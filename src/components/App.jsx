@@ -54,7 +54,7 @@ const generateDefaultData = () => ({
   mediaBreakpoint: getBreakpoint(),
 });
 cache.writeData({ data: generateDefaultData() });
-client.onResetStore(() => cache.writeData({ data: generateDefaultData() }));
+client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaultData() })));
 
 const App = () => (
   <Layout>

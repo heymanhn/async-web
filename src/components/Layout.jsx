@@ -1,15 +1,12 @@
 /* eslint react/prop-types: 0 */
 
 import React, { Component } from 'react';
-import { Query, withApollo } from 'react-apollo';
-import { Link } from '@reach/router';
+import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import isLoggedInQuery from 'graphql/isLoggedInQuery';
 import mediaBreakpointQuery from 'graphql/mediaBreakpointQuery';
 import getBreakpoint from 'utils/mediaQuery';
 
-import LoggedOutNavBar from 'components/navigation/LoggedOutNavBar';
 import NavBar from 'components/navigation/NavBar';
 import GlobalStyles from 'components/style/GlobalStyles';
 import Theme from 'components/style/Theme';
@@ -46,22 +43,6 @@ const Copyright = styled.div(({ theme: { colors, mq } }) => ({
   },
 }));
 
-const Links = styled.div({
-  display: 'flex',
-  justifyContent: 'center',
-  padding: '0px 10px',
-});
-
-const StyledLink = styled(Link)(({ theme: { colors } }) => ({
-  color: colors.blue,
-  textDecoration: 'none',
-  ':hover': {
-    color: colors.blue,
-    textDecoration: 'none',
-  },
-  margin: '0px 10px',
-}));
-
 class Layout extends Component {
   constructor(props) {
     super(props);
@@ -91,26 +72,18 @@ class Layout extends Component {
     const { children } = this.props;
 
     return (
-      <Query query={isLoggedInQuery}>
-        {({ data }) => (
-          <Theme>
-            <GlobalStyles />
-            <Container>
-              {data.isLoggedIn ? <NavBar /> : <LoggedOutNavBar />}
-              <Content>
-                {children}
-              </Content>
-              <Footer>
-                <Copyright>Copyright © Nexus</Copyright>
-                <Links>
-                  <StyledLink to="/privacy">Privacy Policy</StyledLink>
-                  <StyledLink to="/terms">Terms of Use</StyledLink>
-                </Links>
-              </Footer>
-            </Container>
-          </Theme>
-        )}
-      </Query>
+      <Theme>
+        <GlobalStyles />
+        <Container>
+          <NavBar />
+          <Content>
+            {children}
+          </Content>
+          <Footer>
+            <Copyright>Copyright © Nexus</Copyright>
+          </Footer>
+        </Container>
+      </Theme>
     );
   }
 }
