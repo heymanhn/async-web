@@ -21,3 +21,12 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Optional eslint cache
+.eslintcache
+
+# dotenv environment variables file
+.env.*
+
+# VSCode debugging
+/.vscode

@@ -1,8 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+
+import App from 'components/App';
 import * as serviceWorker from './serviceWorker';
+
+// Web fonts
+import 'typeface-roboto'; // For the Material-UI library
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
