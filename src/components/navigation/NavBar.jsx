@@ -1,7 +1,9 @@
 import React from 'react';
+import { Query } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import logo from 'images/logo.png';
+import isLoggedInQuery from 'graphql/isLoggedInQuery';
 
 import AvatarDropdown from './AvatarDropdown';
 
@@ -52,16 +54,24 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
 }));
 
 const NavBar = () => (
-  <NavigationBar>
-    <Container>
-      <LogoImage
-        src={logo}
-        alt="Nexus Logo"
-        title="Nexus"
-      />
-      <AvatarDropdown />
-    </Container>
-  </NavigationBar>
+  <Query query={isLoggedInQuery}>
+    {({ data }) => {
+      console.log(data);
+
+      return (
+        <NavigationBar>
+          <Container>
+            <LogoImage
+              src={logo}
+              alt="Nexus Logo"
+              title="Nexus"
+            />
+            {data.isLoggedIn && <AvatarDropdown />}
+          </Container>
+        </NavigationBar>
+      );
+    }}
+  </Query>
 );
 
 export default NavBar;

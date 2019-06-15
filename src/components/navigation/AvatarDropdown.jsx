@@ -1,15 +1,15 @@
 /* eslint react/prop-types: 0 */
 
 import React, { Component } from 'react';
-import { withApollo } from 'react-apollo';
+import { Query, withApollo } from 'react-apollo';
 import { Dropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
-import { Link, navigate } from '@reach/router';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import { clearLocalUser, getLocalUser } from 'utils/auth';
+import currentUserQuery from 'graphql/currentUserQuery';
 
 import Avatar from 'components/shared/Avatar';
-import tempPic from 'images/herman.png';
 
 const AvatarWithPointer = styled(Avatar)(({ theme: { mq } }) => ({
   cursor: 'pointer',
@@ -74,33 +74,34 @@ class AvatarDropdown extends Component {
     if (!userId) return null;
 
     return (
-      <Dropdown isOpen={dropdownOpen} toggle={this.handleToggle}>
-        <StyledDropdownToggle
-          tag="div"
-          data-toggle="dropdown"
-          aria-expanded={dropdownOpen}
-          nav
-        >
-          <AvatarWithPointer src={tempPic} size={40} />
-        </StyledDropdownToggle>
-        <StyledDropdownMenu>
-          <DropdownItem header>Herman Ng</DropdownItem>
-          <DropdownItem divider />
-          <Link to="/connections">
-            <StyledDropdownItem>
-              Connections
-            </StyledDropdownItem>
-          </Link>
-          <Link to="/preferences">
-            <StyledDropdownItem>
-              Preferences
-            </StyledDropdownItem>
-          </Link>
-          <StyledDropdownItem onClick={this.handleLogout}>
-            Log Out
-          </StyledDropdownItem>
-        </StyledDropdownMenu>
-      </Dropdown>
+      <Query query={currentUserQuery} variables={{ id: userId }}>
+        {({ data, loading }) => {
+          if (loading) return null;
+          if (!data) return null;
+
+          const { user: { profilePictureUrl, fullName } } = data;
+
+          return (
+            <Dropdown isOpen={dropdownOpen} toggle={this.handleToggle}>
+              <StyledDropdownToggle
+                tag="div"
+                data-toggle="dropdown"
+                aria-expanded={dropdownOpen}
+                nav
+              >
+                <AvatarWithPointer src={profilePictureUrl} size={40} />
+              </StyledDropdownToggle>
+              <StyledDropdownMenu>
+                <DropdownItem header>{fullName}</DropdownItem>
+                <DropdownItem divider />
+                <StyledDropdownItem onClick={this.handleLogout}>
+                  Log Out
+                </StyledDropdownItem>
+              </StyledDropdownMenu>
+            </Dropdown>
+          );
+        }}
+      </Query>
     );
   }
 }

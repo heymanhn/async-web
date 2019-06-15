@@ -16,6 +16,7 @@ import getBreakpoint from 'utils/mediaQuery';
 
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
+import Auth from 'components/Auth';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -62,6 +63,9 @@ const App = () => (
     {/* https://stackoverflow.com/questions/53058110/stop-reach-router-scrolling-down-the-page-after-navigating-to-new-page */}
     <Router primary={false}>
       <Home path="/" />
+
+      {/* Temporary login route */}
+      <Auth path="/login" />
 
       {/* <Invite path="/c/:hash" />
       <PrivateRoute path="/onboarding" component={Onboarding} />
