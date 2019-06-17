@@ -53,16 +53,26 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
   },
 }));
 
+const LogoTitle = styled.span({
+  fontSize: '20px',
+  fontWeight: 500,
+  position: 'relative',
+  top: '2px',
+});
+
 const NavBar = () => (
   <Query query={isLoggedInQuery}>
     {({ data }) => (
       <NavigationBar>
         <Container>
-          <LogoImage
-            src={logo}
-            alt="Nexus Logo"
-            title="Nexus"
-          />
+          <div>
+            <LogoImage
+              src={logo}
+              alt="async logo"
+              title="async"
+            />
+            <LogoTitle>async</LogoTitle>
+          </div>
           {data.isLoggedIn && <AvatarDropdown />}
         </Container>
       </NavigationBar>

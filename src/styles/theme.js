@@ -63,5 +63,8 @@ export const theme = {
     formGrey: '#f8f9fa',
     formBorderGrey: '#c3cdd4',
     formPlaceholderGrey: '#c3c3c3',
+
+    titlePlaceholder: '#dbdddf',
+    textPlaceholder: '#c9cfd4',
   },
 };
