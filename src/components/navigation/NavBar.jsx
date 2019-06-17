@@ -55,22 +55,18 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
 
 const NavBar = () => (
   <Query query={isLoggedInQuery}>
-    {({ data }) => {
-      console.log(data);
-
-      return (
-        <NavigationBar>
-          <Container>
-            <LogoImage
-              src={logo}
-              alt="Nexus Logo"
-              title="Nexus"
-            />
-            {data.isLoggedIn && <AvatarDropdown />}
-          </Container>
-        </NavigationBar>
-      );
-    }}
+    {({ data }) => (
+      <NavigationBar>
+        <Container>
+          <LogoImage
+            src={logo}
+            alt="Nexus Logo"
+            title="Nexus"
+          />
+          {data.isLoggedIn && <AvatarDropdown />}
+        </Container>
+      </NavigationBar>
+    )}
   </Query>
 );
 

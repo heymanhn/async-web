@@ -36,6 +36,7 @@ export const theme = {
   ].join(','),
 
   containerMargin: '50px auto',
+  documentContainerMargin: '60px auto',
   shortMargin: '30px auto',
   maxViewport: '740px',
 
