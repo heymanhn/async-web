@@ -60,6 +60,15 @@ const LogoTitle = styled.span({
   top: '2px',
 });
 
+const SavedIndicator = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey5,
+  fontSize: '14px',
+  fontWeight: 400,
+  marginLeft: '20px',
+  position: 'relative',
+  top: '2px',
+}));
+
 const NavBar = () => (
   <Query query={isLoggedInQuery}>
     {({ data }) => (
@@ -72,6 +81,7 @@ const NavBar = () => (
               title="async"
             />
             <LogoTitle>async</LogoTitle>
+            {data.showSavedMessage && <SavedIndicator>Saved!</SavedIndicator>}
           </div>
           {data.isLoggedIn && <AvatarDropdown />}
         </Container>

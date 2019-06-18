@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Query, withApollo } from 'react-apollo';
+import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import withPageTracking from 'utils/withPageTracking';
 import meetingQuery from 'graphql/meetingQuery';
+import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import PageContainer from 'components/shared/PageContainer';
 
@@ -65,8 +66,24 @@ class Meeting extends Component {
     this.setState({ title: event.target.value });
   }
 
-  handleSave() {
-    // TODO: Mutation to update the entire meeting
+  async handleSave() {
+    const { title } = this.state;
+    const { client, id } = this.props;
+
+    try {
+      const response = await client.mutate({
+        mutation: updateMeetingMutation,
+        variables: { id, input: { title } },
+      });
+
+      if (response.data && response.data.updateMeeting) {
+        client.writeData({ data: { showSavedMessage: true } });
+        setTimeout(() => client.writeData({ data: { showSavedMessage: false } }), 2000);
+      }
+    } catch (err) {
+      // No error handling yet
+      console.log('error saving meeting');
+    }
   }
 
   render() {
