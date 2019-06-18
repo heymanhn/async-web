@@ -94,7 +94,7 @@ class Meeting extends Component {
     this.setState({ details: value });
   }
 
-  async handleSave() {
+  async handleSave(event, editor, next) {
     const { title } = this.state;
     const { client, id } = this.props;
     const plainTextTitle = Plain.serialize(title);
@@ -109,9 +109,12 @@ class Meeting extends Component {
         client.writeData({ data: { showSavedMessage: true } });
         setTimeout(() => client.writeData({ data: { showSavedMessage: false } }), 2000);
       }
+
+      next();
     } catch (err) {
       // No error handling yet
       console.log('error saving meeting');
+      next();
     }
   }
 
