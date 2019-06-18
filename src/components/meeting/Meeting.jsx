@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
+import PlaceholderPlugin from 'slate-react-placeholder';
 import styled from '@emotion/styled';
+import { theme } from 'styles/theme';
 
 import withPageTracking from 'utils/withPageTracking';
 import meetingQuery from 'graphql/meetingQuery';
@@ -35,10 +37,6 @@ const MeetingTitle = styled(Editor)(({ theme: { colors } }) => ({
   marginBottom: '40px',
   width: '100%',
   outline: 'none',
-
-  '::placeholder': {
-    color: colors.titlePlaceholder,
-  },
 }));
 
 const MeetingDetails = styled(Editor)(({ theme: { colors } }) => ({
@@ -46,10 +44,6 @@ const MeetingDetails = styled(Editor)(({ theme: { colors } }) => ({
   fontSize: '16px',
   lineHeight: '25px',
   fontWeight: 400,
-
-  '::placeholder': {
-    color: colors.textPlaceholder,
-  },
 }));
 
 class Meeting extends Component {
@@ -129,13 +123,46 @@ class Meeting extends Component {
             <MeetingTitle
               onBlur={this.handleSave}
               onChange={this.handleChangeTitle}
-              placeholder="Untitled Meeting"
               value={title}
+              plugins={[
+                {
+                  queries: {
+                    isEmpty: editor => editor.value.document.text === '',
+                  },
+                },
+                PlaceholderPlugin({
+                  placeholder: 'Untitled Meeting',
+                  when: 'isEmpty',
+                  style: {
+                    color: theme.colors.titlePlaceholder,
+                    opacity: '1',
+                    fontSize: '36px',
+                    fontWeight: '600',
+                  },
+                }),
+              ]}
             />
+            {/* DRY this up later */}
             <MeetingDetails
               onChange={this.handleChangeDetails}
-              placeholder="Share details to get everyone up to speed"
               value={details}
+              plugins={[
+                {
+                  queries: {
+                    isEmpty: editor => editor.value.document.text === '',
+                  },
+                },
+                PlaceholderPlugin({
+                  placeholder: 'Share details to get everyone up to speed',
+                  when: 'isEmpty',
+                  style: {
+                    color: theme.colors.textPlaceholder,
+                    opacity: '1',
+                    fontSize: '16px',
+                    fontWeight: '400',
+                  },
+                }),
+              ]}
             />
           </MetadataSection>
         </MetadataContainer>
