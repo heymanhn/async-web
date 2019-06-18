@@ -16,6 +16,7 @@
     "graphql": "^14.3.1",
     "graphql-anywhere": "^4.2.4",
     "graphql-tag": "^2.10.1",
+    "immutable": "^3.8.2",
     "jquery": "^3.4.1",
     "prop-types": "^15.7.2",
     "query-string": "^6.7.0",
@@ -25,6 +26,9 @@
     "react-helmet": "^5.2.1",
     "react-scripts": "3.0.1",
     "reactstrap": "^8.0.0",
+    "slate": "^0.47.4",
+    "slate-plain-serializer": "^0.7.6",
+    "slate-react": "^0.22.4",
     "snake-case": "^2.1.0",
     "typeface-roboto": "0.0.54",
     "typescript": "^3.5.2"

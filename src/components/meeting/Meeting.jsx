@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
+import { Editor } from 'slate-react';
+import Plain from 'slate-plain-serializer';
 import styled from '@emotion/styled';
 
 import withPageTracking from 'utils/withPageTracking';
@@ -9,7 +11,7 @@ import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import PageContainer from 'components/shared/PageContainer';
 
-const MeetingTitle = styled.input(({ theme: { colors } }) => ({
+const MeetingTitle = styled(Editor)(({ theme: { colors } }) => ({
   background: 'none',
   border: 'none',
   fontSize: '36px',
@@ -52,8 +54,9 @@ class Meeting extends Component {
 
       if (response.data && response.data.meeting) {
         const { title } = response.data.meeting;
+        const deserializedTitle = Plain.deserialize(title);
 
-        this.setState({ loading: false, title });
+        this.setState({ loading: false, title: deserializedTitle });
       } else {
         this.setState({ error: true, loading: false });
       }
@@ -62,18 +65,19 @@ class Meeting extends Component {
     }
   }
 
-  handleChangeTitle(event) {
-    this.setState({ title: event.target.value });
+  handleChangeTitle({ value }) {
+    this.setState({ title: value });
   }
 
   async handleSave() {
     const { title } = this.state;
     const { client, id } = this.props;
+    const plainTextTitle = Plain.serialize(title);
 
     try {
       const response = await client.mutate({
         mutation: updateMeetingMutation,
-        variables: { id, input: { title } },
+        variables: { id, input: { title: plainTextTitle } },
       });
 
       if (response.data && response.data.updateMeeting) {
@@ -96,7 +100,6 @@ class Meeting extends Component {
           onBlur={this.handleSave}
           onChange={this.handleChangeTitle}
           placeholder="Untitled Meeting"
-          type="textarea"
           value={title}
         />
       </PageContainer>
