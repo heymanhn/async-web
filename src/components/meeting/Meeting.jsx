@@ -9,11 +9,26 @@ import withPageTracking from 'utils/withPageTracking';
 import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
-import PageContainer from 'components/shared/PageContainer';
+// import PageContainer from 'components/shared/PageContainer';
+const MetadataContainer = styled.div(({ theme: { colors } }) => ({
+  background: colors.white,
+}));
+
+const MetadataSection = styled.div(({ theme: { colors, maxViewport } }) => ({
+  background: colors.white,
+  margin: '0px auto',
+  maxWidth: maxViewport,
+  padding: '60px 20px',
+}));
+
+const DiscussionSection = styled.div(({ theme: { colors, maxViewport } }) => ({
+  background: colors.bgGrey,
+  margin: '0px auto',
+  maxWidth: maxViewport,
+  padding: '0px 20px',
+}));
 
 const MeetingTitle = styled(Editor)(({ theme: { colors } }) => ({
-  background: 'none',
-  border: 'none',
   fontSize: '36px',
   fontWeight: 600,
   color: colors.mainText,
@@ -26,12 +41,16 @@ const MeetingTitle = styled(Editor)(({ theme: { colors } }) => ({
   },
 }));
 
-// const MeetingDetails = styled.div(({ theme: { colors } }) => ({
-//   fontSize: '16px',
-//   lineHeight: '25px',
-//   fontWeight: 400,
-//   color: colors.textPlaceholder,
-// }));
+const MeetingDetails = styled(Editor)(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '16px',
+  lineHeight: '25px',
+  fontWeight: 400,
+
+  '::placeholder': {
+    color: colors.textPlaceholder,
+  },
+}));
 
 class Meeting extends Component {
   constructor(props) {
@@ -41,9 +60,11 @@ class Meeting extends Component {
       error: false,
       loading: true,
       title: '',
+      details: '',
     };
 
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
+    this.handleChangeDetails = this.handleChangeDetails.bind(this);
     this.handleSave = this.handleSave.bind(this);
   }
 
@@ -56,7 +77,7 @@ class Meeting extends Component {
         const { title } = response.data.meeting;
         const deserializedTitle = Plain.deserialize(title);
 
-        this.setState({ loading: false, title: deserializedTitle });
+        this.setState({ loading: false, title: deserializedTitle, details: Plain.deserialize('') });
       } else {
         this.setState({ error: true, loading: false });
       }
@@ -67,6 +88,10 @@ class Meeting extends Component {
 
   handleChangeTitle({ value }) {
     this.setState({ title: value });
+  }
+
+  handleChangeDetails({ value }) {
+    this.setState({ details: value });
   }
 
   async handleSave() {
@@ -91,18 +116,30 @@ class Meeting extends Component {
   }
 
   render() {
-    const { error, loading, title } = this.state;
+    const { details, error, loading, title } = this.state;
     if (loading || error) return null;
 
     return (
-      <PageContainer isDocument>
-        <MeetingTitle
-          onBlur={this.handleSave}
-          onChange={this.handleChangeTitle}
-          placeholder="Untitled Meeting"
-          value={title}
-        />
-      </PageContainer>
+      <div>
+        <MetadataContainer>
+          <MetadataSection>
+            <MeetingTitle
+              onBlur={this.handleSave}
+              onChange={this.handleChangeTitle}
+              placeholder="Untitled Meeting"
+              value={title}
+            />
+            <MeetingDetails
+              onChange={this.handleChangeDetails}
+              placeholder="Share details to get everyone up to speed"
+              value={details}
+            />
+          </MetadataSection>
+        </MetadataContainer>
+        <DiscussionSection>
+          Add Discussion Topic
+        </DiscussionSection>
+      </div>
     );
   }
 }

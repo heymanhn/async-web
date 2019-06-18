@@ -7,9 +7,10 @@ const Container = styled.div({
 });
 
 const InnerContainer = styled.div(({
-  theme: { containerMargin, documentContainerMargin, shortMargin, maxViewport, mq },
+  theme: { colors, containerMargin, documentContainerMargin, shortMargin, maxViewport, mq },
   isDocument,
 }) => ({
+  background: isDocument ? colors.white : 'none',
   margin: shortMargin,
 
   [mq('tabletUp')]: {

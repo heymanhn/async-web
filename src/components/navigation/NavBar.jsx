@@ -13,8 +13,6 @@ const NavigationBar = styled.div(({ theme: { colors } }) => ({
   zIndex: 1000,
 
   background: colors.white,
-  borderBottom: `1px solid ${colors.borderGrey}`,
-
   margin: '0px auto',
   padding: '0 20px',
   width: '100%',
