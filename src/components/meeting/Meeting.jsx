@@ -30,6 +30,35 @@ const DiscussionSection = styled.div(({ theme: { colors, maxViewport } }) => ({
   padding: '0px 20px',
 }));
 
+const AddDiscussionButton = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  cursor: 'pointer',
+  marginTop: '30px',
+}));
+
+const PlusSign = styled.span(({ theme: { colors } }) => ({
+  fontSize: '26px',
+  fontWeight: 400,
+  paddingRight: '5px',
+  position: 'relative',
+  top: '1px',
+
+  ':hover': {
+    color: colors.grey2,
+  },
+}));
+
+const DiscussionButtonText = styled.span(({ theme: { colors } }) => ({
+  fontSize: '16px',
+  fontWeight: 500,
+  lineHeight: '25px',
+
+  ':hover': {
+    color: colors.grey2,
+    textDecoration: 'underline',
+  },
+}));
+
 const MeetingTitle = styled(Editor)(({ theme: { colors } }) => ({
   fontSize: '36px',
   fontWeight: 600,
@@ -205,7 +234,10 @@ class Meeting extends Component {
           </MetadataSection>
         </MetadataContainer>
         <DiscussionSection>
-          Add Discussion Topic
+          <AddDiscussionButton>
+            <PlusSign>+</PlusSign>
+            <DiscussionButtonText>ADD DISCUSSION TOPIC</DiscussionButtonText>
+          </AddDiscussionButton>
         </DiscussionSection>
       </div>
     );
