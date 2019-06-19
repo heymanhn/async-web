@@ -4,15 +4,15 @@ import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
 import { Value } from 'slate';
-import PlaceholderPlugin from 'slate-react-placeholder';
 import styled from '@emotion/styled';
-import { theme } from 'styles/theme';
 
 import withPageTracking from 'utils/withPageTracking';
+import { titlePlugins, detailsPlugins } from 'utils/slatePlugins';
 import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import MeetingInfo from './MeetingInfo';
+import DiscussionTopic from './DiscussionTopic';
 
 const MetadataContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -113,38 +113,6 @@ class Meeting extends Component {
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeDetails = this.handleChangeDetails.bind(this);
     this.handleSave = this.handleSave.bind(this);
-
-    this.titlePlugins = [
-      {
-        queries: {
-          isEmpty: editor => editor.value.document.text === '',
-        },
-      },
-      PlaceholderPlugin({
-        placeholder: 'Untitled Meeting',
-        when: 'isEmpty',
-        style: {
-          color: theme.colors.titlePlaceholder,
-          opacity: '1',
-        },
-      }),
-    ];
-
-    this.detailsPlugins = [
-      {
-        queries: {
-          isEmpty: editor => editor.value.document.text === '',
-        },
-      },
-      PlaceholderPlugin({
-        placeholder: 'Share details to get everyone up to speed',
-        when: 'isEmpty',
-        style: {
-          color: theme.colors.textPlaceholder,
-          opacity: '1',
-        },
-      }),
-    ];
   }
 
   async componentDidMount() {
@@ -226,7 +194,7 @@ class Meeting extends Component {
               onBlur={this.handleSave}
               onChange={this.handleChangeTitle}
               value={title}
-              plugins={this.titlePlugins}
+              plugins={titlePlugins}
             />
             <MeetingInfo participants={participants} />
             {/* DRY this up later */}
@@ -234,7 +202,7 @@ class Meeting extends Component {
               onBlur={this.handleSave}
               onChange={this.handleChangeDetails}
               value={details}
-              plugins={this.detailsPlugins}
+              plugins={detailsPlugins}
             />
           </MetadataSection>
         </MetadataContainer>
