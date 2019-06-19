@@ -12,7 +12,6 @@ import withPageTracking from 'utils/withPageTracking';
 import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
-// import PageContainer from 'components/shared/PageContainer';
 const MetadataContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
 }));
@@ -51,7 +50,7 @@ const MeetingDetails = styled(Editor)(({ theme: { colors } }) => ({
   },
 }));
 
-const initialValue = Value.fromJSON({
+const initialValue = {
   document: {
     nodes: [
       {
@@ -66,7 +65,7 @@ const initialValue = Value.fromJSON({
       },
     ],
   },
-});
+};
 
 class Meeting extends Component {
   constructor(props) {
@@ -76,7 +75,7 @@ class Meeting extends Component {
       error: false,
       loading: true,
       title: '',
-      details: initialValue,
+      details: '',
     };
 
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
@@ -90,10 +89,16 @@ class Meeting extends Component {
       const response = await client.query({ query: meetingQuery, variables: { id } });
 
       if (response.data && response.data.meeting) {
-        const { title } = response.data.meeting;
+        const { title, body } = response.data.meeting;
         const deserializedTitle = Plain.deserialize(title);
+        const details = body && body.formatter === 'slatejs'
+          ? JSON.parse(body.payload) : initialValue;
 
-        this.setState({ loading: false, title: deserializedTitle });
+        this.setState({
+          loading: false,
+          title: deserializedTitle,
+          details: Value.fromJSON(details),
+        });
       } else {
         this.setState({ error: true, loading: false });
       }
@@ -116,13 +121,21 @@ class Meeting extends Component {
     const plainTextTitle = Plain.serialize(title);
     const detailsJSON = JSON.stringify(details.toJSON());
 
-    // TODO: Persist the details once the API changes are done
     next();
 
     try {
       const response = await client.mutate({
         mutation: updateMeetingMutation,
-        variables: { id, input: { title: plainTextTitle } },
+        variables: {
+          id,
+          input: {
+            title: plainTextTitle,
+            body: {
+              formatter: 'slatejs',
+              payload: detailsJSON,
+            },
+          },
+        },
       });
 
       if (response.data && response.data.updateMeeting) {

@@ -5,9 +5,9 @@ export default gql`
     meeting(id: $id) @rest(type: "Meeting", path: "/meetings/{args.id}") {
       id
       title
-      parts @type(name: "[BodyPart]") {
-        type
-        body
+      body @type(name: "[Body]") {
+        formatter
+        payload
       }
     }
   }

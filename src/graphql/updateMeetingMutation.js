@@ -5,9 +5,9 @@ export default gql`
     updateMeeting(id: $id, input: $input) @rest(type: "Meeting", path: "/meetings/{args.id}", method: "PUT") {
       id
       title
-      parts @type(name: "[BodyPart]") {
-        type
-        body
+      body @type(name: "[Body]") {
+        formatter
+        payload
       }
     }
   }
