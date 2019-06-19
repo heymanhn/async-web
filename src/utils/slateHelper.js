@@ -1,6 +1,23 @@
 import PlaceholderPlugin from 'slate-react-placeholder';
 import { theme } from 'styles/theme';
 
+export const initialValue = {
+  document: {
+    nodes: [
+      {
+        object: 'block',
+        type: 'paragraph',
+        nodes: [
+          {
+            object: 'text',
+            text: '',
+          },
+        ],
+      },
+    ],
+  },
+};
+
 const queries = { isEmpty: editor => editor.value.document.text === '' };
 
 const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({

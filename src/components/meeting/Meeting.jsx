@@ -7,7 +7,7 @@ import { Value } from 'slate';
 import styled from '@emotion/styled';
 
 import withPageTracking from 'utils/withPageTracking';
-import { titlePlugins, detailsPlugins } from 'utils/slatePlugins';
+import { initialValue, titlePlugins, detailsPlugins } from 'utils/slateHelper';
 import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
@@ -80,23 +80,6 @@ const MeetingDetails = styled(Editor)(({ theme: { colors } }) => ({
     marginTop: '1em',
   },
 }));
-
-const initialValue = {
-  document: {
-    nodes: [
-      {
-        object: 'block',
-        type: 'paragraph',
-        nodes: [
-          {
-            object: 'text',
-            text: '',
-          },
-        ],
-      },
-    ],
-  },
-};
 
 class Meeting extends Component {
   constructor(props) {
@@ -211,6 +194,7 @@ class Meeting extends Component {
             <PlusSign>+</PlusSign>
             <DiscussionButtonText>ADD DISCUSSION TOPIC</DiscussionButtonText>
           </AddDiscussionButton>
+          <DiscussionTopic />
         </DiscussionSection>
       </div>
     );
