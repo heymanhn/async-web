@@ -13,8 +13,6 @@ const NavigationBar = styled.div(({ theme: { colors } }) => ({
   zIndex: 1000,
 
   background: colors.white,
-  borderBottom: `1px solid ${colors.borderGrey}`,
-
   margin: '0px auto',
   padding: '0 20px',
   width: '100%',
@@ -53,24 +51,40 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
   },
 }));
 
+const LogoTitle = styled.span({
+  fontSize: '20px',
+  fontWeight: 500,
+  position: 'relative',
+  top: '2px',
+});
+
+const SavedIndicator = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey5,
+  fontSize: '14px',
+  fontWeight: 400,
+  marginLeft: '20px',
+  position: 'relative',
+  top: '2px',
+}));
+
 const NavBar = () => (
   <Query query={isLoggedInQuery}>
-    {({ data }) => {
-      console.log(data);
-
-      return (
-        <NavigationBar>
-          <Container>
+    {({ data }) => (
+      <NavigationBar>
+        <Container>
+          <div>
             <LogoImage
               src={logo}
-              alt="Nexus Logo"
-              title="Nexus"
+              alt="async logo"
+              title="async"
             />
-            {data.isLoggedIn && <AvatarDropdown />}
-          </Container>
-        </NavigationBar>
-      );
-    }}
+            <LogoTitle>async</LogoTitle>
+            {data.showSavedMessage && <SavedIndicator>Saved!</SavedIndicator>}
+          </div>
+          {data.isLoggedIn && <AvatarDropdown />}
+        </Container>
+      </NavigationBar>
+    )}
   </Query>
 );
 

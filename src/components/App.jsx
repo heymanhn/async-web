@@ -17,6 +17,8 @@ import getBreakpoint from 'utils/mediaQuery';
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
 import Auth from 'components/Auth';
+import PrivateRoute from 'components/PrivateRoute';
+import Meeting from 'components/meeting/Meeting';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -53,6 +55,7 @@ const client = new ApolloClient({
 const generateDefaultData = () => ({
   isLoggedIn: isLocalTokenPresent(),
   mediaBreakpoint: getBreakpoint(),
+  showSavedMessage: false,
 });
 cache.writeData({ data: generateDefaultData() });
 client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaultData() })));
@@ -67,17 +70,7 @@ const App = () => (
       {/* Temporary login route */}
       <Auth path="/login" />
 
-      {/* <Invite path="/c/:hash" />
-      <PrivateRoute path="/onboarding" component={Onboarding} />
-      <PrivateRoute path="/search" component={Search} />
-      <PrivateRoute path="/people/:id" component={Person} />
-      <PrivateRoute path="/organizations/:id" component={Organization} />
-      <PrivateRoute path="/connections" component={Connections} />
-      <PrivateRoute path="/preferences" component={Preferences} /> */}
-
-      {/* Legal pages */}
-      {/* <MarkdownTemplate path="/privacy" file={PrivacyPolicy} />
-      <MarkdownTemplate path="/terms" file={TermsOfUse} /> */}
+      <PrivateRoute path="/meetings/:id" component={Meeting} />
 
       {/* <NotFound default /> */}
     </Router>

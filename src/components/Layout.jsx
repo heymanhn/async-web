@@ -80,7 +80,7 @@ class Layout extends Component {
             {children}
           </Content>
           <Footer>
-            <Copyright>Copyright © Nexus</Copyright>
+            <Copyright>Copyright © async</Copyright>
           </Footer>
         </Container>
       </Theme>
