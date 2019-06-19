@@ -107,6 +107,7 @@ class Meeting extends Component {
       loading: true,
       title: '',
       details: '',
+      participants: [],
     };
 
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
@@ -152,7 +153,7 @@ class Meeting extends Component {
       const response = await client.query({ query: meetingQuery, variables: { id } });
 
       if (response.data && response.data.meeting) {
-        const { title, body } = response.data.meeting;
+        const { title, body, participants } = response.data.meeting;
         const deserializedTitle = Plain.deserialize(title);
         const details = body && body.formatter === 'slatejs'
           ? JSON.parse(body.payload) : initialValue;
@@ -161,6 +162,7 @@ class Meeting extends Component {
           loading: false,
           title: deserializedTitle,
           details: Value.fromJSON(details),
+          participants,
         });
       } else {
         this.setState({ error: true, loading: false });
@@ -213,7 +215,7 @@ class Meeting extends Component {
   }
 
   render() {
-    const { details, error, loading, title } = this.state;
+    const { details, error, loading, title, participants } = this.state;
     if (loading || error) return null;
 
     return (
@@ -226,7 +228,7 @@ class Meeting extends Component {
               value={title}
               plugins={this.titlePlugins}
             />
-            <MeetingInfo />
+            <MeetingInfo participants={participants} />
             {/* DRY this up later */}
             <MeetingDetails
               onBlur={this.handleSave}

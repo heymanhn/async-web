@@ -9,6 +9,11 @@ export default gql`
         formatter
         payload
       }
+      participants @type(name: "[Participants]") {
+        id
+        fullName
+        profilePictureUrl
+      }
     }
   }
 `;
