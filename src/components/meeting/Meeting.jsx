@@ -112,6 +112,38 @@ class Meeting extends Component {
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeDetails = this.handleChangeDetails.bind(this);
     this.handleSave = this.handleSave.bind(this);
+
+    this.titlePlugins = [
+      {
+        queries: {
+          isEmpty: editor => editor.value.document.text === '',
+        },
+      },
+      PlaceholderPlugin({
+        placeholder: 'Untitled Meeting',
+        when: 'isEmpty',
+        style: {
+          color: theme.colors.titlePlaceholder,
+          opacity: '1',
+        },
+      }),
+    ];
+
+    this.detailsPlugins = [
+      {
+        queries: {
+          isEmpty: editor => editor.value.document.text === '',
+        },
+      },
+      PlaceholderPlugin({
+        placeholder: 'Share details to get everyone up to speed',
+        when: 'isEmpty',
+        style: {
+          color: theme.colors.textPlaceholder,
+          opacity: '1',
+        },
+      }),
+    ];
   }
 
   async componentDidMount() {
@@ -192,23 +224,7 @@ class Meeting extends Component {
               onBlur={this.handleSave}
               onChange={this.handleChangeTitle}
               value={title}
-              plugins={[
-                {
-                  queries: {
-                    isEmpty: editor => editor.value.document.text === '',
-                  },
-                },
-                PlaceholderPlugin({
-                  placeholder: 'Untitled Meeting',
-                  when: 'isEmpty',
-                  style: {
-                    color: theme.colors.titlePlaceholder,
-                    opacity: '1',
-                    fontSize: '36px',
-                    fontWeight: '600',
-                  },
-                }),
-              ]}
+              plugins={this.titlePlugins}
             />
             <MeetingInfo />
             {/* DRY this up later */}
@@ -216,23 +232,7 @@ class Meeting extends Component {
               onBlur={this.handleSave}
               onChange={this.handleChangeDetails}
               value={details}
-              plugins={[
-                {
-                  queries: {
-                    isEmpty: editor => editor.value.document.text === '',
-                  },
-                },
-                PlaceholderPlugin({
-                  placeholder: 'Share details to get everyone up to speed',
-                  when: 'isEmpty',
-                  style: {
-                    color: theme.colors.textPlaceholder,
-                    opacity: '1',
-                    fontSize: '16px',
-                    fontWeight: '400',
-                  },
-                }),
-              ]}
+              plugins={this.detailsPlugins}
             />
           </MetadataSection>
         </MetadataContainer>
