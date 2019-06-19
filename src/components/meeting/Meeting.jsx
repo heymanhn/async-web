@@ -12,6 +12,8 @@ import withPageTracking from 'utils/withPageTracking';
 import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
+import MeetingInfo from './MeetingInfo';
+
 const MetadataContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
 }));
@@ -63,7 +65,7 @@ const MeetingTitle = styled(Editor)(({ theme: { colors } }) => ({
   fontSize: '36px',
   fontWeight: 600,
   color: colors.mainText,
-  marginBottom: '40px',
+  marginBottom: '30px',
   width: '100%',
   outline: 'none',
 }));
@@ -208,6 +210,7 @@ class Meeting extends Component {
                 }),
               ]}
             />
+            <MeetingInfo />
             {/* DRY this up later */}
             <MeetingDetails
               onBlur={this.handleSave}
