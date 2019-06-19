@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
+import { Value } from 'slate';
 import PlaceholderPlugin from 'slate-react-placeholder';
 import styled from '@emotion/styled';
 import { theme } from 'styles/theme';
@@ -44,7 +45,28 @@ const MeetingDetails = styled(Editor)(({ theme: { colors } }) => ({
   fontSize: '16px',
   lineHeight: '25px',
   fontWeight: 400,
+
+  div: {
+    marginTop: '1em',
+  },
 }));
+
+const initialValue = Value.fromJSON({
+  document: {
+    nodes: [
+      {
+        object: 'block',
+        type: 'paragraph',
+        nodes: [
+          {
+            object: 'text',
+            text: '',
+          },
+        ],
+      },
+    ],
+  },
+});
 
 class Meeting extends Component {
   constructor(props) {
@@ -54,7 +76,7 @@ class Meeting extends Component {
       error: false,
       loading: true,
       title: '',
-      details: '',
+      details: initialValue,
     };
 
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
@@ -71,7 +93,7 @@ class Meeting extends Component {
         const { title } = response.data.meeting;
         const deserializedTitle = Plain.deserialize(title);
 
-        this.setState({ loading: false, title: deserializedTitle, details: Plain.deserialize('') });
+        this.setState({ loading: false, title: deserializedTitle });
       } else {
         this.setState({ error: true, loading: false });
       }
@@ -89,9 +111,12 @@ class Meeting extends Component {
   }
 
   async handleSave(event, editor, next) {
-    const { title } = this.state;
+    const { title, details } = this.state;
     const { client, id } = this.props;
     const plainTextTitle = Plain.serialize(title);
+    const detailsJSON = JSON.stringify(details.toJSON());
+
+    // TODO: Persist the details once the API changes are done
 
     try {
       const response = await client.mutate({
@@ -144,6 +169,7 @@ class Meeting extends Component {
             />
             {/* DRY this up later */}
             <MeetingDetails
+              onBlur={this.handleSave}
               onChange={this.handleChangeDetails}
               value={details}
               plugins={[
