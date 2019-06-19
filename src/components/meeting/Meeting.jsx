@@ -117,6 +117,7 @@ class Meeting extends Component {
     const detailsJSON = JSON.stringify(details.toJSON());
 
     // TODO: Persist the details once the API changes are done
+    next();
 
     try {
       const response = await client.mutate({
@@ -128,8 +129,6 @@ class Meeting extends Component {
         client.writeData({ data: { showSavedMessage: true } });
         setTimeout(() => client.writeData({ data: { showSavedMessage: false } }), 2000);
       }
-
-      next();
     } catch (err) {
       // No error handling yet
       console.log('error saving meeting');
