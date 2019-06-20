@@ -1,8 +1,6 @@
 import React from 'react';
-import { Query } from 'react-apollo';
+import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-
-import dummyParticipantsQuery from 'graphql/dummyParticipantsQuery';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -30,28 +28,27 @@ const StyledAvatar = styled(Avatar)({
   marginRight: '5px',
 });
 
-const MeetingInfo = () => (
-  <Query query={dummyParticipantsQuery}>
-    {({ loading, data }) => {
-      if (loading) return null;
-
-      return (
-        <Container>
-          <InfoSection>
-            <SectionTitle>PARTICIPANTS</SectionTitle>
-            {data.participants.map(p => (
-              <StyledAvatar key={p.id} src={p.profilePictureUrl} size={30} alt={p.fullName} />
-            ))}
-          </InfoSection>
-          <InfoSection>
-            <SectionTitle>DUE DATE</SectionTitle>
-            None
-          </InfoSection>
-        </Container>
-      );
-    }}
-  </Query>
-
+const MeetingInfo = ({ participants }) => (
+  <Container>
+    <InfoSection>
+      <SectionTitle>PARTICIPANTS</SectionTitle>
+      {participants.map(p => (
+        <StyledAvatar key={p.id} src={p.profilePictureUrl} size={30} alt={p.fullName} />
+      ))}
+    </InfoSection>
+    <InfoSection>
+      <SectionTitle>DUE DATE</SectionTitle>
+      None
+    </InfoSection>
+  </Container>
 );
+
+MeetingInfo.propTypes = {
+  participants: PropTypes.array,
+};
+
+MeetingInfo.defaultProps = {
+  participants: [],
+};
 
 export default MeetingInfo;

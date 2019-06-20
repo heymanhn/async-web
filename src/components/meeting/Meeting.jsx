@@ -4,15 +4,15 @@ import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
 import { Value } from 'slate';
-import PlaceholderPlugin from 'slate-react-placeholder';
 import styled from '@emotion/styled';
-import { theme } from 'styles/theme';
 
 import withPageTracking from 'utils/withPageTracking';
+import { initialValue, titlePlugins, detailsPlugins } from 'utils/slateHelper';
 import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import MeetingInfo from './MeetingInfo';
+import DiscussionTopic from './DiscussionTopic';
 
 const MetadataContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -81,69 +81,23 @@ const MeetingDetails = styled(Editor)(({ theme: { colors } }) => ({
   },
 }));
 
-const initialValue = {
-  document: {
-    nodes: [
-      {
-        object: 'block',
-        type: 'paragraph',
-        nodes: [
-          {
-            object: 'text',
-            text: '',
-          },
-        ],
-      },
-    ],
-  },
-};
-
 class Meeting extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       error: false,
+      isComposingTopic: false,
       loading: true,
       title: '',
       details: '',
+      participants: [],
     };
 
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeDetails = this.handleChangeDetails.bind(this);
     this.handleSave = this.handleSave.bind(this);
-
-    this.titlePlugins = [
-      {
-        queries: {
-          isEmpty: editor => editor.value.document.text === '',
-        },
-      },
-      PlaceholderPlugin({
-        placeholder: 'Untitled Meeting',
-        when: 'isEmpty',
-        style: {
-          color: theme.colors.titlePlaceholder,
-          opacity: '1',
-        },
-      }),
-    ];
-
-    this.detailsPlugins = [
-      {
-        queries: {
-          isEmpty: editor => editor.value.document.text === '',
-        },
-      },
-      PlaceholderPlugin({
-        placeholder: 'Share details to get everyone up to speed',
-        when: 'isEmpty',
-        style: {
-          color: theme.colors.textPlaceholder,
-          opacity: '1',
-        },
-      }),
-    ];
+    this.toggleComposeMode = this.toggleComposeMode.bind(this);
   }
 
   async componentDidMount() {
@@ -152,7 +106,7 @@ class Meeting extends Component {
       const response = await client.query({ query: meetingQuery, variables: { id } });
 
       if (response.data && response.data.meeting) {
-        const { title, body } = response.data.meeting;
+        const { title, body, participants } = response.data.meeting;
         const deserializedTitle = Plain.deserialize(title);
         const details = body && body.formatter === 'slatejs'
           ? JSON.parse(body.payload) : initialValue;
@@ -161,6 +115,7 @@ class Meeting extends Component {
           loading: false,
           title: deserializedTitle,
           details: Value.fromJSON(details),
+          participants,
         });
       } else {
         this.setState({ error: true, loading: false });
@@ -212,9 +167,29 @@ class Meeting extends Component {
     }
   }
 
+  toggleComposeMode() {
+    this.setState(prevState => ({ isComposingTopic: !prevState.isComposingTopic }));
+  }
+
   render() {
-    const { details, error, loading, title } = this.state;
+    const {
+      details,
+      error,
+      isComposingTopic,
+      loading,
+      title,
+      participants,
+    } = this.state;
+    const { id } = this.props;
+
     if (loading || error) return null;
+
+    const addDiscussionButton = (
+      <AddDiscussionButton onClick={this.toggleComposeMode}>
+        <PlusSign>+</PlusSign>
+        <DiscussionButtonText>ADD DISCUSSION TOPIC</DiscussionButtonText>
+      </AddDiscussionButton>
+    );
 
     return (
       <div>
@@ -224,23 +199,27 @@ class Meeting extends Component {
               onBlur={this.handleSave}
               onChange={this.handleChangeTitle}
               value={title}
-              plugins={this.titlePlugins}
+              plugins={titlePlugins}
             />
-            <MeetingInfo />
+            <MeetingInfo participants={participants} />
             {/* DRY this up later */}
             <MeetingDetails
               onBlur={this.handleSave}
               onChange={this.handleChangeDetails}
               value={details}
-              plugins={this.detailsPlugins}
+              plugins={detailsPlugins}
             />
           </MetadataSection>
         </MetadataContainer>
         <DiscussionSection>
-          <AddDiscussionButton>
-            <PlusSign>+</PlusSign>
-            <DiscussionButtonText>ADD DISCUSSION TOPIC</DiscussionButtonText>
-          </AddDiscussionButton>
+          <div>Existing discussions go here</div>
+          {!isComposingTopic ? addDiscussionButton : (
+            <DiscussionTopic
+              meetingId={id}
+              mode="compose"
+              onCancelCompose={this.toggleComposeMode}
+            />
+          )}
         </DiscussionSection>
       </div>
     );
