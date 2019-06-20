@@ -5,12 +5,16 @@ export default gql`
     createConversation(meetingId: $meetingId, input: $input) @rest(type: "Conversation", path: "/meetings/{args.meetingId}/conversations", method: "POST") {
       id
       title
+      author
+      createdAt
       messages @type(name: "[Message]") {
-
-      }
-      body @type(name: "[Body]") {
-        formatter
-        payload
+        id
+        author
+        createdAt
+        body @type(name: "Body") {
+          formatter
+          payload
+        }
       }
     }
   }
