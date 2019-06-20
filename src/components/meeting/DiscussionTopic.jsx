@@ -10,12 +10,14 @@ import { initialValue, discussionTopicPlugins } from 'utils/slateHelper';
 import { getLocalUser } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
+import Button from 'components/shared/Button';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.grey5}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
+  marginBottom: '30px',
   width: '100%',
 }));
 
@@ -60,6 +62,11 @@ const ActionsContainer = styled.div(({ theme: { colors } }) => ({
   minHeight: '56px',
 }));
 
+const SmallButton = styled(Button)({
+  marginRight: '10px',
+  padding: '5px 20px',
+});
+
 const AddReplyButton = styled.div({
   fontSize: '14px',
   fontWeight: 500,
@@ -70,6 +77,7 @@ class DiscussionTopic extends Component {
     super(props);
 
     this.state = {
+      conversationId: null,
       loading: true,
       currentUser: null,
       content: null,
@@ -95,8 +103,17 @@ class DiscussionTopic extends Component {
   }
 
   render() {
-    const { currentUser, content, loading } = this.state;
+    const { conversationId: cIdState, currentUser, content, loading } = this.state;
+    const { conversationId: cIdProp } = this.props;
     if (loading) return null;
+
+    const mode = (!cIdState && !cIdProp) ? 'compose' : 'view';
+    const composeBtns = (
+      <React.Fragment>
+        <SmallButton title="Add Topic" onClick={this.handleAddTopic} />
+        <SmallButton type="light" title="Cancel" onClick={this.handleDismiss} />
+      </React.Fragment>
+    );
 
     return (
       <Container>
@@ -115,7 +132,7 @@ class DiscussionTopic extends Component {
           </ContentContainer>
         </MainContainer>
         <ActionsContainer>
-          <AddReplyButton>&#43; Add a reply</AddReplyButton>
+          {mode === 'compose' ? composeBtns : <AddReplyButton>&#43; Add a reply</AddReplyButton>}
         </ActionsContainer>
       </Container>
     );
@@ -124,6 +141,12 @@ class DiscussionTopic extends Component {
 
 DiscussionTopic.propTypes = {
   client: PropTypes.object.isRequired,
+  meetingId: PropTypes.string.isRequired,
+  conversationId: PropTypes.string,
+};
+
+DiscussionTopic.defaultProps = {
+  conversationId: null,
 };
 
 export default withApollo(DiscussionTopic);
