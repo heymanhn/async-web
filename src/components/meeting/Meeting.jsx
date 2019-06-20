@@ -87,6 +87,7 @@ class Meeting extends Component {
 
     this.state = {
       error: false,
+      isComposingTopic: false,
       loading: true,
       title: '',
       details: '',
@@ -96,6 +97,7 @@ class Meeting extends Component {
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeDetails = this.handleChangeDetails.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.toggleComposeMode = this.toggleComposeMode.bind(this);
   }
 
   async componentDidMount() {
@@ -165,9 +167,29 @@ class Meeting extends Component {
     }
   }
 
+  toggleComposeMode() {
+    this.setState(prevState => ({ isComposingTopic: !prevState.isComposingTopic }));
+  }
+
   render() {
-    const { details, error, loading, title, participants } = this.state;
+    const {
+      details,
+      error,
+      isComposingTopic,
+      loading,
+      title,
+      participants,
+    } = this.state;
+    const { id } = this.props;
+
     if (loading || error) return null;
+
+    const addDiscussionButton = (
+      <AddDiscussionButton onClick={this.toggleComposeMode}>
+        <PlusSign>+</PlusSign>
+        <DiscussionButtonText>ADD DISCUSSION TOPIC</DiscussionButtonText>
+      </AddDiscussionButton>
+    );
 
     return (
       <div>
@@ -190,11 +212,14 @@ class Meeting extends Component {
           </MetadataSection>
         </MetadataContainer>
         <DiscussionSection>
-          <AddDiscussionButton>
-            <PlusSign>+</PlusSign>
-            <DiscussionButtonText>ADD DISCUSSION TOPIC</DiscussionButtonText>
-          </AddDiscussionButton>
-          <DiscussionTopic />
+          <div>Existing discussions go here</div>
+          {!isComposingTopic ? addDiscussionButton : (
+            <DiscussionTopic
+              meetingId={id}
+              mode="compose"
+              onCancelCompose={this.toggleComposeMode}
+            />
+          )}
         </DiscussionSection>
       </div>
     );

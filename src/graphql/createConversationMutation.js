@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation CreateConversation($meetingId: String!, $input: Object!) {
-    createConversation(meetingId: $meetingId, input: $input) @rest(type: "Conversation", path: "/meetings/{args.meetingId}/conversations", method: "POST") {
+  mutation CreateConversation($id: String!, $input: Object!) {
+    createConversation(id: $id, input: $input) @rest(type: "Conversation", path: "/meetings/{args.id}/conversations", method: "POST") {
       id
       title
       author

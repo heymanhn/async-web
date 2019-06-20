@@ -6,6 +6,7 @@ import { Value } from 'slate';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
+import createConversationMutation from 'graphql/createConversationMutation';
 import { initialValue, discussionTopicPlugins } from 'utils/slateHelper';
 import { getLocalUser } from 'utils/auth';
 
@@ -72,18 +73,25 @@ const AddReplyButton = styled.div({
   fontWeight: 500,
 });
 
+/*
+ * A discussion topic supports two modes:
+ * 1. Display
+ * 2. Compose
+ *
+ * In compose mode, the editor is no longer read-only.
+ */
 class DiscussionTopic extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      conversationId: null,
-      loading: true,
+      content: Value.fromJSON(initialValue),
       currentUser: null,
-      content: null,
+      loading: true,
     };
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
   }
 
   componentDidMount() {
@@ -95,23 +103,53 @@ class DiscussionTopic extends Component {
 
     // TODO: show existing discussion topics
 
-    this.setState({ currentUser: user, content: Value.fromJSON(initialValue), loading: false });
+    this.setState({ currentUser: user, loading: false });
   }
 
   handleChangeContent({ value }) {
     this.setState({ content: value });
   }
 
+  async handleCreate() {
+    const { content } = this.state;
+    const { client, meetingId: id, onCancelCompose } = this.props;
+    const contentJSON = JSON.stringify(content.toJSON());
+
+    try {
+      const response = await client.mutate({
+        mutation: createConversationMutation,
+        variables: {
+          id,
+          input: {
+            messages: [{
+              body: {
+                formatter: 'slatejs',
+                payload: contentJSON,
+              },
+            }],
+          },
+        },
+      });
+
+      if (response.data && response.data.createConversation) {
+        this.setState({ content: Value.fromJSON(initialValue) });
+        onCancelCompose();
+      }
+    } catch (err) {
+      // No error handling yet
+      console.log('error creating conversation topic');
+    }
+  }
+
   render() {
-    const { conversationId: cIdState, currentUser, content, loading } = this.state;
-    const { conversationId: cIdProp } = this.props;
+    const { currentUser, content, loading } = this.state;
+    const { onCancelCompose, mode } = this.props;
     if (loading) return null;
 
-    const mode = (!cIdState && !cIdProp) ? 'compose' : 'view';
     const composeBtns = (
       <React.Fragment>
-        <SmallButton title="Add Topic" onClick={this.handleAddTopic} />
-        <SmallButton type="light" title="Cancel" onClick={this.handleDismiss} />
+        <SmallButton title="Add Topic" onClick={this.handleCreate} />
+        <SmallButton type="light" title="Cancel" onClick={onCancelCompose} />
       </React.Fragment>
     );
 
@@ -125,6 +163,7 @@ class DiscussionTopic extends Component {
               {/* TODO: Put the timestamp here */}
             </div>
             <Content
+              autoFocus
               onChange={this.handleChangeContent}
               value={content}
               plugins={discussionTopicPlugins}
@@ -141,12 +180,15 @@ class DiscussionTopic extends Component {
 
 DiscussionTopic.propTypes = {
   client: PropTypes.object.isRequired,
-  meetingId: PropTypes.string.isRequired,
   conversationId: PropTypes.string,
+  meetingId: PropTypes.string.isRequired,
+  mode: PropTypes.oneOf(['compose', 'display']),
+  onCancelCompose: PropTypes.func.isRequired,
 };
 
 DiscussionTopic.defaultProps = {
   conversationId: null,
+  mode: 'display',
 };
 
 export default withApollo(DiscussionTopic);
