@@ -9,10 +9,14 @@ export default gql`
         formatter
         payload
       }
-      participants @type(name: "[Participants]") {
+      participants @type(name: "[Participant]") {
         id
         fullName
         profilePictureUrl
+      }
+      conversations @type(name: "[Conversation]") {
+        id
+        createdAt
       }
     }
   }

@@ -6,6 +6,7 @@ import { Value } from 'slate';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
+import meetingConversationQuery from 'graphql/meetingConversationQuery';
 import createConversationMutation from 'graphql/createConversationMutation';
 import { initialValue, discussionTopicPlugins } from 'utils/slateHelper';
 import { getLocalUser } from 'utils/auth';
@@ -94,16 +95,38 @@ class DiscussionTopic extends Component {
     this.handleCreate = this.handleCreate.bind(this);
   }
 
-  componentDidMount() {
-    const { client } = this.props;
+  async componentDidMount() {
+    const { client, conversationId, meetingId } = this.props;
     const { userId } = getLocalUser();
 
-    // Assumes that currentUserQuery is already run once from <AvatarDropdown />
-    const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
+    if (!conversationId) {
+      // Assumes that currentUserQuery is already run once from <AvatarDropdown />
+      const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
+      this.setState({ currentUser: user, loading: false });
+      return;
+    }
 
-    // TODO: show existing discussion topics
+    try {
+      const response = await client.query({
+        query: meetingConversationQuery,
+        variables: { meetingId, conversationId },
+      });
 
-    this.setState({ currentUser: user, loading: false });
+      if (response.data && response.data.conversation) {
+        const { author, createdAt, messages } = response.data.conversation;
+
+        // Assumes each conversation has at least one message
+        const { body: { payload } } = messages[0];
+
+        this.setState({
+          loading: false,
+          currentUser: author,
+          content: Value.fromJSON(JSON.parse(payload)),
+        });
+      }
+    } catch (err) {
+      console.log('Error loading the conversation');
+    }
   }
 
   handleChangeContent({ value }) {
@@ -183,12 +206,13 @@ DiscussionTopic.propTypes = {
   conversationId: PropTypes.string,
   meetingId: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(['compose', 'display']),
-  onCancelCompose: PropTypes.func.isRequired,
+  onCancelCompose: PropTypes.func,
 };
 
 DiscussionTopic.defaultProps = {
   conversationId: null,
   mode: 'display',
+  onCancelCompose: () => {},
 };
 
 export default withApollo(DiscussionTopic);
