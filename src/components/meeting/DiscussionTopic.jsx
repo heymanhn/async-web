@@ -112,6 +112,7 @@ class DiscussionTopic extends Component {
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   async componentDidMount() {
@@ -155,7 +156,7 @@ class DiscussionTopic extends Component {
     this.setState({ content: value });
   }
 
-  async handleCreate() {
+  async handleCreate(retainCompose = false) {
     const { content } = this.state;
     const { client, meetingId: id, onCancelCompose, onCreate } = this.props;
 
@@ -177,14 +178,21 @@ class DiscussionTopic extends Component {
       });
 
       if (response.data && response.data.createConversation) {
-        this.setState({ content: Value.fromJSON(initialValue) });
         onCreate();
-        onCancelCompose();
+        this.setState({ content: Value.fromJSON(initialValue) });
+        if (!retainCompose) onCancelCompose();
       }
     } catch (err) {
       // No error handling yet
       console.log('error creating conversation topic');
     }
+  }
+
+  handleKeyDown(event, editor, next) {
+    if (!event.shiftKey || event.key !== 'Enter') return next();
+
+    event.preventDefault();
+    return this.handleCreate(true);
   }
 
   render() {
@@ -215,8 +223,10 @@ class DiscussionTopic extends Component {
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
             </TopicMetadata>
             <Content
-              autoFocus
+              autoFocus={mode === 'compose'}
+              readOnly={mode === 'display'}
               onChange={this.handleChangeContent}
+              onKeyDown={this.handleKeyDown}
               value={content}
               plugins={discussionTopicPlugins}
             />
