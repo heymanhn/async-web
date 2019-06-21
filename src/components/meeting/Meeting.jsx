@@ -32,6 +32,13 @@ const DiscussionSection = styled.div(({ theme: { colors, maxViewport } }) => ({
   padding: '0px 20px',
 }));
 
+const DiscussionsLabel = styled.div({
+  fontSize: '14px',
+  fontWeight: 500,
+  marginTop: '30px',
+  marginBottom: '20px',
+});
+
 const AddDiscussionButton = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   cursor: 'pointer',
@@ -86,6 +93,7 @@ class Meeting extends Component {
     super(props);
 
     this.state = {
+      conversationIds: [],
       error: false,
       isComposingTopic: false,
       loading: true,
@@ -106,16 +114,21 @@ class Meeting extends Component {
       const response = await client.query({ query: meetingQuery, variables: { id } });
 
       if (response.data && response.data.meeting) {
-        const { title, body, participants } = response.data.meeting;
+        const { title, body, conversations, participants } = response.data.meeting;
         const deserializedTitle = Plain.deserialize(title);
         const details = body && body.formatter === 'slatejs'
           ? JSON.parse(body.payload) : initialValue;
+
+        // HN: I'll make this better later
+        const sortedConvos = conversations.sort(
+          (a, b) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
 
         this.setState({
           loading: false,
           title: deserializedTitle,
           details: Value.fromJSON(details),
           participants,
+          conversationIds: sortedConvos.map(c => c.id),
         });
       } else {
         this.setState({ error: true, loading: false });
@@ -179,6 +192,7 @@ class Meeting extends Component {
       loading,
       title,
       participants,
+      conversationIds,
     } = this.state;
     const { id } = this.props;
 
@@ -212,7 +226,15 @@ class Meeting extends Component {
           </MetadataSection>
         </MetadataContainer>
         <DiscussionSection>
-          <div>Existing discussions go here</div>
+          {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
+          {conversationIds.map(cid => (
+            <DiscussionTopic
+              key={cid}
+              conversationId={cid}
+              meetingId={id}
+              mode="display"
+            />
+          ))}
           {!isComposingTopic ? addDiscussionButton : (
             <DiscussionTopic
               meetingId={id}
