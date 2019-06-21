@@ -20,7 +20,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   border: `1px solid ${colors.grey5}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
-  marginBottom: '30px',
+  marginBottom: '20px',
   width: '100%',
 }));
 
