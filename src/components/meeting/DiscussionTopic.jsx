@@ -18,11 +18,12 @@ import { getLocalUser } from 'utils/auth';
 import Avatar from 'components/shared/Avatar';
 import Button from 'components/shared/Button';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.grey5}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
+  cursor: mode === 'display' ? 'pointer' : 'initial',
   marginBottom: '20px',
   width: '100%',
 }));
@@ -159,7 +160,7 @@ class DiscussionTopic extends Component {
 
   async handleCreate({ hideCompose = true } = {}) {
     const { content } = this.state;
-    const { client, meetingId: id, onCancelCompose, onCreate } = this.props;
+    const { client, meetingId: id, onCancelCompose, afterCreate } = this.props;
 
     try {
       const response = await client.mutate({
@@ -179,7 +180,7 @@ class DiscussionTopic extends Component {
       });
 
       if (response.data && response.data.createConversation) {
-        onCreate();
+        afterCreate();
         this.setState({ content: Value.fromJSON(initialValue) });
         if (hideCompose) onCancelCompose();
       }
@@ -200,7 +201,7 @@ class DiscussionTopic extends Component {
 
   render() {
     const { currentUser, content, createdAt, loading, replyCount } = this.state;
-    const { onCancelCompose, mode } = this.props;
+    const { onCancelCompose, mode, ...props } = this.props;
     if (loading) return null;
 
     const composeBtns = (
@@ -217,7 +218,7 @@ class DiscussionTopic extends Component {
     );
 
     return (
-      <Container>
+      <Container mode={mode} {...props}>
         <MainContainer>
           <AvatarWithMargin src={currentUser.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
@@ -248,7 +249,7 @@ DiscussionTopic.propTypes = {
   conversationId: PropTypes.string,
   meetingId: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(['compose', 'display']),
-  onCreate: PropTypes.func,
+  afterCreate: PropTypes.func,
   onCancelCompose: PropTypes.func,
 };
 
@@ -256,7 +257,7 @@ DiscussionTopic.defaultProps = {
   conversationId: null,
   mode: 'display',
   onCancelCompose: () => {},
-  onCreate: () => { },
+  afterCreate: () => { },
 };
 
 export default withApollo(DiscussionTopic);

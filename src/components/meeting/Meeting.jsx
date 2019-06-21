@@ -14,6 +14,7 @@ import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import MeetingInfo from './MeetingInfo';
 import DiscussionTopic from './DiscussionTopic';
+import DiscussionTopicModal from './DiscussionTopicModal';
 
 const MetadataContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -94,17 +95,19 @@ class Meeting extends Component {
 
     this.state = {
       conversationIds: [],
+      details: '',
       error: false,
       isComposingTopic: false,
       loading: true,
-      title: '',
-      details: '',
       participants: [],
+      selectedConversationId: '',
+      title: '',
     };
 
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeDetails = this.handleChangeDetails.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.handleDismissModal = this.handleDismissModal.bind(this);
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
     this.refetchConversations = this.refetchConversations.bind(this);
   }
@@ -205,19 +208,24 @@ class Meeting extends Component {
     }
   }
 
+  handleDismissModal() {
+    this.setState({ selectedConversationId: '' });
+  }
+
   toggleComposeMode() {
     this.setState(prevState => ({ isComposingTopic: !prevState.isComposingTopic }));
   }
 
   render() {
     const {
+      conversationIds,
       details,
       error,
       isComposingTopic,
       loading,
-      title,
       participants,
-      conversationIds,
+      selectedConversationId,
+      title,
     } = this.state;
     const { id } = this.props;
 
@@ -258,17 +266,22 @@ class Meeting extends Component {
               conversationId={cid}
               meetingId={id}
               mode="display"
+              onClick={() => this.setState({ selectedConversationId: cid })}
             />
           ))}
           {!isComposingTopic ? addDiscussionButton : (
             <DiscussionTopic
               meetingId={id}
               mode="compose"
-              onCreate={this.refetchConversations}
+              afterCreate={this.refetchConversations}
               onCancelCompose={this.toggleComposeMode}
             />
           )}
         </DiscussionSection>
+        <DiscussionTopicModal
+          conversationId={selectedConversationId}
+          onDismissModal={this.handleDismissModal}
+        />
       </div>
     );
   }
