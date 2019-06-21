@@ -136,6 +136,7 @@ class Meeting extends Component {
         this.setState({ error: true, loading: false });
       }
     } catch (err) {
+      console.dir(err);
       this.setState({ error: true, loading: false });
     }
   }
