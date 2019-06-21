@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 import withPageTracking from 'utils/withPageTracking';
 import { initialValue, titlePlugins, detailsPlugins } from 'utils/slateHelper';
 import meetingQuery from 'graphql/meetingQuery';
+import meetingConversationsQuery from 'graphql/meetingConversationsQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import MeetingInfo from './MeetingInfo';
@@ -106,6 +107,7 @@ class Meeting extends Component {
     this.handleChangeDetails = this.handleChangeDetails.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
+    this.refetchConversations = this.refetchConversations.bind(this);
   }
 
   async componentDidMount() {
@@ -128,6 +130,29 @@ class Meeting extends Component {
           title: deserializedTitle,
           details: Value.fromJSON(details),
           participants,
+          conversationIds: sortedConvos.map(c => c.id),
+        });
+      } else {
+        this.setState({ error: true, loading: false });
+      }
+    } catch (err) {
+      this.setState({ error: true, loading: false });
+    }
+  }
+
+  async refetchConversations() {
+    const { client, id } = this.props;
+    try {
+      const response = await client.query({ query: meetingConversationsQuery, variables: { id } });
+
+      if (response.data && response.data.conversationsQuery) {
+        const { conversations } = response.data.conversationsQuery;
+
+        // HN: I'll make this better later AND DRY it up
+        const sortedConvos = conversations.sort(
+          (a, b) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
+
+        this.setState({
           conversationIds: sortedConvos.map(c => c.id),
         });
       } else {
@@ -239,6 +264,7 @@ class Meeting extends Component {
             <DiscussionTopic
               meetingId={id}
               mode="compose"
+              onCreate={this.refetchConversations}
               onCancelCompose={this.toggleComposeMode}
             />
           )}

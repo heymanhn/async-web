@@ -4,6 +4,9 @@ import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
+import Moment from 'react-moment';
+import Pluralize from 'pluralize';
+import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
@@ -20,7 +23,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   border: `1px solid ${colors.grey5}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
-  marginBottom: '30px',
+  marginBottom: '20px',
   width: '100%',
 }));
 
@@ -30,18 +33,32 @@ const MainContainer = styled.div({
   margin: '20px',
 });
 
-const AvatarWithMargin = styled(Avatar)({
+const AvatarWithMargin = styled(Avatar)(({ mode }) => ({
   marginRight: '12px',
-});
+  opacity: mode === 'compose' ? 0.5 : 1,
+}));
 
 const ContentContainer = styled.div({
   width: '100%',
 });
 
-const Author = styled.span({
+const TopicMetadata = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'baseline',
+});
+
+const Author = styled.span(({ mode }) => ({
   fontSize: '14px',
   fontWeight: 600,
-});
+  marginRight: '20px',
+  opacity: mode === 'compose' ? 0.5 : 1,
+}));
+
+const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
+  color: colors.grey2,
+  fontSize: '14px',
+}));
 
 const Content = styled(Editor)({
   fontSize: '16px',
@@ -88,12 +105,15 @@ class DiscussionTopic extends Component {
 
     this.state = {
       content: Value.fromJSON(initialValue),
+      createdAt: '',
       currentUser: null,
       loading: true,
+      replyCount: null,
     };
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   async componentDidMount() {
@@ -116,16 +136,16 @@ class DiscussionTopic extends Component {
       if (response.data && response.data.conversation) {
         const { author, createdAt, messages } = response.data.conversation;
 
-        // So that the build will pass. I still need to show this timestamp on the discussion UI
-        console.log(createdAt);
-
         // Assumes each conversation has at least one message
         const { body: { payload } } = messages[0];
+        const replyCount = messages.length - 1;
 
         this.setState({
           loading: false,
           currentUser: author,
           content: Value.fromJSON(JSON.parse(payload)),
+          createdAt,
+          replyCount,
         });
       }
     } catch (err) {
@@ -137,9 +157,9 @@ class DiscussionTopic extends Component {
     this.setState({ content: value });
   }
 
-  async handleCreate() {
+  async handleCreate(retainCompose = false) {
     const { content } = this.state;
-    const { client, meetingId: id, onCancelCompose } = this.props;
+    const { client, meetingId: id, onCancelCompose, onCreate } = this.props;
 
     try {
       const response = await client.mutate({
@@ -159,8 +179,9 @@ class DiscussionTopic extends Component {
       });
 
       if (response.data && response.data.createConversation) {
+        onCreate();
         this.setState({ content: Value.fromJSON(initialValue) });
-        onCancelCompose();
+        if (!retainCompose) onCancelCompose();
       }
     } catch (err) {
       // No error handling yet
@@ -168,8 +189,17 @@ class DiscussionTopic extends Component {
     }
   }
 
+  handleKeyDown(event, editor, next) {
+    if (isHotKey('Enter', event)) event.preventDefault();
+
+    if (isHotKey('shift+Enter', event)) return this.handleCreate(true);
+    if (isHotKey('mod+Enter', event)) return this.handleCreate();
+
+    return next();
+  }
+
   render() {
-    const { currentUser, content, loading } = this.state;
+    const { currentUser, content, createdAt, loading, replyCount } = this.state;
     const { onCancelCompose, mode } = this.props;
     if (loading) return null;
 
@@ -180,25 +210,33 @@ class DiscussionTopic extends Component {
       </React.Fragment>
     );
 
+    const replyButton = (
+      <AddReplyButton>
+        {replyCount > 0 ? Pluralize('reply', replyCount, true) : '+ Add a reply'}
+      </AddReplyButton>
+    );
+
     return (
       <Container>
         <MainContainer>
-          <AvatarWithMargin src={currentUser.profilePictureUrl} size={36} />
+          <AvatarWithMargin src={currentUser.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
-            <div>
-              <Author>{currentUser.fullName}</Author>
-              {/* TODO: Put the timestamp here */}
-            </div>
+            <TopicMetadata>
+              <Author mode={mode}>{currentUser.fullName}</Author>
+              {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
+            </TopicMetadata>
             <Content
-              autoFocus
+              autoFocus={mode === 'compose'}
+              readOnly={mode === 'display'}
               onChange={this.handleChangeContent}
+              onKeyDown={this.handleKeyDown}
               value={content}
               plugins={discussionTopicPlugins}
             />
           </ContentContainer>
         </MainContainer>
         <ActionsContainer>
-          {mode === 'compose' ? composeBtns : <AddReplyButton>&#43; Add a reply</AddReplyButton>}
+          {mode === 'compose' ? composeBtns : replyButton}
         </ActionsContainer>
       </Container>
     );
@@ -210,6 +248,7 @@ DiscussionTopic.propTypes = {
   conversationId: PropTypes.string,
   meetingId: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(['compose', 'display']),
+  onCreate: PropTypes.func,
   onCancelCompose: PropTypes.func,
 };
 
@@ -217,6 +256,7 @@ DiscussionTopic.defaultProps = {
   conversationId: null,
   mode: 'display',
   onCancelCompose: () => {},
+  onCreate: () => { },
 };
 
 export default withApollo(DiscussionTopic);
