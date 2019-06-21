@@ -5,8 +5,8 @@ import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
 import Moment from 'react-moment';
+import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
-
 
 import currentUserQuery from 'graphql/currentUserQuery';
 import meetingConversationQuery from 'graphql/meetingConversationQuery';
@@ -107,6 +107,7 @@ class DiscussionTopic extends Component {
       createdAt: '',
       currentUser: null,
       loading: true,
+      replyCount: null,
     };
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
@@ -135,12 +136,14 @@ class DiscussionTopic extends Component {
 
         // Assumes each conversation has at least one message
         const { body: { payload } } = messages[0];
+        const replyCount = messages.length - 1;
 
         this.setState({
           loading: false,
           currentUser: author,
           content: Value.fromJSON(JSON.parse(payload)),
           createdAt,
+          replyCount,
         });
       }
     } catch (err) {
@@ -185,7 +188,7 @@ class DiscussionTopic extends Component {
   }
 
   render() {
-    const { currentUser, content, createdAt, loading } = this.state;
+    const { currentUser, content, createdAt, loading, replyCount } = this.state;
     const { onCancelCompose, mode } = this.props;
     if (loading) return null;
 
@@ -194,6 +197,12 @@ class DiscussionTopic extends Component {
         <SmallButton title="Add Topic" onClick={this.handleCreate} />
         <SmallButton type="light" title="Cancel" onClick={onCancelCompose} />
       </React.Fragment>
+    );
+
+    const replyButton = (
+      <AddReplyButton>
+        {replyCount > 0 ? Pluralize('reply', replyCount, true) : '+ Add a reply'}
+      </AddReplyButton>
     );
 
     return (
@@ -214,7 +223,7 @@ class DiscussionTopic extends Component {
           </ContentContainer>
         </MainContainer>
         <ActionsContainer>
-          {mode === 'compose' ? composeBtns : <AddReplyButton>&#43; Add a reply</AddReplyButton>}
+          {mode === 'compose' ? composeBtns : replyButton}
         </ActionsContainer>
       </Container>
     );
