@@ -4,7 +4,9 @@ import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
+import Moment from 'react-moment';
 import styled from '@emotion/styled';
+
 
 import currentUserQuery from 'graphql/currentUserQuery';
 import meetingConversationQuery from 'graphql/meetingConversationQuery';
@@ -38,10 +40,22 @@ const ContentContainer = styled.div({
   width: '100%',
 });
 
+const TopicMetadata = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'baseline',
+});
+
 const Author = styled.span({
   fontSize: '14px',
   fontWeight: 600,
+  marginRight: '20px',
 });
+
+const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
+  color: colors.grey2,
+  fontSize: '14px',
+}));
 
 const Content = styled(Editor)({
   fontSize: '16px',
@@ -88,6 +102,7 @@ class DiscussionTopic extends Component {
 
     this.state = {
       content: Value.fromJSON(initialValue),
+      createdAt: '',
       currentUser: null,
       loading: true,
     };
@@ -116,9 +131,6 @@ class DiscussionTopic extends Component {
       if (response.data && response.data.conversation) {
         const { author, createdAt, messages } = response.data.conversation;
 
-        // So that the build will pass. I still need to show this timestamp on the discussion UI
-        console.log(createdAt);
-
         // Assumes each conversation has at least one message
         const { body: { payload } } = messages[0];
 
@@ -126,6 +138,7 @@ class DiscussionTopic extends Component {
           loading: false,
           currentUser: author,
           content: Value.fromJSON(JSON.parse(payload)),
+          createdAt,
         });
       }
     } catch (err) {
@@ -170,7 +183,7 @@ class DiscussionTopic extends Component {
   }
 
   render() {
-    const { currentUser, content, loading } = this.state;
+    const { currentUser, content, createdAt, loading } = this.state;
     const { onCancelCompose, mode } = this.props;
     if (loading) return null;
 
@@ -186,10 +199,10 @@ class DiscussionTopic extends Component {
         <MainContainer>
           <AvatarWithMargin src={currentUser.profilePictureUrl} size={36} />
           <ContentContainer>
-            <div>
+            <TopicMetadata>
               <Author>{currentUser.fullName}</Author>
-              {/* TODO: Put the timestamp here */}
-            </div>
+              {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
+            </TopicMetadata>
             <Content
               autoFocus
               onChange={this.handleChangeContent}
