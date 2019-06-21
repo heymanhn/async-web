@@ -157,7 +157,7 @@ class DiscussionTopic extends Component {
     this.setState({ content: value });
   }
 
-  async handleCreate(retainCompose = false) {
+  async handleCreate({ hideCompose = true } = {}) {
     const { content } = this.state;
     const { client, meetingId: id, onCancelCompose, onCreate } = this.props;
 
@@ -181,7 +181,7 @@ class DiscussionTopic extends Component {
       if (response.data && response.data.createConversation) {
         onCreate();
         this.setState({ content: Value.fromJSON(initialValue) });
-        if (!retainCompose) onCancelCompose();
+        if (hideCompose) onCancelCompose();
       }
     } catch (err) {
       // No error handling yet
@@ -192,7 +192,7 @@ class DiscussionTopic extends Component {
   handleKeyDown(event, editor, next) {
     if (isHotKey('Enter', event)) event.preventDefault();
 
-    if (isHotKey('shift+Enter', event)) return this.handleCreate(true);
+    if (isHotKey('shift+Enter', event)) return this.handleCreate({ hideCompose: false });
     if (isHotKey('mod+Enter', event)) return this.handleCreate();
 
     return next();
