@@ -112,31 +112,28 @@ class Meeting extends Component {
 
   async componentDidMount() {
     const { client, id } = this.props;
-    try {
-      const response = await client.query({ query: meetingQuery, variables: { id } });
+    const response = await client.query({ query: meetingQuery, variables: { id } });
 
-      if (response.data && response.data.meeting) {
-        const { title, body, conversations, participants } = response.data.meeting;
-        const deserializedTitle = Plain.deserialize(title);
-        const details = body && body.formatter === 'slatejs'
-          ? JSON.parse(body.payload) : initialValue;
+    if (response.data && response.data.meeting) {
+      const { title, body, conversations, participants } = response.data.meeting;
+      const deserializedTitle = Plain.deserialize(title);
+      const details = body && body.formatter === 'slatejs'
+        ? JSON.parse(body.payload) : initialValue;
 
-        // HN: I'll make this better later
-        const sortedConvos = conversations.sort(
-          (a, b) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
+      const sortedConvos = (conversations || []).sort((a, b) => {
+        if (a.createdAt > b.createdAt) return 1;
+        if (b.createdAt > a.createdAt) return -1;
+        return 0;
+      });
 
-        this.setState({
-          loading: false,
-          title: deserializedTitle,
-          details: Value.fromJSON(details),
-          participants,
-          conversationIds: sortedConvos.map(c => c.id),
-        });
-      } else {
-        this.setState({ error: true, loading: false });
-      }
-    } catch (err) {
-      console.dir(err);
+      this.setState({
+        loading: false,
+        title: deserializedTitle,
+        details: Value.fromJSON(details),
+        participants,
+        conversationIds: sortedConvos.map(c => c.id),
+      });
+    } else {
       this.setState({ error: true, loading: false });
     }
   }
@@ -150,8 +147,11 @@ class Meeting extends Component {
         const { conversations } = response.data.conversationsQuery;
 
         // HN: I'll make this better later AND DRY it up
-        const sortedConvos = conversations.sort(
-          (a, b) => (a.createdAt > b.createdAt) ? 1 : ((b.createdAt > a.createdAt) ? -1 : 0));
+        const sortedConvos = (conversations || []).sort((a, b) => {
+          if (a.createdAt > b.createdAt) return 1;
+          if (b.createdAt > a.createdAt) return -1;
+          return 0;
+        });
 
         this.setState({
           conversationIds: sortedConvos.map(c => c.id),
