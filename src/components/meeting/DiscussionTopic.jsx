@@ -139,7 +139,7 @@ class DiscussionTopic extends Component {
 
   async handleCreate() {
     const { content } = this.state;
-    const { client, meetingId: id, onCancelCompose } = this.props;
+    const { client, meetingId: id, onCancelCompose, onCreate } = this.props;
 
     try {
       const response = await client.mutate({
@@ -160,6 +160,7 @@ class DiscussionTopic extends Component {
 
       if (response.data && response.data.createConversation) {
         this.setState({ content: Value.fromJSON(initialValue) });
+        onCreate();
         onCancelCompose();
       }
     } catch (err) {
@@ -210,6 +211,7 @@ DiscussionTopic.propTypes = {
   conversationId: PropTypes.string,
   meetingId: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(['compose', 'display']),
+  onCreate: PropTypes.func,
   onCancelCompose: PropTypes.func,
 };
 
@@ -217,6 +219,7 @@ DiscussionTopic.defaultProps = {
   conversationId: null,
   mode: 'display',
   onCancelCompose: () => {},
+  onCreate: () => { },
 };
 
 export default withApollo(DiscussionTopic);
