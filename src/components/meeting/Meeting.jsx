@@ -150,7 +150,6 @@ class Meeting extends Component {
     const { title, details } = this.state;
     const { client, id } = this.props;
     const plainTextTitle = Plain.serialize(title);
-    const detailsJSON = JSON.stringify(details.toJSON());
 
     next();
 
@@ -163,7 +162,8 @@ class Meeting extends Component {
             title: plainTextTitle,
             body: {
               formatter: 'slatejs',
-              payload: detailsJSON,
+              text: Plain.serialize(details),
+              payload: JSON.stringify(details.toJSON()),
             },
           },
         },

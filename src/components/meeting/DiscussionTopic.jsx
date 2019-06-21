@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
+import Plain from 'slate-plain-serializer';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
@@ -139,7 +140,6 @@ class DiscussionTopic extends Component {
   async handleCreate() {
     const { content } = this.state;
     const { client, meetingId: id, onCancelCompose } = this.props;
-    const contentJSON = JSON.stringify(content.toJSON());
 
     try {
       const response = await client.mutate({
@@ -150,7 +150,8 @@ class DiscussionTopic extends Component {
             messages: [{
               body: {
                 formatter: 'slatejs',
-                payload: contentJSON,
+                text: Plain.serialize(content),
+                payload: JSON.stringify(content.toJSON()),
               },
             }],
           },
