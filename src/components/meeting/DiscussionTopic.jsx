@@ -6,6 +6,7 @@ import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
 import Moment from 'react-moment';
 import Pluralize from 'pluralize';
+import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
@@ -189,10 +190,12 @@ class DiscussionTopic extends Component {
   }
 
   handleKeyDown(event, editor, next) {
-    if (!event.shiftKey || event.key !== 'Enter') return next();
+    if (isHotKey('Enter', event)) event.preventDefault();
 
-    event.preventDefault();
-    return this.handleCreate(true);
+    if (isHotKey('shift+Enter', event)) return this.handleCreate(true);
+    if (isHotKey('mod+Enter', event)) return this.handleCreate();
+
+    return next();
   }
 
   render() {
