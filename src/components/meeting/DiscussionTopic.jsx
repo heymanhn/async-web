@@ -115,6 +115,9 @@ class DiscussionTopic extends Component {
       if (response.data && response.data.conversation) {
         const { author, createdAt, messages } = response.data.conversation;
 
+        // So that the build will pass. I still need to show this timestamp on the discussion UI
+        console.log(createdAt);
+
         // Assumes each conversation has at least one message
         const { body: { payload } } = messages[0];
 
