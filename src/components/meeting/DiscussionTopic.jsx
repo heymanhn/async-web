@@ -32,9 +32,10 @@ const MainContainer = styled.div({
   margin: '20px',
 });
 
-const AvatarWithMargin = styled(Avatar)({
+const AvatarWithMargin = styled(Avatar)(({ mode }) => ({
   marginRight: '12px',
-});
+  opacity: mode === 'compose' ? 0.5 : 1,
+}));
 
 const ContentContainer = styled.div({
   width: '100%',
@@ -46,11 +47,12 @@ const TopicMetadata = styled.div({
   alignItems: 'baseline',
 });
 
-const Author = styled.span({
+const Author = styled.span(({ mode }) => ({
   fontSize: '14px',
   fontWeight: 600,
   marginRight: '20px',
-});
+  opacity: mode === 'compose' ? 0.5 : 1,
+}));
 
 const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   color: colors.grey2,
@@ -197,10 +199,10 @@ class DiscussionTopic extends Component {
     return (
       <Container>
         <MainContainer>
-          <AvatarWithMargin src={currentUser.profilePictureUrl} size={36} />
+          <AvatarWithMargin src={currentUser.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
             <TopicMetadata>
-              <Author>{currentUser.fullName}</Author>
+              <Author mode={mode}>{currentUser.fullName}</Author>
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
             </TopicMetadata>
             <Content
