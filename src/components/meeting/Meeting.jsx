@@ -139,26 +139,26 @@ class Meeting extends Component {
 
   async refetchConversations() {
     const { client, id } = this.props;
-    try {
-      const response = await client.query({ query: meetingConversationsQuery, variables: { id } });
+    const response = await client.query({
+      query: meetingConversationsQuery,
+      variables: { id },
+      fetchPolicy: 'no-cache',
+    });
 
-      if (response.data && response.data.conversationsQuery) {
-        const { conversations } = response.data.conversationsQuery;
+    if (response.data && response.data.conversationsQuery) {
+      const { conversations } = response.data.conversationsQuery;
 
-        // HN: I'll make this better later AND DRY it up
-        const sortedConvos = (conversations || []).sort((a, b) => {
-          if (a.createdAt > b.createdAt) return 1;
-          if (b.createdAt > a.createdAt) return -1;
-          return 0;
-        });
+      // HN: I'll make this better later AND DRY it up
+      const sortedConvos = (conversations || []).sort((a, b) => {
+        if (a.createdAt > b.createdAt) return 1;
+        if (b.createdAt > a.createdAt) return -1;
+        return 0;
+      });
 
-        this.setState({
-          conversationIds: sortedConvos.map(c => c.id),
-        });
-      } else {
-        this.setState({ error: true, loading: false });
-      }
-    } catch (err) {
+      this.setState({
+        conversationIds: sortedConvos.map(c => c.id),
+      });
+    } else {
       this.setState({ error: true, loading: false });
     }
   }
