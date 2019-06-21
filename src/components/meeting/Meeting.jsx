@@ -30,7 +30,7 @@ const DiscussionSection = styled.div(({ theme: { colors, maxViewport } }) => ({
   background: colors.bgGrey,
   margin: '0px auto',
   maxWidth: maxViewport,
-  padding: '0px 20px',
+  padding: '30px 20px',
 }));
 
 const DiscussionsLabel = styled.div({
@@ -43,7 +43,6 @@ const DiscussionsLabel = styled.div({
 const AddDiscussionButton = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   cursor: 'pointer',
-  marginTop: '30px',
 }));
 
 const PlusSign = styled.span(({ theme: { colors } }) => ({
