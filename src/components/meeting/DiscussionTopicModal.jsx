@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
@@ -74,44 +74,109 @@ const Content = styled(Editor)({
 });
 
 const RepliesSection = styled.div({});
-const ActionsContainer = styled.div({});
 
-const DiscussionTopicModal = ({
-  author,
-  conversationId,
-  createdAt,
-  meetingId,
-  messages,
-  ...props
-}) => (
-  <StyledModal
-    fade={false}
-    {...props}
-  >
-    <TopicSection>
-      <Header>
-        <AuthorSection>
-          <AvatarWithMargin src={author.profilePictureUrl} size={45} />
-          <Details>
-            <Author>{author.fullName}</Author>
-            <Timestamp fromNow parse="X">{createdAt}</Timestamp>
-          </Details>
-        </AuthorSection>
-        <StyledImg alt="Menu" src={menuIcon} />
-      </Header>
-      <Content
-        readOnly
-        value={Value.fromJSON(JSON.parse(messages[0].body.payload))}
-      />
-    </TopicSection>
-    <RepliesSection>
-      Replies
-    </RepliesSection>
-    <ActionsContainer>
-      Actions
-    </ActionsContainer>
-  </StyledModal>
-);
+const ActionsContainer = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+
+  borderTop: `1px solid ${colors.borderGrey}`,
+  minHeight: '60px',
+  padding: '0 30px',
+}));
+
+// HN: DRY up these reply button styles later
+const AddReplyButton = styled.div(({ theme: { colors } }) => ({
+  alignSelf: 'center',
+  color: colors.grey3,
+  cursor: 'pointer',
+  position: 'relative',
+  top: '-2px',
+}));
+
+const PlusSign = styled.span(({ theme: { colors } }) => ({
+  fontSize: '20px',
+  fontWeight: 400,
+  paddingRight: '5px',
+  position: 'relative',
+  top: '1px',
+
+  ':hover': {
+    color: colors.grey2,
+  },
+}));
+
+const ButtonText = styled.span(({ theme: { colors } }) => ({
+  fontSize: '14px',
+  fontWeight: 500,
+
+  ':hover': {
+    color: colors.grey2,
+    textDecoration: 'underline',
+  },
+}));
+
+class DiscussionTopicModal extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { isComposingReply: false };
+
+    this.toggleComposeMode = this.toggleComposeMode.bind(this);
+  }
+
+  toggleComposeMode() {
+    this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
+  }
+
+  render() {
+    const { isComposingReply } = this.state;
+    const {
+      author,
+      conversationId,
+      createdAt,
+      meetingId,
+      messages,
+      ...props
+    } = this.props;
+
+    const addReplyButton = (
+      <AddReplyButton onClick={this.toggleComposeMode}>
+        <PlusSign>+</PlusSign>
+        <ButtonText>ADD A REPLY</ButtonText>
+      </AddReplyButton>
+    );
+
+    return (
+      <StyledModal
+        fade={false}
+        {...props}
+      >
+        <TopicSection>
+          <Header>
+            <AuthorSection>
+              <AvatarWithMargin src={author.profilePictureUrl} size={45} />
+              <Details>
+                <Author>{author.fullName}</Author>
+                <Timestamp fromNow parse="X">{createdAt}</Timestamp>
+              </Details>
+            </AuthorSection>
+            <StyledImg alt="Menu" src={menuIcon} />
+          </Header>
+          <Content
+            readOnly
+            value={Value.fromJSON(JSON.parse(messages[0].body.payload))}
+          />
+        </TopicSection>
+        <RepliesSection>
+          Replies
+        </RepliesSection>
+        <ActionsContainer>
+          {!isComposingReply && addReplyButton}
+        </ActionsContainer>
+      </StyledModal>
+    );
+  }
+}
 
 DiscussionTopicModal.propTypes = {
   author: PropTypes.object.isRequired,
