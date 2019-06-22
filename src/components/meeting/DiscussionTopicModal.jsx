@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Moment from 'react-moment';
@@ -76,13 +77,17 @@ const Content = styled(Editor)({
   },
 });
 
-const RepliesSection = styled.div({});
+const RepliesSection = styled.div(({ theme: { colors } }) => ({
+  background: colors.formGrey,
+  borderTop: `1px solid ${colors.borderGrey}`,
+}));
 
 const RepliesLabel = styled.div({
   fontSize: '14px',
   fontWeight: 500,
   marginTop: '25px',
   marginBottom: '20px',
+  marginLeft: '30px',
 });
 
 const ActionsContainer = styled.div(({ theme: { colors } }) => ({
@@ -135,10 +140,34 @@ class DiscussionTopicModal extends Component {
     };
 
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
+    this.refetchMessages = this.refetchMessages.bind(this);
   }
 
   toggleComposeMode() {
     this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
+  }
+
+  async refetchMessages() {
+    const { client, conversationId } = this.props;
+    const response = await client.query({
+      query: conversationMessagesQuery,
+      variables: { id: conversationId },
+      fetchPolicy: 'no-cache',
+    });
+
+    if (response.data && response.data.conversationMessagesQuery) {
+      const { messages } = response.data.conversationMessagesQuery;
+
+      const sortedMsgs = (messages || []).sort((a, b) => {
+        if (a.createdAt > b.createdAt) return -1;
+        if (b.createdAt > a.createdAt) return 0;
+        return 0;
+      });
+
+      this.setState({ messages: sortedMsgs });
+    } else {
+      console.log('Error re-fetching conversation messages');
+    }
   }
 
   render() {
@@ -179,25 +208,27 @@ class DiscussionTopicModal extends Component {
             value={Value.fromJSON(JSON.parse(messages[0].body.payload))}
           />
         </TopicSection>
-        <RepliesSection>
-          {messages.length > 1 && <RepliesLabel>REPLIES</RepliesLabel>}
-          {messages.slice(1).map(m=> (
-            <DiscussionTopicReply
-              author={m.author}
-              conversationId={conversationId}
-              createdAt={m.createdAt}
-              key={m.id}
-              meetingId={meetingId}
-              message={m.body.payload}
-              messageId={m.id}
-              mode="display"
-            />
-          ))}
-        </RepliesSection>
+        {messages.length > 1 && (
+          <RepliesSection>
+            <RepliesLabel>REPLIES</RepliesLabel>
+            {messages.slice(1).map(m => (
+              <DiscussionTopicReply
+                author={m.author}
+                conversationId={conversationId}
+                createdAt={m.createdAt}
+                key={m.id}
+                meetingId={meetingId}
+                message={m.body.payload}
+                messageId={m.id}
+                mode="display"
+              />
+            ))}
+          </RepliesSection>
+        )}
         <ActionsContainer>
           {!isComposingReply ? addReplyButton : (
             <DiscussionTopicReply
-              afterCreate={() => {}}
+              afterCreate={this.refetchMessages}
               conversationId={conversationId}
               meetingId={meetingId}
               mode="compose"
@@ -212,10 +243,11 @@ class DiscussionTopicModal extends Component {
 
 DiscussionTopicModal.propTypes = {
   author: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
   createdAt: PropTypes.number.isRequired,
   meetingId: PropTypes.string.isRequired,
   messages: PropTypes.array.isRequired,
 };
 
-export default DiscussionTopicModal;
+export default withApollo(DiscussionTopicModal);

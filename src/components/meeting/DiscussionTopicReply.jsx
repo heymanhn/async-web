@@ -87,7 +87,6 @@ class DiscussionTopicReply extends Component {
 
     this.state = {
       author: props.author || null,
-      loading: true,
       message: Value.fromJSON(initialJSON),
     };
 
@@ -103,7 +102,7 @@ class DiscussionTopicReply extends Component {
     if (!messageId) {
       // Assumes that currentUserQuery is already run once from <AvatarDropdown />
       const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
-      this.setState({ author: user, loading: false });
+      this.setState({ author: user });
     }
   }
 
@@ -147,7 +146,7 @@ class DiscussionTopicReply extends Component {
   }
 
   render() {
-    const { author, loading, message } = this.state;
+    const { author, message } = this.state;
     const {
       conversationId,
       createdAt,
@@ -157,7 +156,7 @@ class DiscussionTopicReply extends Component {
       ...props
     } = this.props;
 
-    if (loading) return null;
+    if (!author) return null;
 
     return (
       <Container mode={mode} {...props}>
