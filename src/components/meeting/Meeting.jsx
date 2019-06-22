@@ -14,7 +14,6 @@ import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import MeetingInfo from './MeetingInfo';
 import DiscussionTopic from './DiscussionTopic';
-import DiscussionTopicModal from './DiscussionTopicModal';
 
 const MetadataContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -100,14 +99,12 @@ class Meeting extends Component {
       isComposingTopic: false,
       loading: true,
       participants: [],
-      selectedConversationId: '',
       title: '',
     };
 
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeDetails = this.handleChangeDetails.bind(this);
     this.handleSave = this.handleSave.bind(this);
-    this.handleDismissModal = this.handleDismissModal.bind(this);
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
     this.refetchConversations = this.refetchConversations.bind(this);
   }
@@ -208,10 +205,6 @@ class Meeting extends Component {
     }
   }
 
-  handleDismissModal() {
-    this.setState({ selectedConversationId: '' });
-  }
-
   toggleComposeMode() {
     this.setState(prevState => ({ isComposingTopic: !prevState.isComposingTopic }));
   }
@@ -224,7 +217,6 @@ class Meeting extends Component {
       isComposingTopic,
       loading,
       participants,
-      selectedConversationId,
       title,
     } = this.state;
     const { id } = this.props;
@@ -266,7 +258,6 @@ class Meeting extends Component {
               conversationId={cid}
               meetingId={id}
               mode="display"
-              onClick={() => this.setState({ selectedConversationId: cid })}
             />
           ))}
           {!isComposingTopic ? addDiscussionButton : (
@@ -278,10 +269,6 @@ class Meeting extends Component {
             />
           )}
         </DiscussionSection>
-        <DiscussionTopicModal
-          conversationId={selectedConversationId}
-          onDismissModal={this.handleDismissModal}
-        />
       </div>
     );
   }

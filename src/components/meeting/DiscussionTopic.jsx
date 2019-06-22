@@ -18,6 +18,8 @@ import { getLocalUser } from 'utils/auth';
 import Avatar from 'components/shared/Avatar';
 import Button from 'components/shared/Button';
 
+import DiscussionTopicModal from './DiscussionTopicModal';
+
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.grey5}`,
@@ -108,6 +110,7 @@ class DiscussionTopic extends Component {
       content: Value.fromJSON(initialValue),
       createdAt: '',
       currentUser: null,
+      isModalVisible: false,
       loading: true,
       replyCount: null,
     };
@@ -115,6 +118,7 @@ class DiscussionTopic extends Component {
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
   }
 
   async componentDidMount() {
@@ -199,9 +203,20 @@ class DiscussionTopic extends Component {
     return next();
   }
 
+  toggleModal() {
+    this.setState(prevState => ({ isModalVisible: !prevState.isModalVisible }));
+  }
+
   render() {
-    const { currentUser, content, createdAt, loading, replyCount } = this.state;
-    const { onCancelCompose, mode, ...props } = this.props;
+    const {
+      currentUser,
+      content,
+      createdAt,
+      isModalVisible,
+      loading,
+      replyCount,
+    } = this.state;
+    const { conversationId, onCancelCompose, mode, ...props } = this.props;
     if (loading) return null;
 
     const composeBtns = (
@@ -218,7 +233,7 @@ class DiscussionTopic extends Component {
     );
 
     return (
-      <Container mode={mode} {...props}>
+      <Container mode={mode} onClick={this.toggleModal} {...props}>
         <MainContainer>
           <AvatarWithMargin src={currentUser.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
@@ -239,6 +254,12 @@ class DiscussionTopic extends Component {
         <ActionsContainer>
           {mode === 'compose' ? composeBtns : replyButton}
         </ActionsContainer>
+        {conversationId && (
+          <DiscussionTopicModal
+            isOpen={isModalVisible}
+            toggle={this.toggleModal}
+          />
+        )}
       </Container>
     );
   }
