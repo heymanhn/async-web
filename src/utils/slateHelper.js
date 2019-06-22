@@ -48,3 +48,11 @@ export const discussionTopicPlugins = [
     theme.colors.textPlaceholder,
   ),
 ];
+
+export const discussionTopicReplyPlugins = [
+  { queries },
+  createPlaceholderPlugin(
+    'Express your thoughts. Take your time',
+    theme.colors.textPlaceholder,
+  ),
+];

@@ -6,8 +6,11 @@ import Moment from 'react-moment';
 import { Modal } from 'reactstrap';
 import styled from '@emotion/styled';
 
-import Avatar from 'components/shared/Avatar';
+import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import menuIcon from 'images/icons/menu.png';
+
+import Avatar from 'components/shared/Avatar';
+import DiscussionTopicReply from './DiscussionTopicReply';
 
 const StyledModal = styled(Modal)(({ theme: { maxModalViewport } }) => ({
   margin: '100px auto',
@@ -75,13 +78,19 @@ const Content = styled(Editor)({
 
 const RepliesSection = styled.div({});
 
+const RepliesLabel = styled.div({
+  fontSize: '14px',
+  fontWeight: 500,
+  marginTop: '25px',
+  marginBottom: '20px',
+});
+
 const ActionsContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
 
   borderTop: `1px solid ${colors.borderGrey}`,
   minHeight: '60px',
-  padding: '0 30px',
 }));
 
 // HN: DRY up these reply button styles later
@@ -89,6 +98,7 @@ const AddReplyButton = styled.div(({ theme: { colors } }) => ({
   alignSelf: 'center',
   color: colors.grey3,
   cursor: 'pointer',
+  marginLeft: '30px',
   position: 'relative',
   top: '-2px',
 }));
@@ -119,7 +129,10 @@ class DiscussionTopicModal extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { isComposingReply: false };
+    this.state = {
+      isComposingReply: false,
+      messages: props.messages,
+    };
 
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
   }
@@ -129,13 +142,12 @@ class DiscussionTopicModal extends Component {
   }
 
   render() {
-    const { isComposingReply } = this.state;
+    const { isComposingReply, messages } = this.state;
     const {
       author,
       conversationId,
       createdAt,
       meetingId,
-      messages,
       ...props
     } = this.props;
 
@@ -168,10 +180,30 @@ class DiscussionTopicModal extends Component {
           />
         </TopicSection>
         <RepliesSection>
-          Replies
+          {messages.length > 1 && <RepliesLabel>REPLIES</RepliesLabel>}
+          {messages.slice(1).map(m=> (
+            <DiscussionTopicReply
+              author={m.author}
+              conversationId={conversationId}
+              createdAt={m.createdAt}
+              key={m.id}
+              meetingId={meetingId}
+              message={m.body.payload}
+              messageId={m.id}
+              mode="display"
+            />
+          ))}
         </RepliesSection>
         <ActionsContainer>
-          {!isComposingReply && addReplyButton}
+          {!isComposingReply ? addReplyButton : (
+            <DiscussionTopicReply
+              afterCreate={() => {}}
+              conversationId={conversationId}
+              meetingId={meetingId}
+              mode="compose"
+              onCancelCompose={this.toggleComposeMode}
+            />
+          )}
         </ActionsContainer>
       </StyledModal>
     );

@@ -95,13 +95,6 @@ const AddReplyButton = styled.div({
   fontWeight: 500,
 });
 
-/*
- * A discussion topic supports two modes:
- * 1. Display
- * 2. Compose
- *
- * In compose mode, the editor is no longer read-only.
- */
 class DiscussionTopic extends Component {
   constructor(props) {
     super(props);
@@ -134,28 +127,24 @@ class DiscussionTopic extends Component {
     }
 
     // Assumes each conversation has at least one message from here on out
-    try {
-      const response = await client.query({
-        query: meetingConversationQuery,
-        variables: { meetingId, conversationId },
+    const response = await client.query({
+      query: meetingConversationQuery,
+      variables: { meetingId, conversationId },
+    });
+
+    if (response.data && response.data.conversation) {
+      const { author, createdAt, messages } = response.data.conversation;
+      const { body: { payload } } = messages[0];
+      const replyCount = messages.length - 1;
+
+      this.setState({
+        content: Value.fromJSON(JSON.parse(payload)),
+        createdAt,
+        author,
+        loading: false,
+        messages,
+        replyCount,
       });
-
-      if (response.data && response.data.conversation) {
-        const { author, createdAt, messages } = response.data.conversation;
-        const { body: { payload } } = messages[0];
-        const replyCount = messages.length - 1;
-
-        this.setState({
-          content: Value.fromJSON(JSON.parse(payload)),
-          createdAt,
-          author,
-          loading: false,
-          messages,
-          replyCount,
-        });
-      }
-    } catch (err) {
-      console.log('Error loading the conversation');
     }
   }
 
