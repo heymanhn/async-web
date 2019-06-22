@@ -94,12 +94,12 @@ class Meeting extends Component {
 
     this.state = {
       conversationIds: [],
+      details: '',
       error: false,
       isComposingTopic: false,
       loading: true,
-      title: '',
-      details: '',
       participants: [],
+      title: '',
     };
 
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
@@ -211,13 +211,13 @@ class Meeting extends Component {
 
   render() {
     const {
+      conversationIds,
       details,
       error,
       isComposingTopic,
       loading,
-      title,
       participants,
-      conversationIds,
+      title,
     } = this.state;
     const { id } = this.props;
 
@@ -264,7 +264,7 @@ class Meeting extends Component {
             <DiscussionTopic
               meetingId={id}
               mode="compose"
-              onCreate={this.refetchConversations}
+              afterCreate={this.refetchConversations}
               onCancelCompose={this.toggleComposeMode}
             />
           )}
