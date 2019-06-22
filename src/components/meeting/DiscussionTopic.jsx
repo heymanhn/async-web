@@ -109,9 +109,10 @@ class DiscussionTopic extends Component {
     this.state = {
       content: Value.fromJSON(initialValue),
       createdAt: '',
-      currentUser: null,
+      author: null,
       isModalVisible: false,
       loading: true,
+      messages: [],
       replyCount: null,
     };
 
@@ -128,10 +129,11 @@ class DiscussionTopic extends Component {
     if (!conversationId) {
       // Assumes that currentUserQuery is already run once from <AvatarDropdown />
       const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
-      this.setState({ currentUser: user, loading: false });
+      this.setState({ author: user, loading: false });
       return;
     }
 
+    // Assumes each conversation has at least one message from here on out
     try {
       const response = await client.query({
         query: meetingConversationQuery,
@@ -140,16 +142,15 @@ class DiscussionTopic extends Component {
 
       if (response.data && response.data.conversation) {
         const { author, createdAt, messages } = response.data.conversation;
-
-        // Assumes each conversation has at least one message
         const { body: { payload } } = messages[0];
         const replyCount = messages.length - 1;
 
         this.setState({
-          loading: false,
-          currentUser: author,
           content: Value.fromJSON(JSON.parse(payload)),
           createdAt,
+          author,
+          loading: false,
+          messages,
           replyCount,
         });
       }
@@ -209,14 +210,15 @@ class DiscussionTopic extends Component {
 
   render() {
     const {
-      currentUser,
+      author,
       content,
       createdAt,
       isModalVisible,
       loading,
+      messages,
       replyCount,
     } = this.state;
-    const { conversationId, onCancelCompose, mode, ...props } = this.props;
+    const { conversationId, onCancelCompose, meetingId, mode, ...props } = this.props;
     if (loading) return null;
 
     const composeBtns = (
@@ -235,10 +237,10 @@ class DiscussionTopic extends Component {
     return (
       <Container mode={mode} onClick={this.toggleModal} {...props}>
         <MainContainer>
-          <AvatarWithMargin src={currentUser.profilePictureUrl} size={36} mode={mode} />
+          <AvatarWithMargin src={author.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
             <TopicMetadata>
-              <Author mode={mode}>{currentUser.fullName}</Author>
+              <Author mode={mode}>{author.fullName}</Author>
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
             </TopicMetadata>
             <Content
@@ -256,7 +258,12 @@ class DiscussionTopic extends Component {
         </ActionsContainer>
         {conversationId && (
           <DiscussionTopicModal
+            author={author}
+            conversationId={conversationId}
+            createdAt={createdAt}
             isOpen={isModalVisible}
+            meetingId={meetingId}
+            messages={messages}
             toggle={this.toggleModal}
           />
         )}
