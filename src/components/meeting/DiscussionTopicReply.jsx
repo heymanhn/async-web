@@ -20,11 +20,12 @@ const Container = styled.div(({ mode, theme: { colors } }) => ({
   flexDirection: 'row',
   background: mode === 'display' ? colors.formGrey : 'none',
   cursor: mode === 'display' ? 'pointer' : 'initial',
-  padding: '20px 30px 30px',
+  padding: '20px 30px 25px',
   width: '100%',
 }));
 
 const AvatarWithMargin = styled(Avatar)(({ mode }) => ({
+  flexShrink: 0,
   marginRight: '12px',
   opacity: mode === 'compose' ? 0.5 : 1,
 }));

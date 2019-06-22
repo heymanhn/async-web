@@ -5,7 +5,7 @@ import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Moment from 'react-moment';
 import { Modal } from 'reactstrap';
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import menuIcon from 'images/icons/menu.png';
@@ -86,8 +86,21 @@ const RepliesLabel = styled.div({
   fontSize: '14px',
   fontWeight: 500,
   marginTop: '25px',
-  marginBottom: '20px',
   marginLeft: '30px',
+});
+
+const Separator = styled.hr(({ theme: { colors } }) => ({
+  borderTop: `1px solid ${colors.borderGrey}`,
+  margin: 0,
+  marginLeft: '78px', // Assuming 36px avatars, 12px padding, 30px element margin
+}));
+
+const ReplyDisplay = styled.div({
+  ':last-child': {
+    [Separator]: {
+      display: 'none',
+    },
+  },
 });
 
 const ActionsContainer = styled.div(({ theme: { colors } }) => ({
@@ -128,6 +141,10 @@ const ButtonText = styled.span(({ theme: { colors } }) => ({
     color: colors.grey2,
     textDecoration: 'underline',
   },
+}));
+
+const ReplyComposer = styled(DiscussionTopicReply)(({ replyCount, theme: { colors } }) => ({
+  background: replyCount === 0 ? colors.formGrey : 'initial',
 }));
 
 class DiscussionTopicModal extends Component {
@@ -213,24 +230,28 @@ class DiscussionTopicModal extends Component {
           <RepliesSection>
             <RepliesLabel>REPLIES</RepliesLabel>
             {messages.slice(1).map(m => (
-              <DiscussionTopicReply
-                author={m.author}
-                conversationId={conversationId}
-                createdAt={m.createdAt}
-                key={m.id}
-                meetingId={meetingId}
-                message={m.body.payload}
-                messageId={m.id}
-                mode="display"
-              />
+              <ReplyDisplay>
+                <DiscussionTopicReply
+                  author={m.author}
+                  conversationId={conversationId}
+                  createdAt={m.createdAt}
+                  key={m.id}
+                  meetingId={meetingId}
+                  message={m.body.payload}
+                  messageId={m.id}
+                  mode="display"
+                />
+                <Separator />
+              </ReplyDisplay>
             ))}
           </RepliesSection>
         )}
         <ActionsContainer>
           {!isComposingReply ? addReplyButton : (
-            <DiscussionTopicReply
+            <ReplyComposer
               afterCreate={this.refetchMessages}
               conversationId={conversationId}
+              replyCount={messages.length - 1}
               meetingId={meetingId}
               mode="compose"
               onCancelCompose={this.toggleComposeMode}
