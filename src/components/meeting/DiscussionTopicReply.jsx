@@ -18,7 +18,7 @@ import Avatar from 'components/shared/Avatar';
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
-  background: colors.formGrey,
+  background: mode === 'display' ? colors.formGrey : 'none',
   cursor: mode === 'display' ? 'pointer' : 'initial',
   padding: '20px 30px 30px',
   width: '100%',

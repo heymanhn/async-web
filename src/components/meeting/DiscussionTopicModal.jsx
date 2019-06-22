@@ -156,15 +156,16 @@ class DiscussionTopicModal extends Component {
     });
 
     if (response.data && response.data.conversationMessagesQuery) {
-      const { messages } = response.data.conversationMessagesQuery;
+      const { items } = response.data.conversationMessagesQuery;
+      const messages = (items || []).map(i => i.message);
 
-      // const sortedMsgs = (messages || []).sort((a, b) => {
-      //   if (a.createdAt > b.createdAt) return 1;
-      //   if (b.createdAt > a.createdAt) return -1;
-      //   return 0;
-      // });
+      const sortedMsgs = messages.sort((a, b) => {
+        if (a.createdAt > b.createdAt) return 1;
+        if (b.createdAt > a.createdAt) return -1;
+        return 0;
+      });
 
-      this.setState({ messages });
+      this.setState({ messages: sortedMsgs });
     } else {
       console.log('Error re-fetching conversation messages');
     }

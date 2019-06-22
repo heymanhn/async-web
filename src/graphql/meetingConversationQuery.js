@@ -14,6 +14,8 @@ export default gql`
         id
         author @type(name: "Author") {
           id
+          fullName
+          profilePictureUrl
         }
         createdAt
         body @type(name: "Body") {
