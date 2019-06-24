@@ -176,13 +176,7 @@ class DiscussionTopicModal extends Component {
       const { items } = response.data.conversationMessagesQuery;
       const messages = (items || []).map(i => i.message);
 
-      const sortedMsgs = messages.sort((a, b) => {
-        if (a.createdAt > b.createdAt) return 1;
-        if (b.createdAt > a.createdAt) return -1;
-        return 0;
-      });
-
-      this.setState({ messages: sortedMsgs });
+      this.setState({ messages });
     } else {
       console.log('Error re-fetching conversation messages');
     }

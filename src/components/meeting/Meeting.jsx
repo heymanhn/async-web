@@ -119,18 +119,12 @@ class Meeting extends Component {
       const details = body && body.formatter === 'slatejs'
         ? JSON.parse(body.payload) : initialValue;
 
-      const sortedConvos = (conversations || []).sort((a, b) => {
-        if (a.createdAt > b.createdAt) return 1;
-        if (b.createdAt > a.createdAt) return -1;
-        return 0;
-      });
-
       this.setState({
         loading: false,
         title: deserializedTitle,
         details: Value.fromJSON(details),
         participants,
-        conversationIds: sortedConvos.map(c => c.id),
+        conversationIds: (conversations || []).map(c => c.id),
       });
     } else {
       this.setState({ error: true, loading: false });
@@ -148,18 +142,9 @@ class Meeting extends Component {
     if (response.data && response.data.conversationsQuery) {
       const { conversations } = response.data.conversationsQuery;
 
-      // HN: I'll make this better later AND DRY it up
-      const sortedConvos = (conversations || []).sort((a, b) => {
-        if (a.createdAt > b.createdAt) return 1;
-        if (b.createdAt > a.createdAt) return -1;
-        return 0;
-      });
-
-      this.setState({
-        conversationIds: sortedConvos.map(c => c.id),
-      });
+      this.setState({ conversationIds: (conversations || []).map(c => c.id) });
     } else {
-      this.setState({ error: true, loading: false });
+      this.setState({ error: true });
     }
   }
 

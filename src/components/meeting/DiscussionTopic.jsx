@@ -135,20 +135,14 @@ class DiscussionTopic extends Component {
     if (response.data && response.data.conversation) {
       const { author, createdAt, messages } = response.data.conversation;
       const replyCount = messages.length - 1;
-
-      const sortedMsgs = messages.sort((a, b) => {
-        if (a.createdAt > b.createdAt) return 1;
-        if (b.createdAt > a.createdAt) return -1;
-        return 0;
-      });
-      const { body: { payload } } = sortedMsgs[0];
+      const { body: { payload } } = messages[0];
 
       this.setState({
         content: Value.fromJSON(JSON.parse(payload)),
         createdAt,
         author,
         loading: false,
-        messages: sortedMsgs,
+        messages,
         replyCount,
       });
     }
