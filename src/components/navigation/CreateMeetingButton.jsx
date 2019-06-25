@@ -1,5 +1,16 @@
 import React from 'react';
+import { Mutation } from 'react-apollo';
+import { Spinner } from 'reactstrap';
 import styled from '@emotion/styled';
+
+import createMeetingMutation from 'graphql/createMeetingMutation';
+
+const StyledSpinner = styled(Spinner)(({ color, theme: { colors } }) => ({
+  border: `.05em solid ${colors[color]}`,
+  borderRightColor: 'transparent',
+  width: '15px',
+  height: '15px',
+}));
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -10,6 +21,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   fontSize: '26px',
   fontWeight: '400',
   textDecoration: 'none',
+  cursor: 'pointer',
 
   ':hover': {
     textDecoration: 'none',
@@ -23,11 +35,22 @@ const Container = styled.div(({ theme: { colors } }) => ({
 }));
 
 const CreateMeetingButton = () => (
-  <a href="meetings/new" target="_blank">
-    <Container onClick={() => { }}>
-      <span>+</span>
-    </Container>
-  </a>
+  <Mutation
+    mutation={createMeetingMutation}
+    variables={{ input: {} }}
+  >
+    {(create, { loading, error, data }) => {
+      if (loading) return <StyledSpinner color="grey4" />;
+      if (error) console.log(error);
+      if (data && data.createMeeting) window.open(`/meetings/${data.createMeeting.id}`, '_blank');
+
+      return (
+        <Container onClick={() => { create(); }}>
+          <span>+</span>
+        </Container>
+      );
+    }}
+  </Mutation>
 );
 
 export default CreateMeetingButton;
