@@ -224,7 +224,7 @@ class DiscussionTopicModal extends Component {
           <RepliesSection>
             <RepliesLabel>REPLIES</RepliesLabel>
             {messages.slice(1).map(m => (
-              <ReplyDisplay>
+              <ReplyDisplay key={m.id}>
                 <DiscussionTopicReply
                   author={m.author}
                   conversationId={conversationId}
