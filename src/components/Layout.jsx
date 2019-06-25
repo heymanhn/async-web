@@ -80,7 +80,7 @@ class Layout extends Component {
             {children}
           </Content>
           <Footer>
-            <Copyright>Copyright © async</Copyright>
+            <Copyright>Copyright © Roval</Copyright>
           </Footer>
         </Container>
       </Theme>

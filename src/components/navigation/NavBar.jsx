@@ -88,10 +88,10 @@ const NavBar = () => (
           <div>
             <LogoImage
               src={logo}
-              alt="async logo"
-              title="async"
+              alt="Roval logo"
+              title="Roval"
             />
-            <LogoTitle>async</LogoTitle>
+            <LogoTitle>Roval</LogoTitle>
             {data.showSavedMessage && <SavedIndicator>Saved!</SavedIndicator>}
           </div>
           {data.isLoggedIn && (
