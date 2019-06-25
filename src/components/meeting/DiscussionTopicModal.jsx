@@ -158,6 +158,30 @@ class DiscussionTopicModal extends Component {
 
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
     this.refetchMessages = this.refetchMessages.bind(this);
+    this.updateDisplayURL = this.updateDisplayURL.bind(this);
+    this.resetDisplayURL = this.resetDisplayURL.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { isOpen } = this.props;
+    if (!prevProps.isOpen && isOpen) this.updateDisplayURL();
+    if (prevProps.isOpen && !isOpen) this.resetDisplayURL();
+  }
+
+  // Updates the URL in the address bar to reflect this conversation
+  // https://developer.mozilla.org/en-US/docs/Web/API/History_API#Adding_and_modifying_history_entries
+  updateDisplayURL() {
+    const { conversationId, meetingId } = this.props;
+    const { origin } = window.location;
+
+    const url = `${origin}/meetings/${meetingId}/conversations/${conversationId}`;
+    window.history.replaceState({}, `conversation: ${conversationId}`, url);
+  }
+
+  resetDisplayURL() {
+    const { meetingId } = this.props;
+    const url = `${origin}/meetings/${meetingId}`;
+    window.history.replaceState({}, `meeting: ${meetingId}`, url);
   }
 
   toggleComposeMode() {
@@ -262,6 +286,7 @@ DiscussionTopicModal.propTypes = {
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
   createdAt: PropTypes.number.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
   messages: PropTypes.array.isRequired,
 };
