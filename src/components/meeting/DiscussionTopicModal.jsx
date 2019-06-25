@@ -8,10 +8,10 @@ import { Modal } from 'reactstrap';
 import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
-import menuIcon from 'images/icons/menu.png';
 
 import Avatar from 'components/shared/Avatar';
 import DiscussionTopicReply from './DiscussionTopicReply';
+import DiscussionTopicMenu from './DiscussionTopicMenu';
 
 const StyledModal = styled(Modal)(({ theme: { maxModalViewport } }) => ({
   margin: '100px auto',
@@ -60,11 +60,6 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   color: colors.grey2,
   fontSize: '14px',
 }));
-
-const StyledImg = styled.img({
-  width: '26px',
-  height: 'auto',
-});
 
 const Content = styled(Editor)({
   fontSize: '16px',
@@ -237,7 +232,7 @@ class DiscussionTopicModal extends Component {
                 <Timestamp fromNow parse="X">{createdAt}</Timestamp>
               </Details>
             </AuthorSection>
-            <StyledImg alt="Menu" src={menuIcon} />
+            <DiscussionTopicMenu onEdit={this.handleEnterEditMode} />
           </Header>
           <Content
             readOnly
