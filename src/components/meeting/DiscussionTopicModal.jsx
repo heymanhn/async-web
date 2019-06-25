@@ -15,6 +15,7 @@ import updateConversationMessageMutation from 'graphql/updateConversationMessage
 import Avatar from 'components/shared/Avatar';
 import DiscussionTopicReply from './DiscussionTopicReply';
 import DiscussionTopicMenu from './DiscussionTopicMenu';
+import EditorActions from './EditorActions';
 
 const StyledModal = styled(Modal)(({ theme: { maxModalViewport } }) => ({
   margin: '100px auto',
@@ -141,28 +142,6 @@ const ButtonText = styled.span(({ theme: { colors } }) => ({
   },
 }));
 
-const EditorActionsContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  marginTop: '10px',
-});
-
-const SaveButton = styled.div(({ isDisabled, theme: { colors } }) => ({
-  color: colors.blue,
-  cursor: isDisabled ? 'default' : 'pointer',
-  fontSize: '14px',
-  fontWeight: 500,
-  marginRight: '20px',
-  opacity: isDisabled ? 0.5 : 1,
-}));
-
-const CancelButton = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  cursor: 'pointer',
-  fontSize: '14px',
-  fontWeight: 500,
-}));
-
 const ReplyComposer = styled(DiscussionTopicReply)(({ replyCount, theme: { colors } }) => ({
   background: replyCount === 0 ? colors.formGrey : 'initial',
 }));
@@ -179,11 +158,11 @@ class DiscussionTopicModal extends Component {
     };
 
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
+    this.toggleEditMode = this.toggleEditMode.bind(this);
     this.refetchMessages = this.refetchMessages.bind(this);
     this.updateDisplayURL = this.updateDisplayURL.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
     this.handleUpdateTopicMessage = this.handleUpdateTopicMessage.bind(this);
-    this.handleEnterEditMode = this.handleEnterEditMode.bind(this);
     this.handleChangeTopicMessage = this.handleChangeTopicMessage.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
   }
@@ -212,6 +191,10 @@ class DiscussionTopicModal extends Component {
 
   toggleComposeMode() {
     this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
+  }
+
+  toggleEditMode() {
+    this.setState(prevState => ({ isEditingTopic: !prevState.isEditingTopic }));
   }
 
   async refetchMessages() {
@@ -261,10 +244,6 @@ class DiscussionTopicModal extends Component {
     if (response.data && response.data.updateConversationMessage) this.refetchMessages();
   }
 
-  handleEnterEditMode() {
-    this.setState({ isEditingTopic: true });
-  }
-
   handleKeyDown(event, editor, next) {
     if (isHotKey('Enter', event)) event.preventDefault();
 
@@ -299,15 +278,6 @@ class DiscussionTopicModal extends Component {
       </AddReplyButton>
     );
 
-    const editorActions = mode => (
-      <EditorActionsContainer>
-        <SaveButton onClick={this.handleUpdateTopicMessage}>
-          {mode === 'edit' ? 'Update' : 'Reply'}
-        </SaveButton>
-        <CancelButton>Cancel</CancelButton>
-      </EditorActionsContainer>
-    );
-
     return (
       <StyledModal
         fade={false}
@@ -322,7 +292,7 @@ class DiscussionTopicModal extends Component {
                 <Timestamp fromNow parse="X">{createdAt}</Timestamp>
               </Details>
             </AuthorSection>
-            <DiscussionTopicMenu onEdit={this.handleEnterEditMode} />
+            <DiscussionTopicMenu onEdit={this.toggleEditMode} />
           </Header>
           <Content
             onChange={this.handleChangeTopicMessage}
@@ -330,7 +300,14 @@ class DiscussionTopicModal extends Component {
             readOnly={!isEditingTopic}
             value={topicMessage}
           />
-          {isEditingTopic && editorActions('edit')}
+          {isEditingTopic && (
+            <EditorActions
+              isSubmitDisabled={this.isTopicEmpty()}
+              mode="edit"
+              onCancel={this.toggleEditMode}
+              onSubmit={this.handleUpdateTopicMessage}
+            />
+          )}
         </TopicSection>
         {messages.length > 1 && (
           <RepliesSection>
