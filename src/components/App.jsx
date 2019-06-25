@@ -71,6 +71,7 @@ const App = () => (
       <Auth path="/login" />
 
       <PrivateRoute path="/meetings/:id" component={Meeting} />
+      <PrivateRoute path="/meetings/:id/conversations/:cid" component={Meeting} />
 
       {/* <NotFound default /> */}
     </Router>
