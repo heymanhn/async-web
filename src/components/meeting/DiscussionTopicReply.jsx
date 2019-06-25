@@ -60,13 +60,13 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const ReplyButton = styled.div(({ disabled, theme: { colors } }) => ({
+const ReplyButton = styled.div(({ isDisabled, theme: { colors } }) => ({
   color: colors.blue,
-  cursor: disabled ? 'initial' : 'pointer',
+  cursor: isDisabled ? 'default' : 'pointer',
   fontSize: '14px',
   fontWeight: 500,
   justifySelf: 'flex-end',
-  opacity: disabled ? 0.5 : 1,
+  opacity: isDisabled ? 0.5 : 1,
 }));
 
 const Content = styled(Editor)({
@@ -94,6 +94,7 @@ class DiscussionTopicReply extends Component {
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.isReplyEmpty = this.isReplyEmpty.bind(this);
   }
 
   async componentDidMount() {
@@ -113,6 +114,8 @@ class DiscussionTopicReply extends Component {
 
   async handleCreate({ hideCompose = true } = {}) {
     const { message } = this.state;
+    if (this.isReplyEmpty()) return;
+
     const { client, conversationId, meetingId, onCancelCompose, afterCreate } = this.props;
 
     const response = await client.mutate({
@@ -146,6 +149,11 @@ class DiscussionTopicReply extends Component {
     return next();
   }
 
+  isReplyEmpty() {
+    const { message } = this.state;
+    return !Plain.serialize(message);
+  }
+
   render() {
     const { author, message } = this.state;
     const {
@@ -169,7 +177,12 @@ class DiscussionTopicReply extends Component {
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
             </Details>
             {mode === 'compose' && (
-              <ReplyButton onClick={this.handleCreate}>Reply</ReplyButton>
+              <ReplyButton
+                isDisabled={this.isReplyEmpty()}
+                onClick={this.handleCreate}
+              >
+                Reply
+              </ReplyButton>
             )}
           </HeaderSection>
           <Content
