@@ -111,7 +111,7 @@ class Meeting extends Component {
   }
 
   async componentDidMount() {
-    const { client, id, cid } = this.props;
+    const { client, id } = this.props;
     const response = await client.query({ query: meetingQuery, variables: { id } });
 
     if (response.data && response.data.meeting) {
