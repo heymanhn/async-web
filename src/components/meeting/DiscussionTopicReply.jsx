@@ -60,7 +60,7 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const PostReplyButton = styled.div(({ disabled, theme: { colors } }) => ({
+const ReplyButton = styled.div(({ disabled, theme: { colors } }) => ({
   color: colors.blue,
   cursor: disabled ? 'initial' : 'pointer',
   fontSize: '14px',
@@ -169,7 +169,7 @@ class DiscussionTopicReply extends Component {
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
             </Details>
             {mode === 'compose' && (
-              <PostReplyButton onClick={this.handleCreate}>Post Reply</PostReplyButton>
+              <ReplyButton onClick={this.handleCreate}>Reply</ReplyButton>
             )}
           </HeaderSection>
           <Content
