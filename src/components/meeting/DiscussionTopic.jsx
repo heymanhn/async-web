@@ -103,7 +103,7 @@ class DiscussionTopic extends Component {
       content: Value.fromJSON(initialValue),
       createdAt: '',
       author: null,
-      isModalVisible: false,
+      isModalVisible: props.forceDisplayModal,
       loading: true,
       messages: [],
       replyCount: null,
@@ -116,8 +116,17 @@ class DiscussionTopic extends Component {
   }
 
   async componentDidMount() {
-    const { client, conversationId, meetingId } = this.props;
+    const {
+      client,
+      conversationId,
+      forceDisplayModal,
+      meetingId,
+      resetDisplayOverride,
+    } = this.props;
     const { userId } = getLocalUser();
+
+    // Ensures the user can actually close the modal
+    if (forceDisplayModal) resetDisplayOverride();
 
     if (!conversationId) {
       // Assumes that currentUserQuery is already run once from <AvatarDropdown />
@@ -207,7 +216,16 @@ class DiscussionTopic extends Component {
       messages,
       replyCount,
     } = this.state;
-    const { conversationId, onCancelCompose, meetingId, mode, ...props } = this.props;
+
+    const {
+      conversationId,
+      onCancelCompose,
+      meetingId,
+      mode,
+      resetDisplayOverride,
+      ...props
+    } = this.props;
+
     if (loading) return null;
 
     const composeBtns = (
@@ -264,17 +282,21 @@ class DiscussionTopic extends Component {
 DiscussionTopic.propTypes = {
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string,
+  forceDisplayModal: PropTypes.bool,
   meetingId: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(['compose', 'display']),
   afterCreate: PropTypes.func,
   onCancelCompose: PropTypes.func,
+  resetDisplayOverride: PropTypes.func,
 };
 
 DiscussionTopic.defaultProps = {
   conversationId: null,
+  forceDisplayModal: false,
   mode: 'display',
   onCancelCompose: () => {},
-  afterCreate: () => { },
+  afterCreate: () => {},
+  resetDisplayOverride: () => {},
 };
 
 export default withApollo(DiscussionTopic);

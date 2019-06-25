@@ -107,10 +107,11 @@ class Meeting extends Component {
     this.handleSave = this.handleSave.bind(this);
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
     this.refetchConversations = this.refetchConversations.bind(this);
+    this.resetDisplayOverride = this.resetDisplayOverride.bind(this);
   }
 
   async componentDidMount() {
-    const { client, id } = this.props;
+    const { client, id, cid } = this.props;
     const response = await client.query({ query: meetingQuery, variables: { id } });
 
     if (response.data && response.data.meeting) {
@@ -194,17 +195,25 @@ class Meeting extends Component {
     this.setState(prevState => ({ isComposingTopic: !prevState.isComposingTopic }));
   }
 
+  // Passed into Discussion Topic components so that after one of the modals is opened
+  // via navigation to /meetings/:id/conversations/:cid, this method can be called to
+  // not force the modal open after the user closes it.
+  resetDisplayOverride() {
+    this.setState({ isModalDisplayed: true });
+  }
+
   render() {
     const {
       conversationIds,
       details,
       error,
       isComposingTopic,
+      isModalDisplayed,
       loading,
       participants,
       title,
     } = this.state;
-    const { id } = this.props;
+    const { id, cid } = this.props;
 
     if (loading || error) return null;
 
@@ -237,12 +246,14 @@ class Meeting extends Component {
         </MetadataContainer>
         <DiscussionSection>
           {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
-          {conversationIds.map(cid => (
+          {conversationIds.map(conversationId => (
             <DiscussionTopic
-              key={cid}
-              conversationId={cid}
+              key={conversationId}
+              conversationId={conversationId}
               meetingId={id}
               mode="display"
+              forceDisplayModal={cid === conversationId && !isModalDisplayed}
+              resetDisplayOverride={this.resetDisplayOverride}
             />
           ))}
           {!isComposingTopic ? addDiscussionButton : (
@@ -262,6 +273,9 @@ class Meeting extends Component {
 Meeting.propTypes = {
   client: PropTypes.object.isRequired,
   id: PropTypes.string.isRequired,
+  cid: PropTypes.string,
 };
+
+Meeting.defaultProps = { cid: null };
 
 export default withApollo(withPageTracking(Meeting, 'Meeting'));
