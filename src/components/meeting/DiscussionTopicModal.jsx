@@ -165,6 +165,8 @@ class DiscussionTopicModal extends Component {
     this.handleUpdateTopicMessage = this.handleUpdateTopicMessage.bind(this);
     this.handleChangeTopicMessage = this.handleChangeTopicMessage.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleCancelEditMode = this.handleCancelEditMode.bind(this);
+    this.isTopicEmpty = this.isTopicEmpty.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -256,6 +258,12 @@ class DiscussionTopicModal extends Component {
     this.setState({ topicMessage: value });
   }
 
+  handleCancelEditMode() {
+    const { messages } = this.state;
+    this.setState({ topicMessage: Value.fromJSON(JSON.parse(messages[0].body.payload)) });
+    this.toggleEditMode();
+  }
+
   isTopicEmpty() {
     const { topicMessage } = this.state;
     return !Plain.serialize(topicMessage);
@@ -304,7 +312,7 @@ class DiscussionTopicModal extends Component {
             <EditorActions
               isSubmitDisabled={this.isTopicEmpty()}
               mode="edit"
-              onCancel={this.toggleEditMode}
+              onCancel={this.handleCancelEditMode}
               onSubmit={this.handleUpdateTopicMessage}
             />
           )}
