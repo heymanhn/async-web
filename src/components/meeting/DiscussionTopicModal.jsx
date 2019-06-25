@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
+import Plain from 'slate-plain-serializer';
 import Moment from 'react-moment';
 import { Modal } from 'reactstrap';
+import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
+import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 
 import Avatar from 'components/shared/Avatar';
 import DiscussionTopicReply from './DiscussionTopicReply';
@@ -138,6 +141,28 @@ const ButtonText = styled.span(({ theme: { colors } }) => ({
   },
 }));
 
+const EditorActionsContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  marginTop: '10px',
+});
+
+const SaveButton = styled.div(({ isDisabled, theme: { colors } }) => ({
+  color: colors.blue,
+  cursor: isDisabled ? 'default' : 'pointer',
+  fontSize: '14px',
+  fontWeight: 500,
+  marginRight: '20px',
+  opacity: isDisabled ? 0.5 : 1,
+}));
+
+const CancelButton = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  cursor: 'pointer',
+  fontSize: '14px',
+  fontWeight: 500,
+}));
+
 const ReplyComposer = styled(DiscussionTopicReply)(({ replyCount, theme: { colors } }) => ({
   background: replyCount === 0 ? colors.formGrey : 'initial',
 }));
@@ -147,14 +172,20 @@ class DiscussionTopicModal extends Component {
     super(props);
 
     this.state = {
+      isEditingTopic: false,
       isComposingReply: false,
       messages: props.messages,
+      topicMessage: Value.fromJSON(JSON.parse(props.messages[0].body.payload)),
     };
 
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
     this.refetchMessages = this.refetchMessages.bind(this);
     this.updateDisplayURL = this.updateDisplayURL.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
+    this.handleUpdateTopicMessage = this.handleUpdateTopicMessage.bind(this);
+    this.handleEnterEditMode = this.handleEnterEditMode.bind(this);
+    this.handleChangeTopicMessage = this.handleChangeTopicMessage.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -195,14 +226,64 @@ class DiscussionTopicModal extends Component {
       const { items } = response.data.conversationMessagesQuery;
       const messages = (items || []).map(i => i.message);
 
-      this.setState({ messages });
+      this.setState({
+        isEditingTopic: false,
+        messages,
+        topicMessage: Value.fromJSON(JSON.parse(messages[0].body.payload)),
+      });
     } else {
       console.log('Error re-fetching conversation messages');
     }
   }
 
+  async handleUpdateTopicMessage() {
+    const { messages, topicMessage } = this.state;
+    if (this.isTopicEmpty()) return;
+
+    const { client, conversationId, meetingId } = this.props;
+
+    const response = await client.mutate({
+      mutation: updateConversationMessageMutation,
+      variables: {
+        id: conversationId,
+        mid: messages[0].id,
+        input: {
+          meetingId,
+          body: {
+            formatter: 'slatejs',
+            text: Plain.serialize(topicMessage),
+            payload: JSON.stringify(topicMessage.toJSON()),
+          },
+        },
+      },
+    });
+
+    if (response.data && response.data.updateConversationMessage) this.refetchMessages();
+  }
+
+  handleEnterEditMode() {
+    this.setState({ isEditingTopic: true });
+  }
+
+  handleKeyDown(event, editor, next) {
+    if (isHotKey('Enter', event)) event.preventDefault();
+
+    if (isHotKey('mod+Enter', event)) return this.handleUpdateTopicMessage();
+
+    return next();
+  }
+
+  handleChangeTopicMessage({ value }) {
+    this.setState({ topicMessage: value });
+  }
+
+  isTopicEmpty() {
+    const { topicMessage } = this.state;
+    return !Plain.serialize(topicMessage);
+  }
+
   render() {
-    const { isComposingReply, messages } = this.state;
+    const { isComposingReply, isEditingTopic, messages, topicMessage } = this.state;
     const {
       author,
       conversationId,
@@ -216,6 +297,15 @@ class DiscussionTopicModal extends Component {
         <PlusSign>+</PlusSign>
         <ButtonText>ADD A REPLY</ButtonText>
       </AddReplyButton>
+    );
+
+    const editorActions = mode => (
+      <EditorActionsContainer>
+        <SaveButton onClick={this.handleUpdateTopicMessage}>
+          {mode === 'edit' ? 'Update' : 'Reply'}
+        </SaveButton>
+        <CancelButton>Cancel</CancelButton>
+      </EditorActionsContainer>
     );
 
     return (
@@ -235,9 +325,12 @@ class DiscussionTopicModal extends Component {
             <DiscussionTopicMenu onEdit={this.handleEnterEditMode} />
           </Header>
           <Content
-            readOnly
-            value={Value.fromJSON(JSON.parse(messages[0].body.payload))}
+            onChange={this.handleChangeTopicMessage}
+            onKeyDown={this.handleKeyDown}
+            readOnly={!isEditingTopic}
+            value={topicMessage}
           />
+          {isEditingTopic && editorActions('edit')}
         </TopicSection>
         {messages.length > 1 && (
           <RepliesSection>
