@@ -6,6 +6,7 @@ import logo from 'images/logo.png';
 import isLoggedInQuery from 'graphql/isLoggedInQuery';
 
 import AvatarDropdown from './AvatarDropdown';
+import CreateMeetingButton from './CreateMeetingButton';
 
 const NavigationBar = styled.div(({ theme: { colors } }) => ({
   position: 'sticky',
@@ -67,6 +68,18 @@ const SavedIndicator = styled.span(({ theme: { colors } }) => ({
   top: '2px',
 }));
 
+const LoggedInMenu = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+});
+
+const VerticalDivider = styled.div(({ theme: { colors } }) => ({
+  borderRight: `1px solid ${colors.borderGrey}`,
+  height: '25px',
+  margin: '0 15px 0 17px',
+}));
+
 const NavBar = () => (
   <Query query={isLoggedInQuery}>
     {({ data }) => (
@@ -81,7 +94,13 @@ const NavBar = () => (
             <LogoTitle>async</LogoTitle>
             {data.showSavedMessage && <SavedIndicator>Saved!</SavedIndicator>}
           </div>
-          {data.isLoggedIn && <AvatarDropdown />}
+          {data.isLoggedIn && (
+            <LoggedInMenu>
+              <AvatarDropdown />
+              <VerticalDivider />
+              <CreateMeetingButton />
+            </LoggedInMenu>
+          )}
         </Container>
       </NavigationBar>
     )}
