@@ -67,5 +67,7 @@ export const theme = {
 
     titlePlaceholder: '#dbdddf',
     textPlaceholder: '#c9cfd4',
+
+    errorRed: '#ca0b0b',
   },
 };

@@ -55,7 +55,7 @@ const client = new ApolloClient({
 const generateDefaultData = () => ({
   isLoggedIn: isLocalTokenPresent(),
   mediaBreakpoint: getBreakpoint(),
-  showSavedMessage: false,
+  saveStatus: null,
 });
 cache.writeData({ data: generateDefaultData() });
 client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaultData() })));

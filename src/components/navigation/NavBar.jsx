@@ -68,6 +68,16 @@ const SavedIndicator = styled.span(({ theme: { colors } }) => ({
   top: '2px',
 }));
 
+const ErrorIndicator = styled.span(({ theme: { colors } }) => ({
+  background: colors.errorRed,
+  borderRadius: '25px',
+  color: colors.white,
+  fontSize: '13px',
+  fontWeight: 400,
+  marginLeft: '20px',
+  padding: '4px 10px',
+}));
+
 const LoggedInMenu = styled.div({
   display: 'flex',
   flexDirection: 'row',
@@ -92,7 +102,8 @@ const NavBar = () => (
               title="Roval"
             />
             <LogoTitle>Roval</LogoTitle>
-            {data.showSavedMessage && <SavedIndicator>Saved!</SavedIndicator>}
+            {data.saveStatus === 'success' && <SavedIndicator>Saved!</SavedIndicator>}
+            {data.saveStatus === 'error' && <ErrorIndicator>Failed to save</ErrorIndicator>}
           </div>
           {data.isLoggedIn && (
             <LoggedInMenu>

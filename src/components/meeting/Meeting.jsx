@@ -180,8 +180,8 @@ class Meeting extends Component {
       });
 
       if (response.data && response.data.updateMeeting) {
-        client.writeData({ data: { showSavedMessage: true } });
-        setTimeout(() => client.writeData({ data: { showSavedMessage: false } }), 2000);
+        client.writeData({ data: { saveStatus: 'success' } });
+        setTimeout(() => client.writeData({ data: { saveStatus: null } }), 2000);
       }
     } catch (err) {
       // No error handling yet
