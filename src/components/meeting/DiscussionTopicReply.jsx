@@ -79,6 +79,8 @@ class DiscussionTopicReply extends Component {
       mode: props.mode,
     };
 
+    this.editor = React.createRef();
+
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -134,6 +136,7 @@ class DiscussionTopicReply extends Component {
       afterSubmit();
       if (mode === 'compose') this.setState({ content: Value.fromJSON(initialValue) });
       if (mode === 'edit' || hideCompose) this.handleCancelCompose({ saved: true });
+      if (!hideCompose) this.editor.current.focus();
     }
   }
 
@@ -206,6 +209,7 @@ class DiscussionTopicReply extends Component {
             </Details>
           </HeaderSection>
           <Content
+            ref={this.editor}
             autoFocus={['compose', 'edit'].includes(mode)}
             readOnly={mode === 'display'}
             onChange={this.handleChangeContent}

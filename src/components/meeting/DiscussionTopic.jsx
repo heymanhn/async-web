@@ -99,6 +99,8 @@ class DiscussionTopic extends Component {
       replyCount: null,
     };
 
+    this.editor = React.createRef();
+
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
@@ -178,7 +180,11 @@ class DiscussionTopic extends Component {
     if (response.data) {
       afterSubmit();
       this.setState({ content: Value.fromJSON(initialValue) });
-      if (hideCompose) onCancelCompose();
+      if (hideCompose) {
+        onCancelCompose();
+      } else {
+        this.editor.current.focus();
+      }
     }
   }
 
@@ -303,6 +309,7 @@ class DiscussionTopic extends Component {
               )}
             </TopicMetadata>
             <Content
+              ref={this.editor}
               autoFocus={['compose', 'edit'].includes(mode)}
               readOnly={mode === 'display'}
               onChange={this.handleChangeContent}
