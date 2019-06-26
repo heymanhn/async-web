@@ -4,7 +4,6 @@ import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
-import Moment from 'react-moment';
 import Pluralize from 'pluralize';
 import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled';
@@ -12,20 +11,21 @@ import styled from '@emotion/styled';
 import currentUserQuery from 'graphql/currentUserQuery';
 import meetingConversationQuery from 'graphql/meetingConversationQuery';
 import createConversationMutation from 'graphql/createConversationMutation';
+import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { initialValue, discussionTopicPlugins } from 'utils/slateHelper';
-import { getLocalUser } from 'utils/auth';
+import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import Button from 'components/shared/Button';
 
+import ContentToolbar from './ContentToolbar';
 import DiscussionTopicModal from './DiscussionTopicModal';
 
-const Container = styled.div(({ mode, theme: { colors } }) => ({
+const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.grey5}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
-  cursor: mode === 'display' ? 'pointer' : 'initial',
   marginBottom: '20px',
   width: '100%',
 }));
@@ -58,28 +58,6 @@ const Author = styled.span(({ mode }) => ({
   opacity: mode === 'compose' ? 0.5 : 1,
 }));
 
-const AdditionalInfo = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-});
-
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  fontSize: '14px',
-}));
-
-const EditButtonSeparator = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '14px',
-  margin: '0 10px',
-}));
-
-const EditedLabel = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey4,
-  cursor: 'default',
-  fontSize: '14px',
-}));
-
 const Content = styled(Editor)({
   fontSize: '16px',
   lineHeight: '25px',
@@ -94,6 +72,7 @@ const Content = styled(Editor)({
 const ActionsContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.formGrey,
   borderRadius: '0 0 5px 5px',
+  cursor: 'pointer',
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -122,13 +101,18 @@ class DiscussionTopic extends Component {
       isModalVisible: props.forceDisplayModal,
       loading: true,
       messages: [],
+      mode: props.mode,
       replyCount: null,
     };
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
+    this.toggleEditMode = this.toggleEditMode.bind(this);
+    this.handleCancelCompose = this.handleCancelCompose.bind(this);
+    this.isTopicEmpty = this.isTopicEmpty.bind(this);
   }
 
   async componentDidMount() {
@@ -178,47 +162,100 @@ class DiscussionTopic extends Component {
 
   async handleCreate({ hideCompose = true } = {}) {
     const { content } = this.state;
-    const { client, meetingId: id, onCancelCompose, afterCreate } = this.props;
+    if (this.isTopicEmpty()) return;
 
-    try {
-      const response = await client.mutate({
-        mutation: createConversationMutation,
-        variables: {
-          id,
-          input: {
-            messages: [{
-              body: {
-                formatter: 'slatejs',
-                text: Plain.serialize(content),
-                payload: JSON.stringify(content.toJSON()),
-              },
-            }],
-          },
+    const { client, meetingId: id, onCancelCompose, afterSubmit } = this.props;
+    const response = await client.mutate({
+      mutation: createConversationMutation,
+      variables: {
+        id,
+        input: {
+          messages: [{
+            body: {
+              formatter: 'slatejs',
+              text: Plain.serialize(content),
+              payload: JSON.stringify(content.toJSON()),
+            },
+          }],
         },
-      });
+      },
+    });
 
-      if (response.data && response.data.createConversation) {
-        afterCreate();
-        this.setState({ content: Value.fromJSON(initialValue) });
-        if (hideCompose) onCancelCompose();
-      }
-    } catch (err) {
-      // No error handling yet
-      console.log('error creating conversation topic');
+    if (response.data) {
+      afterSubmit();
+      this.setState({ content: Value.fromJSON(initialValue) });
+      if (hideCompose) onCancelCompose();
     }
   }
 
+  // Assumes there's at least one message in the conversation
+  async handleUpdate() {
+    const { content, messages } = this.state;
+    if (this.isTopicEmpty()) return;
+
+    const { client, conversationId, meetingId, afterSubmit } = this.props;
+    const response = await client.mutate({
+      mutation: updateConversationMessageMutation,
+      variables: {
+        id: conversationId,
+        mid: messages[0].id,
+        input: {
+          meetingId,
+          body: {
+            formatter: 'slatejs',
+            text: Plain.serialize(content),
+            payload: JSON.stringify(content.toJSON()),
+          },
+        },
+      },
+    });
+
+    if (response.data) {
+      afterSubmit();
+      this.handleCancelCompose();
+    }
+  }
+
+
   handleKeyDown(event, editor, next) {
+    const { mode } = this.state;
     if (isHotKey('Enter', event)) event.preventDefault();
 
-    if (isHotKey('shift+Enter', event)) return this.handleCreate({ hideCompose: false });
-    if (isHotKey('mod+Enter', event)) return this.handleCreate();
+    if (mode === 'compose' && isHotKey('shift+Enter', event)) {
+      return this.handleCreate({ hideCompose: false });
+    }
+    if (isHotKey('mod+Enter', event)) {
+      return mode === 'compose' ? this.handleCreate() : this.handleUpdate();
+    }
 
     return next();
   }
 
   toggleModal() {
+    const { mode } = this.state;
+    if (mode !== 'display') return;
+
     this.setState(prevState => ({ isModalVisible: !prevState.isModalVisible }));
+  }
+
+  toggleEditMode() {
+    this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
+  }
+
+  // HN: some of this is duplicative to DiscussionTopicReply, can be DRY'ed up
+  handleCancelCompose() {
+    const { onCancelCompose } = this.props;
+    const { mode } = this.state;
+    if (mode === 'edit') {
+      this.setState({ mode: 'display' });
+    } else {
+      onCancelCompose();
+    }
+  }
+
+  isTopicEmpty() {
+    const { content } = this.state;
+    return !Plain.serialize(content);
   }
 
   render() {
@@ -228,6 +265,7 @@ class DiscussionTopic extends Component {
       isModalVisible,
       loading,
       messages,
+      mode,
       replyCount,
     } = this.state;
 
@@ -235,7 +273,6 @@ class DiscussionTopic extends Component {
       conversationId,
       onCancelCompose,
       meetingId,
-      mode,
       resetDisplayOverride,
       ...props
     } = this.props;
@@ -244,8 +281,11 @@ class DiscussionTopic extends Component {
 
     const composeBtns = (
       <React.Fragment>
-        <SmallButton title="Add Topic" onClick={this.handleCreate} />
-        <SmallButton type="light" title="Cancel" onClick={onCancelCompose} />
+        <SmallButton
+          title={mode === 'compose' ? 'Add Topic' : 'Save'}
+          onClick={mode === 'compose' ? this.handleCreate : this.handleUpdate}
+        />
+        <SmallButton type="light" title="Cancel" onClick={this.handleCancelCompose} />
       </React.Fragment>
     );
 
@@ -258,25 +298,21 @@ class DiscussionTopic extends Component {
     const { createdAt, updatedAt } = mode === 'display' ? messages[0] : {};
 
     return (
-      <Container mode={mode} onClick={this.toggleModal} {...props}>
+      <Container {...props}>
         <MainContainer>
           <AvatarWithMargin src={author.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
             <TopicMetadata>
               <Author mode={mode}>{author.fullName}</Author>
-              <AdditionalInfo>
-                {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
-                {/* DRY THIS UP PLEASE */}
-                {createdAt !== updatedAt && (
-                  <React.Fragment>
-                    <EditButtonSeparator>&#8226;</EditButtonSeparator>
-                    <EditedLabel>Edited</EditedLabel>
-                  </React.Fragment>
-                )}
-              </AdditionalInfo>
+              <ContentToolbar
+                createdAt={createdAt}
+                isEditable={matchCurrentUserId(author.id)}
+                isEdited={createdAt !== updatedAt}
+                onEdit={this.toggleEditMode}
+              />
             </TopicMetadata>
             <Content
-              autoFocus={mode === 'compose'}
+              autoFocus={['compose', 'edit'].includes(mode)}
               readOnly={mode === 'display'}
               onChange={this.handleChangeContent}
               onKeyDown={this.handleKeyDown}
@@ -285,8 +321,8 @@ class DiscussionTopic extends Component {
             />
           </ContentContainer>
         </MainContainer>
-        <ActionsContainer>
-          {mode === 'compose' ? composeBtns : replyButton}
+        <ActionsContainer onClick={this.toggleModal}>
+          {['compose', 'edit'].includes(mode) ? composeBtns : replyButton}
         </ActionsContainer>
         {conversationId && (
           <DiscussionTopicModal
@@ -308,8 +344,8 @@ DiscussionTopic.propTypes = {
   conversationId: PropTypes.string,
   forceDisplayModal: PropTypes.bool,
   meetingId: PropTypes.string.isRequired,
-  mode: PropTypes.oneOf(['compose', 'display']),
-  afterCreate: PropTypes.func,
+  mode: PropTypes.oneOf(['compose', 'display', 'edit']),
+  afterSubmit: PropTypes.func,
   onCancelCompose: PropTypes.func,
   resetDisplayOverride: PropTypes.func,
 };
@@ -319,7 +355,7 @@ DiscussionTopic.defaultProps = {
   forceDisplayModal: false,
   mode: 'display',
   onCancelCompose: () => {},
-  afterCreate: () => {},
+  afterSubmit: () => {},
   resetDisplayOverride: () => {},
 };
 

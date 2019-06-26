@@ -141,7 +141,7 @@ class DiscussionTopicReply extends Component {
     const { mode } = this.state;
     if (isHotKey('Enter', event)) event.preventDefault();
 
-    if (mode !== 'edit' && isHotKey('shift+Enter', event)) {
+    if (mode === 'compose' && isHotKey('shift+Enter', event)) {
       return this.handleSubmit({ hideCompose: false });
     }
 
@@ -202,14 +202,14 @@ class DiscussionTopicReply extends Component {
             </Details>
           </HeaderSection>
           <Content
-            autoFocus={mode === 'compose' || mode === 'edit'}
+            autoFocus={['compose', 'edit'].includes(mode)}
             readOnly={mode === 'display'}
             onChange={this.handleChangeContent}
             onKeyDown={this.handleKeyDown}
             value={content}
             plugins={discussionTopicReplyPlugins}
           />
-          {(mode === 'compose' || mode === 'edit') && (
+          {['compose', 'edit'].includes(mode) && (
             <EditorActions
               isSubmitDisabled={this.isReplyEmpty()}
               mode={mode}

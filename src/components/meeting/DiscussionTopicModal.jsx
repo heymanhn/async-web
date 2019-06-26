@@ -4,7 +4,6 @@ import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
-import Moment from 'react-moment';
 import { Modal } from 'reactstrap';
 import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled/macro';
