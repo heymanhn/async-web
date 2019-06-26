@@ -59,6 +59,7 @@ const Author = styled.span(({ mode }) => ({
 
 const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   color: colors.grey2,
+  cursor: 'default',
   fontSize: '14px',
 }));
 
@@ -73,10 +74,17 @@ const Content = styled(Editor)({
   },
 });
 
+// DRY THIS UP with DiscussionTopicModal please
 const EditButtonSeparator = styled.span(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '14px',
   margin: '0 10px',
+}));
+
+const EditedLabel = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey4,
+  cursor: 'default',
+  fontSize: '14px',
 }));
 
 const EditButton = styled.div(({ theme: { colors } }) => ({
@@ -216,6 +224,13 @@ class DiscussionTopicReply extends Component {
             <Details>
               <Author mode={mode}>{replyAuthor.fullName}</Author>
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
+              {/* DRY UP THIS UI!! */}
+              {createdAt !== updatedAt && (
+                <React.Fragment>
+                  <EditButtonSeparator>&#8226;</EditButtonSeparator>
+                  <EditedLabel>Edited</EditedLabel>
+                </React.Fragment>
+              )}
               {mode === 'display' && (
                 <React.Fragment>
                   <EditButtonSeparator>&#8226;</EditButtonSeparator>

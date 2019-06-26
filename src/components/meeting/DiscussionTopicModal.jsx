@@ -60,8 +60,25 @@ const Author = styled.span({
   fontSize: '18px',
 });
 
+const AdditionalInfo = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+});
+
 const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   color: colors.grey2,
+  fontSize: '14px',
+}));
+
+const EditButtonSeparator = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '14px',
+  margin: '0 10px',
+}));
+
+const EditedLabel = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey4,
+  cursor: 'default',
   fontSize: '14px',
 }));
 
@@ -270,7 +287,6 @@ class DiscussionTopicModal extends Component {
     const {
       author,
       conversationId,
-      createdAt,
       meetingId,
       ...props
     } = this.props;
@@ -281,6 +297,8 @@ class DiscussionTopicModal extends Component {
         <ButtonText>ADD A REPLY</ButtonText>
       </AddReplyButton>
     );
+
+    const { createdAt, updatedAt } = messages[0];
 
     return (
       <StyledModal
@@ -293,7 +311,16 @@ class DiscussionTopicModal extends Component {
               <AvatarWithMargin src={author.profilePictureUrl} size={45} />
               <Details>
                 <Author>{author.fullName}</Author>
-                <Timestamp fromNow parse="X">{createdAt}</Timestamp>
+                <AdditionalInfo>
+                  <Timestamp fromNow parse="X">{createdAt}</Timestamp>
+                  {/* DRY THIS UP PLEASE */}
+                  {createdAt !== updatedAt && (
+                    <React.Fragment>
+                      <EditButtonSeparator>&#8226;</EditButtonSeparator>
+                      <EditedLabel>Edited</EditedLabel>
+                    </React.Fragment>
+                  )}
+                </AdditionalInfo>
               </Details>
             </AuthorSection>
             <DiscussionTopicMenu onEdit={this.toggleEditMode} />
@@ -351,7 +378,6 @@ DiscussionTopicModal.propTypes = {
   author: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
-  createdAt: PropTypes.number.isRequired,
   isOpen: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
   messages: PropTypes.array.isRequired,
