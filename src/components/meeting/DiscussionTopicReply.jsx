@@ -193,12 +193,14 @@ class DiscussionTopicReply extends Component {
           <HeaderSection>
             <Details>
               <Author mode={mode}>{replyAuthor.fullName}</Author>
-              <ContentToolbar
-                createdAt={createdAt}
-                isEditable={matchCurrentUserId(author.id)}
-                isEdited={createdAt !== updatedAt}
-                onEdit={this.toggleEditMode}
-              />
+              {mode === 'display' && (
+                <ContentToolbar
+                  createdAt={createdAt}
+                  isEditable={matchCurrentUserId(author.id)}
+                  isEdited={createdAt !== updatedAt}
+                  onEdit={this.toggleEditMode}
+                />
+              )}
             </Details>
           </HeaderSection>
           <Content

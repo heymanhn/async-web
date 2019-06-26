@@ -289,12 +289,14 @@ class DiscussionTopicModal extends Component {
               <AvatarWithMargin src={author.profilePictureUrl} size={45} />
               <Details>
                 <Author>{author.fullName}</Author>
-                <ContentToolbar
-                  createdAt={createdAt}
-                  isEditable={matchCurrentUserId(author.id)}
-                  isEdited={createdAt !== updatedAt}
-                  onEdit={this.toggleEditMode}
-                />
+                {!isEditingTopic && (
+                  <ContentToolbar
+                    createdAt={createdAt}
+                    isEditable={matchCurrentUserId(author.id)}
+                    isEdited={createdAt !== updatedAt}
+                    onEdit={this.toggleEditMode}
+                  />
+                )}
               </Details>
             </AuthorSection>
           </Header>

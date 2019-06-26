@@ -290,12 +290,14 @@ class DiscussionTopic extends Component {
           <ContentContainer>
             <TopicMetadata>
               <Author mode={mode}>{author.fullName}</Author>
-              <ContentToolbar
-                createdAt={createdAt}
-                isEditable={matchCurrentUserId(author.id)}
-                isEdited={createdAt !== updatedAt}
-                onEdit={this.toggleEditMode}
-              />
+              {mode === 'display' && (
+                <ContentToolbar
+                  createdAt={createdAt}
+                  isEditable={matchCurrentUserId(author.id)}
+                  isEdited={createdAt !== updatedAt}
+                  onEdit={this.toggleEditMode}
+                />
+              )}
             </TopicMetadata>
             <Content
               autoFocus={['compose', 'edit'].includes(mode)}
