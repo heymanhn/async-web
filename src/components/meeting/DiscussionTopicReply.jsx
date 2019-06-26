@@ -13,7 +13,6 @@ import createConversationMessageMutation from 'graphql/createConversationMessage
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { initialValue, discussionTopicReplyPlugins } from 'utils/slateHelper';
 import { getLocalUser } from 'utils/auth';
-import withHover from 'utils/withHover';
 
 import Avatar from 'components/shared/Avatar';
 import EditorActions from './EditorActions';
@@ -161,7 +160,7 @@ class DiscussionTopicReply extends Component {
       afterSubmit();
       this.setState({ message: Value.fromJSON(initialValue) });
       if (hideCompose) onCancelCompose();
-      if (mode === 'update') this.handleCancelEditMode();
+      if (mode === 'update') this.handleCancelCompose();
     }
   }
 
@@ -202,7 +201,6 @@ class DiscussionTopicReply extends Component {
     const {
       conversationId,
       createdAt,
-      hover,
       meetingId,
       onCancelCompose,
       ...props
@@ -218,10 +216,10 @@ class DiscussionTopicReply extends Component {
             <Details>
               <Author mode={mode}>{author.fullName}</Author>
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
-              {hover && mode === 'display' && (
+              {mode === 'display' && (
                 <React.Fragment>
                   <EditButtonSeparator>&#8226;</EditButtonSeparator>
-                  <EditButton onClick={this.handleEnterEditMode}>Edit</EditButton>
+                  <EditButton onClick={this.toggleEditMode}>Edit</EditButton>
                 </React.Fragment>
               )}
             </Details>
@@ -253,7 +251,6 @@ DiscussionTopicReply.propTypes = {
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
   createdAt: PropTypes.number,
-  hover: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
   messageId: PropTypes.string,
   message: PropTypes.string,
@@ -272,4 +269,4 @@ DiscussionTopicReply.defaultProps = {
   afterSubmit: () => {},
 };
 
-export default withHover(withApollo(DiscussionTopicReply));
+export default withApollo(DiscussionTopicReply);
