@@ -260,7 +260,7 @@ class Meeting extends Component {
             <DiscussionTopic
               meetingId={id}
               mode="compose"
-              afterCreate={this.refetchConversations}
+              afterSubmit={this.refetchConversations}
               onCancelCompose={this.toggleComposeMode}
             />
           )}

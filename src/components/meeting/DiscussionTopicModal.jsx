@@ -4,18 +4,17 @@ import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
-import Moment from 'react-moment';
 import { Modal } from 'reactstrap';
 import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
-import { getLocalUser } from 'utils/auth';
+import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
+import ContentToolbar from './ContentToolbar';
 import DiscussionTopicReply from './DiscussionTopicReply';
-import DiscussionTopicMenu from './DiscussionTopicMenu';
 import EditorActions from './EditorActions';
 
 const StyledModal = styled(Modal)(({ theme: { maxModalViewport } }) => ({
@@ -60,28 +59,6 @@ const Author = styled.span({
   fontWeight: 600,
   fontSize: '18px',
 });
-
-const AdditionalInfo = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-});
-
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  fontSize: '14px',
-}));
-
-const EditButtonSeparator = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '14px',
-  margin: '0 10px',
-}));
-
-const EditedLabel = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey4,
-  cursor: 'default',
-  fontSize: '14px',
-}));
 
 const Content = styled(Editor)({
   fontSize: '16px',
@@ -181,7 +158,6 @@ class DiscussionTopicModal extends Component {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleCancelEditMode = this.handleCancelEditMode.bind(this);
     this.isTopicEmpty = this.isTopicEmpty.bind(this);
-    this.isAdmin = this.isAdmin.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -265,6 +241,7 @@ class DiscussionTopicModal extends Component {
     if (isHotKey('Enter', event)) event.preventDefault();
 
     if (isHotKey('mod+Enter', event)) return this.handleUpdateTopicMessage();
+    if (isHotKey('Esc', event)) return this.handleCancelEditMode();
 
     return next();
   }
@@ -282,12 +259,6 @@ class DiscussionTopicModal extends Component {
   isTopicEmpty() {
     const { topicMessage } = this.state;
     return !Plain.serialize(topicMessage);
-  }
-
-  isAdmin() {
-    const { author } = this.props;
-    const { userId } = getLocalUser();
-    return author.id === userId;
   }
 
   render() {
@@ -319,19 +290,16 @@ class DiscussionTopicModal extends Component {
               <AvatarWithMargin src={author.profilePictureUrl} size={45} />
               <Details>
                 <Author>{author.fullName}</Author>
-                <AdditionalInfo>
-                  <Timestamp fromNow parse="X">{createdAt}</Timestamp>
-                  {/* DRY THIS UP PLEASE */}
-                  {createdAt !== updatedAt && (
-                    <React.Fragment>
-                      <EditButtonSeparator>&#8226;</EditButtonSeparator>
-                      <EditedLabel>Edited</EditedLabel>
-                    </React.Fragment>
-                  )}
-                </AdditionalInfo>
+                {!isEditingTopic && (
+                  <ContentToolbar
+                    createdAt={createdAt}
+                    isEditable={matchCurrentUserId(author.id)}
+                    isEdited={createdAt !== updatedAt}
+                    onEdit={this.toggleEditMode}
+                  />
+                )}
               </Details>
             </AuthorSection>
-            {this.isAdmin() && <DiscussionTopicMenu onEdit={this.toggleEditMode} />}
           </Header>
           <Content
             onChange={this.handleChangeTopicMessage}
