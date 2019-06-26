@@ -16,16 +16,16 @@ import { initialValue, discussionTopicPlugins } from 'utils/slateHelper';
 import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
-import Button from 'components/shared/Button';
-
 import ContentToolbar from './ContentToolbar';
 import DiscussionTopicModal from './DiscussionTopicModal';
+import TopicEditorActions from './TopicEditorActions';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.grey5}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
+  cursor: mode === 'display' ? 'pointer' : 'initial',
   marginBottom: '20px',
   width: '100%',
 }));
@@ -72,7 +72,6 @@ const Content = styled(Editor)({
 const ActionsContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.formGrey,
   borderRadius: '0 0 5px 5px',
-  cursor: 'pointer',
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -80,11 +79,6 @@ const ActionsContainer = styled.div(({ theme: { colors } }) => ({
   paddingRight: '20px',
   minHeight: '56px',
 }));
-
-const SmallButton = styled(Button)({
-  marginRight: '10px',
-  padding: '5px 20px',
-});
 
 const AddReplyButton = styled.div({
   fontSize: '14px',
@@ -238,7 +232,9 @@ class DiscussionTopic extends Component {
     this.setState(prevState => ({ isModalVisible: !prevState.isModalVisible }));
   }
 
-  toggleEditMode() {
+  toggleEditMode(event) {
+    if (event) event.stopPropagation();
+
     this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
   }
 
@@ -279,16 +275,6 @@ class DiscussionTopic extends Component {
 
     if (loading) return null;
 
-    const composeBtns = (
-      <React.Fragment>
-        <SmallButton
-          title={mode === 'compose' ? 'Add Topic' : 'Save'}
-          onClick={mode === 'compose' ? this.handleCreate : this.handleUpdate}
-        />
-        <SmallButton type="light" title="Cancel" onClick={this.handleCancelCompose} />
-      </React.Fragment>
-    );
-
     const replyButton = (
       <AddReplyButton>
         {replyCount > 0 ? Pluralize('reply', replyCount, true) : '+ Add a reply'}
@@ -298,7 +284,7 @@ class DiscussionTopic extends Component {
     const { createdAt, updatedAt } = mode === 'display' ? messages[0] : {};
 
     return (
-      <Container {...props}>
+      <Container mode={mode} onClick={this.toggleModal} {...props}>
         <MainContainer>
           <AvatarWithMargin src={author.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
@@ -321,8 +307,16 @@ class DiscussionTopic extends Component {
             />
           </ContentContainer>
         </MainContainer>
-        <ActionsContainer onClick={this.toggleModal}>
-          {['compose', 'edit'].includes(mode) ? composeBtns : replyButton}
+        <ActionsContainer>
+          {['compose', 'edit'].includes(mode) ? (
+            <TopicEditorActions
+              isSubmitDisabled={this.isTopicEmpty()}
+              mode={mode}
+              onCancel={this.handleCancelCompose}
+              onCreate={this.handleCreate}
+              onUpdate={this.handleUpdate}
+            />
+          ) : replyButton}
         </ActionsContainer>
         {conversationId && (
           <DiscussionTopicModal
