@@ -115,6 +115,7 @@ class DiscussionTopicReply extends Component {
     this.toggleEditMode = this.toggleEditMode.bind(this);
     this.handleCancelCompose = this.handleCancelCompose.bind(this);
     this.isReplyEmpty = this.isReplyEmpty.bind(this);
+    this.isAdmin = this.isAdmin.bind(this);
   }
 
   async componentDidMount() {
@@ -199,6 +200,15 @@ class DiscussionTopicReply extends Component {
     return !Plain.serialize(content);
   }
 
+  // This method is only called in display mode, where message is populated
+  // Can DRY it up into a util later
+  isAdmin() {
+    const { userId } = getLocalUser();
+    const { message: { author } } = this.props;
+
+    return author.id === userId;
+  }
+
   render() {
     const { content, currentUser, mode } = this.state;
     const {
@@ -231,7 +241,7 @@ class DiscussionTopicReply extends Component {
                   <EditedLabel>Edited</EditedLabel>
                 </React.Fragment>
               )}
-              {mode === 'display' && (
+              {mode === 'display' && this.isAdmin() && (
                 <React.Fragment>
                   <EditButtonSeparator>&#8226;</EditButtonSeparator>
                   <EditButton onClick={this.toggleEditMode}>Edit</EditButton>

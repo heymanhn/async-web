@@ -255,7 +255,7 @@ class DiscussionTopic extends Component {
       </AddReplyButton>
     );
 
-    const { createdAt, updatedAt } = messages[0];
+    const { createdAt, updatedAt } = mode === 'display' ? messages : {};
 
     return (
       <Container mode={mode} onClick={this.toggleModal} {...props}>

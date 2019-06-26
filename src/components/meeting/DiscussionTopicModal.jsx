@@ -11,6 +11,7 @@ import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
+import { getLocalUser } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import DiscussionTopicReply from './DiscussionTopicReply';
@@ -180,6 +181,7 @@ class DiscussionTopicModal extends Component {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleCancelEditMode = this.handleCancelEditMode.bind(this);
     this.isTopicEmpty = this.isTopicEmpty.bind(this);
+    this.isAdmin = this.isAdmin.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -282,6 +284,12 @@ class DiscussionTopicModal extends Component {
     return !Plain.serialize(topicMessage);
   }
 
+  isAdmin() {
+    const { author } = this.props;
+    const { userId } = getLocalUser();
+    return author.id === userId;
+  }
+
   render() {
     const { isComposingReply, isEditingTopic, messages, topicMessage } = this.state;
     const {
@@ -323,7 +331,7 @@ class DiscussionTopicModal extends Component {
                 </AdditionalInfo>
               </Details>
             </AuthorSection>
-            <DiscussionTopicMenu onEdit={this.toggleEditMode} />
+            {this.isAdmin() && <DiscussionTopicMenu onEdit={this.toggleEditMode} />}
           </Header>
           <Content
             onChange={this.handleChangeTopicMessage}
