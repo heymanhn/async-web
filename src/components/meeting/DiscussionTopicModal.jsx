@@ -328,6 +328,7 @@ class DiscussionTopicModal extends Component {
             {messages.slice(1).map(m => (
               <ReplyDisplay key={m.id}>
                 <DiscussionTopicReply
+                  afterSubmit={this.refetchMessages}
                   mode="display"
                   conversationId={conversationId}
                   key={m.id}
