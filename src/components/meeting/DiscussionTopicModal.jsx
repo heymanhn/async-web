@@ -142,10 +142,6 @@ const ButtonText = styled.span(({ theme: { colors } }) => ({
   },
 }));
 
-const ReplyComposer = styled(DiscussionTopicReply)(({ replyCount, theme: { colors } }) => ({
-  background: replyCount === 0 ? colors.formGrey : 'initial',
-}));
-
 class DiscussionTopicModal extends Component {
   constructor(props) {
     super(props);
@@ -323,14 +319,11 @@ class DiscussionTopicModal extends Component {
             {messages.slice(1).map(m => (
               <ReplyDisplay key={m.id}>
                 <DiscussionTopicReply
-                  author={m.author}
+                  mode="display"
                   conversationId={conversationId}
-                  createdAt={m.createdAt}
                   key={m.id}
                   meetingId={meetingId}
-                  message={m.body.payload}
-                  messageId={m.id}
-                  mode="display"
+                  message={m}
                 />
                 <Separator />
               </ReplyDisplay>
@@ -339,12 +332,12 @@ class DiscussionTopicModal extends Component {
         )}
         <ActionsContainer>
           {!isComposingReply ? addReplyButton : (
-            <ReplyComposer
+            <DiscussionTopicReply
+              mode="compose"
               afterSubmit={this.refetchMessages}
               conversationId={conversationId}
               replyCount={messages.length - 1}
               meetingId={meetingId}
-              mode="compose"
               onCancelCompose={this.toggleComposeMode}
             />
           )}

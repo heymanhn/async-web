@@ -18,6 +18,7 @@ export default gql`
           profilePictureUrl
         }
         createdAt
+        updatedAt
         body @type(name: "Body") {
           formatter
           payload

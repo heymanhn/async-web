@@ -93,11 +93,11 @@ class DiscussionTopicReply extends Component {
   constructor(props) {
     super(props);
 
-    const initialJSON = props.message ? JSON.parse(props.message) : initialValue;
+    const initialJSON = props.message.body ? JSON.parse(props.message.body.payload) : initialValue;
 
     this.state = {
-      author: props.author || null,
-      message: Value.fromJSON(initialJSON),
+      content: Value.fromJSON(initialJSON),
+      currentUser: null,
       mode: props.mode,
     };
 
@@ -110,22 +110,20 @@ class DiscussionTopicReply extends Component {
   }
 
   async componentDidMount() {
-    const { client, messageId } = this.props;
+    const { client } = this.props;
     const { userId } = getLocalUser();
 
-    if (!messageId) {
-      // Assumes that currentUserQuery is already run once from <AvatarDropdown />
-      const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
-      this.setState({ author: user });
-    }
+    // Assumes that currentUserQuery is already run once from <AvatarDropdown />
+    const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
+    this.setState({ currentUser: user });
   }
 
   handleChangeContent({ value }) {
-    this.setState({ message: value });
+    this.setState({ content: value });
   }
 
   async handleSubmit({ hideCompose = true } = {}) {
-    const { message, mode } = this.state;
+    const { content, mode } = this.state;
     if (this.isReplyEmpty()) return;
 
     const mutation = mode === 'compose'
@@ -134,7 +132,7 @@ class DiscussionTopicReply extends Component {
       client,
       conversationId,
       meetingId,
-      messageId,
+      message,
       afterSubmit,
     } = this.props;
 
@@ -142,13 +140,13 @@ class DiscussionTopicReply extends Component {
       mutation,
       variables: {
         id: conversationId,
-        mid: messageId,
+        mid: message.id,
         input: {
           meetingId,
           body: {
             formatter: 'slatejs',
-            text: Plain.serialize(message),
-            payload: JSON.stringify(message.toJSON()),
+            text: Plain.serialize(content),
+            payload: JSON.stringify(content.toJSON()),
           },
         },
       },
@@ -156,7 +154,7 @@ class DiscussionTopicReply extends Component {
 
     if (response.data) {
       afterSubmit();
-      if (mode === 'compose') this.setState({ message: Value.fromJSON(initialValue) });
+      if (mode === 'compose') this.setState({ content: Value.fromJSON(initialValue) });
       if (mode === 'edit' || hideCompose) this.handleCancelCompose();
     }
   }
@@ -189,29 +187,34 @@ class DiscussionTopicReply extends Component {
   }
 
   isReplyEmpty() {
-    const { message } = this.state;
-    return !Plain.serialize(message);
+    const { content } = this.state;
+    return !Plain.serialize(content);
   }
 
   render() {
-    const { author, message, mode } = this.state;
+    const { content, currentUser, mode } = this.state;
     const {
       conversationId,
-      createdAt,
       meetingId,
+      message: {
+        author,
+        createdAt,
+        updatedAt,
+      },
       onCancelCompose,
       ...props
     } = this.props;
 
-    if (!author) return null;
+    const replyAuthor = author || currentUser;
+    if (!replyAuthor) return null;
 
     return (
       <Container mode={mode} {...props}>
-        <AvatarWithMargin src={author.profilePictureUrl} size={36} mode={mode} />
+        <AvatarWithMargin src={replyAuthor.profilePictureUrl} size={36} mode={mode} />
         <MainContainer>
           <HeaderSection>
             <Details>
-              <Author mode={mode}>{author.fullName}</Author>
+              <Author mode={mode}>{replyAuthor.fullName}</Author>
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
               {mode === 'display' && (
                 <React.Fragment>
@@ -226,7 +229,7 @@ class DiscussionTopicReply extends Component {
             readOnly={mode === 'display'}
             onChange={this.handleChangeContent}
             onKeyDown={this.handleKeyDown}
-            value={message}
+            value={content}
             plugins={discussionTopicReplyPlugins}
           />
           {(mode === 'compose' || mode === 'edit') && (
@@ -244,23 +247,17 @@ class DiscussionTopicReply extends Component {
 }
 
 DiscussionTopicReply.propTypes = {
-  author: PropTypes.object,
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
-  createdAt: PropTypes.number,
   meetingId: PropTypes.string.isRequired,
-  messageId: PropTypes.string,
-  message: PropTypes.string,
+  message: PropTypes.object,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   afterSubmit: PropTypes.func,
   onCancelCompose: PropTypes.func,
 };
 
 DiscussionTopicReply.defaultProps = {
-  author: null,
-  createdAt: null,
-  messageId: null,
-  message: null,
+  message: {},
   mode: 'display',
   onCancelCompose: () => {},
   afterSubmit: () => {},
