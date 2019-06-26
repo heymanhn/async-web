@@ -340,7 +340,7 @@ class DiscussionTopicModal extends Component {
         <ActionsContainer>
           {!isComposingReply ? addReplyButton : (
             <ReplyComposer
-              afterCreate={this.refetchMessages}
+              afterSubmit={this.refetchMessages}
               conversationId={conversationId}
               replyCount={messages.length - 1}
               meetingId={meetingId}

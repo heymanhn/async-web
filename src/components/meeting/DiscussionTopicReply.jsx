@@ -10,10 +10,13 @@ import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
 import createConversationMessageMutation from 'graphql/createConversationMessageMutation';
+import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { initialValue, discussionTopicReplyPlugins } from 'utils/slateHelper';
 import { getLocalUser } from 'utils/auth';
+import withHover from 'utils/withHover';
 
 import Avatar from 'components/shared/Avatar';
+import EditorActions from './EditorActions';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
@@ -45,6 +48,7 @@ const HeaderSection = styled.div({
 const Details = styled.div({
   display: 'flex',
   flexDirection: 'row',
+  alignItems: 'baseline',
 });
 
 // HN: TODO - DRY these up with <DiscussionTopic />
@@ -60,15 +64,6 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const ReplyButton = styled.div(({ isDisabled, theme: { colors } }) => ({
-  color: colors.blue,
-  cursor: isDisabled ? 'default' : 'pointer',
-  fontSize: '14px',
-  fontWeight: 500,
-  justifySelf: 'flex-end',
-  opacity: isDisabled ? 0.5 : 1,
-}));
-
 const Content = styled(Editor)({
   fontSize: '14px',
   lineHeight: '22px',
@@ -80,6 +75,22 @@ const Content = styled(Editor)({
   },
 });
 
+const EditButtonSeparator = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '14px',
+  margin: '0 10px',
+}));
+
+const EditButton = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  cursor: 'pointer',
+  fontSize: '14px',
+
+  ':hover': {
+    textDecoration: 'underline',
+  },
+}));
+
 class DiscussionTopicReply extends Component {
   constructor(props) {
     super(props);
@@ -89,11 +100,14 @@ class DiscussionTopicReply extends Component {
     this.state = {
       author: props.author || null,
       message: Value.fromJSON(initialJSON),
+      mode: props.mode,
     };
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
-    this.handleCreate = this.handleCreate.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.toggleEditMode = this.toggleEditMode.bind(this);
+    this.handleCancelCompose = this.handleCancelCompose.bind(this);
     this.isReplyEmpty = this.isReplyEmpty.bind(this);
   }
 
@@ -112,16 +126,26 @@ class DiscussionTopicReply extends Component {
     this.setState({ message: value });
   }
 
-  async handleCreate({ hideCompose = true } = {}) {
-    const { message } = this.state;
+  async handleSubmit({ hideCompose = true } = {}) {
+    const { message, mode } = this.state;
     if (this.isReplyEmpty()) return;
 
-    const { client, conversationId, meetingId, onCancelCompose, afterCreate } = this.props;
+    const mutation = mode === 'compose'
+      ? createConversationMessageMutation : updateConversationMessageMutation;
+    const {
+      client,
+      conversationId,
+      meetingId,
+      messageId,
+      onCancelCompose,
+      afterSubmit,
+    } = this.props;
 
     const response = await client.mutate({
-      mutation: createConversationMessageMutation,
+      mutation,
       variables: {
         id: conversationId,
+        mid: messageId,
         input: {
           meetingId,
           body: {
@@ -133,20 +157,39 @@ class DiscussionTopicReply extends Component {
       },
     });
 
-    if (response.data && response.data.createConversationMessage) {
-      afterCreate();
+    if (response.data) {
+      afterSubmit();
       this.setState({ message: Value.fromJSON(initialValue) });
       if (hideCompose) onCancelCompose();
+      if (mode === 'update') this.handleCancelEditMode();
     }
   }
 
   handleKeyDown(event, editor, next) {
+    const { mode } = this.state;
     if (isHotKey('Enter', event)) event.preventDefault();
 
-    if (isHotKey('shift+Enter', event)) return this.handleCreate({ hideCompose: false });
-    if (isHotKey('mod+Enter', event)) return this.handleCreate();
+    if (mode !== 'edit' && isHotKey('shift+Enter', event)) {
+      return this.handleSubmit({ hideCompose: false });
+    }
+
+    if (isHotKey('mod+Enter', event)) return this.handleSubmit();
 
     return next();
+  }
+
+  toggleEditMode() {
+    this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
+  }
+
+  handleCancelCompose() {
+    const { message, onCancelCompose } = this.props;
+    const { mode } = this.state;
+    if (mode === 'edit') {
+      this.setState({ mode: 'display', message: Value.fromJSON(JSON.parse(message)) });
+    } else {
+      onCancelCompose();
+    }
   }
 
   isReplyEmpty() {
@@ -155,12 +198,12 @@ class DiscussionTopicReply extends Component {
   }
 
   render() {
-    const { author, message } = this.state;
+    const { author, message, mode } = this.state;
     const {
       conversationId,
       createdAt,
+      hover,
       meetingId,
-      mode,
       onCancelCompose,
       ...props
     } = this.props;
@@ -175,24 +218,30 @@ class DiscussionTopicReply extends Component {
             <Details>
               <Author mode={mode}>{author.fullName}</Author>
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
+              {hover && mode === 'display' && (
+                <React.Fragment>
+                  <EditButtonSeparator>&#8226;</EditButtonSeparator>
+                  <EditButton onClick={this.handleEnterEditMode}>Edit</EditButton>
+                </React.Fragment>
+              )}
             </Details>
-            {mode === 'compose' && (
-              <ReplyButton
-                isDisabled={this.isReplyEmpty()}
-                onClick={this.handleCreate}
-              >
-                Reply
-              </ReplyButton>
-            )}
           </HeaderSection>
           <Content
-            autoFocus={mode === 'compose'}
+            autoFocus={mode === 'compose' || mode === 'edit'}
             readOnly={mode === 'display'}
             onChange={this.handleChangeContent}
             onKeyDown={this.handleKeyDown}
             value={message}
             plugins={discussionTopicReplyPlugins}
           />
+          {(mode === 'compose' || mode === 'edit') && (
+            <EditorActions
+              isSubmitDisabled={this.isReplyEmpty()}
+              mode={mode}
+              onCancel={this.handleCancelCompose}
+              onSubmit={this.handleSubmit}
+            />
+          )}
         </MainContainer>
       </Container>
     );
@@ -204,11 +253,12 @@ DiscussionTopicReply.propTypes = {
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
   createdAt: PropTypes.number,
+  hover: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
   messageId: PropTypes.string,
   message: PropTypes.string,
-  mode: PropTypes.oneOf(['compose', 'display']),
-  afterCreate: PropTypes.func,
+  mode: PropTypes.oneOf(['compose', 'display', 'edit']),
+  afterSubmit: PropTypes.func,
   onCancelCompose: PropTypes.func,
 };
 
@@ -219,7 +269,7 @@ DiscussionTopicReply.defaultProps = {
   message: null,
   mode: 'display',
   onCancelCompose: () => {},
-  afterCreate: () => {},
+  afterSubmit: () => {},
 };
 
-export default withApollo(DiscussionTopicReply);
+export default withHover(withApollo(DiscussionTopicReply));
