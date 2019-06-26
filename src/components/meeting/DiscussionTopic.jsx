@@ -206,7 +206,7 @@ class DiscussionTopic extends Component {
 
     if (response.data) {
       afterSubmit();
-      this.handleCancelCompose();
+      this.handleCancelCompose({ saved: true });
     }
   }
 
@@ -241,11 +241,12 @@ class DiscussionTopic extends Component {
   }
 
   // HN: some of this is duplicative to DiscussionTopicReply, can be DRY'ed up
-  handleCancelCompose() {
+  handleCancelCompose({ saved = false } = {}) {
     const { onCancelCompose } = this.props;
-    const { mode } = this.state;
+    const { messages, mode } = this.state;
     if (mode === 'edit') {
-      this.setState({ mode: 'display' });
+      if (!saved) this.setState({ content: Value.fromJSON(JSON.parse(messages[0].body.payload)) });
+      this.toggleEditMode();
     } else {
       onCancelCompose();
     }
