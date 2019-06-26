@@ -10,16 +10,17 @@ import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
 import createConversationMessageMutation from 'graphql/createConversationMessageMutation';
+import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { initialValue, discussionTopicReplyPlugins } from 'utils/slateHelper';
 import { getLocalUser } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
+import EditorActions from './EditorActions';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   background: mode === 'display' ? colors.formGrey : 'none',
-  cursor: mode === 'display' ? 'pointer' : 'initial',
   padding: '20px 30px 25px',
   width: '100%',
 }));
@@ -45,6 +46,7 @@ const HeaderSection = styled.div({
 const Details = styled.div({
   display: 'flex',
   flexDirection: 'row',
+  alignItems: 'baseline',
 });
 
 // HN: TODO - DRY these up with <DiscussionTopic />
@@ -57,16 +59,8 @@ const Author = styled.span(({ mode }) => ({
 
 const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   color: colors.grey2,
+  cursor: 'default',
   fontSize: '14px',
-}));
-
-const ReplyButton = styled.div(({ disabled, theme: { colors } }) => ({
-  color: colors.blue,
-  cursor: disabled ? 'initial' : 'pointer',
-  fontSize: '14px',
-  fontWeight: 500,
-  justifySelf: 'flex-end',
-  opacity: disabled ? 0.5 : 1,
 }));
 
 const Content = styled(Editor)({
@@ -80,106 +74,197 @@ const Content = styled(Editor)({
   },
 });
 
+// DRY THIS UP with DiscussionTopicModal please
+const EditButtonSeparator = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '14px',
+  margin: '0 10px',
+}));
+
+const EditedLabel = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey4,
+  cursor: 'default',
+  fontSize: '14px',
+}));
+
+const EditButton = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  cursor: 'pointer',
+  fontSize: '14px',
+
+  ':hover': {
+    textDecoration: 'underline',
+  },
+}));
+
 class DiscussionTopicReply extends Component {
   constructor(props) {
     super(props);
 
-    const initialJSON = props.message ? JSON.parse(props.message) : initialValue;
+    const initialJSON = props.message.body ? JSON.parse(props.message.body.payload) : initialValue;
 
     this.state = {
-      author: props.author || null,
-      message: Value.fromJSON(initialJSON),
+      content: Value.fromJSON(initialJSON),
+      currentUser: null,
+      mode: props.mode,
     };
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
-    this.handleCreate = this.handleCreate.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.toggleEditMode = this.toggleEditMode.bind(this);
+    this.handleCancelCompose = this.handleCancelCompose.bind(this);
+    this.isReplyEmpty = this.isReplyEmpty.bind(this);
+    this.isAdmin = this.isAdmin.bind(this);
   }
 
   async componentDidMount() {
-    const { client, messageId } = this.props;
+    const { client } = this.props;
     const { userId } = getLocalUser();
 
-    if (!messageId) {
-      // Assumes that currentUserQuery is already run once from <AvatarDropdown />
-      const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
-      this.setState({ author: user });
-    }
+    // Assumes that currentUserQuery is already run once from <AvatarDropdown />
+    const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
+    this.setState({ currentUser: user });
   }
 
   handleChangeContent({ value }) {
-    this.setState({ message: value });
+    this.setState({ content: value });
   }
 
-  async handleCreate({ hideCompose = true } = {}) {
-    const { message } = this.state;
-    const { client, conversationId, meetingId, onCancelCompose, afterCreate } = this.props;
+  async handleSubmit({ hideCompose = true } = {}) {
+    const { content, mode } = this.state;
+    if (this.isReplyEmpty()) return;
+
+    const mutation = mode === 'compose'
+      ? createConversationMessageMutation : updateConversationMessageMutation;
+    const {
+      client,
+      conversationId,
+      meetingId,
+      message,
+      afterSubmit,
+    } = this.props;
 
     const response = await client.mutate({
-      mutation: createConversationMessageMutation,
+      mutation,
       variables: {
         id: conversationId,
+        mid: message.id,
         input: {
           meetingId,
           body: {
             formatter: 'slatejs',
-            text: Plain.serialize(message),
-            payload: JSON.stringify(message.toJSON()),
+            text: Plain.serialize(content),
+            payload: JSON.stringify(content.toJSON()),
           },
         },
       },
     });
 
-    if (response.data && response.data.createConversationMessage) {
-      afterCreate();
-      this.setState({ message: Value.fromJSON(initialValue) });
-      if (hideCompose) onCancelCompose();
+    if (response.data) {
+      afterSubmit();
+      if (mode === 'compose') this.setState({ content: Value.fromJSON(initialValue) });
+      if (mode === 'edit' || hideCompose) this.handleCancelCompose();
     }
   }
 
   handleKeyDown(event, editor, next) {
+    const { mode } = this.state;
     if (isHotKey('Enter', event)) event.preventDefault();
 
-    if (isHotKey('shift+Enter', event)) return this.handleCreate({ hideCompose: false });
-    if (isHotKey('mod+Enter', event)) return this.handleCreate();
+    if (mode !== 'edit' && isHotKey('shift+Enter', event)) {
+      return this.handleSubmit({ hideCompose: false });
+    }
+
+    if (isHotKey('mod+Enter', event)) return this.handleSubmit();
 
     return next();
   }
 
+  toggleEditMode() {
+    this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
+  }
+
+  handleCancelCompose() {
+    const { onCancelCompose } = this.props;
+    const { mode } = this.state;
+    if (mode === 'edit') {
+      this.setState({ mode: 'display' });
+    } else {
+      onCancelCompose();
+    }
+  }
+
+  isReplyEmpty() {
+    const { content } = this.state;
+    return !Plain.serialize(content);
+  }
+
+  // This method is only called in display mode, where message is populated
+  // Can DRY it up into a util later
+  isAdmin() {
+    const { userId } = getLocalUser();
+    const { message: { author } } = this.props;
+
+    return author.id === userId;
+  }
+
   render() {
-    const { author, message } = this.state;
+    const { content, currentUser, mode } = this.state;
     const {
       conversationId,
-      createdAt,
       meetingId,
-      mode,
+      message: {
+        author,
+        createdAt,
+        updatedAt,
+      },
       onCancelCompose,
       ...props
     } = this.props;
 
-    if (!author) return null;
+    const replyAuthor = author || currentUser;
+    if (!replyAuthor) return null;
 
     return (
       <Container mode={mode} {...props}>
-        <AvatarWithMargin src={author.profilePictureUrl} size={36} mode={mode} />
+        <AvatarWithMargin src={replyAuthor.profilePictureUrl} size={36} mode={mode} />
         <MainContainer>
           <HeaderSection>
             <Details>
-              <Author mode={mode}>{author.fullName}</Author>
+              <Author mode={mode}>{replyAuthor.fullName}</Author>
               {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
+              {/* DRY UP THIS UI!! */}
+              {createdAt !== updatedAt && (
+                <React.Fragment>
+                  <EditButtonSeparator>&#8226;</EditButtonSeparator>
+                  <EditedLabel>Edited</EditedLabel>
+                </React.Fragment>
+              )}
+              {mode === 'display' && this.isAdmin() && (
+                <React.Fragment>
+                  <EditButtonSeparator>&#8226;</EditButtonSeparator>
+                  <EditButton onClick={this.toggleEditMode}>Edit</EditButton>
+                </React.Fragment>
+              )}
             </Details>
-            {mode === 'compose' && (
-              <ReplyButton onClick={this.handleCreate}>Reply</ReplyButton>
-            )}
           </HeaderSection>
           <Content
-            autoFocus={mode === 'compose'}
+            autoFocus={mode === 'compose' || mode === 'edit'}
             readOnly={mode === 'display'}
             onChange={this.handleChangeContent}
             onKeyDown={this.handleKeyDown}
-            value={message}
+            value={content}
             plugins={discussionTopicReplyPlugins}
           />
+          {(mode === 'compose' || mode === 'edit') && (
+            <EditorActions
+              isSubmitDisabled={this.isReplyEmpty()}
+              mode={mode}
+              onCancel={this.handleCancelCompose}
+              onSubmit={this.handleSubmit}
+            />
+          )}
         </MainContainer>
       </Container>
     );
@@ -187,26 +272,20 @@ class DiscussionTopicReply extends Component {
 }
 
 DiscussionTopicReply.propTypes = {
-  author: PropTypes.object,
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
-  createdAt: PropTypes.number,
   meetingId: PropTypes.string.isRequired,
-  messageId: PropTypes.string,
-  message: PropTypes.string,
-  mode: PropTypes.oneOf(['compose', 'display']),
-  afterCreate: PropTypes.func,
+  message: PropTypes.object,
+  mode: PropTypes.oneOf(['compose', 'display', 'edit']),
+  afterSubmit: PropTypes.func,
   onCancelCompose: PropTypes.func,
 };
 
 DiscussionTopicReply.defaultProps = {
-  author: null,
-  createdAt: null,
-  messageId: null,
-  message: null,
+  message: {},
   mode: 'display',
   onCancelCompose: () => {},
-  afterCreate: () => {},
+  afterSubmit: () => {},
 };
 
 export default withApollo(DiscussionTopicReply);

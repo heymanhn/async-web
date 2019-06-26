@@ -58,8 +58,25 @@ const Author = styled.span(({ mode }) => ({
   opacity: mode === 'compose' ? 0.5 : 1,
 }));
 
+const AdditionalInfo = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+});
+
 const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   color: colors.grey2,
+  fontSize: '14px',
+}));
+
+const EditButtonSeparator = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '14px',
+  margin: '0 10px',
+}));
+
+const EditedLabel = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey4,
+  cursor: 'default',
   fontSize: '14px',
 }));
 
@@ -101,7 +118,6 @@ class DiscussionTopic extends Component {
 
     this.state = {
       content: Value.fromJSON(initialValue),
-      createdAt: '',
       author: null,
       isModalVisible: props.forceDisplayModal,
       loading: true,
@@ -142,13 +158,12 @@ class DiscussionTopic extends Component {
     });
 
     if (response.data && response.data.conversation) {
-      const { author, createdAt, messages } = response.data.conversation;
+      const { author, messages } = response.data.conversation;
       const replyCount = messages.length - 1;
       const { body: { payload } } = messages[0];
 
       this.setState({
         content: Value.fromJSON(JSON.parse(payload)),
-        createdAt,
         author,
         loading: false,
         messages,
@@ -210,7 +225,6 @@ class DiscussionTopic extends Component {
     const {
       author,
       content,
-      createdAt,
       isModalVisible,
       loading,
       messages,
@@ -241,6 +255,8 @@ class DiscussionTopic extends Component {
       </AddReplyButton>
     );
 
+    const { createdAt, updatedAt } = mode === 'display' ? messages : {};
+
     return (
       <Container mode={mode} onClick={this.toggleModal} {...props}>
         <MainContainer>
@@ -248,7 +264,16 @@ class DiscussionTopic extends Component {
           <ContentContainer>
             <TopicMetadata>
               <Author mode={mode}>{author.fullName}</Author>
-              {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
+              <AdditionalInfo>
+                {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
+                {/* DRY THIS UP PLEASE */}
+                {createdAt !== updatedAt && (
+                  <React.Fragment>
+                    <EditButtonSeparator>&#8226;</EditButtonSeparator>
+                    <EditedLabel>Edited</EditedLabel>
+                  </React.Fragment>
+                )}
+              </AdditionalInfo>
             </TopicMetadata>
             <Content
               autoFocus={mode === 'compose'}
@@ -267,7 +292,6 @@ class DiscussionTopic extends Component {
           <DiscussionTopicModal
             author={author}
             conversationId={conversationId}
-            createdAt={createdAt}
             isOpen={isModalVisible}
             meetingId={meetingId}
             messages={messages}

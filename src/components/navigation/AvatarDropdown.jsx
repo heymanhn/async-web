@@ -34,6 +34,7 @@ const StyledDropdownMenu = styled(DropdownMenu)({
 
 const StyledDropdownItem = styled(DropdownItem)(({ theme: { colors } }) => ({
   color: colors.mainText,
+  fontSize: '14px',
 
   a: {
     color: `${colors.mainText} !important`,
