@@ -243,7 +243,10 @@ class DiscussionTopic extends Component {
   toggleEditMode(event) {
     if (event) event.stopPropagation();
 
-    this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
+    this.setState(
+      prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }),
+      () => this.editor.current.focus().moveToEndOfDocument(),
+    );
   }
 
   // HN: some of this is duplicative to DiscussionTopicReply, can be DRY'ed up

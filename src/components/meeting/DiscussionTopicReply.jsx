@@ -155,7 +155,10 @@ class DiscussionTopicReply extends Component {
   }
 
   toggleEditMode() {
-    this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
+    this.setState(
+      prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }),
+      () => this.editor.current.focus().moveToEndOfDocument(),
+    );
   }
 
   handleCancelCompose({ saved = false } = {}) {

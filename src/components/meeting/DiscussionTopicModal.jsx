@@ -148,6 +148,8 @@ class DiscussionTopicModal extends Component {
       topicMessage: Value.fromJSON(JSON.parse(props.messages[0].body.payload)),
     };
 
+    this.editor = React.createRef();
+
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
     this.refetchMessages = this.refetchMessages.bind(this);
@@ -187,7 +189,10 @@ class DiscussionTopicModal extends Component {
   }
 
   toggleEditMode() {
-    this.setState(prevState => ({ isEditingTopic: !prevState.isEditingTopic }));
+    this.setState(
+      prevState => ({ isEditingTopic: !prevState.isEditingTopic }),
+      () => this.editor.current.focus().moveToEndOfDocument(),
+    );
   }
 
   async refetchMessages() {
@@ -302,6 +307,7 @@ class DiscussionTopicModal extends Component {
             </AuthorSection>
           </Header>
           <Content
+            ref={this.editor}
             onChange={this.handleChangeTopicMessage}
             onKeyDown={this.handleKeyDown}
             readOnly={!isEditingTopic}
