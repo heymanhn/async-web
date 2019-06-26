@@ -21,7 +21,6 @@ const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   background: mode === 'display' ? colors.formGrey : 'none',
-  cursor: mode === 'display' ? 'pointer' : 'initial',
   padding: '20px 30px 25px',
   width: '100%',
 }));
@@ -136,7 +135,6 @@ class DiscussionTopicReply extends Component {
       conversationId,
       meetingId,
       messageId,
-      onCancelCompose,
       afterSubmit,
     } = this.props;
 
@@ -158,9 +156,8 @@ class DiscussionTopicReply extends Component {
 
     if (response.data) {
       afterSubmit();
-      this.setState({ message: Value.fromJSON(initialValue) });
-      if (hideCompose) onCancelCompose();
-      if (mode === 'update') this.handleCancelCompose();
+      if (mode === 'compose') this.setState({ message: Value.fromJSON(initialValue) });
+      if (mode === 'edit' || hideCompose) this.handleCancelCompose();
     }
   }
 
@@ -182,10 +179,10 @@ class DiscussionTopicReply extends Component {
   }
 
   handleCancelCompose() {
-    const { message, onCancelCompose } = this.props;
+    const { onCancelCompose } = this.props;
     const { mode } = this.state;
     if (mode === 'edit') {
-      this.setState({ mode: 'display', message: Value.fromJSON(JSON.parse(message)) });
+      this.setState({ mode: 'display' });
     } else {
       onCancelCompose();
     }
