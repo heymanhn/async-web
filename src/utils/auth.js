@@ -38,3 +38,10 @@ export const getAuthHeader = () => {
   const authString = window.btoa(`${user.userId}:${user.userToken}`);
   return `Basic ${authString}`;
 };
+
+export const matchCurrentUserId = (id) => {
+  if (!isBrowser) return false;
+
+  const { userId } = getUser();
+  return userId === id;
+};

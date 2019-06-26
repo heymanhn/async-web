@@ -61,11 +61,6 @@ const Author = styled.span({
   fontSize: '18px',
 });
 
-const AdditionalInfo = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-});
-
 const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   color: colors.grey2,
   fontSize: '14px',

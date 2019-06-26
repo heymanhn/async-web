@@ -4,7 +4,6 @@ import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
-import Moment from 'react-moment';
 import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled';
 
@@ -12,9 +11,10 @@ import currentUserQuery from 'graphql/currentUserQuery';
 import createConversationMessageMutation from 'graphql/createConversationMessageMutation';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { initialValue, discussionTopicReplyPlugins } from 'utils/slateHelper';
-import { getLocalUser } from 'utils/auth';
+import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
+import ContentToolbar from './ContentToolbar';
 import EditorActions from './EditorActions';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
@@ -49,18 +49,11 @@ const Details = styled.div({
   alignItems: 'baseline',
 });
 
-// HN: TODO - DRY these up with <DiscussionTopic />
 const Author = styled.span(({ mode }) => ({
   fontSize: '14px',
   fontWeight: 600,
   marginRight: '20px',
   opacity: mode === 'compose' ? 0.5 : 1,
-}));
-
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  cursor: 'default',
-  fontSize: '14px',
 }));
 
 const Content = styled(Editor)({
@@ -73,29 +66,6 @@ const Content = styled(Editor)({
     marginTop: '1em',
   },
 });
-
-// DRY THIS UP with DiscussionTopicModal please
-const EditButtonSeparator = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '14px',
-  margin: '0 10px',
-}));
-
-const EditedLabel = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey4,
-  cursor: 'default',
-  fontSize: '14px',
-}));
-
-const EditButton = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  cursor: 'pointer',
-  fontSize: '14px',
-
-  ':hover': {
-    textDecoration: 'underline',
-  },
-}));
 
 class DiscussionTopicReply extends Component {
   constructor(props) {
@@ -115,7 +85,6 @@ class DiscussionTopicReply extends Component {
     this.toggleEditMode = this.toggleEditMode.bind(this);
     this.handleCancelCompose = this.handleCancelCompose.bind(this);
     this.isReplyEmpty = this.isReplyEmpty.bind(this);
-    this.isAdmin = this.isAdmin.bind(this);
   }
 
   async componentDidMount() {
@@ -200,15 +169,6 @@ class DiscussionTopicReply extends Component {
     return !Plain.serialize(content);
   }
 
-  // This method is only called in display mode, where message is populated
-  // Can DRY it up into a util later
-  isAdmin() {
-    const { userId } = getLocalUser();
-    const { message: { author } } = this.props;
-
-    return author.id === userId;
-  }
-
   render() {
     const { content, currentUser, mode } = this.state;
     const {
@@ -233,20 +193,12 @@ class DiscussionTopicReply extends Component {
           <HeaderSection>
             <Details>
               <Author mode={mode}>{replyAuthor.fullName}</Author>
-              {createdAt && <Timestamp fromNow parse="X">{createdAt}</Timestamp>}
-              {/* DRY UP THIS UI!! */}
-              {createdAt !== updatedAt && (
-                <React.Fragment>
-                  <EditButtonSeparator>&#8226;</EditButtonSeparator>
-                  <EditedLabel>Edited</EditedLabel>
-                </React.Fragment>
-              )}
-              {mode === 'display' && this.isAdmin() && (
-                <React.Fragment>
-                  <EditButtonSeparator>&#8226;</EditButtonSeparator>
-                  <EditButton onClick={this.toggleEditMode}>Edit</EditButton>
-                </React.Fragment>
-              )}
+              <ContentToolbar
+                createdAt={createdAt}
+                isEditable={matchCurrentUserId(author.id)}
+                isEdited={createdAt !== updatedAt}
+                onEdit={this.toggleEditMode}
+              />
             </Details>
           </HeaderSection>
           <Content
