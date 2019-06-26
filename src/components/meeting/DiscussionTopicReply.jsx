@@ -133,7 +133,7 @@ class DiscussionTopicReply extends Component {
     if (response.data) {
       afterSubmit();
       if (mode === 'compose') this.setState({ content: Value.fromJSON(initialValue) });
-      if (mode === 'edit' || hideCompose) this.handleCancelCompose();
+      if (mode === 'edit' || hideCompose) this.handleCancelCompose({ saved: true });
     }
   }
 
@@ -146,6 +146,7 @@ class DiscussionTopicReply extends Component {
     }
 
     if (isHotKey('mod+Enter', event)) return this.handleSubmit();
+    if (isHotKey('Esc', event)) return this.handleCancelCompose();
 
     return next();
   }
@@ -154,11 +155,12 @@ class DiscussionTopicReply extends Component {
     this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
   }
 
-  handleCancelCompose() {
-    const { onCancelCompose } = this.props;
+  handleCancelCompose({ saved = false } = {}) {
+    const { message, onCancelCompose } = this.props;
     const { mode } = this.state;
     if (mode === 'edit') {
-      this.setState({ mode: 'display' });
+      if (!saved) this.setState({ content: Value.fromJSON(JSON.parse(message.body.payload)) });
+      this.toggleEditMode();
     } else {
       onCancelCompose();
     }

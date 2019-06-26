@@ -222,6 +222,8 @@ class DiscussionTopic extends Component {
       return mode === 'compose' ? this.handleCreate() : this.handleUpdate();
     }
 
+    if (isHotKey('Esc', event)) this.handleCancelCompose();
+
     return next();
   }
 

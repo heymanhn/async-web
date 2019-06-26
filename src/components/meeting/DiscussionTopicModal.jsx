@@ -241,6 +241,7 @@ class DiscussionTopicModal extends Component {
     if (isHotKey('Enter', event)) event.preventDefault();
 
     if (isHotKey('mod+Enter', event)) return this.handleUpdateTopicMessage();
+    if (isHotKey('Esc', event)) return this.handleCancelEditMode();
 
     return next();
   }
