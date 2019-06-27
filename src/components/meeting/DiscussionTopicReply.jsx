@@ -4,13 +4,16 @@ import { withApollo } from 'react-apollo';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
-import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
 import createConversationMessageMutation from 'graphql/createConversationMessageMutation';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
-import { initialValue, discussionTopicReplyPlugins } from 'utils/slateHelper';
+import {
+  initialValue,
+  discussionTopicReplyPlugins,
+  handleKeyDown,
+} from 'utils/slateHelper';
 import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
@@ -81,11 +84,12 @@ class DiscussionTopicReply extends Component {
 
     this.editor = React.createRef();
 
+    this.handleKeyDown = handleKeyDown.bind(this);
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleSubmitAndKeepOpen = this.handleSubmitAndKeepOpen.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
-    this.handleCancelCompose = this.handleCancelCompose.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
     this.isReplyEmpty = this.isReplyEmpty.bind(this);
   }
 
@@ -135,33 +139,16 @@ class DiscussionTopicReply extends Component {
     if (response.data) {
       afterSubmit();
       if (mode === 'compose') this.setState({ content: Value.fromJSON(initialValue) });
-      if (mode === 'edit' || hideCompose) this.handleCancelCompose({ saved: true });
+      if (mode === 'edit' || hideCompose) this.handleCancel({ saved: true });
       if (!hideCompose) this.editor.current.focus();
     }
   }
 
-  handleKeyDown(event, editor, next) {
-    const { mode } = this.state;
-    if (isHotKey('Enter', event)) event.preventDefault();
-
-    if (mode === 'compose' && isHotKey('shift+Enter', event)) {
-      return this.handleSubmit({ hideCompose: false });
-    }
-
-    if (isHotKey('mod+Enter', event)) return this.handleSubmit();
-    if (isHotKey('Esc', event)) return this.handleCancelCompose();
-
-    return next();
+  handleSubmitAndKeepOpen() {
+    this.handleSubmit({ hideCompose: false });
   }
 
-  toggleEditMode() {
-    this.setState(
-      prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }),
-      () => this.editor.current.focus().moveToEndOfDocument(),
-    );
-  }
-
-  handleCancelCompose({ saved = false } = {}) {
+  handleCancel({ saved = false } = {}) {
     const { message, onCancelCompose } = this.props;
     const { mode } = this.state;
     if (mode === 'edit') {
@@ -170,6 +157,13 @@ class DiscussionTopicReply extends Component {
     } else {
       onCancelCompose();
     }
+  }
+
+  toggleEditMode() {
+    this.setState(
+      prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }),
+      () => this.editor.current.focus().moveToEndOfDocument(),
+    );
   }
 
   isReplyEmpty() {

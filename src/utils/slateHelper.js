@@ -1,4 +1,5 @@
 import PlaceholderPlugin from 'slate-react-placeholder';
+import isHotKey from 'is-hotkey';
 import { theme } from 'styles/theme';
 
 export const initialValue = {
@@ -17,6 +18,26 @@ export const initialValue = {
     ],
   },
 };
+
+/* Shared event handler for keyboard UX. Used across all slate editor components.
+ * Requires these component-bound details to be implemented:
+ * - a state property named `mode`
+ * - handleSubmitAndKeepOpen(): only if mode is 'compose'
+ * - handleSubmit()
+ * - handleCancel()
+ */
+export function handleKeyDown(event, editor, next) {
+  const { mode } = this.state;
+
+  if (isHotKey('Enter', event)) event.preventDefault();
+  if (mode === 'compose' && isHotKey('shift+Enter', event)) {
+    return this.handleSubmitAndKeepOpen();
+  }
+  if (isHotKey('mod+Enter', event)) return this.handleSubmit();
+  if (isHotKey('Esc', event)) this.handleCancel();
+
+  return next();
+}
 
 const queries = { isEmpty: editor => editor.value.document.text === '' };
 
