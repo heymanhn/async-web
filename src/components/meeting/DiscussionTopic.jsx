@@ -105,6 +105,7 @@ class DiscussionTopic extends Component {
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleLaunchModal = this.handleLaunchModal.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
     this.handleCancelCompose = this.handleCancelCompose.bind(this);
@@ -266,6 +267,13 @@ class DiscussionTopic extends Component {
     return !Plain.serialize(content);
   }
 
+  // HN: Because somehow some mouse events on the modal are triggering the onClick() handlers of
+  // the UI in the background
+  handleLaunchModal() {
+    const { isModalVisible } = this.state;
+    if (!isModalVisible) this.toggleModal();
+  }
+
   render() {
     const {
       author,
@@ -296,7 +304,7 @@ class DiscussionTopic extends Component {
     const { createdAt, updatedAt } = mode === 'display' ? messages[0] : {};
 
     return (
-      <Container mode={mode} onClick={this.toggleModal} {...props}>
+      <Container mode={mode} onClick={this.handleLaunchModal} {...props}>
         <MainContainer>
           <AvatarWithMargin src={author.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
