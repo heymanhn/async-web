@@ -84,8 +84,8 @@ class DiscussionTopicReply extends Component {
 
     this.editor = React.createRef();
 
-    this.handleKeyDown = handleKeyDown.bind(this);
     this.handleChangeContent = this.handleChangeContent.bind(this);
+    this.handleKeyDown = handleKeyDown.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitAndKeepOpen = this.handleSubmitAndKeepOpen.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);

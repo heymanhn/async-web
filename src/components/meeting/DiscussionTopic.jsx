@@ -5,14 +5,17 @@ import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
 import Pluralize from 'pluralize';
-import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
 import meetingConversationQuery from 'graphql/meetingConversationQuery';
 import createConversationMutation from 'graphql/createConversationMutation';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
-import { initialValue, discussionTopicPlugins } from 'utils/slateHelper';
+import {
+  discussionTopicPlugins,
+  initialValue,
+  handleKeyDown,
+} from 'utils/slateHelper';
 import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
@@ -103,12 +106,14 @@ class DiscussionTopic extends Component {
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
+    this.handleKeyDown = handleKeyDown.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleLaunchModal = this.handleLaunchModal.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmitAndKeepOpen = this.handleSubmitAndKeepOpen.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
-    this.handleCancelCompose = this.handleCancelCompose.bind(this);
     this.isTopicEmpty = this.isTopicEmpty.bind(this);
   }
 
@@ -213,25 +218,17 @@ class DiscussionTopic extends Component {
 
     if (response.data) {
       afterSubmit();
-      this.handleCancelCompose({ saved: true });
+      this.handleCancel({ saved: true });
     }
   }
 
-
-  handleKeyDown(event, editor, next) {
+  handleSubmit() {
     const { mode } = this.state;
-    if (isHotKey('Enter', event)) event.preventDefault();
+    return mode === 'compose' ? this.handleCreate() : this.handleUpdate();
+  }
 
-    if (mode === 'compose' && isHotKey('shift+Enter', event)) {
-      return this.handleCreate({ hideCompose: false });
-    }
-    if (isHotKey('mod+Enter', event)) {
-      return mode === 'compose' ? this.handleCreate() : this.handleUpdate();
-    }
-
-    if (isHotKey('Esc', event)) this.handleCancelCompose();
-
-    return next();
+  handleSubmitAndKeepOpen() {
+    this.handleCreate({ hideCompose: false });
   }
 
   toggleModal() {
@@ -251,7 +248,7 @@ class DiscussionTopic extends Component {
   }
 
   // HN: some of this is duplicative to DiscussionTopicReply, can be DRY'ed up
-  handleCancelCompose({ saved = false } = {}) {
+  handleCancel({ saved = false } = {}) {
     const { onCancelCompose } = this.props;
     const { messages, mode } = this.state;
     if (mode === 'edit') {
@@ -335,7 +332,7 @@ class DiscussionTopic extends Component {
             <TopicEditorActions
               isSubmitDisabled={this.isTopicEmpty()}
               mode={mode}
-              onCancel={this.handleCancelCompose}
+              onCancel={this.handleCancel}
               onCreate={this.handleCreate}
               onUpdate={this.handleUpdate}
             />

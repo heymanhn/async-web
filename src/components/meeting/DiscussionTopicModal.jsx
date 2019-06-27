@@ -5,12 +5,12 @@ import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
 import { Modal } from 'reactstrap';
-import isHotKey from 'is-hotkey';
 import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { matchCurrentUserId } from 'utils/auth';
+import { handleKeyDown } from 'utils/slateHelper';
 
 import Avatar from 'components/shared/Avatar';
 import ContentToolbar from './ContentToolbar';
@@ -155,10 +155,10 @@ class DiscussionTopicModal extends Component {
     this.refetchMessages = this.refetchMessages.bind(this);
     this.updateDisplayURL = this.updateDisplayURL.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
-    this.handleUpdateTopicMessage = this.handleUpdateTopicMessage.bind(this);
     this.handleChangeTopicMessage = this.handleChangeTopicMessage.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleCancelEditMode = this.handleCancelEditMode.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleKeyDown = handleKeyDown.bind(this);
     this.isTopicEmpty = this.isTopicEmpty.bind(this);
   }
 
@@ -217,7 +217,7 @@ class DiscussionTopicModal extends Component {
     }
   }
 
-  async handleUpdateTopicMessage() {
+  async handleSubmit() {
     const { messages, topicMessage } = this.state;
     if (this.isTopicEmpty()) return;
 
@@ -242,20 +242,11 @@ class DiscussionTopicModal extends Component {
     if (response.data && response.data.updateConversationMessage) this.refetchMessages();
   }
 
-  handleKeyDown(event, editor, next) {
-    if (isHotKey('Enter', event)) event.preventDefault();
-
-    if (isHotKey('mod+Enter', event)) return this.handleUpdateTopicMessage();
-    if (isHotKey('Esc', event)) return this.handleCancelEditMode();
-
-    return next();
-  }
-
   handleChangeTopicMessage({ value }) {
     this.setState({ topicMessage: value });
   }
 
-  handleCancelEditMode() {
+  handleCancel() {
     const { messages } = this.state;
     this.setState({ topicMessage: Value.fromJSON(JSON.parse(messages[0].body.payload)) });
     this.toggleEditMode();
@@ -317,8 +308,8 @@ class DiscussionTopicModal extends Component {
             <EditorActions
               isSubmitDisabled={this.isTopicEmpty()}
               mode="edit"
-              onCancel={this.handleCancelEditMode}
-              onSubmit={this.handleUpdateTopicMessage}
+              onCancel={this.handleCancel}
+              onSubmit={this.handleSubmit}
             />
           )}
         </TopicSection>
