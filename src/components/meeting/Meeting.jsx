@@ -7,7 +7,7 @@ import { Value } from 'slate';
 import styled from '@emotion/styled';
 
 import withPageTracking from 'utils/withPageTracking';
-import { initialValue, titlePlugins, detailsPlugins } from 'utils/slateHelper';
+import { initialValue } from 'utils/slateHelper';
 import meetingQuery from 'graphql/meetingQuery';
 import meetingConversationsQuery from 'graphql/meetingConversationsQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
@@ -228,11 +228,11 @@ class Meeting extends Component {
       <div>
         <MetadataContainer>
           <MetadataSection>
+            {/* // HN: add a property "saveOnBlur" which would be true for meeting title and meeting details */}
             <MeetingTitle
               onBlur={this.handleSave}
               onChange={this.handleChangeTitle}
               value={title}
-              plugins={titlePlugins}
             />
             <MeetingInfo participants={participants} />
             {/* DRY this up later */}
@@ -240,7 +240,6 @@ class Meeting extends Component {
               onBlur={this.handleSave}
               onChange={this.handleChangeDetails}
               value={details}
-              plugins={detailsPlugins}
             />
           </MetadataSection>
         </MetadataContainer>

@@ -12,9 +12,7 @@ import meetingConversationQuery from 'graphql/meetingConversationQuery';
 import createConversationMutation from 'graphql/createConversationMutation';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import {
-  discussionTopicPlugins,
   initialValue,
-  handleKeyDown,
 } from 'utils/slateHelper';
 import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
@@ -106,7 +104,6 @@ class DiscussionTopic extends Component {
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
-    this.handleKeyDown = handleKeyDown.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleLaunchModal = this.handleLaunchModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -321,9 +318,7 @@ class DiscussionTopic extends Component {
               autoFocus={['compose', 'edit'].includes(mode)}
               readOnly={mode === 'display'}
               onChange={this.handleChangeContent}
-              onKeyDown={this.handleKeyDown}
               value={content}
-              plugins={discussionTopicPlugins}
             />
           </ContentContainer>
         </MainContainer>

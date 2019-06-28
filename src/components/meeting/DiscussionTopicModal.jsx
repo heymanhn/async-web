@@ -10,12 +10,10 @@ import styled from '@emotion/styled/macro';
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { matchCurrentUserId } from 'utils/auth';
-import { handleKeyDown } from 'utils/slateHelper';
 
 import Avatar from 'components/shared/Avatar';
 import ContentToolbar from './ContentToolbar';
 import DiscussionTopicReply from './DiscussionTopicReply';
-import EditorActions from './EditorActions';
 
 const StyledModal = styled(Modal)(({ theme: { maxModalViewport } }) => ({
   margin: '100px auto',
@@ -158,7 +156,6 @@ class DiscussionTopicModal extends Component {
     this.handleChangeTopicMessage = this.handleChangeTopicMessage.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleKeyDown = handleKeyDown.bind(this);
     this.isTopicEmpty = this.isTopicEmpty.bind(this);
   }
 
@@ -300,18 +297,10 @@ class DiscussionTopicModal extends Component {
           <Content
             ref={this.editor}
             onChange={this.handleChangeTopicMessage}
-            onKeyDown={this.handleKeyDown}
             readOnly={!isEditingTopic}
             value={topicMessage}
           />
-          {isEditingTopic && (
-            <EditorActions
-              isSubmitDisabled={this.isTopicEmpty()}
-              mode="edit"
-              onCancel={this.handleCancel}
-              onSubmit={this.handleSubmit}
-            />
-          )}
+          {isEditingTopic && <div>Should show editor actions here</div>}
         </TopicSection>
         {messages.length > 1 && (
           <RepliesSection>

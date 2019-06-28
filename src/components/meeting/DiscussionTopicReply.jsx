@@ -1,24 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
-import { Editor } from 'slate-react';
-import { Value } from 'slate';
-import Plain from 'slate-plain-serializer';
+
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
 import createConversationMessageMutation from 'graphql/createConversationMessageMutation';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
-import {
-  initialValue,
-  discussionTopicReplyPlugins,
-  handleKeyDown,
-} from 'utils/slateHelper';
 import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
+import RovalEditor from 'components/shared/RovalEditor';
 import ContentToolbar from './ContentToolbar';
-import EditorActions from './EditorActions';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
@@ -59,7 +52,7 @@ const Author = styled.span(({ mode }) => ({
   opacity: mode === 'compose' ? 0.5 : 1,
 }));
 
-const Content = styled(Editor)({
+const EditorContent = styled(RovalEditor)({
   fontSize: '14px',
   lineHeight: '22px',
   fontWeight: 400,
@@ -74,23 +67,14 @@ class DiscussionTopicReply extends Component {
   constructor(props) {
     super(props);
 
-    const initialJSON = props.message.body ? JSON.parse(props.message.body.payload) : initialValue;
-
     this.state = {
-      content: Value.fromJSON(initialJSON),
       currentUser: null,
       mode: props.mode,
     };
 
-    this.editor = React.createRef();
-
-    this.handleChangeContent = this.handleChangeContent.bind(this);
-    this.handleKeyDown = handleKeyDown.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSubmitAndKeepOpen = this.handleSubmitAndKeepOpen.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
-    this.isReplyEmpty = this.isReplyEmpty.bind(this);
   }
 
   async componentDidMount() {
@@ -102,14 +86,8 @@ class DiscussionTopicReply extends Component {
     this.setState({ currentUser: user });
   }
 
-  handleChangeContent({ value }) {
-    this.setState({ content: value });
-  }
-
-  async handleSubmit({ hideCompose = true } = {}) {
-    const { content, mode } = this.state;
-    if (this.isReplyEmpty()) return;
-
+  async handleSubmit({ payload, text } = {}) {
+    const { mode } = this.state;
     const mutation = mode === 'compose'
       ? createConversationMessageMutation : updateConversationMessageMutation;
     const {
@@ -129,8 +107,8 @@ class DiscussionTopicReply extends Component {
           meetingId,
           body: {
             formatter: 'slatejs',
-            text: Plain.serialize(content),
-            payload: JSON.stringify(content.toJSON()),
+            text,
+            payload,
           },
         },
       },
@@ -138,46 +116,31 @@ class DiscussionTopicReply extends Component {
 
     if (response.data) {
       afterSubmit();
-      if (mode === 'compose') this.setState({ content: Value.fromJSON(initialValue) });
-      if (mode === 'edit' || hideCompose) this.handleCancel({ saved: true });
-      if (!hideCompose) this.editor.current.focus();
+      return Promise.resolve();
     }
+
+    return Promise.reject(new Error('Failed to save discussion topic reply'));
   }
 
-  handleSubmitAndKeepOpen() {
-    this.handleSubmit({ hideCompose: false });
-  }
-
-  handleCancel({ saved = false } = {}) {
-    const { message, onCancelCompose } = this.props;
+  handleCancel() {
+    const { onCancelCompose } = this.props;
     const { mode } = this.state;
-    if (mode === 'edit') {
-      if (!saved) this.setState({ content: Value.fromJSON(JSON.parse(message.body.payload)) });
-      this.toggleEditMode();
-    } else {
-      onCancelCompose();
-    }
+    if (mode === 'edit') this.toggleEditMode();
+    if (mode === 'compose') onCancelCompose();
   }
 
   toggleEditMode() {
-    this.setState(
-      prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }),
-      () => this.editor.current.focus().moveToEndOfDocument(),
-    );
-  }
-
-  isReplyEmpty() {
-    const { content } = this.state;
-    return !Plain.serialize(content);
+    this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
   }
 
   render() {
-    const { content, currentUser, mode } = this.state;
+    const { currentUser, mode } = this.state;
     const {
       conversationId,
       meetingId,
       message: {
         author,
+        body,
         createdAt,
         updatedAt,
       },
@@ -205,23 +168,13 @@ class DiscussionTopicReply extends Component {
               )}
             </Details>
           </HeaderSection>
-          <Content
-            ref={this.editor}
-            autoFocus={['compose', 'edit'].includes(mode)}
-            readOnly={mode === 'display'}
-            onChange={this.handleChangeContent}
-            onKeyDown={this.handleKeyDown}
-            value={content}
-            plugins={discussionTopicReplyPlugins}
+          <EditorContent
+            initialContent={mode !== 'compose' ? body.payload : null}
+            mode={mode}
+            onCancel={this.handleCancel}
+            onSubmit={this.handleSubmit}
+            type="discussionTopicReply"
           />
-          {['compose', 'edit'].includes(mode) && (
-            <EditorActions
-              isSubmitDisabled={this.isReplyEmpty()}
-              mode={mode}
-              onCancel={this.handleCancelCompose}
-              onSubmit={this.handleSubmit}
-            />
-          )}
         </MainContainer>
       </Container>
     );
