@@ -38,11 +38,13 @@ const CreateMeetingButton = () => (
   <Mutation
     mutation={createMeetingMutation}
     variables={{ input: {} }}
+    update={(cache, { data: { createMeeting } }) => {
+      window.open(`/meetings/${createMeeting.id}`, '_blank');
+    }}
   >
-    {(create, { loading, error, data }) => {
+    {(create, { loading, error }) => {
       if (loading) return <StyledSpinner color="grey4" />;
       if (error) console.log(error);
-      if (data && data.createMeeting) window.open(`/meetings/${data.createMeeting.id}`, '_blank');
 
       return (
         <Container onClick={() => { create(); }}>
