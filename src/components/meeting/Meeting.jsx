@@ -79,8 +79,26 @@ const DetailsEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   lineHeight: '25px',
   fontWeight: 400,
 
-  div: {
+  'div:not(:first-of-type)': {
     marginTop: '1em',
+  },
+
+  h1: {
+    fontSize: '28px',
+    fontWeight: 600,
+    marginTop: '1.4em',
+  },
+
+  h2: {
+    fontSize: '24px',
+    fontWeight: 500,
+    marginTop: '1.3em',
+  },
+
+  h3: {
+    fontSize: '20px',
+    fontWeight: 500,
+    marginTop: '1.2em',
   },
 }));
 
@@ -171,7 +189,7 @@ class Meeting extends Component {
               <MetadataContainer>
                 <MetadataSection>
                   <TitleEditor
-                    initialContent={title}
+                    initialValue={title}
                     isPlainText
                     onSubmit={this.handleSubmitTitle}
                     saveOnBlur
@@ -179,7 +197,7 @@ class Meeting extends Component {
                   />
                   <MeetingInfo participants={participants} />
                   <DetailsEditor
-                    initialContent={body ? body.payload : null}
+                    initialValue={body ? body.payload : null}
                     onSubmit={this.handleSubmitDetails}
                     saveOnBlur
                     source="meetingDetails"

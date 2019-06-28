@@ -60,8 +60,28 @@ const TopicEditor = styled(RovalEditor)({
   fontWeight: 400,
   marginTop: '10px',
 
+  // HN: opportunity to DRY these up later once we find a pattern of typography
+  // across different editor use cases
   'div:not(:first-of-type)': {
     marginTop: '1em',
+  },
+
+  h1: {
+    fontSize: '28px',
+    fontWeight: 600,
+    marginTop: '1.4em',
+  },
+
+  h2: {
+    fontSize: '24px',
+    fontWeight: 500,
+    marginTop: '1.3em',
+  },
+
+  h3: {
+    fontSize: '20px',
+    fontWeight: 500,
+    marginTop: '1.2em',
   },
 });
 
@@ -87,7 +107,7 @@ class DiscussionTopic extends Component {
 
     this.state = {
       author: null,
-      initialContent: null,
+      initialValue: null,
       isModalVisible: props.forceDisplayModal,
       loading: true,
       messages: [],
@@ -138,7 +158,7 @@ class DiscussionTopic extends Component {
       const { body: { payload } } = messages[0];
 
       this.setState({
-        initialContent: payload,
+        initialValue: payload,
         author,
         loading: false,
         messages,
@@ -238,7 +258,7 @@ class DiscussionTopic extends Component {
   render() {
     const {
       author,
-      initialContent,
+      initialValue,
       isModalVisible,
       loading,
       messages,
@@ -281,7 +301,7 @@ class DiscussionTopic extends Component {
               )}
             </TopicMetadata>
             <TopicEditor
-              initialContent={initialContent}
+              initialValue={initialValue}
               mode={mode}
               onCancel={this.handleCancel}
               onSubmit={this.handleSubmit}

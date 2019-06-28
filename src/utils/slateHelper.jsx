@@ -1,11 +1,11 @@
 import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
-import { isKeyHotkey } from 'is-hotkey';
+import { isHotkey } from 'is-hotkey';
 import { theme } from 'styles/theme';
 
 /* ******************** */
 
-export const initialValue = {
+export const defaultValue = {
   document: {
     nodes: [
       {
@@ -25,13 +25,24 @@ export const initialValue = {
 /* ******************** */
 
 export const hotkeys = {
-  isBold: isKeyHotkey('mod+b'),
-  isItalic: isKeyHotkey('mod+i'),
-  isUnderlined: isKeyHotkey('mod+u'),
-  isCode: isKeyHotkey('mod+k'),
-  isSubmit: isKeyHotkey('mod+Enter'),
-  isSubmitAndKeepOpen: isKeyHotkey('shift+Enter'),
-  isCancel: isKeyHotkey('Esc'),
+  // Marks
+  isBold: isHotkey('mod+b'),
+  isItalic: isHotkey('mod+i'),
+  isUnderlined: isHotkey('mod+u'),
+  isCode: isHotkey('mod+k'),
+
+  // Blocks
+  isBulletedList: isHotkey('mod+shift+8'),
+  isNumberedList: isHotkey('mod+shift+7'),
+  isLargeFont: isHotkey('mod+opt+1'),
+  isMediumFont: isHotkey('mod+opt+2'),
+  isSmallFont: isHotkey('mod+opt+3'),
+
+  // Actions
+  isEnter: isHotkey('Enter'),
+  isSubmit: isHotkey('mod+Enter'),
+  isSubmitAndKeepOpen: isHotkey('shift+Enter'),
+  isCancel: isHotkey('Esc'),
 };
 
 /* ******************** */
@@ -74,10 +85,10 @@ export const plugins = {
   ],
 };
 
-/* ******************** */
+/* Methods for determining how to render marks and blocks in the editor  */
 
 export const renderMark = (props, editor, next) => {
-  const { children, mark, attributes } = props;
+  const { attributes, children, mark } = props;
 
   switch (mark.type) {
     case 'bold':
@@ -88,6 +99,29 @@ export const renderMark = (props, editor, next) => {
       return <em {...attributes}>{children}</em>;
     case 'underlined':
       return <u {...attributes}>{children}</u>;
+    default:
+      return next();
+  }
+};
+
+export const renderBlock = (props, editor, next) => {
+  const { attributes, children, node } = props;
+
+  switch (node.type) {
+    case 'block-quote':
+      return <blockquote {...attributes}>{children}</blockquote>;
+    case 'bulleted-list':
+      return <ul {...attributes}>{children}</ul>;
+    case 'heading-one':
+      return <h1 {...attributes}>{children}</h1>;
+    case 'heading-two':
+      return <h2 {...attributes}>{children}</h2>;
+    case 'heading-three':
+      return <h3 {...attributes}>{children}</h3>;
+    case 'list-item':
+      return <li {...attributes}>{children}</li>;
+    case 'numbered-list':
+      return <ol {...attributes}>{children}</ol>;
     default:
       return next();
   }
