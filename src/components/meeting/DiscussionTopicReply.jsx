@@ -169,7 +169,7 @@ class DiscussionTopicReply extends Component {
             </Details>
           </HeaderSection>
           <ReplyEditor
-            initialContent={mode !== 'compose' ? body.payload : null}
+            initialValue={mode !== 'compose' ? body.payload : null}
             mode={mode}
             onCancel={this.handleCancel}
             onSubmit={this.handleSubmit}

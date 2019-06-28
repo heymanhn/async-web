@@ -268,7 +268,7 @@ class DiscussionTopicModal extends Component {
             </AuthorSection>
           </Header>
           <TopicEditor
-            initialContent={messages[0].body.payload}
+            initialValue={messages[0].body.payload}
             mode={mode}
             onCancel={this.toggleEditMode}
             onSubmit={this.handleSubmit}

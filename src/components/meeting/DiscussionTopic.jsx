@@ -87,7 +87,7 @@ class DiscussionTopic extends Component {
 
     this.state = {
       author: null,
-      initialContent: null,
+      initialValue: null,
       isModalVisible: props.forceDisplayModal,
       loading: true,
       messages: [],
@@ -138,7 +138,7 @@ class DiscussionTopic extends Component {
       const { body: { payload } } = messages[0];
 
       this.setState({
-        initialContent: payload,
+        initialValue: payload,
         author,
         loading: false,
         messages,
@@ -238,7 +238,7 @@ class DiscussionTopic extends Component {
   render() {
     const {
       author,
-      initialContent,
+      initialValue,
       isModalVisible,
       loading,
       messages,
@@ -281,7 +281,7 @@ class DiscussionTopic extends Component {
               )}
             </TopicMetadata>
             <TopicEditor
-              initialContent={initialContent}
+              initialValue={initialValue}
               mode={mode}
               onCancel={this.handleCancel}
               onSubmit={this.handleSubmit}

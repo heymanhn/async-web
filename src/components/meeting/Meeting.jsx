@@ -171,7 +171,7 @@ class Meeting extends Component {
               <MetadataContainer>
                 <MetadataSection>
                   <TitleEditor
-                    initialContent={title}
+                    initialValue={title}
                     isPlainText
                     onSubmit={this.handleSubmitTitle}
                     saveOnBlur
@@ -179,7 +179,7 @@ class Meeting extends Component {
                   />
                   <MeetingInfo participants={participants} />
                   <DetailsEditor
-                    initialContent={body ? body.payload : null}
+                    initialValue={body ? body.payload : null}
                     onSubmit={this.handleSubmitDetails}
                     saveOnBlur
                     source="meetingDetails"
