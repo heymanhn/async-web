@@ -86,8 +86,8 @@ class RovalEditor extends Component {
   }
 
   pluginsForType() {
-    const { type } = this.props;
-    return plugins[type];
+    const { source } = this.props;
+    return plugins[source];
   }
 
   resetToInitialContent() {
@@ -131,7 +131,7 @@ RovalEditor.propTypes = {
   mode: PropTypes.string,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
-  type: PropTypes.oneOf([
+  source: PropTypes.oneOf([
     'meetingTitle',
     'meetingDetails',
     'discussionTopic',

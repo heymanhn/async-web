@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
-import { Editor } from 'slate-react';
-import { Value } from 'slate';
-import Plain from 'slate-plain-serializer';
 import { Modal } from 'reactstrap';
 import styled from '@emotion/styled/macro';
 
@@ -12,6 +9,7 @@ import updateConversationMessageMutation from 'graphql/updateConversationMessage
 import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
+import RovalEditor from 'components/shared/RovalEditor';
 import ContentToolbar from './ContentToolbar';
 import DiscussionTopicReply from './DiscussionTopicReply';
 
@@ -58,7 +56,7 @@ const Author = styled.span({
   fontSize: '18px',
 });
 
-const Content = styled(Editor)({
+const EditorContent = styled(RovalEditor)({
   fontSize: '16px',
   lineHeight: '25px',
   fontWeight: 400,
@@ -140,23 +138,17 @@ class DiscussionTopicModal extends Component {
     super(props);
 
     this.state = {
-      isEditingTopic: false,
       isComposingReply: false,
       messages: props.messages,
-      topicMessage: Value.fromJSON(JSON.parse(props.messages[0].body.payload)),
+      mode: 'display',
     };
 
-    this.editor = React.createRef();
-
-    this.toggleComposeMode = this.toggleComposeMode.bind(this);
+    this.toggleIsComposing = this.toggleIsComposing.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
     this.refetchMessages = this.refetchMessages.bind(this);
     this.updateDisplayURL = this.updateDisplayURL.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
-    this.handleChangeTopicMessage = this.handleChangeTopicMessage.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.isTopicEmpty = this.isTopicEmpty.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -181,15 +173,12 @@ class DiscussionTopicModal extends Component {
     window.history.replaceState({}, `meeting: ${meetingId}`, url);
   }
 
-  toggleComposeMode() {
+  toggleIsComposing() {
     this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
   }
 
   toggleEditMode() {
-    this.setState(
-      prevState => ({ isEditingTopic: !prevState.isEditingTopic }),
-      () => this.editor.current.focus().moveToEndOfDocument(),
-    );
+    this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
   }
 
   async refetchMessages() {
@@ -204,20 +193,14 @@ class DiscussionTopicModal extends Component {
       const { items } = response.data.conversationMessagesQuery;
       const messages = (items || []).map(i => i.message);
 
-      this.setState({
-        isEditingTopic: false,
-        messages,
-        topicMessage: Value.fromJSON(JSON.parse(messages[0].body.payload)),
-      });
+      this.setState({ mode: 'display', messages });
     } else {
       console.log('Error re-fetching conversation messages');
     }
   }
 
-  async handleSubmit() {
-    const { messages, topicMessage } = this.state;
-    if (this.isTopicEmpty()) return;
-
+  async handleSubmit({ payload, text } = {}) {
+    const { messages } = this.state;
     const { client, conversationId, meetingId } = this.props;
 
     const response = await client.mutate({
@@ -229,33 +212,23 @@ class DiscussionTopicModal extends Component {
           meetingId,
           body: {
             formatter: 'slatejs',
-            text: Plain.serialize(topicMessage),
-            payload: JSON.stringify(topicMessage.toJSON()),
+            text,
+            payload,
           },
         },
       },
     });
 
-    if (response.data && response.data.updateConversationMessage) this.refetchMessages();
-  }
+    if (response.data) {
+      this.refetchMessages();
+      return Promise.resolve();
+    }
 
-  handleChangeTopicMessage({ value }) {
-    this.setState({ topicMessage: value });
-  }
-
-  handleCancel() {
-    const { messages } = this.state;
-    this.setState({ topicMessage: Value.fromJSON(JSON.parse(messages[0].body.payload)) });
-    this.toggleEditMode();
-  }
-
-  isTopicEmpty() {
-    const { topicMessage } = this.state;
-    return !Plain.serialize(topicMessage);
+    return Promise.reject(new Error('Failed to update discussion topic'));
   }
 
   render() {
-    const { isComposingReply, isEditingTopic, messages, topicMessage } = this.state;
+    const { isComposingReply, messages, mode } = this.state;
     const {
       author,
       conversationId,
@@ -264,7 +237,7 @@ class DiscussionTopicModal extends Component {
     } = this.props;
 
     const addReplyButton = (
-      <AddReplyButton onClick={this.toggleComposeMode}>
+      <AddReplyButton onClick={this.toggleisComposing}>
         <PlusSign>+</PlusSign>
         <ButtonText>ADD A REPLY</ButtonText>
       </AddReplyButton>
@@ -283,7 +256,7 @@ class DiscussionTopicModal extends Component {
               <AvatarWithMargin src={author.profilePictureUrl} size={45} />
               <Details>
                 <Author>{author.fullName}</Author>
-                {!isEditingTopic && (
+                {mode === 'display' && (
                   <ContentToolbar
                     createdAt={createdAt}
                     isEditable={matchCurrentUserId(author.id)}
@@ -294,13 +267,13 @@ class DiscussionTopicModal extends Component {
               </Details>
             </AuthorSection>
           </Header>
-          <Content
-            ref={this.editor}
-            onChange={this.handleChangeTopicMessage}
-            readOnly={!isEditingTopic}
-            value={topicMessage}
+          <EditorContent
+            initialContent={messages[0].body.payload}
+            mode={mode}
+            onCancel={this.toggleEditMode}
+            onSubmit={this.handleSubmit}
+            source="discussionTopicModal"
           />
-          {isEditingTopic && <div>Should show editor actions here</div>}
         </TopicSection>
         {messages.length > 1 && (
           <RepliesSection>
@@ -309,8 +282,8 @@ class DiscussionTopicModal extends Component {
               <ReplyDisplay key={m.id}>
                 <DiscussionTopicReply
                   afterSubmit={this.refetchMessages}
-                  mode="display"
                   conversationId={conversationId}
+                  initialMode="display"
                   key={m.id}
                   meetingId={meetingId}
                   message={m}
@@ -323,12 +296,12 @@ class DiscussionTopicModal extends Component {
         <ActionsContainer>
           {!isComposingReply ? addReplyButton : (
             <DiscussionTopicReply
-              mode="compose"
               afterSubmit={this.refetchMessages}
               conversationId={conversationId}
+              initialMode="compose"
               replyCount={messages.length - 1}
               meetingId={meetingId}
-              onCancelCompose={this.toggleComposeMode}
+              onCancelCompose={this.toggleIsComposing}
             />
           )}
         </ActionsContainer>

@@ -69,7 +69,7 @@ class DiscussionTopicReply extends Component {
 
     this.state = {
       currentUser: null,
-      mode: props.mode,
+      mode: props.initialMode,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -173,7 +173,7 @@ class DiscussionTopicReply extends Component {
             mode={mode}
             onCancel={this.handleCancel}
             onSubmit={this.handleSubmit}
-            type="discussionTopicReply"
+            source="discussionTopicReply"
           />
         </MainContainer>
       </Container>
@@ -184,16 +184,16 @@ class DiscussionTopicReply extends Component {
 DiscussionTopicReply.propTypes = {
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
+  initialMode: PropTypes.oneOf(['compose', 'display']),
   meetingId: PropTypes.string.isRequired,
   message: PropTypes.object,
-  mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   afterSubmit: PropTypes.func,
   onCancelCompose: PropTypes.func,
 };
 
 DiscussionTopicReply.defaultProps = {
+  initialMode: 'display',
   message: {},
-  mode: 'display',
   onCancelCompose: () => {},
   afterSubmit: () => {},
 };
