@@ -143,8 +143,8 @@ class DiscussionTopicModal extends Component {
       mode: 'display',
     };
 
-    this.toggleIsComposing = this.toggleIsComposing.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
+    this.toggleReplyComposer = this.toggleReplyComposer.bind(this);
     this.refetchMessages = this.refetchMessages.bind(this);
     this.updateDisplayURL = this.updateDisplayURL.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
@@ -173,12 +173,12 @@ class DiscussionTopicModal extends Component {
     window.history.replaceState({}, `meeting: ${meetingId}`, url);
   }
 
-  toggleIsComposing() {
-    this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
-  }
-
   toggleEditMode() {
     this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
+  }
+
+  toggleReplyComposer() {
+    this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
   }
 
   async refetchMessages() {
@@ -237,7 +237,7 @@ class DiscussionTopicModal extends Component {
     } = this.props;
 
     const addReplyButton = (
-      <AddReplyButton onClick={this.toggleisComposing}>
+      <AddReplyButton onClick={this.toggleReplyComposer}>
         <PlusSign>+</PlusSign>
         <ButtonText>ADD A REPLY</ButtonText>
       </AddReplyButton>
@@ -301,7 +301,7 @@ class DiscussionTopicModal extends Component {
               initialMode="compose"
               replyCount={messages.length - 1}
               meetingId={meetingId}
-              onCancelCompose={this.toggleIsComposing}
+              onCancelCompose={this.toggleReplyComposer}
             />
           )}
         </ActionsContainer>
