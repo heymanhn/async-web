@@ -79,8 +79,26 @@ const DetailsEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   lineHeight: '25px',
   fontWeight: 400,
 
-  div: {
+  'div:not(:first-of-type)': {
     marginTop: '1em',
+  },
+
+  h1: {
+    fontSize: '28px',
+    fontWeight: 600,
+    marginTop: '1.4em',
+  },
+
+  h2: {
+    fontSize: '24px',
+    fontWeight: 500,
+    marginTop: '1.3em',
+  },
+
+  h3: {
+    fontSize: '20px',
+    fontWeight: 500,
+    marginTop: '1.2em',
   },
 }));
 

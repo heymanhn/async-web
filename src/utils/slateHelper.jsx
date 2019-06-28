@@ -1,6 +1,6 @@
 import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
-import { isKeyHotkey } from 'is-hotkey';
+import { isHotkey } from 'is-hotkey';
 import { theme } from 'styles/theme';
 import styled from '@emotion/styled';
 
@@ -27,24 +27,24 @@ export const defaultValue = {
 
 export const hotkeys = {
   // Marks
-  isBold: isKeyHotkey('mod+b'),
-  isItalic: isKeyHotkey('mod+i'),
-  isUnderlined: isKeyHotkey('mod+u'),
-  isCode: isKeyHotkey('mod+k'),
+  isBold: isHotkey('mod+b'),
+  isItalic: isHotkey('mod+i'),
+  isUnderlined: isHotkey('mod+u'),
+  isCode: isHotkey('mod+k'),
 
   // Blocks
-  isBulletedList: isKeyHotkey('mod+shift+8'),
-  isNumberedList: isKeyHotkey('mod+shift+7'),
-  isLargeFont: isKeyHotkey('mod+opt+1'),
-  isMediumFont: isKeyHotkey('mod+opt+2'),
-  isSmallFont: isKeyHotkey('mod+opt+3'),
-  isSectionBreak: isKeyHotkey('mod+shift+Enter'),
+  isBulletedList: isHotkey('mod+shift+8'),
+  isNumberedList: isHotkey('mod+shift+7'),
+  isLargeFont: isHotkey('mod+opt+1'),
+  isMediumFont: isHotkey('mod+opt+2'),
+  isSmallFont: isHotkey('mod+opt+3'),
+  isSectionBreak: isHotkey('mod+shift+Enter'),
 
   // Actions
-  isEnter: isKeyHotkey('Enter'),
-  isSubmit: isKeyHotkey('mod+Enter'),
-  isSubmitAndKeepOpen: isKeyHotkey('shift+Enter'),
-  isCancel: isKeyHotkey('Esc'),
+  isEnter: isHotkey('Enter'),
+  isSubmit: isHotkey('mod+Enter'),
+  isSubmitAndKeepOpen: isHotkey('shift+Enter'),
+  isCancel: isHotkey('Esc'),
 };
 
 /* ******************** */
@@ -106,18 +106,6 @@ export const renderMark = (props, editor, next) => {
   }
 };
 
-const LargeFont = styled.div({
-
-});
-
-const MediumFont = styled.div({
-
-});
-
-const SmallFont = styled.div({
-
-});
-
 export const renderBlock = (props, editor, next) => {
   const { attributes, children, node } = props;
 
@@ -127,11 +115,11 @@ export const renderBlock = (props, editor, next) => {
     case 'bulleted-list':
       return <ul {...attributes}>{children}</ul>;
     case 'heading-one':
-      return <LargeFont {...attributes}>{children}</LargeFont>;
+      return <h1 {...attributes}>{children}</h1>;
     case 'heading-two':
-      return <MediumFont {...attributes}>{children}</MediumFont>;
+      return <h2 {...attributes}>{children}</h2>;
     case 'heading-three':
-      return <SmallFont {...attributes}>{children}</SmallFont>;
+      return <h3 {...attributes}>{children}</h3>;
     case 'list-item':
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
