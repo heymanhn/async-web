@@ -42,6 +42,7 @@ class RovalEditor extends Component {
     this.editor = React.createRef();
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
+    this.handleEnterActions = this.handleEnterActions.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
@@ -73,6 +74,26 @@ class RovalEditor extends Component {
     this.setState({ value });
   }
 
+  /*
+   * Special cases:
+   * 1. Pressing Enter while on a blank list item removes the blank list item and creates a
+   *    new default node block
+   */
+  handleEnterActions(next) {
+    const editor = this.editor.current;
+    const { value } = editor;
+
+    const { anchorBlock } = value;
+    if (anchorBlock.type === 'list-item' && !anchorBlock.text) {
+      return editor
+        .setBlocks(DEFAULT_NODE)
+        .unwrapBlock('bulleted-list')
+        .unwrapBlock('numbered-list');
+    }
+
+    return next();
+  }
+
   handleKeyDown(event, editor, next) {
     const { mode } = this.props;
 
@@ -82,6 +103,7 @@ class RovalEditor extends Component {
     }
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
     if (hotkeys.isCancel(event)) return this.handleCancel();
+    if (hotkeys.isEnter(event)) return this.handleEnterActions(next);
 
     // Blocks
     if (hotkeys.isLargeFont(event)) return this.setBlock('heading-one');

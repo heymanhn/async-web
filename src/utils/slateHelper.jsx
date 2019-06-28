@@ -41,6 +41,7 @@ export const hotkeys = {
   isSectionBreak: isKeyHotkey('mod+shift+Enter'),
 
   // Actions
+  isEnter: isKeyHotkey('Enter'),
   isSubmit: isKeyHotkey('mod+Enter'),
   isSubmitAndKeepOpen: isKeyHotkey('shift+Enter'),
   isCancel: isKeyHotkey('Esc'),
