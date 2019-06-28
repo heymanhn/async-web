@@ -104,7 +104,7 @@ class RovalEditor extends Component {
 
   isEditOrComposeMode() {
     const { mode } = this.props;
-    ['compose', 'edit'].includes(mode);
+    return mode === 'compose' || mode === 'edit';
   }
 
   pluginsForType() {
