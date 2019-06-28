@@ -4,10 +4,24 @@ import PropTypes from 'prop-types';
 import { Value } from 'slate';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
+import styled from '@emotion/styled';
 
 import { hotkeys, defaultValue, plugins, renderBlock, renderMark } from 'utils/slateHelper';
 
 import EditorActions from './EditorActions';
+
+const DEFAULT_NODE = 'paragraph';
+
+// Default styles for Roval editor UIs
+const StyledEditor = styled(Editor)({
+  'dl, ul, ol': {
+    marginTop: '1em',
+    marginBottom: '1em',
+  },
+  li: {
+    marginTop: '3px',
+  },
+});
 
 class RovalEditor extends Component {
   constructor(props) {
@@ -150,47 +164,44 @@ class RovalEditor extends Component {
     this.setState({ value: Value.fromJSON(JSON.parse(initialValue)) });
   }
 
-  /* Inspired by @ianstormtaylor's slateJS example code:
+  /* Borrowed from @ianstormtaylor's slateJS example code:
    * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
    */
   setBlock(type) {
-    const { editor } = this;
+    const editor = this.editor.current;
     const { value } = editor;
     const { document } = value;
 
     // Handle everything but list buttons.
+    const isList = this.hasBlock('list-item');
     if (type !== 'bulleted-list' && type !== 'numbered-list') {
       const isActive = this.hasBlock(type);
-      const isList = this.hasBlock('list-item')
 
       if (isList) {
         editor
           .setBlocks(isActive ? DEFAULT_NODE : type)
           .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list')
+          .unwrapBlock('numbered-list');
       } else {
-        editor.setBlocks(isActive ? DEFAULT_NODE : type)
+        editor.setBlocks(isActive ? DEFAULT_NODE : type);
       }
     } else {
-      // Handle the extra wrapping required for list buttons.
-      const isList = this.hasBlock('list-item')
-      const isType = value.blocks.some(block => {
-        return !!document.getClosest(block.key, parent => parent.type === type)
-      })
+      // Handle the extra wrapping required for lists
+      const isType = value.blocks.some(block => (
+        !!document.getClosest(block.key, parent => parent.type === type)
+      ));
 
       if (isList && isType) {
         editor
           .setBlocks(DEFAULT_NODE)
           .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list')
+          .unwrapBlock('numbered-list');
       } else if (isList) {
         editor
-          .unwrapBlock(
-            type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list'
-          )
-          .wrapBlock(type)
+          .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
+          .wrapBlock(type);
       } else {
-        editor.setBlocks('list-item').wrapBlock(type)
+        editor.setBlocks('list-item').wrapBlock(type);
       }
     }
   }
@@ -201,7 +212,7 @@ class RovalEditor extends Component {
 
     return (
       <div>
-        <Editor
+        <StyledEditor
           autoFocus={this.isEditOrComposeMode()}
           onBlur={this.handleSubmitOnBlur}
           onChange={this.handleChangeValue}
