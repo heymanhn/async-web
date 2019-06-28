@@ -1,17 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withApollo } from 'react-apollo';
-import { Editor } from 'slate-react';
-import Plain from 'slate-plain-serializer';
-import { Value } from 'slate';
+import { Query, withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import withPageTracking from 'utils/withPageTracking';
-import { initialValue, titlePlugins, detailsPlugins } from 'utils/slateHelper';
 import meetingQuery from 'graphql/meetingQuery';
-import meetingConversationsQuery from 'graphql/meetingConversationsQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
+import RovalEditor from 'components/shared/RovalEditor';
 import MeetingInfo from './MeetingInfo';
 import DiscussionTopic from './DiscussionTopic';
 
@@ -68,7 +64,7 @@ const DiscussionButtonText = styled.span(({ theme: { colors } }) => ({
   },
 }));
 
-const MeetingTitle = styled(Editor)(({ theme: { colors } }) => ({
+const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   fontSize: '36px',
   fontWeight: 600,
   color: colors.mainText,
@@ -77,7 +73,7 @@ const MeetingTitle = styled(Editor)(({ theme: { colors } }) => ({
   outline: 'none',
 }));
 
-const MeetingDetails = styled(Editor)(({ theme: { colors } }) => ({
+const MeetingDetails = styled(RovalEditor)(({ theme: { colors } }) => ({
   color: colors.mainText,
   fontSize: '16px',
   lineHeight: '25px',
@@ -93,102 +89,47 @@ class Meeting extends Component {
     super(props);
 
     this.state = {
-      conversationIds: [],
-      details: '',
-      error: false,
       isComposingTopic: false,
-      loading: true,
-      participants: [],
-      title: '',
+      isModalInitiallyDisplayed: false,
     };
 
-    this.handleChangeTitle = this.handleChangeTitle.bind(this);
-    this.handleChangeDetails = this.handleChangeDetails.bind(this);
-    this.handleSave = this.handleSave.bind(this);
+    this.handleSubmitTitle = this.handleSubmitTitle.bind(this);
+    this.handleSubmitDetails = this.handleSubmitDetails.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
-    this.refetchConversations = this.refetchConversations.bind(this);
     this.resetDisplayOverride = this.resetDisplayOverride.bind(this);
   }
 
-  async componentDidMount() {
-    const { client, id } = this.props;
-    const response = await client.query({ query: meetingQuery, variables: { id } });
-
-    if (response.data && response.data.meeting) {
-      const { title, body, conversations, participants } = response.data.meeting;
-      const deserializedTitle = Plain.deserialize(title);
-      const details = body && body.formatter === 'slatejs'
-        ? JSON.parse(body.payload) : initialValue;
-
-      this.setState({
-        loading: false,
-        title: deserializedTitle,
-        details: Value.fromJSON(details),
-        participants,
-        conversationIds: (conversations || []).map(c => c.id),
-      });
-    } else {
-      this.setState({ error: true, loading: false });
-    }
+  async handleSubmitTitle({ text }) {
+    await this.handleSubmit({ text, type: 'title' });
   }
 
-  async refetchConversations() {
+  async handleSubmitDetails({ payload, text }) {
+    await this.handleSubmit({ payload, text, type: 'details' });
+  }
+
+  async handleSubmit({ payload, text, type } = {}) {
     const { client, id } = this.props;
-    const response = await client.query({
-      query: meetingConversationsQuery,
-      variables: { id },
-      fetchPolicy: 'no-cache',
+    const input = type === 'title' ? { title: text } : {
+      body: {
+        formatter: 'slatejs',
+        text,
+        payload,
+      },
+    };
+
+    const response = await client.mutate({
+      mutation: updateMeetingMutation,
+      variables: { id, input },
     });
 
-    if (response.data && response.data.conversationsQuery) {
-      const { conversations } = response.data.conversationsQuery;
-
-      this.setState({ conversationIds: (conversations || []).map(c => c.id) });
-    } else {
-      this.setState({ error: true });
+    if (response.data) {
+      client.writeData({ data: { saveStatus: 'success' } });
+      setTimeout(() => client.writeData({ data: { saveStatus: null } }), 2000);
+      return Promise.resolve();
     }
-  }
 
-  handleChangeTitle({ value }) {
-    this.setState({ title: value });
-  }
-
-  handleChangeDetails({ value }) {
-    this.setState({ details: value });
-  }
-
-  async handleSave(event, editor, next) {
-    const { title, details } = this.state;
-    const { client, id } = this.props;
-    const plainTextTitle = Plain.serialize(title);
-
-    next();
-
-    try {
-      const response = await client.mutate({
-        mutation: updateMeetingMutation,
-        variables: {
-          id,
-          input: {
-            title: plainTextTitle,
-            body: {
-              formatter: 'slatejs',
-              text: Plain.serialize(details),
-              payload: JSON.stringify(details.toJSON()),
-            },
-          },
-        },
-      });
-
-      if (response.data && response.data.updateMeeting) {
-        client.writeData({ data: { saveStatus: 'success' } });
-        setTimeout(() => client.writeData({ data: { saveStatus: null } }), 2000);
-      }
-    } catch (err) {
-      // No error handling yet
-      console.log('error saving meeting');
-      next();
-    }
+    return Promise.reject(new Error(`Failed to save meeting ${type}`));
   }
 
   toggleComposeMode() {
@@ -199,23 +140,12 @@ class Meeting extends Component {
   // via navigation to /meetings/:id/conversations/:cid, this method can be called to
   // not force the modal open after the user closes it.
   resetDisplayOverride() {
-    this.setState({ isModalDisplayed: true });
+    this.setState({ isModalInitiallyDisplayed: true });
   }
 
   render() {
-    const {
-      conversationIds,
-      details,
-      error,
-      isComposingTopic,
-      isModalDisplayed,
-      loading,
-      participants,
-      title,
-    } = this.state;
+    const { isComposingTopic, isModalInitiallyDisplayed } = this.state;
     const { id, cid } = this.props;
-
-    if (loading || error) return null;
 
     const addDiscussionButton = (
       <AddDiscussionButton onClick={this.toggleComposeMode}>
@@ -225,47 +155,63 @@ class Meeting extends Component {
     );
 
     return (
-      <div>
-        <MetadataContainer>
-          <MetadataSection>
-            <MeetingTitle
-              onBlur={this.handleSave}
-              onChange={this.handleChangeTitle}
-              value={title}
-              plugins={titlePlugins}
-            />
-            <MeetingInfo participants={participants} />
-            {/* DRY this up later */}
-            <MeetingDetails
-              onBlur={this.handleSave}
-              onChange={this.handleChangeDetails}
-              value={details}
-              plugins={detailsPlugins}
-            />
-          </MetadataSection>
-        </MetadataContainer>
-        <DiscussionSection>
-          {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
-          {conversationIds.map(conversationId => (
-            <DiscussionTopic
-              key={conversationId}
-              conversationId={conversationId}
-              meetingId={id}
-              mode="display"
-              forceDisplayModal={cid === conversationId && !isModalDisplayed}
-              resetDisplayOverride={this.resetDisplayOverride}
-            />
-          ))}
-          {!isComposingTopic ? addDiscussionButton : (
-            <DiscussionTopic
-              meetingId={id}
-              mode="compose"
-              afterSubmit={this.refetchConversations}
-              onCancelCompose={this.toggleComposeMode}
-            />
-          )}
-        </DiscussionSection>
-      </div>
+      <Query
+        query={meetingQuery}
+        variables={{ id }}
+      >
+        {({ loading, error, data, refetch }) => {
+          if (loading && !data) return null;
+          if (error || !data.meeting) return <div>{error}</div>;
+
+          const { body, conversations, participants, title } = data.meeting;
+          const conversationIds = (conversations || []).map(c => c.id);
+
+          return (
+            <React.Fragment>
+              <MetadataContainer>
+                <MetadataSection>
+                  <TitleEditor
+                    initialContent={title}
+                    isPlainText
+                    onSubmit={this.handleSubmitTitle}
+                    saveOnBlur
+                    source="meetingTitle"
+                  />
+                  <MeetingInfo participants={participants} />
+                  <MeetingDetails
+                    initialContent={body ? body.payload : null}
+                    onSubmit={this.handleSubmitDetails}
+                    saveOnBlur
+                    source="meetingDetails"
+                  />
+                </MetadataSection>
+              </MetadataContainer>
+              <DiscussionSection>
+                {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
+                {conversationIds.map(conversationId => (
+                  <DiscussionTopic
+                    afterSubmit={() => refetch()}
+                    conversationId={conversationId}
+                    forceDisplayModal={cid === conversationId && !isModalInitiallyDisplayed}
+                    initialMode="display"
+                    key={conversationId}
+                    meetingId={id}
+                    resetDisplayOverride={this.resetDisplayOverride}
+                  />
+                ))}
+                {!isComposingTopic ? addDiscussionButton : (
+                  <DiscussionTopic
+                    afterSubmit={() => refetch()}
+                    initialMode="compose"
+                    meetingId={id}
+                    onCancelCompose={this.toggleComposeMode}
+                  />
+                )}
+              </DiscussionSection>
+            </React.Fragment>
+          );
+        }}
+      </Query>
     );
   }
 }
