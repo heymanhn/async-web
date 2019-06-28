@@ -99,7 +99,7 @@ class RovalEditor extends Component {
 
   render() {
     const { content } = this.state;
-    const { mode, ...props } = this.props;
+    const { mode, source, ...props } = this.props;
 
     return (
       <div>
@@ -119,6 +119,7 @@ class RovalEditor extends Component {
             mode={mode}
             onCancel={this.handleCancel}
             onSubmit={this.handleSubmit}
+            size={source === 'discussionTopic' ? 'large' : 'small'}
           />
         )}
       </div>

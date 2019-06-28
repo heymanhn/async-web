@@ -247,19 +247,19 @@ class Meeting extends Component {
           {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
           {conversationIds.map(conversationId => (
             <DiscussionTopic
-              key={conversationId}
               conversationId={conversationId}
-              meetingId={id}
-              mode="display"
               forceDisplayModal={cid === conversationId && !isModalDisplayed}
+              initialMode="display"
+              key={conversationId}
+              meetingId={id}
               resetDisplayOverride={this.resetDisplayOverride}
             />
           ))}
           {!isComposingTopic ? addDiscussionButton : (
             <DiscussionTopic
-              meetingId={id}
-              mode="compose"
               afterSubmit={this.refetchConversations}
+              initialMode="compose"
+              meetingId={id}
               onCancelCompose={this.toggleComposeMode}
             />
           )}

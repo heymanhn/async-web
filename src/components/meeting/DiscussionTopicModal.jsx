@@ -199,7 +199,7 @@ class DiscussionTopicModal extends Component {
     }
   }
 
-  async handleSubmit({ payload, text } = {}) {
+  async handleSubmit({ payload, text }) {
     const { messages } = this.state;
     const { client, conversationId, meetingId } = this.props;
 

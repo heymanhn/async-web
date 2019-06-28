@@ -86,7 +86,7 @@ class DiscussionTopicReply extends Component {
     this.setState({ currentUser: user });
   }
 
-  async handleSubmit({ payload, text } = {}) {
+  async handleSubmit({ payload, text }) {
     const { mode } = this.state;
     const mutation = mode === 'compose'
       ? createConversationMessageMutation : updateConversationMessageMutation;
