@@ -2,7 +2,6 @@ import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
 import { isHotkey } from 'is-hotkey';
 import { theme } from 'styles/theme';
-import styled from '@emotion/styled';
 
 /* ******************** */
 
