@@ -38,7 +38,6 @@ export const hotkeys = {
   isLargeFont: isHotkey('mod+opt+1'),
   isMediumFont: isHotkey('mod+opt+2'),
   isSmallFont: isHotkey('mod+opt+3'),
-  isSectionBreak: isHotkey('mod+shift+Enter'),
 
   // Actions
   isEnter: isHotkey('Enter'),
