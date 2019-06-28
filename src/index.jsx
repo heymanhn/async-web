@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 
 // Web fonts
 import 'typeface-roboto'; // For the Material-UI library
+import 'typeface-source-code-pro'; // For code blocks
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 

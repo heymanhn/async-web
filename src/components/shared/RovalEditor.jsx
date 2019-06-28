@@ -4,7 +4,7 @@ import { Value } from 'slate';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
 
-import { hotkeys, initialValue, plugins } from 'utils/slateHelper';
+import { hotkeys, initialValue, plugins, renderMark } from 'utils/slateHelper';
 
 import EditorActions from './EditorActions';
 
@@ -59,13 +59,30 @@ class RovalEditor extends Component {
   handleKeyDown(event, editor, next) {
     const { mode } = this.props;
 
+    // UX commands
     if (mode === 'compose' && hotkeys.isSubmitAndKeepOpen(event)) {
       return this.handleSubmit({ keepOpen: true });
     }
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
-    if (hotkeys.isCancel(event)) this.handleCancel();
+    if (hotkeys.isCancel(event)) return this.handleCancel();
 
-    return next();
+    // Marks
+    let mark;
+
+    if (hotkeys.isBold(event)) {
+      mark = 'bold';
+    } else if (hotkeys.isItalic(event)) {
+      mark = 'italic';
+    } else if (hotkeys.isUnderlined(event)) {
+      mark = 'underlined';
+    } else if (hotkeys.isCode(event)) {
+      mark = 'code';
+    } else {
+      return next();
+    }
+
+    event.preventDefault();
+    return editor.toggleMark(mark);
   }
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
@@ -129,9 +146,10 @@ class RovalEditor extends Component {
           onBlur={this.handleSubmitOnBlur}
           onChange={this.handleChangeContent}
           onKeyDown={this.handleKeyDown}
+          plugins={this.pluginsForType()}
           readOnly={mode === 'display'}
           ref={this.editor}
-          plugins={this.pluginsForType()}
+          renderMark={renderMark}
           value={content}
           {...props}
         />

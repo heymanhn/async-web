@@ -73,7 +73,7 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   outline: 'none',
 }));
 
-const MeetingDetails = styled(RovalEditor)(({ theme: { colors } }) => ({
+const DetailsEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   color: colors.mainText,
   fontSize: '16px',
   lineHeight: '25px',
@@ -178,7 +178,7 @@ class Meeting extends Component {
                     source="meetingTitle"
                   />
                   <MeetingInfo participants={participants} />
-                  <MeetingDetails
+                  <DetailsEditor
                     initialContent={body ? body.payload : null}
                     onSubmit={this.handleSubmitDetails}
                     saveOnBlur
