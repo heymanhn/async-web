@@ -87,10 +87,9 @@ class RovalEditor extends Component {
 
   handleSubmitOnBlur(event, editor, next) {
     const { saveOnBlur } = this.props;
-    if (!saveOnBlur) return;
-
-    this.handleSubmit();
     next();
+
+    if (saveOnBlur) this.handleSubmit();
   }
 
   clearEditorContent() {

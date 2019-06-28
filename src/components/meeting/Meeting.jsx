@@ -160,7 +160,7 @@ class Meeting extends Component {
         variables={{ id }}
       >
         {({ loading, error, data, refetch }) => {
-          if (loading) return null;
+          if (loading && !data) return null;
           if (error || !data.meeting) return <div>{error}</div>;
 
           const { body, conversations, participants, title } = data.meeting;
@@ -179,7 +179,7 @@ class Meeting extends Component {
                   />
                   <MeetingInfo participants={participants} />
                   <MeetingDetails
-                    initialContent={body.payload}
+                    initialContent={body ? body.payload : null}
                     onSubmit={this.handleSubmitDetails}
                     saveOnBlur
                     source="meetingDetails"
