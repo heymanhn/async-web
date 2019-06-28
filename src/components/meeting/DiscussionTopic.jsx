@@ -54,7 +54,7 @@ const Author = styled.span(({ mode }) => ({
   opacity: mode === 'compose' ? 0.5 : 1,
 }));
 
-const EditorContent = styled(RovalEditor)({
+const TopicEditor = styled(RovalEditor)({
   fontSize: '16px',
   lineHeight: '25px',
   fontWeight: 400,
@@ -280,7 +280,7 @@ class DiscussionTopic extends Component {
                 />
               )}
             </TopicMetadata>
-            <EditorContent
+            <TopicEditor
               initialContent={initialContent}
               mode={mode}
               onCancel={this.handleCancel}
@@ -306,22 +306,22 @@ class DiscussionTopic extends Component {
 }
 
 DiscussionTopic.propTypes = {
+  afterSubmit: PropTypes.func,
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string,
   forceDisplayModal: PropTypes.bool,
   initialMode: PropTypes.oneOf(['compose', 'display']),
   meetingId: PropTypes.string.isRequired,
-  afterSubmit: PropTypes.func,
   onCancelCompose: PropTypes.func,
   resetDisplayOverride: PropTypes.func,
 };
 
 DiscussionTopic.defaultProps = {
+  afterSubmit: () => {},
   conversationId: null,
   forceDisplayModal: false,
   initialMode: 'display',
   onCancelCompose: () => {},
-  afterSubmit: () => {},
   resetDisplayOverride: () => {},
 };
 

@@ -52,7 +52,7 @@ const Author = styled.span(({ mode }) => ({
   opacity: mode === 'compose' ? 0.5 : 1,
 }));
 
-const EditorContent = styled(RovalEditor)({
+const ReplyEditor = styled(RovalEditor)({
   fontSize: '14px',
   lineHeight: '22px',
   fontWeight: 400,
@@ -168,7 +168,7 @@ class DiscussionTopicReply extends Component {
               )}
             </Details>
           </HeaderSection>
-          <EditorContent
+          <ReplyEditor
             initialContent={mode !== 'compose' ? body.payload : null}
             mode={mode}
             onCancel={this.handleCancel}

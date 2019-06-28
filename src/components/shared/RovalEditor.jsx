@@ -12,18 +12,27 @@ class RovalEditor extends Component {
   constructor(props) {
     super(props);
 
-    const { initialContent } = props;
-    const initialJSON = initialContent ? JSON.parse(initialContent) : initialValue;
+    const { initialContent, isPlainText } = props;
+    let content;
 
-    this.state = { content: Value.fromJSON(initialJSON) };
+    if (isPlainText && initialContent) {
+      content = Plain.deserialize(initialContent);
+    } else {
+      const initialJSON = initialContent ? JSON.parse(initialContent) : initialValue;
+      content = Value.fromJSON(initialJSON);
+    }
+
+    this.state = { content };
 
     this.editor = React.createRef();
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
     this.clearEditorContent = this.clearEditorContent.bind(this);
     this.isContentEmpty = this.isContentEmpty.bind(this);
+    this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
     this.pluginsForType = this.pluginsForType.bind(this);
     this.resetToInitialContent = this.resetToInitialContent.bind(this);
   }
@@ -76,6 +85,14 @@ class RovalEditor extends Component {
     if (keepOpen) this.editor.current.focus();
   }
 
+  handleSubmitOnBlur(event, editor, next) {
+    const { saveOnBlur } = this.props;
+    if (!saveOnBlur) return;
+
+    this.handleSubmit();
+    next();
+  }
+
   clearEditorContent() {
     this.setState({ content: Value.fromJSON(initialValue) });
   }
@@ -83,6 +100,11 @@ class RovalEditor extends Component {
   isContentEmpty() {
     const { content } = this.state;
     return !Plain.serialize(content);
+  }
+
+  isEditOrComposeMode() {
+    const { mode } = this.props;
+    ['compose', 'edit'].includes(mode);
   }
 
   pluginsForType() {
@@ -104,7 +126,8 @@ class RovalEditor extends Component {
     return (
       <div>
         <Editor
-          autoFocus={['compose', 'edit'].includes(mode)}
+          autoFocus={this.isEditOrComposeMode()}
+          onBlur={this.handleSubmitOnBlur}
           onChange={this.handleChangeContent}
           onKeyDown={this.handleKeyDown}
           readOnly={mode === 'display'}
@@ -113,7 +136,7 @@ class RovalEditor extends Component {
           value={content}
           {...props}
         />
-        {mode !== 'display' && (
+        {this.isEditOrComposeMode() && (
           <EditorActions
             isSubmitDisabled={this.isContentEmpty()}
             mode={mode}
@@ -129,9 +152,11 @@ class RovalEditor extends Component {
 
 RovalEditor.propTypes = {
   initialContent: PropTypes.string,
+  isPlainText: PropTypes.bool,
   mode: PropTypes.string,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
+  saveOnBlur: PropTypes.bool,
   source: PropTypes.oneOf([
     'meetingTitle',
     'meetingDetails',
@@ -143,9 +168,11 @@ RovalEditor.propTypes = {
 
 RovalEditor.defaultProps = {
   initialContent: null,
+  isPlainText: false,
   mode: null,
   onCancel: () => {},
   onSubmit: () => {},
+  saveOnBlur: false,
 };
 
 export default RovalEditor;

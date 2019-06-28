@@ -87,13 +87,14 @@ const EditorActions = ({ isSubmitDisabled, mode, onCancel, onSubmit, size }) => 
 
 EditorActions.propTypes = {
   isSubmitDisabled: PropTypes.bool.isRequired,
-  mode: PropTypes.oneOf(['compose', 'edit']).isRequired,
+  mode: PropTypes.string,
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   size: PropTypes.oneOf(['small', 'large']),
 };
 
 EditorActions.defaultProps = {
+  mode: null,
   size: 'small',
 };
 

@@ -56,7 +56,7 @@ const Author = styled.span({
   fontSize: '18px',
 });
 
-const EditorContent = styled(RovalEditor)({
+const TopicEditor = styled(RovalEditor)({
   fontSize: '16px',
   lineHeight: '25px',
   fontWeight: 400,
@@ -267,7 +267,7 @@ class DiscussionTopicModal extends Component {
               </Details>
             </AuthorSection>
           </Header>
-          <EditorContent
+          <TopicEditor
             initialContent={messages[0].body.payload}
             mode={mode}
             onCancel={this.toggleEditMode}
