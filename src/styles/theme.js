@@ -27,7 +27,7 @@ export const theme = {
   ].join(','),
 
   codeFontStack: [
-    'source-code-pro',
+    'Source Code Pro',
     'Menlo',
     'Monaco',
     'Consolas',
@@ -51,6 +51,7 @@ export const theme = {
     grey3: '#8798a4',
     grey4: '#c3c4c5',
     grey5: '#dadbdc',
+    grey6: '#f0f3f5',
 
     mainText: '#313f48',
 
@@ -61,6 +62,7 @@ export const theme = {
     buttonGrey: '#f1f1f1',
     bgGrey: '#fafbfc',
     borderGrey: '#e4e9ec',
+    codeBlockBorderGrey: '#dce1e4',
     formGrey: '#f8f9fa',
     formBorderGrey: '#c3cdd4',
     formPlaceholderGrey: '#c3c3c3',
@@ -68,6 +70,7 @@ export const theme = {
     titlePlaceholder: '#dbdddf',
     textPlaceholder: '#c9cfd4',
 
+    codeBlockRed: '#ec1e4a',
     errorRed: '#ca0b0b',
   },
 };

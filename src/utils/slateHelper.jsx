@@ -1,3 +1,4 @@
+import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
 import { isKeyHotkey } from 'is-hotkey';
 import { theme } from 'styles/theme';
@@ -27,7 +28,7 @@ export const hotkeys = {
   isBold: isKeyHotkey('mod+b'),
   isItalic: isKeyHotkey('mod+i'),
   isUnderlined: isKeyHotkey('mod+u'),
-  isCode: isKeyHotkey('mod+`'),
+  isCode: isKeyHotkey('mod+k'),
   isSubmit: isKeyHotkey('mod+Enter'),
   isSubmitAndKeepOpen: isKeyHotkey('shift+Enter'),
   isCancel: isKeyHotkey('Esc'),
@@ -71,4 +72,23 @@ export const plugins = {
       theme.colors.textPlaceholder,
     ),
   ],
+};
+
+/* ******************** */
+
+export const renderMark = (props, editor, next) => {
+  const { children, mark, attributes } = props;
+
+  switch (mark.type) {
+    case 'bold':
+      return <strong {...attributes}>{children}</strong>;
+    case 'code':
+      return <code {...attributes}>{children}</code>;
+    case 'italic':
+      return <em {...attributes}>{children}</em>;
+    case 'underlined':
+      return <u {...attributes}>{children}</u>;
+    default:
+      return next();
+  }
 };
