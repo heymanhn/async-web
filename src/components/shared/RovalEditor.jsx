@@ -1,10 +1,11 @@
+/* eslint react/sort-comp: 0 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Value } from 'slate';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
 
-import { hotkeys, initialValue, plugins, renderMark } from 'utils/slateHelper';
+import { hotkeys, defaultValue, plugins, renderBlock, renderMark } from 'utils/slateHelper';
 
 import EditorActions from './EditorActions';
 
@@ -12,29 +13,31 @@ class RovalEditor extends Component {
   constructor(props) {
     super(props);
 
-    const { initialContent, isPlainText } = props;
-    let content;
+    const { initialValue, isPlainText } = props;
+    let value;
 
-    if (isPlainText && initialContent) {
-      content = Plain.deserialize(initialContent);
+    if (isPlainText && initialValue) {
+      value = Plain.deserialize(initialValue);
     } else {
-      const initialJSON = initialContent ? JSON.parse(initialContent) : initialValue;
-      content = Value.fromJSON(initialJSON);
+      const initialJSON = initialValue ? JSON.parse(initialValue) : defaultValue;
+      value = Value.fromJSON(initialJSON);
     }
 
-    this.state = { content };
+    this.state = { value };
 
     this.editor = React.createRef();
     this.handleCancel = this.handleCancel.bind(this);
-    this.handleChangeContent = this.handleChangeContent.bind(this);
+    this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
-    this.clearEditorContent = this.clearEditorContent.bind(this);
-    this.isContentEmpty = this.isContentEmpty.bind(this);
+    this.clearEditorValue = this.clearEditorValue.bind(this);
+    this.hasBlock = this.hasBlock.bind(this);
+    this.isValueEmpty = this.isValueEmpty.bind(this);
     this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
     this.pluginsForType = this.pluginsForType.bind(this);
-    this.resetToInitialContent = this.resetToInitialContent.bind(this);
+    this.resetToInitialValue = this.resetToInitialValue.bind(this);
+    this.setBlock = this.setBlock.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -48,12 +51,12 @@ class RovalEditor extends Component {
   handleCancel({ saved = false } = {}) {
     const { mode, onCancel } = this.props;
 
-    if (mode === 'edit' && !saved) this.resetToInitialContent();
+    if (mode === 'edit' && !saved) this.resetToInitialValue();
     onCancel();
   }
 
-  handleChangeContent({ value }) {
-    this.setState({ content: value });
+  handleChangeValue({ value }) {
+    this.setState({ value });
   }
 
   handleKeyDown(event, editor, next) {
@@ -65,6 +68,13 @@ class RovalEditor extends Component {
     }
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
     if (hotkeys.isCancel(event)) return this.handleCancel();
+
+    // Blocks
+    if (hotkeys.isLargeFont(event)) return this.setBlock('heading-one');
+    if (hotkeys.isMediumFont(event)) return this.setBlock('heading-two');
+    if (hotkeys.isSmallFont(event)) return this.setBlock('heading-three');
+    if (hotkeys.isBulletedList(event)) return this.setBlock('bulleted-list');
+    if (hotkeys.isNumberedList(event)) return this.setBlock('numbered-list');
 
     // Marks
     let mark;
@@ -88,16 +98,16 @@ class RovalEditor extends Component {
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
   // Parent components give us a method to perform the mutation; we give them the data to persist.
   async handleSubmit({ keepOpen = false } = {}) {
-    const { content } = this.state;
+    const { value } = this.state;
     const { mode, onSubmit } = this.props;
-    if (this.isContentEmpty()) return;
+    if (this.isValueEmpty()) return;
 
-    const text = Plain.serialize(content);
-    const payload = JSON.stringify(content.toJSON());
+    const text = Plain.serialize(value);
+    const payload = JSON.stringify(value.toJSON());
 
     await onSubmit({ text, payload });
 
-    if (mode === 'compose') this.clearEditorContent();
+    if (mode === 'compose') this.clearEditorValue();
     if (mode === 'edit' || !keepOpen) this.handleCancel({ saved: true });
     if (keepOpen) this.editor.current.focus();
   }
@@ -109,13 +119,18 @@ class RovalEditor extends Component {
     if (saveOnBlur) this.handleSubmit();
   }
 
-  clearEditorContent() {
-    this.setState({ content: Value.fromJSON(initialValue) });
+  clearEditorValue() {
+    this.setState({ value: Value.fromJSON(defaultValue) });
   }
 
-  isContentEmpty() {
-    const { content } = this.state;
-    return !Plain.serialize(content);
+  hasBlock(type) {
+    const { value } = this.state;
+    return value.blocks.some(node => node.type === type);
+  }
+
+  isValueEmpty() {
+    const { value } = this.state;
+    return !Plain.serialize(value);
   }
 
   isEditOrComposeMode() {
@@ -128,15 +143,60 @@ class RovalEditor extends Component {
     return plugins[source];
   }
 
-  resetToInitialContent() {
-    const { initialContent } = this.props;
-    if (!initialContent) return;
+  resetToInitialValue() {
+    const { initialValue } = this.props;
+    if (!initialValue) return;
 
-    this.setState({ content: Value.fromJSON(JSON.parse(initialContent)) });
+    this.setState({ value: Value.fromJSON(JSON.parse(initialValue)) });
+  }
+
+  /* Inspired by @ianstormtaylor's slateJS example code:
+   * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
+   */
+  setBlock(type) {
+    const { editor } = this;
+    const { value } = editor;
+    const { document } = value;
+
+    // Handle everything but list buttons.
+    if (type !== 'bulleted-list' && type !== 'numbered-list') {
+      const isActive = this.hasBlock(type);
+      const isList = this.hasBlock('list-item')
+
+      if (isList) {
+        editor
+          .setBlocks(isActive ? DEFAULT_NODE : type)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list')
+      } else {
+        editor.setBlocks(isActive ? DEFAULT_NODE : type)
+      }
+    } else {
+      // Handle the extra wrapping required for list buttons.
+      const isList = this.hasBlock('list-item')
+      const isType = value.blocks.some(block => {
+        return !!document.getClosest(block.key, parent => parent.type === type)
+      })
+
+      if (isList && isType) {
+        editor
+          .setBlocks(DEFAULT_NODE)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list')
+      } else if (isList) {
+        editor
+          .unwrapBlock(
+            type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list'
+          )
+          .wrapBlock(type)
+      } else {
+        editor.setBlocks('list-item').wrapBlock(type)
+      }
+    }
   }
 
   render() {
-    const { content } = this.state;
+    const { value } = this.state;
     const { mode, source, ...props } = this.props;
 
     return (
@@ -144,18 +204,19 @@ class RovalEditor extends Component {
         <Editor
           autoFocus={this.isEditOrComposeMode()}
           onBlur={this.handleSubmitOnBlur}
-          onChange={this.handleChangeContent}
+          onChange={this.handleChangeValue}
           onKeyDown={this.handleKeyDown}
           plugins={this.pluginsForType()}
           readOnly={mode === 'display'}
           ref={this.editor}
+          renderBlock={renderBlock}
           renderMark={renderMark}
-          value={content}
+          value={value}
           {...props}
         />
         {this.isEditOrComposeMode() && (
           <EditorActions
-            isSubmitDisabled={this.isContentEmpty()}
+            isSubmitDisabled={this.isValueEmpty()}
             mode={mode}
             onCancel={this.handleCancel}
             onSubmit={this.handleSubmit}
@@ -168,7 +229,7 @@ class RovalEditor extends Component {
 }
 
 RovalEditor.propTypes = {
-  initialContent: PropTypes.string,
+  initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
   mode: PropTypes.string,
   onCancel: PropTypes.func,
@@ -184,7 +245,7 @@ RovalEditor.propTypes = {
 };
 
 RovalEditor.defaultProps = {
-  initialContent: null,
+  initialValue: null,
   isPlainText: false,
   mode: null,
   onCancel: () => {},
