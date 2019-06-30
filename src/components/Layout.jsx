@@ -22,9 +22,10 @@ const Content = styled.div({
 });
 
 const Footer = styled.footer(({ theme: { colors, mq } }) => ({
+  background: colors.bgGrey,
   color: colors.formPlaceholderGrey,
   fontSize: '14px',
-  margin: '30px',
+  padding: '30px',
 
   display: 'flex',
   flexDirection: 'column',
@@ -36,12 +37,7 @@ const Footer = styled.footer(({ theme: { colors, mq } }) => ({
   },
 }));
 
-const Copyright = styled.div(({ theme: { colors, mq } }) => ({
-  [mq('tabletUp')]: {
-    borderRight: `1px solid ${colors.borderGrey}`,
-    paddingRight: '20px',
-  },
-}));
+const Copyright = styled.div({});
 
 class Layout extends Component {
   constructor(props) {

@@ -22,8 +22,11 @@ const MetadataSection = styled.div(({ theme: { colors, maxViewport } }) => ({
   padding: '40px 20px',
 }));
 
-const DiscussionSection = styled.div(({ theme: { colors, maxViewport } }) => ({
+const DiscussionSection = styled.div(({ theme: { colors } }) => ({
   background: colors.bgGrey,
+}));
+
+const InnerContainer = styled.div(({ theme: { maxViewport } }) => ({
   margin: '0px auto',
   maxWidth: maxViewport,
   padding: '30px 20px',
@@ -205,26 +208,28 @@ class Meeting extends Component {
                 </MetadataSection>
               </MetadataContainer>
               <DiscussionSection>
-                {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
-                {conversationIds.map(conversationId => (
-                  <DiscussionTopic
-                    afterSubmit={() => refetch()}
-                    conversationId={conversationId}
-                    forceDisplayModal={cid === conversationId && !isModalInitiallyDisplayed}
-                    initialMode="display"
-                    key={conversationId}
-                    meetingId={id}
-                    resetDisplayOverride={this.resetDisplayOverride}
-                  />
-                ))}
-                {!isComposingTopic ? addDiscussionButton : (
-                  <DiscussionTopic
-                    afterSubmit={() => refetch()}
-                    initialMode="compose"
-                    meetingId={id}
-                    onCancelCompose={this.toggleComposeMode}
-                  />
-                )}
+                <InnerContainer>
+                  {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
+                  {conversationIds.map(conversationId => (
+                    <DiscussionTopic
+                      afterSubmit={() => refetch()}
+                      conversationId={conversationId}
+                      forceDisplayModal={cid === conversationId && !isModalInitiallyDisplayed}
+                      initialMode="display"
+                      key={conversationId}
+                      meetingId={id}
+                      resetDisplayOverride={this.resetDisplayOverride}
+                    />
+                  ))}
+                  {!isComposingTopic ? addDiscussionButton : (
+                    <DiscussionTopic
+                      afterSubmit={() => refetch()}
+                      initialMode="compose"
+                      meetingId={id}
+                      onCancelCompose={this.toggleComposeMode}
+                    />
+                  )}
+                </InnerContainer>
               </DiscussionSection>
             </React.Fragment>
           );
