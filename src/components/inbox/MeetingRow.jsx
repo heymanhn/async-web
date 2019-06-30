@@ -33,6 +33,7 @@ const Container = styled.div(({ hover, theme: { colors } }) => ({
 
   borderLeft: hover ? `8px solid ${colors.hoverBlue}` : 'none',
   padding: '20px 20px 24px',
+  paddingLeft: hover ? '12px' : '20px',
   width: '100%',
 }));
 
