@@ -19,7 +19,7 @@ const MetadataSection = styled.div(({ theme: { colors, maxViewport } }) => ({
   background: colors.white,
   margin: '0px auto',
   maxWidth: maxViewport,
-  padding: '50px 20px',
+  padding: '40px 20px',
 }));
 
 const DiscussionSection = styled.div(({ theme: { colors, maxViewport } }) => ({
