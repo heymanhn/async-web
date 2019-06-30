@@ -26,14 +26,15 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   },
 }));
 
-const Container = styled.div({
+const Container = styled.div(({ hover, theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
 
+  borderLeft: hover ? `8px solid ${colors.hoverBlue}` : 'none',
   padding: '20px 20px 24px',
   width: '100%',
-});
+}));
 
 const MeetingDetails = styled.div({});
 
@@ -65,7 +66,7 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const MeetingRow = ({ conversationCount, hover, meeting }) => {
+const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
   const { createdAt, deadline, id, lastMessage, participants, title } = meeting;
 
   const sortedParticipants = participants; // TO-DO
@@ -97,7 +98,7 @@ const MeetingRow = ({ conversationCount, hover, meeting }) => {
 
   return (
     <StyledLink to={`/meetings/${id}`}>
-      <Container>
+      <Container hover={hover} {...props}>
         <MeetingDetails>
           <Title hover={hover}>{title || 'Untitled Meeting'}</Title>
           <AdditionalInfo>
