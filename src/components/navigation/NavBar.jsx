@@ -1,5 +1,6 @@
 import React from 'react';
 import { Query } from 'react-apollo';
+import { Link } from '@reach/router';
 import styled from '@emotion/styled';
 
 import logo from 'images/logo.png';
@@ -96,11 +97,13 @@ const NavBar = () => (
       <NavigationBar>
         <Container>
           <div>
-            <LogoImage
-              src={logo}
-              alt="Roval logo"
-              title="Roval"
-            />
+            <Link to="/inbox">
+              <LogoImage
+                src={logo}
+                alt="Roval logo"
+                title="Roval"
+              />
+            </Link>
             <LogoTitle>Roval</LogoTitle>
             {data.saveStatus === 'success' && <SavedIndicator>Saved!</SavedIndicator>}
             {data.saveStatus === 'error' && <ErrorIndicator>Failed to save</ErrorIndicator>}

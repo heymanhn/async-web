@@ -18,6 +18,7 @@ import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
 import Auth from 'components/Auth';
 import PrivateRoute from 'components/PrivateRoute';
+import Inbox from 'components/inbox/Inbox';
 import Meeting from 'components/meeting/Meeting';
 
 const restLink = new RestLink({
@@ -70,6 +71,7 @@ const App = () => (
       {/* Temporary login route */}
       <Auth path="/login" />
 
+      <PrivateRoute path="/inbox" component={Inbox} />
       <PrivateRoute path="/meetings/:id" component={Meeting} />
       <PrivateRoute path="/meetings/:id/conversations/:cid" component={Meeting} />
 

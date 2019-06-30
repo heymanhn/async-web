@@ -14,7 +14,6 @@ const GlobalStyles = ({ theme: { colors, fontStack, codeFontStack, mq } }) => (
         MozOsxFontSmoothing: 'grayscale',
       },
       'html, body': {
-        background: colors.bgGrey,
         color: colors.mainText,
         fontWeight: 400,
         margin: 0,
