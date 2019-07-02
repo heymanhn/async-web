@@ -91,9 +91,9 @@ const markdownPlugins = [
     change: change => change.setBlocks('list-item').wrapBlock('numbered-list'),
   }),
   AutoReplace({
-    trigger: 'space',
-    before: /^(---)$/,
-    change: change => change.setBlocks('section-break').insertBlock('paragraph'),
+    trigger: '-',
+    before: /^(--)$/,
+    change: change => change.setBlocks('section-break'),
   }),
   AutoReplace({
     trigger: 'space',
@@ -167,7 +167,12 @@ export const renderBlock = (props, editor, next) => {
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
     case 'section-break':
-      return <hr {...attributes} />;
+      return (
+        <React.Fragment>
+          <hr {...attributes} />
+          {children}
+        </React.Fragment>
+      );
     default:
       return next();
   }
