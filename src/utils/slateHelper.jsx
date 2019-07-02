@@ -1,6 +1,8 @@
 import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
+import AutoReplace from 'slate-auto-replace';
 import PasteLinkify from 'slate-paste-linkify';
+import SoftBreak from 'slate-soft-break';
 import { isHotkey } from 'is-hotkey';
 import { theme } from 'styles/theme';
 
@@ -72,30 +74,64 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
   },
 });
 
+const markdownPlugins = [
+  AutoReplace({
+    trigger: 'space',
+    before: /^(>)$/,
+    change: change => change.setBlocks('block-quote'),
+  }),
+  AutoReplace({
+    trigger: 'space',
+    before: /^(-)$/,
+    change: change => change.setBlocks('list-item').wrapBlock('bulleted-list'),
+  }),
+  AutoReplace({
+    trigger: 'space',
+    before: /^(1.)$/,
+    change: change => change.setBlocks('list-item').wrapBlock('numbered-list'),
+  }),
+  AutoReplace({
+    trigger: 'space',
+    before: /^(---)$/,
+    change: change => change.setBlocks('section-break').insertBlock('paragraph'),
+  }),
+  AutoReplace({
+    trigger: 'space',
+    before: /(--)$/,
+    change: change => change.insertText('— '),
+  }),
+];
+
 export const plugins = {
   meetingTitle: [
     createPlaceholderPlugin('Untitled Meeting', theme.colors.titlePlaceholder),
   ],
   meetingDetails: [
     PasteLinkify(),
+    SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Share details to get everyone up to speed',
       theme.colors.textPlaceholder,
     ),
+    ...markdownPlugins,
   ],
   discussionTopic: [
     PasteLinkify(),
+    SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Share your perspective. Shift + Enter to add another topic',
       theme.colors.textPlaceholder,
     ),
+    ...markdownPlugins,
   ],
   discussionTopicReply: [
     PasteLinkify(),
+    SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Express your thoughts. Take your time',
       theme.colors.textPlaceholder,
     ),
+    ...markdownPlugins,
   ],
 };
 
@@ -130,6 +166,8 @@ export const renderBlock = (props, editor, next) => {
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
+    case 'section-break':
+      return <hr {...attributes} />;
     default:
       return next();
   }
