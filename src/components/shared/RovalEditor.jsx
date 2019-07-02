@@ -14,6 +14,7 @@ import {
   queries,
   renderBlock,
   renderMark,
+  renderInline,
 } from 'utils/slateHelper';
 
 import EditorActions from './EditorActions';
@@ -253,6 +254,7 @@ class RovalEditor extends Component {
           readOnly={mode === 'display'}
           ref={this.editor}
           renderBlock={renderBlock}
+          renderInline={renderInline}
           renderMark={renderMark}
           value={value}
           {...props}
@@ -282,7 +284,6 @@ RovalEditor.propTypes = {
     'meetingTitle',
     'meetingDetails',
     'discussionTopic',
-    'discussionTopicModal',
     'discussionTopicReply',
   ]).isRequired,
 };

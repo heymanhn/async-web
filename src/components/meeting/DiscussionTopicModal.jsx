@@ -296,7 +296,7 @@ class DiscussionTopicModal extends Component {
             mode={mode}
             onCancel={this.toggleEditMode}
             onSubmit={this.handleSubmit}
-            source="discussionTopicModal"
+            source="discussionTopic"
           />
         </TopicSection>
         {messages.length > 1 && (
