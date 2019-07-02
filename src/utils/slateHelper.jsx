@@ -95,6 +95,11 @@ const markdownPlugins = [
     before: /^(---)$/,
     change: change => change.setBlocks('section-break').insertBlock('paragraph'),
   }),
+  AutoReplace({
+    trigger: 'space',
+    before: /(--)$/,
+    change: change => change.insertText('— '),
+  }),
 ];
 
 export const plugins = {
