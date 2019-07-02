@@ -1,5 +1,6 @@
 import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
+import AutoReplace from 'slate-auto-replace';
 import PasteLinkify from 'slate-paste-linkify';
 import { isHotkey } from 'is-hotkey';
 import { theme } from 'styles/theme';
@@ -72,6 +73,24 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
   },
 });
 
+const markdownPlugins = [
+  AutoReplace({
+    trigger: 'space',
+    before: /^(>)$/,
+    change: change => change.setBlocks('block-quote'),
+  }),
+  AutoReplace({
+    trigger: 'space',
+    before: /^(-)$/,
+    change: change => change.setBlocks('list-item').wrapBlock('bulleted-list'),
+  }),
+  AutoReplace({
+    trigger: 'space',
+    before: /^(1.)$/,
+    change: change => change.setBlocks('list-item').wrapBlock('numbered-list'),
+  }),
+];
+
 export const plugins = {
   meetingTitle: [
     createPlaceholderPlugin('Untitled Meeting', theme.colors.titlePlaceholder),
@@ -82,6 +101,7 @@ export const plugins = {
       'Share details to get everyone up to speed',
       theme.colors.textPlaceholder,
     ),
+    ...markdownPlugins,
   ],
   discussionTopic: [
     PasteLinkify(),
@@ -89,6 +109,7 @@ export const plugins = {
       'Share your perspective. Shift + Enter to add another topic',
       theme.colors.textPlaceholder,
     ),
+    ...markdownPlugins,
   ],
   discussionTopicReply: [
     PasteLinkify(),
@@ -96,6 +117,7 @@ export const plugins = {
       'Express your thoughts. Take your time',
       theme.colors.textPlaceholder,
     ),
+    ...markdownPlugins,
   ],
 };
 

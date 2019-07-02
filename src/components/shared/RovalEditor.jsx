@@ -22,15 +22,20 @@ import EditorActions from './EditorActions';
 const DEFAULT_NODE = 'paragraph';
 
 // Default styles for Roval editor UIs
-const StyledEditor = styled(Editor)({
-  'dl, ul, ol': {
+const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
+  'dl, ul, ol, blockquote': {
     marginTop: '1em',
     marginBottom: '1em',
   },
   li: {
     marginTop: '3px',
   },
-});
+  blockquote: {
+    borderLeft: `5px solid ${colors.borderGrey}`,
+    color: colors.grey2,
+    padding: '7px 12px',
+  },
+}));
 
 class RovalEditor extends Component {
   constructor(props) {
@@ -91,13 +96,18 @@ class RovalEditor extends Component {
   handleEnterActions(next) {
     const editor = this.editor.current;
     const { value } = editor;
-
     const { anchorBlock } = value;
+
     if (anchorBlock.type === 'list-item' && !anchorBlock.text) {
       return editor
         .setBlocks(DEFAULT_NODE)
         .unwrapBlock('bulleted-list')
         .unwrapBlock('numbered-list');
+    }
+
+    if (anchorBlock.type === 'block-quote') {
+      next();
+      return editor.setBlocks(DEFAULT_NODE);
     }
 
     return next();
