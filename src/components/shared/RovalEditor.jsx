@@ -111,7 +111,7 @@ class RovalEditor extends Component {
         .unwrapBlock('numbered-list');
     }
 
-    if (anchorBlock.type === 'block-quote') {
+    if (anchorBlock.type !== 'paragraph') {
       next();
       return editor.setBlocks(DEFAULT_NODE);
     }
