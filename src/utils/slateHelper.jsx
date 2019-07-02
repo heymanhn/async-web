@@ -2,6 +2,7 @@ import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
 import AutoReplace from 'slate-auto-replace';
 import PasteLinkify from 'slate-paste-linkify';
+import SoftBreak from 'slate-soft-break';
 import { isHotkey } from 'is-hotkey';
 import { theme } from 'styles/theme';
 
@@ -97,6 +98,7 @@ export const plugins = {
   ],
   meetingDetails: [
     PasteLinkify(),
+    SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Share details to get everyone up to speed',
       theme.colors.textPlaceholder,
@@ -105,6 +107,7 @@ export const plugins = {
   ],
   discussionTopic: [
     PasteLinkify(),
+    SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Share your perspective. Shift + Enter to add another topic',
       theme.colors.textPlaceholder,
@@ -113,6 +116,7 @@ export const plugins = {
   ],
   discussionTopicReply: [
     PasteLinkify(),
+    SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Express your thoughts. Take your time',
       theme.colors.textPlaceholder,
