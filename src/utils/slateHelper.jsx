@@ -90,6 +90,11 @@ const markdownPlugins = [
     before: /^(1.)$/,
     change: change => change.setBlocks('list-item').wrapBlock('numbered-list'),
   }),
+  AutoReplace({
+    trigger: 'space',
+    before: /^(---)$/,
+    change: change => change.setBlocks('section-break').insertBlock('paragraph'),
+  }),
 ];
 
 export const plugins = {
@@ -156,6 +161,8 @@ export const renderBlock = (props, editor, next) => {
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
+    case 'section-break':
+      return <hr {...attributes} />;
     default:
       return next();
   }

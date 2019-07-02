@@ -35,6 +35,12 @@ const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
     color: colors.grey2,
     padding: '7px 12px',
   },
+  hr: {
+    borderRadius: '20px',
+    borderTop: `2px solid ${colors.borderGrey}`,
+    margin: '2em auto',
+    width: '120px',
+  },
 }));
 
 class RovalEditor extends Component {
