@@ -6,7 +6,16 @@ import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
 import styled from '@emotion/styled';
 
-import { hotkeys, defaultValue, plugins, renderBlock, renderMark } from 'utils/slateHelper';
+import {
+  commands,
+  defaultValue,
+  hotkeys,
+  plugins,
+  queries,
+  renderBlock,
+  renderMark,
+  renderInline,
+} from 'utils/slateHelper';
 
 import EditorActions from './EditorActions';
 
@@ -236,13 +245,16 @@ class RovalEditor extends Component {
       <div>
         <StyledEditor
           autoFocus={this.isEditOrComposeMode()}
+          commands={commands}
           onBlur={this.handleSubmitOnBlur}
           onChange={this.handleChangeValue}
           onKeyDown={this.handleKeyDown}
           plugins={this.pluginsForType()}
+          queries={queries}
           readOnly={mode === 'display'}
           ref={this.editor}
           renderBlock={renderBlock}
+          renderInline={renderInline}
           renderMark={renderMark}
           value={value}
           {...props}
@@ -272,7 +284,6 @@ RovalEditor.propTypes = {
     'meetingTitle',
     'meetingDetails',
     'discussionTopic',
-    'discussionTopicModal',
     'discussionTopicReply',
   ]).isRequired,
 };

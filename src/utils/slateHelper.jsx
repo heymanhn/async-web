@@ -1,5 +1,6 @@
 import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
+import PasteLinkify from 'slate-paste-linkify';
 import { isHotkey } from 'is-hotkey';
 import { theme } from 'styles/theme';
 
@@ -47,7 +48,21 @@ export const hotkeys = {
 
 /* ******************** */
 
-const queries = { isEmpty: editor => editor.value.document.text === '' };
+export const commands = {
+  wrapLink: (editor, url) => {
+    editor.wrapInline({ type: 'link', data: { url } });
+  },
+  unwrapLink(editor) {
+    editor.unwrapInline('link');
+  },
+};
+
+export const queries = {
+  isEmpty: editor => editor.value.document.text === '',
+  isLinkActive: (editor, value) => value.inlines.some(i => i.type === 'link'),
+};
+
+/* ******************** */
 
 const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
   placeholder: text,
@@ -59,25 +74,24 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
 
 export const plugins = {
   meetingTitle: [
-    { queries },
     createPlaceholderPlugin('Untitled Meeting', theme.colors.titlePlaceholder),
   ],
   meetingDetails: [
-    { queries },
+    PasteLinkify(),
     createPlaceholderPlugin(
       'Share details to get everyone up to speed',
       theme.colors.textPlaceholder,
     ),
   ],
   discussionTopic: [
-    { queries },
+    PasteLinkify(),
     createPlaceholderPlugin(
       'Share your perspective. Shift + Enter to add another topic',
       theme.colors.textPlaceholder,
     ),
   ],
   discussionTopicReply: [
-    { queries },
+    PasteLinkify(),
     createPlaceholderPlugin(
       'Express your thoughts. Take your time',
       theme.colors.textPlaceholder,
@@ -85,24 +99,7 @@ export const plugins = {
   ],
 };
 
-/* Methods for determining how to render marks and blocks in the editor  */
-
-export const renderMark = (props, editor, next) => {
-  const { attributes, children, mark } = props;
-
-  switch (mark.type) {
-    case 'bold':
-      return <strong {...attributes}>{children}</strong>;
-    case 'code':
-      return <code {...attributes}>{children}</code>;
-    case 'italic':
-      return <em {...attributes}>{children}</em>;
-    case 'underlined':
-      return <u {...attributes}>{children}</u>;
-    default:
-      return next();
-  }
-};
+/* Methods for determining how to render elements in the editor  */
 
 export const renderBlock = (props, editor, next) => {
   const { attributes, children, node } = props;
@@ -118,10 +115,59 @@ export const renderBlock = (props, editor, next) => {
       return <h2 {...attributes}>{children}</h2>;
     case 'heading-three':
       return <h3 {...attributes}>{children}</h3>;
+    case 'link':
+      return (
+        <a
+          {...attributes}
+          href={node.data.get('url')}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {children}
+        </a>
+      );
     case 'list-item':
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
+    default:
+      return next();
+  }
+};
+
+export const renderInline = (props, editor, next) => {
+  const { node, attributes, children } = props;
+
+  switch (node.type) {
+    case 'link':
+      return (
+        <a
+          {...attributes}
+          href={node.data.get('url')}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {children}
+        </a>
+      );
+    default:
+      return next();
+  }
+};
+
+
+export const renderMark = (props, editor, next) => {
+  const { attributes, children, mark } = props;
+
+  switch (mark.type) {
+    case 'bold':
+      return <strong {...attributes}>{children}</strong>;
+    case 'code':
+      return <code {...attributes}>{children}</code>;
+    case 'italic':
+      return <em {...attributes}>{children}</em>;
+    case 'underlined':
+      return <u {...attributes}>{children}</u>;
     default:
       return next();
   }
