@@ -27,6 +27,16 @@ export const defaultValue = {
 
 /* ******************** */
 
+export const schema = {
+  blocks: {
+    'section-break': {
+      isVoid: true, // Needed so that we don't need to pass children to section breaks
+    },
+  },
+};
+
+/* ******************** */
+
 export const hotkeys = {
   // Marks
   isBold: isHotkey('mod+b'),
@@ -167,12 +177,7 @@ export const renderBlock = (props, editor, next) => {
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
     case 'section-break':
-      return (
-        <React.Fragment>
-          <hr {...attributes} />
-          {children}
-        </React.Fragment>
-      );
+      return <hr {...attributes} />;
     default:
       return next();
   }
