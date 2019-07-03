@@ -3,12 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBold,
   faCode,
-  faHeading,
   faItalic,
   faListUl,
   faQuoteRight,
 } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
+
+import CustomHeadingIcon from './CustomHeadingIcon';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -46,7 +47,8 @@ const EditorToolbar = () => (
     <StyledIcon icon={faItalic} />
     <VerticalDivider />
 
-    <StyledIcon icon={faHeading} />
+    <CustomHeadingIcon number={1} />
+    <CustomHeadingIcon number={2} />
     <StyledIcon icon={faListUl} />
     <VerticalDivider />
 
