@@ -78,13 +78,11 @@ class RovalEditor extends Component {
     this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
     this.calculateToolbarPosition = this.calculateToolbarPosition.bind(this);
     this.clearEditorValue = this.clearEditorValue.bind(this);
-    this.hasBlock = this.hasBlock.bind(this);
     this.isValueEmpty = this.isValueEmpty.bind(this);
     this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
     this.pluginsForType = this.pluginsForType.bind(this);
     this.renderEditor = this.renderEditor.bind(this);
     this.resetToInitialValue = this.resetToInitialValue.bind(this);
-    this.setBlock = this.setBlock.bind(this);
     this.updateToolbar = this.updateToolbar.bind(this);
   }
 
@@ -169,11 +167,11 @@ class RovalEditor extends Component {
     if (hotkeys.isBackspace(event)) return this.handleBackspaceActions(next);
 
     // Blocks
-    if (hotkeys.isLargeFont(event)) return this.setBlock('heading-one');
-    if (hotkeys.isMediumFont(event)) return this.setBlock('heading-two');
-    if (hotkeys.isSmallFont(event)) return this.setBlock('heading-three');
-    if (hotkeys.isBulletedList(event)) return this.setBlock('bulleted-list');
-    if (hotkeys.isNumberedList(event)) return this.setBlock('numbered-list');
+    if (hotkeys.isLargeFont(event)) return editor.setBlock('heading-one');
+    if (hotkeys.isMediumFont(event)) return editor.setBlock('heading-two');
+    if (hotkeys.isSmallFont(event)) return editor.setBlock('heading-three');
+    if (hotkeys.isBulletedList(event)) return editor.setBlock('bulleted-list');
+    if (hotkeys.isNumberedList(event)) return editor.setBlock('numbered-list');
 
     // Marks
     let mark;
@@ -242,10 +240,7 @@ class RovalEditor extends Component {
     this.setState({ value: Value.fromJSON(defaultValue) });
   }
 
-  hasBlock(type) {
-    const { value } = this.state;
-    return value.blocks.some(node => node.type === type);
-  }
+
 
   isValueEmpty() {
     const { value } = this.state;
@@ -283,48 +278,6 @@ class RovalEditor extends Component {
     if (!initialValue) return;
 
     this.setState({ value: Value.fromJSON(JSON.parse(initialValue)) });
-  }
-
-  /* Borrowed from @ianstormtaylor's slateJS example code:
-   * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
-   */
-  setBlock(type) {
-    const editor = this.editor.current;
-    const { value } = editor;
-    const { document } = value;
-
-    // Handle everything but list buttons.
-    const isList = this.hasBlock('list-item');
-    if (type !== 'bulleted-list' && type !== 'numbered-list') {
-      const isActive = this.hasBlock(type);
-
-      if (isList) {
-        editor
-          .setBlocks(isActive ? DEFAULT_NODE : type)
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list');
-      } else {
-        editor.setBlocks(isActive ? DEFAULT_NODE : type);
-      }
-    } else {
-      // Handle the extra wrapping required for lists
-      const isType = value.blocks.some(block => (
-        !!document.getClosest(block.key, parent => parent.type === type)
-      ));
-
-      if (isList && isType) {
-        editor
-          .setBlocks(DEFAULT_NODE)
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list');
-      } else if (isList) {
-        editor
-          .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
-          .wrapBlock(type);
-      } else {
-        editor.setBlocks('list-item').wrapBlock(type);
-      }
-    }
   }
 
   updateToolbar() {

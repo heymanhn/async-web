@@ -70,9 +70,51 @@ export const commands = {
   unwrapLink: (editor) => {
     editor.unwrapInline('link');
   },
+
+  /* Borrowed from @ianstormtaylor's slateJS example code:
+   * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
+   */
+  setBlock: (editor, type) => {
+    const { value } = editor;
+    const { document } = value;
+
+    // Handle everything but list buttons.
+    const isList = editor.hasBlock('list-item');
+    if (type !== 'bulleted-list' && type !== 'numbered-list') {
+      const isActive = editor.hasBlock(type);
+
+      if (isList) {
+        editor
+          .setBlocks(isActive ? DEFAULT_NODE : type)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list');
+      } else {
+        editor.setBlocks(isActive ? DEFAULT_NODE : type);
+      }
+    } else {
+      // Handle the extra wrapping required for lists
+      const isType = value.blocks.some(block => (
+        !!document.getClosest(block.key, parent => parent.type === type)
+      ));
+
+      if (isList && isType) {
+        editor
+          .setBlocks(DEFAULT_NODE)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list');
+      } else if (isList) {
+        editor
+          .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
+          .wrapBlock(type);
+      } else {
+        editor.setBlocks('list-item').wrapBlock(type);
+      }
+    }
+  },
 };
 
 export const queries = {
+  hasBlock: (editor, type) => editor.value.blocks.some(node => node.type === type),
   isEmpty: editor => editor.value.document.text === '',
   isEmptyParagraph: (editor) => {
     const { anchorBlock } = editor.value;
@@ -110,7 +152,7 @@ const markdownPlugins = [
   AutoReplace({
     trigger: '-',
     before: /^(--)$/,
-    change: change => change.setBlocks('section-break'),
+    change: change => change.setBlocks('section-break').insertBlock(DEFAULT_NODE),
   }),
   AutoReplace({
     trigger: 'space',
