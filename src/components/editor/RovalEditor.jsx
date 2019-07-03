@@ -131,7 +131,7 @@ class RovalEditor extends Component {
         .unwrapBlock('numbered-list');
     }
 
-    if (anchorBlock.type !== 'paragraph') {
+    if (anchorBlock.type !== 'paragraph' && !anchorBlock.text) {
       next();
       return editor.setBlocks(DEFAULT_NODE);
     }
