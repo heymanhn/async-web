@@ -58,14 +58,20 @@ class RovalEditor extends Component {
       value = Value.fromJSON(initialJSON);
     }
 
-    this.state = { value, isToolbarVisible: false };
+    this.state = {
+      isClicked: false,
+      isToolbarVisible: false,
+      value,
+    };
 
     this.editor = React.createRef();
     this.toolbar = React.createRef();
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.handleEnterActions = this.handleEnterActions.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
     this.calculateToolbarPosition = this.calculateToolbarPosition.bind(this);
@@ -102,6 +108,10 @@ class RovalEditor extends Component {
 
   handleChangeValue({ value }) {
     this.setState({ value });
+  }
+
+  handleClick() {
+    this.setState({ isClicked: true });
   }
 
   /*
@@ -164,6 +174,10 @@ class RovalEditor extends Component {
 
     event.preventDefault();
     return editor.toggleMark(mark);
+  }
+
+  handleMouseDown() {
+    this.setState({ isClicked: false, isToolbarVisible: false });
   }
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
@@ -296,8 +310,10 @@ class RovalEditor extends Component {
   }
 
   updateToolbar() {
-    const { isToolbarVisible, value } = this.state;
+    const { isClicked, isToolbarVisible, value } = this.state;
     const { fragment, selection } = value;
+
+    if (!isClicked) return;
 
     if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
       if (isToolbarVisible) this.setState({ isToolbarVisible: false });
@@ -318,7 +334,9 @@ class RovalEditor extends Component {
           commands={commands}
           onBlur={this.handleSubmitOnBlur}
           onChange={this.handleChangeValue}
+          onClick={this.handleClick}
           onKeyDown={this.handleKeyDown}
+          onMouseDown={this.handleMouseDown}
           plugins={this.pluginsForType()}
           queries={queries}
           readOnly={mode === 'display'}
