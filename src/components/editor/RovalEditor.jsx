@@ -18,7 +18,7 @@ import {
 } from 'utils/slateHelper';
 
 import EditorActions from './EditorActions';
-import EditorToolbar from './EditorToolbar';
+import Toolbar from './toolbar/Toolbar';
 
 const DEFAULT_NODE = 'paragraph';
 
@@ -250,7 +250,7 @@ class RovalEditor extends Component {
     return (
       <React.Fragment>
         {children}
-        <EditorToolbar
+        <Toolbar
           ref={this.toolbar}
           coords={this.calculateToolbarPosition()}
           editor={editor}

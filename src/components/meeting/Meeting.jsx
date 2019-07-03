@@ -7,7 +7,7 @@ import withPageTracking from 'utils/withPageTracking';
 import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
-import RovalEditor from 'components/shared/RovalEditor';
+import RovalEditor from 'components/editor/RovalEditor';
 import MeetingInfo from './MeetingInfo';
 import DiscussionTopic from './DiscussionTopic';
 

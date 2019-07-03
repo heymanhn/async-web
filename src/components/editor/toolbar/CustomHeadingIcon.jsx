@@ -4,11 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeading } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ enabled, number, theme: { colors } }) => ({
+const Container = styled.div(({ isactive, number, theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
 
-  color: enabled ? colors.selectedValueBlue : colors.bgGrey,
+  color: isactive ? colors.selectedValueBlue : colors.bgGrey,
   cursor: 'pointer',
   fontSize: number === 2 ? '12px' : 'initial',
   margin: '5px 10px',

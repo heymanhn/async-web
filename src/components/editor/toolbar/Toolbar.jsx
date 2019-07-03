@@ -1,17 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faBold,
-  faCode,
-  faItalic,
-  faListUl,
-  faQuoteRight,
-} from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
-import CustomHeadingIcon from './CustomHeadingIcon';
+import BlockButton from './BlockButton';
+import MarkButton from './MarkButton';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -36,49 +29,39 @@ const Container = styled.div(({ theme: { colors } }) => ({
   return { opacity: isOpen ? 1 : 0, top, left };
 });
 
-const StyledIcon = styled(FontAwesomeIcon)(({ enabled, theme: { colors } }) => ({
-  color: enabled ? colors.selectedValueBlue : colors.bgGrey,
-  cursor: 'pointer',
-  margin: '5px 10px',
-
-  ':hover': {
-    color: colors.selectedValueBlue,
-  },
-}));
-
 const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   borderRight: `1px solid ${colors.grey1}`,
   height: '24px',
   margin: '0 5px',
 }));
 
-const EditorToolbar = React.forwardRef(({ coords, editor, isOpen }, ref) => {
+const Toolbar = React.forwardRef(({ coords, editor, isOpen }, ref) => {
   const root = window.document.getElementById('root');
 
   return ReactDOM.createPortal(
     <Container ref={ref} coords={coords} isOpen={isOpen}>
-      <StyledIcon icon={faBold} />
-      <StyledIcon icon={faItalic} />
+      <MarkButton editor={editor} type="bold" />
+      <MarkButton editor={editor} type="italic" />
       <VerticalDivider />
 
-      <CustomHeadingIcon number={1} />
-      <CustomHeadingIcon number={2} />
-      <StyledIcon icon={faListUl} />
+      <BlockButton editor={editor} type="heading-one" />
+      <BlockButton editor={editor} type="heading-two" />
+      <BlockButton editor={editor} type="bulleted-list" />
       <VerticalDivider />
 
-      <StyledIcon icon={faQuoteRight} />
-      <StyledIcon icon={faCode} />
+      <BlockButton editor={editor} type="block-quote" />
+      <BlockButton editor={editor} type="code-block" />
     </Container>,
     root,
   );
 });
 
-EditorToolbar.propTypes = {
+Toolbar.propTypes = {
   coords: PropTypes.object.isRequired,
   editor: PropTypes.object.isRequired,
   isOpen: PropTypes.bool,
 };
 
-EditorToolbar.defaultProps = { isOpen: false };
+Toolbar.defaultProps = { isOpen: false };
 
-export default EditorToolbar;
+export default Toolbar;
