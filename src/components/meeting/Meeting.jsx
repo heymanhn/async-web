@@ -8,7 +8,6 @@ import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import RovalEditor from 'components/shared/RovalEditor';
-import EditorToolbar from 'components/shared/EditorToolbar';
 import MeetingInfo from './MeetingInfo';
 import DiscussionTopic from './DiscussionTopic';
 
@@ -199,7 +198,6 @@ class Meeting extends Component {
                     saveOnBlur
                     source="meetingTitle"
                   />
-                  <EditorToolbar />
                   <MeetingInfo participants={participants} />
                   <DetailsEditor
                     initialValue={body ? body.payload : null}

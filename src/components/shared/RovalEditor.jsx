@@ -18,6 +18,7 @@ import {
 } from 'utils/slateHelper';
 
 import EditorActions from './EditorActions';
+import EditorToolbar from './EditorToolbar';
 
 const DEFAULT_NODE = 'paragraph';
 
@@ -57,7 +58,7 @@ class RovalEditor extends Component {
       value = Value.fromJSON(initialJSON);
     }
 
-    this.state = { value };
+    this.state = { value, isToolbarVisible: false };
 
     this.editor = React.createRef();
     this.handleCancel = this.handleCancel.bind(this);
@@ -73,6 +74,11 @@ class RovalEditor extends Component {
     this.pluginsForType = this.pluginsForType.bind(this);
     this.resetToInitialValue = this.resetToInitialValue.bind(this);
     this.setBlock = this.setBlock.bind(this);
+    this.updateToolbar = this.updateToolbar.bind(this);
+  }
+
+  componentDidMount() {
+    this.updateToolbar();
   }
 
   componentDidUpdate(prevProps) {
@@ -81,6 +87,7 @@ class RovalEditor extends Component {
     if (mode === 'edit' && prevProps.mode === 'display') {
       this.editor.current.focus().moveToEndOfDocument();
     }
+    this.updateToolbar();
   }
 
   handleCancel({ saved = false } = {}) {
@@ -253,8 +260,20 @@ class RovalEditor extends Component {
     }
   }
 
+  updateToolbar() {
+    const { isToolbarVisible, value } = this.state;
+    const { fragment, selection } = value;
+
+    if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
+      if (isToolbarVisible) this.setState({ isToolbarVisible: false });
+      return;
+    }
+
+    if (!isToolbarVisible) this.setState({ isToolbarVisible: true });
+  }
+
   render() {
-    const { value } = this.state;
+    const { isToolbarVisible, value } = this.state;
     const { mode, source, ...props } = this.props;
 
     return (
@@ -275,6 +294,7 @@ class RovalEditor extends Component {
           value={value}
           {...props}
         />
+        <EditorToolbar isOpen={isToolbarVisible} />
         {this.isEditOrComposeMode() && (
           <EditorActions
             isSubmitDisabled={this.isValueEmpty()}

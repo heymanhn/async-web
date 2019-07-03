@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBold,
@@ -11,8 +12,8 @@ import styled from '@emotion/styled';
 
 import CustomHeadingIcon from './CustomHeadingIcon';
 
-const Container = styled.div(({ theme: { colors } }) => ({
-  display: 'flex',
+const Container = styled.div(({ isOpen, theme: { colors } }) => ({
+  display: isOpen ? 'flex' : 'none',
   flexDirection: 'row',
   alignItems: 'center',
 
@@ -41,8 +42,8 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 5px',
 }));
 
-const EditorToolbar = () => (
-  <Container>
+const EditorToolbar = ({ isOpen }) => (
+  <Container isOpen={isOpen}>
     <StyledIcon icon={faBold} />
     <StyledIcon icon={faItalic} />
     <VerticalDivider />
@@ -56,5 +57,9 @@ const EditorToolbar = () => (
     <StyledIcon icon={faCode} />
   </Container>
 );
+
+EditorToolbar.propTypes = { isOpen: PropTypes.bool };
+
+EditorToolbar.defaultProps = { isOpen: false };
 
 export default EditorToolbar;
