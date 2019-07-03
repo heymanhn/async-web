@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -12,8 +13,8 @@ import styled from '@emotion/styled';
 
 import CustomHeadingIcon from './CustomHeadingIcon';
 
-const Container = styled.div(({ isOpen, theme: { colors } }) => ({
-  display: isOpen ? 'flex' : 'none',
+const Container = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
 
@@ -22,9 +23,18 @@ const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.25)',
   fontSize: '16px',
   height: '40px',
+  marginTop: '-6px',
+  opacity: 0,
   padding: '0px 5px',
   position: 'absolute',
-}));
+  transition: 'opacity 0.3s',
+  zIndex: 1,
+}), ({ coords, isOpen }) => {
+  if (!isOpen) return {};
+
+  const { top, left } = coords;
+  return { opacity: isOpen ? 1 : 0, top, left };
+});
 
 const StyledIcon = styled(FontAwesomeIcon)(({ enabled, theme: { colors } }) => ({
   color: enabled ? colors.selectedValueBlue : colors.bgGrey,
@@ -42,23 +52,32 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 5px',
 }));
 
-const EditorToolbar = ({ isOpen }) => (
-  <Container isOpen={isOpen}>
-    <StyledIcon icon={faBold} />
-    <StyledIcon icon={faItalic} />
-    <VerticalDivider />
+const EditorToolbar = React.forwardRef(({ coords, editor, isOpen }, ref) => {
+  const root = window.document.getElementById('root');
 
-    <CustomHeadingIcon number={1} />
-    <CustomHeadingIcon number={2} />
-    <StyledIcon icon={faListUl} />
-    <VerticalDivider />
+  return ReactDOM.createPortal(
+    <Container ref={ref} coords={coords} isOpen={isOpen}>
+      <StyledIcon icon={faBold} />
+      <StyledIcon icon={faItalic} />
+      <VerticalDivider />
 
-    <StyledIcon icon={faQuoteRight} />
-    <StyledIcon icon={faCode} />
-  </Container>
-);
+      <CustomHeadingIcon number={1} />
+      <CustomHeadingIcon number={2} />
+      <StyledIcon icon={faListUl} />
+      <VerticalDivider />
 
-EditorToolbar.propTypes = { isOpen: PropTypes.bool };
+      <StyledIcon icon={faQuoteRight} />
+      <StyledIcon icon={faCode} />
+    </Container>,
+    root,
+  );
+});
+
+EditorToolbar.propTypes = {
+  coords: PropTypes.object.isRequired,
+  editor: PropTypes.object.isRequired,
+  isOpen: PropTypes.bool,
+};
 
 EditorToolbar.defaultProps = { isOpen: false };
 

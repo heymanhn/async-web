@@ -61,17 +61,20 @@ class RovalEditor extends Component {
     this.state = { value, isToolbarVisible: false };
 
     this.editor = React.createRef();
+    this.toolbar = React.createRef();
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleEnterActions = this.handleEnterActions.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
+    this.calculateToolbarPosition = this.calculateToolbarPosition.bind(this);
     this.clearEditorValue = this.clearEditorValue.bind(this);
     this.hasBlock = this.hasBlock.bind(this);
     this.isValueEmpty = this.isValueEmpty.bind(this);
     this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
     this.pluginsForType = this.pluginsForType.bind(this);
+    this.renderEditor = this.renderEditor.bind(this);
     this.resetToInitialValue = this.resetToInitialValue.bind(this);
     this.setBlock = this.setBlock.bind(this);
     this.updateToolbar = this.updateToolbar.bind(this);
@@ -187,6 +190,22 @@ class RovalEditor extends Component {
     if (saveOnBlur) this.handleSubmit();
   }
 
+  // Figure out where the toolbar should be displayed based on the user's text selection
+  calculateToolbarPosition() {
+    const { isToolbarVisible } = this.state;
+    if (!isToolbarVisible) return {};
+
+    const native = window.getSelection();
+    const range = native.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    const toolbar = this.toolbar.current;
+
+    return {
+      top: `${rect.top + window.pageYOffset - toolbar.offsetHeight}px`,
+      left: `${rect.left + window.pageXOffset - toolbar.offsetWidth / 2 + rect.width / 2}px`,
+    };
+  }
+
   clearEditorValue() {
     this.setState({ value: Value.fromJSON(defaultValue) });
   }
@@ -209,6 +228,22 @@ class RovalEditor extends Component {
   pluginsForType() {
     const { source } = this.props;
     return plugins[source];
+  }
+
+  renderEditor(props, editor, next) {
+    const { isToolbarVisible } = this.state;
+    const children = next();
+    return (
+      <React.Fragment>
+        {children}
+        <EditorToolbar
+          ref={this.toolbar}
+          coords={this.calculateToolbarPosition()}
+          editor={editor}
+          isOpen={isToolbarVisible}
+        />
+      </React.Fragment>
+    );
   }
 
   resetToInitialValue() {
@@ -273,7 +308,7 @@ class RovalEditor extends Component {
   }
 
   render() {
-    const { isToolbarVisible, value } = this.state;
+    const { value } = this.state;
     const { mode, source, ...props } = this.props;
 
     return (
@@ -289,12 +324,12 @@ class RovalEditor extends Component {
           readOnly={mode === 'display'}
           ref={this.editor}
           renderBlock={renderBlock}
+          renderEditor={this.renderEditor}
           renderInline={renderInline}
           renderMark={renderMark}
           value={value}
           {...props}
         />
-        <EditorToolbar isOpen={isToolbarVisible} />
         {this.isEditOrComposeMode() && (
           <EditorActions
             isSubmitDisabled={this.isValueEmpty()}
