@@ -67,6 +67,7 @@ class RovalEditor extends Component {
 
     this.editor = React.createRef();
     this.toolbar = React.createRef();
+    this.handleBackspaceActions = this.handleBackspaceActions.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -98,6 +99,21 @@ class RovalEditor extends Component {
       this.editor.current.focus().moveToEndOfDocument();
     }
     this.updateToolbar();
+  }
+
+  handleBackspaceActions(next) {
+    const editor = this.editor.current;
+    const { value } = editor;
+    const { previousBlock } = value;
+
+    if (editor.isEmptyParagraph() && previousBlock && previousBlock.type === 'section-break') {
+      next();
+      return editor.removeNodeByKey(previousBlock.key);
+    }
+
+    // TODO: handle backspace behavior for deleting a bulleted list
+
+    return next();
   }
 
   handleCancel({ saved = false } = {}) {
@@ -150,6 +166,7 @@ class RovalEditor extends Component {
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
     if (hotkeys.isCancel(event)) return this.handleCancel();
     if (hotkeys.isEnter(event)) return this.handleEnterActions(next);
+    if (hotkeys.isBackspace(event)) return this.handleBackspaceActions(next);
 
     // Blocks
     if (hotkeys.isLargeFont(event)) return this.setBlock('heading-one');

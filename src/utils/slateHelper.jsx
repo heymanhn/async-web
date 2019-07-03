@@ -56,21 +56,28 @@ export const hotkeys = {
   isSubmit: isHotkey('mod+Enter'),
   isSubmitAndKeepOpen: isHotkey('shift+Enter'),
   isCancel: isHotkey('Esc'),
+  isBackspace: isHotkey('Backspace'),
 };
 
 /* ******************** */
 
+const DEFAULT_NODE = 'paragraph';
 export const commands = {
   wrapLink: (editor, url) => {
     editor.wrapInline({ type: 'link', data: { url } });
   },
-  unwrapLink(editor) {
+
+  unwrapLink: (editor) => {
     editor.unwrapInline('link');
   },
 };
 
 export const queries = {
   isEmpty: editor => editor.value.document.text === '',
+  isEmptyParagraph: (editor) => {
+    const { anchorBlock } = editor.value;
+    return anchorBlock.type === 'paragraph' && !anchorBlock.text;
+  },
   isLinkActive: (editor, value) => value.inlines.some(i => i.type === 'link'),
 };
 
