@@ -11,7 +11,7 @@ import updateConversationMessageMutation from 'graphql/updateConversationMessage
 import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
-import RovalEditor from 'components/shared/RovalEditor';
+import RovalEditor from 'components/editor/RovalEditor';
 import ContentToolbar from './ContentToolbar';
 import DiscussionTopicModal from './DiscussionTopicModal';
 

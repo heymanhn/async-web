@@ -27,12 +27,23 @@ export const defaultValue = {
 
 /* ******************** */
 
+export const schema = {
+  blocks: {
+    'section-break': {
+      isVoid: true, // Needed so that we don't need to pass children to section breaks
+    },
+  },
+};
+
+/* ******************** */
+
 export const hotkeys = {
   // Marks
   isBold: isHotkey('mod+b'),
   isItalic: isHotkey('mod+i'),
   isUnderlined: isHotkey('mod+u'),
-  isCode: isHotkey('mod+k'),
+  isCodeSnippet: isHotkey('mod+k'),
+  isCodeBlock: isHotkey('mod+shift+k'),
 
   // Blocks
   isBulletedList: isHotkey('mod+shift+8'),
@@ -46,21 +57,71 @@ export const hotkeys = {
   isSubmit: isHotkey('mod+Enter'),
   isSubmitAndKeepOpen: isHotkey('shift+Enter'),
   isCancel: isHotkey('Esc'),
+  isBackspace: isHotkey('Backspace'),
 };
 
 /* ******************** */
 
+const DEFAULT_NODE = 'paragraph';
 export const commands = {
   wrapLink: (editor, url) => {
     editor.wrapInline({ type: 'link', data: { url } });
   },
-  unwrapLink(editor) {
+
+  unwrapLink: (editor) => {
     editor.unwrapInline('link');
+  },
+
+  /* Borrowed from @ianstormtaylor's slateJS example code:
+   * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
+   */
+  setBlock: (editor, type) => {
+    const { value } = editor;
+    const { document } = value;
+
+    // Handle everything but list buttons.
+    const isList = editor.hasBlock('list-item');
+    if (type !== 'bulleted-list' && type !== 'numbered-list') {
+      const isActive = editor.hasBlock(type);
+
+      if (isList) {
+        editor
+          .setBlocks(isActive ? DEFAULT_NODE : type)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list');
+      } else {
+        editor.setBlocks(isActive ? DEFAULT_NODE : type);
+      }
+    } else {
+      // Handle the extra wrapping required for lists
+      const isType = value.blocks.some(block => (
+        !!document.getClosest(block.key, parent => parent.type === type)
+      ));
+
+      if (isList && isType) {
+        editor
+          .setBlocks(DEFAULT_NODE)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list');
+      } else if (isList) {
+        editor
+          .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
+          .wrapBlock(type);
+      } else {
+        editor.setBlocks('list-item').wrapBlock(type);
+      }
+    }
   },
 };
 
 export const queries = {
+  hasBlock: (editor, type) => editor.value.blocks.some(node => node.type === type),
+  hasActiveMark: (editor, type) => editor.value.activeMarks.some(mark => mark.type === type),
   isEmpty: editor => editor.value.document.text === '',
+  isEmptyParagraph: (editor) => {
+    const { anchorBlock } = editor.value;
+    return anchorBlock.type === 'paragraph' && !anchorBlock.text;
+  },
   isLinkActive: (editor, value) => value.inlines.some(i => i.type === 'link'),
 };
 
@@ -93,7 +154,7 @@ const markdownPlugins = [
   AutoReplace({
     trigger: '-',
     before: /^(--)$/,
-    change: change => change.setBlocks('section-break'),
+    change: change => change.setBlocks('section-break').insertBlock(DEFAULT_NODE),
   }),
   AutoReplace({
     trigger: 'space',
@@ -166,13 +227,10 @@ export const renderBlock = (props, editor, next) => {
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
+    case 'code-block':
+      return <pre {...attributes}>{children}</pre>;
     case 'section-break':
-      return (
-        <React.Fragment>
-          <hr {...attributes} />
-          {children}
-        </React.Fragment>
-      );
+      return <hr {...attributes} />;
     default:
       return next();
   }
@@ -205,7 +263,7 @@ export const renderMark = (props, editor, next) => {
   switch (mark.type) {
     case 'bold':
       return <strong {...attributes}>{children}</strong>;
-    case 'code':
+    case 'code-snippet':
       return <code {...attributes}>{children}</code>;
     case 'italic':
       return <em {...attributes}>{children}</em>;
@@ -215,3 +273,13 @@ export const renderMark = (props, editor, next) => {
       return next();
   }
 };
+
+/* ******************** */
+
+export const singleUseBlocks = [
+  'block-quote',
+  'heading-one',
+  'heading-two',
+  'heading-three',
+  'section-break',
+];

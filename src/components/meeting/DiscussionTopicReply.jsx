@@ -10,7 +10,7 @@ import updateConversationMessageMutation from 'graphql/updateConversationMessage
 import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
-import RovalEditor from 'components/shared/RovalEditor';
+import RovalEditor from 'components/editor/RovalEditor';
 import ContentToolbar from './ContentToolbar';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({

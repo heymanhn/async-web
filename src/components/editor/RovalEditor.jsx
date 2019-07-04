@@ -15,15 +15,18 @@ import {
   renderBlock,
   renderMark,
   renderInline,
+  schema,
+  singleUseBlocks,
 } from 'utils/slateHelper';
 
 import EditorActions from './EditorActions';
+import Toolbar from './toolbar/Toolbar';
 
 const DEFAULT_NODE = 'paragraph';
 
 // Default styles for Roval editor UIs
 const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
-  'dl, ul, ol, blockquote': {
+  'dl, ul, ol, blockquote, pre': {
     marginTop: '1em',
     marginBottom: '1em',
   },
@@ -57,22 +60,35 @@ class RovalEditor extends Component {
       value = Value.fromJSON(initialJSON);
     }
 
-    this.state = { value };
+    this.state = {
+      isClicked: false,
+      isToolbarVisible: false,
+      value,
+    };
 
     this.editor = React.createRef();
+    this.toolbar = React.createRef();
+    this.handleBackspaceActions = this.handleBackspaceActions.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.handleEnterActions = this.handleEnterActions.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
+    this.calculateToolbarPosition = this.calculateToolbarPosition.bind(this);
     this.clearEditorValue = this.clearEditorValue.bind(this);
-    this.hasBlock = this.hasBlock.bind(this);
     this.isValueEmpty = this.isValueEmpty.bind(this);
     this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
     this.pluginsForType = this.pluginsForType.bind(this);
+    this.renderEditor = this.renderEditor.bind(this);
     this.resetToInitialValue = this.resetToInitialValue.bind(this);
-    this.setBlock = this.setBlock.bind(this);
+    this.updateToolbar = this.updateToolbar.bind(this);
+  }
+
+  componentDidMount() {
+    this.updateToolbar();
   }
 
   componentDidUpdate(prevProps) {
@@ -81,6 +97,22 @@ class RovalEditor extends Component {
     if (mode === 'edit' && prevProps.mode === 'display') {
       this.editor.current.focus().moveToEndOfDocument();
     }
+    this.updateToolbar();
+  }
+
+  handleBackspaceActions(next) {
+    const editor = this.editor.current;
+    const { value } = editor;
+    const { previousBlock } = value;
+
+    if (editor.isEmptyParagraph() && previousBlock && previousBlock.type === 'section-break') {
+      next();
+      return editor.removeNodeByKey(previousBlock.key);
+    }
+
+    // TODO: handle backspace behavior for deleting a bulleted list
+
+    return next();
   }
 
   handleCancel({ saved = false } = {}) {
@@ -92,6 +124,10 @@ class RovalEditor extends Component {
 
   handleChangeValue({ value }) {
     this.setState({ value });
+  }
+
+  handleClick() {
+    this.setState({ isClicked: true });
   }
 
   /*
@@ -111,9 +147,25 @@ class RovalEditor extends Component {
         .unwrapBlock('numbered-list');
     }
 
-    if (anchorBlock.type !== 'paragraph') {
+    if (singleUseBlocks.includes(anchorBlock.type)) {
       next();
       return editor.setBlocks(DEFAULT_NODE);
+    }
+
+    if (anchorBlock.type === 'code-block') {
+      // Pressing enter on a blank line for a code block will reset to a paragraph
+      if (anchorBlock.text.endsWith('\n')) {
+        editor.deleteBackward(1); // Remove the first newline as well
+        next();
+        return editor.setBlocks(DEFAULT_NODE);
+      }
+
+      return editor.insertText('\n');
+    }
+
+    if (editor.hasActiveMark('code-snippet')) {
+      next();
+      return editor.removeMark('code-snippet');
     }
 
     return next();
@@ -129,13 +181,15 @@ class RovalEditor extends Component {
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
     if (hotkeys.isCancel(event)) return this.handleCancel();
     if (hotkeys.isEnter(event)) return this.handleEnterActions(next);
+    if (hotkeys.isBackspace(event)) return this.handleBackspaceActions(next);
 
     // Blocks
-    if (hotkeys.isLargeFont(event)) return this.setBlock('heading-one');
-    if (hotkeys.isMediumFont(event)) return this.setBlock('heading-two');
-    if (hotkeys.isSmallFont(event)) return this.setBlock('heading-three');
-    if (hotkeys.isBulletedList(event)) return this.setBlock('bulleted-list');
-    if (hotkeys.isNumberedList(event)) return this.setBlock('numbered-list');
+    if (hotkeys.isLargeFont(event)) return editor.setBlock('heading-one');
+    if (hotkeys.isMediumFont(event)) return editor.setBlock('heading-two');
+    if (hotkeys.isSmallFont(event)) return editor.setBlock('heading-three');
+    if (hotkeys.isBulletedList(event)) return editor.setBlock('bulleted-list');
+    if (hotkeys.isNumberedList(event)) return editor.setBlock('numbered-list');
+    if (hotkeys.isCodeBlock(event)) return editor.setBlock('code-block');
 
     // Marks
     let mark;
@@ -146,14 +200,18 @@ class RovalEditor extends Component {
       mark = 'italic';
     } else if (hotkeys.isUnderlined(event)) {
       mark = 'underlined';
-    } else if (hotkeys.isCode(event)) {
-      mark = 'code';
+    } else if (hotkeys.isCodeSnippet(event)) {
+      mark = 'code-snippet';
     } else {
       return next();
     }
 
     event.preventDefault();
     return editor.toggleMark(mark);
+  }
+
+  handleMouseDown() {
+    this.setState({ isClicked: false, isToolbarVisible: false });
   }
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
@@ -180,13 +238,24 @@ class RovalEditor extends Component {
     if (saveOnBlur) this.handleSubmit();
   }
 
-  clearEditorValue() {
-    this.setState({ value: Value.fromJSON(defaultValue) });
+  // Figure out where the toolbar should be displayed based on the user's text selection
+  calculateToolbarPosition() {
+    const { isToolbarVisible } = this.state;
+    if (!isToolbarVisible) return {};
+
+    const native = window.getSelection();
+    const range = native.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    const toolbar = this.toolbar.current;
+
+    return {
+      top: `${rect.top + window.pageYOffset - toolbar.offsetHeight}px`,
+      left: `${rect.left + window.pageXOffset - toolbar.offsetWidth / 2 + rect.width / 2}px`,
+    };
   }
 
-  hasBlock(type) {
-    const { value } = this.state;
-    return value.blocks.some(node => node.type === type);
+  clearEditorValue() {
+    this.setState({ value: Value.fromJSON(defaultValue) });
   }
 
   isValueEmpty() {
@@ -204,6 +273,22 @@ class RovalEditor extends Component {
     return plugins[source];
   }
 
+  renderEditor(props, editor, next) {
+    const { isToolbarVisible } = this.state;
+    const children = next();
+    return (
+      <React.Fragment>
+        {children}
+        <Toolbar
+          ref={this.toolbar}
+          coords={this.calculateToolbarPosition()}
+          editor={editor}
+          isOpen={isToolbarVisible}
+        />
+      </React.Fragment>
+    );
+  }
+
   resetToInitialValue() {
     const { initialValue } = this.props;
     if (!initialValue) return;
@@ -211,46 +296,18 @@ class RovalEditor extends Component {
     this.setState({ value: Value.fromJSON(JSON.parse(initialValue)) });
   }
 
-  /* Borrowed from @ianstormtaylor's slateJS example code:
-   * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
-   */
-  setBlock(type) {
-    const editor = this.editor.current;
-    const { value } = editor;
-    const { document } = value;
+  updateToolbar() {
+    const { isClicked, isToolbarVisible, value } = this.state;
+    const { fragment, selection } = value;
 
-    // Handle everything but list buttons.
-    const isList = this.hasBlock('list-item');
-    if (type !== 'bulleted-list' && type !== 'numbered-list') {
-      const isActive = this.hasBlock(type);
+    if (!isClicked) return;
 
-      if (isList) {
-        editor
-          .setBlocks(isActive ? DEFAULT_NODE : type)
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list');
-      } else {
-        editor.setBlocks(isActive ? DEFAULT_NODE : type);
-      }
-    } else {
-      // Handle the extra wrapping required for lists
-      const isType = value.blocks.some(block => (
-        !!document.getClosest(block.key, parent => parent.type === type)
-      ));
-
-      if (isList && isType) {
-        editor
-          .setBlocks(DEFAULT_NODE)
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list');
-      } else if (isList) {
-        editor
-          .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
-          .wrapBlock(type);
-      } else {
-        editor.setBlocks('list-item').wrapBlock(type);
-      }
+    if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
+      if (isToolbarVisible) this.setState({ isToolbarVisible: false });
+      return;
     }
+
+    if (!isToolbarVisible) this.setState({ isToolbarVisible: true });
   }
 
   render() {
@@ -264,14 +321,18 @@ class RovalEditor extends Component {
           commands={commands}
           onBlur={this.handleSubmitOnBlur}
           onChange={this.handleChangeValue}
+          onClick={this.handleClick}
           onKeyDown={this.handleKeyDown}
+          onMouseDown={this.handleMouseDown}
           plugins={this.pluginsForType()}
           queries={queries}
           readOnly={mode === 'display'}
           ref={this.editor}
           renderBlock={renderBlock}
+          renderEditor={this.renderEditor}
           renderInline={renderInline}
           renderMark={renderMark}
+          schema={schema}
           value={value}
           {...props}
         />
