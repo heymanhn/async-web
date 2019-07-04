@@ -42,7 +42,8 @@ export const hotkeys = {
   isBold: isHotkey('mod+b'),
   isItalic: isHotkey('mod+i'),
   isUnderlined: isHotkey('mod+u'),
-  isCode: isHotkey('mod+k'),
+  isCodeSnippet: isHotkey('mod+k'),
+  isCodeBlock: isHotkey('mod+shift+k'),
 
   // Blocks
   isBulletedList: isHotkey('mod+shift+8'),
@@ -226,6 +227,8 @@ export const renderBlock = (props, editor, next) => {
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
+    case 'code-block':
+      return <pre {...attributes}>{children}</pre>;
     case 'section-break':
       return <hr {...attributes} />;
     default:
@@ -260,7 +263,7 @@ export const renderMark = (props, editor, next) => {
   switch (mark.type) {
     case 'bold':
       return <strong {...attributes}>{children}</strong>;
-    case 'code':
+    case 'code-snippet':
       return <code {...attributes}>{children}</code>;
     case 'italic':
       return <em {...attributes}>{children}</em>;

@@ -26,7 +26,7 @@ const DEFAULT_NODE = 'paragraph';
 
 // Default styles for Roval editor UIs
 const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
-  'dl, ul, ol, blockquote': {
+  'dl, ul, ol, blockquote, pre': {
     marginTop: '1em',
     marginBottom: '1em',
   },
@@ -138,6 +138,7 @@ class RovalEditor extends Component {
   handleEnterActions(next) {
     const editor = this.editor.current;
     const { value } = editor;
+    const { selection } = value;
     const { anchorBlock } = value;
 
     if (anchorBlock.type === 'list-item' && !anchorBlock.text) {
@@ -150,6 +151,22 @@ class RovalEditor extends Component {
     if (singleUseBlocks.includes(anchorBlock.type)) {
       next();
       return editor.setBlocks(DEFAULT_NODE);
+    }
+
+    if (anchorBlock.type === 'code-block') {
+      // Pressing enter on a blank line for a code block will reset to a paragraph
+      if (anchorBlock.text.endsWith('\n')) {
+        editor.deleteBackward(2); // Remove the first newline as well
+        next();
+        return editor.setBlocks(DEFAULT_NODE);
+      }
+
+      return editor.insertText('\n');
+    }
+
+    if (editor.hasActiveMark('code-snippet')) {
+      next();
+      return editor.removeMark('code-snippet');
     }
 
     return next();
@@ -173,6 +190,7 @@ class RovalEditor extends Component {
     if (hotkeys.isSmallFont(event)) return editor.setBlock('heading-three');
     if (hotkeys.isBulletedList(event)) return editor.setBlock('bulleted-list');
     if (hotkeys.isNumberedList(event)) return editor.setBlock('numbered-list');
+    if (hotkeys.isCodeBlock(event)) return editor.setBlock('code-block');
 
     // Marks
     let mark;
@@ -183,8 +201,8 @@ class RovalEditor extends Component {
       mark = 'italic';
     } else if (hotkeys.isUnderlined(event)) {
       mark = 'underlined';
-    } else if (hotkeys.isCode(event)) {
-      mark = 'code';
+    } else if (hotkeys.isCodeSnippet(event)) {
+      mark = 'code-snippet';
     } else {
       return next();
     }
