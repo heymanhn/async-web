@@ -138,7 +138,6 @@ class RovalEditor extends Component {
   handleEnterActions(next) {
     const editor = this.editor.current;
     const { value } = editor;
-    const { selection } = value;
     const { anchorBlock } = value;
 
     if (anchorBlock.type === 'list-item' && !anchorBlock.text) {
@@ -156,7 +155,7 @@ class RovalEditor extends Component {
     if (anchorBlock.type === 'code-block') {
       // Pressing enter on a blank line for a code block will reset to a paragraph
       if (anchorBlock.text.endsWith('\n')) {
-        editor.deleteBackward(2); // Remove the first newline as well
+        editor.deleteBackward(1); // Remove the first newline as well
         next();
         return editor.setBlocks(DEFAULT_NODE);
       }
