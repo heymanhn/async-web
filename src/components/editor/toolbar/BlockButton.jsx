@@ -17,12 +17,28 @@ const StyledIcon = styled(FontAwesomeIcon)(({ isactive, theme: { colors } }) => 
 }));
 
 const BlockButton = ({ editor, type }) => {
-  const isActive = editor.hasBlock(type);
+  const isActiveBlock = () => {
+    let isActive = editor.hasBlock(type);
+
+    // For lists, need to traverse upwards to find whether the list type matches
+    if (['numbered-list', 'bulleted-list'].includes(type)) {
+      const { value: { document, blocks } } = editor;
+
+      if (blocks.size > 0) {
+        const parent = document.getParent(blocks.first().key);
+        isActive = editor.hasBlock('list-item') && parent && parent.type === type;
+      }
+    }
+
+    return isActive;
+  };
+
   const iconForType = {
     'block-quote': faQuoteRight,
     'bulleted-list': faListUl,
     'code-block': faCode,
   };
+
   const handleClick = (event) => {
     event.preventDefault();
     editor.setBlock(type);
@@ -32,7 +48,7 @@ const BlockButton = ({ editor, type }) => {
     return (
       <CustomHeadingIcon
         number={type === 'heading-one' ? 1 : 2}
-        isactive={isActive}
+        isactive={isActiveBlock()}
         onMouseDown={handleClick}
       />
     );
@@ -41,7 +57,7 @@ const BlockButton = ({ editor, type }) => {
   return (
     <StyledIcon
       icon={iconForType[type]}
-      isactive={isActive.toString()}
+      isactive={isActiveBlock().toString()}
       onMouseDown={handleClick}
     />
   );
