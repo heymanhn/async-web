@@ -16,6 +16,7 @@ import {
   renderMark,
   renderInline,
   schema,
+  singleUseBlocks,
 } from 'utils/slateHelper';
 
 import EditorActions from './EditorActions';
@@ -146,7 +147,7 @@ class RovalEditor extends Component {
         .unwrapBlock('numbered-list');
     }
 
-    if (anchorBlock.type !== 'paragraph' && !anchorBlock.text) {
+    if (singleUseBlocks.includes(anchorBlock.type)) {
       next();
       return editor.setBlocks(DEFAULT_NODE);
     }

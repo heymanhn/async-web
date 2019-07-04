@@ -270,3 +270,13 @@ export const renderMark = (props, editor, next) => {
       return next();
   }
 };
+
+/* ******************** */
+
+export const singleUseBlocks = [
+  'block-quote',
+  'heading-one',
+  'heading-two',
+  'heading-three',
+  'section-break',
+];
