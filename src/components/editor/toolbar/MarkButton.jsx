@@ -16,8 +16,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ isactive, theme: { colors } }) => 
 }));
 
 const MarkButton = ({ editor, type }) => {
-  const { value } = editor;
-  const isActive = value.activeMarks.some(mark => mark.type === type);
+  const isActive = editor.hasActiveMark(type);
   const iconForType = {
     bold: faBold,
     italic: faItalic,

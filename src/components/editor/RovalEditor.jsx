@@ -240,8 +240,6 @@ class RovalEditor extends Component {
     this.setState({ value: Value.fromJSON(defaultValue) });
   }
 
-
-
   isValueEmpty() {
     const { value } = this.state;
     return !Plain.serialize(value);

@@ -17,8 +17,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ isactive, theme: { colors } }) => 
 }));
 
 const BlockButton = ({ editor, type }) => {
-  const { value } = editor;
-  const isActive = value.activeMarks.some(mark => mark.type === type);
+  const isActive = editor.hasBlock(type);
   const iconForType = {
     'block-quote': faQuoteRight,
     'bulleted-list': faListUl,
@@ -26,8 +25,7 @@ const BlockButton = ({ editor, type }) => {
   };
   const handleClick = (event) => {
     event.preventDefault();
-    event.stopPropagation();
-    editor.toggleMark(type);
+    editor.setBlock(type);
   };
 
   if (type.includes('heading')) {
