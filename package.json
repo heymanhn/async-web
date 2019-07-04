@@ -34,7 +34,7 @@
     "react-moment": "^0.9.2",
     "react-scripts": "3.0.1",
     "reactstrap": "^8.0.0",
-    "slate": "^0.47.4",
+    "slate": "^0.45.1",
     "slate-auto-replace": "^0.12.1",
     "slate-paste-linkify": "^0.7.0",
     "slate-plain-serializer": "^0.7.6",
