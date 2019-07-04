@@ -152,8 +152,13 @@ class RovalEditor extends Component {
       return editor.setBlocks(DEFAULT_NODE);
     }
 
+    // Similar "double Enter" behavior to code blocks below
+    if (editor.isWrappedBy('block-quote') && !anchorBlock.text) {
+      return editor.setBlocks(DEFAULT_NODE).unwrapBlock('block-quote');
+    }
+
     if (anchorBlock.type === 'code-block') {
-      // Pressing enter on a blank line for a code block will reset to a paragraph
+      // Pressing enter on a blank line in a code block will reset to a paragraph
       if (anchorBlock.text.endsWith('\n')) {
         editor.deleteBackward(1); // Remove the first newline as well
         next();

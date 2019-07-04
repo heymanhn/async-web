@@ -76,12 +76,10 @@ export const commands = {
    * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
    */
   setBlock: (editor, type) => {
-    const { value } = editor;
-    const { document } = value;
-
-    // Handle everything but list buttons.
+    // Handle everything but lists and block quotes.
+    // HN: PLEASE CLEAN THIS UP
     const isList = editor.hasBlock('list-item');
-    if (type !== 'bulleted-list' && type !== 'numbered-list') {
+    if (type !== 'bulleted-list' && type !== 'numbered-list' && type !== 'block-quote') {
       const isActive = editor.hasBlock(type);
 
       if (isList) {
@@ -90,26 +88,28 @@ export const commands = {
           .unwrapBlock('bulleted-list')
           .unwrapBlock('numbered-list');
       } else {
-        editor.setBlocks(isActive ? DEFAULT_NODE : type);
+        editor
+          .unwrapBlock('block-quote')
+          .setBlocks(isActive ? DEFAULT_NODE : type);
       }
-    } else {
-      // Handle the extra wrapping required for lists
-      const isType = value.blocks.some(block => (
-        !!document.getClosest(block.key, parent => parent.type === type)
-      ));
-
-      if (isList && isType) {
+    } else if (editor.isWrappedBy(type)) {
+      // Handle the extra wrapping required for lists and block quotes
+      if (isList) {
         editor
           .setBlocks(DEFAULT_NODE)
           .unwrapBlock('bulleted-list')
           .unwrapBlock('numbered-list');
-      } else if (isList) {
-        editor
-          .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
-          .wrapBlock(type);
       } else {
-        editor.setBlocks('list-item').wrapBlock(type);
+        editor.setBlocks(DEFAULT_NODE).unwrapBlock('block-quote');
       }
+    } else if (isList) {
+      editor
+        .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
+        .wrapBlock(type);
+    } else if (type === 'bulleted-list' || type === 'numbered-list') {
+      editor.setBlocks('list-item').wrapBlock(type);
+    } else {
+      editor.wrapBlock(type);
     }
   },
 };
@@ -123,6 +123,9 @@ export const queries = {
     return anchorBlock.type === 'paragraph' && !anchorBlock.text;
   },
   isLinkActive: (editor, value) => value.inlines.some(i => i.type === 'link'),
+  isWrappedBy: (editor, type) => editor.value.blocks.some(block => (
+    !!editor.value.document.getClosest(block.key, parent => parent.type === type)
+  )),
 };
 
 /* ******************** */
@@ -139,7 +142,7 @@ const markdownPlugins = [
   AutoReplace({
     trigger: 'space',
     before: /^(>)$/,
-    change: change => change.setBlocks('block-quote'),
+    change: change => change.wrapBlock('block-quote'),
   }),
   AutoReplace({
     trigger: 'space',
@@ -277,7 +280,6 @@ export const renderMark = (props, editor, next) => {
 /* ******************** */
 
 export const singleUseBlocks = [
-  'block-quote',
   'heading-one',
   'heading-two',
   'heading-three',

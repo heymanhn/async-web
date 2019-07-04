@@ -20,6 +20,15 @@ const BlockButton = ({ editor, type }) => {
   const isActiveBlock = () => {
     let isActive = editor.hasBlock(type);
 
+    if (type === 'block-quote') {
+      const { value: { document, blocks } } = editor;
+
+      if (blocks.size > 0) {
+        const parent = document.getParent(blocks.first().key);
+        isActive = parent && parent.type === type;
+      }
+    }
+
     // For lists, need to traverse upwards to find whether the list type matches
     if (['numbered-list', 'bulleted-list'].includes(type)) {
       const { value: { document, blocks } } = editor;
