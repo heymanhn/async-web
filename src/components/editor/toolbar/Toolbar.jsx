@@ -23,7 +23,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   padding: '0px 5px',
   position: 'absolute',
   transition: 'opacity 0.3s',
-  zIndex: 1,
+  zIndex: 10000,
 }), ({ coords, isOpen }) => {
   if (!isOpen) return {};
 
