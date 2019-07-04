@@ -117,6 +117,11 @@ export const commands = {
 export const queries = {
   hasBlock: (editor, type) => editor.value.blocks.some(node => node.type === type),
   hasActiveMark: (editor, type) => editor.value.activeMarks.some(mark => mark.type === type),
+  isAtBeginning: (editor) => {
+    const { value } = editor;
+    const { selection } = value;
+    return selection.isCollapsed && selection.anchor.offset === 0;
+  },
   isEmpty: editor => editor.value.document.text === '',
   isEmptyParagraph: (editor) => {
     const { anchorBlock } = editor.value;

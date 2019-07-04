@@ -148,7 +148,8 @@ class RovalEditor extends Component {
     }
 
     if (singleUseBlocks.includes(anchorBlock.type)) {
-      next();
+      if (!editor.isAtBeginning()) next();
+
       return editor.setBlocks(DEFAULT_NODE);
     }
 
