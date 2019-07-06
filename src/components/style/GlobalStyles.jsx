@@ -79,7 +79,7 @@ const GlobalStyles = ({ theme: { colors, fontStack, codeFontStack, mq } }) => (
         },
       },
       code: {
-        background: colors.grey6,
+        background: colors.grey7,
         border: `1px solid ${colors.codeBlockBorderGrey}`,
         borderRadius: '3px',
         color: colors.codeBlockRed,

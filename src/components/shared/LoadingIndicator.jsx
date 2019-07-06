@@ -11,7 +11,7 @@ const Container = styled.div({
 });
 
 const LoadingText = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey4,
+  color: colors.grey5,
   fontSize: '18px',
   marginRight: '15px',
 }));

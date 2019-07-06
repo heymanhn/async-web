@@ -66,7 +66,7 @@ class Auth extends Component {
 
   render() {
     const { error, loading, params } = this.state;
-    if (loading) return <Container><LoadingIndicator color="grey4" /></Container>;
+    if (loading) return <Container><LoadingIndicator color="grey5" /></Container>;
     if (error || !params || !params.email) return <Container>Cannot log in</Container>;
 
     return <Container>Logged in successfully</Container>;

@@ -17,7 +17,7 @@ import DiscussionTopicModal from './DiscussionTopicModal';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
-  border: `1px solid ${colors.grey5}`,
+  border: `1px solid ${colors.grey6}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
   cursor: mode === 'display' ? 'pointer' : 'initial',

@@ -61,7 +61,7 @@ const LogoTitle = styled.span({
 });
 
 const SavedIndicator = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey5,
+  color: colors.grey6,
   fontSize: '14px',
   fontWeight: 400,
   marginLeft: '20px',

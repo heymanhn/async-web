@@ -42,7 +42,7 @@ const LightContainer = styled(Container)(({ theme: { colors } }) => ({
 
 const DisabledContainer = styled(Container)(({ theme: { colors } }) => ({
   backgroundColor: colors.buttonGrey,
-  color: colors.grey5,
+  color: colors.grey6,
   cursor: 'default',
 }));
 

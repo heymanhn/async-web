@@ -43,7 +43,7 @@ const CreateMeetingButton = () => (
     }}
   >
     {(create, { loading, error }) => {
-      if (loading) return <StyledSpinner color="grey4" />;
+      if (loading) return <StyledSpinner color="grey5" />;
       if (error) console.log(error);
 
       return (
