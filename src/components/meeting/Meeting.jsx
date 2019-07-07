@@ -8,8 +8,8 @@ import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import RovalEditor from 'components/editor/RovalEditor';
-import MeetingInfo from './MeetingInfo';
 import DiscussionTopic from './DiscussionTopic';
+import ParticipantsSelector from './ParticipantsSelector';
 
 const MetadataContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -20,6 +20,23 @@ const MetadataSection = styled.div(({ theme: { colors, maxViewport } }) => ({
   margin: '0px auto',
   maxWidth: maxViewport,
   padding: '40px 20px',
+}));
+
+const InfoContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  marginBottom: '30px',
+});
+
+const DeadlineSelector = styled.div({
+  width: '300px',
+});
+
+const DeadlineTitle = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '14px',
+  fontWeight: 500,
+  marginBottom: '10px',
 }));
 
 const DiscussionSection = styled.div(({ theme: { colors } }) => ({
@@ -198,7 +215,13 @@ class Meeting extends Component {
                     saveOnBlur
                     source="meetingTitle"
                   />
-                  <MeetingInfo participants={participants} />
+                  <InfoContainer>
+                    <ParticipantsSelector participants={participants} />
+                    <DeadlineSelector>
+                      <DeadlineTitle>DUE DATE</DeadlineTitle>
+                      None
+                    </DeadlineSelector>
+                  </InfoContainer>
                   <DetailsEditor
                     initialValue={body ? body.payload : null}
                     onSubmit={this.handleSubmitDetails}
