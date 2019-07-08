@@ -13,11 +13,11 @@ const MemberContainer = styled.div(({ hover, isOrganizer, theme: { colors } }) =
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  padding: '0 15px',
 
   background: (hover && !isOrganizer) ? colors.blue : 'initial',
   color: (hover && !isOrganizer) ? colors.white : 'initial',
   cursor: isOrganizer ? 'default' : 'pointer',
+  padding: '0 15px',
 }));
 
 const Details = styled.div({

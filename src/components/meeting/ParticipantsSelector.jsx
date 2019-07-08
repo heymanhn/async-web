@@ -32,6 +32,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
 }));
 
 const ParticipantsDisplay = styled.div({
+  marginBottom: '10px',
 });
 
 const Title = styled.div(({ theme: { colors } }) => ({
@@ -53,9 +54,16 @@ const MembersList = styled.div(({ theme: { colors } }) => ({
   borderTop: 'none',
   boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.05)',
   marginLeft: '-15px',
-  padding: '10px 0',
   position: 'absolute',
   width: '320px',
+}));
+
+// Needed for a CSS trick to hide the box shadow at the top of the absolute positioned element
+const InnerMembersContainer = styled.div(({ theme: { colors } }) => ({
+  background: colors.bgGrey,
+  borderRadius: '0 0 5px 5px',
+  padding: '10px 0',
+  marginTop: '-2px',
 }));
 
 class ParticipantsSelector extends Component {
@@ -121,20 +129,22 @@ class ParticipantsSelector extends Component {
             <StyledAvatar key={p.id} src={p.profilePictureUrl} size={30} alt={p.fullName} />
           ))}
         </ParticipantsDisplay>
-        {isOpen && (
+        {members && (
           <MembersList>
-            {members.map(member => (
-              <Member
-                key={member.id}
-                fullName={member.fullName}
-                id={member.id}
-                isOrganizer={member.id === participants[0].id}
-                isParticipant={isParticipant(member.id)}
-                handleAction={this.handleAction}
-                profilePictureUrl={member.profilePictureUrl}
-                tabIndex={0}
-              />
-            ))}
+            <InnerMembersContainer>
+              {members.map(member => (
+                <Member
+                  key={member.id}
+                  fullName={member.fullName}
+                  id={member.id}
+                  isOrganizer={member.id === participants[0].id}
+                  isParticipant={this.isParticipant(member.id)}
+                  handleAction={this.handleAction}
+                  profilePictureUrl={member.profilePictureUrl}
+                  tabIndex={0}
+                />
+              ))}
+            </InnerMembersContainer>
           </MembersList>
         )}
       </Container>
