@@ -25,10 +25,11 @@ const MetadataSection = styled.div(({ theme: { colors, maxViewport } }) => ({
 const InfoContainer = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  marginBottom: '30px',
+  marginBottom: '20px',
 });
 
 const DeadlineSelector = styled.div({
+  marginTop: '15px',
   width: '300px',
 });
 
@@ -88,7 +89,7 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   fontSize: '36px',
   fontWeight: 600,
   color: colors.mainText,
-  marginBottom: '30px',
+  marginBottom: '15px',
   width: '100%',
   outline: 'none',
 }));
