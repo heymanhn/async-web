@@ -1,9 +1,14 @@
+/* eslint react/no-did-update-set-state: 0 */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
+import meetingQuery from 'graphql/meetingQuery';
 import fakeMembersQuery from 'graphql/fakeMembersQuery';
+import addParticipantMutation from 'graphql/addParticipantMutation';
+import removeParticipantMutation from 'graphql/removeParticipantMutation';
 
 import Avatar from 'components/shared/Avatar';
 import Member from './Member';
@@ -79,6 +84,9 @@ class ParticipantsSelector extends Component {
     this.handleAction = this.handleAction.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.addParticipant = this.addParticipant.bind(this);
+    this.removeParticipant = this.removeParticipant.bind(this);
+    this.isParticipant = this.isParticipant.bind(this);
   }
 
   async componentDidMount() {
@@ -92,9 +100,16 @@ class ParticipantsSelector extends Component {
     }
   }
 
-  // TODO
-  handleAction(id) {
+  componentDidUpdate() {
     const { participants } = this.state;
+    const { participants: newParticipants } = this.props;
+    if (participants.length !== newParticipants.length) {
+      this.setState({ participants: newParticipants });
+    }
+  }
+
+  async handleAction(id) {
+    return this.isParticipant(id) ? this.removeParticipant(id) : this.addParticipant(id);
   }
 
   handleClose() {
@@ -111,9 +126,53 @@ class ParticipantsSelector extends Component {
     this.setState({ isOpen: true });
   }
 
+  addParticipant(id) {
+    const { members } = this.state;
+    const { client, meetingId } = this.props;
+
+    return client.mutate({
+      mutation: addParticipantMutation,
+      variables: {
+        id: meetingId,
+        input: {
+          userId: id,
+          accessType: 'collaborator',
+        },
+      },
+      update: (cache) => {
+        const member = members.find(m => m.id === id);
+        const { meeting } = cache.readQuery({ query: meetingQuery, variables: { id: meetingId } });
+        meeting.participants = meeting.participants.contact(member);
+        cache.writeQuery({
+          query: meetingQuery,
+          variables: { id: meetingId },
+          data: { meeting },
+        });
+      },
+    });
+  }
+
+  isParticipant(id) {
+    const { participants } = this.state;
+    return participants.findIndex(p => p.id === id) >= 0;
+  }
+
+  async removeParticipant(id) {
+    const { client, meetingId } = this.props;
+
+    const response = await client.mutate({
+      mutation: removeParticipantMutation,
+      variables: {
+        id: meetingId,
+        input: {
+          userId: id,
+        },
+      },
+    });
+  }
+
   render() {
     const { isOpen, members, participants } = this.state;
-    const isParticipant = memberId => participants.findIndex(p => p.id === memberId) >= 0;
 
     return (
       <Container
@@ -154,6 +213,7 @@ class ParticipantsSelector extends Component {
 
 ParticipantsSelector.propTypes = {
   client: PropTypes.object.isRequired,
+  meetingId: PropTypes.string.isRequired,
   participants: PropTypes.array.isRequired,
 };
 

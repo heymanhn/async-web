@@ -58,8 +58,10 @@ class Member extends Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick() {
+  handleClick(event) {
     const { id, handleAction } = this.props;
+    event.preventDefault();
+    event.stopPropagation();
     handleAction(id);
   }
 
@@ -77,7 +79,7 @@ class Member extends Component {
       <MemberContainer
         hover={hover}
         isOrganizer={isOrganizer}
-        onClick={this.handleClick}
+        onMouseDown={this.handleClick}
         {...props}
       >
         <Details>

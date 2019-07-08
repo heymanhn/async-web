@@ -217,7 +217,7 @@ class Meeting extends Component {
                     source="meetingTitle"
                   />
                   <InfoContainer>
-                    <ParticipantsSelector participants={participants} />
+                    <ParticipantsSelector meetingId={id} participants={participants} />
                     <DeadlineSelector>
                       <DeadlineTitle>DUE DATE</DeadlineTitle>
                       None
