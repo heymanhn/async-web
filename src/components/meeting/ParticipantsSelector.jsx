@@ -129,7 +129,7 @@ class ParticipantsSelector extends Component {
                 id={member.id}
                 isOrganizer={member.id === participants[0].id}
                 isParticipant={isParticipant(member.id)}
-                onAction={this.handleAction}
+                handleAction={this.handleAction}
                 profilePictureUrl={member.profilePictureUrl}
               />
             ))}

@@ -52,8 +52,8 @@ class Member extends Component {
   }
 
   handleClick() {
-    const { id, onAction } = this.props;
-    onAction(id);
+    const { id, handleAction } = this.props;
+    handleAction(id);
   }
 
   render() {
@@ -84,11 +84,11 @@ class Member extends Component {
 
 Member.propTypes = {
   fullName: PropTypes.string.isRequired,
+  handleAction: PropTypes.func.isRequired,
   hover: PropTypes.bool.isRequired,
   id: PropTypes.string.isRequired,
   isOrganizer: PropTypes.bool.isRequired,
   isParticipant: PropTypes.bool.isRequired,
-  onAction: PropTypes.func.isRequired,
   profilePictureUrl: PropTypes.string.isRequired,
 };
 
