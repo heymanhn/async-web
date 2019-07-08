@@ -8,20 +8,27 @@ import withHover from 'utils/withHover';
 
 import Avatar from 'components/shared/Avatar';
 
-const MemberContainer = styled.div({
+const MemberContainer = styled.div(({ hover, isOrganizer, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-});
+  padding: '0 15px',
+
+  background: (hover && !isOrganizer) ? colors.blue : 'initial',
+  color: (hover && !isOrganizer) ? colors.white : 'initial',
+  cursor: isOrganizer ? 'default' : 'pointer',
+}));
 
 const Details = styled.div({
   display: 'flex',
   flexDirection: 'row',
+  alignItems: 'center',
 });
 
 const StyledAvatar = styled(Avatar)({
-
+  margin: '5px 0',
+  marginRight: '10px',
 });
 
 const Name = styled.div({
@@ -32,7 +39,7 @@ const MetadataContainer = styled.div({
 
 });
 
-const OrganizerLabel = styled.span(({ theme: { colors } }) => ({
+const OrganizerLabel = styled.div(({ theme: { colors } }) => ({
   color: colors.grey4,
   fontSize: '12px',
 }));
@@ -67,7 +74,12 @@ class Member extends Component {
     } = this.props;
 
     return (
-      <MemberContainer onClick={this.handleClick} {...props}>
+      <MemberContainer
+        hover={hover}
+        isOrganizer={isOrganizer}
+        onClick={this.handleClick}
+        {...props}
+      >
         <Details>
           <StyledAvatar src={profilePictureUrl} size={30} />
           <Name>{fullName}</Name>

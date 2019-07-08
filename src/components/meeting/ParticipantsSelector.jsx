@@ -53,6 +53,7 @@ const MembersList = styled.div(({ theme: { colors } }) => ({
   borderTop: 'none',
   boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.05)',
   marginLeft: '-15px',
+  padding: '10px 0',
   position: 'absolute',
   width: '320px',
 }));
@@ -131,6 +132,7 @@ class ParticipantsSelector extends Component {
                 isParticipant={isParticipant(member.id)}
                 handleAction={this.handleAction}
                 profilePictureUrl={member.profilePictureUrl}
+                tabIndex={0}
               />
             ))}
           </MembersList>
@@ -144,6 +146,5 @@ ParticipantsSelector.propTypes = {
   client: PropTypes.object.isRequired,
   participants: PropTypes.array.isRequired,
 };
-
 
 export default withApollo(ParticipantsSelector);
