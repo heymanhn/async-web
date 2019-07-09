@@ -57,6 +57,12 @@ const MembersList = styled.div(({ isOpen, theme: { colors } }) => ({
   width: '320px',
 }));
 
+const WhiteSeparator = styled.div(({ theme: { colors } }) => ({
+  background: colors.white,
+  height: '10px',
+  marginTop: '-2px',
+}));
+
 // Needed for a CSS trick to hide the box shadow at the top of the absolute positioned element
 const InnerMembersContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.bgGrey,
@@ -202,6 +208,7 @@ class ParticipantsSelector extends Component {
         </div>
         {!!members.length && (
           <MembersList isOpen={isOpen}>
+            <WhiteSeparator />
             <InnerMembersContainer>
               {members.map(member => (
                 <Member
