@@ -49,9 +49,10 @@ export const theme = {
     grey1: '#54636d',
     grey2: '#70828e',
     grey3: '#8798a4',
-    grey4: '#c3c4c5',
-    grey5: '#dadbdc',
-    grey6: '#f0f3f5',
+    grey4: '#a7b6c0',
+    grey5: '#c3c4c5',
+    grey6: '#dadbdc',
+    grey7: '#f0f3f5',
 
     mainText: '#313f48',
 

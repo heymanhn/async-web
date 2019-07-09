@@ -22,7 +22,7 @@ const Separator = styled.span(({ theme: { colors } }) => ({
 }));
 
 const EditedLabel = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey4,
+  color: colors.grey5,
   cursor: 'default',
   fontSize: '14px',
 }));

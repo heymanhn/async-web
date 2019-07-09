@@ -5,14 +5,19 @@ export default gql`
     meeting(id: $id) @rest(type: "Meeting", path: "/meetings/{args.id}") {
       id
       title
+      author @type(name: "User") {
+        id
+      }
       body @type(name: "Body") {
         formatter
         payload
       }
       participants @type(name: "[Participant]") {
-        id
-        fullName
-        profilePictureUrl
+        user @type(name: "User") {
+          id
+          fullName
+          profilePictureUrl
+        }
       }
       conversations @type(name: "[Conversation]") {
         id
