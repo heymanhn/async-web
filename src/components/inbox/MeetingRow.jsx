@@ -68,9 +68,8 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
 }));
 
 const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
-  const { createdAt, deadline, id, lastMessage, participants, title } = meeting;
+  const { author, createdAt, deadline, id, lastMessage, participants, title } = meeting;
 
-  const sortedParticipants = participants; // TO-DO
   const timestamp = lastMessage ? lastMessage.createdAt : createdAt;
   const timestampContext = lastMessage ? 'Latest reply ' : 'Created ';
 
@@ -89,7 +88,7 @@ const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
   if (deadline) {
     metadata.push(
       <span>
-        {'Due in '}
+        {'Due '}
         <Timestamp fromNow parse="X">{deadline}</Timestamp>
       </span>,
     );
@@ -110,7 +109,7 @@ const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
             {metadata.length > 2 && metadata[2]}
           </AdditionalInfo>
         </MeetingDetails>
-        <ParticipantAvatars participants={sortedParticipants} />
+        <ParticipantAvatars authorId={author.id} participants={participants.map(p => p.user)} />
       </Container>
     </StyledLink>
   );

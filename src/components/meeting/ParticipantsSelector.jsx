@@ -10,7 +10,8 @@ import fakeMembersQuery from 'graphql/fakeMembersQuery';
 import addParticipantMutation from 'graphql/addParticipantMutation';
 import removeParticipantMutation from 'graphql/removeParticipantMutation';
 
-import Avatar from 'components/shared/Avatar';
+import ParticipantAvatars from 'components/shared/ParticipantAvatars';
+
 import Member from './Member';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -36,19 +37,12 @@ const Container = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const ParticipantsDisplay = styled.div({});
-
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '14px',
   fontWeight: 500,
   marginBottom: '10px',
 }));
-
-const StyledAvatar = styled(Avatar)({
-  display: 'inline-block',
-  marginRight: '-4px',
-});
 
 const MembersList = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
@@ -86,7 +80,7 @@ class ParticipantsSelector extends Component {
     this.addParticipant = this.addParticipant.bind(this);
     this.isParticipant = this.isParticipant.bind(this);
     this.removeParticipant = this.removeParticipant.bind(this);
-    this.sortByMeetingOwnerFirst = this.sortByMeetingOwnerFirst.bind(this);
+    this.sortMembers = this.sortMembers.bind(this);
   }
 
   async componentDidMount() {
@@ -178,25 +172,21 @@ class ParticipantsSelector extends Component {
     });
   }
 
-  // Display the meeting organizer first in the list of participants
-  // TODO: Reuse this for ParticipantAvatars later
-  sortByMeetingOwnerFirst({ type }) {
+  sortMembers() {
     const { members } = this.state;
-    const { authorId, participants } = this.props;
-    const list = type === 'participants' ? participants : members;
-    if (!list.length) return [];
+    const { authorId } = this.props;
+    if (!members.length) return [];
 
-    const meetingOrganizer = list.find(l => l.id === authorId);
-    const others = list.filter(l => l.id !== authorId);
+    const meetingOrganizer = members.find(l => l.id === authorId);
+    const others = members.filter(l => l.id !== authorId);
 
     return [meetingOrganizer, ...others];
   }
 
   render() {
     const { isOpen } = this.state;
-    const { authorId } = this.props;
-    const participants = this.sortByMeetingOwnerFirst({ type: 'participants' });
-    const members = this.sortByMeetingOwnerFirst({ type: 'members' });
+    const { authorId, participants } = this.props;
+    const members = this.sortMembers();
 
     return (
       <Container
@@ -206,17 +196,10 @@ class ParticipantsSelector extends Component {
         onFocus={this.handleOpen}
         tabIndex={0}
       >
-        <ParticipantsDisplay isOpen={isOpen}>
+        <div>
           <Title>PARTICIPANTS</Title>
-          {participants.map(p => (
-            <StyledAvatar
-              key={p.id}
-              src={p.profilePictureUrl}
-              size={30}
-              alt={p.fullName}
-            />
-          ))}
-        </ParticipantsDisplay>
+          <ParticipantAvatars authorId={authorId} participants={participants} />
+        </div>
         {!!members.length && (
           <MembersList isOpen={isOpen}>
             <InnerMembersContainer>

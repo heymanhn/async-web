@@ -9,23 +9,37 @@ const Container = styled.div({
   alignItems: 'center',
 });
 
-// HN: Will perfect this component once we implement participants properly
+const StyledAvatar = styled(Avatar)({
+  display: 'inline-block',
+  marginRight: '-4px',
+});
 
-const ParticipantAvatars = ({ participants }) => (
+// Display the meeting organizer first in the list of participants
+const sortByMeetingOwnerFirst = (list, authorId) => {
+  if (!list.length) return [];
+
+  const meetingOrganizer = list.find(l => l.id === authorId);
+  const others = list.filter(l => l.id !== authorId);
+
+  return [meetingOrganizer, ...others];
+};
+
+const ParticipantAvatars = ({ authorId, participants }) => (
   <Container>
-    {participants.map(participant => (
-      <Avatar
-        alt={participant.fullName}
-        key={participant.id}
+    {sortByMeetingOwnerFirst(participants, authorId).map(p => (
+      <StyledAvatar
+        alt={p.fullName}
+        key={p.id}
         size={30}
-        src={participant.profilePictureUrl}
-        title={participant.fullName}
+        src={p.profilePictureUrl}
+        title={p.fullName}
       />
     ))}
   </Container>
 );
 
 ParticipantAvatars.propTypes = {
+  authorId: PropTypes.string.isRequired,
   participants: PropTypes.array.isRequired,
 };
 
