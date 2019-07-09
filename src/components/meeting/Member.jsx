@@ -59,10 +59,11 @@ class Member extends Component {
   }
 
   handleClick(event) {
-    const { id, handleAction } = this.props;
+    const { handleAction, id, isOrganizer } = this.props;
     event.preventDefault();
     event.stopPropagation();
-    handleAction(id);
+
+    if (!isOrganizer) handleAction(id);
   }
 
   render() {

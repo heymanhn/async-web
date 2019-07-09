@@ -202,7 +202,7 @@ class Meeting extends Component {
           if (loading && !data) return null;
           if (error || !data.meeting) return <div>{error}</div>;
 
-          const { body, conversations, participants, title } = data.meeting;
+          const { author, body, conversations, participants, title } = data.meeting;
           const conversationIds = (conversations || []).map(c => c.id);
 
           return (
@@ -217,7 +217,11 @@ class Meeting extends Component {
                     source="meetingTitle"
                   />
                   <InfoContainer>
-                    <ParticipantsSelector meetingId={id} participants={participants} />
+                    <ParticipantsSelector
+                      authorId={author.id}
+                      meetingId={id}
+                      participants={participants.map(p => p.user)}
+                    />
                     <DeadlineSelector>
                       <DeadlineTitle>DUE DATE</DeadlineTitle>
                       None

@@ -5,6 +5,9 @@ export default gql`
     meeting(id: $id) @rest(type: "Meeting", path: "/meetings/{args.id}") {
       id
       title
+      author @type(name: "User") {
+        id
+      }
       body @type(name: "Body") {
         formatter
         payload
@@ -15,7 +18,6 @@ export default gql`
           fullName
           profilePictureUrl
         }
-        accessType
       }
       conversations @type(name: "[Conversation]") {
         id

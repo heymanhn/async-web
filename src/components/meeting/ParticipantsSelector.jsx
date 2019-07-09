@@ -76,7 +76,7 @@ class ParticipantsSelector extends Component {
     super(props);
 
     this.state = {
-      members: null,
+      members: [],
       isOpen: false,
     };
 
@@ -84,8 +84,9 @@ class ParticipantsSelector extends Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.addParticipant = this.addParticipant.bind(this);
-    this.removeParticipant = this.removeParticipant.bind(this);
     this.isParticipant = this.isParticipant.bind(this);
+    this.removeParticipant = this.removeParticipant.bind(this);
+    this.sortByMeetingOwnerFirst = this.sortByMeetingOwnerFirst.bind(this);
   }
 
   async componentDidMount() {
@@ -133,9 +134,10 @@ class ParticipantsSelector extends Component {
       update: (cache) => {
         const member = members.find(m => m.id === id);
         const { meeting } = cache.readQuery({ query: meetingQuery, variables: { id: meetingId } });
+        if (meeting.participants.findIndex(p => p.user.id === id) >= 0) return;
+
         meeting.participants = meeting.participants.concat({
           user: member,
-          accessType: 'collaborator',
           __typename: '[Participant]',
         });
         cache.writeQuery({
@@ -149,7 +151,7 @@ class ParticipantsSelector extends Component {
 
   isParticipant(id) {
     const { participants } = this.props;
-    return participants.findIndex(p => p.user.id === id) >= 0;
+    return participants.findIndex(p => p.id === id) >= 0;
   }
 
   removeParticipant(id) {
@@ -162,10 +164,11 @@ class ParticipantsSelector extends Component {
         userId: id,
       },
       update: (cache) => {
-        const index = participants.findIndex(m => m.user.id === id);
+        const index = participants.findIndex(p => p.id === id);
         const { meeting } = cache.readQuery({ query: meetingQuery, variables: { id: meetingId } });
-        participants.splice(index, 1);
-        meeting.participants = participants;
+        if (index >= 0) participants.splice(index, 1);
+
+        meeting.participants = participants.map(p => ({ user: p, __typename: '[Participant]' }));
         cache.writeQuery({
           query: meetingQuery,
           variables: { id: meetingId },
@@ -175,9 +178,25 @@ class ParticipantsSelector extends Component {
     });
   }
 
+  // Display the meeting organizer first in the list of participants
+  // TODO: Reuse this for ParticipantAvatars later
+  sortByMeetingOwnerFirst({ type }) {
+    const { members } = this.state;
+    const { authorId, participants } = this.props;
+    const list = type === 'participants' ? participants : members;
+    if (!list.length) return [];
+
+    const meetingOrganizer = list.find(l => l.id === authorId);
+    const others = list.filter(l => l.id !== authorId);
+
+    return [meetingOrganizer, ...others];
+  }
+
   render() {
-    const { isOpen, members } = this.state;
-    const { participants } = this.props;
+    const { isOpen } = this.state;
+    const { authorId } = this.props;
+    const participants = this.sortByMeetingOwnerFirst({ type: 'participants' });
+    const members = this.sortByMeetingOwnerFirst({ type: 'members' });
 
     return (
       <Container
@@ -191,14 +210,14 @@ class ParticipantsSelector extends Component {
           <Title>PARTICIPANTS</Title>
           {participants.map(p => (
             <StyledAvatar
-              key={p.user.id}
-              src={p.user.profilePictureUrl}
+              key={p.id}
+              src={p.profilePictureUrl}
               size={30}
-              alt={p.user.fullName}
+              alt={p.fullName}
             />
           ))}
         </ParticipantsDisplay>
-        {members && (
+        {!!members.length && (
           <MembersList isOpen={isOpen}>
             <InnerMembersContainer>
               {members.map(member => (
@@ -206,7 +225,7 @@ class ParticipantsSelector extends Component {
                   key={member.id}
                   fullName={member.fullName}
                   id={member.id}
-                  isOrganizer={member.id === participants[0].user.id}
+                  isOrganizer={member.id === authorId}
                   isParticipant={this.isParticipant(member.id)}
                   handleAction={this.handleAction}
                   profilePictureUrl={member.profilePictureUrl}
@@ -222,6 +241,7 @@ class ParticipantsSelector extends Component {
 }
 
 ParticipantsSelector.propTypes = {
+  authorId: PropTypes.string.isRequired,
   client: PropTypes.object.isRequired,
   meetingId: PropTypes.string.isRequired,
   participants: PropTypes.array.isRequired,
