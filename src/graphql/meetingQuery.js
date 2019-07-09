@@ -10,9 +10,12 @@ export default gql`
         payload
       }
       participants @type(name: "[Participant]") {
-        id
-        fullName
-        profilePictureUrl
+        user @type(name: "User") {
+          id
+          fullName
+          profilePictureUrl
+        }
+        accessType
       }
       conversations @type(name: "[Conversation]") {
         id

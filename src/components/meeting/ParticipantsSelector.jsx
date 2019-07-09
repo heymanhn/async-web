@@ -36,9 +36,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const ParticipantsDisplay = styled.div({
-  marginBottom: '10px',
-});
+const ParticipantsDisplay = styled.div({});
 
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
@@ -52,13 +50,15 @@ const StyledAvatar = styled(Avatar)({
   marginRight: '-4px',
 });
 
-const MembersList = styled.div(({ theme: { colors } }) => ({
+const MembersList = styled.div(({ isOpen, theme: { colors } }) => ({
+  display: isOpen ? 'block' : 'none',
   background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '0 0 5px 5px',
   borderTop: 'none',
   boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.05)',
   marginLeft: '-15px',
+  marginTop: '10px',
   position: 'absolute',
   width: '320px',
 }));
@@ -78,7 +78,6 @@ class ParticipantsSelector extends Component {
     this.state = {
       members: null,
       isOpen: false,
-      participants: props.participants,
     };
 
     this.handleAction = this.handleAction.bind(this);
@@ -97,14 +96,6 @@ class ParticipantsSelector extends Component {
     if (response.data && response.data.fakeMembers) {
       const { fakeMembers: members } = response.data;
       this.setState({ members });
-    }
-  }
-
-  componentDidUpdate() {
-    const { participants } = this.state;
-    const { participants: newParticipants } = this.props;
-    if (participants.length !== newParticipants.length) {
-      this.setState({ participants: newParticipants });
     }
   }
 
@@ -142,7 +133,11 @@ class ParticipantsSelector extends Component {
       update: (cache) => {
         const member = members.find(m => m.id === id);
         const { meeting } = cache.readQuery({ query: meetingQuery, variables: { id: meetingId } });
-        meeting.participants = meeting.participants.contact(member);
+        meeting.participants = meeting.participants.concat({
+          user: member,
+          accessType: 'collaborator',
+          __typename: '[Participant]',
+        });
         cache.writeQuery({
           query: meetingQuery,
           variables: { id: meetingId },
@@ -153,26 +148,36 @@ class ParticipantsSelector extends Component {
   }
 
   isParticipant(id) {
-    const { participants } = this.state;
-    return participants.findIndex(p => p.id === id) >= 0;
+    const { participants } = this.props;
+    return participants.findIndex(p => p.user.id === id) >= 0;
   }
 
-  async removeParticipant(id) {
-    const { client, meetingId } = this.props;
+  removeParticipant(id) {
+    const { client, meetingId, participants } = this.props;
 
-    const response = await client.mutate({
+    return client.mutate({
       mutation: removeParticipantMutation,
       variables: {
         id: meetingId,
-        input: {
-          userId: id,
-        },
+        userId: id,
+      },
+      update: (cache) => {
+        const index = participants.findIndex(m => m.user.id === id);
+        const { meeting } = cache.readQuery({ query: meetingQuery, variables: { id: meetingId } });
+        participants.splice(index, 1);
+        meeting.participants = participants;
+        cache.writeQuery({
+          query: meetingQuery,
+          variables: { id: meetingId },
+          data: { meeting },
+        });
       },
     });
   }
 
   render() {
-    const { isOpen, members, participants } = this.state;
+    const { isOpen, members } = this.state;
+    const { participants } = this.props;
 
     return (
       <Container
@@ -182,21 +187,26 @@ class ParticipantsSelector extends Component {
         onFocus={this.handleOpen}
         tabIndex={0}
       >
-        <ParticipantsDisplay>
+        <ParticipantsDisplay isOpen={isOpen}>
           <Title>PARTICIPANTS</Title>
           {participants.map(p => (
-            <StyledAvatar key={p.id} src={p.profilePictureUrl} size={30} alt={p.fullName} />
+            <StyledAvatar
+              key={p.user.id}
+              src={p.user.profilePictureUrl}
+              size={30}
+              alt={p.user.fullName}
+            />
           ))}
         </ParticipantsDisplay>
         {members && (
-          <MembersList>
+          <MembersList isOpen={isOpen}>
             <InnerMembersContainer>
               {members.map(member => (
                 <Member
                   key={member.id}
                   fullName={member.fullName}
                   id={member.id}
-                  isOrganizer={member.id === participants[0].id}
+                  isOrganizer={member.id === participants[0].user.id}
                   isParticipant={this.isParticipant(member.id)}
                   handleAction={this.handleAction}
                   profilePictureUrl={member.profilePictureUrl}
