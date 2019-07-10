@@ -55,6 +55,13 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
   },
 }));
 
+const LogoTitle = styled.span({
+  fontSize: '18px',
+  fontWeight: 500,
+  position: 'relative',
+  top: '2px',
+});
+
 const SavedIndicator = styled.span(({ theme: { colors } }) => ({
   color: colors.grey6,
   fontSize: '14px',
@@ -99,6 +106,7 @@ const NavBar = () => (
                 title="Roval"
               />
             </Link>
+            <LogoTitle>Roval</LogoTitle>
             {data.saveStatus === 'success' && <SavedIndicator>Saved!</SavedIndicator>}
             {data.saveStatus === 'error' && <ErrorIndicator>Failed to save</ErrorIndicator>}
           </div>
