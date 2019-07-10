@@ -12,13 +12,11 @@ import CreateMeetingButton from './CreateMeetingButton';
 const NavigationBar = styled.div(({ theme: { colors } }) => ({
   position: 'sticky',
   top: 0,
-  zIndex: 1000,
+  zIndex: 2000,
 
-  background: colors.white,
+  background: 'rgba(255, 255, 255, 0.98)',
   borderBottom: `1px solid ${colors.borderGrey}`,
-  
   margin: '0px auto',
-  padding: '0 20px',
   width: '100%',
 }));
 
@@ -32,6 +30,7 @@ const Container = styled.div(({ theme: { maxViewport } }) => ({
   maxWidth: maxViewport,
 
   margin: '0 auto',
+  padding: '0 20px',
 
   a: {
     textDecoration: 'none',
@@ -50,17 +49,10 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
   marginRight: '10px',
 
   [mq('tabletUp')]: {
-    height: '40px',
+    height: '36px',
     marginRight: '15px',
   },
 }));
-
-const LogoTitle = styled.span({
-  fontSize: '20px',
-  fontWeight: 500,
-  position: 'relative',
-  top: '2px',
-});
 
 const SavedIndicator = styled.span(({ theme: { colors } }) => ({
   color: colors.grey6,
@@ -106,7 +98,6 @@ const NavBar = () => (
                 title="Roval"
               />
             </Link>
-            <LogoTitle>Roval</LogoTitle>
             {data.saveStatus === 'success' && <SavedIndicator>Saved!</SavedIndicator>}
             {data.saveStatus === 'error' && <ErrorIndicator>Failed to save</ErrorIndicator>}
           </div>

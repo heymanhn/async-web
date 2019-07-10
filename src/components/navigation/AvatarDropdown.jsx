@@ -90,7 +90,7 @@ class AvatarDropdown extends Component {
                 aria-expanded={dropdownOpen}
                 nav
               >
-                <AvatarWithPointer src={profilePictureUrl} size={40} />
+                <AvatarWithPointer src={profilePictureUrl} size={36} />
               </StyledDropdownToggle>
               <StyledDropdownMenu>
                 <DropdownItem header>{fullName}</DropdownItem>
