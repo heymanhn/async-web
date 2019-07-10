@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import logo from 'images/logo.png';
 import isLoggedInQuery from 'graphql/isLoggedInQuery';
 
+import NotificationSystem from 'components/notifications/NotificationSystem';
 import AvatarDropdown from './AvatarDropdown';
 import CreateMeetingButton from './CreateMeetingButton';
 
@@ -82,7 +83,7 @@ const LoggedInMenu = styled.div({
 const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   borderRight: `1px solid ${colors.borderGrey}`,
   height: '25px',
-  margin: '0 15px 0 17px',
+  margin: '0 10px',
 }));
 
 const NavBar = () => (
@@ -103,9 +104,10 @@ const NavBar = () => (
           </div>
           {data.isLoggedIn && (
             <LoggedInMenu>
-              <AvatarDropdown />
-              <VerticalDivider />
+              <NotificationSystem />
               <CreateMeetingButton />
+              <VerticalDivider />
+              <AvatarDropdown />
             </LoggedInMenu>
           )}
         </Container>
