@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Query, withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
+import Moment from 'react-moment';
 
 import withPageTracking from 'utils/withPageTracking';
 import meetingQuery from 'graphql/meetingQuery';
@@ -123,6 +124,12 @@ const DetailsEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   },
 }));
 
+const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  cursor: 'default',
+  fontSize: '16px',
+}));
+
 class Meeting extends Component {
   constructor(props) {
     super(props);
@@ -202,7 +209,7 @@ class Meeting extends Component {
           if (loading && !data) return null;
           if (error || !data.meeting) return <div>{error}</div>;
 
-          const { author, body, conversations, participants, title } = data.meeting;
+          const { author, body, conversations, deadline, participants, title } = data.meeting;
           const conversationIds = (conversations || []).map(c => c.id);
 
           return (
@@ -223,8 +230,8 @@ class Meeting extends Component {
                       participants={participants.map(p => p.user)}
                     />
                     <DeadlineSelector>
-                      <DeadlineTitle>DUE DATE</DeadlineTitle>
-                      None
+                      <DeadlineTitle>DUE</DeadlineTitle>
+                      <Timestamp fromNow parse="X">{deadline}</Timestamp>
                     </DeadlineSelector>
                   </InfoContainer>
                   <DetailsEditor
