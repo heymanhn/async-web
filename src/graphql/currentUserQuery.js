@@ -9,6 +9,7 @@ export default gql`
       fullName
       email
       profilePictureUrl
+      notificationReadTime
     }
   }
 `;
