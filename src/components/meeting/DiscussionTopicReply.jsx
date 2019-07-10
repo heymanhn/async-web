@@ -101,9 +101,8 @@ class DiscussionTopicReply extends Component {
     const { client } = this.props;
     const { userId } = getLocalUser();
 
-    // Assumes that currentUserQuery is already run once from <AvatarDropdown />
-    const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
-    this.setState({ currentUser: user });
+    const response = await client.query({ query: currentUserQuery, variables: { id: userId } });
+    if (response.data) this.setState({ currentUser: response.data.user });
   }
 
   async handleSubmit({ payload, text }) {

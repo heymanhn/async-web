@@ -140,9 +140,8 @@ class DiscussionTopic extends Component {
     if (forceDisplayModal) resetDisplayOverride();
 
     if (!conversationId) {
-      // Assumes that currentUserQuery is already run once from <AvatarDropdown />
-      const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
-      this.setState({ author: user, loading: false });
+      const res = await client.query({ query: currentUserQuery, variables: { id: userId } });
+      if (res.data) this.setState({ author: res.data.user, loading: false });
       return;
     }
 
