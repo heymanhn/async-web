@@ -10,16 +10,16 @@ import NotificationSystem from 'components/notifications/NotificationSystem';
 import AvatarDropdown from './AvatarDropdown';
 import CreateMeetingButton from './CreateMeetingButton';
 
-const NavigationBar = styled.div(({ theme: { colors } }) => ({
+const NavigationBar = styled.div({
   position: 'sticky',
   top: 0,
   zIndex: 2000,
 
   background: 'rgba(255, 255, 255, 0.98)',
-  borderBottom: `1px solid ${colors.borderGrey}`,
+  boxShadow: '0px 1px 5px rgba(0, 0, 0, 0.08)',
   margin: '0px auto',
   width: '100%',
-}));
+});
 
 const Container = styled.div(({ theme: { maxViewport } }) => ({
   display: 'flex',
