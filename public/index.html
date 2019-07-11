@@ -26,10 +26,15 @@
         accessToken: '6e9f46d150f24c3b830a3de1fa508def',
         captureUncaught: true,
         captureUnhandledRejections: true,
-        sourceMapEnabled: true,
-        codeVersion: '%REACT_APP_GIT_SHA%',
         payload: {
-          environment: '%NODE_ENV%'
+          environment: '%NODE_ENV%',
+          client: {
+            javascript: {
+              source_map_enabled: true,
+              code_version: '%REACT_APP_GIT_SHA%',
+              guess_uncaught_frames: true
+            }
+          }
         }
       };
 
