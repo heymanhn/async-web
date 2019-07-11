@@ -161,6 +161,7 @@ class DiscussionTopicReply extends Component {
         author,
         body,
         createdAt,
+        id,
         updatedAt,
       },
       onCancelCompose,
@@ -171,7 +172,7 @@ class DiscussionTopicReply extends Component {
     if (!replyAuthor) return null;
 
     return (
-      <Container mode={mode} {...props}>
+      <Container mode={mode} {...props} id={mode === 'display' ? id : undefined}>
         <AvatarWithMargin src={replyAuthor.profilePictureUrl} size={36} mode={mode} />
         <MainContainer>
           <HeaderSection>
