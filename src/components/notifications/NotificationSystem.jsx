@@ -16,14 +16,11 @@ import { getLocalUser } from 'utils/auth';
 
 import NotificationsDropdown from './NotificationsDropdown';
 
-const Container = styled.div({
-  cursor: 'pointer',
-});
-
 const IconContainer = styled.div({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  cursor: 'pointer',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
@@ -88,11 +85,11 @@ class NotificationSystem extends Component {
     return icon ? icon.offsetWidth : null;
   }
 
-  toggleDropdown(event) {
+  toggleDropdown(event, callback = () => {}) {
     event.stopPropagation();
     // const { isOpen } = this.state;
 
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }), callback);
 
     // TODO: Mark notifications as read
   }
@@ -101,7 +98,7 @@ class NotificationSystem extends Component {
     const { isOpen, notifications, unreadCount } = this.state;
 
     return (
-      <Container>
+      <div>
         <IconContainer
           className="ignore-react-onclickoutside"
           onClick={this.toggleDropdown}
@@ -117,7 +114,7 @@ class NotificationSystem extends Component {
           unreadCount={unreadCount}
           iconWidth={this.findIconWidth()}
         />
-      </Container>
+      </div>
     );
   }
 }

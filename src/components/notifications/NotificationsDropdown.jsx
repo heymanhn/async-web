@@ -57,7 +57,7 @@ class NotificationsDropdown extends Component {
   }
 
   render() {
-    const { iconWidth, isOpen, notifications, unreadCount } = this.props;
+    const { handleCloseDropdown, iconWidth, isOpen, notifications, unreadCount } = this.props;
 
     return (
       <Container iconWidth={iconWidth} isOpen={isOpen}>
@@ -67,7 +67,11 @@ class NotificationsDropdown extends Component {
         </TitleSection>
         {!notifications && <div>Loading...</div>}
         {notifications && notifications.map(n => (
-          <NotificationRow key={n.createdAt} notification={n} />
+          <NotificationRow
+            key={n.createdAt}
+            notification={n}
+            handleCloseDropdown={handleCloseDropdown}
+          />
         ))}
       </Container>
     );
