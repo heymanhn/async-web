@@ -17,10 +17,13 @@ import { getLocalUser } from 'utils/auth';
 import NotificationsDropdown from './NotificationsDropdown';
 
 const Container = styled.div({
+  cursor: 'pointer',
+});
+
+const IconContainer = styled.div({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  cursor: 'pointer',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
@@ -51,7 +54,7 @@ class NotificationSystem extends Component {
 
     this.iconRef = React.createRef();
     this.fetchNotificationData = this.fetchNotificationData.bind(this);
-    this.iconDimensions = this.iconDimensions.bind(this);
+    this.findIconWidth = this.findIconWidth.bind(this);
     this.toggleDropdown = this.toggleDropdown.bind(this);
   }
 
@@ -80,9 +83,9 @@ class NotificationSystem extends Component {
     this.setState({ notifications, unreadCount });
   }
 
-  iconDimensions() {
+  findIconWidth() {
     const icon = this.iconRef.current;
-    return icon ? { width: icon.offsetWidth, height: icon.offsetHeight } : {};
+    return icon ? icon.offsetWidth : null;
   }
 
   toggleDropdown(event) {
@@ -103,14 +106,16 @@ class NotificationSystem extends Component {
         onClick={this.toggleDropdown}
         ref={this.iconRef}
       >
-        <StyledIcon icon={isOpen ? solidBell : regularBell} />
-        {unreadCount > 0 && <UnreadBadge />}
+        <IconContainer>
+          <StyledIcon icon={isOpen ? solidBell : regularBell} />
+          {unreadCount > 0 && <UnreadBadge />}
+        </IconContainer>
         <NotificationsDropdown
           isOpen={isOpen}
           notifications={notifications}
           handleCloseDropdown={this.toggleDropdown}
           unreadCount={unreadCount}
-          iconDimensions={this.iconDimensions()}
+          iconWidth={this.findIconWidth()}
         />
       </Container>
     );

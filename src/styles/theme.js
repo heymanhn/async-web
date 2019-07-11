@@ -59,6 +59,7 @@ export const theme = {
     bgBlue: '#eff9fd',
     hoverBlue: '#eaf9ff',
     selectedValueBlue: '#beeafe',
+    lightestBlue: '#f3f9ff',
 
     buttonGrey: '#f1f1f1',
     bgGrey: '#fafbfc',
