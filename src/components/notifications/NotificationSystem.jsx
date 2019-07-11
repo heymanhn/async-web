@@ -101,12 +101,12 @@ class NotificationSystem extends Component {
     const { isOpen, notifications, unreadCount } = this.state;
 
     return (
-      <Container
-        className="ignore-react-onclickoutside"
-        onClick={this.toggleDropdown}
-        ref={this.iconRef}
-      >
-        <IconContainer>
+      <Container>
+        <IconContainer
+          className="ignore-react-onclickoutside"
+          onClick={this.toggleDropdown}
+          ref={this.iconRef}
+        >
           <StyledIcon icon={isOpen ? solidBell : regularBell} />
           {unreadCount > 0 && <UnreadBadge />}
         </IconContainer>
