@@ -7,22 +7,21 @@ import styled from '@emotion/styled';
 
 import Avatar from 'components/shared/Avatar';
 
-// const StyledLink = styled(Link)({
-//   cursor: 'pointer',
-//   textDecoration: 'none',
-
-//   ':hover,:active,:visited': {
-//     textDecoration: 'none',
-//   },
-// });
-
 const Container = styled.div(({ isUnread, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   background: isUnread ? colors.lightestBlue : colors.bgGrey,
-  borderTop: `1px solid ${colors.borderGrey}`,
+  borderBottom: `1px solid ${colors.borderGrey}`,
   cursor: 'pointer',
   padding: '15px 15px 12px',
+
+  ':last-of-type': {
+    borderBottom: 'none',
+  },
+
+  ':hover': {
+    background: isUnread ? colors.hoverBlue : colors.grey7,
+  },
 }));
 
 const StyledAvatar = styled(Avatar)({
@@ -57,8 +56,9 @@ class NotificationRow extends Component {
   }
 
   closeDropdownAndNavigate(event) {
+    event.stopPropagation();
     const { handleCloseDropdown } = this.props;
-    handleCloseDropdown(event, () => navigate(this.constructURL()));
+    handleCloseDropdown(() => navigate(this.constructURL()));
   }
 
   constructURL() {

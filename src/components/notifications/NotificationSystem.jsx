@@ -12,6 +12,7 @@ import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
 import notificationsQuery from 'graphql/notificationsQuery';
+import updateCurrentUserMutation from 'graphql/updateCurrentUserMutation';
 import { getLocalUser } from 'utils/auth';
 
 import NotificationsDropdown from './NotificationsDropdown';
@@ -42,11 +43,14 @@ const UnreadBadge = styled.div(({ theme: { colors } }) => ({
 class NotificationSystem extends Component {
   constructor(props) {
     super(props);
+    const { userId } = getLocalUser();
 
     this.state = {
+      badgeDismissed: false,
       isOpen: false,
       notifications: null,
       unreadCount: 0,
+      userId,
     };
 
     this.iconRef = React.createRef();
@@ -64,7 +68,7 @@ class NotificationSystem extends Component {
 
   async fetchNotificationData() {
     const { client } = this.props;
-    const { userId } = getLocalUser();
+    const { userId } = this.state;
 
     const response = await client.query({ query: notificationsQuery, variables: { id: userId } });
     if (!response.data) return;
@@ -78,7 +82,7 @@ class NotificationSystem extends Component {
   // Reconfigure the data for each notification for the dropdown's benefit
   async prepUnreadNotifications(notifications) {
     const { client } = this.props;
-    const { userId } = getLocalUser();
+    const { userId } = this.state;
 
     const response = await client.query({ query: currentUserQuery, variables: { id: userId } });
     if (!response.data) return;
@@ -108,20 +112,43 @@ class NotificationSystem extends Component {
 
   toggleDropdown(event) {
     event.stopPropagation();
-    const { isOpen } = this.state;
+    const { badgeDismissed, isOpen } = this.state;
 
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
 
-    // Mark notifications as read once the user launches the dropdown
-    if (!isOpen) this.markNotificationsAsRead();
+    if (!isOpen) {
+      this.markNotificationsAsRead();
+      if (!badgeDismissed) this.setState({ badgeDismissed: true });
+    }
   }
 
   markNotificationsAsRead() {
-    // TODO
+    const { client } = this.props;
+    const { userId } = this.state;
+    const timestamp = Math.floor(Date.now() / 1000);
+
+    return client.mutate({
+      mutation: updateCurrentUserMutation,
+      variables: {
+        id: userId,
+        input: {
+          notificationReadTime: timestamp,
+        },
+      },
+      update: (cache) => {
+        const { user } = cache.readQuery({ query: currentUserQuery, variables: { id: userId } });
+        user.notificationReadTime = timestamp;
+        cache.writeQuery({
+          query: currentUserQuery,
+          variables: { id: userId },
+          data: { user },
+        });
+      },
+    });
   }
 
   render() {
-    const { isOpen, notifications, unreadCount } = this.state;
+    const { badgeDismissed, isOpen, notifications, unreadCount } = this.state;
 
     return (
       <div>
@@ -131,7 +158,7 @@ class NotificationSystem extends Component {
           ref={this.iconRef}
         >
           <StyledIcon icon={isOpen ? solidBell : regularBell} />
-          {unreadCount > 0 && <UnreadBadge />}
+          {unreadCount > 0 && !badgeDismissed && <UnreadBadge />}
         </IconContainer>
         <NotificationsDropdown
           isOpen={isOpen}

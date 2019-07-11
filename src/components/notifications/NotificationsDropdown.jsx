@@ -20,12 +20,17 @@ const Container = styled.div(({ iconWidth, isOpen, theme: { colors } }) => ({
   zIndex: 1000,
 }));
 
-const TitleSection = styled.div({
+const TitleSection = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
+
+  background: colors.white,
+  borderBottom: `1px solid ${colors.borderGrey}`,
   padding: '15px',
-});
+  position: 'sticky',
+  top: '0px',
+}));
 
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
@@ -52,8 +57,9 @@ class NotificationsDropdown extends Component {
 
   handleClickOutside(event) {
     const { isOpen, handleCloseDropdown } = this.props;
+    event.stopPropagation();
 
-    if (isOpen) handleCloseDropdown(event);
+    if (isOpen) handleCloseDropdown();
   }
 
   render() {
