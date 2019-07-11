@@ -52,6 +52,9 @@ class NotificationSystem extends Component {
     this.iconRef = React.createRef();
     this.fetchNotificationData = this.fetchNotificationData.bind(this);
     this.findIconWidth = this.findIconWidth.bind(this);
+    this.handleCloseDropdown = this.handleCloseDropdown.bind(this);
+    this.markNotificationsAsRead = this.markNotificationsAsRead.bind(this);
+    this.prepUnreadNotifications = this.prepUnreadNotifications.bind(this);
     this.toggleDropdown = this.toggleDropdown.bind(this);
   }
 
@@ -63,21 +66,30 @@ class NotificationSystem extends Component {
     const { client } = this.props;
     const { userId } = getLocalUser();
 
-    const response1 = await client.query({ query: currentUserQuery, variables: { id: userId } });
-    const response2 = await client.query({ query: notificationsQuery, variables: { id: userId } });
+    const response = await client.query({ query: notificationsQuery, variables: { id: userId } });
+    if (!response.data) return;
 
-    if (!response1.data || !response2.data) return;
+    const { notificationsQuery: query } = response.data;
+    const notifications = query ? query.notifications : [];
 
-    // Reconfigure the data for each notification for the dropdown's benefit
-    const { notificationReadTime } = response1.data.user;
-    const { notificationsQuery: query } = response2.data;
-    let notifications = query ? query.notifications : [];
-    notifications = notifications.map(n => ({
+    this.prepUnreadNotifications(notifications);
+  }
+
+  // Reconfigure the data for each notification for the dropdown's benefit
+  async prepUnreadNotifications(notifications) {
+    const { client } = this.props;
+    const { userId } = getLocalUser();
+
+    const response = await client.query({ query: currentUserQuery, variables: { id: userId } });
+    if (!response.data) return;
+
+    const { notificationReadTime } = response.data.user;
+    const notificationsWithUnread = notifications.map(n => ({
       ...n,
       isUnread: n.createdAt > notificationReadTime,
     }));
-    const unreadCount = notifications.filter(n => n.isUnread).length;
-    this.setState({ notifications, unreadCount });
+    const unreadCount = notificationsWithUnread.filter(n => n.isUnread).length;
+    this.setState({ notifications: notificationsWithUnread, unreadCount });
   }
 
   findIconWidth() {
@@ -85,13 +97,27 @@ class NotificationSystem extends Component {
     return icon ? icon.offsetWidth : null;
   }
 
-  toggleDropdown(event, callback = () => {}) {
+  // The notification rows need to wait until the dropdown is closed before
+  // it performs a navigate, otherwise for some reason the whole app reloads.
+  // That's what the callback method is for
+  handleCloseDropdown(callback = () => { }) {
+    const { isOpen, notifications } = this.state;
+    if (isOpen) this.setState({ isOpen: false }, callback);
+    this.prepUnreadNotifications(notifications);
+  }
+
+  toggleDropdown(event) {
     event.stopPropagation();
-    // const { isOpen } = this.state;
+    const { isOpen } = this.state;
 
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }), callback);
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
 
-    // TODO: Mark notifications as read
+    // Mark notifications as read once the user launches the dropdown
+    if (!isOpen) this.markNotificationsAsRead();
+  }
+
+  markNotificationsAsRead() {
+    // TODO
   }
 
   render() {
@@ -110,7 +136,7 @@ class NotificationSystem extends Component {
         <NotificationsDropdown
           isOpen={isOpen}
           notifications={notifications}
-          handleCloseDropdown={this.toggleDropdown}
+          handleCloseDropdown={this.handleCloseDropdown}
           unreadCount={unreadCount}
           iconWidth={this.findIconWidth()}
         />
