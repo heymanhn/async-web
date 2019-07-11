@@ -10,12 +10,6 @@ const Container = styled.div({
   justifyContent: 'center',
 });
 
-const LoadingText = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey5,
-  fontSize: '18px',
-  marginRight: '15px',
-}));
-
 const StyledSpinner = styled(Spinner)(({ color, theme: { colors } }) => ({
   border: `.05em solid ${colors[color]}`,
   borderRightColor: 'transparent',
@@ -23,9 +17,8 @@ const StyledSpinner = styled(Spinner)(({ color, theme: { colors } }) => ({
   height: '20px',
 }));
 
-const LoadingIndicator = ({ color }) => (
-  <Container>
-    <LoadingText>Loading</LoadingText>
+const LoadingIndicator = ({ color, ...props }) => (
+  <Container {...props}>
     <StyledSpinner color={color} />
   </Container>
 );

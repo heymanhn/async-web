@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import styled from '@emotion/styled';
 
+import LoadingIndicator from 'components/shared/LoadingIndicator';
 import NotificationRow from './NotificationRow';
 
 const Container = styled.div(({ iconWidth, isOpen, theme: { colors } }) => ({
@@ -38,6 +39,16 @@ const Title = styled.div(({ theme: { colors } }) => ({
   fontWeight: 500,
 }));
 
+const StyledLoadingIndicator = styled(LoadingIndicator)({
+  margin: '25px',
+});
+
+const EmptyText = styled.div(({ theme: { colors } }) => ({
+  margin: '25px',
+  fontSize: '14px',
+  color: colors.grey3,
+}));
+
 const UnreadCountBadge = styled.div(({ theme: { colors } }) => ({
   background: colors.blue,
   borderRadius: '5px',
@@ -71,7 +82,8 @@ class NotificationsDropdown extends Component {
           <Title>NOTIFICATIONS</Title>
           {unreadCount > 0 && <UnreadCountBadge>{unreadCount}</UnreadCountBadge>}
         </TitleSection>
-        {!notifications && <div>Loading...</div>}
+        {!notifications && <StyledLoadingIndicator color="grey4" />}
+        {notifications && !notifications.length && <EmptyText>No notifications</EmptyText>}
         {notifications && notifications.map(n => (
           <NotificationRow
             key={n.createdAt}
