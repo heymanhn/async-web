@@ -6,21 +6,20 @@ import styled from '@emotion/styled';
 import logo from 'images/logo.png';
 import isLoggedInQuery from 'graphql/isLoggedInQuery';
 
+import NotificationSystem from 'components/notifications/NotificationSystem';
 import AvatarDropdown from './AvatarDropdown';
 import CreateMeetingButton from './CreateMeetingButton';
 
-const NavigationBar = styled.div(({ theme: { colors } }) => ({
+const NavigationBar = styled.div({
   position: 'sticky',
   top: 0,
-  zIndex: 1000,
+  zIndex: 1049, // The modal windows are at z-index 1050
 
-  background: colors.white,
-  borderBottom: `1px solid ${colors.borderGrey}`,
-  
+  background: 'rgba(255, 255, 255, 0.98)',
+  boxShadow: '0px 1px 5px rgba(0, 0, 0, 0.08)',
   margin: '0px auto',
-  padding: '0 20px',
   width: '100%',
-}));
+});
 
 const Container = styled.div(({ theme: { maxViewport } }) => ({
   display: 'flex',
@@ -32,6 +31,7 @@ const Container = styled.div(({ theme: { maxViewport } }) => ({
   maxWidth: maxViewport,
 
   margin: '0 auto',
+  padding: '0 20px',
 
   a: {
     textDecoration: 'none',
@@ -50,13 +50,13 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
   marginRight: '10px',
 
   [mq('tabletUp')]: {
-    height: '40px',
+    height: '36px',
     marginRight: '15px',
   },
 }));
 
 const LogoTitle = styled.span({
-  fontSize: '20px',
+  fontSize: '18px',
   fontWeight: 500,
   position: 'relative',
   top: '2px',
@@ -90,7 +90,7 @@ const LoggedInMenu = styled.div({
 const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   borderRight: `1px solid ${colors.borderGrey}`,
   height: '25px',
-  margin: '0 15px 0 17px',
+  margin: '0 10px',
 }));
 
 const NavBar = () => (
@@ -112,9 +112,10 @@ const NavBar = () => (
           </div>
           {data.isLoggedIn && (
             <LoggedInMenu>
-              <AvatarDropdown />
-              <VerticalDivider />
+              <NotificationSystem />
               <CreateMeetingButton />
+              <VerticalDivider />
+              <AvatarDropdown />
             </LoggedInMenu>
           )}
         </Container>

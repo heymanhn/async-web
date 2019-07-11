@@ -1,36 +1,30 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import { Spinner } from 'reactstrap';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import createMeetingMutation from 'graphql/createMeetingMutation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const StyledSpinner = styled(Spinner)(({ color, theme: { colors } }) => ({
-  border: `.05em solid ${colors[color]}`,
+const StyledSpinner = styled(Spinner)(({ theme: { colors } }) => ({
+  border: `.05em solid ${colors.grey4}`,
   borderRightColor: 'transparent',
-  width: '15px',
-  height: '15px',
+  width: '16px',
+  height: '16px',
+  margin: '0 10px',
 }));
 
-const Container = styled.div(({ theme: { colors } }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-
+const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey3,
-  fontSize: '26px',
-  fontWeight: '400',
+  fontSize: '16px',
+  margin: '0 10px',
   textDecoration: 'none',
   cursor: 'pointer',
 
   ':hover': {
     textDecoration: 'none',
     color: colors.grey2,
-  },
-
-  span: {
-    position: 'relative',
-    top: '-2px',
   },
 }));
 
@@ -43,14 +37,10 @@ const CreateMeetingButton = () => (
     }}
   >
     {(create, { loading, error }) => {
-      if (loading) return <StyledSpinner color="grey5" />;
+      if (loading) return <StyledSpinner />;
       if (error) console.log(error);
 
-      return (
-        <Container onClick={() => { create(); }}>
-          <span>+</span>
-        </Container>
-      );
+      return <StyledIcon icon={faPlus} onClick={() => { create(); }} />;
     }}
   </Mutation>
 );

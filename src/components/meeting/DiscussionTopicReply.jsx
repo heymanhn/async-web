@@ -101,9 +101,8 @@ class DiscussionTopicReply extends Component {
     const { client } = this.props;
     const { userId } = getLocalUser();
 
-    // Assumes that currentUserQuery is already run once from <AvatarDropdown />
-    const { user } = client.readQuery({ query: currentUserQuery, variables: { id: userId } });
-    this.setState({ currentUser: user });
+    const response = await client.query({ query: currentUserQuery, variables: { id: userId } });
+    if (response.data) this.setState({ currentUser: response.data.user });
   }
 
   async handleSubmit({ payload, text }) {
@@ -162,6 +161,7 @@ class DiscussionTopicReply extends Component {
         author,
         body,
         createdAt,
+        id,
         updatedAt,
       },
       onCancelCompose,
@@ -172,7 +172,7 @@ class DiscussionTopicReply extends Component {
     if (!replyAuthor) return null;
 
     return (
-      <Container mode={mode} {...props}>
+      <Container mode={mode} {...props} id={mode === 'display' ? id : undefined}>
         <AvatarWithMargin src={replyAuthor.profilePictureUrl} size={36} mode={mode} />
         <MainContainer>
           <HeaderSection>

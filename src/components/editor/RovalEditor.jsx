@@ -50,20 +50,10 @@ class RovalEditor extends Component {
   constructor(props) {
     super(props);
 
-    const { initialValue, isPlainText } = props;
-    let value;
-
-    if (isPlainText && initialValue) {
-      value = Plain.deserialize(initialValue);
-    } else {
-      const initialJSON = initialValue ? JSON.parse(initialValue) : defaultValue;
-      value = Value.fromJSON(initialJSON);
-    }
-
     this.state = {
       isClicked: false,
       isToolbarVisible: false,
-      value,
+      value: null,
     };
 
     this.editor = React.createRef();
@@ -81,6 +71,7 @@ class RovalEditor extends Component {
     this.clearEditorValue = this.clearEditorValue.bind(this);
     this.isValueEmpty = this.isValueEmpty.bind(this);
     this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
+    this.loadInitialValue = this.loadInitialValue.bind(this);
     this.pluginsForType = this.pluginsForType.bind(this);
     this.renderEditor = this.renderEditor.bind(this);
     this.resetToInitialValue = this.resetToInitialValue.bind(this);
@@ -88,16 +79,22 @@ class RovalEditor extends Component {
   }
 
   componentDidMount() {
-    this.updateToolbar();
+    this.loadInitialValue();
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     // The editor is only autofocused when initially mounted
-    const { mode } = this.props;
+    const { initialValue, mode } = this.props;
     if (mode === 'edit' && prevProps.mode === 'display') {
       this.editor.current.focus().moveToEndOfDocument();
     }
-    this.updateToolbar();
+
+    // Only set the content of the editor if it's changed (eg. loading a new meeting)
+    if (initialValue !== prevProps.initialValue) {
+      this.loadInitialValue();
+    } else {
+      this.updateToolbar();
+    }
   }
 
   handleBackspaceActions(next) {
@@ -275,6 +272,20 @@ class RovalEditor extends Component {
     return mode === 'compose' || mode === 'edit';
   }
 
+  loadInitialValue() {
+    const { initialValue, isPlainText } = this.props;
+    let value;
+
+    if (isPlainText && initialValue) {
+      value = Plain.deserialize(initialValue);
+    } else {
+      const initialJSON = initialValue ? JSON.parse(initialValue) : defaultValue;
+      value = Value.fromJSON(initialJSON);
+    }
+
+    this.setState({ value }, this.updateToolbar);
+  }
+
   pluginsForType() {
     const { source } = this.props;
     return plugins[source];
@@ -320,6 +331,7 @@ class RovalEditor extends Component {
   render() {
     const { value } = this.state;
     const { mode, source, ...props } = this.props;
+    if (!value) return null;
 
     return (
       <div>

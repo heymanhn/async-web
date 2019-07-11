@@ -51,14 +51,15 @@ export const theme = {
     grey3: '#8798a4',
     grey4: '#a7b6c0',
     grey5: '#c3c4c5',
-    grey6: '#dadbdc',
-    grey7: '#f0f3f5',
+    grey6: '#dadcde',
+    grey7: '#f0f3f6',
 
     mainText: '#313f48',
 
     bgBlue: '#eff9fd',
     hoverBlue: '#eaf9ff',
     selectedValueBlue: '#beeafe',
+    lightestBlue: '#f3f9ff',
 
     buttonGrey: '#f1f1f1',
     bgGrey: '#fafbfc',
