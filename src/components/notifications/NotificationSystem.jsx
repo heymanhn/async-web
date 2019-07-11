@@ -74,7 +74,7 @@ class NotificationSystem extends Component {
     if (!response.data) return;
 
     const { notificationsQuery: query } = response.data;
-    const notifications = query ? query.notifications : [];
+    const notifications = (query && query.notifications) ? query.notifications : [];
 
     this.prepUnreadNotifications(notifications);
   }
