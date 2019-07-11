@@ -117,6 +117,8 @@ class DiscussionTopic extends Component {
 
     this.editor = React.createRef();
 
+    this.displayModalIfNeeded = this.displayModalIfNeeded.bind(this);
+    this.fetchConversationData = this.fetchConversationData.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleLaunchModal = this.handleLaunchModal.bind(this);
@@ -130,20 +132,36 @@ class DiscussionTopic extends Component {
     const {
       client,
       conversationId,
-      forceDisplayModal,
-      meetingId,
-      resetDisplayOverride,
     } = this.props;
     const { userId } = getLocalUser();
-
-    // Ensures the user can actually close the modal
-    if (forceDisplayModal) resetDisplayOverride();
 
     if (!conversationId) {
       const res = await client.query({ query: currentUserQuery, variables: { id: userId } });
       if (res.data) this.setState({ author: res.data.user, loading: false });
       return;
     }
+
+    this.displayModalIfNeeded();
+    this.fetchConversationData();
+  }
+
+  componentDidUpdate() {
+    this.displayModalIfNeeded();
+  }
+
+  displayModalIfNeeded() {
+    const { isModalVisible } = this.state;
+    const { forceDisplayModal, initialMode, resetDisplayOverride } = this.props;
+
+    // Ensures the user can actually close the modal
+    if (forceDisplayModal) {
+      if (!isModalVisible) this.setState({ isModalVisible: true, mode: initialMode });
+      resetDisplayOverride();
+    }
+  }
+
+  async fetchConversationData() {
+    const { client, conversationId, meetingId } = this.props;
 
     // Assumes each conversation has at least one message from here on out
     const response = await client.query({

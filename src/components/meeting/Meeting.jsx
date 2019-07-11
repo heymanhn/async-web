@@ -1,3 +1,5 @@
+/* eslint react/no-did-update-set-state: 0 */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Query, withApollo } from 'react-apollo';
@@ -137,6 +139,11 @@ class Meeting extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggleComposeMode = this.toggleComposeMode.bind(this);
     this.resetDisplayOverride = this.resetDisplayOverride.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { cid } = this.props;
+    if (cid && prevProps.cid !== cid) this.setState({ isModalInitiallyDisplayed: false });
   }
 
   async handleSubmitTitle({ text }) {

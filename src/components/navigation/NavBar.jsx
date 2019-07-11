@@ -13,7 +13,7 @@ import CreateMeetingButton from './CreateMeetingButton';
 const NavigationBar = styled.div({
   position: 'sticky',
   top: 0,
-  zIndex: 2000,
+  zIndex: 1049, // The modal windows are at z-index 1050
 
   background: 'rgba(255, 255, 255, 0.98)',
   boxShadow: '0px 1px 5px rgba(0, 0, 0, 0.08)',
