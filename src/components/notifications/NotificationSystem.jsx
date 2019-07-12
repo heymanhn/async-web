@@ -74,7 +74,7 @@ class NotificationSystem extends Component {
     if (!response.data) return;
 
     const { notificationsQuery: query } = response.data;
-    const notifications = (query && query.notifications) ? query.notifications : [];
+    const notifications = query ? query.notifications : null;
 
     this.prepUnreadNotifications(notifications);
   }
@@ -88,7 +88,7 @@ class NotificationSystem extends Component {
     if (!response.data) return;
 
     const { notificationReadTime } = response.data.user;
-    const notificationsWithUnread = notifications.map(n => ({
+    const notificationsWithUnread = (notifications || []).map(n => ({
       ...n,
       isUnread: n.createdAt > notificationReadTime,
     }));
