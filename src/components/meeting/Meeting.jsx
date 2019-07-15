@@ -127,7 +127,7 @@ const DetailsEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
 }));
 
 const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
-  color: colors.grey3,
+  color: colors.mainText,
   cursor: 'default',
   fontSize: '16px',
 }));
@@ -237,8 +237,8 @@ class Meeting extends Component {
                       participants={participants.map(p => p.user)}
                     />
                     <DeadlineSelector>
-                      <DeadlineTitle>DUE</DeadlineTitle>
-                      <Timestamp fromNow parse="X">{deadline}</Timestamp>
+                      <DeadlineTitle>DUE DATE</DeadlineTitle>
+                      <Timestamp format="MMM D, YYYY" parse="X">{deadline}</Timestamp>
                     </DeadlineSelector>
                   </InfoContainer>
                   <DetailsEditor
