@@ -27,30 +27,6 @@ const TopicSection = styled.div({
   display: 'flex',
   flexDirection: 'column',
   margin: '25px 30px 30px',
-
-  // HN: opportunity to DRY these up later once we find a pattern of typography
-  // across different editor use cases
-  'div:not(:first-of-type)': {
-    marginTop: '1em',
-  },
-
-  h1: {
-    fontSize: '28px',
-    fontWeight: 600,
-    marginTop: '1.4em',
-  },
-
-  h2: {
-    fontSize: '24px',
-    fontWeight: 500,
-    marginTop: '1.3em',
-  },
-
-  h3: {
-    fontSize: '20px',
-    fontWeight: 500,
-    marginTop: '1.2em',
-  },
 });
 
 const Header = styled.div({
@@ -86,8 +62,28 @@ const TopicEditor = styled(RovalEditor)({
   fontWeight: 400,
   marginTop: '20px',
 
+  // HN: opportunity to DRY these up later once we find a pattern of typography
+  // across different editor use cases
   'div:not(:first-of-type)': {
     marginTop: '1em',
+  },
+
+  h1: {
+    fontSize: '28px',
+    fontWeight: 600,
+    marginTop: '1.4em',
+  },
+
+  h2: {
+    fontSize: '24px',
+    fontWeight: 500,
+    marginTop: '1.3em',
+  },
+
+  h3: {
+    fontSize: '20px',
+    fontWeight: 500,
+    marginTop: '1.2em',
   },
 });
 
