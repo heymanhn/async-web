@@ -88,21 +88,13 @@ const TopicEditor = styled(RovalEditor)({
 });
 
 const RepliesSection = styled.div(({ theme: { colors } }) => ({
-  background: colors.formGrey,
+  background: colors.white,
   borderTop: `1px solid ${colors.borderGrey}`,
 }));
-
-const RepliesLabel = styled.div({
-  fontSize: '14px',
-  fontWeight: 500,
-  marginTop: '25px',
-  marginLeft: '30px',
-});
 
 const Separator = styled.hr(({ theme: { colors } }) => ({
   borderTop: `1px solid ${colors.borderGrey}`,
   margin: 0,
-  marginLeft: '78px', // Assuming 36px avatars, 12px padding, 30px element margin
 }));
 
 const ReplyDisplay = styled.div({
@@ -297,7 +289,6 @@ class DiscussionTopicModal extends Component {
         </TopicSection>
         {messages.length > 1 && (
           <RepliesSection>
-            <RepliesLabel>REPLIES</RepliesLabel>
             {messages.slice(1).map(m => (
               <ReplyDisplay key={m.id}>
                 <DiscussionTopicReply

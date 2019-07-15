@@ -16,9 +16,13 @@ import ContentToolbar from './ContentToolbar';
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
-  background: mode === 'display' ? colors.formGrey : 'none',
+  background: mode === 'compose' ? colors.formGrey : 'initial',
   padding: '20px 30px 25px',
   width: '100%',
+
+  ':hover': {
+    background: mode === 'display' ? colors.bgGrey : 'initial',
+  },
 }));
 
 const AvatarWithMargin = styled(Avatar)(({ mode }) => ({
