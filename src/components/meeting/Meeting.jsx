@@ -171,18 +171,21 @@ class Meeting extends Component {
       },
     };
 
-    const response = await client.mutate({
-      mutation: updateMeetingMutation,
-      variables: { id, input },
-    });
+    try {
+      const response = await client.mutate({
+        mutation: updateMeetingMutation,
+        variables: { id, input },
+      });
 
-    if (response.data) {
-      client.writeData({ data: { saveStatus: 'success' } });
-      setTimeout(() => client.writeData({ data: { saveStatus: null } }), 2000);
-      return Promise.resolve();
+      if (response.data) {
+        client.writeData({ data: { saveStatus: 'success' } });
+        setTimeout(() => client.writeData({ data: { saveStatus: null } }), 2000);
+      }
+    } catch (e) {
+      client.writeData({ data: { saveStatus: 'error' } });
     }
 
-    return Promise.reject(new Error(`Failed to save meeting ${type}`));
+    return Promise.resolve();
   }
 
   toggleComposeMode() {
