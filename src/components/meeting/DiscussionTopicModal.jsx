@@ -13,10 +13,10 @@ import RovalEditor from 'components/editor/RovalEditor';
 import ContentToolbar from './ContentToolbar';
 import DiscussionTopicReply from './DiscussionTopicReply';
 
-const StyledModal = styled(Modal)(({ theme: { maxModalViewport } }) => ({
+const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
   margin: '100px auto',
-  width: maxModalViewport,
-  maxWidth: maxModalViewport,
+  width: maxViewport,
+  maxWidth: maxViewport,
 
   '.modal-content': {
     border: 'none',

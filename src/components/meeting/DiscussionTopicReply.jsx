@@ -57,8 +57,8 @@ const Author = styled.span(({ mode }) => ({
 }));
 
 const ReplyEditor = styled(RovalEditor)({
-  fontSize: '14px',
-  lineHeight: '22px',
+  fontSize: '16px',
+  lineHeight: '25px',
   fontWeight: 400,
   marginTop: '10px',
 
@@ -69,19 +69,19 @@ const ReplyEditor = styled(RovalEditor)({
   },
 
   h1: {
-    fontSize: '24px',
+    fontSize: '28px',
     fontWeight: 600,
     marginTop: '1.4em',
   },
 
   h2: {
-    fontSize: '20px',
+    fontSize: '24px',
     fontWeight: 500,
     marginTop: '1.3em',
   },
 
   h3: {
-    fontSize: '16px',
+    fontSize: '20px',
     fontWeight: 500,
     marginTop: '1.2em',
   },
