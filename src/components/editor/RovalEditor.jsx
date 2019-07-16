@@ -19,7 +19,6 @@ import {
   singleUseBlocks,
 } from 'utils/slateHelper';
 
-import EditorActions from './EditorActions';
 import Toolbar from './toolbar/Toolbar';
 
 const DEFAULT_NODE = 'paragraph';
@@ -74,7 +73,6 @@ class RovalEditor extends Component {
     this.loadInitialValue = this.loadInitialValue.bind(this);
     this.pluginsForType = this.pluginsForType.bind(this);
     this.renderEditor = this.renderEditor.bind(this);
-    this.resetToInitialValue = this.resetToInitialValue.bind(this);
     this.updateToolbar = this.updateToolbar.bind(this);
   }
 
@@ -113,9 +111,10 @@ class RovalEditor extends Component {
   }
 
   handleCancel({ saved = false } = {}) {
-    const { mode, onCancel } = this.props;
+    const { mode, onCancel, source } = this.props;
 
-    if (mode === 'edit' && !saved) this.resetToInitialValue();
+    const resetAllowed = mode === 'edit' || source.includes('meeting');
+    if (resetAllowed && !saved) this.loadInitialValue();
     onCancel();
   }
 
@@ -307,13 +306,6 @@ class RovalEditor extends Component {
     );
   }
 
-  resetToInitialValue() {
-    const { initialValue } = this.props;
-    if (!initialValue) return;
-
-    this.setState({ value: Value.fromJSON(JSON.parse(initialValue)) });
-  }
-
   updateToolbar() {
     const { isClicked, isToolbarVisible, value } = this.state;
     const { fragment, selection } = value;
@@ -355,15 +347,6 @@ class RovalEditor extends Component {
           value={value}
           {...props}
         />
-        {/* {this.isEditOrComposeMode() && (
-          <EditorActions
-            isSubmitDisabled={this.isValueEmpty()}
-            mode={mode}
-            onCancel={this.handleCancel}
-            onSubmit={this.handleSubmit}
-            size={source === 'discussionTopic' ? 'large' : 'small'}
-          />
-        )} */}
       </div>
     );
   }
