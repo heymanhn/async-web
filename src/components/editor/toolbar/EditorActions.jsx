@@ -70,7 +70,7 @@ const layouts = {
 
 
 // TODO (HN): Pass the action buttons' text into the component in the future
-const EditorActions = ({ contentType, isSubmitDisabled, onCancel, onSubmit }) => {
+const ContentToolbar = ({ contentType, isSubmitDisabled, onCancel, onSubmit }) => {
   // const buttons = {
   //   save: {
   //     small: (
@@ -113,12 +113,13 @@ const EditorActions = ({ contentType, isSubmitDisabled, onCancel, onSubmit }) =>
   // return <LargeContainer>{buttonsToDisplay}</LargeContainer>;
 };
 
-EditorActions.propTypes = {
+ContentToolbar.propTypes = {
   contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
-  displayMode: PropTypes.oneOf(['display', 'compose', 'edit', 'hide']).isRequired,
+  mode: PropTypes.oneOf(['display', 'compose', 'edit']).isRequired,
   isSubmitDisabled: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  replyCount: PropTypes.number.isRequired,
 };
 
-export default EditorActions;
+export default ContentToolbar;

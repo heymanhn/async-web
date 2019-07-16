@@ -12,12 +12,13 @@ import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
+import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
 import DiscussionTopicModal from './DiscussionTopicModal';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
-  border: `1px solid ${colors.grey6}`,
+  border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
   cursor: mode === 'display' ? 'pointer' : 'initial',
@@ -309,7 +310,7 @@ class DiscussionTopic extends Component {
             <TopicMetadata>
               <Author mode={mode}>{author.fullName}</Author>
               {mode === 'display' && (
-                <ContentToolbar
+                <ContentHeader
                   createdAt={createdAt}
                   isEditable={matchCurrentUserId(author.id)}
                   isEdited={createdAt !== updatedAt}
@@ -324,9 +325,23 @@ class DiscussionTopic extends Component {
               onSubmit={this.handleSubmit}
               source="discussionTopic"
             />
+            {/* {this.isEditOrComposeMode() && (
+              <EditorActions
+                isSubmitDisabled={this.isValueEmpty()}
+                mode={mode}
+                onCancel={this.handleCancel}
+                onSubmit={this.handleSubmit}
+                size={source === 'discussionTopic' ? 'large' : 'small'}
+              />
+            )} */}
           </ContentContainer>
         </MainContainer>
-        {mode === 'display' && <ActionsContainer>{replyButton}</ActionsContainer>}
+        {mode === 'display' && (
+          <ContentToolbar
+            contentType="topic"
+            replyCount={replyCount}
+          />
+        )}
         {conversationId && (
           <DiscussionTopicModal
             author={author}

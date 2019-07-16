@@ -10,7 +10,7 @@ import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
-import ContentToolbar from './ContentToolbar';
+import ContentHeader from './ContentHeader';
 import DiscussionTopicReply from './DiscussionTopicReply';
 
 const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
@@ -269,7 +269,7 @@ class DiscussionTopicModal extends Component {
               <Details>
                 <Author>{author.fullName}</Author>
                 {mode === 'display' && (
-                  <ContentToolbar
+                  <ContentHeader
                     createdAt={createdAt}
                     isEditable={matchCurrentUserId(author.id)}
                     isEdited={createdAt !== updatedAt}
