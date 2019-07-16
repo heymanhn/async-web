@@ -2,10 +2,10 @@ import React from 'react';
 import { Mutation } from 'react-apollo';
 import { Spinner } from 'reactstrap';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import createMeetingMutation from 'graphql/createMeetingMutation';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const StyledSpinner = styled(Spinner)(({ theme: { colors } }) => ({
   border: `.05em solid ${colors.grey4}`,
