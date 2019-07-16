@@ -355,7 +355,7 @@ class RovalEditor extends Component {
           value={value}
           {...props}
         />
-        {this.isEditOrComposeMode() && (
+        {/* {this.isEditOrComposeMode() && (
           <EditorActions
             isSubmitDisabled={this.isValueEmpty()}
             mode={mode}
@@ -363,7 +363,7 @@ class RovalEditor extends Component {
             onSubmit={this.handleSubmit}
             size={source === 'discussionTopic' ? 'large' : 'small'}
           />
-        )}
+        )} */}
       </div>
     );
   }

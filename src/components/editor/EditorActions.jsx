@@ -1,8 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { faComment } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import Button from 'components/shared/Button';
+
+const Container = styled.div(({ theme: { colors } }) => ({
+  background: colors.formGrey,
+  color: colors.grey3,
+
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+}));
+
+const ButtonContainer = styled.div({ });
 
 const SmallContainer = styled.div({
   display: 'flex',
@@ -43,59 +55,70 @@ const CancelLink = styled.div(({ theme: { colors } }) => ({
   fontWeight: 500,
 }));
 
-// For the large version only
-const StyledButton = styled(Button)(({ isDisabled }) => ({
-  cursor: isDisabled ? 'default' : 'pointer',
-  marginRight: '10px',
-  opacity: isDisabled ? 0.5 : 1,
-  padding: '5px 20px',
-}));
+const layouts = {
+  topic: styled.div(({ theme: { colors } }) => ({
+    borderRadius: '0 0 5px 5px',
+    minHeight: '56px',
+    paddingLeft: '68px',
+    paddingRight: '20px',
+  })),
+  // modalTopic: styled.div({ }),
+  // modalReply: styled.div({
+
+  // }),
+};
+
 
 // TODO (HN): Pass the action buttons' text into the component in the future
-const EditorActions = ({ isSubmitDisabled, mode, onCancel, onSubmit, size }) => {
-  const buttons = {
-    save: {
-      small: (
-        <SaveLink onClick={isSubmitDisabled ? () => { } : onSubmit} isDisabled={isSubmitDisabled}>
-          {mode === 'edit' ? 'Update' : 'Reply'}
-        </SaveLink>
-      ),
-      large: (
-        <StyledButton
-          title={mode === 'compose' ? 'Add Topic' : 'Save'}
-          onClick={onSubmit}
-          isDisabled={isSubmitDisabled}
-        />
-      ),
-    },
-    cancel: {
-      small: <CancelLink onClick={onCancel}>Cancel</CancelLink>,
-      large: <StyledButton type="light" title="Cancel" onClick={onCancel} />,
-    },
-  };
+const EditorActions = ({ contentType, isSubmitDisabled, onCancel, onSubmit }) => {
+  // const buttons = {
+  //   save: {
+  //     small: (
+  //       <SaveLink onClick={isSubmitDisabled ? () => { } : onSubmit} isDisabled={isSubmitDisabled}>
+  //         {mode === 'edit' ? 'Update' : 'Reply'}
+  //       </SaveLink>
+  //     ),
+  //     large: (
+  //       <StyledButton
+  //         title={mode === 'compose' ? 'Add Topic' : 'Save'}
+  //         onClick={onSubmit}
+  //         isDisabled={isSubmitDisabled}
+  //       />
+  //     ),
+  //   },
+  //   cancel: {
+  //     small: <CancelLink onClick={onCancel}>Cancel</CancelLink>,
+  //     large: <StyledButton type="light" title="Cancel" onClick={onCancel} />,
+  //   },
+  // };
 
-  const buttonsToDisplay = (
-    <React.Fragment>
-      {buttons.save[size]}
-      {buttons.cancel[size]}
-    </React.Fragment>
+  // const buttonsToDisplay = (
+  //   <React.Fragment>
+  //     {buttons.save[size]}
+  //     {buttons.cancel[size]}
+  //   </React.Fragment>
+  // );
+
+  const repliesButton = (
+    <ButtonContainer value={0}>
+    </ButtonContainer>
   );
 
-  if (size === 'small') return <SmallContainer>{buttonsToDisplay}</SmallContainer>;
-  return <LargeContainer>{buttonsToDisplay}</LargeContainer>;
+  return (
+    <Container>
+      {repliesButton}
+    </Container>
+  );
+
+  // return <LargeContainer>{buttonsToDisplay}</LargeContainer>;
 };
 
 EditorActions.propTypes = {
+  contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
+  displayMode: PropTypes.oneOf(['display', 'compose', 'edit', 'hide']).isRequired,
   isSubmitDisabled: PropTypes.bool.isRequired,
-  mode: PropTypes.string,
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  size: PropTypes.oneOf(['small', 'large']),
-};
-
-EditorActions.defaultProps = {
-  mode: null,
-  size: 'small',
 };
 
 export default EditorActions;
