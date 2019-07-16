@@ -323,7 +323,7 @@ class DiscussionTopic extends Component {
               mode={mode}
               onCancel={this.handleCancel}
               onSubmit={this.handleSubmit}
-              source="topic"
+              contentType="topic"
             />
           </ContentContainer>
         </MainContainer>

@@ -11,6 +11,7 @@ import { matchCurrentUserId } from 'utils/auth';
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
 import ContentHeader from './ContentHeader';
+import ContentToolbar from './ContentToolbar';
 import DiscussionTopicReply from './DiscussionTopicReply';
 
 const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
@@ -26,7 +27,7 @@ const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
 const TopicSection = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  margin: '25px 30px 30px',
+  margin: '25px 30px',
 });
 
 const Header = styled.div({
@@ -284,9 +285,15 @@ class DiscussionTopicModal extends Component {
             mode={mode}
             onCancel={this.toggleEditMode}
             onSubmit={this.handleSubmit}
-            source="modalTopic"
+            contentType="modalTopic"
           />
         </TopicSection>
+        {mode === 'display' && (
+          <ContentToolbar
+            contentType="modalTopic"
+            replyCount={messages.length - 1}
+          />
+        )}
         {messages.length > 1 && (
           <RepliesSection>
             {messages.slice(1).map(m => (

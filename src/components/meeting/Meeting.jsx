@@ -231,7 +231,7 @@ class Meeting extends Component {
                     isPlainText
                     onSubmit={this.handleSubmitTitle}
                     saveOnBlur
-                    source="meetingTitle"
+                    contentType="meetingTitle"
                   />
                   <InfoContainer>
                     <ParticipantsSelector
@@ -248,7 +248,7 @@ class Meeting extends Component {
                     initialValue={body ? body.payload : null}
                     onSubmit={this.handleSubmitDetails}
                     saveOnBlur
-                    source="meetingDetails"
+                    contentType="meetingDetails"
                   />
                 </MetadataSection>
               </MetadataContainer>

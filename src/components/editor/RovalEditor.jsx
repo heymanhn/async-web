@@ -112,9 +112,9 @@ class RovalEditor extends Component {
   }
 
   handleCancel({ saved = false } = {}) {
-    const { mode, onCancel, source } = this.props;
+    const { mode, onCancel, contentType } = this.props;
 
-    const resetAllowed = mode === 'edit' || source.includes('meeting');
+    const resetAllowed = mode === 'edit' || contentType.includes('meeting');
     if (resetAllowed && !saved) this.loadInitialValue();
     onCancel();
   }
@@ -287,8 +287,8 @@ class RovalEditor extends Component {
   }
 
   pluginsForType() {
-    const { source } = this.props;
-    return plugins[source];
+    const { contentType } = this.props;
+    return plugins[contentType];
   }
 
   renderEditor(props, editor, next) {
@@ -323,7 +323,7 @@ class RovalEditor extends Component {
 
   render() {
     const { value } = this.state;
-    const { mode, source, ...props } = this.props;
+    const { mode, contentType, ...props } = this.props;
     if (!value) return null;
 
     return (
@@ -350,7 +350,7 @@ class RovalEditor extends Component {
         />
         {this.isEditOrComposeMode() && (
           <EditorActions
-            contentType={source}
+            contentType={contentType}
             isSubmitDisabled={this.isValueEmpty()}
             mode={mode}
             onCancel={this.handleCancel}
@@ -363,19 +363,19 @@ class RovalEditor extends Component {
 }
 
 RovalEditor.propTypes = {
-  initialValue: PropTypes.string,
-  isPlainText: PropTypes.bool,
-  mode: PropTypes.string,
-  onCancel: PropTypes.func,
-  onSubmit: PropTypes.func,
-  saveOnBlur: PropTypes.bool,
-  source: PropTypes.oneOf([
+  contentType: PropTypes.oneOf([
     'meetingTitle',
     'meetingDetails',
     'topic',
     'modalTopic',
     'modalReply',
   ]).isRequired,
+  initialValue: PropTypes.string,
+  isPlainText: PropTypes.bool,
+  mode: PropTypes.string,
+  onCancel: PropTypes.func,
+  onSubmit: PropTypes.func,
+  saveOnBlur: PropTypes.bool,
 };
 
 RovalEditor.defaultProps = {

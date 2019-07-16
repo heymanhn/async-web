@@ -18,7 +18,13 @@ const layouts = {
     position: 'relative',
     left: '3px',
   }),
-  // modalTopic: styled.div({ }),
+  modalTopic: ({ colors }) => ({
+    borderTop: `1px solid ${colors.borderGrey}`,
+    margin: '25px -27px -25px -33px',
+    minHeight: heights.modalTopic,
+    position: 'relative',
+    left: '3px',
+  }),
   // modalReply: styled.div({
 
   // }),

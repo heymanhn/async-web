@@ -17,7 +17,10 @@ const layouts = {
     borderTop: `1px solid ${colors.borderGrey}`,
     minHeight: heights.topic,
   }),
-  // modalTopic: styled.div({ }),
+  modalTopic: ({ colors }) => ({
+    borderTop: `1px solid ${colors.borderGrey}`,
+    minHeight: heights.modalTopic,
+  }),
   // modalReply: styled.div({
 
   // }),

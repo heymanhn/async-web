@@ -17,7 +17,7 @@ const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   background: mode === 'compose' ? colors.formGrey : 'initial',
-  padding: '20px 30px 25px',
+  padding: '25px 30px',
   width: '100%',
 
   ':hover': {
@@ -197,7 +197,7 @@ class DiscussionTopicReply extends Component {
             mode={mode}
             onCancel={this.handleCancel}
             onSubmit={this.handleSubmit}
-            source="modalReply"
+            contentType="modalReply"
           />
         </MainContainer>
       </Container>
