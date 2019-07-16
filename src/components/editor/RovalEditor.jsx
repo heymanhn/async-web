@@ -19,6 +19,7 @@ import {
   singleUseBlocks,
 } from 'utils/slateHelper';
 
+import EditorActions from './EditorActions';
 import Toolbar from './toolbar/Toolbar';
 
 const DEFAULT_NODE = 'paragraph';
@@ -27,7 +28,7 @@ const DEFAULT_NODE = 'paragraph';
 const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
   'dl, ul, ol, blockquote, pre': {
     marginTop: '1em',
-    marginBottom: '1em',
+    marginBottom: 0,
   },
   li: {
     marginTop: '3px',
@@ -347,6 +348,15 @@ class RovalEditor extends Component {
           value={value}
           {...props}
         />
+        {this.isEditOrComposeMode() && (
+          <EditorActions
+            contentType={source}
+            isSubmitDisabled={this.isValueEmpty()}
+            mode={mode}
+            onCancel={this.handleCancel}
+            onSubmit={this.handleSubmit}
+          />
+        )}
       </div>
     );
   }
@@ -362,8 +372,9 @@ RovalEditor.propTypes = {
   source: PropTypes.oneOf([
     'meetingTitle',
     'meetingDetails',
-    'discussionTopic',
-    'discussionTopicReply',
+    'topic',
+    'modalTopic',
+    'modalReply',
   ]).isRequired,
 };
 

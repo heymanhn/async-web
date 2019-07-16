@@ -4,9 +4,10 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
+// HN: DRY this up with EditorActions in the future
 const heights = {
-  topic: '56px',
-  modalTopic: '56px',
+  topic: '52px',
+  modalTopic: '52px',
   modalReply: '32px',
 };
 

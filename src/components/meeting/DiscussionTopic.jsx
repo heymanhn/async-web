@@ -323,17 +323,8 @@ class DiscussionTopic extends Component {
               mode={mode}
               onCancel={this.handleCancel}
               onSubmit={this.handleSubmit}
-              source="discussionTopic"
+              source="topic"
             />
-            {/* {this.isEditOrComposeMode() && (
-              <EditorActions
-                isSubmitDisabled={this.isValueEmpty()}
-                mode={mode}
-                onCancel={this.handleCancel}
-                onSubmit={this.handleSubmit}
-                size={source === 'discussionTopic' ? 'large' : 'small'}
-              />
-            )} */}
           </ContentContainer>
         </MainContainer>
         {mode === 'display' && (

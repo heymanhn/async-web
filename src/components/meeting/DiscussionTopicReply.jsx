@@ -197,7 +197,7 @@ class DiscussionTopicReply extends Component {
             mode={mode}
             onCancel={this.handleCancel}
             onSubmit={this.handleSubmit}
-            source="discussionTopicReply"
+            source="modalReply"
           />
         </MainContainer>
       </Container>
