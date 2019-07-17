@@ -178,7 +178,7 @@ class DiscussionTopicReply extends Component {
 
     return (
       <Container mode={mode} {...props} id={mode === 'display' ? id : undefined}>
-        <AvatarWithMargin src={replyAuthor.profilePictureUrl} size={36} mode={mode} />
+        <AvatarWithMargin src={replyAuthor.profilePictureUrl} size={45} mode={mode} />
         <MainContainer>
           <HeaderSection>
             <Details>
