@@ -80,10 +80,11 @@ const LargeReply = ({
   createdAt,
   handleCancel,
   handleSubmit,
+  handleToggleEditMode,
   id,
   message,
   mode,
-  handleToggleEditMode,
+  replyCount,
   updatedAt,
   ...props
 }) => (
@@ -116,7 +117,7 @@ const LargeReply = ({
     {mode === 'display' && (
       <ContentToolbar
         contentType="modalTopic"
-        replyCount={0}
+        replyCount={replyCount}
       />
     )}
   </React.Fragment>
@@ -131,6 +132,7 @@ LargeReply.propTypes = {
   id: PropTypes.string,
   message: PropTypes.string,
   mode: PropTypes.string.isRequired,
+  replyCount: PropTypes.number.isRequired,
   updatedAt: PropTypes.number.isRequired,
 };
 

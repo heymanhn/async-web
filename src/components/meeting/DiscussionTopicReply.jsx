@@ -90,7 +90,6 @@ class DiscussionTopicReply extends Component {
   render() {
     const { currentUser, mode } = this.state;
     const {
-      conversationId,
       meetingId,
       message: {
         author,

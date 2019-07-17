@@ -90,6 +90,7 @@ class DiscussionTopicModal extends Component {
     this.refetchMessages = this.refetchMessages.bind(this);
     this.updateDisplayURL = this.updateDisplayURL.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
+    this.replyCountForMessage = this.replyCountForMessage.bind(this);
     this.sizeForMessage = this.sizeForMessage.bind(this);
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
   }
@@ -136,6 +137,13 @@ class DiscussionTopicModal extends Component {
     } else {
       console.log('Error re-fetching conversation messages');
     }
+  }
+
+  // HN: Change this later, once the messageCount field is returned from backend
+  replyCountForMessage(message) {
+    const { messages } = this.state;
+    if (message.id === messages[0].id) return messages.length - 1;
+    return message.replyCount || 0;
   }
 
   sizeForMessage(id) {
@@ -189,6 +197,7 @@ class DiscussionTopicModal extends Component {
                 key={m.id}
                 meetingId={meetingId}
                 message={m}
+                replyCount={this.replyCountForMessage(m)}
                 size={this.sizeForMessage(m.id)}
               />
               <Separator />

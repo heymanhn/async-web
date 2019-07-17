@@ -90,10 +90,11 @@ const SmallReply = ({
   createdAt,
   handleCancel,
   handleSubmit,
+  handleToggleEditMode,
   id,
   message,
   mode,
-  handleToggleEditMode,
+  replyCount,
   updatedAt,
   ...props
 }) => (
@@ -123,7 +124,7 @@ const SmallReply = ({
       {mode === 'display' && (
         <ContentToolbar
           contentType="modalReply"
-          replyCount={0} // This will be introduced when nested replies are ready
+          replyCount={replyCount}
         />
       )}
     </MainContainer>
@@ -139,6 +140,7 @@ SmallReply.propTypes = {
   id: PropTypes.string,
   message: PropTypes.string,
   mode: PropTypes.string.isRequired,
+  replyCount: PropTypes.number.isRequired,
   updatedAt: PropTypes.number.isRequired,
 };
 
