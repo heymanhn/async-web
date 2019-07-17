@@ -133,20 +133,23 @@ const SmallReply = ({
 
 SmallReply.propTypes = {
   author: PropTypes.object.isRequired,
-  createdAt: PropTypes.number.isRequired,
+  createdAt: PropTypes.number,
   handleCancel: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleToggleEditMode: PropTypes.func.isRequired,
   id: PropTypes.string,
   message: PropTypes.string,
   mode: PropTypes.string.isRequired,
-  replyCount: PropTypes.number.isRequired,
-  updatedAt: PropTypes.number.isRequired,
+  replyCount: PropTypes.number,
+  updatedAt: PropTypes.number,
 };
 
 SmallReply.defaultProps = {
+  createdAt: null,
   id: null,
   message: null,
+  replyCount: null,
+  updatedAt: null,
 };
 
 export default SmallReply;

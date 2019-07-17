@@ -77,11 +77,12 @@ const ContentToolbar = ({ contentType, replyCount }) => {
   // Doing this for now. will make more complex later when reactions UX is added
   if (!replyCount && contentType === 'modalReply') return null;
 
+  const countLabel = replyCount || (contentType === 'topic' ? 'add a reply' : 0);
   const repliesButton = (
     <React.Fragment>
       <ButtonContainer contentType={contentType}>
         <StyledIcon contenttype={contentType} icon={faComment} />
-        <CountLabel contentType={contentType}>{replyCount || 'add a reply'}</CountLabel>
+        <CountLabel contentType={contentType}>{countLabel}</CountLabel>
       </ButtonContainer>
       {/* Temporary contentType flag below */}
       {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
