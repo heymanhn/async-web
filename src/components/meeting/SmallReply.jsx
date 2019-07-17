@@ -87,7 +87,6 @@ const ReplyEditor = styled(RovalEditor)({
 
 const SmallReply = ({
   author,
-  conversationId,
   createdAt,
   handleCancel,
   handleSubmit,
@@ -133,7 +132,6 @@ const SmallReply = ({
 
 SmallReply.propTypes = {
   author: PropTypes.object.isRequired,
-  conversationId: PropTypes.string.isRequired,
   createdAt: PropTypes.number.isRequired,
   handleCancel: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,

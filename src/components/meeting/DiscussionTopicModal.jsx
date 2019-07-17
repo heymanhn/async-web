@@ -90,6 +90,7 @@ class DiscussionTopicModal extends Component {
     this.refetchMessages = this.refetchMessages.bind(this);
     this.updateDisplayURL = this.updateDisplayURL.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
+    this.sizeForMessage = this.sizeForMessage.bind(this);
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
   }
 
@@ -137,6 +138,13 @@ class DiscussionTopicModal extends Component {
     }
   }
 
+  sizeForMessage(id) {
+    const { focusedMessage, messages } = this.state;
+    if (focusedMessage) return focusedMessage.id === id ? 'large' : 'small';
+
+    return messages[0].id === id ? 'large' : 'small';
+  }
+
   handleFocusOnMessage(message) {
     const { focusedMessage, parentConversation } = this.state;
 
@@ -181,6 +189,7 @@ class DiscussionTopicModal extends Component {
                 key={m.id}
                 meetingId={meetingId}
                 message={m}
+                size={this.sizeForMessage(m.id)}
               />
               <Separator />
             </ReplyDisplay>

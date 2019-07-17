@@ -88,7 +88,7 @@ class DiscussionTopicReply extends Component {
   }
 
   render() {
-    const { currentUser, mode, size } = this.state;
+    const { currentUser, mode } = this.state;
     const {
       conversationId,
       meetingId,
@@ -100,6 +100,7 @@ class DiscussionTopicReply extends Component {
         updatedAt,
       },
       onCancelCompose,
+      size,
       ...props
     } = this.props;
     if (!author && !currentUser) return null; // edge case

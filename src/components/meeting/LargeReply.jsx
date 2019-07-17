@@ -77,7 +77,6 @@ const TopicEditor = styled(RovalEditor)({
 
 const LargeReply = ({
   author,
-  conversationId,
   createdAt,
   handleCancel,
   handleSubmit,
@@ -125,7 +124,6 @@ const LargeReply = ({
 
 LargeReply.propTypes = {
   author: PropTypes.object.isRequired,
-  conversationId: PropTypes.string.isRequired,
   createdAt: PropTypes.number.isRequired,
   handleCancel: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
