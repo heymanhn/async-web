@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
-import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
@@ -84,22 +83,6 @@ const TopicEditor = styled(RovalEditor)({
     fontWeight: 500,
     marginTop: '1.2em',
   },
-});
-
-const ActionsContainer = styled.div(({ theme: { colors } }) => ({
-  background: colors.formGrey,
-  borderRadius: '0 0 5px 5px',
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingLeft: '68px',
-  paddingRight: '20px',
-  minHeight: '56px',
-}));
-
-const AddReplyButton = styled.div({
-  fontSize: '14px',
-  fontWeight: 500,
 });
 
 class DiscussionTopic extends Component {
@@ -293,12 +276,6 @@ class DiscussionTopic extends Component {
     } = this.props;
 
     if (loading) return null;
-
-    const replyButton = (
-      <AddReplyButton>
-        {replyCount > 0 ? Pluralize('reply', replyCount, true) : '+ Add a reply'}
-      </AddReplyButton>
-    );
 
     const { createdAt, updatedAt } = mode === 'display' ? messages[0] : {};
 
