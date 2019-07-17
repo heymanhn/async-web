@@ -97,6 +97,7 @@ class DiscussionTopicReply extends Component {
       mode: props.initialMode,
     };
 
+    this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -153,6 +154,13 @@ class DiscussionTopicReply extends Component {
     if (mode === 'compose') onCancelCompose();
   }
 
+  handleClick() {
+    const { initialMode, message, handleFocusMessage } = this.props;
+    if (initialMode === 'compose') return;
+
+    handleFocusMessage(message);
+  }
+
   toggleEditMode() {
     this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
   }
@@ -177,7 +185,12 @@ class DiscussionTopicReply extends Component {
     if (!replyAuthor) return null;
 
     return (
-      <Container mode={mode} {...props} id={mode === 'display' ? id : undefined}>
+      <Container
+        id={mode === 'display' ? id : undefined}
+        mode={mode}
+        onClick={this.handleClick}
+        {...props}
+      >
         <AvatarWithMargin src={replyAuthor.profilePictureUrl} size={45} mode={mode} />
         <MainContainer>
           <HeaderSection>
@@ -213,20 +226,22 @@ class DiscussionTopicReply extends Component {
 }
 
 DiscussionTopicReply.propTypes = {
+  afterSubmit: PropTypes.func,
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
+  handleFocusMessage: PropTypes.func,
   initialMode: PropTypes.oneOf(['compose', 'display']),
   meetingId: PropTypes.string.isRequired,
   message: PropTypes.object,
-  afterSubmit: PropTypes.func,
   onCancelCompose: PropTypes.func,
 };
 
 DiscussionTopicReply.defaultProps = {
+  afterSubmit: () => {},
+  handleFocusMessage: () => {},
   initialMode: 'display',
   message: {},
   onCancelCompose: () => {},
-  afterSubmit: () => {},
 };
 
 export default withApollo(DiscussionTopicReply);

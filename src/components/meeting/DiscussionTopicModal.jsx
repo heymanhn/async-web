@@ -151,9 +151,11 @@ class DiscussionTopicModal extends Component {
     super(props);
 
     this.state = {
+      focusedMessage: null,
       isComposingReply: false,
       messages: props.messages,
       mode: 'display',
+      parentConversation: null,
     };
 
     this.toggleEditMode = this.toggleEditMode.bind(this);
@@ -161,6 +163,7 @@ class DiscussionTopicModal extends Component {
     this.refetchMessages = this.refetchMessages.bind(this);
     this.updateDisplayURL = this.updateDisplayURL.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
+    this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -210,6 +213,18 @@ class DiscussionTopicModal extends Component {
     } else {
       console.log('Error re-fetching conversation messages');
     }
+  }
+
+  handleFocusOnMessage(message) {
+    const { focusedMessage, parentConversation } = this.state;
+
+    if (focusedMessage && focusedMessage.id === message.id) {
+      return this.setState({
+        focusedMessage: parentConversation ? parentConversation.messages[0] : null,
+      });
+    }
+
+    return this.setState({ focusedMessage: message });
   }
 
   async handleSubmit({ payload, text }) {
@@ -301,6 +316,7 @@ class DiscussionTopicModal extends Component {
                 <DiscussionTopicReply
                   afterSubmit={this.refetchMessages}
                   conversationId={conversationId}
+                  handleFocusMessage={this.handleFocusOnMessage}
                   initialMode="display"
                   key={m.id}
                   meetingId={meetingId}
