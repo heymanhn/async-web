@@ -74,7 +74,8 @@ const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
 }));
 
 const ContentToolbar = ({ contentType, replyCount }) => {
-  if (!replyCount) return null; // For now. will make more complex later when reactions UX is added
+  // Doing this for now. will make more complex later when reactions UX is added
+  if (!replyCount && contentType === 'modalReply') return null;
 
   const repliesButton = (
     <React.Fragment>
