@@ -2,91 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 
-import styled from '@emotion/styled';
-
 import currentUserQuery from 'graphql/currentUserQuery';
 import createConversationMessageMutation from 'graphql/createConversationMessageMutation';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
-import { getLocalUser, matchCurrentUserId } from 'utils/auth';
+import { getLocalUser } from 'utils/auth';
 
-import Avatar from 'components/shared/Avatar';
-import RovalEditor from 'components/editor/RovalEditor';
-import ContentHeader from './ContentHeader';
-import ContentToolbar from './ContentToolbar';
-
-const Container = styled.div(({ mode, theme: { colors } }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  background: mode === 'compose' ? colors.formGrey : 'initial',
-  padding: '25px 30px',
-  width: '100%',
-
-  ':hover': {
-    background: mode === 'display' ? colors.bgGrey : 'initial',
-  },
-}));
-
-const AvatarWithMargin = styled(Avatar)(({ mode }) => ({
-  flexShrink: 0,
-  marginRight: '12px',
-  opacity: mode === 'compose' ? 0.5 : 1,
-}));
-
-const MainContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-});
-
-const HeaderSection = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-});
-
-const Details = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'baseline',
-});
-
-const Author = styled.span(({ mode }) => ({
-  fontSize: '14px',
-  fontWeight: 600,
-  marginRight: '20px',
-  opacity: mode === 'compose' ? 0.5 : 1,
-}));
-
-const ReplyEditor = styled(RovalEditor)({
-  fontSize: '16px',
-  lineHeight: '25px',
-  fontWeight: 400,
-  marginTop: '10px',
-
-  // HN: opportunity to DRY these up later once we find a pattern of typography
-  // across different editor use cases
-  'div:not(:first-of-type)': {
-    marginTop: '1em',
-  },
-
-  h1: {
-    fontSize: '28px',
-    fontWeight: 600,
-    marginTop: '1.4em',
-  },
-
-  h2: {
-    fontSize: '24px',
-    fontWeight: 500,
-    marginTop: '1.3em',
-  },
-
-  h3: {
-    fontSize: '20px',
-    fontWeight: 500,
-    marginTop: '1.2em',
-  },
-});
+import LargeReply from './LargeReply';
+import SmallReply from './SmallReply';
 
 class DiscussionTopicReply extends Component {
   constructor(props) {
@@ -166,7 +88,7 @@ class DiscussionTopicReply extends Component {
   }
 
   render() {
-    const { currentUser, mode } = this.state;
+    const { currentUser, mode, size } = this.state;
     const {
       conversationId,
       meetingId,
@@ -180,48 +102,23 @@ class DiscussionTopicReply extends Component {
       onCancelCompose,
       ...props
     } = this.props;
+    if (!author && !currentUser) return null; // edge case
 
-    const replyAuthor = author || currentUser;
-    if (!replyAuthor) return null;
+    const fwdProps = {
+      author: author || currentUser,
+      createdAt,
+      handleCancel: this.handleCancel,
+      handleSubmit: this.handleSubmit,
+      handleToggleEditMode: this.toggleEditMode,
+      id: mode === 'display' ? id : undefined,
+      message: mode !== 'compose' ? body.payload : null,
+      mode,
+      onClick: this.handleClick,
+      updatedAt,
+      ...props,
+    };
 
-    return (
-      <Container
-        id={mode === 'display' ? id : undefined}
-        mode={mode}
-        onClick={this.handleClick}
-        {...props}
-      >
-        <AvatarWithMargin src={replyAuthor.profilePictureUrl} size={45} mode={mode} />
-        <MainContainer>
-          <HeaderSection>
-            <Details>
-              <Author mode={mode}>{replyAuthor.fullName}</Author>
-              {mode === 'display' && (
-                <ContentHeader
-                  createdAt={createdAt}
-                  isEditable={matchCurrentUserId(author.id)}
-                  isEdited={createdAt !== updatedAt}
-                  onEdit={this.toggleEditMode}
-                />
-              )}
-            </Details>
-          </HeaderSection>
-          <ReplyEditor
-            initialValue={mode !== 'compose' ? body.payload : null}
-            mode={mode}
-            onCancel={this.handleCancel}
-            onSubmit={this.handleSubmit}
-            contentType="modalReply"
-          />
-          {mode === 'display' && (
-            <ContentToolbar
-              contentType="modalReply"
-              replyCount={0} // This will be introduced when nested replies are ready
-            />
-          )}
-        </MainContainer>
-      </Container>
-    );
+    return size === 'large' ? <LargeReply {...fwdProps} /> : <SmallReply {...fwdProps} />;
   }
 }
 
@@ -234,6 +131,7 @@ DiscussionTopicReply.propTypes = {
   meetingId: PropTypes.string.isRequired,
   message: PropTypes.object,
   onCancelCompose: PropTypes.func,
+  size: PropTypes.oneOf(['small', 'large']),
 };
 
 DiscussionTopicReply.defaultProps = {
@@ -242,6 +140,7 @@ DiscussionTopicReply.defaultProps = {
   initialMode: 'display',
   message: {},
   onCancelCompose: () => {},
+  size: 'small',
 };
 
 export default withApollo(DiscussionTopicReply);
