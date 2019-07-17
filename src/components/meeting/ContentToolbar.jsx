@@ -1,10 +1,10 @@
+// HN: Future me, please find a way to DRY this up with <EditorActions />
 import React from 'react';
 import PropTypes from 'prop-types';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
-// HN: DRY this up with EditorActions in the future
 const heights = {
   topic: '52px',
   modalTopic: '52px',

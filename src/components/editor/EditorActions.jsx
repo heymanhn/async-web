@@ -25,9 +25,11 @@ const layouts = {
     position: 'relative',
     left: '3px',
   }),
-  // modalReply: styled.div({
-
-  // }),
+  modalReply: () => ({
+    background: 'none',
+    minHeight: heights.modalReply,
+    marginTop: '10px',
+  }),
 };
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -39,25 +41,40 @@ const Container = styled.div(({ theme: { colors } }) => ({
   alignItems: 'center',
 }), ({ contentType, theme: { colors } }) => layouts[contentType]({ colors }));
 
+// Only for modal reply UIs
+const InnerContainer = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+
+  background: colors.formGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  minHeight: heights.modalReply,
+}));
+
 const ButtonContainer = styled.div(({ contentType, isDisabled, theme: { colors }, type }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
 
   background: type === 'save' ? colors.white : 'initial',
-  borderBottomLeftRadius:
-    contentType.toLowerCase().includes('topic') && type === 'save' ? '5px' : 'initial',
   color: type === 'save' ? colors.blue : colors.grey3,
   cursor: isDisabled ? 'default' : 'pointer',
   fontSize: 14,
   fontWeight: 500,
   height: heights[contentType],
-  padding: '0px 30px',
+  padding: contentType === 'modalReply' ? '0px 15px' : '0px 30px',
 
   div: {
     opacity: isDisabled ? 0.5 : 1,
   },
-}));
+}), ({ contentType, type }) => {
+  if (type !== 'save') return {};
+  if (contentType === 'modalReply') return { borderRadius: '5px 0 0 5px' };
+  if (contentType === 'topic') return { borderRadius: '0 0 0 5px' };
+  return {};
+});
 
 const PlusSign = styled.div({
   fontSize: '18px',
@@ -65,6 +82,10 @@ const PlusSign = styled.div({
   position: 'relative',
   top: '-1px',
 });
+
+const ButtonText = styled.div(({ contentType }) => ({
+  fontSize: contentType === 'modalReply' ? '13px' : '14px',
+}));
 
 const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
   borderRight: `1px solid ${colors.borderGrey}`,
@@ -88,8 +109,8 @@ const EditorActions = ({ contentType, isSubmitDisabled, mode, onCancel, onSubmit
         onClick={isSubmitDisabled ? () => { } : onSubmit}
         type="save"
       >
-        <PlusSign>+</PlusSign>
-        <div>{generateSaveButtonText()}</div>
+        {mode === 'compose' && <PlusSign>+</PlusSign>}
+        <ButtonText contentType={contentType}>{generateSaveButtonText()}</ButtonText>
       </ButtonContainer>
       <VerticalDivider contentType={contentType} />
     </React.Fragment>
@@ -102,11 +123,22 @@ const EditorActions = ({ contentType, isSubmitDisabled, mode, onCancel, onSubmit
         onClick={onCancel}
         type="cancel"
       >
-        Cancel
+        <ButtonText contentType={contentType}>Cancel</ButtonText>
       </ButtonContainer>
-      <VerticalDivider contentType={contentType} />
+      {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
     </React.Fragment>
   );
+
+  if (contentType === 'modalReply') {
+    return (
+      <Container contentType={contentType}>
+        <InnerContainer>
+          {saveButton}
+          {cancelButton}
+        </InnerContainer>
+      </Container>
+    );
+  }
 
   return (
     <Container contentType={contentType}>
