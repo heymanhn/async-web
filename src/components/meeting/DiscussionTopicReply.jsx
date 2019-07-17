@@ -12,6 +12,7 @@ import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
 import ContentHeader from './ContentHeader';
+import ContentToolbar from './ContentToolbar';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
@@ -199,6 +200,12 @@ class DiscussionTopicReply extends Component {
             onSubmit={this.handleSubmit}
             contentType="modalReply"
           />
+          {mode === 'display' && (
+            <ContentToolbar
+              contentType="modalReply"
+              replyCount={0} // This will be introduced when nested replies are ready
+            />
+          )}
         </MainContainer>
       </Container>
     );

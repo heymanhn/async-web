@@ -21,9 +21,11 @@ const layouts = {
     borderTop: `1px solid ${colors.borderGrey}`,
     minHeight: heights.modalTopic,
   }),
-  // modalReply: styled.div({
-
-  // }),
+  modalReply: () => ({
+    background: 'none',
+    minHeight: heights.modalReply,
+    marginTop: '10px',
+  }),
 };
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -35,22 +37,35 @@ const Container = styled.div(({ theme: { colors } }) => ({
   alignItems: 'center',
 }), ({ contentType, theme: { colors } }) => layouts[contentType]({ colors }));
 
-const ButtonContainer = styled.div({
+// Only for modal reply UIs
+const InnerContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
-  margin: '0px 30px',
-});
+  alignItems: 'center',
 
-const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
+  background: colors.formGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  minHeight: heights.modalReply,
+}));
+
+const ButtonContainer = styled.div(({ contentType }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: contentType === 'modalReply' ? 'center' : 'initial',
+  margin: contentType === 'modalReply' ? '0px 15px' : '0px 30px',
+}));
+
+const StyledIcon = styled(FontAwesomeIcon)(({ contenttype, theme: { colors } }) => ({
   color: colors.grey4,
-  fontSize: '22px',
+  fontSize: contenttype === 'modalReply' ? '16px' : '22px',
   marginRight: '10px',
 }));
 
-const CountLabel = styled.div({
-  fontSize: '14px',
+const CountLabel = styled.div(({ contentType }) => ({
+  fontSize: contentType === 'modalReply' ? '13px' : '14px',
   fontWeight: 500,
-});
+}));
 
 const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
   borderRight: `1px solid ${colors.borderGrey}`,
@@ -59,15 +74,28 @@ const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
 }));
 
 const ContentToolbar = ({ contentType, replyCount }) => {
+  if (!replyCount) return null; // For now. will make more complex later when reactions UX is added
+
   const repliesButton = (
     <React.Fragment>
-      <ButtonContainer>
-        <StyledIcon icon={faComment} />
-        <CountLabel>{replyCount || 'add a reply'}</CountLabel>
+      <ButtonContainer contentType={contentType}>
+        <StyledIcon contenttype={contentType} icon={faComment} />
+        <CountLabel contentType={contentType}>{replyCount || 'add a reply'}</CountLabel>
       </ButtonContainer>
-      <VerticalDivider contentType={contentType} />
+      {/* Temporary contentType flag below */}
+      {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
     </React.Fragment>
   );
+
+  if (contentType === 'modalReply') {
+    return (
+      <Container contentType={contentType}>
+        <InnerContainer>
+          {repliesButton}
+        </InnerContainer>
+      </Container>
+    );
+  }
 
   return (
     <Container contentType={contentType}>
