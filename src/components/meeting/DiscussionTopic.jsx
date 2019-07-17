@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
-import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/currentUserQuery';
@@ -12,12 +11,13 @@ import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
+import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
 import DiscussionTopicModal from './DiscussionTopicModal';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
-  border: `1px solid ${colors.grey6}`,
+  border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
   cursor: mode === 'display' ? 'pointer' : 'initial',
@@ -83,22 +83,6 @@ const TopicEditor = styled(RovalEditor)({
     fontWeight: 500,
     marginTop: '1.2em',
   },
-});
-
-const ActionsContainer = styled.div(({ theme: { colors } }) => ({
-  background: colors.formGrey,
-  borderRadius: '0 0 5px 5px',
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingLeft: '68px',
-  paddingRight: '20px',
-  minHeight: '56px',
-}));
-
-const AddReplyButton = styled.div({
-  fontSize: '14px',
-  fontWeight: 500,
 });
 
 class DiscussionTopic extends Component {
@@ -293,12 +277,6 @@ class DiscussionTopic extends Component {
 
     if (loading) return null;
 
-    const replyButton = (
-      <AddReplyButton>
-        {replyCount > 0 ? Pluralize('reply', replyCount, true) : '+ Add a reply'}
-      </AddReplyButton>
-    );
-
     const { createdAt, updatedAt } = mode === 'display' ? messages[0] : {};
 
     return (
@@ -309,7 +287,7 @@ class DiscussionTopic extends Component {
             <TopicMetadata>
               <Author mode={mode}>{author.fullName}</Author>
               {mode === 'display' && (
-                <ContentToolbar
+                <ContentHeader
                   createdAt={createdAt}
                   isEditable={matchCurrentUserId(author.id)}
                   isEdited={createdAt !== updatedAt}
@@ -322,11 +300,16 @@ class DiscussionTopic extends Component {
               mode={mode}
               onCancel={this.handleCancel}
               onSubmit={this.handleSubmit}
-              source="discussionTopic"
+              contentType="topic"
             />
           </ContentContainer>
         </MainContainer>
-        {mode === 'display' && <ActionsContainer>{replyButton}</ActionsContainer>}
+        {mode === 'display' && (
+          <ContentToolbar
+            contentType="topic"
+            replyCount={replyCount}
+          />
+        )}
         {conversationId && (
           <DiscussionTopicModal
             author={author}

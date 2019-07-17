@@ -10,13 +10,14 @@ import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
+import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
 import DiscussionTopicReply from './DiscussionTopicReply';
 
-const StyledModal = styled(Modal)(({ theme: { maxModalViewport } }) => ({
+const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
   margin: '100px auto',
-  width: maxModalViewport,
-  maxWidth: maxModalViewport,
+  width: maxViewport,
+  maxWidth: maxViewport,
 
   '.modal-content': {
     border: 'none',
@@ -26,31 +27,7 @@ const StyledModal = styled(Modal)(({ theme: { maxModalViewport } }) => ({
 const TopicSection = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  margin: '25px 30px 30px',
-
-  // HN: opportunity to DRY these up later once we find a pattern of typography
-  // across different editor use cases
-  'div:not(:first-of-type)': {
-    marginTop: '1em',
-  },
-
-  h1: {
-    fontSize: '28px',
-    fontWeight: 600,
-    marginTop: '1.4em',
-  },
-
-  h2: {
-    fontSize: '24px',
-    fontWeight: 500,
-    marginTop: '1.3em',
-  },
-
-  h3: {
-    fontSize: '20px',
-    fontWeight: 500,
-    marginTop: '1.2em',
-  },
+  margin: '25px 30px',
 });
 
 const Header = styled.div({
@@ -86,27 +63,39 @@ const TopicEditor = styled(RovalEditor)({
   fontWeight: 400,
   marginTop: '20px',
 
+  // HN: opportunity to DRY these up later once we find a pattern of typography
+  // across different editor use cases
   'div:not(:first-of-type)': {
     marginTop: '1em',
+  },
+
+  h1: {
+    fontSize: '28px',
+    fontWeight: 600,
+    marginTop: '1.4em',
+  },
+
+  h2: {
+    fontSize: '24px',
+    fontWeight: 500,
+    marginTop: '1.3em',
+  },
+
+  h3: {
+    fontSize: '20px',
+    fontWeight: 500,
+    marginTop: '1.2em',
   },
 });
 
 const RepliesSection = styled.div(({ theme: { colors } }) => ({
-  background: colors.formGrey,
+  background: colors.white,
   borderTop: `1px solid ${colors.borderGrey}`,
 }));
-
-const RepliesLabel = styled.div({
-  fontSize: '14px',
-  fontWeight: 500,
-  marginTop: '25px',
-  marginLeft: '30px',
-});
 
 const Separator = styled.hr(({ theme: { colors } }) => ({
   borderTop: `1px solid ${colors.borderGrey}`,
   margin: 0,
-  marginLeft: '78px', // Assuming 36px avatars, 12px padding, 30px element margin
 }));
 
 const ReplyDisplay = styled.div({
@@ -281,7 +270,7 @@ class DiscussionTopicModal extends Component {
               <Details>
                 <Author>{author.fullName}</Author>
                 {mode === 'display' && (
-                  <ContentToolbar
+                  <ContentHeader
                     createdAt={createdAt}
                     isEditable={matchCurrentUserId(author.id)}
                     isEdited={createdAt !== updatedAt}
@@ -296,12 +285,17 @@ class DiscussionTopicModal extends Component {
             mode={mode}
             onCancel={this.toggleEditMode}
             onSubmit={this.handleSubmit}
-            source="discussionTopic"
+            contentType="modalTopic"
           />
         </TopicSection>
+        {mode === 'display' && (
+          <ContentToolbar
+            contentType="modalTopic"
+            replyCount={messages.length - 1}
+          />
+        )}
         {messages.length > 1 && (
           <RepliesSection>
-            <RepliesLabel>REPLIES</RepliesLabel>
             {messages.slice(1).map(m => (
               <ReplyDisplay key={m.id}>
                 <DiscussionTopicReply

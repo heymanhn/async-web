@@ -28,7 +28,7 @@ const DEFAULT_NODE = 'paragraph';
 const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
   'dl, ul, ol, blockquote, pre': {
     marginTop: '1em',
-    marginBottom: '1em',
+    marginBottom: 0,
   },
   li: {
     marginTop: '3px',
@@ -74,7 +74,6 @@ class RovalEditor extends Component {
     this.loadInitialValue = this.loadInitialValue.bind(this);
     this.pluginsForType = this.pluginsForType.bind(this);
     this.renderEditor = this.renderEditor.bind(this);
-    this.resetToInitialValue = this.resetToInitialValue.bind(this);
     this.updateToolbar = this.updateToolbar.bind(this);
   }
 
@@ -113,9 +112,10 @@ class RovalEditor extends Component {
   }
 
   handleCancel({ saved = false } = {}) {
-    const { mode, onCancel } = this.props;
+    const { mode, onCancel, contentType } = this.props;
 
-    if (mode === 'edit' && !saved) this.resetToInitialValue();
+    const resetAllowed = mode === 'edit' || contentType.includes('meeting');
+    if (resetAllowed && !saved) this.loadInitialValue();
     onCancel();
   }
 
@@ -287,8 +287,8 @@ class RovalEditor extends Component {
   }
 
   pluginsForType() {
-    const { source } = this.props;
-    return plugins[source];
+    const { contentType } = this.props;
+    return plugins[contentType];
   }
 
   renderEditor(props, editor, next) {
@@ -307,13 +307,6 @@ class RovalEditor extends Component {
     );
   }
 
-  resetToInitialValue() {
-    const { initialValue } = this.props;
-    if (!initialValue) return;
-
-    this.setState({ value: Value.fromJSON(JSON.parse(initialValue)) });
-  }
-
   updateToolbar() {
     const { isClicked, isToolbarVisible, value } = this.state;
     const { fragment, selection } = value;
@@ -330,7 +323,7 @@ class RovalEditor extends Component {
 
   render() {
     const { value } = this.state;
-    const { mode, source, ...props } = this.props;
+    const { mode, contentType, ...props } = this.props;
     if (!value) return null;
 
     return (
@@ -357,11 +350,11 @@ class RovalEditor extends Component {
         />
         {this.isEditOrComposeMode() && (
           <EditorActions
+            contentType={contentType}
             isSubmitDisabled={this.isValueEmpty()}
             mode={mode}
             onCancel={this.handleCancel}
             onSubmit={this.handleSubmit}
-            size={source === 'discussionTopic' ? 'large' : 'small'}
           />
         )}
       </div>
@@ -370,18 +363,19 @@ class RovalEditor extends Component {
 }
 
 RovalEditor.propTypes = {
+  contentType: PropTypes.oneOf([
+    'meetingTitle',
+    'meetingDetails',
+    'topic',
+    'modalTopic',
+    'modalReply',
+  ]).isRequired,
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
   mode: PropTypes.string,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   saveOnBlur: PropTypes.bool,
-  source: PropTypes.oneOf([
-    'meetingTitle',
-    'meetingDetails',
-    'discussionTopic',
-    'discussionTopicReply',
-  ]).isRequired,
 };
 
 RovalEditor.defaultProps = {

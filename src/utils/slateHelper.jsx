@@ -184,7 +184,7 @@ export const plugins = {
     ),
     ...markdownPlugins,
   ],
-  discussionTopic: [
+  topic: [
     PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(
@@ -193,7 +193,16 @@ export const plugins = {
     ),
     ...markdownPlugins,
   ],
-  discussionTopicReply: [
+  modalTopic: [
+    PasteLinkify(),
+    SoftBreak({ shift: true }),
+    createPlaceholderPlugin(
+      'Share your perspective. Shift + Enter to add another topic',
+      theme.colors.textPlaceholder,
+    ),
+    ...markdownPlugins,
+  ],
+  modalReply: [
     PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(

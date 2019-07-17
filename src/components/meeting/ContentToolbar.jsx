@@ -1,60 +1,112 @@
+// HN: Future me, please find a way to DRY this up with <EditorActions />
 import React from 'react';
 import PropTypes from 'prop-types';
-import Moment from 'react-moment';
-import styled from '@emotion/styled';
+import { faComment } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styled from '@emotion/styled/macro';
 
-const Container = styled.div({
+const heights = {
+  topic: '52px',
+  modalTopic: '52px',
+  modalReply: '32px',
+};
+
+const layouts = {
+  topic: ({ colors }) => ({
+    borderRadius: '0 0 5px 5px',
+    borderTop: `1px solid ${colors.borderGrey}`,
+    minHeight: heights.topic,
+  }),
+  modalTopic: ({ colors }) => ({
+    borderTop: `1px solid ${colors.borderGrey}`,
+    minHeight: heights.modalTopic,
+  }),
+  modalReply: () => ({
+    background: 'none',
+    minHeight: heights.modalReply,
+    marginTop: '10px',
+  }),
+};
+
+const Container = styled.div(({ theme: { colors } }) => ({
+  background: colors.formGrey,
+  color: colors.grey3,
+
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'baseline',
-});
+  alignItems: 'center',
+}), ({ contentType, theme: { colors } }) => layouts[contentType]({ colors }));
 
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  cursor: 'default',
-  fontSize: '14px',
+// Only for modal reply UIs
+const InnerContainer = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+
+  background: colors.formGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  minHeight: heights.modalReply,
 }));
 
-const Separator = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '14px',
-  margin: '0 10px',
+const ButtonContainer = styled.div(({ contentType }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: contentType === 'modalReply' ? 'center' : 'initial',
+  margin: contentType === 'modalReply' ? '0px 15px' : '0px 30px',
 }));
 
-const EditedLabel = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey5,
-  cursor: 'default',
-  fontSize: '14px',
+const StyledIcon = styled(FontAwesomeIcon)(({ contenttype, theme: { colors } }) => ({
+  color: colors.grey4,
+  fontSize: contenttype === 'modalReply' ? '16px' : '22px',
+  marginRight: '10px',
 }));
 
-const EditButton = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  cursor: 'pointer',
-  fontSize: '14px',
-
-  ':hover': {
-    textDecoration: 'underline',
-  },
+const CountLabel = styled.div(({ contentType }) => ({
+  fontSize: contentType === 'modalReply' ? '13px' : '14px',
+  fontWeight: 500,
 }));
 
-const separator = <Separator>&#8226;</Separator>;
-const editedLabel = <EditedLabel>Edited</EditedLabel>;
+const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
+  borderRight: `1px solid ${colors.borderGrey}`,
+  height: heights[contentType],
+  margin: 0,
+}));
 
-const ContentToolbar = ({ createdAt, isEditable, isEdited, onEdit }) => (
-  <Container>
-    <Timestamp fromNow parse="X">{createdAt}</Timestamp>
-    {isEdited && separator}
-    {isEdited && editedLabel}
-    {isEditable && separator}
-    {isEditable && <EditButton onClick={onEdit}>Edit</EditButton>}
-  </Container>
-);
+const ContentToolbar = ({ contentType, replyCount }) => {
+  if (!replyCount) return null; // For now. will make more complex later when reactions UX is added
+
+  const repliesButton = (
+    <React.Fragment>
+      <ButtonContainer contentType={contentType}>
+        <StyledIcon contenttype={contentType} icon={faComment} />
+        <CountLabel contentType={contentType}>{replyCount || 'add a reply'}</CountLabel>
+      </ButtonContainer>
+      {/* Temporary contentType flag below */}
+      {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
+    </React.Fragment>
+  );
+
+  if (contentType === 'modalReply') {
+    return (
+      <Container contentType={contentType}>
+        <InnerContainer>
+          {repliesButton}
+        </InnerContainer>
+      </Container>
+    );
+  }
+
+  return (
+    <Container contentType={contentType}>
+      {repliesButton}
+    </Container>
+  );
+};
 
 ContentToolbar.propTypes = {
-  createdAt: PropTypes.number.isRequired,
-  isEditable: PropTypes.bool.isRequired,
-  isEdited: PropTypes.bool.isRequired,
-  onEdit: PropTypes.func.isRequired,
+  contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
+  replyCount: PropTypes.number.isRequired,
 };
 
 export default ContentToolbar;

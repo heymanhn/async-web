@@ -11,14 +11,19 @@ import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
+import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
-  background: mode === 'display' ? colors.formGrey : 'none',
-  padding: '20px 30px 25px',
+  background: mode === 'compose' ? colors.formGrey : 'initial',
+  padding: '25px 30px',
   width: '100%',
+
+  ':hover': {
+    background: mode === 'display' ? colors.bgGrey : 'initial',
+  },
 }));
 
 const AvatarWithMargin = styled(Avatar)(({ mode }) => ({
@@ -53,8 +58,8 @@ const Author = styled.span(({ mode }) => ({
 }));
 
 const ReplyEditor = styled(RovalEditor)({
-  fontSize: '14px',
-  lineHeight: '22px',
+  fontSize: '16px',
+  lineHeight: '25px',
   fontWeight: 400,
   marginTop: '10px',
 
@@ -65,19 +70,19 @@ const ReplyEditor = styled(RovalEditor)({
   },
 
   h1: {
-    fontSize: '24px',
+    fontSize: '28px',
     fontWeight: 600,
     marginTop: '1.4em',
   },
 
   h2: {
-    fontSize: '20px',
+    fontSize: '24px',
     fontWeight: 500,
     marginTop: '1.3em',
   },
 
   h3: {
-    fontSize: '16px',
+    fontSize: '20px',
     fontWeight: 500,
     marginTop: '1.2em',
   },
@@ -179,7 +184,7 @@ class DiscussionTopicReply extends Component {
             <Details>
               <Author mode={mode}>{replyAuthor.fullName}</Author>
               {mode === 'display' && (
-                <ContentToolbar
+                <ContentHeader
                   createdAt={createdAt}
                   isEditable={matchCurrentUserId(author.id)}
                   isEdited={createdAt !== updatedAt}
@@ -193,8 +198,14 @@ class DiscussionTopicReply extends Component {
             mode={mode}
             onCancel={this.handleCancel}
             onSubmit={this.handleSubmit}
-            source="discussionTopicReply"
+            contentType="modalReply"
           />
+          {mode === 'display' && (
+            <ContentToolbar
+              contentType="modalReply"
+              replyCount={0} // This will be introduced when nested replies are ready
+            />
+          )}
         </MainContainer>
       </Container>
     );
