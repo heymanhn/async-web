@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withApollo } from 'react-apollo';
 import { Modal } from 'reactstrap';
 import styled from '@emotion/styled/macro';
-
-import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 
 import DiscussionTopicReply from './DiscussionTopicReply';
 
@@ -86,19 +83,82 @@ class DiscussionTopicModal extends Component {
       parentConversation: null,
     };
 
-    this.toggleReplyComposer = this.toggleReplyComposer.bind(this);
-    this.refetchMessages = this.refetchMessages.bind(this);
-    this.updateDisplayURL = this.updateDisplayURL.bind(this);
-    this.resetDisplayURL = this.resetDisplayURL.bind(this);
-    this.replyCountForMessage = this.replyCountForMessage.bind(this);
-    this.sizeForMessage = this.sizeForMessage.bind(this);
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
+    this.conversationIdForNewReply = this.conversationIdForNewReply.bind(this);
+    this.replyCountForMessage = this.replyCountForMessage.bind(this);
+    this.resetDisplayURL = this.resetDisplayURL.bind(this);
+    this.showFocusedConversation = this.showFocusedConversation.bind(this);
+    this.sizeForMessage = this.sizeForMessage.bind(this);
+    this.toggleReplyComposer = this.toggleReplyComposer.bind(this);
+    this.updateDisplayURL = this.updateDisplayURL.bind(this);
+    this.updateMessageInList = this.updateMessageInList.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     const { isOpen } = this.props;
     if (!prevProps.isOpen && isOpen) this.updateDisplayURL();
     if (prevProps.isOpen && !isOpen) this.resetDisplayURL();
+  }
+
+  async handleFocusOnMessage(message) {
+    const { focusedMessage, parentConversation } = this.state;
+    let newFocusedMessage;
+
+    if (focusedMessage && focusedMessage.id === message.id) {
+      newFocusedMessage = parentConversation ? parentConversation.messages[0] : null;
+    } else {
+      newFocusedMessage = message;
+    }
+
+    return this.setState({ focusedMessage: newFocusedMessage }, this.showFocusedConversation);
+  }
+
+  conversationIdForNewReply() {
+    const { focusedMessage } = this.state;
+    const { conversationId } = this.props;
+
+    return focusedMessage ? focusedMessage.childConversationId : conversationId;
+  }
+
+  // HN: Change this later, once the messageCount field is returned from backend
+  replyCountForMessage(message) {
+    const { messages } = this.state;
+    if (message.id === messages[0].id) return messages.length - 1;
+    return message.replyCount || 0;
+  }
+
+  resetDisplayURL() {
+    const { meetingId } = this.props;
+    const url = `${origin}/meetings/${meetingId}`;
+    window.history.replaceState({}, `meeting: ${meetingId}`, url);
+  }
+
+  sizeForMessage(id) {
+    const { focusedMessage, messages } = this.state;
+    if (focusedMessage) return focusedMessage.id === id ? 'large' : 'small';
+
+    return messages[0].id === id ? 'large' : 'small';
+  }
+
+  /*
+  * When a message is selected, all the messages in the conversation after that message are no
+  * no longer displayed, replaced by any replies to the current message, if it is the first
+  * message of another conversation.
+  */
+  showFocusedConversation() {
+    const { focusedMessage, messages } = this.state;
+    if (!focusedMessage) return;
+
+    const index = messages.findIndex(m => m.id === focusedMessage.id);
+    if (index === 0) return;
+
+    this.setState({
+      messages: messages.slice(0, index + 1),
+    });
+  }
+
+  toggleReplyComposer() {
+    this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
   }
 
   // Updates the URL in the address bar to reflect this conversation
@@ -111,62 +171,38 @@ class DiscussionTopicModal extends Component {
     window.history.replaceState({}, `conversation: ${conversationId}`, url);
   }
 
-  resetDisplayURL() {
-    const { meetingId } = this.props;
-    const url = `${origin}/meetings/${meetingId}`;
-    window.history.replaceState({}, `meeting: ${meetingId}`, url);
-  }
-
-  toggleReplyComposer() {
-    this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
-  }
-
-  async refetchMessages() {
-    const { client, conversationId } = this.props;
-    const response = await client.query({
-      query: conversationMessagesQuery,
-      variables: { id: conversationId },
-      fetchPolicy: 'no-cache',
-    });
-
-    if (response.data && response.data.conversationMessagesQuery) {
-      const { items } = response.data.conversationMessagesQuery;
-      const messages = (items || []).map(i => i.message);
-
-      this.setState({ messages });
-    } else {
-      console.log('Error re-fetching conversation messages');
-    }
-  }
-
-  // HN: Change this later, once the messageCount field is returned from backend
-  replyCountForMessage(message) {
-    const { messages } = this.state;
-    if (message.id === messages[0].id) return messages.length - 1;
-    return message.replyCount || 0;
-  }
-
-  sizeForMessage(id) {
+  // Serves as an optimistic update to the messages state. Handles two cases:
+  // 1. A new message is added to a conversation
+  // 2. A message has been edited by the current user
+  updateMessageInList(updatedMessage) {
     const { focusedMessage, messages } = this.state;
-    if (focusedMessage) return focusedMessage.id === id ? 'large' : 'small';
+    const index = messages.findIndex(m => m.id === updatedMessage.id);
+    let newMessages;
 
-    return messages[0].id === id ? 'large' : 'small';
-  }
+    if (index < 0) {
+      const messageToUpdate = focusedMessage || messages[0];
+      messageToUpdate.replyCount += 1;
+      const secondIndex = messages.findIndex(m => m.id === focusedMessage.id);
 
-  handleFocusOnMessage(message) {
-    const { focusedMessage, parentConversation } = this.state;
-
-    if (focusedMessage && focusedMessage.id === message.id) {
-      return this.setState({
-        focusedMessage: parentConversation ? parentConversation.messages[0] : null,
-      });
+      newMessages = [
+        ...messages.slice(0, secondIndex),
+        messageToUpdate,
+        ...messages.slice(secondIndex + 1),
+        updatedMessage,
+      ];
+    } else {
+      newMessages = [
+        ...messages.slice(0, index),
+        updatedMessage,
+        ...messages.slice(index + 1),
+      ];
     }
 
-    return this.setState({ focusedMessage: message });
+    this.setState({ messages: newMessages });
   }
 
   render() {
-    const { isComposingReply, messages } = this.state;
+    const { focusedMessage, isComposingReply, messages } = this.state;
     const {
       author,
       conversationId,
@@ -190,7 +226,7 @@ class DiscussionTopicModal extends Component {
           {messages.map(m => (
             <ReplyDisplay key={m.id}>
               <DiscussionTopicReply
-                afterSubmit={this.refetchMessages}
+                afterSubmit={this.updateMessageInList}
                 conversationId={conversationId}
                 handleFocusMessage={this.handleFocusOnMessage}
                 initialMode="display"
@@ -207,8 +243,9 @@ class DiscussionTopicModal extends Component {
         <ActionsContainer>
           {!isComposingReply ? addReplyButton : (
             <DiscussionTopicReply
-              afterSubmit={this.refetchMessages}
-              conversationId={conversationId}
+              afterSubmit={this.updateMessageInList}
+              conversationId={this.conversationIdForNewReply()}
+              focusedMessage={focusedMessage}
               initialMode="compose"
               meetingId={meetingId}
               onCancelCompose={this.toggleReplyComposer}
@@ -222,11 +259,10 @@ class DiscussionTopicModal extends Component {
 
 DiscussionTopicModal.propTypes = {
   author: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
   messages: PropTypes.array.isRequired,
 };
 
-export default withApollo(DiscussionTopicModal);
+export default DiscussionTopicModal;

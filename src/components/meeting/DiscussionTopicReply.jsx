@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 
 import currentUserQuery from 'graphql/currentUserQuery';
+import createConversationMutation from 'graphql/createConversationMutation';
 import createConversationMessageMutation from 'graphql/createConversationMessageMutation';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { getLocalUser } from 'utils/auth';
@@ -19,10 +20,11 @@ class DiscussionTopicReply extends Component {
       mode: props.initialMode,
     };
 
+    this.handleCancel = this.handleCancel.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.createNestedConversation = this.createNestedConversation.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
   }
 
   async componentDidMount() {
@@ -35,8 +37,6 @@ class DiscussionTopicReply extends Component {
 
   async handleSubmit({ payload, text }) {
     const { mode } = this.state;
-    const mutation = mode === 'compose'
-      ? createConversationMessageMutation : updateConversationMessageMutation;
     const {
       client,
       conversationId,
@@ -45,6 +45,12 @@ class DiscussionTopicReply extends Component {
       afterSubmit,
     } = this.props;
 
+    // The currently focused message not having a conversation ID means we need to
+    // create a new (nested) one
+    if (!conversationId) return this.createNestedConversation({ payload, text });
+
+    const mutation = mode === 'compose'
+      ? createConversationMessageMutation : updateConversationMessageMutation;
     const response = await client.mutate({
       mutation,
       variables: {
@@ -62,7 +68,9 @@ class DiscussionTopicReply extends Component {
     });
 
     if (response.data) {
-      afterSubmit();
+      const { createConversationMessage, updateConversationMessage } = response.data;
+      const msg = mode === 'compose' ? createConversationMessage : updateConversationMessage;
+      afterSubmit(msg);
       return Promise.resolve();
     }
 
@@ -77,13 +85,56 @@ class DiscussionTopicReply extends Component {
   }
 
   handleClick() {
+    const { mode } = this.state;
     const { initialMode, message, handleFocusMessage } = this.props;
-    if (initialMode === 'compose') return;
+    if (initialMode === 'compose' || mode !== 'display') return;
 
     handleFocusMessage(message);
   }
 
-  toggleEditMode() {
+  async createNestedConversation({ payload, text }) {
+    const { currentUser } = this.state;
+    const { afterSubmit, client, focusedMessage, meetingId: id } = this.props;
+    if (!focusedMessage) {
+      return Promise.reject(
+        new Error('No focused message found when creating nested conversation'),
+      );
+    }
+
+    const response = await client.mutate({
+      mutation: createConversationMutation,
+      variables: {
+        id,
+        input: {
+          parentId: focusedMessage.conversationId,
+          messages: [
+            focusedMessage,
+            {
+              body: {
+                formatter: 'slatejs',
+                text,
+                payload,
+              },
+            },
+          ],
+        },
+      },
+    });
+
+    if (response.data) {
+      // TEMP: Append author manually, because backend doesn't provide it yet.
+      const newMessage = response.data.createConversation.messages[0];
+      newMessage.author = currentUser;
+
+      afterSubmit(newMessage);
+      return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('Failed to create nested conversation'));
+  }
+
+  toggleEditMode(event) {
+    if (event) event.stopPropagation();
     this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
   }
 
@@ -125,7 +176,8 @@ class DiscussionTopicReply extends Component {
 DiscussionTopicReply.propTypes = {
   afterSubmit: PropTypes.func,
   client: PropTypes.object.isRequired,
-  conversationId: PropTypes.string.isRequired,
+  conversationId: PropTypes.string,
+  focusedMessage: PropTypes.object,
   handleFocusMessage: PropTypes.func,
   initialMode: PropTypes.oneOf(['compose', 'display']),
   meetingId: PropTypes.string.isRequired,
@@ -136,6 +188,8 @@ DiscussionTopicReply.propTypes = {
 
 DiscussionTopicReply.defaultProps = {
   afterSubmit: () => {},
+  conversationId: null,
+  focusedMessage: null,
   handleFocusMessage: () => {},
   initialMode: 'display',
   message: {},
