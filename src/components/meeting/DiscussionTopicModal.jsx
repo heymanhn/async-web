@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withApollo } from 'react-apollo';
 import { Modal } from 'reactstrap';
 import styled from '@emotion/styled/macro';
+
+import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 
 import DiscussionTopicReply from './DiscussionTopicReply';
 
@@ -85,6 +88,7 @@ class DiscussionTopicModal extends Component {
 
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
     this.conversationIdForNewReply = this.conversationIdForNewReply.bind(this);
+    this.fetchConversationMessages = this.fetchConversationMessages.bind(this);
     this.replyCountForMessage = this.replyCountForMessage.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
     this.showFocusedConversation = this.showFocusedConversation.bind(this);
@@ -101,16 +105,19 @@ class DiscussionTopicModal extends Component {
   }
 
   async handleFocusOnMessage(message) {
-    const { focusedMessage, parentConversation } = this.state;
-    let newFocusedMessage;
+    const { focusedMessage, messages, parentConversation } = this.state;
+    let newFocus;
 
-    if (focusedMessage && focusedMessage.id === message.id) {
-      newFocusedMessage = parentConversation ? parentConversation.messages[0] : null;
+    if (message.id === messages[0].id) {
+      newFocus = null;
+    } else if (focusedMessage && focusedMessage.id === message.id) {
+      // TODO: Figure out how to set parentConversation properly
+      newFocus = parentConversation ? parentConversation.messages[0] : null;
     } else {
-      newFocusedMessage = message;
+      newFocus = message;
     }
 
-    return this.setState({ focusedMessage: newFocusedMessage }, this.showFocusedConversation);
+    this.showFocusedConversation(newFocus);
   }
 
   conversationIdForNewReply() {
@@ -118,6 +125,24 @@ class DiscussionTopicModal extends Component {
     const { conversationId } = this.props;
 
     return focusedMessage ? focusedMessage.childConversationId : conversationId;
+  }
+
+  async fetchConversationMessages(conversationId) {
+    const { client } = this.props;
+    const response = await client.query({
+      query: conversationMessagesQuery,
+      variables: { id: conversationId },
+      fetchPolicy: 'no-cache',
+    });
+
+    if (response.data) {
+      const { items } = response.data.conversationMessagesQuery;
+      const messages = (items || []).map(i => i.message);
+
+      return messages;
+    }
+
+    return new Error('Error fetching conversation messages');
   }
 
   // HN: Change this later, once the messageCount field is returned from backend
@@ -145,16 +170,28 @@ class DiscussionTopicModal extends Component {
   * no longer displayed, replaced by any replies to the current message, if it is the first
   * message of another conversation.
   */
-  showFocusedConversation() {
-    const { focusedMessage, messages } = this.state;
-    if (!focusedMessage) return;
+  async showFocusedConversation(focusedMessage) {
+    const { messages } = this.state;
+    const { conversationId } = this.props;
+    let newMessages = [];
 
-    const index = messages.findIndex(m => m.id === focusedMessage.id);
-    if (index === 0) return;
+    if (!focusedMessage) {
+      // TODO: when parentConversation is implemented, have this code fetch the messages
+      // from the parent conversation, instead of from the root
+      newMessages = await this.fetchConversationMessages(conversationId);
+    } else {
+      const index = messages.findIndex(m => m.id === focusedMessage.id);
+      if (index === 0) return;
 
-    this.setState({
-      messages: messages.slice(0, index + 1),
-    });
+      newMessages = messages.slice(0, index + 1);
+      if (focusedMessage.childConversationId) {
+        const { childConversationId } = focusedMessage;
+        const childMessages = await this.fetchConversationMessages(childConversationId);
+        newMessages = newMessages.concat(childMessages);
+      }
+    }
+
+    this.setState({ focusedMessage, messages: newMessages });
   }
 
   toggleReplyComposer() {
@@ -259,10 +296,11 @@ class DiscussionTopicModal extends Component {
 
 DiscussionTopicModal.propTypes = {
   author: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
   messages: PropTypes.array.isRequired,
 };
 
-export default DiscussionTopicModal;
+export default withApollo(DiscussionTopicModal);
