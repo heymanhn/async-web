@@ -101,12 +101,22 @@ const EditorActions = ({ contentType, isSubmitDisabled, mode, onCancel, onSubmit
     return `${verb} ${subject}`;
   };
 
+  const handleSubmit = (event) => {
+    event.stopPropagation();
+    return isSubmitDisabled ? null : onSubmit();
+  };
+
+  const handleCancel = (event) => {
+    event.stopPropagation();
+    return onCancel();
+  };
+
   const saveButton = (
     <React.Fragment>
       <ButtonContainer
         contentType={contentType}
         isDisabled={isSubmitDisabled}
-        onClick={isSubmitDisabled ? () => { } : onSubmit}
+        onClick={handleSubmit}
         type="save"
       >
         {mode === 'compose' && <PlusSign>+</PlusSign>}
@@ -120,7 +130,7 @@ const EditorActions = ({ contentType, isSubmitDisabled, mode, onCancel, onSubmit
     <React.Fragment>
       <ButtonContainer
         contentType={contentType}
-        onClick={onCancel}
+        onClick={handleCancel}
         type="cancel"
       >
         <ButtonText contentType={contentType}>Cancel</ButtonText>

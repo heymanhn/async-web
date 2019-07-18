@@ -5,13 +5,7 @@ import { Modal } from 'reactstrap';
 import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
-import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
-import { matchCurrentUserId } from 'utils/auth';
 
-import Avatar from 'components/shared/Avatar';
-import RovalEditor from 'components/editor/RovalEditor';
-import ContentHeader from './ContentHeader';
-import ContentToolbar from './ContentToolbar';
 import DiscussionTopicReply from './DiscussionTopicReply';
 
 const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
@@ -24,73 +18,8 @@ const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
   },
 }));
 
-const TopicSection = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  margin: '25px 30px',
-});
-
-const Header = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-});
-
-const AuthorSection = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-});
-
-const AvatarWithMargin = styled(Avatar)(({ mode }) => ({
-  marginRight: '12px',
-  opacity: mode === 'compose' ? 0.5 : 1,
-}));
-
-const Details = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-});
-
-const Author = styled.span({
-  fontWeight: 600,
-  fontSize: '18px',
-});
-
-const TopicEditor = styled(RovalEditor)({
-  fontSize: '16px',
-  lineHeight: '25px',
-  fontWeight: 400,
-  marginTop: '20px',
-
-  // HN: opportunity to DRY these up later once we find a pattern of typography
-  // across different editor use cases
-  'div:not(:first-of-type)': {
-    marginTop: '1em',
-  },
-
-  h1: {
-    fontSize: '28px',
-    fontWeight: 600,
-    marginTop: '1.4em',
-  },
-
-  h2: {
-    fontSize: '24px',
-    fontWeight: 500,
-    marginTop: '1.3em',
-  },
-
-  h3: {
-    fontSize: '20px',
-    fontWeight: 500,
-    marginTop: '1.2em',
-  },
-});
-
-const RepliesSection = styled.div(({ theme: { colors } }) => ({
+const MessagesSection = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
-  borderTop: `1px solid ${colors.borderGrey}`,
 }));
 
 const Separator = styled.hr(({ theme: { colors } }) => ({
@@ -151,23 +80,122 @@ class DiscussionTopicModal extends Component {
     super(props);
 
     this.state = {
+      focusedMessage: null,
       isComposingReply: false,
       messages: props.messages,
-      mode: 'display',
+      parentConversation: null,
     };
 
-    this.toggleEditMode = this.toggleEditMode.bind(this);
-    this.toggleReplyComposer = this.toggleReplyComposer.bind(this);
-    this.refetchMessages = this.refetchMessages.bind(this);
-    this.updateDisplayURL = this.updateDisplayURL.bind(this);
+    this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
+    this.conversationIdForNewReply = this.conversationIdForNewReply.bind(this);
+    this.fetchConversationMessages = this.fetchConversationMessages.bind(this);
+    this.replyCountForMessage = this.replyCountForMessage.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.showFocusedConversation = this.showFocusedConversation.bind(this);
+    this.sizeForMessage = this.sizeForMessage.bind(this);
+    this.toggleReplyComposer = this.toggleReplyComposer.bind(this);
+    this.updateDisplayURL = this.updateDisplayURL.bind(this);
+    this.updateMessageInList = this.updateMessageInList.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     const { isOpen } = this.props;
     if (!prevProps.isOpen && isOpen) this.updateDisplayURL();
     if (prevProps.isOpen && !isOpen) this.resetDisplayURL();
+  }
+
+  async handleFocusOnMessage(message) {
+    const { focusedMessage, messages, parentConversation } = this.state;
+    let newFocus;
+
+    if (message.id === messages[0].id) {
+      newFocus = null;
+    } else if (focusedMessage && focusedMessage.id === message.id) {
+      // TODO: Figure out how to set parentConversation properly
+      newFocus = parentConversation ? parentConversation.messages[0] : null;
+    } else {
+      newFocus = message;
+    }
+
+    this.showFocusedConversation(newFocus);
+  }
+
+  conversationIdForNewReply() {
+    const { focusedMessage } = this.state;
+    const { conversationId } = this.props;
+
+    return focusedMessage ? focusedMessage.childConversationId : conversationId;
+  }
+
+  async fetchConversationMessages(conversationId) {
+    const { client } = this.props;
+    const response = await client.query({
+      query: conversationMessagesQuery,
+      variables: { id: conversationId },
+      fetchPolicy: 'no-cache',
+    });
+
+    if (response.data) {
+      const { items } = response.data.conversationMessagesQuery;
+      const messages = (items || []).map(i => i.message);
+
+      return messages;
+    }
+
+    return new Error('Error fetching conversation messages');
+  }
+
+  // HN: Change this later, once the messageCount field is returned from backend
+  replyCountForMessage(message) {
+    const { messages } = this.state;
+    if (message.id === messages[0].id) return messages.length - 1;
+    return message.replyCount || 0;
+  }
+
+  resetDisplayURL() {
+    const { meetingId } = this.props;
+    const url = `${origin}/meetings/${meetingId}`;
+    window.history.replaceState({}, `meeting: ${meetingId}`, url);
+  }
+
+  sizeForMessage(id) {
+    const { focusedMessage, messages } = this.state;
+    if (focusedMessage) return focusedMessage.id === id ? 'large' : 'small';
+
+    return messages[0].id === id ? 'large' : 'small';
+  }
+
+  /*
+  * When a message is selected, all the messages in the conversation after that message are no
+  * no longer displayed, replaced by any replies to the current message, if it is the first
+  * message of another conversation.
+  */
+  async showFocusedConversation(focusedMessage) {
+    const { messages } = this.state;
+    const { conversationId } = this.props;
+    let newMessages = [];
+
+    if (!focusedMessage) {
+      // TODO: when parentConversation is implemented, have this code fetch the messages
+      // from the parent conversation, instead of from the root
+      newMessages = await this.fetchConversationMessages(conversationId);
+    } else {
+      const index = messages.findIndex(m => m.id === focusedMessage.id);
+      if (index === 0) return;
+
+      newMessages = messages.slice(0, index + 1);
+      if (focusedMessage.childConversationId) {
+        const { childConversationId } = focusedMessage;
+        const childMessages = await this.fetchConversationMessages(childConversationId);
+        newMessages = newMessages.concat(childMessages);
+      }
+    }
+
+    this.setState({ focusedMessage, messages: newMessages });
+  }
+
+  toggleReplyComposer() {
+    this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
   }
 
   // Updates the URL in the address bar to reflect this conversation
@@ -180,68 +208,38 @@ class DiscussionTopicModal extends Component {
     window.history.replaceState({}, `conversation: ${conversationId}`, url);
   }
 
-  resetDisplayURL() {
-    const { meetingId } = this.props;
-    const url = `${origin}/meetings/${meetingId}`;
-    window.history.replaceState({}, `meeting: ${meetingId}`, url);
-  }
+  // Serves as an optimistic update to the messages state. Handles two cases:
+  // 1. A new message is added to a conversation
+  // 2. A message has been edited by the current user
+  updateMessageInList(updatedMessage) {
+    const { focusedMessage, messages } = this.state;
+    const index = messages.findIndex(m => m.id === updatedMessage.id);
+    let newMessages;
 
-  toggleEditMode() {
-    this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
-  }
+    if (index < 0) {
+      const messageToUpdate = focusedMessage || messages[0];
+      messageToUpdate.replyCount += 1;
+      const secondIndex = messages.findIndex(m => m.id === focusedMessage.id);
 
-  toggleReplyComposer() {
-    this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
-  }
-
-  async refetchMessages() {
-    const { client, conversationId } = this.props;
-    const response = await client.query({
-      query: conversationMessagesQuery,
-      variables: { id: conversationId },
-      fetchPolicy: 'no-cache',
-    });
-
-    if (response.data && response.data.conversationMessagesQuery) {
-      const { items } = response.data.conversationMessagesQuery;
-      const messages = (items || []).map(i => i.message);
-
-      this.setState({ mode: 'display', messages });
+      newMessages = [
+        ...messages.slice(0, secondIndex),
+        messageToUpdate,
+        ...messages.slice(secondIndex + 1),
+        updatedMessage,
+      ];
     } else {
-      console.log('Error re-fetching conversation messages');
-    }
-  }
-
-  async handleSubmit({ payload, text }) {
-    const { messages } = this.state;
-    const { client, conversationId, meetingId } = this.props;
-
-    const response = await client.mutate({
-      mutation: updateConversationMessageMutation,
-      variables: {
-        id: conversationId,
-        mid: messages[0].id,
-        input: {
-          meetingId,
-          body: {
-            formatter: 'slatejs',
-            text,
-            payload,
-          },
-        },
-      },
-    });
-
-    if (response.data) {
-      this.refetchMessages();
-      return Promise.resolve();
+      newMessages = [
+        ...messages.slice(0, index),
+        updatedMessage,
+        ...messages.slice(index + 1),
+      ];
     }
 
-    return Promise.reject(new Error('Failed to update discussion topic'));
+    this.setState({ messages: newMessages });
   }
 
   render() {
-    const { isComposingReply, messages, mode } = this.state;
+    const { focusedMessage, isComposingReply, messages } = this.state;
     const {
       author,
       conversationId,
@@ -256,68 +254,36 @@ class DiscussionTopicModal extends Component {
       </AddReplyButton>
     );
 
-    const { createdAt, updatedAt } = messages[0];
-
     return (
       <StyledModal
         fade={false}
         {...props}
       >
-        <TopicSection>
-          <Header>
-            <AuthorSection>
-              <AvatarWithMargin src={author.profilePictureUrl} size={45} />
-              <Details>
-                <Author>{author.fullName}</Author>
-                {mode === 'display' && (
-                  <ContentHeader
-                    createdAt={createdAt}
-                    isEditable={matchCurrentUserId(author.id)}
-                    isEdited={createdAt !== updatedAt}
-                    onEdit={this.toggleEditMode}
-                  />
-                )}
-              </Details>
-            </AuthorSection>
-          </Header>
-          <TopicEditor
-            initialValue={messages[0].body.payload}
-            mode={mode}
-            onCancel={this.toggleEditMode}
-            onSubmit={this.handleSubmit}
-            contentType="modalTopic"
-          />
-        </TopicSection>
-        {mode === 'display' && (
-          <ContentToolbar
-            contentType="modalTopic"
-            replyCount={messages.length - 1}
-          />
-        )}
-        {messages.length > 1 && (
-          <RepliesSection>
-            {messages.slice(1).map(m => (
-              <ReplyDisplay key={m.id}>
-                <DiscussionTopicReply
-                  afterSubmit={this.refetchMessages}
-                  conversationId={conversationId}
-                  initialMode="display"
-                  key={m.id}
-                  meetingId={meetingId}
-                  message={m}
-                />
-                <Separator />
-              </ReplyDisplay>
-            ))}
-          </RepliesSection>
-        )}
+        <MessagesSection>
+          {messages.map(m => (
+            <ReplyDisplay key={m.id}>
+              <DiscussionTopicReply
+                afterSubmit={this.updateMessageInList}
+                conversationId={conversationId}
+                handleFocusMessage={this.handleFocusOnMessage}
+                initialMode="display"
+                key={m.id}
+                meetingId={meetingId}
+                message={m}
+                replyCount={this.replyCountForMessage(m)}
+                size={this.sizeForMessage(m.id)}
+              />
+              <Separator />
+            </ReplyDisplay>
+          ))}
+        </MessagesSection>
         <ActionsContainer>
           {!isComposingReply ? addReplyButton : (
             <DiscussionTopicReply
-              afterSubmit={this.refetchMessages}
-              conversationId={conversationId}
+              afterSubmit={this.updateMessageInList}
+              conversationId={this.conversationIdForNewReply()}
+              focusedMessage={focusedMessage}
               initialMode="compose"
-              replyCount={messages.length - 1}
               meetingId={meetingId}
               onCancelCompose={this.toggleReplyComposer}
             />

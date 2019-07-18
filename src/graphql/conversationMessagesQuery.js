@@ -17,6 +17,9 @@ export default gql`
             formatter
             payload
           }
+          conversationId
+          childConversationId
+          replyCount
         }
       }
     }
