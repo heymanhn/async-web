@@ -111,7 +111,6 @@ class DiscussionTopic extends Component {
       loading: true,
       messages: [],
       mode: props.initialMode,
-      replyCount: null,
       messageCount: null,
     };
 
