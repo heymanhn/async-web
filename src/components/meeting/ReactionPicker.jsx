@@ -48,7 +48,7 @@ const Container = styled.div(({ isOpen, offset, theme: { colors } }) => ({
   boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
   marginTop: `${offset}px`,
   opacity: isOpen ? 1 : 0,
-  padding: '10px 2px 0',
+  padding: '10px 5px 5px',
   position: 'absolute',
   transition: 'opacity 0.2s',
   zIndex: 1,
@@ -146,7 +146,7 @@ class ReactionPicker extends Component {
               key={r.code}
               code={r.code}
               icon={r.icon}
-              isSelected={false}
+              isSelected={false} // TODO: Pass real data later
               onAddReaction={this.addReaction}
               onExitHover={this.handleExitHover}
               onHover={this.handleHover}

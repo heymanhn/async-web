@@ -3,7 +3,14 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 const Container = styled.div({
-  padding: '10px',
+  padding: '5px 10px',
+}, ({ isSelected, theme: { colors } }) => {
+  if (!isSelected) return {};
+
+  return !isSelected ? {} : {
+    background: colors.hoverBlue,
+    border: `1px solid ${colors.borderGrey}`,
+  };
 });
 
 const Icon = styled.div({
@@ -36,10 +43,11 @@ class ReactionIcon extends Component {
   }
 
   render() {
-    const { icon } = this.props;
+    const { icon, isSelected } = this.props;
 
     return (
       <Container
+        isSelected={isSelected}
         onBlur={this.handleExitHover}
         onClick={this.handleClick}
         onFocus={this.handleHover}
