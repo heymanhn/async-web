@@ -14,30 +14,42 @@ const Container = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const StyledIcon = styled(FontAwesomeIcon)(({ basefontsize }) => ({
+const StyledIcon = styled(FontAwesomeIcon)(({ customsize }) => ({
   cursor: 'pointer',
-  fontSize: `${basefontsize}px`,
+  fontSize: customsize === 'small' ? '16px' : '18px',
 }));
 
-const PlusSign = styled.div(({ baseFontSize }) => ({
-  fontSize: `${baseFontSize - 3}px`,
-  marginLeft: '2px',
-  marginTop: '-2px',
-}));
+const PlusSign = styled.div({
+  fontWeight: 500,
+}, ({ size }) => {
+  if (size === 'small') {
+    return {
+      fontSize: '13px',
+      marginLeft: '1px',
+      marginTop: '-2px',
+    };
+  }
 
-const AddReactionButton = ({ baseFontSize }) => (
-  <Container>
-    <StyledIcon basefontsize={baseFontSize} icon={faLaugh} />
-    <PlusSign baseFontSize={baseFontSize}>+</PlusSign>
+  return {
+    fontSize: '15px',
+    marginLeft: '2px',
+    marginTop: '-4px',
+  };
+});
+
+const AddReactionButton = ({ size, ...props }) => (
+  <Container {...props}>
+    <StyledIcon customsize={size} icon={faLaugh} />
+    <PlusSign size={size}>+</PlusSign>
   </Container>
 );
 
 AddReactionButton.propTypes = {
-  baseFontSize: PropTypes.number,
+  size: PropTypes.oneOf(['small', 'large']),
 };
 
 AddReactionButton.defaultProps = {
-  baseFontSize: 16,
+  size: 'small',
 };
 
 export default AddReactionButton;

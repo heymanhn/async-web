@@ -5,6 +5,8 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
+import AddReactionButton from './AddReactionButton';
+
 const heights = {
   topic: '52px',
   modalTopic: '52px',
@@ -73,6 +75,10 @@ const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
   margin: 0,
 }));
 
+const StyledAddReactionButton = styled(AddReactionButton)({
+  marginLeft: '15px',
+});
+
 const ContentToolbar = ({ contentType, replyCount }) => {
   // Doing this for now. will make more complex later when reactions UX is added
   if (!replyCount && contentType === 'modalReply') return null;
@@ -86,6 +92,7 @@ const ContentToolbar = ({ contentType, replyCount }) => {
       </ButtonContainer>
       {/* Temporary contentType flag below */}
       {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
+      {contentType !== 'modalReply' && <StyledAddReactionButton size="large" />}
     </React.Fragment>
   );
 
