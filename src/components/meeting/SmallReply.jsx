@@ -106,7 +106,7 @@ const SmallReply = ({
   updatedAt,
   ...props
 }) => (
-  <Container mode={mode} {...props}>
+  <Container mode={mode} onClick={handleFocusCurrentMessage} {...props}>
     <AvatarWithMargin src={author.profilePictureUrl} size={45} mode={mode} />
     <MainContainer>
       <HeaderSection>
