@@ -179,8 +179,8 @@ class DiscussionTopicModal extends Component {
     if (!focusedMessage) {
       // TODO: when parentConversation is implemented, have this code fetch the messages
       // from the parent conversation, instead of from the root
-      const { messages, messageCount } = await this.fetchConversationMessages(conversationId);
-      this.setState({ focusedMessage, messageCount, messages });
+      const { messages: parentMessages, messageCount } = await this.fetchConversationMessages(conversationId);
+      this.setState({ focusedMessage, messageCount, messages: parentMessages });
     } else {
       const index = messages.findIndex(m => m.id === focusedMessage.id);
       if (index === 0) return;
