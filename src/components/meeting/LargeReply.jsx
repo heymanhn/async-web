@@ -110,7 +110,7 @@ const LargeReply = ({
         </AuthorSection>
         <StyledHoverMenu
           bgMode="grey"
-          isOpen={hover}
+          isOpen={hover && mode === 'display'}
           onEdit={handleToggleEditMode}
           showEditButton={matchCurrentUserId(author.id)}
           showReplyButton

@@ -309,7 +309,7 @@ class DiscussionTopic extends Component {
               </MessageDetails>
               <StyledHoverMenu
                 bgMode="grey"
-                isOpen={hover}
+                isOpen={hover && mode === 'display'}
                 onEdit={this.toggleEditMode}
                 showEditButton={matchCurrentUserId(author.id)}
                 showReplyButton
