@@ -10,18 +10,20 @@ const Container = styled.div(({ isOpen, placement, theme: { colors } }) => ({
 
   background: colors.white,
   borderRadius: '5px',
-  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
+  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
   opacity: isOpen ? 1 : 0,
   padding: '10px',
   position: 'absolute',
   marginTop: '20px',
   transition: 'opacity 0.2s',
+  zIndex: 1,
 }));
 
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '14px',
   fontWeight: 500,
+  marginBottom: '10px',
 }));
 
 const Divider = styled.div(({ theme: { colors } }) => ({
