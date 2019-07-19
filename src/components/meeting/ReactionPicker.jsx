@@ -3,7 +3,42 @@ import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ isOpen, placement, theme: { colors } }) => ({
+import ReactionIcon from './ReactionIcon';
+
+const REACTIONS = [
+  {
+    code: 'smile',
+    icon: '😄',
+    text: "That's funny",
+  },
+  {
+    code: 'heart',
+    icon: '❤️',
+    text: 'Love it',
+  },
+  {
+    code: 'thumbs_up',
+    icon: '👍',
+    text: 'Agree',
+  },
+  {
+    code: 'thumbs_down',
+    icon: '👎',
+    text: 'Disagree',
+  },
+  {
+    code: 'thinking_face',
+    icon: '🤔',
+    text: 'Confused',
+  },
+  {
+    code: 'clap',
+    icon: '👏',
+    text: 'Applause',
+  },
+];
+
+const Container = styled.div(({ isOpen, offset, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -11,10 +46,10 @@ const Container = styled.div(({ isOpen, placement, theme: { colors } }) => ({
   background: colors.white,
   borderRadius: '5px',
   boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
+  marginTop: `${offset}px`,
   opacity: isOpen ? 1 : 0,
-  padding: '10px',
+  padding: '10px 2px 0',
   position: 'absolute',
-  marginTop: '20px',
   transition: 'opacity 0.2s',
   zIndex: 1,
 }));
@@ -23,24 +58,32 @@ const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '14px',
   fontWeight: 500,
-  marginBottom: '10px',
 }));
 
 const Divider = styled.div(({ theme: { colors } }) => ({
   borderTop: `1px solid ${colors.borderGrey}`,
   width: '60px',
-  margin: '0px',
+  margin: '10px 0 5px',
 }));
 
 const ReactionsList = styled.div({
-
+  display: 'flex',
+  flexDirection: 'row',
 });
 
 class ReactionPicker extends Component {
   constructor(props) {
     super(props);
 
+    this.state = { reactionOnHover: null };
+
+    this.picker = React.createRef();
     this.handleClickOutside = this.handleClickOutside.bind(this);
+    this.handleExitHover = this.handleExitHover.bind(this);
+    this.handleHover = this.handleHover.bind(this);
+    this.addReaction = this.addReaction.bind(this);
+    this.calculateOffset = this.calculateOffset.bind(this);
+    this.removeReaction = this.removeReaction.bind(this);
   }
 
   handleClickOutside(event) {
@@ -50,15 +93,66 @@ class ReactionPicker extends Component {
     if (isOpen) handleClose();
   }
 
+  handleExitHover(code) {
+    const { reactionOnHover } = this.state;
+    if (code !== reactionOnHover) return;
+
+    this.setState({ reactionOnHover: null });
+  }
+
+  handleHover(code) {
+    this.setState({ reactionOnHover: code });
+  }
+
+  addReaction(code) {
+    // TODO: need to have access to message_id and conversation_id here
+    console.log('Adding reaction: ' + code);
+  }
+
+  // Aiming for an 8 pixel gap between the add reaction button and the picker,
+  // regardless of direction
+  calculateOffset() {
+    const { placement } = this.props;
+    const picker = this.picker.current;
+    if (!picker || placement === 'below') return 25;
+
+    return (picker.offsetHeight + 8) * -1;
+  }
+
+  removeReaction(code) {
+    // TODO: need to have access to message_id and conversation_id here
+    console.log('Removing reaction: ' + code);
+  }
+
   render() {
+    const { reactionOnHover: hoverCode } = this.state;
     const { handleClose, isOpen, placement, ...props } = this.props;
 
+    const title = hoverCode ? REACTIONS.find(r => r.code === hoverCode).text : 'Pick a reaction';
+
     return (
-      <Container isOpen={isOpen} placement={placement} {...props}>
-        <Title>Pick a reaction</Title>
+      <Container
+        isOpen={isOpen}
+        offset={this.calculateOffset()}
+        placement={placement}
+        ref={this.picker}
+        {...props}
+      >
+        <Title>{title}</Title>
         <Divider />
         <ReactionsList>
-          Hello
+          {REACTIONS.map(r => (
+            <ReactionIcon
+              key={r.code}
+              code={r.code}
+              icon={r.icon}
+              isSelected={false}
+              onAddReaction={this.addReaction}
+              onExitHover={this.handleExitHover}
+              onHover={this.handleHover}
+              onRemoveReaction={this.removeReaction}
+            />
+          ))}
         </ReactionsList>
       </Container>
     );
@@ -69,11 +163,13 @@ ReactionPicker.propTypes = {
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
   placement: PropTypes.oneOf(['above', 'below']),
+  reactions: PropTypes.array,
 };
 
 ReactionPicker.defaultProps = {
   isOpen: false,
   placement: 'above',
+  reactions: [],
 };
 
 export default onClickOutside(ReactionPicker);

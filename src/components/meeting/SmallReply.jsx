@@ -121,6 +121,7 @@ const SmallReply = ({
           onEdit={handleToggleEditMode}
           onReply={handleFocusCurrentMessage}
           replyCount={replyCount}
+          showAddReactionButton
           showEditButton={matchCurrentUserId(author.id)}
           showReplyButton
         />
