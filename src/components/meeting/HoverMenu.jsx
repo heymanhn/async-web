@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 const Container = styled.div(({ bgMode, isOpen, theme: { colors } }) => ({
-  display: isOpen ? 'flex' : 'none',
+  display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
 
@@ -12,6 +12,8 @@ const Container = styled.div(({ bgMode, isOpen, theme: { colors } }) => ({
   borderRadius: '25px',
   cursor: 'pointer',
   minHeight: '30px',
+  opacity: isOpen ? 1 : 0,
+  transition: 'opacity 0.1s',
 }));
 
 const ButtonContainer = styled.div(({ theme: { colors } }) => ({
@@ -19,6 +21,10 @@ const ButtonContainer = styled.div(({ theme: { colors } }) => ({
   fontSize: '12px',
   fontWeight: 500,
   padding: '0px 12px',
+
+  ':hover': {
+    color: colors.grey1,
+  },
 }));
 
 const VerticalDivider = styled.div(({ theme: { colors } }) => ({
