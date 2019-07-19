@@ -4,12 +4,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import withHover from 'utils/withHover';
 import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
 import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
+import HoverMenu from './HoverMenu';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   display: 'flex',
@@ -37,17 +39,16 @@ const MainContainer = styled.div({
 
 const HeaderSection = styled.div({
   display: 'flex',
-  flexDirection: 'row',
   justifyContent: 'space-between',
+  alignItems: 'center',
 });
 
 const Details = styled.div({
   display: 'flex',
-  flexDirection: 'row',
   alignItems: 'baseline',
 });
 
-const Author = styled.span(({ mode }) => ({
+const Author = styled.div(({ mode }) => ({
   fontSize: '14px',
   fontWeight: 600,
   marginRight: '20px',
@@ -85,12 +86,19 @@ const ReplyEditor = styled(RovalEditor)({
   },
 });
 
+const StyledHoverMenu = styled(HoverMenu)({
+  position: 'absolute',
+  right: '30px',
+});
+
 const SmallReply = ({
   author,
   createdAt,
   handleCancel,
+  handleFocusCurrentMessage,
   handleSubmit,
   handleToggleEditMode,
+  hover,
   id,
   message,
   mode,
@@ -98,21 +106,25 @@ const SmallReply = ({
   updatedAt,
   ...props
 }) => (
-  <Container {...props}>
+  <Container mode={mode} onClick={handleFocusCurrentMessage} {...props}>
     <AvatarWithMargin src={author.profilePictureUrl} size={45} mode={mode} />
     <MainContainer>
       <HeaderSection>
         <Details>
           <Author mode={mode}>{author.fullName}</Author>
           {mode === 'display' && (
-            <ContentHeader
-              createdAt={createdAt}
-              isEditable={matchCurrentUserId(author.id)}
-              isEdited={createdAt !== updatedAt}
-              onEdit={handleToggleEditMode}
-            />
+            <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
           )}
         </Details>
+        <StyledHoverMenu
+          isOpen={hover && mode === 'display'}
+          onEdit={handleToggleEditMode}
+          onReply={handleFocusCurrentMessage}
+          replyCount={replyCount}
+          showEditButton={matchCurrentUserId(author.id)}
+          showReplyButton
+          source="reply"
+        />
       </HeaderSection>
       <ReplyEditor
         initialValue={mode !== 'compose' ? message : null}
@@ -124,6 +136,7 @@ const SmallReply = ({
       {mode === 'display' && (
         <ContentToolbar
           contentType="modalReply"
+          onClickReply={handleFocusCurrentMessage}
           replyCount={replyCount}
         />
       )}
@@ -135,8 +148,10 @@ SmallReply.propTypes = {
   author: PropTypes.object.isRequired,
   createdAt: PropTypes.number,
   handleCancel: PropTypes.func.isRequired,
+  handleFocusCurrentMessage: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleToggleEditMode: PropTypes.func.isRequired,
+  hover: PropTypes.bool.isRequired,
   id: PropTypes.string,
   message: PropTypes.string,
   mode: PropTypes.string.isRequired,
@@ -152,4 +167,4 @@ SmallReply.defaultProps = {
   updatedAt: null,
 };
 
-export default SmallReply;
+export default withHover(SmallReply);

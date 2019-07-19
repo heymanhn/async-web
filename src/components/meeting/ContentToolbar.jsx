@@ -5,6 +5,8 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
+// import AddReactionButton from './AddReactionButton';
+
 const heights = {
   topic: '52px',
   modalTopic: '52px',
@@ -53,6 +55,8 @@ const ButtonContainer = styled.div(({ contentType }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: contentType === 'modalReply' ? 'center' : 'initial',
+
+  cursor: 'pointer',
   margin: contentType === 'modalReply' ? '0px 15px' : '0px 30px',
 }));
 
@@ -73,19 +77,25 @@ const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
   margin: 0,
 }));
 
-const ContentToolbar = ({ contentType, replyCount }) => {
+// const StyledAddReactionButton = styled(AddReactionButton)({
+//   marginLeft: '15px',
+// });
+
+const ContentToolbar = ({ contentType, onClickReply, replyCount }) => {
   // Doing this for now. will make more complex later when reactions UX is added
   if (!replyCount && contentType === 'modalReply') return null;
 
   const countLabel = replyCount || (contentType === 'topic' ? 'add a reply' : 0);
   const repliesButton = (
     <React.Fragment>
-      <ButtonContainer contentType={contentType}>
+      <ButtonContainer contentType={contentType} onClick={onClickReply}>
         <StyledIcon contenttype={contentType} icon={faComment} />
         <CountLabel contentType={contentType}>{countLabel}</CountLabel>
       </ButtonContainer>
       {/* Temporary contentType flag below */}
       {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
+      {/* HN: Enabling the below once reactions UX is live */}
+      {/* {contentType !== 'modalReply' && <StyledAddReactionButton size="large" />} */}
     </React.Fragment>
   );
 
@@ -108,7 +118,12 @@ const ContentToolbar = ({ contentType, replyCount }) => {
 
 ContentToolbar.propTypes = {
   contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
+  onClickReply: PropTypes.func,
   replyCount: PropTypes.number.isRequired,
+};
+
+ContentToolbar.defaultProps = {
+  onClickReply: () => {},
 };
 
 export default ContentToolbar;

@@ -21,7 +21,7 @@ class DiscussionTopicReply extends Component {
     };
 
     this.handleCancel = this.handleCancel.bind(this);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleFocusCurrentMessage = this.handleFocusCurrentMessage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.createNestedConversation = this.createNestedConversation.bind(this);
     this.toggleEditMode = this.toggleEditMode.bind(this);
@@ -84,7 +84,7 @@ class DiscussionTopicReply extends Component {
     if (mode === 'compose') onCancelCompose();
   }
 
-  handleClick() {
+  handleFocusCurrentMessage() {
     const { mode } = this.state;
     const { initialMode, message, handleFocusMessage } = this.props;
     if (initialMode === 'compose' || mode !== 'display') return;
@@ -159,12 +159,12 @@ class DiscussionTopicReply extends Component {
       author: author || currentUser,
       createdAt,
       handleCancel: this.handleCancel,
+      handleFocusCurrentMessage: this.handleFocusCurrentMessage,
       handleSubmit: this.handleSubmit,
       handleToggleEditMode: this.toggleEditMode,
       id: mode === 'display' ? id : undefined,
       message: mode !== 'compose' ? body.payload : null,
       mode,
-      onClick: this.handleClick,
       updatedAt,
       ...props,
     };

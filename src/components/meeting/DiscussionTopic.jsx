@@ -7,6 +7,7 @@ import currentUserQuery from 'graphql/currentUserQuery';
 import meetingConversationQuery from 'graphql/meetingConversationQuery';
 import createConversationMutation from 'graphql/createConversationMutation';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
+import withHover from 'utils/withHover';
 import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
@@ -14,6 +15,7 @@ import RovalEditor from 'components/editor/RovalEditor';
 import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
 import DiscussionTopicModal from './DiscussionTopicModal';
+import HoverMenu from './HoverMenu';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
@@ -44,6 +46,14 @@ const ContentContainer = styled.div({
 const TopicMetadata = styled.div({
   display: 'flex',
   flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+
+  position: 'relative',
+});
+
+const MessageDetails = styled.div({
+  display: 'flex',
   alignItems: 'baseline',
 });
 
@@ -83,6 +93,11 @@ const TopicEditor = styled(RovalEditor)({
     fontWeight: 500,
     marginTop: '1.2em',
   },
+});
+
+const StyledHoverMenu = styled(HoverMenu)({
+  position: 'absolute',
+  right: '0px',
 });
 
 class DiscussionTopic extends Component {
@@ -269,6 +284,7 @@ class DiscussionTopic extends Component {
 
     const {
       conversationId,
+      hover,
       onCancelCompose,
       meetingId,
       resetDisplayOverride,
@@ -285,15 +301,19 @@ class DiscussionTopic extends Component {
           <AvatarWithMargin src={author.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
             <TopicMetadata>
-              <Author mode={mode}>{author.fullName}</Author>
-              {mode === 'display' && (
-                <ContentHeader
-                  createdAt={createdAt}
-                  isEditable={matchCurrentUserId(author.id)}
-                  isEdited={createdAt !== updatedAt}
-                  onEdit={this.toggleEditMode}
-                />
-              )}
+              <MessageDetails>
+                <Author mode={mode}>{author.fullName}</Author>
+                {mode === 'display' && (
+                  <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
+                )}
+              </MessageDetails>
+              <StyledHoverMenu
+                bgMode="grey"
+                isOpen={hover && mode === 'display'}
+                onEdit={this.toggleEditMode}
+                showEditButton={matchCurrentUserId(author.id)}
+                source="topic"
+              />
             </TopicMetadata>
             <TopicEditor
               initialValue={initialValue}
@@ -330,6 +350,7 @@ DiscussionTopic.propTypes = {
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string,
   forceDisplayModal: PropTypes.bool,
+  hover: PropTypes.bool.isRequired,
   initialMode: PropTypes.oneOf(['compose', 'display']),
   meetingId: PropTypes.string.isRequired,
   onCancelCompose: PropTypes.func,
@@ -345,4 +366,4 @@ DiscussionTopic.defaultProps = {
   resetDisplayOverride: () => {},
 };
 
-export default withApollo(DiscussionTopic);
+export default withApollo(withHover(DiscussionTopic));

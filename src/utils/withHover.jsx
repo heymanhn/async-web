@@ -15,11 +15,16 @@ const withHover = (WrappedComponent) => {
       super(props);
 
       this.state = { hover: false };
-      this.toggleHover = this.toggleHover.bind(this);
+      this.disableHover = this.disableHover.bind(this);
+      this.enableHover = this.enableHover.bind(this);
     }
 
-    toggleHover() {
-      this.setState(prevState => ({ hover: !prevState.hover }));
+    disableHover() {
+      this.setState({ hover: false });
+    }
+
+    enableHover() {
+      this.setState({ hover: true });
     }
 
     render() {
@@ -27,10 +32,10 @@ const withHover = (WrappedComponent) => {
 
       return (
         <WrappedComponent
-          onBlur={this.toggleHover}
-          onFocus={this.toggleHover}
-          onMouseOut={this.toggleHover}
-          onMouseOver={this.toggleHover}
+          onBlur={this.disableHover}
+          onFocus={this.enableHover}
+          onMouseOut={this.disableHover}
+          onMouseOver={this.enableHover}
           hover={hover}
           {...this.props}
         />

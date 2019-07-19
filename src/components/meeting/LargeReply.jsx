@@ -4,12 +4,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
 
+import withHover from 'utils/withHover';
 import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
 import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
+import HoverMenu from './HoverMenu';
 
 const MessageSection = styled.div({
   display: 'flex',
@@ -39,7 +41,7 @@ const Details = styled.div({
   flexDirection: 'column',
 });
 
-const Author = styled.span({
+const Author = styled.div({
   fontWeight: 600,
   fontSize: '18px',
 });
@@ -75,12 +77,19 @@ const TopicEditor = styled(RovalEditor)({
   },
 });
 
+const StyledHoverMenu = styled(HoverMenu)({
+  position: 'absolute',
+  right: '30px',
+});
+
 const LargeReply = ({
   author,
   createdAt,
   handleCancel,
+  handleFocusCurrentMessage,
   handleSubmit,
   handleToggleEditMode,
+  hover,
   id,
   message,
   mode,
@@ -89,22 +98,24 @@ const LargeReply = ({
   ...props
 }) => (
   <React.Fragment>
-    <MessageSection {...props}>
+    <MessageSection onClick={handleFocusCurrentMessage} {...props}>
       <Header>
         <AuthorSection>
           <AvatarWithMargin src={author.profilePictureUrl} size={45} />
           <Details>
             <Author>{author.fullName}</Author>
             {mode === 'display' && (
-              <ContentHeader
-                createdAt={createdAt}
-                isEditable={matchCurrentUserId(author.id)}
-                isEdited={createdAt !== updatedAt}
-                onEdit={handleToggleEditMode}
-              />
+              <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
             )}
           </Details>
         </AuthorSection>
+        <StyledHoverMenu
+          bgMode="grey"
+          isOpen={hover && mode === 'display'}
+          onEdit={handleToggleEditMode}
+          showEditButton={matchCurrentUserId(author.id)}
+          source="reply"
+        />
       </Header>
       <TopicEditor
         initialValue={message}
@@ -127,8 +138,10 @@ LargeReply.propTypes = {
   author: PropTypes.object.isRequired,
   createdAt: PropTypes.number.isRequired,
   handleCancel: PropTypes.func.isRequired,
+  handleFocusCurrentMessage: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleToggleEditMode: PropTypes.func.isRequired,
+  hover: PropTypes.bool.isRequired,
   id: PropTypes.string,
   message: PropTypes.string,
   mode: PropTypes.string.isRequired,
@@ -141,4 +154,4 @@ LargeReply.defaultProps = {
   message: null,
 };
 
-export default LargeReply;
+export default withHover(LargeReply);

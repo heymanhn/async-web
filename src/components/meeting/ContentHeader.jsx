@@ -27,34 +27,20 @@ const EditedLabel = styled.span(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const EditButton = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  cursor: 'pointer',
-  fontSize: '14px',
-
-  ':hover': {
-    textDecoration: 'underline',
-  },
-}));
-
 const separator = <Separator>&#8226;</Separator>;
 const editedLabel = <EditedLabel>Edited</EditedLabel>;
 
-const ContentHeader = ({ createdAt, isEditable, isEdited, onEdit }) => (
+const ContentHeader = ({ createdAt, isEdited }) => (
   <Container>
     <Timestamp fromNow parse="X">{createdAt}</Timestamp>
     {isEdited && separator}
     {isEdited && editedLabel}
-    {isEditable && separator}
-    {isEditable && <EditButton onClick={onEdit}>Edit</EditButton>}
   </Container>
 );
 
 ContentHeader.propTypes = {
   createdAt: PropTypes.number.isRequired,
-  isEditable: PropTypes.bool.isRequired,
   isEdited: PropTypes.bool.isRequired,
-  onEdit: PropTypes.func.isRequired,
 };
 
 export default ContentHeader;
