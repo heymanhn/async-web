@@ -56,7 +56,6 @@ const HoverMenu = ({
   showAddReactionButton,
   showEditButton,
   showReplyButton,
-  source,
   ...props
 }) => {
   if (!showAddReactionButton && !showEditButton && !showReplyButton) return null;
@@ -77,13 +76,13 @@ const HoverMenu = ({
   const replyButton = (
     <ButtonContainer onClick={handleClickReplyButton}>
       <StyledIcon icon={faComment} />
-      {replyCount > 0 ? `view ${Pluralize('reply', replyCount)}` : 'add a reply'}
+      {replyCount > 0 ? `view ${Pluralize('reply', replyCount)}` : 'reply'}
     </ButtonContainer>
   );
   const editButton = (
     <ButtonContainer onClick={handleClickEditButton}>
       <StyledIcon icon={faEdit} />
-      {`edit ${source}`}
+      edit
     </ButtonContainer>
   );
   const addReactionButton = (
@@ -113,7 +112,6 @@ HoverMenu.propTypes = {
   showAddReactionButton: PropTypes.bool,
   showEditButton: PropTypes.bool,
   showReplyButton: PropTypes.bool,
-  source: PropTypes.string.isRequired,
 };
 
 HoverMenu.defaultProps = {

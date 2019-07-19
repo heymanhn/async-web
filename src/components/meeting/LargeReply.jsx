@@ -114,7 +114,6 @@ const LargeReply = ({
           isOpen={hover && mode === 'display'}
           onEdit={handleToggleEditMode}
           showEditButton={matchCurrentUserId(author.id)}
-          source="reply"
         />
       </Header>
       <TopicEditor

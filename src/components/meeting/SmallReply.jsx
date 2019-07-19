@@ -123,7 +123,6 @@ const SmallReply = ({
           replyCount={replyCount}
           showEditButton={matchCurrentUserId(author.id)}
           showReplyButton
-          source="reply"
         />
       </HeaderSection>
       <ReplyEditor
