@@ -87,7 +87,7 @@ const HoverMenu = ({
   );
   const addReactionButton = (
     <ButtonContainer onClick={handleClickAddReactionButton}>
-      <AddReactionButton />
+      <AddReactionButton source="hoverMenu" />
     </ButtonContainer>
   );
 
