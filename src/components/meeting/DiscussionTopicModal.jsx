@@ -84,6 +84,7 @@ class DiscussionTopicModal extends Component {
       isComposingReply: false,
       messages: props.messages,
       parentConversation: null,
+      messageCount: props.messageCount
     };
 
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
@@ -136,8 +137,12 @@ class DiscussionTopicModal extends Component {
     });
 
     if (response.data) {
-      const { items } = response.data.conversationMessagesQuery;
+      const { items, messageCount } = response.data.conversationMessagesQuery;
       const messages = (items || []).map(i => i.message);
+      const { messageCountHash } = this.state;
+      const messageCounts = messageCountHash || {}
+      messageCounts[conversationId] = messageCount
+      this.setState({ messageCountHash: messageCounts });
 
       return messages;
     }
@@ -147,8 +152,10 @@ class DiscussionTopicModal extends Component {
 
   // HN: Change this later, once the messageCount field is returned from backend
   replyCountForMessage(message) {
-    const { messages } = this.state;
-    if (message.id === messages[0].id) return messages.length - 1;
+    const { messages, messageCountHash, messageCount } = this.state;
+    if (message.id === messages[0].id) {
+      return messageCountHash ? (messageCountHash[message.conversationId] - 1) : messageCount;
+    }
     return message.replyCount || 0;
   }
 

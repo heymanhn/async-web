@@ -169,8 +169,7 @@ class DiscussionTopic extends Component {
     });
 
     if (response.data && response.data.conversation) {
-      const { author, messages } = response.data.conversation;
-      const replyCount = messages.length - 1;
+      const { author, messages, messageCount } = response.data.conversation;
       const { body: { payload } } = messages[0];
 
       this.setState({
@@ -178,7 +177,7 @@ class DiscussionTopic extends Component {
         author,
         loading: false,
         messages,
-        replyCount,
+        messageCount,
       });
     }
   }
@@ -279,7 +278,7 @@ class DiscussionTopic extends Component {
       loading,
       messages,
       mode,
-      replyCount,
+      messageCount,
     } = this.state;
 
     const {
@@ -326,7 +325,7 @@ class DiscussionTopic extends Component {
         {mode === 'display' && (
           <ContentToolbar
             contentType="topic"
-            replyCount={replyCount}
+            replyCount={messageCount-1}
           />
         )}
         {conversationId && (
@@ -336,6 +335,7 @@ class DiscussionTopic extends Component {
             isOpen={isModalVisible}
             meetingId={meetingId}
             messages={messages}
+            messageCount={messageCount-1}
             toggle={this.toggleModal}
           />
         )}
