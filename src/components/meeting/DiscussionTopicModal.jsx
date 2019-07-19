@@ -84,6 +84,7 @@ class DiscussionTopicModal extends Component {
       isComposingReply: false,
       messages: props.messages,
       parentConversation: null,
+      messageCount: props.messageCount,
     };
 
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
@@ -136,10 +137,10 @@ class DiscussionTopicModal extends Component {
     });
 
     if (response.data) {
-      const { items } = response.data.conversationMessagesQuery;
+      const { items, messageCount } = response.data.conversationMessagesQuery;
       const messages = (items || []).map(i => i.message);
 
-      return messages;
+      return { messages, messageCount };
     }
 
     return new Error('Error fetching conversation messages');
@@ -147,8 +148,8 @@ class DiscussionTopicModal extends Component {
 
   // HN: Change this later, once the messageCount field is returned from backend
   replyCountForMessage(message) {
-    const { messages } = this.state;
-    if (message.id === messages[0].id) return messages.length - 1;
+    const { messages, messageCount } = this.state;
+    if (message.id === messages[0].id) return messageCount - 1 || 0;
     return message.replyCount || 0;
   }
 
@@ -178,7 +179,8 @@ class DiscussionTopicModal extends Component {
     if (!focusedMessage) {
       // TODO: when parentConversation is implemented, have this code fetch the messages
       // from the parent conversation, instead of from the root
-      newMessages = await this.fetchConversationMessages(conversationId);
+      const { messages, messageCount } = await this.fetchConversationMessages(conversationId);
+      this.setState({ focusedMessage, messageCount, messages });
     } else {
       const index = messages.findIndex(m => m.id === focusedMessage.id);
       if (index === 0) return;
@@ -186,12 +188,12 @@ class DiscussionTopicModal extends Component {
       newMessages = messages.slice(0, index + 1);
       if (focusedMessage.childConversationId) {
         const { childConversationId } = focusedMessage;
-        const childMessages = await this.fetchConversationMessages(childConversationId);
+        const { messages: childMessages } = await this.fetchConversationMessages(childConversationId);
         newMessages = newMessages.concat(childMessages);
       }
-    }
 
-    this.setState({ focusedMessage, messages: newMessages });
+      this.setState({ focusedMessage, messages: newMessages });
+    }
   }
 
   toggleReplyComposer() {

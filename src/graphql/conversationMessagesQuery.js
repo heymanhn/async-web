@@ -22,6 +22,7 @@ export default gql`
           replyCount
         }
       }
+      messageCount
     }
   }
 `;
