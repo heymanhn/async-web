@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment, faEdit } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 const Container = styled.div(({ bgMode, isOpen, theme: { colors } }) => ({
@@ -25,6 +27,13 @@ const ButtonContainer = styled.div(({ theme: { colors } }) => ({
   ':hover': {
     color: colors.grey1,
   },
+}));
+
+const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  cursor: 'pointer',
+  fontSize: '14px',
+  marginRight: '6px',
 }));
 
 const VerticalDivider = styled.div(({ theme: { colors } }) => ({
@@ -58,10 +67,16 @@ const HoverMenu = ({
   };
 
   const replyButton = (
-    <ButtonContainer onClick={handleClickReplyButton}>add a reply</ButtonContainer>
+    <ButtonContainer onClick={handleClickReplyButton}>
+      <StyledIcon icon={faComment} />
+      add a reply
+    </ButtonContainer>
   );
   const editButton = (
-    <ButtonContainer onClick={handleClickEditButton}>edit reply</ButtonContainer>
+    <ButtonContainer onClick={handleClickEditButton}>
+      <StyledIcon icon={faEdit} />
+      edit reply
+    </ButtonContainer>
   );
   const addReactionButton = (
     <ButtonContainer onClick={handleClickAddReactionButton}>:)</ButtonContainer>
