@@ -86,6 +86,7 @@ const LargeReply = ({
   author,
   createdAt,
   handleCancel,
+  handleFocusCurrentMessage,
   handleSubmit,
   handleToggleEditMode,
   hover,
@@ -97,7 +98,7 @@ const LargeReply = ({
   ...props
 }) => (
   <React.Fragment>
-    <MessageSection {...props}>
+    <MessageSection onClick={handleFocusCurrentMessage} {...props}>
       <Header>
         <AuthorSection>
           <AvatarWithMargin src={author.profilePictureUrl} size={45} />
@@ -113,8 +114,7 @@ const LargeReply = ({
           isOpen={hover && mode === 'display'}
           onEdit={handleToggleEditMode}
           showEditButton={matchCurrentUserId(author.id)}
-          showReplyButton
-          showAddReactionButton
+          source="reply"
         />
       </Header>
       <TopicEditor
@@ -138,6 +138,7 @@ LargeReply.propTypes = {
   author: PropTypes.object.isRequired,
   createdAt: PropTypes.number.isRequired,
   handleCancel: PropTypes.func.isRequired,
+  handleFocusCurrentMessage: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleToggleEditMode: PropTypes.func.isRequired,
   hover: PropTypes.bool.isRequired,

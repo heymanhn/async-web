@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Pluralize from 'pluralize';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faEdit } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
@@ -51,9 +52,11 @@ const HoverMenu = ({
   onAddReaction,
   onEdit,
   onReply,
+  replyCount,
   showAddReactionButton,
   showEditButton,
   showReplyButton,
+  source,
   ...props
 }) => {
   if (!showAddReactionButton && !showEditButton && !showReplyButton) return null;
@@ -74,13 +77,13 @@ const HoverMenu = ({
   const replyButton = (
     <ButtonContainer onClick={handleClickReplyButton}>
       <StyledIcon icon={faComment} />
-      add a reply
+      {replyCount > 0 ? `view ${Pluralize('reply', replyCount)}` : 'add a reply'}
     </ButtonContainer>
   );
   const editButton = (
     <ButtonContainer onClick={handleClickEditButton}>
       <StyledIcon icon={faEdit} />
-      edit reply
+      {`edit ${source}`}
     </ButtonContainer>
   );
   const addReactionButton = (
@@ -106,9 +109,11 @@ HoverMenu.propTypes = {
   onAddReaction: PropTypes.func,
   onEdit: PropTypes.func,
   onReply: PropTypes.func,
+  replyCount: PropTypes.number,
   showAddReactionButton: PropTypes.bool,
   showEditButton: PropTypes.bool,
   showReplyButton: PropTypes.bool,
+  source: PropTypes.string.isRequired,
 };
 
 HoverMenu.defaultProps = {
@@ -116,9 +121,10 @@ HoverMenu.defaultProps = {
   onAddReaction: () => {},
   onEdit: () => { },
   onReply: () => { },
-  showAddReactionButton: PropTypes.bool,
-  showEditButton: PropTypes.bool,
-  showReplyButton: PropTypes.bool,
+  replyCount: 0,
+  showAddReactionButton: false,
+  showEditButton: false,
+  showReplyButton: false,
 };
 
 export default HoverMenu;

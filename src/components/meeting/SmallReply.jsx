@@ -95,6 +95,7 @@ const SmallReply = ({
   author,
   createdAt,
   handleCancel,
+  handleFocusCurrentMessage,
   handleSubmit,
   handleToggleEditMode,
   hover,
@@ -118,9 +119,11 @@ const SmallReply = ({
         <StyledHoverMenu
           isOpen={hover && mode === 'display'}
           onEdit={handleToggleEditMode}
+          onReply={handleFocusCurrentMessage}
+          replyCount={replyCount}
           showEditButton={matchCurrentUserId(author.id)}
           showReplyButton
-          showAddReactionButton
+          source="reply"
         />
       </HeaderSection>
       <ReplyEditor
@@ -133,6 +136,7 @@ const SmallReply = ({
       {mode === 'display' && (
         <ContentToolbar
           contentType="modalReply"
+          onClickReply={handleFocusCurrentMessage}
           replyCount={replyCount}
         />
       )}
@@ -144,6 +148,7 @@ SmallReply.propTypes = {
   author: PropTypes.object.isRequired,
   createdAt: PropTypes.number,
   handleCancel: PropTypes.func.isRequired,
+  handleFocusCurrentMessage: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleToggleEditMode: PropTypes.func.isRequired,
   hover: PropTypes.bool.isRequired,

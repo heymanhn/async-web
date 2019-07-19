@@ -312,8 +312,7 @@ class DiscussionTopic extends Component {
                 isOpen={hover && mode === 'display'}
                 onEdit={this.toggleEditMode}
                 showEditButton={matchCurrentUserId(author.id)}
-                showReplyButton
-                showAddReactionButton
+                source="topic"
               />
             </TopicMetadata>
             <TopicEditor
