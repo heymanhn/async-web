@@ -112,6 +112,7 @@ class DiscussionTopic extends Component {
       messages: [],
       mode: props.initialMode,
       replyCount: null,
+      messageCount: null,
     };
 
     this.editor = React.createRef();
@@ -325,7 +326,7 @@ class DiscussionTopic extends Component {
         {mode === 'display' && (
           <ContentToolbar
             contentType="topic"
-            replyCount={messageCount-1}
+            replyCount={messageCount - 1}
           />
         )}
         {conversationId && (

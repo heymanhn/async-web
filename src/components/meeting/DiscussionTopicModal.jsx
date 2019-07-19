@@ -84,7 +84,7 @@ class DiscussionTopicModal extends Component {
       isComposingReply: false,
       messages: props.messages,
       parentConversation: null,
-      messageCount: props.messageCount
+      messageCount: props.messageCount,
     };
 
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
