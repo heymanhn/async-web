@@ -335,7 +335,7 @@ class DiscussionTopic extends Component {
             isOpen={isModalVisible}
             meetingId={meetingId}
             messages={messages}
-            messageCount={messageCount-1}
+            messageCount={messageCount}
             toggle={this.toggleModal}
           />
         )}
