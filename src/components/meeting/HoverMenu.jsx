@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faEdit } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+import AddReactionButton from './AddReactionButton';
+
 const Container = styled.div(({ bgMode, isOpen, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
@@ -19,6 +21,9 @@ const Container = styled.div(({ bgMode, isOpen, theme: { colors } }) => ({
 }));
 
 const ButtonContainer = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  alignItems: 'center',
+
   color: colors.grey2,
   fontSize: '12px',
   fontWeight: 500,
@@ -32,8 +37,8 @@ const ButtonContainer = styled.div(({ theme: { colors } }) => ({
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey3,
   cursor: 'pointer',
-  fontSize: '14px',
-  marginRight: '6px',
+  fontSize: '16px',
+  marginRight: '5px',
 }));
 
 const VerticalDivider = styled.div(({ theme: { colors } }) => ({
@@ -79,7 +84,9 @@ const HoverMenu = ({
     </ButtonContainer>
   );
   const addReactionButton = (
-    <ButtonContainer onClick={handleClickAddReactionButton}>:)</ButtonContainer>
+    <ButtonContainer onClick={handleClickAddReactionButton}>
+      <AddReactionButton />
+    </ButtonContainer>
   );
 
   return (
