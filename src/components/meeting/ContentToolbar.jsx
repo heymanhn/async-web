@@ -81,7 +81,7 @@ const StyledAddReactionButton = styled(AddReactionButton)({
   marginLeft: '15px',
 });
 
-const ContentToolbar = ({ contentType, conversationId, messageId, onClickReply, replyCount }) => {
+const ContentToolbar = ({ contentType, conversationId, message, onClickReply, replyCount }) => {
   // TODO: Doing this for now. will make more complex later when reactions UX is added
   if (!replyCount && contentType === 'modalReply') return null;
 
@@ -97,7 +97,7 @@ const ContentToolbar = ({ contentType, conversationId, messageId, onClickReply, 
       {contentType !== 'modalReply' && (
         <StyledAddReactionButton
           conversationId={conversationId}
-          messageId={messageId}
+          message={message}
           size="large"
           source="toolbar"
         />
@@ -125,7 +125,7 @@ const ContentToolbar = ({ contentType, conversationId, messageId, onClickReply, 
 ContentToolbar.propTypes = {
   contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
   conversationId: PropTypes.string.isRequired,
-  messageId: PropTypes.string.isRequired,
+  message: PropTypes.object.isRequired,
   onClickReply: PropTypes.func,
   replyCount: PropTypes.number.isRequired,
 };

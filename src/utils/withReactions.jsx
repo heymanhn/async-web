@@ -44,7 +44,7 @@ const reactions = [
  *
  * Any parent component will need to pass the following props:
  * - conversationId
- * - messageId
+ * - message
  *
  * The HOC provides the following props to the child component:
  * - func addReaction(code: String)
@@ -61,14 +61,14 @@ const withReactions = (WrappedComponent) => {
     }
 
     async addReaction(code) {
-      const { client, conversationId, messageId } = this.props;
+      const { client, conversationId, message } = this.props;
 
       const response = await client.mutate({
         mutation: createReactionMutation,
         variables: {
           input: {
             objectType: 'message',
-            objectId: messageId,
+            objectId: message.id,
             parentId: conversationId,
             code,
           },
@@ -83,7 +83,7 @@ const withReactions = (WrappedComponent) => {
     }
 
     async removeReaction(code) {
-      const { client, conversationId, messageId } = this.props;
+      const { client, conversationId, message } = this.props;
 
       const response = await client.mutate({
         mutation: deleteReactionMutation,
@@ -91,7 +91,7 @@ const withReactions = (WrappedComponent) => {
           id: 0, // TODO: pass reactionIds via userReactions
           input: {
             objectType: 'message',
-            objectId: messageId,
+            objectId: message.id,
             parentId: conversationId,
             code,
           },
@@ -121,7 +121,7 @@ const withReactions = (WrappedComponent) => {
   WithReactions.propTypes = {
     client: PropTypes.object.isRequired,
     conversationId: PropTypes.string.isRequired,
-    messageId: PropTypes.string.isRequired,
+    message: PropTypes.object.isRequired,
   };
 
   return withApollo(WithReactions);

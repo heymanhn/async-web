@@ -94,60 +94,61 @@ const StyledHoverMenu = styled(HoverMenu)({
 const SmallReply = ({
   author,
   conversationId,
-  createdAt,
   handleCancel,
   handleFocusCurrentMessage,
   handleSubmit,
   handleToggleEditMode,
   hover,
-  id,
   message,
   mode,
   replyCount,
-  updatedAt,
   ...props
-}) => (
-  <Container mode={mode} onClick={handleFocusCurrentMessage} {...props}>
-    <AvatarWithMargin src={author.profilePictureUrl} size={45} mode={mode} />
-    <MainContainer>
-      <HeaderSection>
-        <Details>
-          <Author mode={mode}>{author.fullName}</Author>
-          {mode === 'display' && (
-            <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
-          )}
-        </Details>
-        <StyledHoverMenu
-          conversationId={conversationId}
-          isOpen={hover && mode === 'display'}
-          messageId={id}
-          onEdit={handleToggleEditMode}
-          onReply={handleFocusCurrentMessage}
-          replyCount={replyCount}
-          showAddReactionButton
-          showEditButton={matchCurrentUserId(author.id)}
-          showReplyButton
-        />
-      </HeaderSection>
-      <ReplyEditor
-        initialValue={mode !== 'compose' ? message : null}
-        mode={mode}
-        onCancel={handleCancel}
-        onSubmit={handleSubmit}
-        contentType="modalReply"
-      />
-      {mode === 'display' && (
-        <ContentToolbar
+}) => {
+  const { body, createdAt, updatedAt } = message || {};
+
+  return (
+    <Container mode={mode} onClick={handleFocusCurrentMessage} {...props}>
+      <AvatarWithMargin src={author.profilePictureUrl} size={45} mode={mode} />
+      <MainContainer>
+        <HeaderSection>
+          <Details>
+            <Author mode={mode}>{author.fullName}</Author>
+            {mode === 'display' && (
+              <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
+            )}
+          </Details>
+          <StyledHoverMenu
+            conversationId={conversationId}
+            isOpen={hover && mode === 'display'}
+            message={message}
+            onEdit={handleToggleEditMode}
+            onReply={handleFocusCurrentMessage}
+            replyCount={replyCount}
+            showAddReactionButton
+            showEditButton={matchCurrentUserId(author.id)}
+            showReplyButton
+          />
+        </HeaderSection>
+        <ReplyEditor
+          initialValue={mode !== 'compose' ? body.payload : null}
+          mode={mode}
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
           contentType="modalReply"
-          conversationId={conversationId}
-          messageId={id}
-          onClickReply={handleFocusCurrentMessage}
-          replyCount={replyCount}
         />
-      )}
-    </MainContainer>
-  </Container>
-);
+        {mode === 'display' && (
+          <ContentToolbar
+            contentType="modalReply"
+            conversationId={conversationId}
+            message={message}
+            onClickReply={handleFocusCurrentMessage}
+            replyCount={replyCount}
+          />
+        )}
+      </MainContainer>
+    </Container>
+  );
+};
 
 SmallReply.propTypes = {
   author: PropTypes.object.isRequired,
@@ -158,8 +159,7 @@ SmallReply.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   handleToggleEditMode: PropTypes.func.isRequired,
   hover: PropTypes.bool.isRequired,
-  id: PropTypes.string,
-  message: PropTypes.string,
+  message: PropTypes.object,
   mode: PropTypes.string.isRequired,
   replyCount: PropTypes.number,
   updatedAt: PropTypes.number,
@@ -167,7 +167,6 @@ SmallReply.propTypes = {
 
 SmallReply.defaultProps = {
   createdAt: null,
-  id: null,
   message: null,
   replyCount: null,
   updatedAt: null,

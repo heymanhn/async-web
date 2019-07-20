@@ -68,7 +68,7 @@ class AddReactionButton extends Component {
 
   render() {
     const { isPickerOpen } = this.state;
-    const { conversationId, messageId, size, source, ...props } = this.props;
+    const { conversationId, message, size, source, ...props } = this.props;
 
     return (
       <Container {...props}>
@@ -81,7 +81,7 @@ class AddReactionButton extends Component {
         </ButtonContainer>
         <ReactionPicker
           conversationId={conversationId}
-          messageId={messageId}
+          message={message}
           handleClose={this.handleClosePicker}
           isOpen={isPickerOpen}
           placement={source === 'toolbar' ? 'above' : 'below'}
@@ -93,7 +93,7 @@ class AddReactionButton extends Component {
 
 AddReactionButton.propTypes = {
   conversationId: PropTypes.string.isRequired,
-  messageId: PropTypes.string.isRequired,
+  message: PropTypes.object.isRequired,
   size: PropTypes.oneOf(['small', 'large']),
   source: PropTypes.oneOf(['hoverMenu', 'toolbar']).isRequired,
 };

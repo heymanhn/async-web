@@ -146,7 +146,6 @@ class DiscussionTopicModal extends Component {
     return new Error('Error fetching conversation messages');
   }
 
-  // HN: Change this later, once the messageCount field is returned from backend
   replyCountForMessage(message) {
     const { messages, messageCount } = this.state;
     if (message.id === messages[0].id) return messageCount - 1 || 0;
@@ -179,7 +178,10 @@ class DiscussionTopicModal extends Component {
     if (!focusedMessage) {
       // TODO: when parentConversation is implemented, have this code fetch the messages
       // from the parent conversation, instead of from the root
-      const { messages: parentMessages, messageCount } = await this.fetchConversationMessages(conversationId);
+      const {
+        messages: parentMessages,
+        messageCount,
+      } = await this.fetchConversationMessages(conversationId);
       this.setState({ focusedMessage, messageCount, messages: parentMessages });
     } else {
       const index = messages.findIndex(m => m.id === focusedMessage.id);
@@ -188,7 +190,9 @@ class DiscussionTopicModal extends Component {
       newMessages = messages.slice(0, index + 1);
       if (focusedMessage.childConversationId) {
         const { childConversationId } = focusedMessage;
-        const { messages: childMessages } = await this.fetchConversationMessages(childConversationId);
+        const {
+          messages: childMessages,
+        } = await this.fetchConversationMessages(childConversationId);
         newMessages = newMessages.concat(childMessages);
       }
 

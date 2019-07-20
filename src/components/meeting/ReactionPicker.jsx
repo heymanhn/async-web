@@ -154,6 +154,7 @@ ReactionPicker.propTypes = {
   addReaction: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
+  message: PropTypes.object.isRequired,
   placement: PropTypes.oneOf(['above', 'below']),
   reactions: PropTypes.array.isRequired,
   removeReaction: PropTypes.func.isRequired,
