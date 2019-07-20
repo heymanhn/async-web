@@ -44,13 +44,28 @@ class ReactionPicker extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { reactionOnHover: null };
+    this.state = {
+      reactionOnHover: null,
+      userReactions: props.userReactions,
+    };
 
     this.picker = React.createRef();
+    this.handleAddReaction = this.handleAddReaction.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.handleExitHover = this.handleExitHover.bind(this);
     this.handleHover = this.handleHover.bind(this);
     this.calculateOffset = this.calculateOffset.bind(this);
+  }
+
+  async handleAddReaction(code) {
+    const { userReactions } = this.state;
+    const { addReaction } = this.props;
+
+    const response = await addReaction(code);
+
+    if (response && !userReactions.includes(code)) {
+      this.setState({ userReactions: [...userReactions, code] });
+    }
   }
 
   handleClickOutside(event) {
@@ -71,6 +86,19 @@ class ReactionPicker extends Component {
     this.setState({ reactionOnHover: code });
   }
 
+  async handleRemoveReaction(code) {
+    const { removeReaction, userReactions } = this.props;
+
+    const response = await removeReaction(code);
+
+    if (response && userReactions.includes(code)) {
+      const index = userReactions.findIndex(r => r === code);
+      this.setState({
+        userReactions: [...userReactions.slice(0, index), ...userReactions.slice(index + 1)],
+      });
+    }
+  }
+
   // Aiming for an 8 pixel gap between the add reaction button and the picker,
   // regardless of direction
   calculateOffset() {
@@ -82,14 +110,12 @@ class ReactionPicker extends Component {
   }
 
   render() {
-    const { reactionOnHover: hoverCode } = this.state;
+    const { reactionOnHover: hoverCode, userReactions } = this.state;
     const {
-      addReaction,
       handleClose,
       isOpen,
       placement,
       reactions,
-      removeReaction,
       ...props
     } = this.props;
 
@@ -111,11 +137,11 @@ class ReactionPicker extends Component {
               key={r.code}
               code={r.code}
               icon={r.icon}
-              isSelected={false} // TODO: Pass real data later
-              onAddReaction={addReaction}
+              isSelected={userReactions.includes(r.code)}
+              onAddReaction={this.handleAddReaction}
               onExitHover={this.handleExitHover}
               onHover={this.handleHover}
-              onRemoveReaction={removeReaction}
+              onRemoveReaction={this.handleRemoveReaction}
             />
           ))}
         </ReactionsList>
