@@ -81,8 +81,8 @@ const StyledAddReactionButton = styled(AddReactionButton)({
   marginLeft: '15px',
 });
 
-const ContentToolbar = ({ contentType, onClickReply, replyCount }) => {
-  // Doing this for now. will make more complex later when reactions UX is added
+const ContentToolbar = ({ contentType, conversationId, messageId, onClickReply, replyCount }) => {
+  // TODO: Doing this for now. will make more complex later when reactions UX is added
   if (!replyCount && contentType === 'modalReply') return null;
 
   const countLabel = replyCount || (contentType === 'topic' ? 'add a reply' : 0);
@@ -92,9 +92,16 @@ const ContentToolbar = ({ contentType, onClickReply, replyCount }) => {
         <StyledIcon contenttype={contentType} icon={faComment} />
         <CountLabel contentType={contentType}>{countLabel}</CountLabel>
       </ButtonContainer>
-      {/* Temporary contentType flag below */}
+      {/* TODO: Temporary contentType flag below */}
       {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
-      {contentType !== 'modalReply' && <StyledAddReactionButton size="large" source="toolbar" />}
+      {contentType !== 'modalReply' && (
+        <StyledAddReactionButton
+          conversationId={conversationId}
+          messageId={messageId}
+          size="large"
+          source="toolbar"
+        />
+      )}
     </React.Fragment>
   );
 
@@ -117,6 +124,8 @@ const ContentToolbar = ({ contentType, onClickReply, replyCount }) => {
 
 ContentToolbar.propTypes = {
   contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
+  conversationId: PropTypes.string.isRequired,
+  messageId: PropTypes.string.isRequired,
   onClickReply: PropTypes.func,
   replyCount: PropTypes.number.isRequired,
 };

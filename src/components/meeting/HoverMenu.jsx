@@ -49,6 +49,8 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
 }));
 
 const HoverMenu = ({
+  conversationId,
+  messageId,
   onAddReaction,
   onEdit,
   onReply,
@@ -73,38 +75,40 @@ const HoverMenu = ({
     onReply();
   };
 
-  const replyButton = (
-    <ButtonContainer onClick={handleClickReplyButton}>
-      <StyledIcon icon={faComment} />
-      {replyCount > 0 ? `view ${Pluralize('reply', replyCount)}` : 'reply'}
-    </ButtonContainer>
-  );
-  const editButton = (
-    <ButtonContainer onClick={handleClickEditButton}>
-      <StyledIcon icon={faEdit} />
-      edit
-    </ButtonContainer>
-  );
-  const addReactionButton = (
-    <ButtonContainer onClick={handleClickAddReactionButton}>
-      <AddReactionButton source="hoverMenu" />
-    </ButtonContainer>
-  );
-
   return (
     <Container {...props}>
-      {showReplyButton && replyButton}
+      {showReplyButton && (
+        <ButtonContainer onClick={handleClickReplyButton}>
+          <StyledIcon icon={faComment} />
+          {replyCount > 0 ? `view ${Pluralize('reply', replyCount)}` : 'reply'}
+        </ButtonContainer>
+      )}
       {showReplyButton && <VerticalDivider />}
-      {showEditButton && editButton}
+      {showEditButton && (
+        <ButtonContainer onClick={handleClickEditButton}>
+          <StyledIcon icon={faEdit} />
+          edit
+        </ButtonContainer>
+      )}
       {showEditButton && <VerticalDivider />}
-      {showAddReactionButton && addReactionButton}
+      {showAddReactionButton && (
+        <ButtonContainer onClick={handleClickAddReactionButton}>
+          <AddReactionButton
+            conversationId={conversationId}
+            messageId={messageId}
+            source="hoverMenu"
+          />
+        </ButtonContainer>
+      )}
     </Container>
   );
 };
 
 HoverMenu.propTypes = {
   bgMode: PropTypes.oneOf(['white', 'grey']),
+  conversationId: PropTypes.string,
   isOpen: PropTypes.bool.isRequired,
+  messageId: PropTypes.string,
   onAddReaction: PropTypes.func,
   onEdit: PropTypes.func,
   onReply: PropTypes.func,
@@ -116,6 +120,8 @@ HoverMenu.propTypes = {
 
 HoverMenu.defaultProps = {
   bgMode: 'white',
+  conversationId: null,
+  messageId: null,
   onAddReaction: () => {},
   onEdit: () => { },
   onReply: () => { },

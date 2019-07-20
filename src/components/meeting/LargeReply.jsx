@@ -84,6 +84,7 @@ const StyledHoverMenu = styled(HoverMenu)({
 
 const LargeReply = ({
   author,
+  conversationId,
   createdAt,
   handleCancel,
   handleFocusCurrentMessage,
@@ -127,6 +128,8 @@ const LargeReply = ({
     {mode === 'display' && (
       <ContentToolbar
         contentType="modalTopic"
+        conversationId={conversationId}
+        messageId={id}
         replyCount={replyCount}
       />
     )}
@@ -135,6 +138,7 @@ const LargeReply = ({
 
 LargeReply.propTypes = {
   author: PropTypes.object.isRequired,
+  conversationId: PropTypes.string.isRequired,
   createdAt: PropTypes.number.isRequired,
   handleCancel: PropTypes.func.isRequired,
   handleFocusCurrentMessage: PropTypes.func.isRequired,

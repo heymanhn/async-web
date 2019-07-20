@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 const Container = styled.div({
+  cursor: 'pointer',
   padding: '5px 10px',
 }, ({ isSelected, theme: { colors } }) => {
   if (!isSelected) return {};

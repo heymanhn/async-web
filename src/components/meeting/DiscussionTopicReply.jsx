@@ -141,6 +141,7 @@ class DiscussionTopicReply extends Component {
   render() {
     const { currentUser, mode } = this.state;
     const {
+      conversationId,
       meetingId,
       message: {
         author,
@@ -157,6 +158,7 @@ class DiscussionTopicReply extends Component {
 
     const fwdProps = {
       author: author || currentUser,
+      conversationId,
       createdAt,
       handleCancel: this.handleCancel,
       handleFocusCurrentMessage: this.handleFocusCurrentMessage,

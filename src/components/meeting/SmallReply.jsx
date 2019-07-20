@@ -93,6 +93,7 @@ const StyledHoverMenu = styled(HoverMenu)({
 
 const SmallReply = ({
   author,
+  conversationId,
   createdAt,
   handleCancel,
   handleFocusCurrentMessage,
@@ -117,7 +118,9 @@ const SmallReply = ({
           )}
         </Details>
         <StyledHoverMenu
+          conversationId={conversationId}
           isOpen={hover && mode === 'display'}
+          messageId={id}
           onEdit={handleToggleEditMode}
           onReply={handleFocusCurrentMessage}
           replyCount={replyCount}
@@ -136,6 +139,8 @@ const SmallReply = ({
       {mode === 'display' && (
         <ContentToolbar
           contentType="modalReply"
+          conversationId={conversationId}
+          messageId={id}
           onClickReply={handleFocusCurrentMessage}
           replyCount={replyCount}
         />
@@ -146,6 +151,7 @@ const SmallReply = ({
 
 SmallReply.propTypes = {
   author: PropTypes.object.isRequired,
+  conversationId: PropTypes.string.isRequired,
   createdAt: PropTypes.number,
   handleCancel: PropTypes.func.isRequired,
   handleFocusCurrentMessage: PropTypes.func.isRequired,
