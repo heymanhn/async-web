@@ -57,7 +57,7 @@ const ButtonContainer = styled.div(({ contentType }) => ({
   alignItems: contentType === 'modalReply' ? 'center' : 'initial',
 
   cursor: 'pointer',
-  margin: contentType === 'modalReply' ? '0px 15px' : '0px 30px',
+  padding: contentType === 'modalReply' ? '0px 15px' : '0px 30px',
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)(({ contenttype, theme: { colors } }) => ({
