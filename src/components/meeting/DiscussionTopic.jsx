@@ -291,7 +291,7 @@ class DiscussionTopic extends Component {
       ...props
     } = this.props;
 
-    if (loading) return null;
+    if (loading || !messages.length) return null;
 
     const { createdAt, updatedAt } = mode === 'display' ? messages[0] : {};
 
