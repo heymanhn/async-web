@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withApollo } from 'react-apollo';
+import { withApollo, Query } from 'react-apollo';
 
+import conversationMessageQuery from 'graphql/conversationMessageQuery';
 import createReactionMutation from 'graphql/createReactionMutation';
 import deleteReactionMutation from 'graphql/deleteReactionMutation';
 
 const getDisplayName = C => C.displayName || C.name || 'Component';
 
-const reactions = [
+const reactionsReference = [
   {
     code: 'smile',
     icon: '😄',
@@ -48,7 +49,7 @@ const reactions = [
  *
  * The HOC provides the following props to the child component:
  * - func addReaction(code: String)
- * - func removeReaction(code: String)
+ * - func removeReaction(id: String)
  * - array of reactions
  */
 const withReactions = (WrappedComponent) => {
@@ -61,18 +62,19 @@ const withReactions = (WrappedComponent) => {
     }
 
     async addReaction(code) {
-      const { client, conversationId, message } = this.props;
+      const { client, conversationId, messageId } = this.props;
 
       const response = await client.mutate({
         mutation: createReactionMutation,
         variables: {
           input: {
             objectType: 'message',
-            objectId: message.id,
+            objectId: messageId,
             parentId: conversationId,
             code,
           },
         },
+        refetchQueries: [conversationMessageQuery],
       });
 
       if (response.data && response.data.createReaction) {
@@ -82,20 +84,13 @@ const withReactions = (WrappedComponent) => {
       return Promise.reject(new Error('Failed to add reaction to message'));
     }
 
-    async removeReaction(code) {
-      const { client, conversationId, message } = this.props;
+    async removeReaction(id) {
+      const { client } = this.props;
 
       const response = await client.mutate({
         mutation: deleteReactionMutation,
-        variables: {
-          id: 0, // TODO: pass reactionIds via userReactions
-          input: {
-            objectType: 'message',
-            objectId: message.id,
-            parentId: conversationId,
-            code,
-          },
-        },
+        variables: { id },
+        refetchQueries: [conversationMessageQuery],
       });
 
       if (response.data && response.data.removeReaction) {
@@ -106,13 +101,28 @@ const withReactions = (WrappedComponent) => {
     }
 
     render() {
+      const { conversationId: cid, messageId: mid } = this.props;
+
       return (
-        <WrappedComponent
-          addReaction={this.addReaction}
-          removeReaction={this.removeReaction}
-          reactions={reactions}
-          {...this.props}
-        />
+        <Query
+          query={conversationMessageQuery}
+          variables={{ cid, mid }}
+        >
+          {({ loading, data }) => {
+            if (loading) return null;
+
+            const { reactions } = data.conversationMessage;
+            return (
+              <WrappedComponent
+                addReaction={this.addReaction}
+                removeReaction={this.removeReaction}
+                reactions={reactions}
+                reactionsReference={reactionsReference}
+                {...this.props}
+              />
+            );
+          }}
+        </Query>
       );
     }
   }
@@ -121,7 +131,7 @@ const withReactions = (WrappedComponent) => {
   WithReactions.propTypes = {
     client: PropTypes.object.isRequired,
     conversationId: PropTypes.string.isRequired,
-    message: PropTypes.object.isRequired,
+    messageId: PropTypes.string.isRequired,
   };
 
   return withApollo(WithReactions);

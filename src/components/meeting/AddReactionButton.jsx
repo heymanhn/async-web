@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLaugh } from '@fortawesome/free-regular-svg-icons';
 import styled from '@emotion/styled';
 
+import { matchCurrentUserId } from 'utils/auth';
+
 import ReactionPicker from './ReactionPicker';
 
 const Container = styled.div({
@@ -69,6 +71,9 @@ class AddReactionButton extends Component {
   render() {
     const { isPickerOpen } = this.state;
     const { conversationId, message, size, source, ...props } = this.props;
+    const { reactions } = message;
+
+    const currentUserReactions = (reactions || []).filter(r => matchCurrentUserId(r.author.id));
 
     return (
       <Container {...props}>
@@ -85,6 +90,7 @@ class AddReactionButton extends Component {
           handleClose={this.handleClosePicker}
           isOpen={isPickerOpen}
           placement={source === 'toolbar' ? 'above' : 'below'}
+          currentUserReactions={currentUserReactions}
         />
       </Container>
     );

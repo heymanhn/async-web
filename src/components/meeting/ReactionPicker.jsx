@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import styled from '@emotion/styled';
 
+import { matchCurrentUserId } from 'utils/auth';
 import withReactions from 'utils/withReactions';
 
 import ReactionIcon from './ReactionIcon';
@@ -46,26 +47,15 @@ class ReactionPicker extends Component {
 
     this.state = {
       reactionOnHover: null,
-      userReactions: props.userReactions,
     };
 
     this.picker = React.createRef();
-    this.handleAddReaction = this.handleAddReaction.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.handleExitHover = this.handleExitHover.bind(this);
     this.handleHover = this.handleHover.bind(this);
+    this.hasReactedWith = this.hasReactedWith.bind(this);
     this.calculateOffset = this.calculateOffset.bind(this);
-  }
-
-  async handleAddReaction(code) {
-    const { userReactions } = this.state;
-    const { addReaction } = this.props;
-
-    const response = await addReaction(code);
-
-    if (response && !userReactions.includes(code)) {
-      this.setState({ userReactions: [...userReactions, code] });
-    }
+    this.userReactionForCode = this.userReactionForCode.bind(this);
   }
 
   handleClickOutside(event) {
@@ -86,17 +76,10 @@ class ReactionPicker extends Component {
     this.setState({ reactionOnHover: code });
   }
 
-  async handleRemoveReaction(code) {
-    const { removeReaction, userReactions } = this.props;
+  hasReactedWith(code) {
+    const { reactions } = this.props;
 
-    const response = await removeReaction(code);
-
-    if (response && userReactions.includes(code)) {
-      const index = userReactions.findIndex(r => r === code);
-      this.setState({
-        userReactions: [...userReactions.slice(0, index), ...userReactions.slice(index + 1)],
-      });
-    }
+    return reactions.findIndex(r => matchCurrentUserId(r.author.id) && r.code === code) >= 0;
   }
 
   // Aiming for an 8 pixel gap between the add reaction button and the picker,
@@ -109,17 +92,26 @@ class ReactionPicker extends Component {
     return (picker.offsetHeight + 8) * -1;
   }
 
+  userReactionForCode(code) {
+    const { reactions } = this.props;
+    const reaction = reactions.find(r => r.eicode === code && matchCurrentUserId(r.author.id));
+    return reaction ? reaction.id : null;
+  }
+
   render() {
-    const { reactionOnHover: hoverCode, userReactions } = this.state;
+    const { reactionOnHover: hoverCode } = this.state;
     const {
+      addReaction,
       handleClose,
       isOpen,
       placement,
-      reactions,
+      reactionsReference,
+      removeReaction,
       ...props
     } = this.props;
 
-    const title = hoverCode ? reactions.find(r => r.code === hoverCode).text : 'Pick a reaction';
+    const title = hoverCode
+      ? reactionsReference.find(r => r.code === hoverCode).text : 'Pick a reaction';
 
     return (
       <Container
@@ -132,16 +124,17 @@ class ReactionPicker extends Component {
         <Title>{title}</Title>
         <Divider />
         <ReactionsList>
-          {reactions.map(r => (
+          {reactionsReference.map(r => (
             <ReactionIcon
               key={r.code}
               code={r.code}
+              existingReactionId={this.userReactionForCode(r.code)}
               icon={r.icon}
-              isSelected={userReactions.includes(r.code)}
-              onAddReaction={this.handleAddReaction}
+              isSelected={this.hasReactedWith(r.code)}
+              onAddReaction={addReaction}
               onExitHover={this.handleExitHover}
               onHover={this.handleHover}
-              onRemoveReaction={this.handleRemoveReaction}
+              onRemoveReaction={removeReaction}
             />
           ))}
         </ReactionsList>
@@ -154,17 +147,15 @@ ReactionPicker.propTypes = {
   addReaction: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
-  message: PropTypes.object.isRequired,
   placement: PropTypes.oneOf(['above', 'below']),
   reactions: PropTypes.array.isRequired,
+  reactionsReference: PropTypes.array.isRequired,
   removeReaction: PropTypes.func.isRequired,
-  userReactions: PropTypes.array,
 };
 
 ReactionPicker.defaultProps = {
   isOpen: false,
   placement: 'above',
-  userReactions: [],
 };
 
 export default withReactions(onClickOutside(ReactionPicker));

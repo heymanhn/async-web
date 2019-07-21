@@ -30,8 +30,8 @@ class ReactionIcon extends Component {
 
   handleClick(event) {
     event.stopPropagation();
-    const { code, isSelected, onAddReaction, onRemoveReaction } = this.props;
-    return isSelected ? onRemoveReaction(code) : onAddReaction(code);
+    const { code, existingReactionId, isSelected, onAddReaction, onRemoveReaction } = this.props;
+    return isSelected ? onRemoveReaction(existingReactionId) : onAddReaction(code);
   }
 
   handleExitHover() {
@@ -70,6 +70,11 @@ ReactionIcon.propTypes = {
   onExitHover: PropTypes.func.isRequired,
   onHover: PropTypes.func.isRequired,
   onRemoveReaction: PropTypes.func.isRequired,
+  existingReactionId: PropTypes.string,
+};
+
+ReactionIcon.defaultProps = {
+  existingReactionId: null,
 };
 
 export default ReactionIcon;

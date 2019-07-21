@@ -306,6 +306,7 @@ DiscussionTopicModal.propTypes = {
   conversationId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
+  messageCount: PropTypes.number.isRequired,
   messages: PropTypes.array.isRequired,
 };
 
