@@ -104,7 +104,7 @@ const SmallReply = ({
   replyCount,
   ...props
 }) => {
-  const { body, createdAt, updatedAt } = message || {};
+  const { body, createdAt, id: messageId, updatedAt } = message || {};
 
   return (
     <Container mode={mode} onClick={handleFocusCurrentMessage} {...props}>
@@ -120,7 +120,7 @@ const SmallReply = ({
           <StyledHoverMenu
             conversationId={conversationId}
             isOpen={hover && mode === 'display'}
-            message={message}
+            messageId={messageId}
             onEdit={handleToggleEditMode}
             onReply={handleFocusCurrentMessage}
             replyCount={replyCount}
@@ -140,7 +140,7 @@ const SmallReply = ({
           <ContentToolbar
             contentType="modalReply"
             conversationId={conversationId}
-            message={message}
+            messageId={messageId}
             onClickReply={handleFocusCurrentMessage}
             replyCount={replyCount}
           />

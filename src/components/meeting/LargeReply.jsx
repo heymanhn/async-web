@@ -95,7 +95,7 @@ const LargeReply = ({
   replyCount,
   ...props
 }) => {
-  const { body, createdAt, updatedAt } = message || {};
+  const { body, createdAt, id: messageId, updatedAt } = message || {};
   return (
     <React.Fragment>
       <MessageSection onClick={handleFocusCurrentMessage} {...props}>
@@ -128,7 +128,7 @@ const LargeReply = ({
         <ContentToolbar
           contentType="modalTopic"
           conversationId={conversationId}
-          message={message}
+          messageId={messageId}
           replyCount={replyCount}
         />
       )}

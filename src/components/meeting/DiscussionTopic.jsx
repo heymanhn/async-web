@@ -327,7 +327,7 @@ class DiscussionTopic extends Component {
           <ContentToolbar
             contentType="topic"
             conversationId={conversationId}
-            message={messages[0]}
+            messageId={messages[0].id}
             onClickReply={this.handleLaunchModal}
             replyCount={messageCount - 1}
           />

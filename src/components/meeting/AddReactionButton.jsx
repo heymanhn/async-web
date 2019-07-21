@@ -4,8 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLaugh } from '@fortawesome/free-regular-svg-icons';
 import styled from '@emotion/styled';
 
-import { matchCurrentUserId } from 'utils/auth';
-
 import ReactionPicker from './ReactionPicker';
 
 const Container = styled.div({
@@ -70,10 +68,7 @@ class AddReactionButton extends Component {
 
   render() {
     const { isPickerOpen } = this.state;
-    const { conversationId, message, size, source, ...props } = this.props;
-    const { reactions } = message;
-
-    const currentUserReactions = (reactions || []).filter(r => matchCurrentUserId(r.author.id));
+    const { conversationId, messageId, size, source, ...props } = this.props;
 
     return (
       <Container {...props}>
@@ -86,11 +81,10 @@ class AddReactionButton extends Component {
         </ButtonContainer>
         <ReactionPicker
           conversationId={conversationId}
-          message={message}
           handleClose={this.handleClosePicker}
           isOpen={isPickerOpen}
+          messageId={messageId}
           placement={source === 'toolbar' ? 'above' : 'below'}
-          currentUserReactions={currentUserReactions}
         />
       </Container>
     );
@@ -99,7 +93,7 @@ class AddReactionButton extends Component {
 
 AddReactionButton.propTypes = {
   conversationId: PropTypes.string.isRequired,
-  message: PropTypes.object.isRequired,
+  messageId: PropTypes.string.isRequired,
   size: PropTypes.oneOf(['small', 'large']),
   source: PropTypes.oneOf(['hoverMenu', 'toolbar']).isRequired,
 };

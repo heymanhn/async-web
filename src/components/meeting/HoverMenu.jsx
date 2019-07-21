@@ -50,7 +50,7 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
 
 const HoverMenu = ({
   conversationId,
-  message,
+  messageId,
   onAddReaction,
   onEdit,
   onReply,
@@ -95,7 +95,7 @@ const HoverMenu = ({
         <ButtonContainer onClick={handleClickAddReactionButton}>
           <AddReactionButton
             conversationId={conversationId}
-            message={message}
+            messageId={messageId}
             source="hoverMenu"
           />
         </ButtonContainer>
@@ -108,7 +108,7 @@ HoverMenu.propTypes = {
   bgMode: PropTypes.oneOf(['white', 'grey']),
   conversationId: PropTypes.string,
   isOpen: PropTypes.bool.isRequired,
-  message: PropTypes.object,
+  messageId: PropTypes.string,
   onAddReaction: PropTypes.func,
   onEdit: PropTypes.func,
   onReply: PropTypes.func,
@@ -121,7 +121,7 @@ HoverMenu.propTypes = {
 HoverMenu.defaultProps = {
   bgMode: 'white',
   conversationId: null,
-  message: null,
+  messageId: null,
   onAddReaction: () => {},
   onEdit: () => { },
   onReply: () => { },
