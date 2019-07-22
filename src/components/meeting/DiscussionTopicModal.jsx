@@ -228,7 +228,7 @@ class DiscussionTopicModal extends Component {
     if (index < 0) {
       const messageToUpdate = focusedMessage || messages[0];
       messageToUpdate.replyCount += 1;
-      const secondIndex = messages.findIndex(m => m.id === focusedMessage.id);
+      const secondIndex = messages.findIndex(m => m.id === messageToUpdate.id);
 
       newMessages = [
         ...messages.slice(0, secondIndex),
