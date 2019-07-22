@@ -117,7 +117,7 @@ const SmallReply = ({
               <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
             )}
           </Details>
-          {mode === 'display' && (
+          {mode === 'display' && conversationId &&  (
             <StyledHoverMenu
               conversationId={conversationId}
               isOpen={hover && mode === 'display'}
@@ -138,7 +138,7 @@ const SmallReply = ({
           onSubmit={handleSubmit}
           contentType="modalReply"
         />
-        {mode === 'display' && (
+        {mode === 'display' && conversationId && (
           <ContentToolbar
             contentType="modalReply"
             conversationId={conversationId}
@@ -154,7 +154,7 @@ const SmallReply = ({
 
 SmallReply.propTypes = {
   author: PropTypes.object.isRequired,
-  conversationId: PropTypes.string.isRequired,
+  conversationId: PropTypes.string,
   createdAt: PropTypes.number,
   handleCancel: PropTypes.func.isRequired,
   handleFocusCurrentMessage: PropTypes.func.isRequired,
@@ -168,6 +168,7 @@ SmallReply.propTypes = {
 };
 
 SmallReply.defaultProps = {
+  conversationId: null,
   createdAt: null,
   message: null,
   replyCount: null,

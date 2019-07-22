@@ -13,7 +13,10 @@ export default gql`
         formatter
         payload
       }
+      childConversationId
+      conversationId
       createdAt
+      updatedAt
     }
   }
 `;
