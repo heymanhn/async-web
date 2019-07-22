@@ -129,7 +129,7 @@ const ContentToolbar = ({
   replyCount,
   ...props
 }) => {
-  if (!reactions.length && !replyCount) return null;
+  if (!reactions.length && !replyCount && contentType === 'modalReply') return null;
 
   const reactionsToDisplay = () => {
     const histogram = [];
