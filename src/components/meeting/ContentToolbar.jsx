@@ -5,7 +5,11 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
+import withReactions from 'utils/withReactions';
+import { matchCurrentUserId } from 'utils/auth';
+
 import AddReactionButton from './AddReactionButton';
+import ReactionCountDisplay from './ReactionCountDisplay';
 
 const heights = {
   topic: '52px',
@@ -57,7 +61,7 @@ const ButtonContainer = styled.div(({ contentType }) => ({
   alignItems: contentType === 'modalReply' ? 'center' : 'initial',
 
   cursor: 'pointer',
-  padding: contentType === 'modalReply' ? '0px 15px' : '0px 30px',
+  padding: contentType === 'modalReply' ? '0px 15px' : '0px 25px',
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)(({ contenttype, theme: { colors } }) => ({
@@ -81,9 +85,40 @@ const StyledAddReactionButton = styled(AddReactionButton)({
   marginLeft: '15px',
 });
 
-const ContentToolbar = ({ contentType, conversationId, messageId, onClickReply, replyCount }) => {
+const ContentToolbar = ({
+  addReaction,
+  contentType,
+  conversationId,
+  messageId,
+  onClickReply,
+  reactions,
+  reactionsReference,
+  removeReaction,
+  replyCount,
+}) => {
   // TODO: Doing this for now. will make more complex later when reactions UX is added
   if (!replyCount && contentType === 'modalReply') return null;
+
+  const reactionsToDisplay = () => {
+    const histogram = [];
+
+    reactionsReference.forEach((reax) => {
+      const { code, icon } = reax;
+      const matchingReactions = reactions.filter(r => r.code === reax.code);
+      if (matchingReactions.length) {
+        const reaxToDisplay = {
+          code,
+          icon,
+          reactionCount: matchingReactions.length,
+        };
+        const currentUserReaction = matchingReactions.find(r => matchCurrentUserId(r.author.id));
+        if (currentUserReaction) reaxToDisplay.currentUserReactionId = currentUserReaction.id;
+        histogram.push(reaxToDisplay);
+      }
+    });
+
+    return histogram;
+  };
 
   const countLabel = replyCount || (contentType === 'topic' ? 'add a reply' : 0);
   const repliesButton = (
@@ -92,16 +127,37 @@ const ContentToolbar = ({ contentType, conversationId, messageId, onClickReply, 
         <StyledIcon contenttype={contentType} icon={faComment} />
         <CountLabel contentType={contentType}>{countLabel}</CountLabel>
       </ButtonContainer>
-      {/* TODO: Temporary contentType flag below */}
       {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
-      {contentType !== 'modalReply' && (
-        <StyledAddReactionButton
-          conversationId={conversationId}
-          messageId={messageId}
-          size="large"
-          source="toolbar"
-        />
-      )}
+    </React.Fragment>
+  );
+  const addReactionButton = (
+    <StyledAddReactionButton
+      conversationId={conversationId}
+      messageId={messageId}
+      size="large"
+      source="toolbar"
+    />
+  );
+  const innerContent = (
+    <React.Fragment>
+      {repliesButton}
+      {reactionsToDisplay().map(r => (
+        <React.Fragment key={r.code}>
+          <ReactionCountDisplay
+            code={r.code}
+            contentType={contentType}
+            currentUserReactionId={r.currentUserReactionId}
+            icon={r.icon}
+            onAddReaction={addReaction}
+            onRemoveReaction={removeReaction}
+            reactionCount={r.reactionCount}
+          />
+          {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
+        </React.Fragment>
+      ))}
+      {/* TODO: Make the button show on replies only when hovering over a
+              visible content toolbar */}
+      {contentType !== 'modalReply' && addReactionButton}
     </React.Fragment>
   );
 
@@ -109,7 +165,7 @@ const ContentToolbar = ({ contentType, conversationId, messageId, onClickReply, 
     return (
       <Container contentType={contentType}>
         <InnerContainer>
-          {repliesButton}
+          {innerContent}
         </InnerContainer>
       </Container>
     );
@@ -117,16 +173,20 @@ const ContentToolbar = ({ contentType, conversationId, messageId, onClickReply, 
 
   return (
     <Container contentType={contentType}>
-      {repliesButton}
+      {innerContent}
     </Container>
   );
 };
 
 ContentToolbar.propTypes = {
+  addReaction: PropTypes.func.isRequired,
   contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
   conversationId: PropTypes.string.isRequired,
   messageId: PropTypes.string.isRequired,
   onClickReply: PropTypes.func,
+  reactions: PropTypes.array.isRequired,
+  reactionsReference: PropTypes.array.isRequired,
+  removeReaction: PropTypes.func.isRequired,
   replyCount: PropTypes.number.isRequired,
 };
 
@@ -134,4 +194,4 @@ ContentToolbar.defaultProps = {
   onClickReply: () => {},
 };
 
-export default ContentToolbar;
+export default withReactions(ContentToolbar);

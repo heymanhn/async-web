@@ -9,7 +9,7 @@ const Container = styled.div({
 }, ({ isSelected, theme: { colors } }) => {
   if (!isSelected) return {};
 
-  return !isSelected ? {} : {
+  return {
     background: colors.hoverBlue,
     border: `1px solid ${colors.borderGrey}`,
   };

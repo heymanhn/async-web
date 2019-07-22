@@ -250,6 +250,7 @@ class DiscussionTopicModal extends Component {
       author,
       conversationId,
       meetingId,
+      messageCount, // initializing so that it's not passed into the Modal component below
       ...props
     } = this.props;
 
