@@ -50,7 +50,9 @@ const reactionsReference = [
  * The HOC provides the following props to the child component:
  * - func addReaction(code: String)
  * - func removeReaction(id: String)
- * - array of reactions
+ * - array of all the reactions to expect from a message
+ * - array of the reactions that users created for the given message
+ *
  */
 const withReactions = (WrappedComponent) => {
   class WithReactions extends Component {
