@@ -84,72 +84,73 @@ const StyledHoverMenu = styled(HoverMenu)({
 
 const LargeReply = ({
   author,
-  createdAt,
+  conversationId,
   handleCancel,
   handleFocusCurrentMessage,
   handleSubmit,
   handleToggleEditMode,
   hover,
-  id,
   message,
   mode,
   replyCount,
-  updatedAt,
   ...props
-}) => (
-  <React.Fragment>
-    <MessageSection onClick={handleFocusCurrentMessage} {...props}>
-      <Header>
-        <AuthorSection>
-          <AvatarWithMargin src={author.profilePictureUrl} size={45} />
-          <Details>
-            <Author>{author.fullName}</Author>
-            {mode === 'display' && (
-              <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
-            )}
-          </Details>
-        </AuthorSection>
-        <StyledHoverMenu
-          bgMode="grey"
-          isOpen={hover && mode === 'display'}
-          onEdit={handleToggleEditMode}
-          showEditButton={matchCurrentUserId(author.id)}
+}) => {
+  const { body, createdAt, id: messageId, updatedAt } = message || {};
+
+  return (
+    <React.Fragment>
+      <MessageSection onClick={handleFocusCurrentMessage} {...props}>
+        <Header>
+          <AuthorSection>
+            <AvatarWithMargin src={author.profilePictureUrl} size={45} />
+            <Details>
+              <Author>{author.fullName}</Author>
+              {mode === 'display' && (
+                <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
+              )}
+            </Details>
+          </AuthorSection>
+          <StyledHoverMenu
+            bgMode="grey"
+            isOpen={hover && mode === 'display'}
+            onEdit={handleToggleEditMode}
+            showEditButton={matchCurrentUserId(author.id)}
+          />
+        </Header>
+        <TopicEditor
+          initialValue={body.payload}
+          mode={mode}
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+          contentType="modalTopic"
         />
-      </Header>
-      <TopicEditor
-        initialValue={message}
-        mode={mode}
-        onCancel={handleCancel}
-        onSubmit={handleSubmit}
-        contentType="modalTopic"
-      />
-    </MessageSection>
-    {mode === 'display' && (
-      <ContentToolbar
-        contentType="modalTopic"
-        replyCount={replyCount}
-      />
-    )}
-  </React.Fragment>
-);
+      </MessageSection>
+      {mode === 'display' && (
+        <ContentToolbar
+          contentType="modalTopic"
+          conversationId={conversationId}
+          messageId={messageId}
+          replyCount={replyCount}
+        />
+      )}
+    </React.Fragment>
+  );
+};
 
 LargeReply.propTypes = {
   author: PropTypes.object.isRequired,
-  createdAt: PropTypes.number.isRequired,
+  conversationId: PropTypes.string.isRequired,
   handleCancel: PropTypes.func.isRequired,
   handleFocusCurrentMessage: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleToggleEditMode: PropTypes.func.isRequired,
   hover: PropTypes.bool.isRequired,
-  id: PropTypes.string,
-  message: PropTypes.string,
+  message: PropTypes.object,
   mode: PropTypes.string.isRequired,
   replyCount: PropTypes.number.isRequired,
-  updatedAt: PropTypes.number.isRequired,
 };
 
 LargeReply.defaultProps = {
-  id: null,
   message: null,
 };
 

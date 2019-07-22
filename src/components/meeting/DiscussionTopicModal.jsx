@@ -20,6 +20,8 @@ const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
 
 const MessagesSection = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
+  borderTopLeftRadius: '5px',
+  borderTopRightRadius: '5px',
 }));
 
 const Separator = styled.hr(({ theme: { colors } }) => ({
@@ -28,7 +30,7 @@ const Separator = styled.hr(({ theme: { colors } }) => ({
 }));
 
 const ReplyDisplay = styled.div({
-  ':last-child': {
+  ':last-of-type': {
     [Separator]: {
       display: 'none',
     },
@@ -146,7 +148,6 @@ class DiscussionTopicModal extends Component {
     return new Error('Error fetching conversation messages');
   }
 
-  // HN: Change this later, once the messageCount field is returned from backend
   replyCountForMessage(message) {
     const { messages, messageCount } = this.state;
     if (message.id === messages[0].id) return messageCount - 1 || 0;
@@ -179,16 +180,22 @@ class DiscussionTopicModal extends Component {
     if (!focusedMessage) {
       // TODO: when parentConversation is implemented, have this code fetch the messages
       // from the parent conversation, instead of from the root
-      const { messages: parentMessages, messageCount } = await this.fetchConversationMessages(conversationId);
+      const {
+        messages: parentMessages,
+        messageCount,
+      } = await this.fetchConversationMessages(conversationId);
       this.setState({ focusedMessage, messageCount, messages: parentMessages });
     } else {
       const index = messages.findIndex(m => m.id === focusedMessage.id);
-      if (index === 0) return;
 
+      if (index === 0) return;
       newMessages = messages.slice(0, index + 1);
-      if (focusedMessage.childConversationId) {
-        const { childConversationId } = focusedMessage;
-        const { messages: childMessages } = await this.fetchConversationMessages(childConversationId);
+
+      const { childConversationId } = focusedMessage;
+      if (childConversationId) {
+        const {
+          messages: childMessages,
+        } = await this.fetchConversationMessages(childConversationId);
         newMessages = newMessages.concat(childMessages);
       }
 
@@ -221,7 +228,7 @@ class DiscussionTopicModal extends Component {
     if (index < 0) {
       const messageToUpdate = focusedMessage || messages[0];
       messageToUpdate.replyCount += 1;
-      const secondIndex = messages.findIndex(m => m.id === focusedMessage.id);
+      const secondIndex = messages.findIndex(m => m.id === messageToUpdate.id);
 
       newMessages = [
         ...messages.slice(0, secondIndex),
@@ -246,6 +253,7 @@ class DiscussionTopicModal extends Component {
       author,
       conversationId,
       meetingId,
+      messageCount, // initializing so that it's not passed into the Modal component below
       ...props
     } = this.props;
 
@@ -266,7 +274,7 @@ class DiscussionTopicModal extends Component {
             <ReplyDisplay key={m.id}>
               <DiscussionTopicReply
                 afterSubmit={this.updateMessageInList}
-                conversationId={conversationId}
+                conversationId={m.conversationId}
                 handleFocusMessage={this.handleFocusOnMessage}
                 initialMode="display"
                 key={m.id}
@@ -302,6 +310,7 @@ DiscussionTopicModal.propTypes = {
   conversationId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
+  messageCount: PropTypes.number.isRequired,
   messages: PropTypes.array.isRequired,
 };
 

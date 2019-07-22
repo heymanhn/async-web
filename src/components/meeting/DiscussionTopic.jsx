@@ -22,7 +22,7 @@ const Container = styled.div(({ mode, theme: { colors } }) => ({
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   boxShadow: `0px 1px 3px ${colors.buttonGrey}`,
-  cursor: mode === 'display' ? 'pointer' : 'initial',
+  cursor: mode === 'display' ? 'default' : 'initial',
   marginBottom: '20px',
   width: '100%',
 }));
@@ -35,6 +35,7 @@ const MainContainer = styled.div(({ mode }) => ({
 }));
 
 const AvatarWithMargin = styled(Avatar)(({ mode }) => ({
+  flexShrink: 0,
   marginRight: '12px',
   opacity: mode === 'compose' ? 0.5 : 1,
 }));
@@ -290,12 +291,12 @@ class DiscussionTopic extends Component {
       ...props
     } = this.props;
 
-    if (loading) return null;
+    if (loading || !messages.length) return null;
 
     const { createdAt, updatedAt } = mode === 'display' ? messages[0] : {};
 
     return (
-      <Container mode={mode} onClick={this.handleLaunchModal} {...props}>
+      <Container mode={mode} {...props}>
         <MainContainer mode={mode}>
           <AvatarWithMargin src={author.profilePictureUrl} size={36} mode={mode} />
           <ContentContainer>
@@ -325,6 +326,9 @@ class DiscussionTopic extends Component {
         {mode === 'display' && (
           <ContentToolbar
             contentType="topic"
+            conversationId={conversationId}
+            messageId={messages[0].id}
+            onClickReply={this.handleLaunchModal}
             replyCount={messageCount - 1}
           />
         )}

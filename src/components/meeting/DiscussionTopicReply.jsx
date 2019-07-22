@@ -141,31 +141,24 @@ class DiscussionTopicReply extends Component {
   render() {
     const { currentUser, mode } = this.state;
     const {
+      conversationId,
       meetingId,
-      message: {
-        author,
-        body,
-        createdAt,
-        id,
-        updatedAt,
-      },
+      message,
       onCancelCompose,
       size,
       ...props
     } = this.props;
-    if (!author && !currentUser) return null; // edge case
+    if (!message.author && !currentUser) return null; // edge case
 
     const fwdProps = {
-      author: author || currentUser,
-      createdAt,
+      author: message.author || currentUser,
+      conversationId,
       handleCancel: this.handleCancel,
       handleFocusCurrentMessage: this.handleFocusCurrentMessage,
       handleSubmit: this.handleSubmit,
       handleToggleEditMode: this.toggleEditMode,
-      id: mode === 'display' ? id : undefined,
-      message: mode !== 'compose' ? body.payload : null,
+      message,
       mode,
-      updatedAt,
       ...props,
     };
 

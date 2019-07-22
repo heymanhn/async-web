@@ -5,7 +5,11 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
-// import AddReactionButton from './AddReactionButton';
+import withReactions from 'utils/withReactions';
+import { matchCurrentUserId } from 'utils/auth';
+
+import AddReactionButton from './AddReactionButton';
+import ReactionCountDisplay from './ReactionCountDisplay';
 
 const heights = {
   topic: '52px',
@@ -57,7 +61,7 @@ const ButtonContainer = styled.div(({ contentType }) => ({
   alignItems: contentType === 'modalReply' ? 'center' : 'initial',
 
   cursor: 'pointer',
-  margin: contentType === 'modalReply' ? '0px 15px' : '0px 30px',
+  padding: contentType === 'modalReply' ? '0px 15px' : '0px 25px',
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)(({ contenttype, theme: { colors } }) => ({
@@ -77,48 +81,142 @@ const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
   margin: 0,
 }));
 
-// const StyledAddReactionButton = styled(AddReactionButton)({
-//   marginLeft: '15px',
-// });
+const StyledReactionCountDisplay = styled(ReactionCountDisplay)({});
 
-const ContentToolbar = ({ contentType, onClickReply, replyCount }) => {
-  // Doing this for now. will make more complex later when reactions UX is added
-  if (!replyCount && contentType === 'modalReply') return null;
+const ButtonWrapper = styled.div(({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+}), ({ contentType }) => {
+  if (contentType !== 'modalReply') return {};
+
+  return {
+    ':first-of-type': {
+      [StyledReactionCountDisplay]: {
+        borderTopLeftRadius: '5px',
+        borderBottomLeftRadius: '5px',
+      },
+    },
+    ':last-of-type': {
+      [VerticalDivider]: {
+        display: 'none',
+      },
+      [ButtonContainer]: {
+        borderTopRightRadius: '5px',
+        borderBottomRightRadius: '5px',
+      },
+      [StyledReactionCountDisplay]: {
+        borderTopRightRadius: '5px',
+        borderBottomRightRadius: '5px',
+      },
+    },
+  };
+});
+
+const StyledAddReactionButton = styled(AddReactionButton)({
+  marginLeft: '15px',
+});
+
+const ContentToolbar = ({
+  addReaction,
+  contentType,
+  conversationId,
+  messageId,
+  onClickReply,
+  reactions,
+  reactionsReference,
+  removeReaction,
+  replyCount,
+  ...props
+}) => {
+  if (!reactions.length && !replyCount) return null;
+
+  const reactionsToDisplay = () => {
+    const histogram = [];
+
+    reactionsReference.forEach((reax) => {
+      const { code, icon } = reax;
+      const matchingReactions = reactions.filter(r => r.code === reax.code);
+      if (matchingReactions.length) {
+        const reaxToDisplay = {
+          code,
+          icon,
+          reactionCount: matchingReactions.length,
+        };
+        const currentUserReaction = matchingReactions.find(r => matchCurrentUserId(r.author.id));
+        if (currentUserReaction) reaxToDisplay.currentUserReactionId = currentUserReaction.id;
+        histogram.push(reaxToDisplay);
+      }
+    });
+
+    return histogram;
+  };
 
   const countLabel = replyCount || (contentType === 'topic' ? 'add a reply' : 0);
   const repliesButton = (
-    <React.Fragment>
+    <ButtonWrapper contentType={contentType}>
       <ButtonContainer contentType={contentType} onClick={onClickReply}>
         <StyledIcon contenttype={contentType} icon={faComment} />
         <CountLabel contentType={contentType}>{countLabel}</CountLabel>
       </ButtonContainer>
-      {/* Temporary contentType flag below */}
-      {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
-      {/* HN: Enabling the below once reactions UX is live */}
-      {/* {contentType !== 'modalReply' && <StyledAddReactionButton size="large" />} */}
+      <VerticalDivider contentType={contentType} />
+    </ButtonWrapper>
+  );
+  const addReactionButton = (
+    <StyledAddReactionButton
+      conversationId={conversationId}
+      messageId={messageId}
+      size="large"
+      source="toolbar"
+    />
+  );
+  const innerContent = (
+    <React.Fragment>
+      {(contentType !== 'modalReply' || replyCount > 0) && repliesButton}
+      {reactionsToDisplay().map(r => (
+        <ButtonWrapper key={r.code} contentType={contentType}>
+          <StyledReactionCountDisplay
+            code={r.code}
+            contentType={contentType}
+            currentUserReactionId={r.currentUserReactionId}
+            icon={r.icon}
+            onAddReaction={addReaction}
+            onRemoveReaction={removeReaction}
+            reactionCount={r.reactionCount}
+          />
+          <VerticalDivider contentType={contentType} />
+        </ButtonWrapper>
+      ))}
+      {contentType !== 'modalReply' && addReactionButton}
     </React.Fragment>
   );
 
   if (contentType === 'modalReply') {
     return (
-      <Container contentType={contentType}>
+      <Container contentType={contentType} {...props}>
         <InnerContainer>
-          {repliesButton}
+          {innerContent}
         </InnerContainer>
       </Container>
     );
   }
 
   return (
-    <Container contentType={contentType}>
-      {repliesButton}
+    <Container contentType={contentType} {...props}>
+      {innerContent}
     </Container>
   );
 };
 
 ContentToolbar.propTypes = {
+  addReaction: PropTypes.func.isRequired,
   contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
+  conversationId: PropTypes.string.isRequired,
+  messageId: PropTypes.string.isRequired,
   onClickReply: PropTypes.func,
+  reactions: PropTypes.array.isRequired,
+  reactionsReference: PropTypes.array.isRequired,
+  removeReaction: PropTypes.func.isRequired,
   replyCount: PropTypes.number.isRequired,
 };
 
@@ -126,4 +224,4 @@ ContentToolbar.defaultProps = {
   onClickReply: () => {},
 };
 
-export default ContentToolbar;
+export default withReactions(ContentToolbar);
