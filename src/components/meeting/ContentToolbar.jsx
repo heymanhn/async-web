@@ -95,6 +95,7 @@ const ContentToolbar = ({
   reactionsReference,
   removeReaction,
   replyCount,
+  ...props
 }) => {
   // TODO: Doing this for now. will make more complex later when reactions UX is added
   if (!replyCount && contentType === 'modalReply') return null;
@@ -127,7 +128,7 @@ const ContentToolbar = ({
         <StyledIcon contenttype={contentType} icon={faComment} />
         <CountLabel contentType={contentType}>{countLabel}</CountLabel>
       </ButtonContainer>
-      {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
+      <VerticalDivider contentType={contentType} />
     </React.Fragment>
   );
   const addReactionButton = (
@@ -152,18 +153,16 @@ const ContentToolbar = ({
             onRemoveReaction={removeReaction}
             reactionCount={r.reactionCount}
           />
-          {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
+          <VerticalDivider contentType={contentType} />
         </React.Fragment>
       ))}
-      {/* TODO: Make the button show on replies only when hovering over a
-              visible content toolbar */}
       {contentType !== 'modalReply' && addReactionButton}
     </React.Fragment>
   );
 
   if (contentType === 'modalReply') {
     return (
-      <Container contentType={contentType}>
+      <Container contentType={contentType} {...props}>
         <InnerContainer>
           {innerContent}
         </InnerContainer>
@@ -172,7 +171,7 @@ const ContentToolbar = ({
   }
 
   return (
-    <Container contentType={contentType}>
+    <Container contentType={contentType} {...props}>
       {innerContent}
     </Container>
   );

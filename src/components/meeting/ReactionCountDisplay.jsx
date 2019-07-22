@@ -2,28 +2,26 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ contentType }) => ({
+const Container = styled.div(({ contentType, isActive, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
-  alignItems: contentType === 'modalReply' ? 'center' : 'initial',
+  alignItems: 'center',
+
+  background: isActive ? colors.hoverBlue : 'none',
   cursor: 'pointer',
   padding: contentType === 'modalReply' ? '0 15px' : '0 20px',
-}), ({ isActive, theme: { colors } }) => {
-  if (!isActive) return {};
+  height: contentType === 'modalReply' ? '32px' : '52px',
+}));
 
-  return {
-    background: colors.hoverBlue,
-    border: `1px solid ${colors.borderGrey}`,
-  };
-});
-
-const Icon = styled.div({
-  fontSize: '24px',
-});
+const Icon = styled.div(({ contentType }) => ({
+  fontSize: contentType === 'modalReply' ? '14px' : '24px',
+  marginRight: '8px',
+}));
 
 const ReactionCount = styled.div(({ isActive, contentType, theme: { colors } }) => ({
   color: isActive ? colors.blue : colors.grey3,
   fontSize: contentType === 'modalReply' ? '13px' : '14px',
+  fontWeight: 500,
 }));
 
 class ReactionCountDisplay extends Component {
@@ -53,7 +51,7 @@ class ReactionCountDisplay extends Component {
         isActive={!!currentUserReactionId}
         onClick={this.handleClick}
       >
-        <Icon>{icon}</Icon>
+        <Icon contentType={contentType}>{icon}</Icon>
         <ReactionCount
           isActive={!!currentUserReactionId}
           contentType={contentType}
