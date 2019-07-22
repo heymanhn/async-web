@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export default gql`
   query ConversationMessage($cid: String!, $mid: String!) {
-    conversationMessage(id: $id) @rest(type: "Message", path: "/conversations/{args.cid}/messages/{args.mid}", method: "GET") {
+    conversationMessage(cid: $cid, mid: $mid) @rest(type: "Message", path: "/conversations/{args.cid}/messages/{args.mid}", method: "GET") {
       id
       author @type(name: "Author") {
         id

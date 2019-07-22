@@ -94,7 +94,7 @@ class ReactionPicker extends Component {
 
   userReactionForCode(code) {
     const { reactions } = this.props;
-    const reaction = reactions.find(r => r.eicode === code && matchCurrentUserId(r.author.id));
+    const reaction = reactions.find(r => r.code === code && matchCurrentUserId(r.author.id));
     return reaction ? reaction.id : null;
   }
 

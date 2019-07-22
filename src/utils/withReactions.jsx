@@ -62,19 +62,22 @@ const withReactions = (WrappedComponent) => {
     }
 
     async addReaction(code) {
-      const { client, conversationId, messageId } = this.props;
+      const { client, conversationId: cid, messageId: mid } = this.props;
 
       const response = await client.mutate({
         mutation: createReactionMutation,
         variables: {
           input: {
             objectType: 'message',
-            objectId: messageId,
-            parentId: conversationId,
+            objectId: mid,
+            parentId: cid,
             code,
           },
         },
-        refetchQueries: [conversationMessageQuery],
+        refetchQueries: [{
+          query: conversationMessageQuery,
+          variables: { cid, mid },
+        }],
       });
 
       if (response.data && response.data.createReaction) {
@@ -85,15 +88,18 @@ const withReactions = (WrappedComponent) => {
     }
 
     async removeReaction(id) {
-      const { client } = this.props;
+      const { client, conversationId: cid, messageId: mid } = this.props;
 
       const response = await client.mutate({
         mutation: deleteReactionMutation,
         variables: { id },
-        refetchQueries: [conversationMessageQuery],
+        refetchQueries: [{
+          query: conversationMessageQuery,
+          variables: { cid, mid },
+        }],
       });
 
-      if (response.data && response.data.removeReaction) {
+      if (response.data && response.data.deleteReaction) {
         return Promise.resolve(true);
       }
 
@@ -116,7 +122,7 @@ const withReactions = (WrappedComponent) => {
               <WrappedComponent
                 addReaction={this.addReaction}
                 removeReaction={this.removeReaction}
-                reactions={reactions}
+                reactions={reactions || []}
                 reactionsReference={reactionsReference}
                 {...this.props}
               />
