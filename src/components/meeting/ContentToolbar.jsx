@@ -81,6 +81,38 @@ const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
   margin: 0,
 }));
 
+const StyledReactionCountDisplay = styled(ReactionCountDisplay)({});
+
+const ButtonWrapper = styled.div(({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+}), ({ contentType }) => {
+  if (contentType !== 'modalReply') return {};
+
+  return {
+    ':first-child': {
+      [StyledReactionCountDisplay]: {
+        borderTopLeftRadius: '5px',
+        borderBottomLeftRadius: '5px',
+      },
+    },
+    ':last-child': {
+      [VerticalDivider]: {
+        display: 'none',
+      },
+      [ButtonContainer]: {
+        borderTopRightRadius: '5px',
+        borderBottomRightRadius: '5px',
+      },
+      [StyledReactionCountDisplay]: {
+        borderTopRightRadius: '5px',
+        borderBottomRightRadius: '5px',
+      },
+    },
+  };
+});
+
 const StyledAddReactionButton = styled(AddReactionButton)({
   marginLeft: '15px',
 });
@@ -123,13 +155,13 @@ const ContentToolbar = ({
 
   const countLabel = replyCount || (contentType === 'topic' ? 'add a reply' : 0);
   const repliesButton = (
-    <React.Fragment>
+    <ButtonWrapper contentType={contentType}>
       <ButtonContainer contentType={contentType} onClick={onClickReply}>
         <StyledIcon contenttype={contentType} icon={faComment} />
         <CountLabel contentType={contentType}>{countLabel}</CountLabel>
       </ButtonContainer>
       <VerticalDivider contentType={contentType} />
-    </React.Fragment>
+    </ButtonWrapper>
   );
   const addReactionButton = (
     <StyledAddReactionButton
@@ -143,8 +175,8 @@ const ContentToolbar = ({
     <React.Fragment>
       {repliesButton}
       {reactionsToDisplay().map(r => (
-        <React.Fragment key={r.code}>
-          <ReactionCountDisplay
+        <ButtonWrapper key={r.code} contentType={contentType}>
+          <StyledReactionCountDisplay
             code={r.code}
             contentType={contentType}
             currentUserReactionId={r.currentUserReactionId}
@@ -154,7 +186,7 @@ const ContentToolbar = ({
             reactionCount={r.reactionCount}
           />
           <VerticalDivider contentType={contentType} />
-        </React.Fragment>
+        </ButtonWrapper>
       ))}
       {contentType !== 'modalReply' && addReactionButton}
     </React.Fragment>

@@ -20,6 +20,8 @@ const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
 
 const MessagesSection = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
+  borderTopLeftRadius: '5px',
+  borderTopRightRadius: '5px',
 }));
 
 const Separator = styled.hr(({ theme: { colors } }) => ({

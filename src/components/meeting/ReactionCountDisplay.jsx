@@ -43,13 +43,22 @@ class ReactionCountDisplay extends Component {
   }
 
   render() {
-    const { contentType, currentUserReactionId, icon, reactionCount } = this.props;
+    const {
+      contentType,
+      currentUserReactionId,
+      icon,
+      onAddReaction,
+      onRemoveReaction,
+      reactionCount,
+      ...props
+    } = this.props;
 
     return (
       <Container
         contentType={contentType}
         isActive={!!currentUserReactionId}
         onClick={this.handleClick}
+        {...props}
       >
         <Icon contentType={contentType}>{icon}</Icon>
         <ReactionCount
