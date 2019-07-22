@@ -50,12 +50,20 @@ class ReactionPicker extends Component {
     };
 
     this.picker = React.createRef();
+    this.handleAddReaction = this.handleAddReaction.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.handleExitHover = this.handleExitHover.bind(this);
     this.handleHover = this.handleHover.bind(this);
+    this.handleRemoveReaction = this.handleRemoveReaction.bind(this);
     this.hasReactedWith = this.hasReactedWith.bind(this);
     this.calculateOffset = this.calculateOffset.bind(this);
     this.userReactionForCode = this.userReactionForCode.bind(this);
+  }
+
+  handleAddReaction(code) {
+    const { addReaction, handleClose } = this.props;
+    handleClose();
+    addReaction(code);
   }
 
   handleClickOutside(event) {
@@ -74,6 +82,12 @@ class ReactionPicker extends Component {
 
   handleHover(code) {
     this.setState({ reactionOnHover: code });
+  }
+
+  handleRemoveReaction(reactionId) {
+    const { removeReaction, handleClose } = this.props;
+    handleClose();
+    removeReaction(reactionId);
   }
 
   hasReactedWith(code) {
@@ -101,12 +115,10 @@ class ReactionPicker extends Component {
   render() {
     const { reactionOnHover: hoverCode } = this.state;
     const {
-      addReaction,
       handleClose,
       isOpen,
       placement,
       reactionsReference,
-      removeReaction,
       ...props
     } = this.props;
 
@@ -131,10 +143,10 @@ class ReactionPicker extends Component {
               existingReactionId={this.userReactionForCode(r.code)}
               icon={r.icon}
               isSelected={this.hasReactedWith(r.code)}
-              onAddReaction={addReaction}
+              onAddReaction={this.handleAddReaction}
               onExitHover={this.handleExitHover}
               onHover={this.handleHover}
-              onRemoveReaction={removeReaction}
+              onRemoveReaction={this.handleRemoveReaction}
             />
           ))}
         </ReactionsList>
