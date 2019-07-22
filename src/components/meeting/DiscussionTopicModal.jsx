@@ -30,7 +30,7 @@ const Separator = styled.hr(({ theme: { colors } }) => ({
 }));
 
 const ReplyDisplay = styled.div({
-  ':last-child': {
+  ':last-of-type': {
     [Separator]: {
       display: 'none',
     },

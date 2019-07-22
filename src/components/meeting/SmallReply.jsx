@@ -117,17 +117,19 @@ const SmallReply = ({
               <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
             )}
           </Details>
-          <StyledHoverMenu
-            conversationId={conversationId}
-            isOpen={hover && mode === 'display'}
-            messageId={messageId}
-            onEdit={handleToggleEditMode}
-            onReply={handleFocusCurrentMessage}
-            replyCount={replyCount}
-            showAddReactionButton
-            showEditButton={matchCurrentUserId(author.id)}
-            showReplyButton
-          />
+          {mode === 'display' && (
+            <StyledHoverMenu
+              conversationId={conversationId}
+              isOpen={hover && mode === 'display'}
+              messageId={messageId}
+              onEdit={handleToggleEditMode}
+              onReply={handleFocusCurrentMessage}
+              replyCount={replyCount}
+              showAddReactionButton
+              showEditButton={matchCurrentUserId(author.id)}
+              showReplyButton
+            />
+          )}
         </HeaderSection>
         <ReplyEditor
           initialValue={mode !== 'compose' ? body.payload : null}

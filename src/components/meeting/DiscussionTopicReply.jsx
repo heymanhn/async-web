@@ -151,7 +151,7 @@ class DiscussionTopicReply extends Component {
     if (!message.author && !currentUser) return null; // edge case
 
     const fwdProps = {
-      author: message ? message.author : currentUser,
+      author: message.author || currentUser,
       conversationId,
       handleCancel: this.handleCancel,
       handleFocusCurrentMessage: this.handleFocusCurrentMessage,

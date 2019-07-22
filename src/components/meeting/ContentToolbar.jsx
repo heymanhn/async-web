@@ -91,13 +91,13 @@ const ButtonWrapper = styled.div(({
   if (contentType !== 'modalReply') return {};
 
   return {
-    ':first-child': {
+    ':first-of-type': {
       [StyledReactionCountDisplay]: {
         borderTopLeftRadius: '5px',
         borderBottomLeftRadius: '5px',
       },
     },
-    ':last-child': {
+    ':last-of-type': {
       [VerticalDivider]: {
         display: 'none',
       },
@@ -129,8 +129,7 @@ const ContentToolbar = ({
   replyCount,
   ...props
 }) => {
-  // TODO: Doing this for now. will make more complex later when reactions UX is added
-  if (!replyCount && contentType === 'modalReply') return null;
+  if (!reactions.length && !replyCount) return null;
 
   const reactionsToDisplay = () => {
     const histogram = [];
@@ -173,7 +172,7 @@ const ContentToolbar = ({
   );
   const innerContent = (
     <React.Fragment>
-      {repliesButton}
+      {(contentType !== 'modalReply' || replyCount > 0) && repliesButton}
       {reactionsToDisplay().map(r => (
         <ButtonWrapper key={r.code} contentType={contentType}>
           <StyledReactionCountDisplay
