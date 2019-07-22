@@ -96,6 +96,7 @@ const LargeReply = ({
   ...props
 }) => {
   const { body, createdAt, id: messageId, updatedAt } = message || {};
+
   return (
     <React.Fragment>
       <MessageSection onClick={handleFocusCurrentMessage} {...props}>

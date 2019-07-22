@@ -185,11 +185,12 @@ class DiscussionTopicModal extends Component {
       this.setState({ focusedMessage, messageCount, messages: parentMessages });
     } else {
       const index = messages.findIndex(m => m.id === focusedMessage.id);
-      if (index === 0) return;
 
+      if (index === 0) return;
       newMessages = messages.slice(0, index + 1);
-      if (focusedMessage.childConversationId) {
-        const { childConversationId } = focusedMessage;
+
+      const { childConversationId } = focusedMessage;
+      if (childConversationId) {
         const {
           messages: childMessages,
         } = await this.fetchConversationMessages(childConversationId);
@@ -271,7 +272,7 @@ class DiscussionTopicModal extends Component {
             <ReplyDisplay key={m.id}>
               <DiscussionTopicReply
                 afterSubmit={this.updateMessageInList}
-                conversationId={conversationId}
+                conversationId={m.conversationId}
                 handleFocusMessage={this.handleFocusOnMessage}
                 initialMode="display"
                 key={m.id}
