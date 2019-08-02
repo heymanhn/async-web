@@ -73,9 +73,9 @@ class DiscussionThread extends Component {
     this.state = {
       focusedMessage: null,
       isComposingReply: false,
-      messages: props.messages,
+      messages: null,
       parentConversation: null,
-      messageCount: props.messageCount,
+      messageCount: 0,
     };
 
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
@@ -86,6 +86,12 @@ class DiscussionThread extends Component {
     this.sizeForMessage = this.sizeForMessage.bind(this);
     this.toggleReplyComposer = this.toggleReplyComposer.bind(this);
     this.updateMessageInList = this.updateMessageInList.bind(this);
+  }
+
+  async componentDidMount() {
+    const { conversationId } = this.props;
+    const { messages, messageCount } = await this.fetchConversationMessages(conversationId);
+    this.setState({ messageCount, messages });
   }
 
   async handleFocusOnMessage(message) {
@@ -216,7 +222,9 @@ class DiscussionThread extends Component {
 
   render() {
     const { focusedMessage, isComposingReply, messages } = this.state;
-    const { meetingId } = this.props;
+    const { client, conversationId, meetingId, ...props } = this.props;
+
+    if (!messages) return null;
 
     const addReplyButton = (
       <AddReplyButton onClick={this.toggleReplyComposer}>
@@ -226,7 +234,7 @@ class DiscussionThread extends Component {
     );
 
     return (
-      <React.Fragment>
+      <div {...props}>
         <MessagesSection>
           {messages.map(m => (
             <ReplyDisplay key={m.id}>
@@ -257,7 +265,7 @@ class DiscussionThread extends Component {
             />
           )}
         </ActionsContainer>
-      </React.Fragment>
+      </div>
     );
   }
 }
@@ -266,8 +274,6 @@ DiscussionThread.propTypes = {
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
   meetingId: PropTypes.string.isRequired,
-  messageCount: PropTypes.number.isRequired,
-  messages: PropTypes.array.isRequired,
 };
 
 export default withApollo(DiscussionThread);

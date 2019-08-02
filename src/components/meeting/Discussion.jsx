@@ -338,8 +338,6 @@ class Discussion extends Component {
             conversationId={conversationId}
             isOpen={isModalVisible}
             meetingId={meetingId}
-            messages={messages}
-            messageCount={messageCount}
             toggle={this.toggleModal}
           />
         )}
