@@ -6,7 +6,7 @@ import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 
-import DiscussionTopicReply from './DiscussionTopicReply';
+import DiscussionReply from './DiscussionReply';
 
 const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
   margin: '100px auto',
@@ -77,7 +77,7 @@ const ButtonText = styled.span(({ theme: { colors } }) => ({
   },
 }));
 
-class DiscussionTopicModal extends Component {
+class DiscussionModal extends Component {
   constructor(props) {
     super(props);
 
@@ -272,7 +272,7 @@ class DiscussionTopicModal extends Component {
         <MessagesSection>
           {messages.map(m => (
             <ReplyDisplay key={m.id}>
-              <DiscussionTopicReply
+              <DiscussionReply
                 afterSubmit={this.updateMessageInList}
                 conversationId={m.conversationId}
                 handleFocusMessage={this.handleFocusOnMessage}
@@ -289,7 +289,7 @@ class DiscussionTopicModal extends Component {
         </MessagesSection>
         <ActionsContainer>
           {!isComposingReply ? addReplyButton : (
-            <DiscussionTopicReply
+            <DiscussionReply
               afterSubmit={this.updateMessageInList}
               conversationId={this.conversationIdForNewReply()}
               focusedMessage={focusedMessage}
@@ -304,7 +304,7 @@ class DiscussionTopicModal extends Component {
   }
 }
 
-DiscussionTopicModal.propTypes = {
+DiscussionModal.propTypes = {
   author: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
@@ -314,4 +314,4 @@ DiscussionTopicModal.propTypes = {
   messages: PropTypes.array.isRequired,
 };
 
-export default withApollo(DiscussionTopicModal);
+export default withApollo(DiscussionModal);

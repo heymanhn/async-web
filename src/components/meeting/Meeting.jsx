@@ -12,7 +12,7 @@ import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
 import Layout from 'components/Layout';
 import RovalEditor from 'components/editor/RovalEditor';
-import DiscussionTopic from './DiscussionTopic';
+import Discussion from './Discussion';
 import ParticipantsSelector from './ParticipantsSelector';
 
 const MetadataContainer = styled.div(({ theme: { colors } }) => ({
@@ -258,7 +258,7 @@ class Meeting extends Component {
                   <InnerContainer>
                     {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
                     {conversationIds.map(conversationId => (
-                      <DiscussionTopic
+                      <Discussion
                         afterSubmit={() => refetch()}
                         conversationId={conversationId}
                         forceDisplayModal={cid === conversationId && !isModalInitiallyDisplayed}
@@ -269,7 +269,7 @@ class Meeting extends Component {
                       />
                     ))}
                     {!isComposingTopic ? addDiscussionButton : (
-                      <DiscussionTopic
+                      <Discussion
                         afterSubmit={() => refetch()}
                         initialMode="compose"
                         meetingId={id}

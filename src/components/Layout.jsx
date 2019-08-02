@@ -64,13 +64,13 @@ class Layout extends Component {
   }
 
   render() {
-    const { children, title } = this.props;
+    const { children, mode, title } = this.props;
 
     return (
       <Theme>
         <GlobalStyles />
         <Container>
-          <NavBar title={title} />
+          <NavBar mode={mode} title={title} />
           <Content>
             {children}
           </Content>
@@ -86,10 +86,12 @@ class Layout extends Component {
 Layout.propTypes = {
   children: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
+  mode: PropTypes.oneOf(['normal', 'wide']),
   title: PropTypes.string,
 };
 
 Layout.defaultProps = {
+  mode: 'normal',
   title: '',
 };
 

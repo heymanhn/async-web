@@ -38,7 +38,8 @@ export const theme = {
   containerMargin: '50px auto',
   documentContainerMargin: '60px auto',
   shortMargin: '30px auto',
-  maxViewport: '1180px',
+  maxViewport: '740px',
+  wideViewport: '1180px',
 
   // Update with new colors for Project Async once ready
   colors: {

@@ -22,14 +22,14 @@ const NavigationBar = styled.div({
   width: '100%',
 });
 
-const Container = styled.div(({ theme: { maxViewport } }) => ({
+const Container = styled.div(({ mode, theme: { maxViewport, wideViewport } }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
 
   // We'll care about custom media query dimensions later
   minHeight: '70px',
-  maxWidth: maxViewport,
+  maxWidth: mode === 'wide' ? wideViewport : maxViewport,
 
   margin: '0 auto',
   padding: '0 20px',
@@ -94,11 +94,11 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 10px',
 }));
 
-const NavBar = ({ title }) => (
+const NavBar = ({ mode, title }) => (
   <Query query={isLoggedInQuery}>
     {({ data }) => (
       <NavigationBar>
-        <Container>
+        <Container mode={mode}>
           <div>
             <Link to="/inbox">
               <LogoImage
@@ -126,6 +126,7 @@ const NavBar = ({ title }) => (
 );
 
 NavBar.propTypes = {
+  mode: PropTypes.oneOf(['normal', 'wide']).isRequired,
   title: PropTypes.string.isRequired,
 };
 

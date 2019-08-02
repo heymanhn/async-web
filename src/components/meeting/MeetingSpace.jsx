@@ -19,7 +19,7 @@ const MeetingSpace = ({ id }) => (
       const conversationIds = (conversations || []).map(c => c.id);
 
       return (
-        <Layout title={title}>
+        <Layout mode="wide" title={title}>
           <div>hello</div>
         </Layout>
       );
