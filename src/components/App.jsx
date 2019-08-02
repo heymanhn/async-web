@@ -75,7 +75,7 @@ const App = () => (
     <PrivateRoute path="/meetings/:id/conversations/:cid" component={Meeting} />
 
     {/* New UI for meeting spaces */}
-    <PrivateRoute path="/meetingspaces/:id" component={MeetingSpace} />
+    <PrivateRoute path="/spaces/:id" component={MeetingSpace} />
 
     {/* <NotFound default /> */}
   </Router>
