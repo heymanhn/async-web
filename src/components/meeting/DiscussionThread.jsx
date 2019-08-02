@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
-import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
+import conversationQuery from 'graphql/meetingConversationQuery';
 
 import DiscussionReply from './DiscussionReply';
 
@@ -80,7 +80,7 @@ class DiscussionThread extends Component {
 
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
     this.conversationIdForNewReply = this.conversationIdForNewReply.bind(this);
-    this.fetchConversationMessages = this.fetchConversationMessages.bind(this);
+    this.fetchConversation = this.fetchConversation.bind(this);
     this.replyCountForMessage = this.replyCountForMessage.bind(this);
     this.showFocusedConversation = this.showFocusedConversation.bind(this);
     this.sizeForMessage = this.sizeForMessage.bind(this);
@@ -90,7 +90,7 @@ class DiscussionThread extends Component {
 
   async componentDidMount() {
     const { conversationId } = this.props;
-    const { messages, messageCount } = await this.fetchConversationMessages(conversationId);
+    const { messages, messageCount } = await this.fetchConversation(conversationId);
     this.setState({ messageCount, messages });
   }
 
@@ -117,19 +117,17 @@ class DiscussionThread extends Component {
     return focusedMessage ? focusedMessage.childConversationId : conversationId;
   }
 
-  async fetchConversationMessages(conversationId) {
-    const { client } = this.props;
+  async fetchConversation(conversationId) {
+    const { client, meetingId } = this.props;
     const response = await client.query({
-      query: conversationMessagesQuery,
-      variables: { id: conversationId },
+      query: conversationQuery,
+      variables: { conversationId, meetingId },
       fetchPolicy: 'no-cache',
     });
 
     if (response.data) {
-      const { items, messageCount } = response.data.conversationMessagesQuery;
-      const messages = (items || []).map(i => i.message);
-
-      return { messages, messageCount };
+      const { messages, messageCount } = response.data.conversation;
+      return { messages: messages || [], messageCount };
     }
 
     return new Error('Error fetching conversation messages');
@@ -166,7 +164,7 @@ class DiscussionThread extends Component {
       const {
         messages: parentMessages,
         messageCount,
-      } = await this.fetchConversationMessages(conversationId);
+      } = await this.fetchConversation(conversationId);
       this.setState({ focusedMessage, messageCount, messages: parentMessages });
     } else {
       const index = messages.findIndex(m => m.id === focusedMessage.id);
@@ -178,7 +176,7 @@ class DiscussionThread extends Component {
       if (childConversationId) {
         const {
           messages: childMessages,
-        } = await this.fetchConversationMessages(childConversationId);
+        } = await this.fetchConversation(childConversationId);
         newMessages = newMessages.concat(childMessages);
       }
 
