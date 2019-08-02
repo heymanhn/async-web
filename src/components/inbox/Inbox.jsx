@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import withPageTracking from 'utils/withPageTracking';
 import meetingsQuery from 'graphql/meetingsQuery';
 
+import Layout from 'components/Layout';
 import MeetingRow from './MeetingRow';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -33,18 +34,20 @@ const Inbox = () => (
       const { items: meetingItems } = data.meetings;
 
       return (
-        <Container>
-          <InnerContainer>
-            <PageTitle>Your Meetings</PageTitle>
-            {meetingItems.map(item => (
-              <MeetingRow
-                key={item.meeting.id}
-                meeting={item.meeting}
-                conversationCount={item.conversationCount}
-              />
-            ))}
-          </InnerContainer>
-        </Container>
+        <Layout>
+          <Container>
+            <InnerContainer>
+              <PageTitle>Your Meetings</PageTitle>
+              {meetingItems.map(item => (
+                <MeetingRow
+                  key={item.meeting.id}
+                  meeting={item.meeting}
+                  conversationCount={item.conversationCount}
+                />
+              ))}
+            </InnerContainer>
+          </Container>
+        </Layout>
       );
     }}
   </Query>

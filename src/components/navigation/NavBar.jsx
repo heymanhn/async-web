@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import { Link } from '@reach/router';
 import styled from '@emotion/styled';
@@ -55,7 +56,7 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
   },
 }));
 
-const LogoTitle = styled.span({
+const Title = styled.span({
   fontSize: '18px',
   fontWeight: 500,
   position: 'relative',
@@ -93,7 +94,7 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 10px',
 }));
 
-const NavBar = () => (
+const NavBar = ({ title }) => (
   <Query query={isLoggedInQuery}>
     {({ data }) => (
       <NavigationBar>
@@ -106,7 +107,7 @@ const NavBar = () => (
                 title="Roval"
               />
             </Link>
-            <LogoTitle>Roval</LogoTitle>
+            <Title>{title}</Title>
             {data.saveStatus === 'success' && <SavedIndicator>Saved!</SavedIndicator>}
             {data.saveStatus === 'error' && <ErrorIndicator>Failed to save</ErrorIndicator>}
           </div>
@@ -123,5 +124,9 @@ const NavBar = () => (
     )}
   </Query>
 );
+
+NavBar.propTypes = {
+  title: PropTypes.string.isRequired,
+};
 
 export default NavBar;

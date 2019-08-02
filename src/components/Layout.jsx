@@ -1,6 +1,5 @@
-/* eslint react/prop-types: 0 */
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
@@ -65,13 +64,13 @@ class Layout extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, title } = this.props;
 
     return (
       <Theme>
         <GlobalStyles />
         <Container>
-          <NavBar />
+          <NavBar title={title} />
           <Content>
             {children}
           </Content>
@@ -83,5 +82,15 @@ class Layout extends Component {
     );
   }
 }
+
+Layout.propTypes = {
+  children: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
+  title: PropTypes.string,
+};
+
+Layout.defaultProps = {
+  title: '',
+};
 
 export default withApollo(Layout);
