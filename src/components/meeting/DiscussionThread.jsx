@@ -82,18 +82,10 @@ class DiscussionThread extends Component {
     this.conversationIdForNewReply = this.conversationIdForNewReply.bind(this);
     this.fetchConversationMessages = this.fetchConversationMessages.bind(this);
     this.replyCountForMessage = this.replyCountForMessage.bind(this);
-    this.resetDisplayURL = this.resetDisplayURL.bind(this);
     this.showFocusedConversation = this.showFocusedConversation.bind(this);
     this.sizeForMessage = this.sizeForMessage.bind(this);
     this.toggleReplyComposer = this.toggleReplyComposer.bind(this);
-    this.updateDisplayURL = this.updateDisplayURL.bind(this);
     this.updateMessageInList = this.updateMessageInList.bind(this);
-  }
-
-  componentDidUpdate(prevProps) {
-    const { isOpen } = this.props;
-    if (!prevProps.isOpen && isOpen) this.updateDisplayURL();
-    if (prevProps.isOpen && !isOpen) this.resetDisplayURL();
   }
 
   async handleFocusOnMessage(message) {
@@ -137,16 +129,12 @@ class DiscussionThread extends Component {
     return new Error('Error fetching conversation messages');
   }
 
+  // The reply count for the first message in the root conversation is always the number
+  // of messages in the conversation.
   replyCountForMessage(message) {
     const { messages, messageCount } = this.state;
     if (message.id === messages[0].id) return messageCount - 1 || 0;
     return message.replyCount || 0;
-  }
-
-  resetDisplayURL() {
-    const { meetingId } = this.props;
-    const url = `${origin}/meetings/${meetingId}`;
-    window.history.replaceState({}, `meeting: ${meetingId}`, url);
   }
 
   sizeForMessage(id) {
@@ -157,9 +145,9 @@ class DiscussionThread extends Component {
   }
 
   /*
-  * When a message is selected, all the messages in the conversation after that message are no
-  * no longer displayed, replaced by any replies to the current message, if it is the first
-  * message of another conversation.
+   * When a message is selected, all the messages in the conversation after that message are no
+   * no longer displayed, replaced by any replies to the current message, if it is the first
+   * message of another conversation.
   */
   async showFocusedConversation(focusedMessage) {
     const { messages } = this.state;
@@ -196,16 +184,6 @@ class DiscussionThread extends Component {
     this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
   }
 
-  // Updates the URL in the address bar to reflect this conversation
-  // https://developer.mozilla.org/en-US/docs/Web/API/History_API#Adding_and_modifying_history_entries
-  updateDisplayURL() {
-    const { conversationId, meetingId } = this.props;
-    const { origin } = window.location;
-
-    const url = `${origin}/meetings/${meetingId}/conversations/${conversationId}`;
-    window.history.replaceState({}, `conversation: ${conversationId}`, url);
-  }
-
   // Serves as an optimistic update to the messages state. Handles two cases:
   // 1. A new message is added to a conversation
   // 2. A message has been edited by the current user
@@ -238,12 +216,7 @@ class DiscussionThread extends Component {
 
   render() {
     const { focusedMessage, isComposingReply, messages } = this.state;
-    const {
-      author,
-      conversationId,
-      meetingId,
-      messageCount, // initializing so that it's not passed into the Modal component below
-    } = this.props;
+    const { meetingId } = this.props;
 
     const addReplyButton = (
       <AddReplyButton onClick={this.toggleReplyComposer}>
@@ -290,10 +263,8 @@ class DiscussionThread extends Component {
 }
 
 DiscussionThread.propTypes = {
-  author: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string.isRequired,
-  isOpen: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
   messageCount: PropTypes.number.isRequired,
   messages: PropTypes.array.isRequired,
