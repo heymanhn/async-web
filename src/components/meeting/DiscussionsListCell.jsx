@@ -33,7 +33,7 @@ const DiscussionTitle = styled.div({
 });
 
 const MessagePreview = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey1,
+  color: colors.grey2,
   fontSize: '14px',
   lineHeight: '22px',
   marginBottom: '20px',
@@ -71,6 +71,8 @@ const DiscussionsListCell = ({
 }) => {
   const replyCount = messageCount - 1;
   const { author, body, createdAt } = lastMessage;
+  const { text } = body;
+  const messagePreview = text ? text.replace(/\n/, ' ') : null;
 
   const handleSelectConversation = (event) => {
     event.stopPropagation();
@@ -81,7 +83,7 @@ const DiscussionsListCell = ({
     <Container onClick={handleSelectConversation} {...props}>
       {replyCount > 0 && <RepliesDisplay>{Pluralize('reply', replyCount, true)}</RepliesDisplay>}
       <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
-      <MessagePreview>The quick brown fox jumps over the lazy dog</MessagePreview>
+      {messagePreview && <MessagePreview>{messagePreview}</MessagePreview>}
       <MessageDetails>
         <StyledAvatar src={author.profilePictureUrl} size={24} />
         <MessageAuthor>{author.fullName}</MessageAuthor>
