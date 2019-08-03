@@ -8,6 +8,8 @@ export default gql`
       title
       author @type(name: "User") {
         id
+        fullName
+        profilePictureUrl
       }
       body @type(name: "Body") {
         formatter
@@ -22,7 +24,28 @@ export default gql`
       }
       conversations @type(name: "[Conversation]") {
         id
+        author @type(name: "User") {
+          id
+          fullName
+          profilePictureUrl
+        }
         createdAt
+        messageCount
+        title
+        lastMessage @type(name: "Message") {
+          id
+          createdAt
+          body @type(name: "Body") {
+            formatter
+            payload
+            text
+          }
+          author @type(name: "User") {
+            id
+            fullName
+            profilePictureUrl
+          }
+        }
       }
     }
   }

@@ -56,7 +56,13 @@ class MeetingSpace extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { selectedConversation: null };
+    this.state = { selectedConversationId: null };
+
+    this.handleSelectConversation = this.handleSelectConversation.bind(this);
+  }
+
+  handleSelectConversation(conversationId) {
+    this.setState({ selectedConversationId: conversationId });
   }
 
   render() {
@@ -72,7 +78,6 @@ class MeetingSpace extends Component {
           if (error || !data.meeting) return <div>{error}</div>;
 
           const { conversations, participants, title } = data.meeting;
-          const conversationIds = (conversations || []).map(c => c.id);
           const selectedConversation = conversations[0]; // TEMPORARY
 
           return (
@@ -83,9 +88,11 @@ class MeetingSpace extends Component {
                     <ButtonLabel>Start a discussion</ButtonLabel>
                     <PlusSign>+</PlusSign>
                   </StartDiscussionButton>
-                  <DiscussionsList conversationIds={conversationIds} meetingId={id} />
+                  <DiscussionsList
+                    conversations={conversations || []}
+                    onSelectConversation={this.handleSelectConversation}
+                  />
                 </div>
-
                 <StyledDiscussionThread
                   conversationId={selectedConversation.id}
                   meetingId={id}
