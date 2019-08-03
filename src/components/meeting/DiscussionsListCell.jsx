@@ -9,10 +9,14 @@ import Avatar from 'components/shared/Avatar';
 
 const Container = styled.div(({ hover, theme: { colors } }) => ({
   background: hover ? colors.lightestBlue : colors.white,
-  border: `1px solid ${colors.borderGrey}`,
+  borderBottom: `1px solid ${colors.borderGrey}`,
   cursor: 'pointer',
   padding: '20px 30px',
   width: '460px',
+
+  ':last-of-type': {
+    borderBottom: 'none',
+  },
 }));
 
 const RepliesDisplay = styled.div(({ theme: { colors } }) => ({
@@ -70,7 +74,7 @@ const DiscussionsListCell = ({
   return (
     <Container onClick={onSelectConversation} {...props}>
       {replyCount > 0 && <RepliesDisplay>{Pluralize('reply', replyCount, true)}</RepliesDisplay>}
-      <DiscussionTitle>M4 Scope Proposal</DiscussionTitle>
+      <DiscussionTitle>{title}</DiscussionTitle>
       <MessagePreview>The quick brown fox jumps over the lazy dog</MessagePreview>
       <MessageDetails>
         <StyledAvatar src={author.profilePictureUrl} size={24} />
@@ -84,7 +88,13 @@ const DiscussionsListCell = ({
 DiscussionsListCell.propTypes = {
   hover: PropTypes.bool.isRequired,
   lastMessage: PropTypes.object.isRequired,
+  messageCount: PropTypes.number.isRequired,
   onSelectConversation: PropTypes.func.isRequired,
+  title: PropTypes.string,
+};
+
+DiscussionsListCell.defaultProps = {
+  title: 'Untitled Discussion',
 };
 
 export default withHover(DiscussionsListCell);
