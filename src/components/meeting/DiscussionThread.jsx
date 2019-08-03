@@ -1,3 +1,4 @@
+/* eslint react/no-did-update-set-state: 0 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
@@ -80,7 +81,7 @@ class DiscussionThread extends Component {
 
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
     this.conversationIdForNewReply = this.conversationIdForNewReply.bind(this);
-    this.fetchConversation = this.fetchConversation.bind(this);
+    this.fetchConversationMessages = this.fetchConversationMessages.bind(this);
     this.replyCountForMessage = this.replyCountForMessage.bind(this);
     this.showFocusedConversation = this.showFocusedConversation.bind(this);
     this.sizeForMessage = this.sizeForMessage.bind(this);
@@ -89,9 +90,23 @@ class DiscussionThread extends Component {
   }
 
   async componentDidMount() {
-    const { conversationId } = this.props;
-    const { messages, messageCount } = await this.fetchConversation(conversationId);
+    const { conversation } = this.props;
+    const { messages, messageCount } = await this.fetchConversationMessages(conversation.id);
     this.setState({ messageCount, messages });
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { conversation } = this.props;
+    if (conversation.id !== prevProps.conversation.id) {
+      const { messages, messageCount } = await this.fetchConversationMessages(conversation.id);
+      this.setState({
+        focusedMessage: null,
+        isComposingReply: false,
+        messageCount,
+        messages,
+        parentConversation: null,
+      });
+    }
   }
 
   async handleFocusOnMessage(message) {
@@ -112,12 +127,12 @@ class DiscussionThread extends Component {
 
   conversationIdForNewReply() {
     const { focusedMessage } = this.state;
-    const { conversationId } = this.props;
+    const { conversation } = this.props;
 
-    return focusedMessage ? focusedMessage.childConversationId : conversationId;
+    return focusedMessage ? focusedMessage.childConversationId : conversation.id;
   }
 
-  async fetchConversation(conversationId) {
+  async fetchConversationMessages(conversationId) {
     const { client, meetingId } = this.props;
     const response = await client.query({
       query: conversationQuery,
@@ -126,8 +141,8 @@ class DiscussionThread extends Component {
     });
 
     if (response.data) {
-      const { messages, messageCount } = response.data.conversation;
-      return { messages: messages || [], messageCount };
+      const { messages: items, messageCount } = response.data.conversation;
+      return { messages: (items || []), messageCount };
     }
 
     return new Error('Error fetching conversation messages');
@@ -155,7 +170,7 @@ class DiscussionThread extends Component {
   */
   async showFocusedConversation(focusedMessage) {
     const { messages } = this.state;
-    const { conversationId } = this.props;
+    const { conversation } = this.props;
     let newMessages = [];
 
     if (!focusedMessage) {
@@ -164,7 +179,7 @@ class DiscussionThread extends Component {
       const {
         messages: parentMessages,
         messageCount,
-      } = await this.fetchConversation(conversationId);
+      } = await this.fetchConversationMessages(conversation.id);
       this.setState({ focusedMessage, messageCount, messages: parentMessages });
     } else {
       const index = messages.findIndex(m => m.id === focusedMessage.id);
@@ -176,7 +191,7 @@ class DiscussionThread extends Component {
       if (childConversationId) {
         const {
           messages: childMessages,
-        } = await this.fetchConversation(childConversationId);
+        } = await this.fetchConversationMessages(childConversationId);
         newMessages = newMessages.concat(childMessages);
       }
 
@@ -220,7 +235,7 @@ class DiscussionThread extends Component {
 
   render() {
     const { focusedMessage, isComposingReply, messages } = this.state;
-    const { client, conversationId, meetingId, ...props } = this.props;
+    const { client, conversation, meetingId, ...props } = this.props;
 
     if (!messages) return null;
 
@@ -270,7 +285,7 @@ class DiscussionThread extends Component {
 
 DiscussionThread.propTypes = {
   client: PropTypes.object.isRequired,
-  conversationId: PropTypes.string.isRequired,
+  conversation: PropTypes.object.isRequired,
   meetingId: PropTypes.string.isRequired,
 };
 

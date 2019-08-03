@@ -97,10 +97,10 @@ const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
   const separator = <Separator>&#8226;</Separator>;
 
   return (
-    <StyledLink to={`/meetings/${id}`}>
+    <StyledLink to={`/spaces/${id}`}>
       <Container hover={hover} {...props}>
         <MeetingDetails>
-          <Title hover={hover}>{title || 'Untitled Meeting'}</Title>
+          <Title hover={hover}>{title || 'Untitled Meeting Space'}</Title>
           <AdditionalInfo>
             {metadata.length > 0 && metadata[0]}
             {metadata.length > 1 && separator}

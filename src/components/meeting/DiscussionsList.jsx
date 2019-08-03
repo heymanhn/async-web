@@ -15,6 +15,7 @@ const DiscussionsList = ({ conversations, onSelectConversation }) => (
     {conversations.map(c => (
       <DiscussionsListCell
         key={c.id}
+        conversationId={c.id}
         lastMessage={c.lastMessage}
         messageCount={c.messageCount}
         onSelectConversation={onSelectConversation}

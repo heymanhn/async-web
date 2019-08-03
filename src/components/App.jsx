@@ -71,11 +71,12 @@ const App = () => (
     <Auth path="/login" />
 
     <PrivateRoute path="/inbox" component={Inbox} />
-    <PrivateRoute path="/meetings/:id" component={Meeting} />
-    <PrivateRoute path="/meetings/:id/conversations/:cid" component={Meeting} />
 
-    {/* New UI for meeting spaces */}
     <PrivateRoute path="/spaces/:id" component={MeetingSpace} />
+    <PrivateRoute path="/spaces/:id/conversations/:cid" component={MeetingSpace} />
+
+    {/* TODO */}
+    <PrivateRoute path="/spaces/:id/conversations/:cid/messages/:mid" component={MeetingSpace} />
 
     {/* <NotFound default /> */}
   </Router>

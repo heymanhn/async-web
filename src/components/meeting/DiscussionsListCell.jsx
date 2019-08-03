@@ -62,6 +62,7 @@ const MessageTimestamp = styled(Moment)(({ theme: { colors } }) => ({
 }));
 
 const DiscussionsListCell = ({
+  conversationId,
   lastMessage,
   messageCount,
   onSelectConversation,
@@ -71,8 +72,13 @@ const DiscussionsListCell = ({
   const replyCount = messageCount - 1;
   const { author, body, createdAt } = lastMessage;
 
+  const handleSelectConversation = (event) => {
+    event.stopPropagation();
+    onSelectConversation(conversationId);
+  };
+
   return (
-    <Container onClick={onSelectConversation} {...props}>
+    <Container onClick={handleSelectConversation} {...props}>
       {replyCount > 0 && <RepliesDisplay>{Pluralize('reply', replyCount, true)}</RepliesDisplay>}
       <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
       <MessagePreview>The quick brown fox jumps over the lazy dog</MessagePreview>
@@ -86,11 +92,16 @@ const DiscussionsListCell = ({
 };
 
 DiscussionsListCell.propTypes = {
+  conversationId: PropTypes.string.isRequired,
   hover: PropTypes.bool.isRequired,
   lastMessage: PropTypes.object.isRequired,
   messageCount: PropTypes.number.isRequired,
   onSelectConversation: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
+};
+
+DiscussionsListCell.defaultProps = {
+  title: 'Untitled Discussion',
 };
 
 export default withHover(DiscussionsListCell);

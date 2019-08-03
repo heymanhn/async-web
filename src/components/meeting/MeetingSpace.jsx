@@ -59,10 +59,18 @@ class MeetingSpace extends Component {
     this.state = { selectedConversationId: null };
 
     this.handleSelectConversation = this.handleSelectConversation.bind(this);
+    this.findSelectedConversation = this.findSelectedConversation.bind(this);
   }
 
   handleSelectConversation(conversationId) {
     this.setState({ selectedConversationId: conversationId });
+  }
+
+  findSelectedConversation(conversations) {
+    const { selectedConversationId } = this.state;
+
+    if (!selectedConversationId) return conversations[0];
+    return conversations.find(c => c.id === selectedConversationId);
   }
 
   render() {
@@ -78,7 +86,6 @@ class MeetingSpace extends Component {
           if (error || !data.meeting) return <div>{error}</div>;
 
           const { conversations, participants, title } = data.meeting;
-          const selectedConversation = conversations[0]; // TEMPORARY
 
           return (
             <Layout mode="wide" title={title}>
@@ -94,7 +101,7 @@ class MeetingSpace extends Component {
                   />
                 </div>
                 <StyledDiscussionThread
-                  conversationId={selectedConversation.id}
+                  conversation={this.findSelectedConversation(conversations)}
                   meetingId={id}
                 />
               </Container>

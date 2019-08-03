@@ -222,7 +222,6 @@ class Meeting extends Component {
             if (error || !data.meeting) return <div>{error}</div>;
 
             const { author, body, conversations, deadline, participants, title } = data.meeting;
-            const conversationIds = (conversations || []).map(c => c.id);
 
             return (
               <React.Fragment>
@@ -256,14 +255,14 @@ class Meeting extends Component {
                 </MetadataContainer>
                 <DiscussionSection>
                   <InnerContainer>
-                    {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
-                    {conversationIds.map(conversationId => (
+                    {conversations.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
+                    {(conversations || []).map(c => (
                       <Discussion
                         afterSubmit={() => refetch()}
-                        conversationId={conversationId}
-                        forceDisplayModal={cid === conversationId && !isModalInitiallyDisplayed}
+                        conversation={c}
+                        forceDisplayModal={cid === c.id && !isModalInitiallyDisplayed}
                         initialMode="display"
-                        key={conversationId}
+                        key={c.id}
                         meetingId={id}
                         resetDisplayOverride={this.resetDisplayOverride}
                       />
