@@ -114,7 +114,8 @@ const NavBar = ({ mode, title }) => (
           {data.isLoggedIn && (
             <LoggedInMenu>
               <NotificationSystem />
-              <CreateMeetingButton />
+              {/* HN: Hiding the create meeting button until the new creation flow is ready */}
+              {/* <CreateMeetingButton /> */}
               <VerticalDivider />
               <AvatarDropdown />
             </LoggedInMenu>
