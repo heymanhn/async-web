@@ -7,6 +7,7 @@ import meetingQuery from 'graphql/meetingQuery';
 
 import Layout from 'components/Layout';
 import DiscussionsList from './DiscussionsList';
+import DiscussionComposer from './DiscussionComposer';
 import DiscussionThread from './DiscussionThread';
 
 const Container = styled.div(({ theme: { wideViewport } }) => ({
@@ -44,6 +45,12 @@ const PlusSign = styled.div(({ theme: { colors } }) => ({
   marginTop: '-4px',
 }));
 
+const StyledDiscussionComposer = styled(DiscussionComposer)({
+  margin: '0 20px',
+  maxWidth: '700px',
+  width: '700px',
+});
+
 const StyledDiscussionThread = styled(DiscussionThread)(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
@@ -56,10 +63,18 @@ class MeetingSpace extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { selectedConversationId: null };
+    this.state = {
+      isComposing: false,
+      selectedConversationId: null,
+    };
 
+    this.handleCreateDiscussion = this.handleCreateDiscussion.bind(this);
     this.handleSelectConversation = this.handleSelectConversation.bind(this);
     this.findSelectedConversation = this.findSelectedConversation.bind(this);
+  }
+
+  handleCreateDiscussion() {
+    this.setState({ isComposing: true });
   }
 
   handleSelectConversation(conversationId) {
@@ -74,6 +89,7 @@ class MeetingSpace extends Component {
   }
 
   render() {
+    const { isComposing } = this.state;
     const { id } = this.props;
 
     return (
@@ -85,13 +101,14 @@ class MeetingSpace extends Component {
           if (loading && !data) return null;
           if (error || !data.meeting) return <div>{error}</div>;
 
-          const { conversations, participants, title } = data.meeting;
+          const { conversations, title } = data.meeting;
+          const showComposer = isComposing || !conversations;
 
           return (
             <Layout mode="wide" title={title}>
               <Container>
                 <div>
-                  <StartDiscussionButton>
+                  <StartDiscussionButton onClick={this.handleCreateDiscussion}>
                     <ButtonLabel>Start a discussion</ButtonLabel>
                     <PlusSign>+</PlusSign>
                   </StartDiscussionButton>
@@ -100,10 +117,12 @@ class MeetingSpace extends Component {
                     onSelectConversation={this.handleSelectConversation}
                   />
                 </div>
-                <StyledDiscussionThread
-                  conversation={this.findSelectedConversation(conversations)}
-                  meetingId={id}
-                />
+                {showComposer ? <StyledDiscussionComposer /> : (
+                  <StyledDiscussionThread
+                    conversation={this.findSelectedConversation(conversations)}
+                    meetingId={id}
+                  />
+                )}
               </Container>
             </Layout>
           );
