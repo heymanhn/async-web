@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Query } from 'react-apollo';
+import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import meetingQuery from 'graphql/meetingQuery';
@@ -64,13 +64,26 @@ class MeetingSpace extends Component {
     super(props);
 
     this.state = {
+      conversations: null,
       isComposing: false,
       selectedConversationId: null,
+      title: null,
     };
 
     this.handleCreateDiscussion = this.handleCreateDiscussion.bind(this);
     this.handleSelectConversation = this.handleSelectConversation.bind(this);
+    this.fetchMeetingData = this.fetchMeetingData.bind(this);
     this.findSelectedConversation = this.findSelectedConversation.bind(this);
+    this.showCreatedConversation = this.showCreatedConversation.bind(this);
+  }
+
+  async componentDidMount() {
+    const { conversations, title } = await this.fetchMeetingData();
+    this.setState({
+      conversations,
+      selectedConversationId: conversations.length ? conversations[0].id : null,
+      title,
+    });
   }
 
   handleCreateDiscussion() {
@@ -81,59 +94,85 @@ class MeetingSpace extends Component {
     this.setState({ isComposing: false, selectedConversationId: conversationId });
   }
 
+  async fetchMeetingData() {
+    const { client, id } = this.props;
+    const response = await client.query({
+      query: meetingQuery,
+      variables: { id },
+      fetchPolicy: 'no-cache',
+    });
+
+    if (response.data) {
+      const { conversations, title } = response.data.meeting;
+      return { conversations: conversations || [], title: title || 'Untitled Discussion' };
+    }
+
+    return new Error('Error fetching meeting data');
+  }
+
   findSelectedConversation(conversations) {
     const { selectedConversationId } = this.state;
-
-    if (!selectedConversationId) return conversations[0];
     return conversations.find(c => c.id === selectedConversationId);
   }
 
+  async showCreatedConversation(conversationId) {
+    const { conversations, title } = await this.fetchMeetingData();
+
+    this.setState({
+      conversations,
+      isComposing: false,
+      selectedConversationId: conversationId,
+      title,
+    });
+  }
+
   render() {
-    const { isComposing } = this.state;
+    const {
+      conversations,
+      isComposing,
+      selectedConversationId,
+      title,
+    } = this.state;
+
     const { id } = this.props;
+    if (!conversations || !title) return null;
+
+    const showComposer = isComposing || !conversations.length;
 
     return (
-      <Query
-        query={meetingQuery}
-        variables={{ id }}
-      >
-        {({ loading, error, data }) => {
-          if (loading && !data) return null;
-          if (error || !data.meeting) return <div>{error}</div>;
-
-          const { conversations, title } = data.meeting;
-          const showComposer = isComposing || !conversations;
-
-          return (
-            <Layout mode="wide" title={title}>
-              <Container>
-                <div>
-                  <StartDiscussionButton onClick={this.handleCreateDiscussion}>
-                    <ButtonLabel>Start a discussion</ButtonLabel>
-                    <PlusSign>+</PlusSign>
-                  </StartDiscussionButton>
-                  <DiscussionsList
-                    conversations={conversations || []}
-                    onSelectConversation={this.handleSelectConversation}
-                  />
-                </div>
-                {showComposer ? <StyledDiscussionComposer meetingId={id} /> : (
-                  <StyledDiscussionThread
-                    conversation={this.findSelectedConversation(conversations)}
-                    meetingId={id}
-                  />
-                )}
-              </Container>
-            </Layout>
-          );
-        }}
-      </Query>
+      <Layout mode="wide" title={title}>
+        <Container>
+          <div>
+            <StartDiscussionButton onClick={this.handleCreateDiscussion}>
+              <ButtonLabel>Start a discussion</ButtonLabel>
+              <PlusSign>+</PlusSign>
+            </StartDiscussionButton>
+            <DiscussionsList
+              conversations={conversations}
+              onSelectConversation={this.handleSelectConversation}
+              selectedConversationId={selectedConversationId}
+            />
+          </div>
+          {showComposer ? (
+            <StyledDiscussionComposer
+              afterSubmit={this.showCreatedConversation}
+              meetingId={id}
+            />
+          ) : (
+            <StyledDiscussionThread
+              conversation={this.findSelectedConversation(conversations)}
+              meetingId={id}
+            />
+          )}
+        </Container>
+      </Layout>
     );
   }
 }
 
 MeetingSpace.propTypes = {
+  client: PropTypes.object.isRequired,
   id: PropTypes.string.isRequired,
 };
 
-export default MeetingSpace;
+export default withApollo(MeetingSpace);

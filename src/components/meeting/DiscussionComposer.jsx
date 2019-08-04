@@ -91,7 +91,7 @@ class DiscussionComposer extends Component {
     });
 
     if (response.data) {
-      afterSubmit();
+      afterSubmit(response.data.createConversation.id);
       this.setState({ isSubmitting: false });
       return Promise.resolve();
     }

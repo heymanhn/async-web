@@ -8,8 +8,8 @@ import withHover from 'utils/withHover';
 
 import Avatar from 'components/shared/Avatar';
 
-const Container = styled.div(({ hover, theme: { colors } }) => ({
-  background: hover ? colors.lightestBlue : colors.white,
+const Container = styled.div(({ hover, isSelected, theme: { colors } }) => ({
+  background: (hover || isSelected) ? colors.lightestBlue : colors.white,
   borderBottom: `1px solid ${colors.borderGrey}`,
   cursor: 'pointer',
   padding: '18px 30px 20px',
@@ -96,6 +96,7 @@ const DiscussionsListCell = ({
 DiscussionsListCell.propTypes = {
   conversationId: PropTypes.string.isRequired,
   hover: PropTypes.bool.isRequired,
+  isSelected: PropTypes.bool.isRequired,
   lastMessage: PropTypes.object.isRequired,
   messageCount: PropTypes.number.isRequired,
   onSelectConversation: PropTypes.func.isRequired,

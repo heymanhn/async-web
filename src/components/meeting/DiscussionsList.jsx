@@ -10,7 +10,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   marginTop: '15px',
 }));
 
-const DiscussionsList = ({ conversations, onSelectConversation }) => (
+const DiscussionsList = ({ conversations, onSelectConversation, selectedConversationId }) => (
   <Container>
     {conversations.map(c => (
       <DiscussionsListCell
@@ -19,6 +19,7 @@ const DiscussionsList = ({ conversations, onSelectConversation }) => (
         lastMessage={c.lastMessage}
         messageCount={c.messageCount}
         onSelectConversation={onSelectConversation}
+        isSelected={selectedConversationId === c.id}
         title={c.title}
       />
     ))}
@@ -28,6 +29,11 @@ const DiscussionsList = ({ conversations, onSelectConversation }) => (
 DiscussionsList.propTypes = {
   conversations: PropTypes.array.isRequired,
   onSelectConversation: PropTypes.func.isRequired,
+  selectedConversationId: PropTypes.string,
+};
+
+DiscussionsList.defaultProps = {
+  selectedConversationId: null,
 };
 
 export default DiscussionsList;
