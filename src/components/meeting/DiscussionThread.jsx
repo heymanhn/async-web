@@ -6,7 +6,18 @@ import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 
+import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionReply from './DiscussionReply';
+
+const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
+  borderBottom: `1px solid ${colors.borderGrey}`,
+  color: colors.mainText,
+  fontSize: '20px',
+  fontWeight: 500,
+  padding: '20px 30px',
+  width: '100%',
+  outline: 'none',
+}));
 
 const MessagesSection = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -248,6 +259,12 @@ class DiscussionThread extends Component {
 
     return (
       <div {...props}>
+        <TitleEditor
+          contentType="discussionTitle"
+          initialValue={conversation.title}
+          isPlainText
+          mode="display"
+        />
         <MessagesSection>
           {messages.map(m => (
             <ReplyDisplay key={m.id}>
