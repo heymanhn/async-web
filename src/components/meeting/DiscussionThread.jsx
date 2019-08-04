@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
-import conversationQuery from 'graphql/meetingConversationQuery';
+import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 
 import DiscussionReply from './DiscussionReply';
 
@@ -133,16 +133,16 @@ class DiscussionThread extends Component {
   }
 
   async fetchConversationMessages(conversationId) {
-    const { client, meetingId } = this.props;
+    const { client } = this.props;
     const response = await client.query({
-      query: conversationQuery,
-      variables: { conversationId, meetingId },
+      query: conversationMessagesQuery,
+      variables: { id: conversationId },
       fetchPolicy: 'no-cache',
     });
 
     if (response.data) {
-      const { messages: items, messageCount } = response.data.conversation;
-      return { messages: (items || []), messageCount };
+      const { items, messageCount } = response.data.conversationMessagesQuery;
+      return { messages: (items || []).map(i => i.message), messageCount };
     }
 
     return new Error('Error fetching conversation messages');
