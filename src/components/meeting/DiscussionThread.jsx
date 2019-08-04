@@ -261,7 +261,7 @@ class DiscussionThread extends Component {
       <div {...props}>
         <TitleEditor
           contentType="discussionTitle"
-          initialValue={conversation.title}
+          initialValue={conversation.title || 'Untitled Discussion'}
           isPlainText
           mode="display"
         />

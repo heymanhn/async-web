@@ -323,7 +323,7 @@ class RovalEditor extends Component {
 
   render() {
     const { value } = this.state;
-    const { mode, contentType, ...props } = this.props;
+    const { contentType, isSubmitting, mode, ...props } = this.props;
     if (!value) return null;
 
     return (
@@ -351,6 +351,7 @@ class RovalEditor extends Component {
         {this.isEditOrComposeMode() && (
           <EditorActions
             contentType={contentType}
+            isSubmitting={isSubmitting}
             isSubmitDisabled={this.isValueEmpty()}
             mode={mode}
             onCancel={this.handleCancel}
@@ -371,6 +372,7 @@ RovalEditor.propTypes = {
   ]).isRequired,
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
+  isSubmitting: PropTypes.bool,
   mode: PropTypes.string,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
@@ -380,6 +382,7 @@ RovalEditor.propTypes = {
 RovalEditor.defaultProps = {
   initialValue: null,
   isPlainText: false,
+  isSubmitting: false,
   mode: null,
   onCancel: () => {},
   onSubmit: () => {},

@@ -69,6 +69,7 @@ class DiscussionComposer extends Component {
   }
 
   async handleCreate({ payload, text }) {
+    this.setState({ isSubmitting: true });
     const { title } = this.state;
     const { client, meetingId: id, afterSubmit } = this.props;
 
@@ -91,6 +92,7 @@ class DiscussionComposer extends Component {
 
     if (response.data) {
       afterSubmit();
+      this.setState({ isSubmitting: false });
       return Promise.resolve();
     }
 
@@ -124,6 +126,7 @@ class DiscussionComposer extends Component {
           saveOnBlur
         />
         <DiscussionEditor
+          isSubmitting={isSubmitting}
           mode="compose"
           onCancel={onCancelCompose}
           onSubmit={this.handleCreate}
