@@ -78,7 +78,7 @@ class MeetingSpace extends Component {
   }
 
   handleSelectConversation(conversationId) {
-    this.setState({ selectedConversationId: conversationId });
+    this.setState({ isComposing: false, selectedConversationId: conversationId });
   }
 
   findSelectedConversation(conversations) {
@@ -117,7 +117,7 @@ class MeetingSpace extends Component {
                     onSelectConversation={this.handleSelectConversation}
                   />
                 </div>
-                {showComposer ? <StyledDiscussionComposer /> : (
+                {showComposer ? <StyledDiscussionComposer meetingId={id} /> : (
                   <StyledDiscussionThread
                     conversation={this.findSelectedConversation(conversations)}
                     meetingId={id}

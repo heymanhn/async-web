@@ -364,9 +364,8 @@ class RovalEditor extends Component {
 
 RovalEditor.propTypes = {
   contentType: PropTypes.oneOf([
-    'meetingTitle',
-    'meetingDetails',
-    'topic',
+    'discussion',
+    'discussionTitle',
     'modalTopic',
     'modalReply',
   ]).isRequired,

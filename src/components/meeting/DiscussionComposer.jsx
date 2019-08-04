@@ -26,6 +26,7 @@ const DiscussionEditor = styled(RovalEditor)({
   fontSize: '16px',
   lineHeight: '25px',
   fontWeight: 400,
+  minHeight: '250px',
   padding: '20px 30px',
 
   // HN: opportunity to DRY these up later once we find a pattern of typography
@@ -96,8 +97,13 @@ class DiscussionComposer extends Component {
     return Promise.reject(new Error('Failed to create discussion topic'));
   }
 
-  handleSaveTitle({ text }) {
-    this.setState({ title: text });
+  async handleSaveTitle({ text }) {
+    const { title } = this.state;
+
+    // HACK due to https://github.com/ianstormtaylor/slate/issues/2434
+    if (title !== text) setTimeout(() => this.setState({ title: text }), 0);
+
+    return Promise.resolve();
   }
 
   render() {
@@ -112,12 +118,13 @@ class DiscussionComposer extends Component {
     return (
       <Container {...props}>
         <TitleEditor
-          isPlainText
-          onSubmit={this.saveTitle}
           contentType="discussionTitle"
+          isPlainText
+          onSubmit={this.handleSaveTitle}
           saveOnBlur
         />
         <DiscussionEditor
+          mode="compose"
           onCancel={onCancelCompose}
           onSubmit={this.handleCreate}
           contentType="discussion"

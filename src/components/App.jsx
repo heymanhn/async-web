@@ -18,7 +18,6 @@ import Home from 'components/homepage/Home';
 import Auth from 'components/Auth';
 import PrivateRoute from 'components/PrivateRoute';
 import Inbox from 'components/inbox/Inbox';
-import Meeting from 'components/meeting/Meeting';
 import MeetingSpace from 'components/meeting/MeetingSpace';
 
 const restLink = new RestLink({
