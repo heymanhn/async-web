@@ -128,10 +128,12 @@ class DiscussionComposer extends Component {
         <TitleEditor
           contentType="discussionTitle"
           isPlainText
+          mode="compose"
           onSubmit={this.handleSaveTitle}
           saveOnBlur
         />
         <DiscussionEditor
+          disableAutoFocus
           isSubmitting={isSubmitting}
           mode="compose"
           onCancel={onCancelCompose}

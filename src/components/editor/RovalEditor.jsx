@@ -324,13 +324,20 @@ class RovalEditor extends Component {
 
   render() {
     const { value } = this.state;
-    const { contentType, isSubmitting, mode, ...props } = this.props;
+    const {
+      contentType,
+      disableAutoFocus,
+      isPlainText,
+      isSubmitting,
+      mode,
+      ...props
+    } = this.props;
     if (!value) return null;
 
     return (
       <div>
         <StyledEditor
-          autoFocus={this.isEditOrComposeMode()}
+          autoFocus={!disableAutoFocus && this.isEditOrComposeMode()}
           commands={commands}
           onBlur={this.handleSubmitOnBlur}
           onChange={this.handleChangeValue}
@@ -349,7 +356,7 @@ class RovalEditor extends Component {
           value={value}
           {...props}
         />
-        {this.isEditOrComposeMode() && (
+        {this.isEditOrComposeMode() && !isPlainText && (
           <EditorActions
             contentType={contentType}
             isSubmitting={isSubmitting}
@@ -371,6 +378,7 @@ RovalEditor.propTypes = {
     'modalTopic',
     'modalReply',
   ]).isRequired,
+  disableAutoFocus: PropTypes.bool,
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
   isSubmitting: PropTypes.bool,
@@ -381,6 +389,7 @@ RovalEditor.propTypes = {
 };
 
 RovalEditor.defaultProps = {
+  disableAutoFocus: false,
   initialValue: null,
   isPlainText: false,
   isSubmitting: false,
