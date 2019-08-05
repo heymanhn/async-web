@@ -222,7 +222,7 @@ class RovalEditor extends Component {
   // Parent components give us a method to perform the mutation; we give them the data to persist.
   async handleSubmit({ keepOpen = false } = {}) {
     const { value } = this.state;
-    const { mode, onSubmit } = this.props;
+    const { isPlainText, mode, onSubmit } = this.props;
     if (this.isValueEmpty()) return;
 
     const text = Plain.serialize(value);
@@ -230,7 +230,7 @@ class RovalEditor extends Component {
 
     await onSubmit({ text, payload });
 
-    if (mode === 'compose') this.clearEditorValue();
+    if (mode === 'compose' && !isPlainText) this.clearEditorValue();
     if (mode === 'edit' || !keepOpen) this.handleCancel({ saved: true });
     if (keepOpen) this.editor.current.focus();
   }
