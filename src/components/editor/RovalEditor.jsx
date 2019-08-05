@@ -309,9 +309,10 @@ class RovalEditor extends Component {
 
   updateToolbar() {
     const { isClicked, isToolbarVisible, value } = this.state;
+    const { isPlainText } = this.props;
     const { fragment, selection } = value;
 
-    if (!isClicked) return;
+    if (!isClicked || isPlainText) return;
 
     if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
       if (isToolbarVisible) this.setState({ isToolbarVisible: false });

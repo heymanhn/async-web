@@ -4,6 +4,7 @@ import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import createConversationMutation from 'graphql/createConversationMutation';
+import meetingQuery from 'graphql/meetingQuery';
 
 import RovalEditor from 'components/editor/RovalEditor';
 
@@ -88,6 +89,11 @@ class DiscussionComposer extends Component {
           }],
         },
       },
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id },
+      }],
+      awaitRefetchQueries: true,
     });
 
     if (response.data) {
