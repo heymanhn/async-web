@@ -152,7 +152,7 @@ class MeetingSpace extends Component {
                     <DiscussionsList
                       conversations={conversations || []}
                       onSelectConversation={this.handleSelectConversation}
-                      selectedConversationId={selectedConversationId}
+                      selectedConversationId={isComposing ? null : selectedConversationId}
                     />
                   </DiscussionsContainer>
                 </div>
