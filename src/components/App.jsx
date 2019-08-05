@@ -14,12 +14,11 @@ import snake_case from 'snake-case';
 import { getAuthHeader, isLocalTokenPresent } from 'utils/auth';
 import getBreakpoint from 'utils/mediaQuery';
 
-import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
 import Auth from 'components/Auth';
 import PrivateRoute from 'components/PrivateRoute';
 import Inbox from 'components/inbox/Inbox';
-import Meeting from 'components/meeting/Meeting';
+import MeetingSpace from 'components/meeting/MeetingSpace';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -62,22 +61,24 @@ cache.writeData({ data: generateDefaultData() });
 client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaultData() })));
 
 const App = () => (
-  <Layout>
-    {/* Setting primary prop to `false` per: */}
-    {/* https://stackoverflow.com/questions/53058110/stop-reach-router-scrolling-down-the-page-after-navigating-to-new-page */}
-    <Router primary={false}>
-      <Home path="/" />
+  // Setting primary prop to `false` per:
+  // https://stackoverflow.com/questions/53058110/stop-reach-router-scrolling-down-the-page-after-navigating-to-new-page
+  <Router primary={false}>
+    <Home path="/" />
 
-      {/* Temporary login route */}
-      <Auth path="/login" />
+    {/* Temporary login route */}
+    <Auth path="/login" />
 
-      <PrivateRoute path="/inbox" component={Inbox} />
-      <PrivateRoute path="/meetings/:id" component={Meeting} />
-      <PrivateRoute path="/meetings/:id/conversations/:cid" component={Meeting} />
+    <PrivateRoute path="/inbox" component={Inbox} />
 
-      {/* <NotFound default /> */}
-    </Router>
-  </Layout>
+    <PrivateRoute path="/spaces/:id" component={MeetingSpace} />
+    <PrivateRoute path="/spaces/:id/conversations/:cid" component={MeetingSpace} />
+
+    {/* TODO */}
+    <PrivateRoute path="/spaces/:id/conversations/:cid/messages/:mid" component={MeetingSpace} />
+
+    {/* <NotFound default /> */}
+  </Router>
 );
 
 const ApolloApp = () => (

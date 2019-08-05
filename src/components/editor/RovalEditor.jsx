@@ -222,7 +222,7 @@ class RovalEditor extends Component {
   // Parent components give us a method to perform the mutation; we give them the data to persist.
   async handleSubmit({ keepOpen = false } = {}) {
     const { value } = this.state;
-    const { mode, onSubmit } = this.props;
+    const { isPlainText, mode, onSubmit } = this.props;
     if (this.isValueEmpty()) return;
 
     const text = Plain.serialize(value);
@@ -230,7 +230,7 @@ class RovalEditor extends Component {
 
     await onSubmit({ text, payload });
 
-    if (mode === 'compose') this.clearEditorValue();
+    if (mode === 'compose' && !isPlainText) this.clearEditorValue();
     if (mode === 'edit' || !keepOpen) this.handleCancel({ saved: true });
     if (keepOpen) this.editor.current.focus();
   }
@@ -309,9 +309,10 @@ class RovalEditor extends Component {
 
   updateToolbar() {
     const { isClicked, isToolbarVisible, value } = this.state;
+    const { isPlainText } = this.props;
     const { fragment, selection } = value;
 
-    if (!isClicked) return;
+    if (!isClicked || isPlainText) return;
 
     if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
       if (isToolbarVisible) this.setState({ isToolbarVisible: false });
@@ -323,13 +324,20 @@ class RovalEditor extends Component {
 
   render() {
     const { value } = this.state;
-    const { mode, contentType, ...props } = this.props;
+    const {
+      contentType,
+      disableAutoFocus,
+      isPlainText,
+      isSubmitting,
+      mode,
+      ...props
+    } = this.props;
     if (!value) return null;
 
     return (
       <div>
         <StyledEditor
-          autoFocus={this.isEditOrComposeMode()}
+          autoFocus={!disableAutoFocus && this.isEditOrComposeMode()}
           commands={commands}
           onBlur={this.handleSubmitOnBlur}
           onChange={this.handleChangeValue}
@@ -348,9 +356,10 @@ class RovalEditor extends Component {
           value={value}
           {...props}
         />
-        {this.isEditOrComposeMode() && (
+        {this.isEditOrComposeMode() && !isPlainText && (
           <EditorActions
             contentType={contentType}
+            isSubmitting={isSubmitting}
             isSubmitDisabled={this.isValueEmpty()}
             mode={mode}
             onCancel={this.handleCancel}
@@ -364,14 +373,15 @@ class RovalEditor extends Component {
 
 RovalEditor.propTypes = {
   contentType: PropTypes.oneOf([
-    'meetingTitle',
-    'meetingDetails',
-    'topic',
+    'discussion',
+    'discussionTitle',
     'modalTopic',
     'modalReply',
   ]).isRequired,
+  disableAutoFocus: PropTypes.bool,
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
+  isSubmitting: PropTypes.bool,
   mode: PropTypes.string,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
@@ -379,8 +389,10 @@ RovalEditor.propTypes = {
 };
 
 RovalEditor.defaultProps = {
+  disableAutoFocus: false,
   initialValue: null,
   isPlainText: false,
+  isSubmitting: false,
   mode: null,
   onCancel: () => {},
   onSubmit: () => {},

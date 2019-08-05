@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import { Link } from '@reach/router';
 import styled from '@emotion/styled';
@@ -7,28 +8,29 @@ import logo from 'images/logo.png';
 import isLoggedInQuery from 'graphql/isLoggedInQuery';
 
 import NotificationSystem from 'components/notifications/NotificationSystem';
+import MeetingProperties from 'components/meeting/MeetingProperties';
 import AvatarDropdown from './AvatarDropdown';
-import CreateMeetingButton from './CreateMeetingButton';
+// import CreateMeetingButton from './CreateMeetingButton';
 
-const NavigationBar = styled.div({
+const NavigationBar = styled.div(({ theme: { colors } }) => ({
   position: 'sticky',
   top: 0,
   zIndex: 1049, // The modal windows are at z-index 1050
 
-  background: 'rgba(255, 255, 255, 0.98)',
-  boxShadow: '0px 1px 5px rgba(0, 0, 0, 0.08)',
+  background: colors.white,
+  borderBottom: `1px solid ${colors.borderGrey}`,
   margin: '0px auto',
   width: '100%',
-});
+}));
 
-const Container = styled.div(({ theme: { maxViewport } }) => ({
+const Container = styled.div(({ mode, theme: { maxViewport, wideViewport } }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
 
   // We'll care about custom media query dimensions later
   minHeight: '70px',
-  maxWidth: maxViewport,
+  maxWidth: mode === 'wide' ? wideViewport : maxViewport,
 
   margin: '0 auto',
   padding: '0 20px',
@@ -44,6 +46,12 @@ const Container = styled.div(({ theme: { maxViewport } }) => ({
   },
 }));
 
+const LeftContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+});
+
 const LogoImage = styled.img(({ theme: { mq } }) => ({
   height: '30px',
   width: 'auto',
@@ -55,11 +63,9 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
   },
 }));
 
-const LogoTitle = styled.span({
+const Title = styled.div({
   fontSize: '18px',
   fontWeight: 500,
-  position: 'relative',
-  top: '2px',
 });
 
 const SavedIndicator = styled.span(({ theme: { colors } }) => ({
@@ -93,12 +99,12 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 10px',
 }));
 
-const NavBar = () => (
+const NavBar = ({ meetingId, mode, title }) => (
   <Query query={isLoggedInQuery}>
     {({ data }) => (
       <NavigationBar>
-        <Container>
-          <div>
+        <Container mode={mode}>
+          <LeftContainer>
             <Link to="/inbox">
               <LogoImage
                 src={logo}
@@ -106,14 +112,16 @@ const NavBar = () => (
                 title="Roval"
               />
             </Link>
-            <LogoTitle>Roval</LogoTitle>
+            <Title>{title}</Title>
+            {meetingId && <MeetingProperties meetingId={meetingId} />}
             {data.saveStatus === 'success' && <SavedIndicator>Saved!</SavedIndicator>}
             {data.saveStatus === 'error' && <ErrorIndicator>Failed to save</ErrorIndicator>}
-          </div>
+          </LeftContainer>
           {data.isLoggedIn && (
             <LoggedInMenu>
               <NotificationSystem />
-              <CreateMeetingButton />
+              {/* HN: Hiding the create meeting button until the new creation flow is ready */}
+              {/* <CreateMeetingButton /> */}
               <VerticalDivider />
               <AvatarDropdown />
             </LoggedInMenu>
@@ -123,5 +131,15 @@ const NavBar = () => (
     )}
   </Query>
 );
+
+NavBar.propTypes = {
+  meetingId: PropTypes.string,
+  mode: PropTypes.oneOf(['normal', 'wide']).isRequired,
+  title: PropTypes.string.isRequired,
+};
+
+NavBar.defaultProps = {
+  meetingId: null,
+};
 
 export default NavBar;

@@ -1,22 +1,20 @@
 // HN: Future me, please find a way to DRY this up with <ContentToolbar />
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Spinner } from 'reactstrap';
 import styled from '@emotion/styled';
 
 const heights = {
-  topic: '52px',
+  discussion: '52px',
   modalTopic: '52px',
   modalReply: '32px',
 };
 
 const layouts = {
-  topic: ({ colors }) => ({
-    borderRadius: '0 0 5px 5px',
+  discussion: ({ colors }) => ({
     borderTop: `1px solid ${colors.borderGrey}`,
-    margin: '20px -17px 0 -69px',
-    minHeight: heights.topic,
-    position: 'relative',
-    left: '3px',
+    marginTop: '7px',
+    minHeight: heights.discussion,
   }),
   modalTopic: ({ colors }) => ({
     borderTop: `1px solid ${colors.borderGrey}`,
@@ -72,7 +70,6 @@ const ButtonContainer = styled.div(({ contentType, isDisabled, theme: { colors }
 }), ({ contentType, type }) => {
   if (type !== 'save') return {};
   if (contentType === 'modalReply') return { borderRadius: '5px 0 0 5px' };
-  if (contentType === 'topic') return { borderRadius: '0 0 0 5px' };
   return {};
 });
 
@@ -82,6 +79,15 @@ const PlusSign = styled.div({
   position: 'relative',
   top: '-1px',
 });
+
+const StyledSpinner = styled(Spinner)(({ theme: { colors } }) => ({
+  border: `.05em solid ${colors.blue}`,
+  borderRightColor: 'transparent',
+  width: '12px',
+  height: '12px',
+  marginRight: '8px',
+  marginTop: '1px',
+}));
 
 const ButtonText = styled.div(({ contentType }) => ({
   fontSize: contentType === 'modalReply' ? '13px' : '14px',
@@ -93,9 +99,16 @@ const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
   margin: 0,
 }));
 
-const EditorActions = ({ contentType, isSubmitDisabled, mode, onCancel, onSubmit }) => {
+const EditorActions = ({
+  contentType,
+  isSubmitDisabled,
+  isSubmitting,
+  mode,
+  onCancel,
+  onSubmit,
+}) => {
   const generateSaveButtonText = () => {
-    const subject = contentType === 'modalReply' ? 'Reply' : 'Topic';
+    const subject = contentType === 'modalReply' ? 'Reply' : 'Discussion';
     const verb = mode === 'compose' ? 'Post' : 'Save';
 
     return `${verb} ${subject}`;
@@ -119,7 +132,8 @@ const EditorActions = ({ contentType, isSubmitDisabled, mode, onCancel, onSubmit
         onClick={handleSubmit}
         type="save"
       >
-        {mode === 'compose' && <PlusSign>+</PlusSign>}
+        {!isSubmitting && mode === 'compose' && <PlusSign>+</PlusSign>}
+        {isSubmitting && mode === 'compose' && <StyledSpinner />}
         <ButtonText contentType={contentType}>{generateSaveButtonText()}</ButtonText>
       </ButtonContainer>
       <VerticalDivider contentType={contentType} />
@@ -159,8 +173,9 @@ const EditorActions = ({ contentType, isSubmitDisabled, mode, onCancel, onSubmit
 };
 
 EditorActions.propTypes = {
-  contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
+  contentType: PropTypes.oneOf(['discussion', 'modalTopic', 'modalReply']).isRequired,
   isSubmitDisabled: PropTypes.bool.isRequired,
+  isSubmitting: PropTypes.bool.isRequired,
   mode: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,

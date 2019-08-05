@@ -10,8 +10,9 @@ import withPageTracking from 'utils/withPageTracking';
 import meetingQuery from 'graphql/meetingQuery';
 import updateMeetingMutation from 'graphql/updateMeetingMutation';
 
+import Layout from 'components/Layout';
 import RovalEditor from 'components/editor/RovalEditor';
-import DiscussionTopic from './DiscussionTopic';
+import Discussion from './Discussion';
 import ParticipantsSelector from './ParticipantsSelector';
 
 const MetadataContainer = styled.div(({ theme: { colors } }) => ({
@@ -211,75 +212,76 @@ class Meeting extends Component {
     );
 
     return (
-      <Query
-        query={meetingQuery}
-        variables={{ id }}
-      >
-        {({ loading, error, data, refetch }) => {
-          if (loading && !data) return null;
-          if (error || !data.meeting) return <div>{error}</div>;
+      <Layout>
+        <Query
+          query={meetingQuery}
+          variables={{ id }}
+        >
+          {({ loading, error, data, refetch }) => {
+            if (loading && !data) return null;
+            if (error || !data.meeting) return <div>{error}</div>;
 
-          const { author, body, conversations, deadline, participants, title } = data.meeting;
-          const conversationIds = (conversations || []).map(c => c.id);
+            const { author, body, conversations, deadline, participants, title } = data.meeting;
 
-          return (
-            <React.Fragment>
-              <MetadataContainer>
-                <MetadataSection>
-                  <TitleEditor
-                    initialValue={title}
-                    isPlainText
-                    onSubmit={this.handleSubmitTitle}
-                    saveOnBlur
-                    contentType="meetingTitle"
-                  />
-                  <InfoContainer>
-                    <ParticipantsSelector
-                      authorId={author.id}
-                      meetingId={id}
-                      participants={participants.map(p => p.user)}
+            return (
+              <React.Fragment>
+                <MetadataContainer>
+                  <MetadataSection>
+                    <TitleEditor
+                      initialValue={title}
+                      isPlainText
+                      onSubmit={this.handleSubmitTitle}
+                      saveOnBlur
+                      contentType="meetingTitle"
                     />
-                    <DeadlineSelector>
-                      <DeadlineTitle>DUE DATE</DeadlineTitle>
-                      <Timestamp format="MMM D, YYYY" parse="X">{deadline}</Timestamp>
-                    </DeadlineSelector>
-                  </InfoContainer>
-                  <DetailsEditor
-                    initialValue={body ? body.payload : null}
-                    onSubmit={this.handleSubmitDetails}
-                    saveOnBlur
-                    contentType="meetingDetails"
-                  />
-                </MetadataSection>
-              </MetadataContainer>
-              <DiscussionSection>
-                <InnerContainer>
-                  {conversationIds.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
-                  {conversationIds.map(conversationId => (
-                    <DiscussionTopic
-                      afterSubmit={() => refetch()}
-                      conversationId={conversationId}
-                      forceDisplayModal={cid === conversationId && !isModalInitiallyDisplayed}
-                      initialMode="display"
-                      key={conversationId}
-                      meetingId={id}
-                      resetDisplayOverride={this.resetDisplayOverride}
+                    <InfoContainer>
+                      <ParticipantsSelector
+                        authorId={author.id}
+                        meetingId={id}
+                        participants={participants.map(p => p.user)}
+                      />
+                      <DeadlineSelector>
+                        <DeadlineTitle>DUE DATE</DeadlineTitle>
+                        <Timestamp format="MMM D, YYYY" parse="X">{deadline}</Timestamp>
+                      </DeadlineSelector>
+                    </InfoContainer>
+                    <DetailsEditor
+                      initialValue={body ? body.payload : null}
+                      onSubmit={this.handleSubmitDetails}
+                      saveOnBlur
+                      contentType="meetingDetails"
                     />
-                  ))}
-                  {!isComposingTopic ? addDiscussionButton : (
-                    <DiscussionTopic
-                      afterSubmit={() => refetch()}
-                      initialMode="compose"
-                      meetingId={id}
-                      onCancelCompose={this.toggleComposeMode}
-                    />
-                  )}
-                </InnerContainer>
-              </DiscussionSection>
-            </React.Fragment>
-          );
-        }}
-      </Query>
+                  </MetadataSection>
+                </MetadataContainer>
+                <DiscussionSection>
+                  <InnerContainer>
+                    {conversations.length > 0 && <DiscussionsLabel>DISCUSSION</DiscussionsLabel>}
+                    {(conversations || []).map(c => (
+                      <Discussion
+                        afterSubmit={() => refetch()}
+                        conversation={c}
+                        forceDisplayModal={cid === c.id && !isModalInitiallyDisplayed}
+                        initialMode="display"
+                        key={c.id}
+                        meetingId={id}
+                        resetDisplayOverride={this.resetDisplayOverride}
+                      />
+                    ))}
+                    {!isComposingTopic ? addDiscussionButton : (
+                      <Discussion
+                        afterSubmit={() => refetch()}
+                        initialMode="compose"
+                        meetingId={id}
+                        onCancelCompose={this.toggleComposeMode}
+                      />
+                    )}
+                  </InnerContainer>
+                </DiscussionSection>
+              </React.Fragment>
+            );
+          }}
+        </Query>
+      </Layout>
     );
   }
 }

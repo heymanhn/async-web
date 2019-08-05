@@ -175,6 +175,7 @@ export const plugins = {
   meetingTitle: [
     createPlaceholderPlugin('Untitled Meeting', theme.colors.titlePlaceholder),
   ],
+  // NOTE: Not used anymore, for now
   meetingDetails: [
     PasteLinkify(),
     SoftBreak({ shift: true }),
@@ -184,11 +185,15 @@ export const plugins = {
     ),
     ...markdownPlugins,
   ],
-  topic: [
+
+  discussionTitle: [
+    createPlaceholderPlugin('Untitled Discussion', theme.colors.titlePlaceholder),
+  ],
+  discussion: [
     PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(
-      'Share your perspective. Shift + Enter to add another topic',
+      'Share your perspective with others in this meeting. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
     ...markdownPlugins,

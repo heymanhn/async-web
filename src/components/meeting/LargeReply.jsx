@@ -24,6 +24,7 @@ const Header = styled.div({
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+  position: 'relative',
 });
 
 const AuthorSection = styled.div({
@@ -79,7 +80,7 @@ const TopicEditor = styled(RovalEditor)({
 
 const StyledHoverMenu = styled(HoverMenu)({
   position: 'absolute',
-  right: '30px',
+  right: '0px',
 });
 
 const LargeReply = ({

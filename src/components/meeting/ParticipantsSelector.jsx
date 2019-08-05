@@ -35,7 +35,15 @@ const Container = styled.div(({ theme: { colors } }) => ({
     borderBottom: 'none',
     borderRadius: '5px 5px 0 0',
   },
-}));
+}), ({ alwaysOpen, theme: { colors } }) => {
+  if (!alwaysOpen) return {};
+  return {
+    background: colors.white,
+    border: `1px solid ${colors.borderGrey}`,
+    boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.05)',
+    padding: '14px',
+  };
+});
 
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
@@ -77,7 +85,7 @@ class ParticipantsSelector extends Component {
 
     this.state = {
       members: [],
-      isOpen: false,
+      isOpen: props.alwaysOpen,
     };
 
     this.handleAction = this.handleAction.bind(this);
@@ -106,14 +114,16 @@ class ParticipantsSelector extends Component {
 
   handleClose() {
     const { isOpen } = this.state;
-    if (!isOpen) return;
+    const { alwaysOpen } = this.props;
+    if (!isOpen || alwaysOpen) return;
 
     this.setState({ isOpen: false });
   }
 
   handleOpen() {
     const { isOpen } = this.state;
-    if (isOpen) return;
+    const { alwaysOpen } = this.props;
+    if (isOpen || alwaysOpen) return;
 
     this.setState({ isOpen: true });
   }
@@ -191,7 +201,7 @@ class ParticipantsSelector extends Component {
 
   render() {
     const { isOpen } = this.state;
-    const { authorId, participants } = this.props;
+    const { authorId, participants, ...props } = this.props;
     const members = this.sortMembers();
 
     return (
@@ -201,6 +211,7 @@ class ParticipantsSelector extends Component {
         onClick={this.handleOpen}
         onFocus={this.handleOpen}
         tabIndex={0}
+        {...props}
       >
         <div>
           <Title>PARTICIPANTS</Title>
@@ -231,10 +242,15 @@ class ParticipantsSelector extends Component {
 }
 
 ParticipantsSelector.propTypes = {
+  alwaysOpen: PropTypes.bool,
   authorId: PropTypes.string.isRequired,
   client: PropTypes.object.isRequired,
   meetingId: PropTypes.string.isRequired,
   participants: PropTypes.array.isRequired,
+};
+
+ParticipantsSelector.defaultProps = {
+  alwaysOpen: false,
 };
 
 export default withApollo(ParticipantsSelector);

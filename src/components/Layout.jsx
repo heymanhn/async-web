@@ -1,6 +1,5 @@
-/* eslint react/prop-types: 0 */
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
@@ -11,15 +10,7 @@ import NavBar from 'components/navigation/NavBar';
 import GlobalStyles from 'components/style/GlobalStyles';
 import Theme from 'components/style/Theme';
 
-const Container = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-});
-
-const Content = styled.div({
-  flexGrow: 1,
-});
+const Container = styled.div({});
 
 const Footer = styled.footer(({ theme: { colors, mq } }) => ({
   background: colors.bgGrey,
@@ -65,23 +56,43 @@ class Layout extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, hideFooter, meetingId, mode, title } = this.props;
 
     return (
       <Theme>
         <GlobalStyles />
         <Container>
-          <NavBar />
-          <Content>
-            {children}
-          </Content>
-          <Footer>
-            <Copyright>Copyright © Roval</Copyright>
-          </Footer>
+          <NavBar
+            meetingId={meetingId}
+            mode={mode}
+            title={title}
+          />
+          {children}
+          {!hideFooter && (
+            <Footer>
+              <Copyright>Copyright © Roval</Copyright>
+            </Footer>
+          )}
         </Container>
       </Theme>
     );
   }
 }
+
+Layout.propTypes = {
+  children: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
+  hideFooter: PropTypes.bool,
+  meetingId: PropTypes.string,
+  mode: PropTypes.oneOf(['normal', 'wide']),
+  title: PropTypes.string,
+};
+
+Layout.defaultProps = {
+  hideFooter: false,
+  meetingId: null,
+  mode: 'normal',
+  title: '',
+};
 
 export default withApollo(Layout);

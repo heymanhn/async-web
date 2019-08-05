@@ -12,6 +12,7 @@ import fakeAuthQuery from 'graphql/fakeAuthQuery'; // Temporary, for the prototy
 import isLoggedInQuery from 'graphql/isLoggedInQuery';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
+import Layout from 'components/Layout';
 
 const Container = styled.div(({ theme: { containerMargin, maxViewport } }) => ({
   margin: containerMargin,
@@ -28,6 +29,8 @@ class Auth extends Component {
       error: false,
       loading: true,
     };
+
+    this.renderContents = this.renderContents.bind(this);
   }
 
   async componentDidMount() {
@@ -64,12 +67,23 @@ class Auth extends Component {
     }
   }
 
-  render() {
+  renderContents() {
     const { error, loading, params } = this.state;
-    if (loading) return <Container><LoadingIndicator color="grey5" /></Container>;
-    if (error || !params || !params.email) return <Container>Cannot log in</Container>;
 
-    return <Container>Logged in successfully</Container>;
+    if (loading) return <LoadingIndicator color="grey5" />;
+    if (error || !params || !params.email) return 'Cannot log in';
+
+    return 'Logged in successfully';
+  }
+
+  render() {
+    return (
+      <Layout>
+        <Container>
+          {this.renderContents()}
+        </Container>
+      </Layout>
+    );
   }
 }
 

@@ -14,7 +14,7 @@ import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
 import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
-import DiscussionTopicModal from './DiscussionTopicModal';
+import DiscussionModal from './DiscussionModal';
 import HoverMenu from './HoverMenu';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
@@ -101,7 +101,7 @@ const StyledHoverMenu = styled(HoverMenu)({
   right: '0px',
 });
 
-class DiscussionTopic extends Component {
+class Discussion extends Component {
   constructor(props) {
     super(props);
 
@@ -256,7 +256,7 @@ class DiscussionTopic extends Component {
     this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
   }
 
-  // HN: this is the same as DiscussionTopicReply, can be DRY'ed up in a HOC
+  // HN: this is the same as DiscussionReply, can be DRY'ed up in a HOC
   handleCancel() {
     const { onCancelCompose } = this.props;
     const { mode } = this.state;
@@ -333,13 +333,11 @@ class DiscussionTopic extends Component {
           />
         )}
         {conversationId && (
-          <DiscussionTopicModal
+          <DiscussionModal
             author={author}
             conversationId={conversationId}
             isOpen={isModalVisible}
             meetingId={meetingId}
-            messages={messages}
-            messageCount={messageCount}
             toggle={this.toggleModal}
           />
         )}
@@ -348,7 +346,7 @@ class DiscussionTopic extends Component {
   }
 }
 
-DiscussionTopic.propTypes = {
+Discussion.propTypes = {
   afterSubmit: PropTypes.func,
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string,
@@ -360,7 +358,7 @@ DiscussionTopic.propTypes = {
   resetDisplayOverride: PropTypes.func,
 };
 
-DiscussionTopic.defaultProps = {
+Discussion.defaultProps = {
   afterSubmit: () => {},
   conversationId: null,
   forceDisplayModal: false,
@@ -369,4 +367,4 @@ DiscussionTopic.defaultProps = {
   resetDisplayOverride: () => {},
 };
 
-export default withApollo(withHover(DiscussionTopic));
+export default withApollo(withHover(Discussion));

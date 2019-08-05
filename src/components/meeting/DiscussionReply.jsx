@@ -5,13 +5,14 @@ import { withApollo } from 'react-apollo';
 import currentUserQuery from 'graphql/currentUserQuery';
 import createConversationMutation from 'graphql/createConversationMutation';
 import createConversationMessageMutation from 'graphql/createConversationMessageMutation';
+import meetingQuery from 'graphql/meetingQuery';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { getLocalUser } from 'utils/auth';
 
 import LargeReply from './LargeReply';
 import SmallReply from './SmallReply';
 
-class DiscussionTopicReply extends Component {
+class DiscussionReply extends Component {
   constructor(props) {
     super(props);
 
@@ -65,6 +66,10 @@ class DiscussionTopicReply extends Component {
           },
         },
       },
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id: meetingId },
+      }],
     });
 
     if (response.data) {
@@ -166,7 +171,7 @@ class DiscussionTopicReply extends Component {
   }
 }
 
-DiscussionTopicReply.propTypes = {
+DiscussionReply.propTypes = {
   afterSubmit: PropTypes.func,
   client: PropTypes.object.isRequired,
   conversationId: PropTypes.string,
@@ -179,7 +184,7 @@ DiscussionTopicReply.propTypes = {
   size: PropTypes.oneOf(['small', 'large']),
 };
 
-DiscussionTopicReply.defaultProps = {
+DiscussionReply.defaultProps = {
   afterSubmit: () => {},
   conversationId: null,
   focusedMessage: null,
@@ -190,4 +195,4 @@ DiscussionTopicReply.defaultProps = {
   size: 'small',
 };
 
-export default withApollo(DiscussionTopicReply);
+export default withApollo(DiscussionReply);
