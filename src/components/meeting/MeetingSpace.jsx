@@ -68,10 +68,15 @@ class MeetingSpace extends Component {
       selectedConversationId: null,
     };
 
+    this.handleCancelCompose = this.handleCancelCompose.bind(this);
     this.handleCreateDiscussion = this.handleCreateDiscussion.bind(this);
     this.handleSelectConversation = this.handleSelectConversation.bind(this);
     this.findSelectedConversation = this.findSelectedConversation.bind(this);
     this.showCreatedConversation = this.showCreatedConversation.bind(this);
+  }
+
+  handleCancelCompose() {
+    this.setState({ isComposing: false });
   }
 
   handleCreateDiscussion() {
@@ -134,6 +139,7 @@ class MeetingSpace extends Component {
                   <StyledDiscussionComposer
                     afterSubmit={this.showCreatedConversation}
                     meetingId={id}
+                    onCancelCompose={this.handleCancelCompose}
                   />
                 ) : (
                   <StyledDiscussionThread
