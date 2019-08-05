@@ -58,6 +58,10 @@ class Layout extends Component {
   render() {
     const { children, hideFooter, meetingId, mode, title } = this.props;
 
+    // Prevent vertical scrolling on a meeting space page
+    // https://medium.com/react-camp/how-to-fight-the-body-scroll-2b00267b37ac
+    if (meetingId) document.body.style = 'overflow: hidden';
+
     return (
       <Theme>
         <GlobalStyles />
