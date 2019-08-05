@@ -15,8 +15,10 @@ const Container = styled.div(({ theme: { wideViewport } }) => ({
   flexDirection: 'row',
   alignItems: 'flex-start',
 
+  maxHeight: 'calc(100vh - 70px)',
   margin: '0 auto',
   maxWidth: wideViewport,
+  overflow: 'hidden',
   padding: '30px 0',
 }));
 
@@ -48,10 +50,15 @@ const PlusSign = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DiscussionsContainer = styled.div({
+  height: 'calc(100vh - 148px)', // 70px nav bar, 30px margin, 48px start disucssion button
+  overflow: 'auto',
 });
 
 const MainColumn = styled.div(({ theme: { colors } }) => ({
   borderTop: `1px solid ${colors.borderGrey}`,
+  height: 'calc(100vh - 100px)',
+  overflow: 'auto',
+  overflowX: 'hidden',
   margin: '0 20px',
 }));
 
