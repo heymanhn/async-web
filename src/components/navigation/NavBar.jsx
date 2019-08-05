@@ -8,8 +8,9 @@ import logo from 'images/logo.png';
 import isLoggedInQuery from 'graphql/isLoggedInQuery';
 
 import NotificationSystem from 'components/notifications/NotificationSystem';
+import MeetingProperties from 'components/meeting/MeetingProperties';
 import AvatarDropdown from './AvatarDropdown';
-import CreateMeetingButton from './CreateMeetingButton';
+// import CreateMeetingButton from './CreateMeetingButton';
 
 const NavigationBar = styled.div(({ theme: { colors } }) => ({
   position: 'sticky',
@@ -45,6 +46,12 @@ const Container = styled.div(({ mode, theme: { maxViewport, wideViewport } }) =>
   },
 }));
 
+const LeftContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+});
+
 const LogoImage = styled.img(({ theme: { mq } }) => ({
   height: '30px',
   width: 'auto',
@@ -56,11 +63,9 @@ const LogoImage = styled.img(({ theme: { mq } }) => ({
   },
 }));
 
-const Title = styled.span({
+const Title = styled.div({
   fontSize: '18px',
   fontWeight: 500,
-  position: 'relative',
-  top: '2px',
 });
 
 const SavedIndicator = styled.span(({ theme: { colors } }) => ({
@@ -94,12 +99,12 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 10px',
 }));
 
-const NavBar = ({ mode, title }) => (
+const NavBar = ({ meetingId, mode, title }) => (
   <Query query={isLoggedInQuery}>
     {({ data }) => (
       <NavigationBar>
         <Container mode={mode}>
-          <div>
+          <LeftContainer>
             <Link to="/inbox">
               <LogoImage
                 src={logo}
@@ -108,9 +113,10 @@ const NavBar = ({ mode, title }) => (
               />
             </Link>
             <Title>{title}</Title>
+            {meetingId && <MeetingProperties meetingId={meetingId} />}
             {data.saveStatus === 'success' && <SavedIndicator>Saved!</SavedIndicator>}
             {data.saveStatus === 'error' && <ErrorIndicator>Failed to save</ErrorIndicator>}
-          </div>
+          </LeftContainer>
           {data.isLoggedIn && (
             <LoggedInMenu>
               <NotificationSystem />
@@ -127,8 +133,13 @@ const NavBar = ({ mode, title }) => (
 );
 
 NavBar.propTypes = {
+  meetingId: PropTypes.string,
   mode: PropTypes.oneOf(['normal', 'wide']).isRequired,
   title: PropTypes.string.isRequired,
+};
+
+NavBar.defaultProps = {
+  meetingId: null,
 };
 
 export default NavBar;

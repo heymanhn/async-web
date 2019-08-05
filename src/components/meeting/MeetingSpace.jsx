@@ -113,7 +113,11 @@ class MeetingSpace extends Component {
           const showComposer = isComposing || !conversations;
 
           return (
-            <Layout mode="wide" title={title || 'Untitled Discussion'}>
+            <Layout
+              meetingId={id}
+              mode="wide"
+              title={title || 'Untitled Discussion'}
+            >
               <Container>
                 <div>
                   <StartDiscussionButton onClick={this.handleCreateDiscussion}>

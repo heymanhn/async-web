@@ -41,6 +41,7 @@ const HeaderSection = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  position: 'relative',
 });
 
 const Details = styled.div({
@@ -88,7 +89,7 @@ const ReplyEditor = styled(RovalEditor)({
 
 const StyledHoverMenu = styled(HoverMenu)({
   position: 'absolute',
-  right: '30px',
+  right: '0px',
 });
 
 const SmallReply = ({
@@ -117,7 +118,7 @@ const SmallReply = ({
               <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
             )}
           </Details>
-          {mode === 'display' && conversationId &&  (
+          {mode === 'display' && conversationId && (
             <StyledHoverMenu
               conversationId={conversationId}
               isOpen={hover && mode === 'display'}
