@@ -71,7 +71,7 @@ class NotificationRow extends Component {
     });
     const { meetingId, conversationId } = payloadCamelJSON;
     let path = '';
-    if (meetingId) path += `/meetings/${meetingId}`;
+    if (meetingId) path += `/spaces/${meetingId}`;
     if (conversationId) path += `/conversations/${conversationId}`;
 
     return path;
