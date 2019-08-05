@@ -13,6 +13,8 @@ import DiscussionThread from './DiscussionThread';
 const Container = styled.div(({ theme: { wideViewport } }) => ({
   display: 'flex',
   flexDirection: 'row',
+  alignItems: 'flex-start',
+
   margin: '0 auto',
   maxWidth: wideViewport,
   padding: '30px 0',
@@ -45,6 +47,14 @@ const PlusSign = styled.div(({ theme: { colors } }) => ({
   marginTop: '-4px',
 }));
 
+const DiscussionsContainer = styled.div({
+});
+
+const MainColumn = styled.div(({ theme: { colors } }) => ({
+  borderTop: `1px solid ${colors.borderGrey}`,
+  margin: '0 20px',
+}));
+
 const StyledDiscussionComposer = styled(DiscussionComposer)({
   margin: '0 20px',
   maxWidth: '700px',
@@ -54,7 +64,8 @@ const StyledDiscussionComposer = styled(DiscussionComposer)({
 const StyledDiscussionThread = styled(DiscussionThread)(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
-  margin: '0 20px',
+  borderTop: 'none',
+  marginBottom: '30px',
   maxWidth: '700px',
   width: '700px',
 }));
@@ -119,6 +130,7 @@ class MeetingSpace extends Component {
 
           return (
             <Layout
+              hideFooter
               meetingId={id}
               mode="wide"
               title={title || 'Untitled Discussion'}
@@ -129,24 +141,28 @@ class MeetingSpace extends Component {
                     <ButtonLabel>Start a discussion</ButtonLabel>
                     <PlusSign>+</PlusSign>
                   </StartDiscussionButton>
-                  <DiscussionsList
-                    conversations={conversations || []}
-                    onSelectConversation={this.handleSelectConversation}
-                    selectedConversationId={selectedConversationId}
-                  />
+                  <DiscussionsContainer>
+                    <DiscussionsList
+                      conversations={conversations || []}
+                      onSelectConversation={this.handleSelectConversation}
+                      selectedConversationId={selectedConversationId}
+                    />
+                  </DiscussionsContainer>
                 </div>
-                {showComposer ? (
-                  <StyledDiscussionComposer
-                    afterSubmit={this.showCreatedConversation}
-                    meetingId={id}
-                    onCancelCompose={this.handleCancelCompose}
-                  />
-                ) : (
-                  <StyledDiscussionThread
-                    conversation={this.findSelectedConversation(conversations)}
-                    meetingId={id}
-                  />
-                )}
+                <MainColumn>
+                  {showComposer ? (
+                    <StyledDiscussionComposer
+                      afterSubmit={this.showCreatedConversation}
+                      meetingId={id}
+                      onCancelCompose={this.handleCancelCompose}
+                    />
+                  ) : (
+                    <StyledDiscussionThread
+                      conversation={this.findSelectedConversation(conversations)}
+                      meetingId={id}
+                    />
+                  )}
+                </MainColumn>
               </Container>
             </Layout>
           );

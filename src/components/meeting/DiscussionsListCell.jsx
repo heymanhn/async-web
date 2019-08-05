@@ -13,7 +13,7 @@ const Container = styled.div(({ hover, isSelected, theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
   cursor: 'pointer',
   padding: '18px 30px 20px',
-  width: '460px',
+  width: '458px',
 
   ':last-of-type': {
     borderBottom: 'none',

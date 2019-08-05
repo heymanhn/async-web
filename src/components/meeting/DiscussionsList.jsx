@@ -6,8 +6,7 @@ import DiscussionsListCell from './DiscussionsListCell';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   border: `1px solid ${colors.borderGrey}`,
-  marginLeft: '20px',
-  marginTop: '15px',
+  margin: '15px 0px 30px 20px',
 }));
 
 const DiscussionsList = ({ conversations, onSelectConversation, selectedConversationId }) => (

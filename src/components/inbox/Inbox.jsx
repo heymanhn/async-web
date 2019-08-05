@@ -9,7 +9,7 @@ import Layout from 'components/Layout';
 import MeetingRow from './MeetingRow';
 
 const Container = styled.div(({ theme: { colors } }) => ({
-  background: colors.white,
+  background: colors.bgGrey,
 }));
 
 const InnerContainer = styled.div(({ theme: { colors, maxViewport } }) => ({

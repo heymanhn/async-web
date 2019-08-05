@@ -9,6 +9,8 @@ import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionReply from './DiscussionReply';
 
+const Container = styled.div({});
+
 const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
   color: colors.mainText,
@@ -258,7 +260,7 @@ class DiscussionThread extends Component {
     );
 
     return (
-      <div {...props}>
+      <Container {...props}>
         <TitleEditor
           contentType="discussionTitle"
           initialValue={conversation.title || 'Untitled Discussion'}
@@ -295,7 +297,7 @@ class DiscussionThread extends Component {
             />
           )}
         </ActionsContainer>
-      </div>
+      </Container>
     );
   }
 }

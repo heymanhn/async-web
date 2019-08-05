@@ -10,6 +10,8 @@ import NavBar from 'components/navigation/NavBar';
 import GlobalStyles from 'components/style/GlobalStyles';
 import Theme from 'components/style/Theme';
 
+const Container = styled.div({});
+
 const Footer = styled.footer(({ theme: { colors, mq } }) => ({
   background: colors.bgGrey,
   color: colors.formPlaceholderGrey,
@@ -54,22 +56,24 @@ class Layout extends Component {
   }
 
   render() {
-    const { children, meetingId, mode, title } = this.props;
+    const { children, hideFooter, meetingId, mode, title } = this.props;
 
     return (
       <Theme>
         <GlobalStyles />
-        <div>
+        <Container>
           <NavBar
             meetingId={meetingId}
             mode={mode}
             title={title}
           />
           {children}
-          <Footer>
-            <Copyright>Copyright © Roval</Copyright>
-          </Footer>
-        </div>
+          {!hideFooter && (
+            <Footer>
+              <Copyright>Copyright © Roval</Copyright>
+            </Footer>
+          )}
+        </Container>
       </Theme>
     );
   }
@@ -78,12 +82,14 @@ class Layout extends Component {
 Layout.propTypes = {
   children: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
+  hideFooter: PropTypes.bool,
   meetingId: PropTypes.string,
   mode: PropTypes.oneOf(['normal', 'wide']),
   title: PropTypes.string,
 };
 
 Layout.defaultProps = {
+  hideFooter: false,
   meetingId: null,
   mode: 'normal',
   title: '',
