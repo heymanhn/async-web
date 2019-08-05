@@ -10,16 +10,6 @@ import NavBar from 'components/navigation/NavBar';
 import GlobalStyles from 'components/style/GlobalStyles';
 import Theme from 'components/style/Theme';
 
-const Container = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
-});
-
-const Content = styled.div({
-  flexGrow: 1,
-});
-
 const Footer = styled.footer(({ theme: { colors, mq } }) => ({
   background: colors.bgGrey,
   color: colors.formPlaceholderGrey,
@@ -69,19 +59,17 @@ class Layout extends Component {
     return (
       <Theme>
         <GlobalStyles />
-        <Container>
+        <div>
           <NavBar
             meetingId={meetingId}
             mode={mode}
             title={title}
           />
-          <Content>
-            {children}
-          </Content>
+          {children}
           <Footer>
             <Copyright>Copyright © Roval</Copyright>
           </Footer>
-        </Container>
+        </div>
       </Theme>
     );
   }
