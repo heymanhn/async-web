@@ -11,6 +11,7 @@ import RovalEditor from 'components/editor/RovalEditor';
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
+  borderTop: 'none',
 }));
 
 const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({

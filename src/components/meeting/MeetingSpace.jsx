@@ -63,7 +63,6 @@ const MainColumn = styled.div(({ theme: { colors } }) => ({
 }));
 
 const StyledDiscussionComposer = styled(DiscussionComposer)({
-  margin: '0 20px',
   maxWidth: '700px',
   width: '700px',
 });
