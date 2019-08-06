@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Pluralize from 'pluralize';
 import Moment from 'react-moment';
+import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
 import withHover from 'utils/withHover';
@@ -91,7 +92,13 @@ const DiscussionsListCell = ({
     <Container ref={cellRef} isSelected={isSelected} onClick={handleSelectConversation} {...props}>
       {replyCount > 0 && <RepliesDisplay>{Pluralize('reply', replyCount, true)}</RepliesDisplay>}
       <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
-      {messagePreview && <MessagePreview>{messagePreview}</MessagePreview>}
+      {messagePreview && (
+        <MessagePreview>
+          <Truncate lines={2}>
+            {messagePreview}
+          </Truncate>
+        </MessagePreview>
+      )}
       <MessageDetails>
         <StyledAvatar src={author.profilePictureUrl} size={24} />
         <MessageAuthor>{author.fullName}</MessageAuthor>
