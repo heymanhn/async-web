@@ -89,7 +89,21 @@ class MeetingSpace extends Component {
     this.handleCreateDiscussion = this.handleCreateDiscussion.bind(this);
     this.handleSelectConversation = this.handleSelectConversation.bind(this);
     this.findSelectedConversation = this.findSelectedConversation.bind(this);
+    this.resetDisplayURL = this.resetDisplayURL.bind(this);
     this.showCreatedConversation = this.showCreatedConversation.bind(this);
+    this.updateDisplayURL = this.updateDisplayURL.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { isComposing, selectedConversationId: cid } = this.state;
+
+    const switchConvo = cid && (cid !== prevState.selectedConversationId);
+    const cancelCompose = !isComposing && prevState.isComposing; // WHAT HAPPENED HERE?
+    if (switchConvo || cancelCompose) this.updateDisplayURL();
+
+    const switchToCompose = isComposing && !prevState.isComposing;
+    const clearSelectedConvo = !cid && prevState.selectedConversationId;
+    if (switchToCompose || clearSelectedConvo) this.resetDisplayURL();
   }
 
   handleCancelCompose() {
@@ -106,9 +120,17 @@ class MeetingSpace extends Component {
 
   findSelectedConversation(conversations) {
     const { selectedConversationId } = this.state;
+    const { cid } = this.props;
 
+    if (cid && !selectedConversationId) return conversations.find(c => c.id === cid);
     if (!selectedConversationId && conversations.length) return conversations[0];
     return conversations.find(c => c.id === selectedConversationId);
+  }
+
+  resetDisplayURL() {
+    const { id } = this.props;
+    const url = `${origin}/spaces/${id}`;
+    window.history.replaceState({}, `meeting space: ${id}`, url);
   }
 
   async showCreatedConversation(conversationId) {
@@ -118,8 +140,19 @@ class MeetingSpace extends Component {
     });
   }
 
+  // Updates the URL in the address bar to reflect this discussion
+  // https://developer.mozilla.org/en-US/docs/Web/API/History_API#Adding_and_modifying_history_entries
+  updateDisplayURL() {
+    const { selectedConversationId } = this.state;
+    const { id } = this.props;
+    const { origin } = window.location;
+
+    const url = `${origin}/spaces/${id}/conversations/${selectedConversationId}`;
+    window.history.replaceState({}, `conversation: ${selectedConversationId}`, url);
+  }
+
   render() {
-    const { isComposing, selectedConversationId } = this.state;
+    const { isComposing } = this.state;
     const { id } = this.props;
 
     return (
@@ -133,6 +166,7 @@ class MeetingSpace extends Component {
 
           const { conversations, title } = data.meeting;
           const showComposer = isComposing || !conversations;
+          const selectedConvo = this.findSelectedConversation(conversations);
 
           return (
             <Layout
@@ -151,7 +185,7 @@ class MeetingSpace extends Component {
                     <DiscussionsList
                       conversations={conversations || []}
                       onSelectConversation={this.handleSelectConversation}
-                      selectedConversationId={isComposing ? null : selectedConversationId}
+                      selectedConversationId={isComposing ? null : selectedConvo.id}
                     />
                   </DiscussionsContainer>
                 </div>
@@ -164,7 +198,7 @@ class MeetingSpace extends Component {
                     />
                   ) : (
                     <StyledDiscussionThread
-                      conversation={this.findSelectedConversation(conversations)}
+                      conversation={selectedConvo}
                       meetingId={id}
                     />
                   )}
@@ -180,6 +214,11 @@ class MeetingSpace extends Component {
 
 MeetingSpace.propTypes = {
   id: PropTypes.string.isRequired,
+  cid: PropTypes.string, // conversation Id
+};
+
+MeetingSpace.defaultProps = {
+  cid: null,
 };
 
 export default MeetingSpace;
