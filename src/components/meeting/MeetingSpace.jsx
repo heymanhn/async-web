@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { createRef, Component } from 'react';
 import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import styled from '@emotion/styled';
@@ -85,8 +85,10 @@ class MeetingSpace extends Component {
       selectedConversationId: null,
     };
 
+    this.listRef = createRef();
     this.handleCancelCompose = this.handleCancelCompose.bind(this);
     this.handleCreateDiscussion = this.handleCreateDiscussion.bind(this);
+    this.handleScrollToCell = this.handleScrollToCell.bind(this);
     this.handleSelectConversation = this.handleSelectConversation.bind(this);
     this.findSelectedConversation = this.findSelectedConversation.bind(this);
     this.resetDisplayURL = this.resetDisplayURL.bind(this);
@@ -112,6 +114,19 @@ class MeetingSpace extends Component {
 
   handleCreateDiscussion() {
     this.setState({ isComposing: true });
+  }
+
+  handleScrollToCell(targetElement) {
+    const element = this.listRef.current;
+
+    if (!element) {
+      // The ref would be around by the next cycle
+      setTimeout(() => this.handleScrollToCell(targetElement), 0);
+      return;
+    }
+
+    // Give it some breathing room at the top
+    element.scrollTo({ top: targetElement.offsetTop - 200 });
   }
 
   handleSelectConversation(conversationId) {
@@ -152,8 +167,8 @@ class MeetingSpace extends Component {
   }
 
   render() {
-    const { isComposing } = this.state;
-    const { id } = this.props;
+    const { isComposing, selectedConversationId } = this.state;
+    const { id, cid } = this.props;
 
     return (
       <Query
@@ -167,6 +182,7 @@ class MeetingSpace extends Component {
           const { conversations, title } = data.meeting;
           const showComposer = isComposing || !conversations;
           const selectedConvo = this.findSelectedConversation(conversations);
+          const isFirstLoadWithConvoParam = cid && !selectedConversationId;
 
           return (
             <Layout
@@ -181,9 +197,10 @@ class MeetingSpace extends Component {
                     <ButtonLabel>Start a discussion</ButtonLabel>
                     <PlusSign>+</PlusSign>
                   </StartDiscussionButton>
-                  <DiscussionsContainer>
+                  <DiscussionsContainer ref={this.listRef}>
                     <DiscussionsList
                       conversations={conversations || []}
+                      onScrollTo={isFirstLoadWithConvoParam ? this.handleScrollToCell : undefined}
                       onSelectConversation={this.handleSelectConversation}
                       selectedConversationId={isComposing ? null : selectedConvo.id}
                     />

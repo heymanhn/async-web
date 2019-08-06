@@ -9,7 +9,12 @@ const Container = styled.div(({ theme: { colors } }) => ({
   margin: '15px 0px 30px 20px',
 }));
 
-const DiscussionsList = ({ conversations, onSelectConversation, selectedConversationId }) => (
+const DiscussionsList = ({
+  conversations,
+  onScrollTo,
+  onSelectConversation,
+  selectedConversationId,
+}) => (
   <Container>
     {conversations.map(c => (
       <DiscussionsListCell
@@ -17,6 +22,7 @@ const DiscussionsList = ({ conversations, onSelectConversation, selectedConversa
         conversationId={c.id}
         lastMessage={c.lastMessage}
         messageCount={c.messageCount}
+        onScrollTo={onScrollTo}
         onSelectConversation={onSelectConversation}
         isSelected={selectedConversationId === c.id}
         title={c.title}
@@ -27,11 +33,13 @@ const DiscussionsList = ({ conversations, onSelectConversation, selectedConversa
 
 DiscussionsList.propTypes = {
   conversations: PropTypes.array.isRequired,
+  onScrollTo: PropTypes.func,
   onSelectConversation: PropTypes.func.isRequired,
   selectedConversationId: PropTypes.string,
 };
 
 DiscussionsList.defaultProps = {
+  onScrollTo: undefined,
   selectedConversationId: null,
 };
 

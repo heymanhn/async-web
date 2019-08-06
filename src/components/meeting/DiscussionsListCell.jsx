@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Pluralize from 'pluralize';
 import Moment from 'react-moment';
@@ -63,8 +63,10 @@ const MessageTimestamp = styled(Moment)(({ theme: { colors } }) => ({
 
 const DiscussionsListCell = ({
   conversationId,
+  isSelected,
   lastMessage,
   messageCount,
+  onScrollTo,
   onSelectConversation,
   title,
   ...props
@@ -79,8 +81,14 @@ const DiscussionsListCell = ({
     onSelectConversation(conversationId);
   };
 
+  // Using new React Hooks API to scroll to this cell if it's selected and not visible
+  // https://reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node
+  const cellRef = useCallback((element) => {
+    if (element && isSelected) onScrollTo(element);
+  }, [isSelected, onScrollTo]);
+
   return (
-    <Container onClick={handleSelectConversation} {...props}>
+    <Container ref={cellRef} isSelected={isSelected} onClick={handleSelectConversation} {...props}>
       {replyCount > 0 && <RepliesDisplay>{Pluralize('reply', replyCount, true)}</RepliesDisplay>}
       <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
       {messagePreview && <MessagePreview>{messagePreview}</MessagePreview>}
@@ -99,11 +107,13 @@ DiscussionsListCell.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   lastMessage: PropTypes.object.isRequired,
   messageCount: PropTypes.number.isRequired,
+  onScrollTo: PropTypes.func,
   onSelectConversation: PropTypes.func.isRequired,
   title: PropTypes.string,
 };
 
 DiscussionsListCell.defaultProps = {
+  onScrollTo: () => {},
   title: 'Untitled Discussion',
 };
 
