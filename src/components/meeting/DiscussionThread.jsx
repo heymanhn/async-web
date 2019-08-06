@@ -5,6 +5,8 @@ import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
+import meetingQuery from 'graphql/meetingQuery';
+import updateConversationMutation from 'graphql/updateConversationMutation';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionReply from './DiscussionReply';
@@ -93,6 +95,7 @@ class DiscussionThread extends Component {
     };
 
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
+    this.handleUpdateTitle = this.handleUpdateTitle.bind(this);
     this.conversationIdForNewReply = this.conversationIdForNewReply.bind(this);
     this.fetchConversationMessages = this.fetchConversationMessages.bind(this);
     this.replyCountForMessage = this.replyCountForMessage.bind(this);
@@ -136,6 +139,26 @@ class DiscussionThread extends Component {
     }
 
     this.showFocusedConversation(newFocus);
+  }
+
+  async handleUpdateTitle({ text } = {}) {
+    const { client, conversation, meetingId } = this.props;
+
+    const input = { title: text };
+    const response = await client.mutate({
+      mutation: updateConversationMutation,
+      variables: { meetingId, conversationId: conversation.id, input },
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id: meetingId },
+      }],
+    });
+
+    if (response.data) {
+      return Promise.resolve();
+    }
+
+    return new Error('Error updating conversation title');
   }
 
   conversationIdForNewReply() {
@@ -265,7 +288,8 @@ class DiscussionThread extends Component {
           contentType="discussionTitle"
           initialValue={conversation.title || 'Untitled Discussion'}
           isPlainText
-          mode="display"
+          onSubmit={this.handleUpdateTitle}
+          saveOnBlur
         />
         <MessagesSection>
           {messages.map(m => (
