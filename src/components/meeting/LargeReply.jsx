@@ -44,7 +44,7 @@ const Details = styled.div({
 
 const Author = styled.div({
   fontWeight: 600,
-  fontSize: '18px',
+  fontSize: '16px',
 });
 
 const TopicEditor = styled(RovalEditor)({
