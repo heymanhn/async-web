@@ -50,13 +50,13 @@ const PlusSign = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DiscussionsContainer = styled.div({
-  height: 'calc(100vh - 148px)', // 70px nav bar, 30px margin, 48px start disucssion button
+  height: 'calc(100vh - 148px)', // 70px nav bar, 30px margin, 48px start discuss button
   overflow: 'auto',
 });
 
 const MainColumn = styled.div(({ theme: { colors } }) => ({
   borderTop: `1px solid ${colors.borderGrey}`,
-  height: 'calc(100vh - 100px)',
+  height: 'calc(100vh - 100px)', // 70px nav bar, 30px margin
   overflow: 'auto',
   overflowX: 'hidden',
   margin: '0 20px',
