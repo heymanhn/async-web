@@ -17,6 +17,7 @@ import getBreakpoint from 'utils/mediaQuery';
 import Home from 'components/homepage/Home';
 import Auth from 'components/Auth';
 import PrivateRoute from 'components/PrivateRoute';
+import Inbox from 'components/inbox/Inbox';
 import MeetingSpace from 'components/meeting/MeetingSpace';
 import DiscussionFeed from 'components/feed/DiscussionFeed';
 
@@ -68,6 +69,9 @@ const App = () => (
 
     {/* Temporary login route */}
     <Auth path="/login" />
+
+    {/* Keep this around for now */}
+    <PrivateRoute path="/inbox" component={Inbox} />
 
     <PrivateRoute path="/feed" component={DiscussionFeed} />
 
