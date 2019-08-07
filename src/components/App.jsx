@@ -17,8 +17,8 @@ import getBreakpoint from 'utils/mediaQuery';
 import Home from 'components/homepage/Home';
 import Auth from 'components/Auth';
 import PrivateRoute from 'components/PrivateRoute';
-import Inbox from 'components/inbox/Inbox';
 import MeetingSpace from 'components/meeting/MeetingSpace';
+import DiscussionFeed from 'components/feed/DiscussionFeed';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -69,7 +69,7 @@ const App = () => (
     {/* Temporary login route */}
     <Auth path="/login" />
 
-    <PrivateRoute path="/inbox" component={Inbox} />
+    <PrivateRoute path="/feed" component={DiscussionFeed} />
 
     <PrivateRoute path="/spaces/:id" component={MeetingSpace} />
     <PrivateRoute path="/spaces/:id/conversations/:cid" component={MeetingSpace} />
