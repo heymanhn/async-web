@@ -10,13 +10,6 @@ export default gql`
           author @type(name: "User") {
             id
           }
-          participants @type(name: "[Participant]") {
-            user @type(name: "User") {
-              id
-              fullName
-              profilePictureUrl
-            }
-          }
           lastMessage @type(name: "Message") {
             author @type(name: "Author") {
               id

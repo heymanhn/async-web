@@ -7,8 +7,6 @@ import styled from '@emotion/styled';
 
 import withHover from 'utils/withHover';
 
-import ParticipantAvatars from 'components/shared/ParticipantAvatars';
-
 const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -68,7 +66,7 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
 }));
 
 const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
-  const { author, createdAt, deadline, id, lastMessage, participants, title } = meeting;
+  const { createdAt, deadline, id, lastMessage, title } = meeting;
 
   const timestamp = lastMessage ? lastMessage.createdAt : createdAt;
   const timestampContext = lastMessage ? 'Latest reply ' : 'Created ';
@@ -109,7 +107,6 @@ const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
             {metadata.length > 2 && metadata[2]}
           </AdditionalInfo>
         </MeetingDetails>
-        <ParticipantAvatars authorId={author.id} participants={participants.map(p => p.user)} />
       </Container>
     </StyledLink>
   );
