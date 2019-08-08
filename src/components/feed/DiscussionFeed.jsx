@@ -2,7 +2,7 @@
  * Experimenting with React Hooks to create stateful function components:
  * https://reactjs.org/docs/hooks-overview.html
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { Query } from 'react-apollo';
 import styled from '@emotion/styled';
 
@@ -13,6 +13,7 @@ import { getLocalUser } from 'utils/auth';
 import Layout from 'components/Layout';
 
 import DiscussionFeedItem from './DiscussionFeedItem';
+import DiscussionFeedFilters from './DiscussionFeedFilters';
 
 const Container = styled.div(({ theme: { wideViewport } }) => ({
   display: 'flex',
@@ -38,6 +39,14 @@ const DiscussionsContainer = styled.div({
 const DiscussionFeed = () => {
   const { userId: id } = getLocalUser();
 
+  /* HN: Ideas:
+   * - see if I can reorganize the elements so that the filter UI is rendered regardless
+   *   of this query's progress
+   * - Add a state to track which filter option is selected
+   * - the "All Discussions" option is equivalent to resetting the state
+   */
+  const [meetingIdToFilter, setMeetingIdToFilter] = useState(null);
+
   return (
     <Query
       query={discussionFeedQuery}
@@ -58,6 +67,10 @@ const DiscussionFeed = () => {
             title="My Discussions"
           >
             <Container>
+              <DiscussionFeedFilters
+                onSelectFilter={setMeetingIdToFilter}
+                selectedMeetingId={meetingIdToFilter}
+              />
               <DiscussionsContainer>
                 {items.map(i => (
                   <DiscussionFeedItem

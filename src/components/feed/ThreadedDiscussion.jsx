@@ -104,7 +104,7 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
         <ReplyDisplay key={m.id}>
           <SmallReply
             author={m.author}
-            conversationId={conversationId}
+            conversationId={m.conversationId}
             message={m}
             mode="display"
             replyCount={m.replyCount || 0}
