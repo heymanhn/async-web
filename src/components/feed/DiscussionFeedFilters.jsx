@@ -15,9 +15,10 @@ const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
-  marginTop: '50px',
+  marginTop: '50px', // 71px nav bar, 50px margin
   marginLeft: '20px',
   padding: '25px 0',
+  position: 'fixed',
   width: '320px',
 }));
 
