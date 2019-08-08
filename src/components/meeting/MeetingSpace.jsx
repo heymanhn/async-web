@@ -189,6 +189,7 @@ class MeetingSpace extends Component {
               hideFooter
               meetingId={id}
               mode="wide"
+              preventScrolling
               title={title || 'Untitled Discussion'}
             >
               <Container>

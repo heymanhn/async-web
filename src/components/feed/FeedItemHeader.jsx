@@ -22,6 +22,12 @@ const ReplyCountDisplay = styled.div(({ theme: { colors } }) => ({
   fontWeight: 500,
 }));
 
+const StyledLink = styled(Link)({
+  ':hover': {
+    textDecoration: 'none',
+  },
+});
+
 const MeetingSpaceLabel = styled.div(({ theme: { colors } }) => ({
   background: colors.borderGrey,
   borderRadius: '5px',
@@ -32,32 +38,37 @@ const MeetingSpaceLabel = styled.div(({ theme: { colors } }) => ({
   textDecoration: 'none',
 }));
 
-const DiscussionTitle = styled.div(({ theme: { colors } }) => ({
+const DiscussionTitle = styled.span(({ theme: { colors } }) => ({
   color: colors.mainText,
   fontSize: '20px',
   fontWeight: 500,
+  width: '100%',
+
+  ':hover': {
+    color: colors.blue,
+  },
 }));
 
 const FeedItemHeader = ({ conversation, meeting, ...props }) => {
   const { id: conversationId, messages, messageCount, title: conversationTitle } = conversation;
   const { id: meetingId, title: meetingTitle } = meeting;
-  const replyCount = messageCount - 1;
+  const replyCount = messageCount ? messageCount - 1 : 0;
 
   return (
     <Container {...props}>
       <MetadataRow>
         <ReplyCountDisplay>
-          {replyCount > 0 ? Pluralize('reply', replyCount) : 'No replies'}
+          {replyCount > 0 ? Pluralize('reply', replyCount, true) : 'No replies'}
         </ReplyCountDisplay>
-        <Link to={`/spaces/${meetingId}`}>
+        <StyledLink to={`/spaces/${meetingId}`}>
           <MeetingSpaceLabel>
             {meetingTitle}
           </MeetingSpaceLabel>
-        </Link>
+        </StyledLink>
       </MetadataRow>
-      <Link to={`/spaces/${meetingId}/conversations/${conversationId}`}>
-        <DiscussionTitle>{conversationTitle}</DiscussionTitle>
-      </Link>
+      <StyledLink to={`/spaces/${meetingId}/conversations/${conversationId}`}>
+        <DiscussionTitle>{conversationTitle || 'Untitled Discussion'}</DiscussionTitle>
+      </StyledLink>
     </Container>
   );
 };

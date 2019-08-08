@@ -56,11 +56,11 @@ class Layout extends Component {
   }
 
   render() {
-    const { children, hideFooter, meetingId, mode, title } = this.props;
+    const { children, hideFooter, meetingId, mode, preventScrolling, title } = this.props;
 
     // Prevent vertical scrolling on a meeting space page
     // https://medium.com/react-camp/how-to-fight-the-body-scroll-2b00267b37ac
-    if (meetingId) document.body.style = 'overflow: hidden';
+    if (preventScrolling) document.body.style = 'overflow: hidden';
 
     return (
       <Theme>
@@ -89,6 +89,7 @@ Layout.propTypes = {
   hideFooter: PropTypes.bool,
   meetingId: PropTypes.string,
   mode: PropTypes.oneOf(['normal', 'wide']),
+  preventScrolling: PropTypes.bool,
   title: PropTypes.string,
 };
 
@@ -96,6 +97,7 @@ Layout.defaultProps = {
   hideFooter: false,
   meetingId: null,
   mode: 'normal',
+  preventScrolling: false,
   title: '',
 };
 

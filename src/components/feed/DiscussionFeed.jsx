@@ -20,7 +20,7 @@ const Container = styled.div(({ theme: { wideViewport } }) => ({
   alignItems: 'flex-start',
 
   maxHeight: 'calc(100vh - 70px)',
-  margin: '25px auto',
+  margin: '0px auto',
   maxWidth: wideViewport,
   overflow: 'hidden',
 }));
@@ -29,10 +29,10 @@ const DiscussionsContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
 
-  height: 'calc(100vh - 95px)', // 70px nav bar, 25px margin until start of scroll line
+  height: 'calc(100vh - 70px)',
   margin: '0 auto',
   overflow: 'auto',
-  padding: '0 80px',
+  padding: '25px 80px',
 });
 
 const DiscussionFeed = () => {
@@ -54,6 +54,7 @@ const DiscussionFeed = () => {
           <Layout
             hideFooter
             mode="wide"
+            preventScrolling
             title="My Discussions"
           >
             <Container>
