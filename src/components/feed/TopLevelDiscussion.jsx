@@ -16,14 +16,14 @@ const Container = styled.div(({ theme: { colors, discussionWidth } }) => ({
 }));
 
 const TopLevelDiscussion = ({ conversation, meeting, ...props }) => {
-  const { messages, id: conversationId } = conversation;
+  const { messages } = conversation;
   const { author } = messages[0];
   return (
     <Container {...props}>
       <FeedItemHeader conversation={conversation} meeting={meeting} />
       <LargeReply
         author={author}
-        conversationId={conversationId}
+        conversationId={messages[0].conversationId}
         message={messages[0]}
         mode="display"
         replyCount={0}

@@ -22,6 +22,7 @@ export default gql`
           deadline
         }
         conversationCount
+        userUnreadThreadCount
       }
     }
   }

@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query DiscussionFeed($id: String!) {
-    discussionFeed(id: $id) @rest(type: "User", path: "/users/{args.id}/feed") {
+  query DiscussionFeed($id: String!, $meetingId: String!) {
+    discussionFeed(id: $id, meetingId: $meetingId) @rest(type: "User", path: "/users/{args.id}/feed?meeting_id={args.meetingId}") {
       items @type(name: "[DiscussionFeedItem]") {
         meeting @type(name: "Meeting") {
           id
