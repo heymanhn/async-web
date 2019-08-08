@@ -13,7 +13,7 @@ import FilterItem from './FilterItem';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
+  border: `1px solid ${colors.grey6}`,
   borderRadius: '5px',
   marginTop: '50px',
   marginLeft: '20px',
