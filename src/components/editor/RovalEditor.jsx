@@ -24,6 +24,13 @@ import Toolbar from './toolbar/Toolbar';
 
 const DEFAULT_NODE = 'paragraph';
 
+const Container = styled.div(({ initialHeight, mode }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  minHeight: (mode === 'compose' && initialHeight) ? `${initialHeight}px` : 'initial',
+}));
+
 // Default styles for Roval editor UIs
 const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
   'dl, ul, ol, blockquote, pre': {
@@ -327,6 +334,7 @@ class RovalEditor extends Component {
     const {
       contentType,
       disableAutoFocus,
+      initialHeight,
       isPlainText,
       isSubmitting,
       mode,
@@ -335,7 +343,7 @@ class RovalEditor extends Component {
     if (!value) return null;
 
     return (
-      <div>
+      <Container mode={mode} initialHeight={initialHeight}>
         <StyledEditor
           autoFocus={!disableAutoFocus && this.isEditOrComposeMode()}
           commands={commands}
@@ -366,7 +374,7 @@ class RovalEditor extends Component {
             onSubmit={this.handleSubmit}
           />
         )}
-      </div>
+      </Container>
     );
   }
 }
@@ -379,6 +387,7 @@ RovalEditor.propTypes = {
     'modalReply',
   ]).isRequired,
   disableAutoFocus: PropTypes.bool,
+  initialHeight: PropTypes.number,
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
   isSubmitting: PropTypes.bool,
@@ -390,6 +399,7 @@ RovalEditor.propTypes = {
 
 RovalEditor.defaultProps = {
   disableAutoFocus: false,
+  initialHeight: null,
   initialValue: null,
   isPlainText: false,
   isSubmitting: false,

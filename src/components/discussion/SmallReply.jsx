@@ -133,6 +133,7 @@ const SmallReply = ({
           )}
         </HeaderSection>
         <ReplyEditor
+          initialHeight={120}
           initialValue={mode !== 'compose' ? body.payload : null}
           mode={mode}
           onCancel={handleCancel}
