@@ -9,6 +9,7 @@ import meetingQuery from 'graphql/meetingQuery';
 import updateConversationMutation from 'graphql/updateConversationMutation';
 
 import RovalEditor from 'components/editor/RovalEditor';
+import AddReplyButtonRow from 'components/discussion/AddReplyButtonRow';
 import DiscussionReply from './DiscussionReply';
 
 const Container = styled.div({});
@@ -42,44 +43,12 @@ const ReplyDisplay = styled.div({
   },
 });
 
-const ActionsContainer = styled.div(({ theme: { colors } }) => ({
+const ComposeContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
 
   borderTop: `1px solid ${colors.borderGrey}`,
   minHeight: '60px',
-}));
-
-// HN: DRY up these reply button styles later
-const AddReplyButton = styled.div(({ theme: { colors } }) => ({
-  alignSelf: 'center',
-  color: colors.grey3,
-  cursor: 'pointer',
-  marginLeft: '30px',
-  position: 'relative',
-  top: '-2px',
-}));
-
-const PlusSign = styled.span(({ theme: { colors } }) => ({
-  fontSize: '20px',
-  fontWeight: 400,
-  paddingRight: '5px',
-  position: 'relative',
-  top: '1px',
-
-  ':hover': {
-    color: colors.grey2,
-  },
-}));
-
-const ButtonText = styled.span(({ theme: { colors } }) => ({
-  fontSize: '14px',
-  fontWeight: 500,
-
-  ':hover': {
-    color: colors.grey2,
-    textDecoration: 'underline',
-  },
 }));
 
 class DiscussionThread extends Component {
@@ -275,13 +244,6 @@ class DiscussionThread extends Component {
 
     if (!messages) return null;
 
-    const addReplyButton = (
-      <AddReplyButton onClick={this.toggleReplyComposer}>
-        <PlusSign>+</PlusSign>
-        <ButtonText>ADD A REPLY</ButtonText>
-      </AddReplyButton>
-    );
-
     return (
       <Container {...props}>
         <TitleEditor
@@ -309,8 +271,8 @@ class DiscussionThread extends Component {
             </ReplyDisplay>
           ))}
         </MessagesSection>
-        <ActionsContainer>
-          {!isComposingReply ? addReplyButton : (
+        {!isComposingReply ? <AddReplyButtonRow onClickReply={this.toggleReplyComposer} /> : (
+          <ComposeContainer>
             <DiscussionReply
               afterSubmit={this.updateMessageInList}
               conversationId={this.conversationIdForNewReply()}
@@ -319,8 +281,8 @@ class DiscussionThread extends Component {
               meetingId={meetingId}
               onCancelCompose={this.toggleReplyComposer}
             />
-          )}
-        </ActionsContainer>
+          </ComposeContainer>
+        )}
       </Container>
     );
   }

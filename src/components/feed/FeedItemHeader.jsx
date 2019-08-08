@@ -23,6 +23,8 @@ const ReplyCountDisplay = styled.div(({ theme: { colors } }) => ({
 }));
 
 const StyledLink = styled(Link)({
+  textDecoration: 'none',
+
   ':hover': {
     textDecoration: 'none',
   },
