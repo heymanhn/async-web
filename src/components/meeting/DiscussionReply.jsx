@@ -9,8 +9,8 @@ import meetingQuery from 'graphql/meetingQuery';
 import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
 import { getLocalUser } from 'utils/auth';
 
-import LargeReply from './LargeReply';
-import SmallReply from './SmallReply';
+import LargeReply from 'components/discussion/LargeReply';
+import SmallReply from 'components/discussion/SmallReply';
 
 class DiscussionReply extends Component {
   constructor(props) {

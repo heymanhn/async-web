@@ -177,7 +177,7 @@ class DiscussionThread extends Component {
     });
 
     if (response.data) {
-      const { items, messageCount } = response.data.conversationMessagesQuery;
+      const { items, messageCount } = response.data.conversationMessages;
       return { messages: (items || []).map(i => i.message), messageCount };
     }
 
