@@ -3,7 +3,6 @@
  * https://reactjs.org/docs/hooks-overview.html
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import styled from '@emotion/styled';
 
@@ -13,26 +12,27 @@ import { getLocalUser } from 'utils/auth';
 
 import Layout from 'components/Layout';
 
+import DiscussionFeedItem from './DiscussionFeedItem';
+
 const Container = styled.div(({ theme: { wideViewport } }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'flex-start',
 
   maxHeight: 'calc(100vh - 70px)',
-  margin: '0 auto',
+  margin: '25px auto',
   maxWidth: wideViewport,
   overflow: 'hidden',
-  padding: '50px 0',
 }));
 
 const DiscussionsContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
 
-  height: 'calc(100vh - 100px)', // 70px nav bar, 30px margin until start of scroll line
-  margin: '30px auto',
+  height: 'calc(100vh - 95px)', // 70px nav bar, 25px margin until start of scroll line
+  margin: '0 auto',
   overflow: 'auto',
-  padding: '20px 80px',
+  padding: '0 80px',
 });
 
 const DiscussionFeed = () => {
@@ -58,7 +58,13 @@ const DiscussionFeed = () => {
           >
             <Container>
               <DiscussionsContainer>
-                {items.map(i => <div key={i.conversation.id}>{i.conversation.title}</div>)}
+                {items.map(i => (
+                  <DiscussionFeedItem
+                    key={i.conversation.id}
+                    conversation={i.conversation}
+                    meeting={i.meeting}
+                  />
+                ))}
               </DiscussionsContainer>
             </Container>
           </Layout>
@@ -66,10 +72,6 @@ const DiscussionFeed = () => {
       }}
     </Query>
   );
-};
-
-DiscussionFeed.propTypes = {
-
 };
 
 export default withPageTracking(DiscussionFeed, 'Discussion Feed');
