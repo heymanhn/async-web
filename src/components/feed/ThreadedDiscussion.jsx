@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
+import ReplyComposer from 'components/discussion/ReplyComposer';
 import SmallReply from 'components/discussion/SmallReply';
 import FeedItemHeader from './FeedItemHeader';
 
-// TODO(HN): DRY up these component styles in the future
+// TODO(HN): DRY up these component styles in the future, with TopLevelDiscussion
 const Container = styled.div(({ theme: { colors, discussionWidth } }) => ({
   background: colors.white,
   border: `1px solid ${colors.grey6}`,
@@ -62,14 +63,35 @@ const ReplyDisplay = styled.div({
 });
 
 const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
-  const { id: conversationId, messages, messageCount } = conversation;
+  const {
+    id: conversationId,
+    messageCount,
+    messages,
+  } = conversation;
   const { id: meetingId } = meeting;
   const isTruncated = messageCount > 3;
-  const messagesToShow = isTruncated ? messages.slice(messageCount - 3) : messages;
+  const initialMessagesToShow = isTruncated ? messages.slice(messageCount - 3) : messages;
+
+  // Manually keep track of any new replies the user added inline
+  const [newMessages, setNewMessages] = useState([]);
+  const combinedMessages = [...initialMessagesToShow, ...newMessages];
+
+  function addMessageToThread(newMessage) {
+    setNewMessages([...newMessages, newMessage]);
+  }
+
+  // Allows users to edit the reply in place
+  // function updateMessageInThread(updatedMessage) {
+  //   // TODO
+  // }
 
   return (
     <Container {...props}>
-      <FeedItemHeader conversation={conversation} meeting={meeting} />
+      <FeedItemHeader
+        conversation={conversation}
+        meeting={meeting}
+        numNewMessages={newMessages.length}
+      />
       {isTruncated ? (
         <StyledLink to={`/spaces/${meetingId}/conversations/${conversationId}`}>
           <ViewEntireDiscussionButton>
@@ -78,7 +100,7 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
           </ViewEntireDiscussionButton>
         </StyledLink>
       ) : null}
-      {messagesToShow.map(m => (
+      {combinedMessages.map(m => (
         <ReplyDisplay key={m.id}>
           <SmallReply
             author={m.author}
@@ -90,6 +112,12 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
           <Separator />
         </ReplyDisplay>
       ))}
+      <ReplyComposer
+        afterSubmit={addMessageToThread}
+        conversationId={conversationId}
+        meetingId={meetingId}
+        roundedCorner
+      />
     </Container>
   );
 };

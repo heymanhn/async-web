@@ -9,7 +9,7 @@ import meetingQuery from 'graphql/meetingQuery';
 import updateConversationMutation from 'graphql/updateConversationMutation';
 
 import RovalEditor from 'components/editor/RovalEditor';
-import AddReplyButtonRow from 'components/discussion/AddReplyButtonRow';
+import ReplyComposer from 'components/discussion/ReplyComposer';
 import DiscussionReply from './DiscussionReply';
 
 const Container = styled.div({});
@@ -35,29 +35,12 @@ const Separator = styled.hr(({ theme: { colors } }) => ({
   margin: 0,
 }));
 
-const ReplyDisplay = styled.div({
-  ':last-of-type': {
-    [Separator]: {
-      display: 'none',
-    },
-  },
-});
-
-const ComposeContainer = styled.div(({ theme: { colors } }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-
-  borderTop: `1px solid ${colors.borderGrey}`,
-  minHeight: '60px',
-}));
-
 class DiscussionThread extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       focusedMessage: null,
-      isComposingReply: false,
       messages: null,
       parentConversation: null,
       messageCount: 0,
@@ -65,12 +48,10 @@ class DiscussionThread extends Component {
 
     this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
     this.handleUpdateTitle = this.handleUpdateTitle.bind(this);
-    this.conversationIdForNewReply = this.conversationIdForNewReply.bind(this);
     this.fetchConversationMessages = this.fetchConversationMessages.bind(this);
     this.replyCountForMessage = this.replyCountForMessage.bind(this);
     this.showFocusedConversation = this.showFocusedConversation.bind(this);
     this.sizeForMessage = this.sizeForMessage.bind(this);
-    this.toggleReplyComposer = this.toggleReplyComposer.bind(this);
     this.updateMessageInList = this.updateMessageInList.bind(this);
   }
 
@@ -86,7 +67,6 @@ class DiscussionThread extends Component {
       const { messages, messageCount } = await this.fetchConversationMessages(conversation.id);
       this.setState({
         focusedMessage: null,
-        isComposingReply: false,
         messageCount,
         messages,
         parentConversation: null,
@@ -128,13 +108,6 @@ class DiscussionThread extends Component {
     }
 
     return new Error('Error updating conversation title');
-  }
-
-  conversationIdForNewReply() {
-    const { focusedMessage } = this.state;
-    const { conversation } = this.props;
-
-    return focusedMessage ? focusedMessage.childConversationId : conversation.id;
   }
 
   async fetchConversationMessages(conversationId) {
@@ -204,10 +177,6 @@ class DiscussionThread extends Component {
     }
   }
 
-  toggleReplyComposer() {
-    this.setState(prevState => ({ isComposingReply: !prevState.isComposingReply }));
-  }
-
   // Serves as an optimistic update to the messages state. Handles two cases:
   // 1. A new message is added to a conversation
   // 2. A message has been edited by the current user
@@ -239,7 +208,7 @@ class DiscussionThread extends Component {
   }
 
   render() {
-    const { focusedMessage, isComposingReply, messages } = this.state;
+    const { focusedMessage, messages } = this.state;
     const { client, conversation, meetingId, ...props } = this.props;
 
     if (!messages) return null;
@@ -255,7 +224,7 @@ class DiscussionThread extends Component {
         />
         <MessagesSection>
           {messages.map(m => (
-            <ReplyDisplay key={m.id}>
+            <React.Fragment key={m.id}>
               <DiscussionReply
                 afterSubmit={this.updateMessageInList}
                 conversationId={m.conversationId}
@@ -268,21 +237,15 @@ class DiscussionThread extends Component {
                 size={this.sizeForMessage(m.id)}
               />
               <Separator />
-            </ReplyDisplay>
+            </React.Fragment>
           ))}
         </MessagesSection>
-        {!isComposingReply ? <AddReplyButtonRow onClickReply={this.toggleReplyComposer} /> : (
-          <ComposeContainer>
-            <DiscussionReply
-              afterSubmit={this.updateMessageInList}
-              conversationId={this.conversationIdForNewReply()}
-              focusedMessage={focusedMessage}
-              initialMode="compose"
-              meetingId={meetingId}
-              onCancelCompose={this.toggleReplyComposer}
-            />
-          </ComposeContainer>
-        )}
+        <ReplyComposer
+          afterSubmit={this.updateMessageInList}
+          conversationId={conversation.id}
+          focusedMessage={focusedMessage}
+          meetingId={meetingId}
+        />
       </Container>
     );
   }

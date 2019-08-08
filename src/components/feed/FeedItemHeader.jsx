@@ -51,16 +51,16 @@ const DiscussionTitle = styled.span(({ theme: { colors } }) => ({
   },
 }));
 
-const FeedItemHeader = ({ conversation, meeting, ...props }) => {
-  const { id: conversationId, messages, messageCount, title: conversationTitle } = conversation;
+const FeedItemHeader = ({ conversation, meeting, numNewMessages, ...props }) => {
+  const { id: conversationId, messageCount, title: conversationTitle } = conversation;
   const { id: meetingId, title: meetingTitle } = meeting;
-  const replyCount = messageCount ? messageCount - 1 : 0;
+  const totalMessageCount = messageCount + numNewMessages;
 
   return (
     <Container {...props}>
       <MetadataRow>
         <ReplyCountDisplay>
-          {replyCount > 0 ? Pluralize('reply', replyCount, true) : 'No replies'}
+          {totalMessageCount > 1 ? Pluralize('message', totalMessageCount, true) : 'No replies'}
         </ReplyCountDisplay>
         <StyledLink to={`/spaces/${meetingId}`}>
           <MeetingSpaceLabel>
@@ -78,6 +78,11 @@ const FeedItemHeader = ({ conversation, meeting, ...props }) => {
 FeedItemHeader.propTypes = {
   conversation: PropTypes.object.isRequired,
   meeting: PropTypes.object.isRequired,
+  numNewMessages: PropTypes.number,
+};
+
+FeedItemHeader.defaultProps = {
+  numNewMessages: 0,
 };
 
 export default FeedItemHeader;
