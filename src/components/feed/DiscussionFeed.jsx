@@ -48,7 +48,7 @@ const DiscussionFeed = () => {
   return (
     <Query
       query={discussionFeedQuery}
-      variables={{ id }}
+      variables={{ id, meetingId: meetingIdToFilter || '' }}
       fetchPolicy="no-cache"
     >
       {({ loading, error, data }) => {
