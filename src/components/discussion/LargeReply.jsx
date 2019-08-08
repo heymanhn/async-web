@@ -94,6 +94,7 @@ const LargeReply = ({
   message,
   mode,
   replyCount,
+  roundedCorner,
   ...props
 }) => {
   const { body, createdAt, id: messageId, updatedAt } = message || {};
@@ -132,6 +133,7 @@ const LargeReply = ({
           conversationId={conversationId}
           messageId={messageId}
           replyCount={replyCount}
+          roundedCorner={roundedCorner}
         />
       )}
     </React.Fragment>
@@ -149,10 +151,12 @@ LargeReply.propTypes = {
   message: PropTypes.object,
   mode: PropTypes.string.isRequired,
   replyCount: PropTypes.number.isRequired,
+  roundedCorner: PropTypes.bool,
 };
 
 LargeReply.defaultProps = {
   message: null,
+  roundedCorner: false,
 };
 
 export default withHover(LargeReply);

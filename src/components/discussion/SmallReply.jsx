@@ -133,6 +133,7 @@ const SmallReply = ({
           )}
         </HeaderSection>
         <ReplyEditor
+          initialHeight={120}
           initialValue={mode !== 'compose' ? body.payload : null}
           mode={mode}
           onCancel={handleCancel}
@@ -156,7 +157,6 @@ const SmallReply = ({
 SmallReply.propTypes = {
   author: PropTypes.object.isRequired,
   conversationId: PropTypes.string,
-  createdAt: PropTypes.number,
   handleCancel: PropTypes.func.isRequired,
   handleFocusCurrentMessage: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
@@ -165,15 +165,12 @@ SmallReply.propTypes = {
   message: PropTypes.object,
   mode: PropTypes.string.isRequired,
   replyCount: PropTypes.number,
-  updatedAt: PropTypes.number,
 };
 
 SmallReply.defaultProps = {
   conversationId: null,
-  createdAt: null,
   message: null,
   replyCount: null,
-  updatedAt: null,
 };
 
 export default withHover(SmallReply);

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
+import { Redirect } from '@reach/router';
 import styled from '@emotion/styled';
 
 import {
@@ -73,7 +74,7 @@ class Auth extends Component {
     if (loading) return <LoadingIndicator color="grey5" />;
     if (error || !params || !params.email) return 'Cannot log in';
 
-    return 'Logged in successfully';
+    return <Redirect to="/feed" noThrow />;
   }
 
   render() {
