@@ -36,38 +36,31 @@ const DiscussionsContainer = styled.div({
 
 const DiscussionFeed = () => {
   const { userId: id } = getLocalUser();
-
-  /* HN: Ideas:
-   * - see if I can reorganize the elements so that the filter UI is rendered regardless
-   *   of this query's progress
-   * - Add a state to track which filter option is selected
-   * - the "All Discussions" option is equivalent to resetting the state
-   */
   const [meetingIdToFilter, setMeetingIdToFilter] = useState(null);
 
   return (
-    <Query
-      query={discussionFeedQuery}
-      variables={{ id, meetingId: meetingIdToFilter || '' }}
-      fetchPolicy="no-cache"
+    <Layout
+      hideFooter
+      mode="wide"
+      title="My Discussions"
     >
-      {({ loading, error, data }) => {
-        if (loading) return null;
-        if (error || !data.discussionFeed) return <div>{error}</div>;
+      <Container>
+        <DiscussionFeedFilters
+          onSelectFilter={setMeetingIdToFilter}
+          selectedMeetingId={meetingIdToFilter}
+        />
+        <Query
+          query={discussionFeedQuery}
+          variables={{ id, meetingId: meetingIdToFilter || '' }}
+          fetchPolicy="no-cache"
+        >
+          {({ loading, error, data }) => {
+            if (loading) return null;
+            if (error || !data.discussionFeed) return <div>{error}</div>;
 
-        const { items } = data.discussionFeed;
+            const { items } = data.discussionFeed;
 
-        return (
-          <Layout
-            hideFooter
-            mode="wide"
-            title="My Discussions"
-          >
-            <Container>
-              <DiscussionFeedFilters
-                onSelectFilter={setMeetingIdToFilter}
-                selectedMeetingId={meetingIdToFilter}
-              />
+            return (
               <DiscussionsContainer>
                 {items.map(i => (
                   <DiscussionFeedItem
@@ -77,11 +70,11 @@ const DiscussionFeed = () => {
                   />
                 ))}
               </DiscussionsContainer>
-            </Container>
-          </Layout>
-        );
-      }}
-    </Query>
+            );
+          }}
+        </Query>
+      </Container>
+    </Layout>
   );
 };
 
