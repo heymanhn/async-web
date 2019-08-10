@@ -170,7 +170,10 @@ class DiscussionThread extends Component {
         const {
           messages: childMessages,
         } = await this.fetchConversationMessages(childConversationId);
-        newMessages = newMessages.concat(childMessages);
+
+        // Backend returns the originating message of the nested conversation as the first
+        // message in the list
+        newMessages = newMessages.concat(childMessages.slice(1));
       }
 
       this.setState({ focusedMessage, messages: newMessages });
