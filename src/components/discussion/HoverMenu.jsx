@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Pluralize from 'pluralize';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -50,6 +50,7 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
 
 const HoverMenu = ({
   conversationId,
+  isOpen,
   messageId,
   onAddReaction,
   onEdit,
@@ -60,6 +61,7 @@ const HoverMenu = ({
   showReplyButton,
   ...props
 }) => {
+  const [isPickerOpen, setPickerState] = useState(false);
   if (!showAddReactionButton && !showEditButton && !showReplyButton) return null;
 
   const handleClickAddReactionButton = (event) => {
@@ -76,7 +78,7 @@ const HoverMenu = ({
   };
 
   return (
-    <Container {...props}>
+    <Container isOpen={isOpen || isPickerOpen} {...props}>
       {showReplyButton && (
         <ButtonContainer onClick={handleClickReplyButton}>
           <StyledIcon icon={faComment} />
@@ -97,6 +99,7 @@ const HoverMenu = ({
             conversationId={conversationId}
             messageId={messageId}
             source="hoverMenu"
+            onPickerStateChange={setPickerState}
           />
         </ButtonContainer>
       )}

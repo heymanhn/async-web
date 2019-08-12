@@ -9,7 +9,7 @@ import withReactions from 'utils/withReactions';
 import ReactionIcon from './ReactionIcon';
 
 const Container = styled.div(({ isOpen, offset, theme: { colors } }) => ({
-  display: 'flex',
+  display: isOpen ? 'flex' : 'none',
   flexDirection: 'column',
   alignItems: 'center',
 
@@ -21,7 +21,6 @@ const Container = styled.div(({ isOpen, offset, theme: { colors } }) => ({
   padding: '10px 5px 5px',
   position: 'absolute',
   transition: 'opacity 0.2s',
-  zIndex: isOpen ? 1 : -1,
 }));
 
 const Title = styled.div(({ theme: { colors } }) => ({

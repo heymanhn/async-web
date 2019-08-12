@@ -57,18 +57,36 @@ class AddReactionButton extends Component {
 
   handleClosePicker() {
     const { isPickerOpen } = this.state;
-    if (isPickerOpen) this.setState({ isPickerOpen: false });
+    const { onPickerStateChange } = this.props;
+
+    if (isPickerOpen) {
+      onPickerStateChange(false);
+      this.setState({ isPickerOpen: false });
+    }
   }
 
   togglePicker(event) {
     event.stopPropagation();
 
-    this.setState(prevState => ({ isPickerOpen: !prevState.isPickerOpen }));
+    const { onPickerStateChange } = this.props;
+
+    this.setState((prevState) => {
+      const newState = !prevState.isPickerOpen;
+      onPickerStateChange(newState);
+      return { isPickerOpen: !prevState.isPickerOpen };
+    });
   }
 
   render() {
     const { isPickerOpen } = this.state;
-    const { conversationId, messageId, size, source, ...props } = this.props;
+    const {
+      conversationId,
+      messageId,
+      onPickerStateChange,
+      size,
+      source,
+      ...props
+    } = this.props;
 
     return (
       <Container {...props}>
@@ -94,11 +112,13 @@ class AddReactionButton extends Component {
 AddReactionButton.propTypes = {
   conversationId: PropTypes.string.isRequired,
   messageId: PropTypes.string.isRequired,
+  onPickerStateChange: PropTypes.func,
   size: PropTypes.oneOf(['small', 'large']),
   source: PropTypes.oneOf(['hoverMenu', 'toolbar']).isRequired,
 };
 
 AddReactionButton.defaultProps = {
+  onPickerStateChange: () => {},
   size: 'small',
 };
 
