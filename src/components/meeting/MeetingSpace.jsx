@@ -18,7 +18,6 @@ const Container = styled.div(({ theme: { wideViewport } }) => ({
   maxHeight: 'calc(100vh - 70px)',
   margin: '0 auto',
   maxWidth: wideViewport,
-  overflow: 'hidden',
   padding: '30px 0',
 }));
 
@@ -49,16 +48,10 @@ const PlusSign = styled.div(({ theme: { colors } }) => ({
   marginTop: '-4px',
 }));
 
-const DiscussionsContainer = styled.div({
-  height: 'calc(100vh - 148px)', // 70px nav bar, 30px margin, 48px start discuss button
-  overflow: 'auto',
-});
+const DiscussionsContainer = styled.div({});
 
 const MainColumn = styled.div(({ theme: { colors } }) => ({
   borderTop: `1px solid ${colors.borderGrey}`,
-  height: 'calc(100vh - 100px)', // 70px nav bar, 30px margin
-  overflow: 'auto',
-  overflowX: 'hidden',
   margin: '0 20px',
 }));
 
@@ -189,7 +182,6 @@ class MeetingSpace extends Component {
               hideFooter
               meetingId={id}
               mode="wide"
-              preventScrolling
               title={title || 'Untitled Discussion'}
             >
               <Container>
