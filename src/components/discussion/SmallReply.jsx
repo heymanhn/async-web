@@ -161,7 +161,7 @@ SmallReply.propTypes = {
   handleFocusCurrentMessage: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleToggleEditMode: PropTypes.func.isRequired,
-  hover: PropTypes.bool.isRequired,
+  hover: PropTypes.bool,
   message: PropTypes.object,
   mode: PropTypes.string.isRequired,
   replyCount: PropTypes.number,
@@ -169,6 +169,7 @@ SmallReply.propTypes = {
 
 SmallReply.defaultProps = {
   conversationId: null,
+  hover: false,
   message: null,
   replyCount: null,
 };

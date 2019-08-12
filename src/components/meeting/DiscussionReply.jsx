@@ -164,6 +164,7 @@ class DiscussionReply extends Component {
       handleToggleEditMode: this.toggleEditMode,
       message,
       mode,
+      noHover: mode !== 'display',
       ...props,
     };
 

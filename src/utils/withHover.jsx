@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 const getDisplayName = C => C.displayName || C.name || 'Component';
 
@@ -19,18 +20,23 @@ const withHover = (WrappedComponent) => {
       this.enableHover = this.enableHover.bind(this);
     }
 
-    disableHover() {
-      this.setState({ hover: false });
+    disableHover(event) {
+      event.stopPropagation();
+      const { noHover } = this.props;
+      if (!noHover) this.setState({ hover: false });
     }
 
-    enableHover() {
-      this.setState({ hover: true });
+    enableHover(event) {
+      event.stopPropagation();
+      const { noHover } = this.props;
+      if (!noHover) this.setState({ hover: true });
     }
 
     render() {
       const { hover } = this.state;
+      const { noHover } = this.props;
 
-      return (
+      return noHover ? <WrappedComponent {...this.props} /> : (
         <WrappedComponent
           onBlur={this.disableHover}
           onFocus={this.enableHover}
@@ -42,6 +48,14 @@ const withHover = (WrappedComponent) => {
       );
     }
   }
+
+  WithHover.propTypes = {
+    noHover: PropTypes.bool,
+  };
+
+  WithHover.defaultProps = {
+    noHover: false,
+  };
 
   WithHover.displayName = `WithHover(${getDisplayName(WrappedComponent)})`;
   return WithHover;
