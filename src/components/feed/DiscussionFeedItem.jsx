@@ -8,7 +8,7 @@ import ThreadedDiscussion from './ThreadedDiscussion';
 import TopLevelDiscussion from './TopLevelDiscussion';
 
 const DiscussionFeedItem = ({ conversation, meeting }) => {
-  const { id, title } = conversation;
+  const { id, title, parentId } = conversation;
 
   return (
     <Query
@@ -27,6 +27,7 @@ const DiscussionFeedItem = ({ conversation, meeting }) => {
             id,
             messages,
             messageCount,
+            parentId,
             title,
           },
           meeting,

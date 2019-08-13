@@ -40,21 +40,35 @@ const MeetingSpaceLabel = styled.div(({ theme: { colors } }) => ({
   textDecoration: 'none',
 }));
 
-const DiscussionTitle = styled.span(({ theme: { colors } }) => ({
+const ThreadLabel = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontWeight: 400,
+  paddingRight: '5px',
+}));
+
+const DiscussionTitle = styled.span(({ isLink, theme: { colors } }) => ({
   color: colors.mainText,
   fontSize: '20px',
   fontWeight: 500,
   width: '100%',
 
   ':hover': {
-    color: colors.blue,
+    color: isLink ? colors.blue : 'initial',
   },
 }));
 
 const FeedItemHeader = ({ conversation, meeting, numNewMessages, ...props }) => {
-  const { id: conversationId, messageCount, title: conversationTitle } = conversation;
+  const { id: conversationId, messageCount, title: conversationTitle, parentId } = conversation;
   const { id: meetingId, title: meetingTitle } = meeting;
   const totalMessageCount = messageCount + numNewMessages;
+  const isRootConversation = !parentId;
+
+  const discussionTitle = (
+    <DiscussionTitle isLink={isRootConversation}>
+      {!isRootConversation ? <ThreadLabel>Thread:</ThreadLabel> : undefined}
+      {conversationTitle || 'Untitled Discussion'}
+    </DiscussionTitle>
+  );
 
   return (
     <Container {...props}>
@@ -68,9 +82,11 @@ const FeedItemHeader = ({ conversation, meeting, numNewMessages, ...props }) => 
           </MeetingSpaceLabel>
         </StyledLink>
       </MetadataRow>
-      <StyledLink to={`/spaces/${meetingId}/conversations/${conversationId}`}>
-        <DiscussionTitle>{conversationTitle || 'Untitled Discussion'}</DiscussionTitle>
-      </StyledLink>
+      {isRootConversation ? (
+        <StyledLink to={`/spaces/${meetingId}/conversations/${conversationId}`}>
+          {discussionTitle}
+        </StyledLink>
+      ) : discussionTitle}
     </Container>
   );
 };
