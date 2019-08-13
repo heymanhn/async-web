@@ -48,7 +48,6 @@ class ReactionPicker extends Component {
       reactionOnHover: null,
     };
 
-    this.picker = React.createRef();
     this.handleAddReaction = this.handleAddReaction.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.handleExitHover = this.handleExitHover.bind(this);
@@ -99,10 +98,7 @@ class ReactionPicker extends Component {
   // regardless of direction
   calculateOffset() {
     const { placement } = this.props;
-    const picker = this.picker.current;
-    if (!picker || placement === 'below') return 25;
-
-    return (picker.offsetHeight + 8) * -1;
+    return placement === 'below' ? 25 : -106; // Based on a single row of reactions
   }
 
   userReactionForCode(code) {
@@ -129,7 +125,6 @@ class ReactionPicker extends Component {
         isOpen={isOpen}
         offset={this.calculateOffset()}
         placement={placement}
-        ref={this.picker}
         {...props}
       >
         <Title>{title}</Title>
