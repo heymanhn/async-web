@@ -101,6 +101,7 @@ const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
 
 const EditorActions = ({
   contentType,
+  hideCancelButton,
   isSubmitDisabled,
   isSubmitting,
   mode,
@@ -158,7 +159,7 @@ const EditorActions = ({
       <Container contentType={contentType}>
         <InnerContainer>
           {saveButton}
-          {cancelButton}
+          {!hideCancelButton ? cancelButton : undefined}
         </InnerContainer>
       </Container>
     );
@@ -167,13 +168,14 @@ const EditorActions = ({
   return (
     <Container contentType={contentType}>
       {saveButton}
-      {cancelButton}
+      {!hideCancelButton ? cancelButton : undefined}
     </Container>
   );
 };
 
 EditorActions.propTypes = {
   contentType: PropTypes.oneOf(['discussion', 'modalTopic', 'modalReply']).isRequired,
+  hideCancelButton: PropTypes.bool.isRequired,
   isSubmitDisabled: PropTypes.bool.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
   mode: PropTypes.string.isRequired,
