@@ -5,8 +5,8 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
+import DiscussionReply from 'components/discussion/DiscussionReply';
 import ReplyComposer from 'components/discussion/ReplyComposer';
-import DiscussionReply from 'components/meeting/DiscussionReply';
 import FeedItemHeader from './FeedItemHeader';
 
 // TODO(HN): DRY up these component styles in the future, with TopLevelDiscussion

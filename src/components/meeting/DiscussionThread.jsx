@@ -9,8 +9,8 @@ import meetingQuery from 'graphql/meetingQuery';
 import updateConversationMutation from 'graphql/updateConversationMutation';
 
 import RovalEditor from 'components/editor/RovalEditor';
+import DiscussionReply from 'components/discussion/DiscussionReply';
 import ReplyComposer from 'components/discussion/ReplyComposer';
-import DiscussionReply from './DiscussionReply';
 
 const Container = styled.div({});
 

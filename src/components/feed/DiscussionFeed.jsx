@@ -1,7 +1,3 @@
-/*
- * Experimenting with React Hooks to create stateful function components:
- * https://reactjs.org/docs/hooks-overview.html
- */
 import React, { useState } from 'react';
 import { Query } from 'react-apollo';
 import styled from '@emotion/styled';

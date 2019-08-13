@@ -1,17 +1,8 @@
-/*
- * Experimenting with React Hooks to create stateful function components:
- * https://reactjs.org/docs/hooks-overview.html
- */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import DiscussionReply from 'components/meeting/DiscussionReply';
-
-// const ComposeContainer = styled.div(({ theme: { colors } }) => ({
-//   display: 'flex',
-//   flexDirection: 'row',
-// }));
+import DiscussionReply from './DiscussionReply';
 
 const Container = styled.div(({ roundedCorner }) => ({
   borderRadius: roundedCorner ? '0 0 5px 5px' : 'none',

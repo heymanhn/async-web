@@ -1,7 +1,3 @@
-/*
- * Experimenting with React Hooks to create stateful function components:
- * https://reactjs.org/docs/hooks-overview.html
- */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
