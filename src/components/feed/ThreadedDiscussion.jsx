@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
 import ReplyComposer from 'components/discussion/ReplyComposer';
-import SmallReply from 'components/discussion/SmallReply';
+import DiscussionReply from 'components/meeting/DiscussionReply';
 import FeedItemHeader from './FeedItemHeader';
 
 // TODO(HN): DRY up these component styles in the future, with TopLevelDiscussion
@@ -72,25 +72,28 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
   const isTruncated = messageCount > 3;
   const initialMessagesToShow = isTruncated ? messages.slice(messageCount - 3) : messages;
 
-  // Manually keep track of any new replies the user added inline
-  const [newMessages, setNewMessages] = useState([]);
-  const combinedMessages = [...initialMessagesToShow, ...newMessages];
+  // Manually keep track of any new replies the user added
+  const [threadMessages, setThreadMessages] = useState(initialMessagesToShow);
 
-  function addMessageToThread(newMessage) {
-    setNewMessages([...newMessages, newMessage]);
+  function updateMessageInThread(message) {
+    const index = threadMessages.findIndex(m => m.id === message.id);
+    if (index < 0) {
+      setThreadMessages([...threadMessages, message]);
+    } else {
+      setThreadMessages([
+        ...threadMessages.slice(0, index),
+        message,
+        ...threadMessages.slice(index + 1),
+      ]);
+    }
   }
-
-  // Allows users to edit the reply in place
-  // function updateMessageInThread(updatedMessage) {
-  //   // TODO
-  // }
 
   return (
     <Container {...props}>
       <FeedItemHeader
         conversation={conversation}
         meeting={meeting}
-        numNewMessages={newMessages.length}
+        numNewMessages={threadMessages.length - initialMessagesToShow.length}
       />
       {isTruncated ? (
         <StyledLink to={`/spaces/${meetingId}/conversations/${conversationId}`}>
@@ -100,20 +103,21 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
           </ViewEntireDiscussionButton>
         </StyledLink>
       ) : null}
-      {combinedMessages.map(m => (
+      {threadMessages.map(m => (
         <ReplyDisplay key={m.id}>
-          <SmallReply
-            author={m.author}
+          <DiscussionReply
+            afterSubmit={updateMessageInThread}
             conversationId={m.conversationId}
+            initialMode="display"
+            meetingId={meetingId}
             message={m}
-            mode="display"
             replyCount={m.replyCount || 0}
           />
           <Separator />
         </ReplyDisplay>
       ))}
       <ReplyComposer
-        afterSubmit={addMessageToThread}
+        afterSubmit={updateMessageInThread}
         conversationId={conversationId}
         meetingId={meetingId}
         roundedCorner
