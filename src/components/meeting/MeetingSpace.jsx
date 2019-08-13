@@ -130,9 +130,10 @@ class MeetingSpace extends Component {
     const { selectedConversationId } = this.state;
     const { cid } = this.props;
 
+    if (!conversations) return {};
     if (cid && !selectedConversationId) return conversations.find(c => c.id === cid);
     if (!selectedConversationId && conversations.length) return conversations[0];
-    return conversations.find(c => c.id === selectedConversationId);
+    return conversations.find(c => c.id === selectedConversationId) || {};
   }
 
   resetDisplayURL() {
