@@ -13,14 +13,17 @@ const DiscussionFeedItem = ({ conversation, meeting }) => {
   return (
     <Query
       query={conversationMessagesQuery}
-      variables={{ id }}
+      variables={{
+        id,
+        queryParams: { order: 'desc' },
+      }}
     >
       {({ loading, data, error }) => {
         if (loading) return null;
         if (error || !data.conversationMessages) return <div>{error}</div>;
 
         const { items, messageCount } = data.conversationMessages;
-        const messages = items.map(i => i.message);
+        const messages = items.map(i => i.message).reverse();
 
         const fwdProps = {
           conversation: {
