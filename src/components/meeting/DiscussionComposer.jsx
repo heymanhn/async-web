@@ -135,6 +135,7 @@ class DiscussionComposer extends Component {
         />
         <DiscussionEditor
           disableAutoFocus
+          hideCancelButton
           isSubmitting={isSubmitting}
           mode="compose"
           onCancel={onCancelCompose}

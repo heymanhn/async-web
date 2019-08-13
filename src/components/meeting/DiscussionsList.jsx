@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import DiscussionsListCell from './DiscussionsListCell';
 
 const Container = styled.div(({ theme: { colors } }) => ({
-  border: `1px solid ${colors.grey6}`,
+  border: `1px solid ${colors.borderGrey}`,
   margin: '15px 0 30px 20px',
 }));
 
@@ -17,6 +17,7 @@ const EmptyContainer = styled.div(({ theme: { colors } }) => ({
 
   border: `1px dashed ${colors.grey6}`,
   color: colors.grey4,
+  cursor: 'default',
   fontSize: '16px',
   fontWeight: 500,
   margin: '15px 0 30px 20px',
