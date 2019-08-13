@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 
-import LargeReply from 'components/discussion/LargeReply';
+import DiscussionReply from 'components/discussion/DiscussionReply';
 import ReplyComposer from 'components/discussion/ReplyComposer';
 import FeedItemHeader from './FeedItemHeader';
 
@@ -21,23 +21,65 @@ const Separator = styled.hr(({ theme: { colors } }) => ({
   margin: 0,
 }));
 
+const ReplyDisplay = styled.div({
+  ':last-of-type': {
+    [Separator]: {
+      display: 'none',
+    },
+  },
+});
+
 const TopLevelDiscussion = ({ conversation, meeting, ...props }) => {
   const { messages } = conversation;
   const { id: meetingId } = meeting;
-  const { author } = messages[0];
+
+  // Keep track of any new replies the user added
+  const [newMessages, setNewMessages] = useState([]);
+
+  function updateNewMessages(message) {
+    const index = newMessages.findIndex(m => m.id === message.id);
+    if (index < 0) {
+      setNewMessages([...newMessages, message]);
+    } else {
+      setNewMessages([
+        ...newMessages.slice(0, index),
+        message,
+        ...newMessages.slice(index + 1),
+      ]);
+    }
+  }
+
   return (
     <Container {...props}>
-      <FeedItemHeader conversation={conversation} meeting={meeting} />
-      <LargeReply
-        author={author}
+      <FeedItemHeader
+        conversation={conversation}
+        meeting={meeting}
+        numNewMessages={newMessages.length}
+      />
+      <DiscussionReply
         conversationId={messages[0].conversationId}
+        initialMode="display"
+        meetingId={meetingId}
         message={messages[0]}
-        mode="display"
         replyCount={0}
+        size="large"
       />
       <Separator />
+      {newMessages.map(m => (
+        <ReplyDisplay key={m.id}>
+          <DiscussionReply
+            afterSubmit={updateNewMessages}
+            conversationId={m.conversationId}
+            initialMode="display"
+            meetingId={meetingId}
+            message={m}
+            replyCount={m.replyCount || 0}
+          />
+          <Separator />
+        </ReplyDisplay>
+      ))}
       <ReplyComposer
-        afterSubmit={() => {}}
+        afterSubmit={updateNewMessages}
         conversationId={messages[0].conversationId}
         meetingId={meetingId}
         roundedCorner

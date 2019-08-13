@@ -34,9 +34,8 @@ const layouts = {
   }),
 };
 
-const Container = styled.div(({ roundedCorner, theme: { colors } }) => ({
+const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.formGrey,
-  borderRadius: roundedCorner ? '0 0 5px 5px' : 'none',
   color: colors.grey3,
 
   display: 'flex',
@@ -219,12 +218,10 @@ ContentToolbar.propTypes = {
   reactionsReference: PropTypes.array.isRequired,
   removeReaction: PropTypes.func.isRequired,
   replyCount: PropTypes.number.isRequired,
-  roundedCorner: PropTypes.bool,
 };
 
 ContentToolbar.defaultProps = {
   onClickReply: () => {},
-  roundedCorner: false,
 };
 
 export default withReactions(ContentToolbar);
