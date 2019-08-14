@@ -70,7 +70,7 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
   } = conversation;
   const { id: meetingId } = meeting;
   const isTruncated = messageCount > 3;
-  const initialMessagesToShow = isTruncated ? messages.slice(messageCount - 3) : messages;
+  const initialMessagesToShow = isTruncated ? messages.slice(messages.length - 3) : messages;
 
   // Keep track of any new replies the user added
   const [threadMessages, setThreadMessages] = useState(initialMessagesToShow);
