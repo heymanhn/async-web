@@ -32,8 +32,8 @@ const InnerContainer = styled.div(({ isUnread, theme: { colors } }) => {
   };
 });
 
-const RepliesDisplay = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey3,
+const RepliesDisplay = styled.div(({ isUnread, theme: { colors } }) => ({
+  color: isUnread ? colors.blue : colors.grey3,
   fontSize: '14px',
   fontWeight: 500,
   marginBottom: '8px',
@@ -103,7 +103,8 @@ const DiscussionsListCell = ({
   const unreadCounts = data.conversation.unreadCounts || [];
   const { userId } = getLocalUser();
 
-  /* Conditions that indicate unread:
+  /*
+   * Conditions that indicate unread:
    * 1. no unreadCounts from the current user (user hasn't seen this thread at all)
    * 2. user has an unreadCount where count > 0 (user hasn't read `count` messages)
    *
@@ -114,6 +115,24 @@ const DiscussionsListCell = ({
     return userUnreadRecord ? userUnreadRecord.count : -1;
   }
 
+  // The only situation where we don't show this UI is if there are no replies
+  function showRepliesDisplay() {
+    const unreadCount = unreadMessageCount();
+    const isUnread = unreadCount !== 0;
+    if (!replyCount && !isUnread) return null;
+
+    let displayText = '';
+    if (unreadCount === -1) {
+      displayText = 'New discussion';
+    } else if (unreadCount > 0) {
+      displayText = Pluralize('new reply', unreadCount, true);
+    } else {
+      displayText = Pluralize('reply', replyCount, true);
+    }
+
+    return <RepliesDisplay isUnread={isUnread}>{displayText}</RepliesDisplay>;
+  }
+
   return (
     <Container
       ref={cellRef}
@@ -122,7 +141,7 @@ const DiscussionsListCell = ({
       {...props}
     >
       <InnerContainer isUnread={unreadMessageCount() !== 0}>
-        {replyCount > 0 && <RepliesDisplay>{Pluralize('reply', replyCount, true)}</RepliesDisplay>}
+        {showRepliesDisplay()}
         <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
         {messagePreview && (
           <MessagePreview>
