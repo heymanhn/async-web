@@ -79,7 +79,7 @@ const DiscussionsListCell = ({
   onSelectConversation,
   ...props
 }) => {
-  const { id: conversationId, lastMessage, meetingId, messageCount, title } = conversation;
+  const { id: conversationId, lastMessage, messageCount, title } = conversation;
   const replyCount = messageCount - 1;
   const { author, body, createdAt } = lastMessage;
   const { text } = body;
@@ -96,9 +96,7 @@ const DiscussionsListCell = ({
     if (element && isSelected) onScrollTo(element);
   }, [isSelected, onScrollTo]);
 
-  const { loading, data } = useQuery(conversationQuery, {
-    variables: { meetingId, conversationId },
-  });
+  const { loading, data } = useQuery(conversationQuery, { variables: { conversationId } });
   if (loading || !data.conversation) return null;
 
   const unreadCounts = data.conversation.unreadCounts || [];

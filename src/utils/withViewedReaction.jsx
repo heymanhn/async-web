@@ -32,7 +32,7 @@ const withViewedReaction = (WrappedComponent) => {
         },
         refetchQueries: [{
           query: conversationQuery,
-          variables: { meetingId, conversationId },
+          variables: { conversationId },
         }],
       });
     }
