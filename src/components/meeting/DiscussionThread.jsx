@@ -114,7 +114,7 @@ class DiscussionThread extends Component {
     const { client } = this.props;
     const response = await client.query({
       query: conversationMessagesQuery,
-      variables: { id: conversationId },
+      variables: { id: conversationId, queryParams: {} },
       fetchPolicy: 'no-cache',
     });
 

@@ -1,9 +1,10 @@
 import React, { createRef, Component } from 'react';
 import PropTypes from 'prop-types';
-import { Query } from 'react-apollo';
+import { Query, withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import meetingQuery from 'graphql/meetingQuery';
+import createReactionMutation from 'graphql/createReactionMutation';
 
 import Layout from 'components/Layout';
 import DiscussionsList from './DiscussionsList';
@@ -123,6 +124,24 @@ class MeetingSpace extends Component {
   }
 
   handleSelectConversation(conversationId) {
+    // Mark the conversation as read. Will DRY this up later.
+    const { client, id } = this.props;
+    client.mutate({
+      mutation: createReactionMutation,
+      variables: {
+        input: {
+          objectType: 'conversation',
+          objectId: conversationId,
+          parentId: id,
+          code: 'viewed',
+        },
+      },
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id },
+      }],
+    });
+
     this.setState({ isComposing: false, selectedConversationId: conversationId });
   }
 
@@ -226,10 +245,11 @@ class MeetingSpace extends Component {
 MeetingSpace.propTypes = {
   id: PropTypes.string.isRequired,
   cid: PropTypes.string, // conversation Id
+  client: PropTypes.object.isRequired,
 };
 
 MeetingSpace.defaultProps = {
   cid: null,
 };
 
-export default MeetingSpace;
+export default withApollo(MeetingSpace);
