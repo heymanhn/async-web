@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 
 import createReactionMutation from 'graphql/createReactionMutation';
+import conversationQuery from 'graphql/conversationQuery';
 
 const getDisplayName = C => C.displayName || C.name || 'Component';
 
-
-/* Allows any wrapped component to mark a conversation as read
+/*
+ * Allows any wrapped component to mark a conversation as read
  */
 const withViewedReaction = (WrappedComponent) => {
   class WithViewedReaction extends Component {
@@ -29,11 +30,10 @@ const withViewedReaction = (WrappedComponent) => {
             code: 'viewed',
           },
         },
-        // HN: disabling this for now
-        // refetchQueries: [{
-        //   query: meetingQuery,
-        //   variables: { id },
-        // }],
+        refetchQueries: [{
+          query: conversationQuery,
+          variables: { meetingId, conversationId },
+        }],
       });
     }
 

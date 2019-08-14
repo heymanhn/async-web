@@ -1,10 +1,13 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { useQuery } from 'react-apollo';
 import Pluralize from 'pluralize';
 import Moment from 'react-moment';
 import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
+import conversationQuery from 'graphql/conversationQuery';
+import { getLocalUser } from 'utils/auth';
 import withHover from 'utils/withHover';
 
 import Avatar from 'components/shared/Avatar';
@@ -19,7 +22,14 @@ const Container = styled.div(({ hover, isSelected, theme: { colors } }) => ({
   ':last-of-type': {
     borderBottom: 'none',
   },
-}));
+}), ({ isUnread, theme: { colors } }) => {
+  if (!isUnread) return {};
+
+  return {
+    borderLeft: `8px solid ${colors.blue}`,
+    paddingLeft: '22px',
+  };
+});
 
 const RepliesDisplay = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
@@ -63,15 +73,13 @@ const MessageTimestamp = styled(Moment)(({ theme: { colors } }) => ({
 }));
 
 const DiscussionsListCell = ({
-  conversationId,
+  conversation,
   isSelected,
-  lastMessage,
-  messageCount,
   onScrollTo,
   onSelectConversation,
-  title,
   ...props
 }) => {
+  const { id: conversationId, lastMessage, meetingId, messageCount, title } = conversation;
   const replyCount = messageCount - 1;
   const { author, body, createdAt } = lastMessage;
   const { text } = body;
@@ -88,8 +96,33 @@ const DiscussionsListCell = ({
     if (element && isSelected) onScrollTo(element);
   }, [isSelected, onScrollTo]);
 
+  const { loading, data } = useQuery(conversationQuery, {
+    variables: { meetingId, conversationId },
+  });
+  if (loading || !data.conversation) return null;
+
+  const unreadCounts = data.conversation.unreadCounts || [];
+  const { userId } = getLocalUser();
+
+  /* Conditions that indicate unread:
+   * 1. no unreadCounts from the current user (user hasn't seen this thread at all)
+   * 2. user has an unreadCount where count > 0 (user hasn't read `count` messages)
+   *
+   * Return -1 if user hasn't read anything, or the number of unread messages
+   */
+  function unreadMessageCount() {
+    const userUnreadRecord = unreadCounts.find(c => c.userId === userId);
+    return userUnreadRecord ? userUnreadRecord.count : -1;
+  }
+
   return (
-    <Container ref={cellRef} isSelected={isSelected} onClick={handleSelectConversation} {...props}>
+    <Container
+      ref={cellRef}
+      isSelected={isSelected}
+      isUnread={unreadMessageCount() !== 0}
+      onClick={handleSelectConversation}
+      {...props}
+    >
       {replyCount > 0 && <RepliesDisplay>{Pluralize('reply', replyCount, true)}</RepliesDisplay>}
       <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
       {messagePreview && (
@@ -109,19 +142,15 @@ const DiscussionsListCell = ({
 };
 
 DiscussionsListCell.propTypes = {
-  conversationId: PropTypes.string.isRequired,
+  conversation: PropTypes.object.isRequired,
   hover: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool.isRequired,
-  lastMessage: PropTypes.object.isRequired,
-  messageCount: PropTypes.number.isRequired,
   onScrollTo: PropTypes.func,
   onSelectConversation: PropTypes.func.isRequired,
-  title: PropTypes.string,
 };
 
 DiscussionsListCell.defaultProps = {
   onScrollTo: () => {},
-  title: 'Untitled Discussion',
 };
 
 export default withHover(DiscussionsListCell);
