@@ -1,10 +1,10 @@
 import React, { createRef, Component } from 'react';
 import PropTypes from 'prop-types';
-import { Query, withApollo } from 'react-apollo';
+import { Query } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import meetingQuery from 'graphql/meetingQuery';
-import createReactionMutation from 'graphql/createReactionMutation';
+import withViewedReaction from 'utils/withViewedReaction';
 
 import Layout from 'components/Layout';
 import DiscussionsList from './DiscussionsList';
@@ -124,41 +124,29 @@ class MeetingSpace extends Component {
   }
 
   handleSelectConversation(conversationId) {
-    // Mark the conversation as read. Will DRY this up later.
-    const { client, id } = this.props;
-    client.mutate({
-      mutation: createReactionMutation,
-      variables: {
-        input: {
-          objectType: 'conversation',
-          objectId: conversationId,
-          parentId: id,
-          code: 'viewed',
-        },
-      },
-      refetchQueries: [{
-        query: meetingQuery,
-        variables: { id },
-      }],
-    });
+    const { markAsRead } = this.props;
+    markAsRead(conversationId);
 
     this.setState({ isComposing: false, selectedConversationId: conversationId });
   }
 
   findSelectedConversation(conversations) {
     const { selectedConversationId } = this.state;
-    const { cid } = this.props;
+    const { conversationId, markAsRead } = this.props;
 
     if (!conversations) return {};
-    if (cid && !selectedConversationId) return conversations.find(c => c.id === cid);
+    if (conversationId && !selectedConversationId) {
+      markAsRead(conversationId);
+      return conversations.find(c => c.id === conversationId);
+    }
     if (!selectedConversationId && conversations.length) return conversations[0];
     return conversations.find(c => c.id === selectedConversationId) || {};
   }
 
   resetDisplayURL() {
-    const { id } = this.props;
-    const url = `${origin}/spaces/${id}`;
-    window.history.replaceState({}, `meeting space: ${id}`, url);
+    const { meetingId } = this.props;
+    const url = `${origin}/spaces/${meetingId}`;
+    window.history.replaceState({}, `meeting space: ${meetingId}`, url);
   }
 
   async showCreatedConversation(conversationId) {
@@ -172,21 +160,21 @@ class MeetingSpace extends Component {
   // https://developer.mozilla.org/en-US/docs/Web/API/History_API#Adding_and_modifying_history_entries
   updateDisplayURL() {
     const { selectedConversationId } = this.state;
-    const { id } = this.props;
+    const { meetingId } = this.props;
     const { origin } = window.location;
 
-    const url = `${origin}/spaces/${id}/conversations/${selectedConversationId}`;
+    const url = `${origin}/spaces/${meetingId}/conversations/${selectedConversationId}`;
     window.history.replaceState({}, `conversation: ${selectedConversationId}`, url);
   }
 
   render() {
     const { isComposing, selectedConversationId } = this.state;
-    const { id, cid } = this.props;
+    const { conversationId, meetingId } = this.props;
 
     return (
       <Query
         query={meetingQuery}
-        variables={{ id }}
+        variables={{ id: meetingId }}
       >
         {({ loading, error, data }) => {
           if (loading) return null;
@@ -195,12 +183,12 @@ class MeetingSpace extends Component {
           const { conversations, title } = data.meeting;
           const showComposer = isComposing || !conversations;
           const selectedConvo = this.findSelectedConversation(conversations);
-          const isFirstLoadWithConvoParam = cid && !selectedConversationId;
+          const isFirstLoadWithConvoParam = conversationId && !selectedConversationId;
 
           return (
             <Layout
               hideFooter
-              meetingId={id}
+              meetingId={meetingId}
               mode="wide"
               title={title || 'Untitled Discussion'}
             >
@@ -223,13 +211,13 @@ class MeetingSpace extends Component {
                   {showComposer ? (
                     <StyledDiscussionComposer
                       afterSubmit={this.showCreatedConversation}
-                      meetingId={id}
+                      meetingId={meetingId}
                       onCancelCompose={this.handleCancelCompose}
                     />
                   ) : (
                     <StyledDiscussionThread
                       conversation={selectedConvo}
-                      meetingId={id}
+                      meetingId={meetingId}
                     />
                   )}
                 </MainColumn>
@@ -243,13 +231,13 @@ class MeetingSpace extends Component {
 }
 
 MeetingSpace.propTypes = {
-  id: PropTypes.string.isRequired,
-  cid: PropTypes.string, // conversation Id
-  client: PropTypes.object.isRequired,
+  conversationId: PropTypes.string, // conversation Id
+  markAsRead: PropTypes.func.isRequired,
+  meetingId: PropTypes.string.isRequired,
 };
 
 MeetingSpace.defaultProps = {
-  cid: null,
+  conversationId: null,
 };
 
-export default withApollo(MeetingSpace);
+export default withViewedReaction(MeetingSpace);
