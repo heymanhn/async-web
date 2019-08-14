@@ -27,8 +27,8 @@ const InnerContainer = styled.div(({ isUnread, theme: { colors } }) => {
   if (!isUnread) return { padding: '18px 30px 20px' };
 
   return {
-    borderLeft: `8px solid ${colors.blue}`,
-    padding: '18px 30px 20px 22px',
+    borderLeft: `6px solid ${colors.blue}`,
+    padding: '18px 30px 20px 24px',
   };
 });
 
