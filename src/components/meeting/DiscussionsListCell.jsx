@@ -16,18 +16,19 @@ const Container = styled.div(({ hover, isSelected, theme: { colors } }) => ({
   background: (hover || isSelected) ? colors.lightestBlue : colors.white,
   borderBottom: `1px solid ${colors.borderGrey}`,
   cursor: 'pointer',
-  padding: '18px 30px 20px',
   width: '458px',
 
   ':last-of-type': {
     borderBottom: 'none',
   },
-}), ({ isUnread, theme: { colors } }) => {
-  if (!isUnread) return {};
+}));
+
+const InnerContainer = styled.div(({ isUnread, theme: { colors } }) => {
+  if (!isUnread) return { padding: '18px 30px 20px' };
 
   return {
     borderLeft: `8px solid ${colors.blue}`,
-    paddingLeft: '22px',
+    padding: '18px 30px 20px 22px',
   };
 });
 
@@ -117,24 +118,25 @@ const DiscussionsListCell = ({
     <Container
       ref={cellRef}
       isSelected={isSelected}
-      isUnread={unreadMessageCount() !== 0}
       onClick={handleSelectConversation}
       {...props}
     >
-      {replyCount > 0 && <RepliesDisplay>{Pluralize('reply', replyCount, true)}</RepliesDisplay>}
-      <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
-      {messagePreview && (
-        <MessagePreview>
-          <Truncate lines={2}>
-            {messagePreview}
-          </Truncate>
-        </MessagePreview>
-      )}
-      <MessageDetails>
-        <StyledAvatar src={author.profilePictureUrl} size={24} />
-        <MessageAuthor>{author.fullName}</MessageAuthor>
-        <MessageTimestamp fromNow parse="X">{createdAt}</MessageTimestamp>
-      </MessageDetails>
+      <InnerContainer isUnread={unreadMessageCount() !== 0}>
+        {replyCount > 0 && <RepliesDisplay>{Pluralize('reply', replyCount, true)}</RepliesDisplay>}
+        <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
+        {messagePreview && (
+          <MessagePreview>
+            <Truncate lines={2}>
+              {messagePreview}
+            </Truncate>
+          </MessagePreview>
+        )}
+        <MessageDetails>
+          <StyledAvatar src={author.profilePictureUrl} size={24} />
+          <MessageAuthor>{author.fullName}</MessageAuthor>
+          <MessageTimestamp fromNow parse="X">{createdAt}</MessageTimestamp>
+        </MessageDetails>
+      </InnerContainer>
     </Container>
   );
 };
