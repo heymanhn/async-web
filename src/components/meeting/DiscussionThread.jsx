@@ -7,6 +7,7 @@ import styled from '@emotion/styled/macro';
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import meetingQuery from 'graphql/meetingQuery';
 import updateConversationMutation from 'graphql/updateConversationMutation';
+import withViewedReaction from 'utils/withViewedReaction';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionReply from 'components/discussion/DiscussionReply';
@@ -148,7 +149,7 @@ class DiscussionThread extends Component {
   */
   async showFocusedConversation(focusedMessage) {
     const { messages } = this.state;
-    const { conversation } = this.props;
+    const { conversation, markAsRead } = this.props;
     let newMessages = [];
 
     if (!focusedMessage) {
@@ -165,8 +166,9 @@ class DiscussionThread extends Component {
       if (index === 0) return;
       newMessages = messages.slice(0, index + 1);
 
-      const { childConversationId } = focusedMessage;
+      const { childConversationId } = focusedMessage; // indicates nested conversation
       if (childConversationId) {
+        markAsRead(childConversationId);
         const {
           messages: childMessages,
         } = await this.fetchConversationMessages(childConversationId);
@@ -257,7 +259,8 @@ class DiscussionThread extends Component {
 DiscussionThread.propTypes = {
   client: PropTypes.object.isRequired,
   conversation: PropTypes.object.isRequired,
+  markAsRead: PropTypes.func.isRequired,
   meetingId: PropTypes.string.isRequired,
 };
 
-export default withApollo(DiscussionThread);
+export default withApollo(withViewedReaction(DiscussionThread));
