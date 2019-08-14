@@ -240,6 +240,7 @@ class DiscussionThread extends Component {
                 message={m}
                 replyCount={this.replyCountForMessage(m)}
                 size={this.sizeForMessage(m.id)}
+                source="discussion"
               />
               <Separator />
             </React.Fragment>

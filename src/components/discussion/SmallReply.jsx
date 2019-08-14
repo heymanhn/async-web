@@ -111,6 +111,7 @@ const SmallReply = ({
   message,
   mode,
   replyCount,
+  source,
   ...props
 }) => {
   const { body, childConversationId, createdAt, id: messageId, updatedAt } = message || {};
@@ -119,7 +120,7 @@ const SmallReply = ({
   const [getChildConversation, { data }] = useLazyQuery(conversationQuery, {
     variables: { conversationId: childConversationId },
   });
-  if (childConversationId && !data) getChildConversation();
+  if (source === 'discussion' && childConversationId && !data) getChildConversation();
   if (data && data.conversation) {
     const unreadCounts = data.conversation.unreadCounts || [];
     const { userId } = getLocalUser();
@@ -191,6 +192,7 @@ SmallReply.propTypes = {
   message: PropTypes.object,
   mode: PropTypes.string.isRequired,
   replyCount: PropTypes.number,
+  source: PropTypes.string.isRequired,
 };
 
 SmallReply.defaultProps = {

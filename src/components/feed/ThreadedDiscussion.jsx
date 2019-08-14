@@ -112,6 +112,7 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
             meetingId={meetingId}
             message={m}
             replyCount={m.replyCount || 0}
+            source="feed"
           />
           <Separator />
         </ReplyDisplay>

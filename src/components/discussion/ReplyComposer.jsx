@@ -76,6 +76,7 @@ const AddReplyButtonRow = ({
       initialMode="compose"
       meetingId={meetingId}
       onCancelCompose={toggleComposeMode}
+      source="replyComposer"
     />
   );
   return (

@@ -183,6 +183,7 @@ DiscussionReply.propTypes = {
   message: PropTypes.object,
   onCancelCompose: PropTypes.func,
   size: PropTypes.oneOf(['small', 'large']),
+  source: PropTypes.oneOf(['discussion', 'feed', 'replyComposer']).isRequired,
 };
 
 DiscussionReply.defaultProps = {
