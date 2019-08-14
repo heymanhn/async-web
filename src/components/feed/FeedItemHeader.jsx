@@ -16,8 +16,8 @@ const MetadataRow = styled.div({
   alignItems: 'center',
 });
 
-const ReplyCountDisplay = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey3,
+const ReplyCountDisplay = styled.div(({ isUnread, theme: { colors } }) => ({
+  color: isUnread ? colors.blue : colors.grey3,
   fontSize: '14px',
   fontWeight: 500,
 }));
@@ -58,7 +58,13 @@ const DiscussionTitle = styled.span(({ isLink, theme: { colors } }) => ({
 }));
 
 const FeedItemHeader = ({ conversation, meeting, numNewMessages, ...props }) => {
-  const { id: conversationId, messageCount, title: conversationTitle, parentId } = conversation;
+  const {
+    id: conversationId,
+    messageCount,
+    title: conversationTitle,
+    parentId,
+    userUnreadRecord,
+  } = conversation;
   const { id: meetingId, title: meetingTitle } = meeting;
   const totalMessageCount = messageCount + numNewMessages;
   const isRootConversation = !parentId;
@@ -70,12 +76,27 @@ const FeedItemHeader = ({ conversation, meeting, numNewMessages, ...props }) => 
     </DiscussionTitle>
   );
 
+  function showReplyCountDisplay() {
+    const isUnread = !userUnreadRecord || userUnreadRecord.count !== 0;
+
+    let displayText = '';
+    if (!userUnreadRecord) {
+      displayText = 'New discussion';
+    } else if (userUnreadRecord.count > 0) {
+      displayText = Pluralize('new reply', userUnreadRecord.count, true);
+    } else if (totalMessageCount === 1) {
+      displayText = 'no replies';
+    } else {
+      displayText = Pluralize('reply', totalMessageCount, true);
+    }
+
+    return <ReplyCountDisplay isUnread={isUnread}>{displayText}</ReplyCountDisplay>;
+  }
+
   return (
     <Container {...props}>
       <MetadataRow>
-        <ReplyCountDisplay>
-          {totalMessageCount > 1 ? Pluralize('message', totalMessageCount, true) : 'No replies'}
-        </ReplyCountDisplay>
+        {showReplyCountDisplay()}
         <StyledLink to={`/spaces/${meetingId}`}>
           <MeetingSpaceLabel>
             {meetingTitle}
