@@ -63,6 +63,7 @@ const TopLevelDiscussion = ({ conversation, meeting, ...props }) => {
         message={messages[0]}
         replyCount={0}
         size="large"
+        source="feed"
       />
       <Separator />
       {newMessages.map(m => (
@@ -74,6 +75,7 @@ const TopLevelDiscussion = ({ conversation, meeting, ...props }) => {
             meetingId={meetingId}
             message={m}
             replyCount={m.replyCount || 0}
+            source="feed"
           />
           <Separator />
         </ReplyDisplay>

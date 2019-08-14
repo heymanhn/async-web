@@ -75,11 +75,11 @@ const App = () => (
 
     <PrivateRoute path="/feed" component={DiscussionFeed} />
 
-    <PrivateRoute path="/spaces/:id" component={MeetingSpace} />
-    <PrivateRoute path="/spaces/:id/conversations/:cid" component={MeetingSpace} />
+    <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />
+    <PrivateRoute path="/spaces/:meetingId/conversations/:conversationId" component={MeetingSpace} />
 
     {/* TODO */}
-    <PrivateRoute path="/spaces/:id/conversations/:cid/messages/:mid" component={MeetingSpace} />
+    <PrivateRoute path="/spaces/:meetingId/conversations/:conversationId/messages/:messageId" component={MeetingSpace} />
 
     {/* <NotFound default /> */}
   </Router>

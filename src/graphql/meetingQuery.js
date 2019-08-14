@@ -18,6 +18,7 @@ export default gql`
       participants @type(name: "[Participant]") {
         user @type(name: "User") {
           id
+          meetingId
           fullName
           profilePictureUrl
         }
@@ -30,6 +31,7 @@ export default gql`
           profilePictureUrl
         }
         createdAt
+        meetingId
         messageCount
         title
         lastMessage @type(name: "Message") {

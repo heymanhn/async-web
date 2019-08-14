@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import withViewedReaction from 'utils/withViewedReaction';
+
 import DiscussionReply from './DiscussionReply';
 
 const Container = styled.div(({ roundedCorner }) => ({
@@ -41,12 +43,14 @@ const AddReplyButtonRow = ({
   afterSubmit,
   conversationId,
   focusedMessage,
+  markAsRead,
   meetingId,
   ...props
 }) => {
   const [isComposing, setIsComposing] = useState(false);
 
   function toggleComposeMode() {
+    if (!isComposing) markAsRead(conversationId);
     setIsComposing(!isComposing);
   }
   function disableComposeMode() {
@@ -72,6 +76,7 @@ const AddReplyButtonRow = ({
       initialMode="compose"
       meetingId={meetingId}
       onCancelCompose={toggleComposeMode}
+      source="replyComposer"
     />
   );
   return (
@@ -85,6 +90,7 @@ AddReplyButtonRow.propTypes = {
   afterSubmit: PropTypes.func,
   conversationId: PropTypes.string.isRequired,
   focusedMessage: PropTypes.object,
+  markAsRead: PropTypes.func.isRequired,
   meetingId: PropTypes.string.isRequired,
   roundedCorner: PropTypes.bool,
 };
@@ -95,4 +101,4 @@ AddReplyButtonRow.defaultProps = {
   roundedCorner: false,
 };
 
-export default AddReplyButtonRow;
+export default withViewedReaction(AddReplyButtonRow);

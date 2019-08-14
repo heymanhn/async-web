@@ -49,13 +49,10 @@ const DiscussionsList = ({
       {conversations.map(c => (
         <DiscussionsListCell
           key={c.id}
-          conversationId={c.id}
-          lastMessage={c.lastMessage}
-          messageCount={c.messageCount}
+          conversation={c}
           onScrollTo={onScrollTo}
           onSelectConversation={onSelectConversation}
           isSelected={selectedConversationId === c.id}
-          title={c.title}
         />
       ))}
     </Container>
