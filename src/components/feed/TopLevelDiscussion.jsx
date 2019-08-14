@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled/macro';
+
+import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 
 import DiscussionReply from 'components/discussion/DiscussionReply';
 import ReplyComposer from 'components/discussion/ReplyComposer';
@@ -30,7 +33,7 @@ const ReplyDisplay = styled.div({
 });
 
 const TopLevelDiscussion = ({ conversation, meeting, ...props }) => {
-  const { messages } = conversation;
+  const { id } = conversation;
   const { id: meetingId } = meeting;
 
   // Keep track of any new replies the user added
@@ -48,6 +51,15 @@ const TopLevelDiscussion = ({ conversation, meeting, ...props }) => {
       ]);
     }
   }
+
+  const { loading, error, data } = useQuery(conversationMessagesQuery, {
+    variables: { id, queryParams: { order: 'desc' } },
+  });
+  if (loading) return null;
+  if (error || !data.conversationMessages) return <div>{error}</div>;
+
+  const { items } = data.conversationMessages;
+  const messages = items.map(i => i.message).reverse();
 
   return (
     <Container {...props}>

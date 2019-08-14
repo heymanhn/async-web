@@ -1,49 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Query } from 'react-apollo';
+import { useQuery } from 'react-apollo';
 
-import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
+import conversationQuery from 'graphql/conversationQuery';
+import { getLocalUser } from 'utils/auth';
 
 import ThreadedDiscussion from './ThreadedDiscussion';
 import TopLevelDiscussion from './TopLevelDiscussion';
 
 const DiscussionFeedItem = ({ conversation, meeting }) => {
-  const { id, title, parentId } = conversation;
+  const { id, messageCount, parentId, title } = conversation;
+  const { loading, data, error } = useQuery(conversationQuery, {
+    variables: { conversationId: id },
+  });
+  if (loading) return null;
+  if (error || !data.conversation) return <div>{error}</div>;
 
-  return (
-    <Query
-      query={conversationMessagesQuery}
-      variables={{
-        id,
-        queryParams: { order: 'desc' },
-      }}
-    >
-      {({ loading, data, error }) => {
-        if (loading) return null;
-        if (error || !data.conversationMessages) return <div>{error}</div>;
+  const unreadCounts = data.conversation.unreadCounts || [];
+  const { userId } = getLocalUser();
+  const userUnreadRecord = unreadCounts.find(c => c.userId === userId);
 
-        const { items, messageCount } = data.conversationMessages;
-        const messages = items.map(i => i.message).reverse();
+  const fwdProps = {
+    conversation: {
+      id,
+      messageCount,
+      parentId,
+      title,
+      userUnreadRecord,
+    },
+    meeting,
+  };
 
-        const fwdProps = {
-          conversation: {
-            id,
-            messages,
-            messageCount,
-            parentId,
-            title,
-          },
-          meeting,
-        };
-
-        // This will be more sophisticated later, as we incorporate read / unread discussions
-        return messageCount > 1
-          ? <ThreadedDiscussion {...fwdProps} />
-          : <TopLevelDiscussion {...fwdProps} />;
-      }}
-    </Query>
-
-  );
+  return (messageCount === 1 || !userUnreadRecord)
+    ? <TopLevelDiscussion {...fwdProps} />
+    : <ThreadedDiscussion {...fwdProps} />;
 };
 
 DiscussionFeedItem.propTypes = {

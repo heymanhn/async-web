@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useQuery } from 'react-apollo';
 import { Link } from '@reach/router';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
+
+import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 
 import DiscussionReply from 'components/discussion/DiscussionReply';
 import ReplyComposer from 'components/discussion/ReplyComposer';
@@ -64,16 +67,26 @@ const ReplyDisplay = styled.div({
 
 const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
   const {
-    id: conversationId,
+    id,
     messageCount,
-    messages,
   } = conversation;
   const { id: meetingId } = meeting;
+
+  // Keeps track of any new replies the user added
+  const [threadMessages, setThreadMessages] = useState([]);
+
+  const { loading, error, data } = useQuery(conversationMessagesQuery, {
+    variables: { id, queryParams: { order: 'desc' } },
+  });
+  if (loading) return null;
+  if (error || !data.conversationMessages) return <div>{error}</div>;
+
+  const { items } = data.conversationMessages;
+  const messages = items.map(i => i.message).reverse();
+
   const isTruncated = messageCount > 3;
   const initialMessagesToShow = isTruncated ? messages.slice(messages.length - 3) : messages;
-
-  // Keep track of any new replies the user added
-  const [threadMessages, setThreadMessages] = useState(initialMessagesToShow);
+  if (!threadMessages.length) setThreadMessages(initialMessagesToShow);
 
   function updateMessageInThread(message) {
     const index = threadMessages.findIndex(m => m.id === message.id);
@@ -96,7 +109,7 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
         numNewMessages={threadMessages.length - initialMessagesToShow.length}
       />
       {isTruncated ? (
-        <StyledLink to={`/spaces/${meetingId}/conversations/${conversationId}`}>
+        <StyledLink to={`/spaces/${meetingId}/conversations/${id}`}>
           <ViewEntireDiscussionButton>
             <StyledIcon icon={faComment} />
             <ButtonLabel>View entire discussion</ButtonLabel>
@@ -119,7 +132,7 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
       ))}
       <ReplyComposer
         afterSubmit={updateMessageInThread}
-        conversationId={conversationId}
+        conversationId={id}
         meetingId={meetingId}
         roundedCorner
       />
