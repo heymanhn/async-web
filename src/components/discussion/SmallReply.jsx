@@ -1,9 +1,15 @@
 // HN: Could be DRY'ed up with <LargeReply /> in the future
-
 import React from 'react';
 import PropTypes from 'prop-types';
+
+// Because hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
+// Undo once that's fixed
+import { useLazyQuery } from '@apollo/react-hooks';
+
 import styled from '@emotion/styled';
 
+import conversationQuery from 'graphql/conversationQuery';
+import { getLocalUser } from 'utils/auth';
 import withHover from 'utils/withHover';
 import { matchCurrentUserId } from 'utils/auth';
 
@@ -13,11 +19,13 @@ import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
 import HoverMenu from './HoverMenu';
 
-const Container = styled.div(({ mode, theme: { colors } }) => ({
+const Container = styled.div(({ isUnread, mode, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
+
   background: mode === 'compose' ? colors.formGrey : 'initial',
-  padding: '25px 30px',
+  borderLeft: isUnread ? `6px solid ${colors.blue}` : 'none',
+  padding: isUnread ? '25px 30px 25px 24px' : '25px 30px',
   width: '100%',
 
   ':hover': {
@@ -105,10 +113,28 @@ const SmallReply = ({
   replyCount,
   ...props
 }) => {
-  const { body, createdAt, id: messageId, updatedAt } = message || {};
+  const { body, childConversationId, createdAt, id: messageId, updatedAt } = message || {};
+  let isUnread = false;
+
+  const [getChildConversation, { data }] = useLazyQuery(conversationQuery, {
+    variables: { conversationId: childConversationId },
+  });
+  if (childConversationId && !data) getChildConversation();
+  if (data && data.conversation) {
+    const unreadCounts = data.conversation.unreadCounts || [];
+    const { userId } = getLocalUser();
+    const userUnreadRecord = unreadCounts.find(c => c.userId === userId);
+
+    if (!userUnreadRecord || userUnreadRecord.count) isUnread = true;
+  }
 
   return (
-    <Container mode={mode} onClick={handleFocusCurrentMessage} {...props}>
+    <Container
+      isUnread={isUnread}
+      mode={mode}
+      onClick={handleFocusCurrentMessage}
+      {...props}
+    >
       <AvatarWithMargin src={author.profilePictureUrl} size={45} mode={mode} />
       <MainContainer>
         <HeaderSection>
