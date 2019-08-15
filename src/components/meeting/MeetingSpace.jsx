@@ -163,8 +163,10 @@ class MeetingSpace extends Component {
     const { meetingId } = this.props;
     const { origin } = window.location;
 
+    if (!selectedConversationId) return this.resetDisplayURL();
+
     const url = `${origin}/spaces/${meetingId}/conversations/${selectedConversationId}`;
-    window.history.replaceState({}, `conversation: ${selectedConversationId}`, url);
+    return window.history.replaceState({}, `conversation: ${selectedConversationId}`, url);
   }
 
   render() {
