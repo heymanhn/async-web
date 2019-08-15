@@ -186,6 +186,7 @@ class MeetingSpace extends Component {
           const showComposer = isComposing || !conversations;
           const selectedConvo = this.findSelectedConversation(conversations);
           const isFirstLoadWithConvoParam = conversationId && !selectedConversationId;
+          const hideCancelButton = !conversations || !conversations.length;
 
           return (
             <Layout
@@ -213,7 +214,7 @@ class MeetingSpace extends Component {
                   {showComposer ? (
                     <StyledDiscussionComposer
                       afterSubmit={this.showCreatedConversation}
-                      hideCancelButton={!conversations.length}
+                      hideCancelButton={hideCancelButton}
                       meetingId={meetingId}
                       onCancelCompose={this.handleCancelCompose}
                     />
