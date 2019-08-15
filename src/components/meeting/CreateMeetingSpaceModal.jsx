@@ -2,20 +2,22 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import { navigate } from '@reach/router';
-import { Input, Label, Modal, Spinner } from 'reactstrap';
+import { Modal, Spinner } from 'reactstrap';
 import styled from '@emotion/styled';
 
 import createMeetingMutation from 'graphql/createMeetingMutation';
 
+import RovalEditor from 'components/editor/RovalEditor';
+
 // import ParticipantsSelector from './ParticipantsSelector';
 
-const StyledModal = styled(Modal)(({ theme: { maxViewport } }) => ({
+const StyledModal = styled(Modal)({
   margin: '120px auto',
 
   '.modal-content': {
     border: 'none',
   },
-}));
+});
 
 const MainContainer = styled.div({
   borderTopLeftRadius: '5px',
@@ -23,10 +25,32 @@ const MainContainer = styled.div({
   margin: '40px 30px 50px',
 });
 
-const Title = styled.div({
+const ModalTitle = styled.div({
   fontSize: '24px',
   fontWeight: 500,
 });
+
+const Label = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '14px',
+  fontWeight: 500,
+  marginBottom: '10px',
+}));
+
+const InputEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
+  border: `1px solid ${colors.formBorderGrey}`,
+  borderRadius: '5px',
+  color: colors.mainText,
+  fontSize: '16px',
+  fontWeight: 400,
+  lineHeight: '24px',
+  padding: '10px 15px',
+  width: '400px',
+
+  ':active': {
+    // outline: 'none',
+  },
+}));
 
 const ButtonsContainer = styled.div({
 
@@ -47,11 +71,17 @@ const StyledSpinner = styled(Spinner)(({ theme: { colors } }) => ({
 const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
   const [name, setName] = useState('');
   const [purpose, setPurpose] = useState('');
-  function handleChangeName(event) {
-    setName(event.target.value);
+  async function handleChangeName({ text }) {
+    // HACK due to https://github.com/ianstormtaylor/slate/issues/2434
+    if (name !== text) setTimeout(() => setName(text), 0);
+
+    return Promise.resolve();
   }
-  function handleChangePurpose(event) {
-    setPurpose(event.target.value);
+  function handleChangePurpose({ text }) {
+    // HACK due to https://github.com/ianstormtaylor/slate/issues/2434
+    if (purpose !== text) setTimeout(() => setPurpose(text), 0);
+
+    return Promise.resolve();
   }
 
   const [createMeeting, { loading }] = useMutation(createMeetingMutation, {
@@ -76,11 +106,24 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
       {...props}
     >
       <MainContainer>
-        <Title>Create a meeting space</Title>
-        <Label for="name">NAME</Label>
-        <Input type="textarea" id="name" value={name} onChange={handleChangeName} />
-        <Label for="purpose">PURPOSE</Label>
-        <Input type="textarea" id="purpose" value={purpose} onChange={handleChangePurpose} />
+        <ModalTitle>Create a meeting space</ModalTitle>
+        <Label>NAME</Label>
+        <InputEditor
+          contentType="meetingTitle"
+          isPlainText
+          mode="compose"
+          onSubmit={handleChangeName}
+          saveOnBlur
+        />
+        <Label>PURPOSE</Label>
+        <InputEditor
+          contentType="meetingPurpose"
+          disableAutoFocus
+          isPlainText
+          mode="compose"
+          onSubmit={handleChangePurpose}
+          saveOnBlur
+        />
         {/* <ParticipantsSelector
           authorId={author.id}
           meetingId={meetingId}
