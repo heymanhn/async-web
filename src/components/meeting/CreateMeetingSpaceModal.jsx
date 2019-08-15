@@ -48,10 +48,6 @@ const InputEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   marginBottom: '30px',
   padding: '8px 12px',
   width: '400px',
-
-  ':active': {
-    // outline: 'none',
-  },
 }));
 
 const ActionsContainer = styled.div(({ theme: { colors } }) => ({
@@ -139,6 +135,7 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
       },
     },
     onCompleted: (data) => {
+      toggle();
       navigate(`/spaces/${data.createMeeting.id}`);
     },
   });
@@ -147,7 +144,7 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
   const createButton = (
     <React.Fragment>
       <ButtonContainer
-        isDisabled={loading}
+        isDisabled={!name || loading}
         onClick={createMeeting}
         type="create"
       >
@@ -180,7 +177,7 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
         <ModalTitle>Create a meeting space</ModalTitle>
         <Label>NAME</Label>
         <InputEditor
-          contentType="meetingTitle"
+          contentType="meetingName"
           isPlainText
           mode="compose"
           onSubmit={handleChangeName}
@@ -208,21 +205,6 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
     </StyledModal>
   );
 };
-
-/*  <Mutation
-    mutation={createMeetingMutation}
-    variables={{ input: {} }}
-    update={(cache, { data: { createMeeting } }) => {
-      window.open(`/meetings/${createMeeting.id}`, '_blank');
-    }}
-  >
-    {(create, { loading, error }) => {
-      if (loading) return <StyledSpinner />;
-      if (error) console.log(error);
-
-      return <StyledIcon icon={faPlus} onClick={() => { create(); }} />;
-    }}
-  </Mutation> */
 
 CreateMeetingSpaceModal.propTypes = {
   toggle: PropTypes.func.isRequired,
