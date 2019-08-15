@@ -28,6 +28,7 @@ const MainContainer = styled.div({
 const ModalTitle = styled.div({
   fontSize: '24px',
   fontWeight: 500,
+  marginBottom: '30px',
 });
 
 const Label = styled.div(({ theme: { colors } }) => ({
@@ -44,7 +45,8 @@ const InputEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   fontSize: '16px',
   fontWeight: 400,
   lineHeight: '24px',
-  padding: '10px 15px',
+  marginBottom: '30px',
+  padding: '8px 12px',
   width: '400px',
 
   ':active': {
@@ -52,20 +54,61 @@ const InputEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   },
 }));
 
-const ButtonsContainer = styled.div({
+const ActionsContainer = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
 
-});
+  background: colors.formGrey,
+  borderBottomLeftRadius: '5px',
+  borderBottomRightRadius: '5px',
+  borderTop: `1px solid ${colors.borderGrey}`,
+  color: colors.grey3,
+}));
 
-const StyledButton = styled.div({
+const ButtonContainer = styled.div(({ isDisabled, theme: { colors }, type }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
 
+  background: type === 'create' ? colors.white : 'initial',
+  borderBottomLeftRadius: type === 'create' ? '5px' : 'none',
+  color: type === 'create' ? colors.blue : colors.grey3,
+  cursor: isDisabled ? 'default' : 'pointer',
+  fontSize: 14,
+  fontWeight: 500,
+  height: '52px',
+  padding: '0px 30px',
+
+  div: {
+    opacity: isDisabled ? 0.5 : 1,
+  },
+}));
+
+const PlusSign = styled.div({
+  fontSize: '18px',
+  marginRight: '8px',
+  position: 'relative',
+  top: '-1px',
 });
 
 const StyledSpinner = styled(Spinner)(({ theme: { colors } }) => ({
-  border: `.05em solid ${colors.grey4}`,
+  border: `.05em solid ${colors.blue}`,
   borderRightColor: 'transparent',
-  width: '16px',
-  height: '16px',
-  margin: '0 10px',
+  width: '12px',
+  height: '12px',
+  marginRight: '8px',
+  marginTop: '1px',
+}));
+
+const ButtonText = styled.div({
+  fontSize: '14px',
+});
+
+const VerticalDivider = styled.div(({ theme: { colors } }) => ({
+  borderRight: `1px solid ${colors.borderGrey}`,
+  height: '52px',
+  margin: 0,
 }));
 
 const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
@@ -100,6 +143,34 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
     },
   });
 
+  // The UI concept of a "save + cancel button toolbar" should be DRY'ed up if this is permanent
+  const createButton = (
+    <React.Fragment>
+      <ButtonContainer
+        isDisabled={loading}
+        onClick={createMeeting}
+        type="create"
+      >
+        {!loading && <PlusSign>+</PlusSign>}
+        {loading && <StyledSpinner />}
+        <ButtonText>Create</ButtonText>
+      </ButtonContainer>
+      <VerticalDivider />
+    </React.Fragment>
+  );
+
+  const cancelButton = (
+    <React.Fragment>
+      <ButtonContainer
+        onClick={toggle}
+        type="cancel"
+      >
+        <ButtonText>Cancel</ButtonText>
+      </ButtonContainer>
+      <VerticalDivider />
+    </React.Fragment>
+  );
+
   return (
     <StyledModal
       fade={false}
@@ -130,12 +201,10 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
           participants={participants.map(p => p.user)}
         /> */}
       </MainContainer>
-      <ButtonsContainer>
-        <StyledButton loading={loading} mode="submit" onClick={createMeeting}>
-          {loading ? <StyledSpinner /> : '+ Create'}
-        </StyledButton>
-        <StyledButton onClick={toggle}>Cancel</StyledButton>
-      </ButtonsContainer>
+      <ActionsContainer>
+        {createButton}
+        {cancelButton}
+      </ActionsContainer>
     </StyledModal>
   );
 };
