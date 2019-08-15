@@ -6,8 +6,8 @@ import styled from '@emotion/styled';
 
 const heights = {
   discussion: '52px',
-  modalTopic: '52px',
-  modalReply: '32px',
+  largeReply: '52px',
+  smallReply: '32px',
 };
 
 const layouts = {
@@ -16,16 +16,16 @@ const layouts = {
     marginTop: '7px',
     minHeight: heights.discussion,
   }),
-  modalTopic: ({ colors }) => ({
+  largeReply: ({ colors }) => ({
     borderTop: `1px solid ${colors.borderGrey}`,
     margin: '25px -27px -25px -33px',
-    minHeight: heights.modalTopic,
+    minHeight: heights.largeReply,
     position: 'relative',
     left: '3px',
   }),
-  modalReply: () => ({
+  smallReply: () => ({
     background: 'none',
-    minHeight: heights.modalReply,
+    minHeight: heights.smallReply,
     marginTop: '10px',
   }),
 };
@@ -39,7 +39,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   alignItems: 'center',
 }), ({ contentType, theme: { colors } }) => layouts[contentType]({ colors }));
 
-// Only for modal reply UIs
+// Only for small reply UIs
 const InnerContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
@@ -48,7 +48,7 @@ const InnerContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.formGrey,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
-  minHeight: heights.modalReply,
+  minHeight: heights.smallReply,
 }));
 
 const ButtonContainer = styled.div(({ contentType, isDisabled, theme: { colors }, type }) => ({
@@ -62,14 +62,14 @@ const ButtonContainer = styled.div(({ contentType, isDisabled, theme: { colors }
   fontSize: 14,
   fontWeight: 500,
   height: heights[contentType],
-  padding: contentType === 'modalReply' ? '0px 15px' : '0px 30px',
+  padding: contentType === 'smallReply' ? '0px 15px' : '0px 30px',
 
   div: {
     opacity: isDisabled ? 0.5 : 1,
   },
 }), ({ contentType, type }) => {
   if (type !== 'save') return {};
-  if (contentType === 'modalReply') return { borderRadius: '5px 0 0 5px' };
+  if (contentType === 'smallReply') return { borderRadius: '5px 0 0 5px' };
   return {};
 });
 
@@ -90,7 +90,7 @@ const StyledSpinner = styled(Spinner)(({ theme: { colors } }) => ({
 }));
 
 const ButtonText = styled.div(({ contentType }) => ({
-  fontSize: contentType === 'modalReply' ? '13px' : '14px',
+  fontSize: contentType === 'smallReply' ? '13px' : '14px',
 }));
 
 const VerticalDivider = styled.div(({ contentType, theme: { colors } }) => ({
@@ -109,7 +109,7 @@ const EditorActions = ({
   onSubmit,
 }) => {
   const generateSaveButtonText = () => {
-    const subject = contentType === 'modalReply' ? 'Reply' : 'Discussion';
+    const subject = contentType === 'smallReply' ? 'Reply' : 'Discussion';
     const verb = mode === 'compose' ? 'Post' : 'Save';
 
     return `${verb} ${subject}`;
@@ -150,11 +150,11 @@ const EditorActions = ({
       >
         <ButtonText contentType={contentType}>Cancel</ButtonText>
       </ButtonContainer>
-      {contentType !== 'modalReply' && <VerticalDivider contentType={contentType} />}
+      {contentType !== 'smallReply' && <VerticalDivider contentType={contentType} />}
     </React.Fragment>
   );
 
-  if (contentType === 'modalReply') {
+  if (contentType === 'smallReply') {
     return (
       <Container contentType={contentType}>
         <InnerContainer>
@@ -174,7 +174,11 @@ const EditorActions = ({
 };
 
 EditorActions.propTypes = {
-  contentType: PropTypes.oneOf(['discussion', 'modalTopic', 'modalReply']).isRequired,
+  contentType: PropTypes.oneOf([
+    'discussion',
+    'largeReply',
+    'smallReply',
+  ]).isRequired,
   hideCancelButton: PropTypes.bool.isRequired,
   isSubmitDisabled: PropTypes.bool.isRequired,
   isSubmitting: PropTypes.bool.isRequired,

@@ -103,7 +103,7 @@ class DiscussionComposer extends Component {
       return Promise.resolve();
     }
 
-    return Promise.reject(new Error('Failed to create discussion topic'));
+    return Promise.reject(new Error('Failed to create discussion'));
   }
 
   async handleSaveTitle({ text }) {

@@ -12,24 +12,18 @@ import AddReactionButton from './AddReactionButton';
 import ReactionCountDisplay from './ReactionCountDisplay';
 
 const heights = {
-  topic: '52px',
-  modalTopic: '52px',
-  modalReply: '32px',
+  largeReply: '52px',
+  smallReply: '32px',
 };
 
 const layouts = {
-  topic: ({ colors }) => ({
-    borderRadius: '0 0 5px 5px',
+  largeReply: ({ colors }) => ({
     borderTop: `1px solid ${colors.borderGrey}`,
-    minHeight: heights.topic,
+    minHeight: heights.largeReply,
   }),
-  modalTopic: ({ colors }) => ({
-    borderTop: `1px solid ${colors.borderGrey}`,
-    minHeight: heights.modalTopic,
-  }),
-  modalReply: () => ({
+  smallReply: () => ({
     background: 'none',
-    minHeight: heights.modalReply,
+    minHeight: heights.smallReply,
     marginTop: '10px',
   }),
 };
@@ -52,26 +46,26 @@ const InnerContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.formGrey,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
-  minHeight: heights.modalReply,
+  minHeight: heights.smallReply,
 }));
 
 const ButtonContainer = styled.div(({ contentType }) => ({
   display: 'flex',
   flexDirection: 'row',
-  alignItems: contentType === 'modalReply' ? 'center' : 'initial',
+  alignItems: contentType === 'smallReply' ? 'center' : 'initial',
 
   cursor: 'pointer',
-  padding: contentType === 'modalReply' ? '0px 15px' : '0px 25px',
+  padding: contentType === 'smallReply' ? '0px 15px' : '0px 25px',
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)(({ contenttype, theme: { colors } }) => ({
   color: colors.grey4,
-  fontSize: contenttype === 'modalReply' ? '16px' : '22px',
+  fontSize: contenttype === 'smallReply' ? '16px' : '22px',
   marginRight: '10px',
 }));
 
 const CountLabel = styled.div(({ contentType }) => ({
-  fontSize: contentType === 'modalReply' ? '13px' : '14px',
+  fontSize: contentType === 'smallReply' ? '13px' : '14px',
   fontWeight: 500,
 }));
 
@@ -88,7 +82,7 @@ const ButtonWrapper = styled.div(({
   flexDirection: 'row',
   alignItems: 'center',
 }), ({ contentType }) => {
-  if (contentType !== 'modalReply') return {};
+  if (contentType !== 'smallReply') return {};
 
   return {
     ':first-of-type': {
@@ -129,7 +123,7 @@ const ContentToolbar = ({
   replyCount,
   ...props
 }) => {
-  if (!reactions.length && !replyCount && contentType === 'modalReply') return null;
+  if (!reactions.length && !replyCount && contentType === 'smallReply') return null;
 
   const reactionsToDisplay = () => {
     const histogram = [];
@@ -152,7 +146,7 @@ const ContentToolbar = ({
     return histogram;
   };
 
-  const countLabel = replyCount || (contentType === 'topic' ? 'add a reply' : 0);
+  const countLabel = replyCount || 0;
   const repliesButton = (
     <ButtonWrapper contentType={contentType}>
       <ButtonContainer contentType={contentType} onClick={onClickReply}>
@@ -172,7 +166,7 @@ const ContentToolbar = ({
   );
   const innerContent = (
     <React.Fragment>
-      {(contentType !== 'modalReply' || replyCount > 0) && repliesButton}
+      {(contentType !== 'smallReply' || replyCount > 0) && repliesButton}
       {reactionsToDisplay().map(r => (
         <ButtonWrapper key={r.code} contentType={contentType}>
           <StyledReactionCountDisplay
@@ -187,11 +181,11 @@ const ContentToolbar = ({
           <VerticalDivider contentType={contentType} />
         </ButtonWrapper>
       ))}
-      {contentType !== 'modalReply' && addReactionButton}
+      {contentType !== 'smallReply' && addReactionButton}
     </React.Fragment>
   );
 
-  if (contentType === 'modalReply') {
+  if (contentType === 'smallReply') {
     return (
       <Container contentType={contentType} {...props}>
         <InnerContainer>
@@ -210,7 +204,7 @@ const ContentToolbar = ({
 
 ContentToolbar.propTypes = {
   addReaction: PropTypes.func.isRequired,
-  contentType: PropTypes.oneOf(['topic', 'modalTopic', 'modalReply']).isRequired,
+  contentType: PropTypes.oneOf(['largeReply', 'smallReply']).isRequired,
   conversationId: PropTypes.string.isRequired,
   messageId: PropTypes.string.isRequired,
   onClickReply: PropTypes.func,

@@ -79,7 +79,7 @@ class DiscussionReply extends Component {
       return Promise.resolve();
     }
 
-    return Promise.reject(new Error('Failed to save discussion topic reply'));
+    return Promise.reject(new Error('Failed to save discussion reply'));
   }
 
   handleCancel() {
