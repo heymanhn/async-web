@@ -47,7 +47,7 @@ const Author = styled.div({
   fontSize: '16px',
 });
 
-const TopicEditor = styled(RovalEditor)({
+const DiscussionEditor = styled(RovalEditor)({
   fontSize: '16px',
   lineHeight: '25px',
   fontWeight: 400,
@@ -94,7 +94,6 @@ const LargeReply = ({
   message,
   mode,
   replyCount,
-  roundedCorner,
   ...props
 }) => {
   const { body, createdAt, id: messageId, updatedAt } = message || {};
@@ -119,17 +118,17 @@ const LargeReply = ({
             showEditButton={matchCurrentUserId(author.id)}
           />
         </Header>
-        <TopicEditor
+        <DiscussionEditor
           initialValue={body.payload}
           mode={mode}
           onCancel={handleCancel}
           onSubmit={handleSubmit}
-          contentType="modalTopic"
+          contentType="largeReply"
         />
       </MessageSection>
       {mode === 'display' && (
         <ContentToolbar
-          contentType="modalTopic"
+          contentType="largeReply"
           conversationId={conversationId}
           messageId={messageId}
           replyCount={replyCount}

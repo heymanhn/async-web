@@ -10,7 +10,7 @@ import isLoggedInQuery from 'graphql/isLoggedInQuery';
 import NotificationSystem from 'components/notifications/NotificationSystem';
 import MeetingProperties from 'components/meeting/MeetingProperties';
 import AvatarDropdown from './AvatarDropdown';
-// import CreateMeetingButton from './CreateMeetingButton';
+import CreateMeetingSpaceButton from './CreateMeetingSpaceButton';
 
 const NavigationBar = styled.div(({ theme: { colors } }) => ({
   position: 'sticky',
@@ -120,8 +120,7 @@ const NavBar = ({ meetingId, mode, title }) => (
           {data.isLoggedIn && (
             <LoggedInMenu>
               <NotificationSystem />
-              {/* HN: Hiding the create meeting button until the new creation flow is ready */}
-              {/* <CreateMeetingButton /> */}
+              <CreateMeetingSpaceButton />
               <VerticalDivider />
               <AvatarDropdown />
             </LoggedInMenu>

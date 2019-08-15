@@ -172,20 +172,8 @@ const markdownPlugins = [
 ];
 
 export const plugins = {
-  meetingTitle: [
-    createPlaceholderPlugin('Untitled Meeting', theme.colors.titlePlaceholder),
-  ],
-  // NOTE: Not used anymore, for now
-  meetingDetails: [
-    PasteLinkify(),
-    SoftBreak({ shift: true }),
-    createPlaceholderPlugin(
-      'Share details to get everyone up to speed',
-      theme.colors.textPlaceholder,
-    ),
-    ...markdownPlugins,
-  ],
-
+  meetingTitle: [],
+  meetingPurpose: [],
   discussionTitle: [
     createPlaceholderPlugin('Untitled Discussion', theme.colors.titlePlaceholder),
   ],
@@ -198,16 +186,16 @@ export const plugins = {
     ),
     ...markdownPlugins,
   ],
-  modalTopic: [
+  largeReply: [
     PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(
-      'Share your perspective. Shift + Enter to add another topic',
+      'Express your thoughts. Take your time',
       theme.colors.textPlaceholder,
     ),
     ...markdownPlugins,
   ],
-  modalReply: [
+  smallReply: [
     PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(

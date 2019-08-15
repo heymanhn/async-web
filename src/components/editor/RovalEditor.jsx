@@ -119,10 +119,9 @@ class RovalEditor extends Component {
   }
 
   handleCancel({ saved = false } = {}) {
-    const { mode, onCancel, contentType } = this.props;
+    const { mode, onCancel } = this.props;
 
-    const resetAllowed = mode === 'edit' || contentType.includes('meeting');
-    if (resetAllowed && !saved) this.loadInitialValue();
+    if (mode === 'edit' && !saved) this.loadInitialValue();
     onCancel();
   }
 
@@ -385,8 +384,10 @@ RovalEditor.propTypes = {
   contentType: PropTypes.oneOf([
     'discussion',
     'discussionTitle',
-    'modalTopic',
-    'modalReply',
+    'meetingName',
+    'meetingPurpose',
+    'largeReply',
+    'smallReply',
   ]).isRequired,
   disableAutoFocus: PropTypes.bool,
   hideCancelButton: PropTypes.bool,

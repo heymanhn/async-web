@@ -9,18 +9,18 @@ const Container = styled.div(({ contentType, isActive, theme: { colors } }) => (
 
   background: isActive ? colors.hoverBlue : 'none',
   cursor: 'pointer',
-  padding: contentType === 'modalReply' ? '0 15px' : '0 20px',
-  height: contentType === 'modalReply' ? '32px' : '52px',
+  padding: contentType === 'smallReply' ? '0 15px' : '0 20px',
+  height: contentType === 'smallReply' ? '32px' : '52px',
 }));
 
 const Icon = styled.div(({ contentType }) => ({
-  fontSize: contentType === 'modalReply' ? '14px' : '24px',
+  fontSize: contentType === 'smallReply' ? '14px' : '24px',
   marginRight: '8px',
 }));
 
 const ReactionCount = styled.div(({ isActive, contentType, theme: { colors } }) => ({
   color: isActive ? colors.blue : colors.grey3,
-  fontSize: contentType === 'modalReply' ? '13px' : '14px',
+  fontSize: contentType === 'smallReply' ? '13px' : '14px',
   fontWeight: 500,
 }));
 

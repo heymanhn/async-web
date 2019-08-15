@@ -103,7 +103,7 @@ class DiscussionComposer extends Component {
       return Promise.resolve();
     }
 
-    return Promise.reject(new Error('Failed to create discussion topic'));
+    return Promise.reject(new Error('Failed to create discussion'));
   }
 
   async handleSaveTitle({ text }) {
@@ -119,6 +119,7 @@ class DiscussionComposer extends Component {
     const { isSubmitting } = this.state;
 
     const {
+      hideCancelButton,
       onCancelCompose,
       meetingId,
       ...props
@@ -135,7 +136,7 @@ class DiscussionComposer extends Component {
         />
         <DiscussionEditor
           disableAutoFocus
-          hideCancelButton
+          hideCancelButton={hideCancelButton}
           isSubmitting={isSubmitting}
           mode="compose"
           onCancel={onCancelCompose}
@@ -150,12 +151,14 @@ class DiscussionComposer extends Component {
 DiscussionComposer.propTypes = {
   afterSubmit: PropTypes.func,
   client: PropTypes.object.isRequired,
+  hideCancelButton: PropTypes.bool,
   meetingId: PropTypes.string.isRequired,
   onCancelCompose: PropTypes.func,
 };
 
 DiscussionComposer.defaultProps = {
   afterSubmit: () => {},
+  hideCancelButton: false,
   onCancelCompose: () => {},
 };
 

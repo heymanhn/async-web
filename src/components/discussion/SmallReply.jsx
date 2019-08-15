@@ -165,11 +165,11 @@ const SmallReply = ({
           mode={mode}
           onCancel={handleCancel}
           onSubmit={handleSubmit}
-          contentType="modalReply"
+          contentType="smallReply"
         />
         {mode === 'display' && conversationId && (
           <ContentToolbar
-            contentType="modalReply"
+            contentType="smallReply"
             conversationId={conversationId}
             messageId={messageId}
             onClickReply={handleFocusCurrentMessage}

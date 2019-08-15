@@ -163,8 +163,10 @@ class MeetingSpace extends Component {
     const { meetingId } = this.props;
     const { origin } = window.location;
 
+    if (!selectedConversationId) return this.resetDisplayURL();
+
     const url = `${origin}/spaces/${meetingId}/conversations/${selectedConversationId}`;
-    window.history.replaceState({}, `conversation: ${selectedConversationId}`, url);
+    return window.history.replaceState({}, `conversation: ${selectedConversationId}`, url);
   }
 
   render() {
@@ -184,6 +186,7 @@ class MeetingSpace extends Component {
           const showComposer = isComposing || !conversations;
           const selectedConvo = this.findSelectedConversation(conversations);
           const isFirstLoadWithConvoParam = conversationId && !selectedConversationId;
+          const hideCancelButton = !conversations || !conversations.length;
 
           return (
             <Layout
@@ -211,6 +214,7 @@ class MeetingSpace extends Component {
                   {showComposer ? (
                     <StyledDiscussionComposer
                       afterSubmit={this.showCreatedConversation}
+                      hideCancelButton={hideCancelButton}
                       meetingId={meetingId}
                       onCancelCompose={this.handleCancelCompose}
                     />
