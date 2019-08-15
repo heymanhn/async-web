@@ -211,6 +211,7 @@ class MeetingSpace extends Component {
                   {showComposer ? (
                     <StyledDiscussionComposer
                       afterSubmit={this.showCreatedConversation}
+                      hideCancelButton={!conversations.length}
                       meetingId={meetingId}
                       onCancelCompose={this.handleCancelCompose}
                     />
