@@ -13,7 +13,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   borderRadius: '5px',
   marginTop: '50px',
   marginLeft: '20px',
-  padding: '25px 0',
+  paddingTop: '25px',
   position: 'fixed',
   width: '320px',
 }));
@@ -35,9 +35,7 @@ const DiscussionFeedFilters = ({ onSelectFilter, selectedMeetingId }) => (
         if (error || !data.meetings) return <div>{error}</div>;
 
         const { items } = data.meetings;
-        const meetings = items
-          .filter(i => i.conversationCount > 0)
-          .map(i => i.meeting);
+        const meetings = items.filter(i => i.conversationCount > 0);
 
         return (
           <React.Fragment>
@@ -45,12 +43,13 @@ const DiscussionFeedFilters = ({ onSelectFilter, selectedMeetingId }) => (
               isSelected={!selectedMeetingId}
               onSelectFilter={onSelectFilter}
             />
-            {meetings.map(m => (
+            {meetings.map(i => (
               <FilterItem
-                key={m.id}
-                isSelected={selectedMeetingId === m.id}
-                meeting={m}
+                key={i.meeting.id}
+                isSelected={selectedMeetingId === i.meeting.id}
+                meeting={i.meeting}
                 onSelectFilter={onSelectFilter}
+                unreadCount={i.userUnreadThreadCount}
               />
             ))}
           </React.Fragment>

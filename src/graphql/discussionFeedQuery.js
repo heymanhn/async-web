@@ -10,8 +10,9 @@ export default gql`
         }
         conversation @type(name: "Conversation") {
           id
-          title
+          messageCount
           parentId
+          title
         }
       }
     }
