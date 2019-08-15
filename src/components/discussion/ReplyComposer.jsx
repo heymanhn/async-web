@@ -39,18 +39,19 @@ const ButtonText = styled.span(({ theme: { colors } }) => ({
   },
 }));
 
-const AddReplyButtonRow = ({
+const ReplyComposer = ({
   afterSubmit,
   conversationId,
   focusedMessage,
   markAsRead,
+  markAsReadOnClick,
   meetingId,
   ...props
 }) => {
   const [isComposing, setIsComposing] = useState(false);
 
   function toggleComposeMode() {
-    if (!isComposing) markAsRead(conversationId);
+    if (!isComposing && markAsReadOnClick) markAsRead(conversationId);
     setIsComposing(!isComposing);
   }
   function disableComposeMode() {
@@ -86,19 +87,21 @@ const AddReplyButtonRow = ({
   );
 };
 
-AddReplyButtonRow.propTypes = {
+ReplyComposer.propTypes = {
   afterSubmit: PropTypes.func,
   conversationId: PropTypes.string.isRequired,
   focusedMessage: PropTypes.object,
   markAsRead: PropTypes.func.isRequired,
+  markAsReadOnClick: PropTypes.bool,
   meetingId: PropTypes.string.isRequired,
   roundedCorner: PropTypes.bool,
 };
 
-AddReplyButtonRow.defaultProps = {
+ReplyComposer.defaultProps = {
   afterSubmit: () => {},
   focusedMessage: null,
+  markAsReadOnClick: true,
   roundedCorner: false,
 };
 
-export default withViewedReaction(AddReplyButtonRow);
+export default withViewedReaction(ReplyComposer);

@@ -133,6 +133,7 @@ const ThreadedDiscussion = ({ conversation, meeting, ...props }) => {
       <ReplyComposer
         afterSubmit={updateMessageInThread}
         conversationId={id}
+        markAsReadOnClick={false}
         meetingId={meetingId}
         roundedCorner
       />
