@@ -57,6 +57,7 @@ const MembersList = styled.div(({ isOpen, theme: { colors } }) => ({
   marginTop: '10px',
   position: 'absolute',
   width: '320px',
+  zIndex: 1,
 }));
 
 const WhiteSeparator = styled.div(({ theme: { colors } }) => ({

@@ -5,11 +5,12 @@ import { navigate } from '@reach/router';
 import { Modal, Spinner } from 'reactstrap';
 import styled from '@emotion/styled';
 
+import addParticipantMutation from 'graphql/addParticipantMutation';
 import createMeetingMutation from 'graphql/createMeetingMutation';
+import { getLocalUser } from 'utils/auth';
 
 import RovalEditor from 'components/editor/RovalEditor';
-
-// import ParticipantsSelector from './ParticipantsSelector';
+import ParticipantsSelector from './ParticipantsSelector';
 
 const StyledModal = styled(Modal)({
   margin: '120px auto',
@@ -107,7 +108,9 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: 0,
 }));
 
-const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
+const CreateMeetingSpaceModal = ({ isOpen, toggle, ...props }) => {
+  const { userId } = getLocalUser();
+
   const [name, setName] = useState('');
   const [purpose, setPurpose] = useState('');
   async function handleChangeName({ text }) {
@@ -123,6 +126,17 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
     return Promise.resolve();
   }
 
+  const [participantIds, setParticipantIds] = useState([userId]);
+  if (!isOpen && participantIds.length > 1) setParticipantIds([userId]); // reset on modal close
+  function addParticipant(id) {
+    setParticipantIds([...participantIds, id]);
+  }
+  function removeParticipant(id) {
+    const index = participantIds.indexOf(id);
+    setParticipantIds([...participantIds.slice(0, index), ...participantIds.slice(index + 1)]);
+  }
+
+  const [addParticipantAPI] = useMutation(addParticipantMutation);
   const [createMeeting, { loading }] = useMutation(createMeetingMutation, {
     variables: {
       input: {
@@ -135,6 +149,19 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
       },
     },
     onCompleted: (data) => {
+      const { id: meetingId } = data.createMeeting;
+      // Don't add the meeting organizer (1st entry in array) as a participant
+      participantIds.slice(1).forEach((id) => {
+        addParticipantAPI({
+          variables: {
+            id: meetingId,
+            input: {
+              userId: id,
+              accessType: 'collaborator',
+            },
+          },
+        });
+      });
       toggle();
       navigate(`/spaces/${data.createMeeting.id}`);
     },
@@ -171,6 +198,7 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
   return (
     <StyledModal
       fade={false}
+      isOpen={isOpen}
       {...props}
     >
       <MainContainer>
@@ -192,11 +220,12 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
           onSubmit={handleChangePurpose}
           saveOnBlur
         />
-        {/* <ParticipantsSelector
-          authorId={author.id}
-          meetingId={meetingId}
-          participants={participants.map(p => p.user)}
-        /> */}
+        <ParticipantsSelector
+          authorId={userId}
+          onAddParticipant={addParticipant}
+          onRemoveParticipant={removeParticipant}
+          participantIds={participantIds}
+        />
       </MainContainer>
       <ActionsContainer>
         {createButton}
@@ -207,6 +236,7 @@ const CreateMeetingSpaceModal = ({ toggle, ...props }) => {
 };
 
 CreateMeetingSpaceModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
 };
 
