@@ -16,7 +16,6 @@ const Container = styled.div(({ theme: { wideViewport } }) => ({
   flexDirection: 'row',
   alignItems: 'flex-start',
 
-  maxHeight: 'calc(100vh - 70px)',
   margin: '0 auto',
   maxWidth: wideViewport,
   padding: '30px 0',

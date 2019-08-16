@@ -18,8 +18,15 @@ const Container = styled.div(({ theme: { wideViewport } }) => ({
 
   margin: '0px auto',
   maxWidth: wideViewport,
-  overflow: 'hidden',
 }));
+
+const FiltersContainer = styled.div({
+  maxHeight: 'calc(100vh - 71px)',
+  overflow: 'auto',
+  paddingTop: '50px',
+  position: 'fixed',
+  width: '380px', // add 30px side margins to the filter UI, to aid with scrolling perception
+});
 
 const DiscussionsContainer = styled.div({
   display: 'flex',
@@ -41,10 +48,12 @@ const DiscussionFeed = () => {
       title="My Discussions"
     >
       <Container>
-        <DiscussionFeedFilters
-          onSelectFilter={setMeetingIdToFilter}
-          selectedMeetingId={meetingIdToFilter}
-        />
+        <FiltersContainer>
+          <DiscussionFeedFilters
+            onSelectFilter={setMeetingIdToFilter}
+            selectedMeetingId={meetingIdToFilter}
+          />
+        </FiltersContainer>
         <Query
           query={discussionFeedQuery}
           variables={{ id, meetingId: meetingIdToFilter || '' }}

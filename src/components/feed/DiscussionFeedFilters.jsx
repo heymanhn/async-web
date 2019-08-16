@@ -11,10 +11,9 @@ const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.grey6}`,
   borderRadius: '5px',
-  marginTop: '50px',
+  marginBottom: '50px',
   marginLeft: '20px',
   paddingTop: '25px',
-  position: 'fixed',
   width: '320px',
 }));
 
