@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
+import { useMutation, useQuery } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
@@ -54,35 +54,59 @@ const StyledParticipantsSelector = styled(ParticipantsSelector)({
 
 const MeetingProperties = ({ meetingId }) => {
   const [isSelectorOpen, setIsOpen] = useState(false);
-  function toggleDropdown() {
-    setIsOpen(!isSelectorOpen);
-  }
-
   const [participantIds, setParticipantIds] = useState(null);
+  const [initialParticipantIds, setInitialParticipantIds] = useState(null);
+  const [addParticipantAPI] = useMutation(addParticipantMutation);
+  const [removeParticipantAPI] = useMutation(removeParticipantMutation);
 
   function addParticipant(id) {
     setParticipantIds([...participantIds, id]);
   }
+
   function removeParticipant(id) {
     const index = participantIds.indexOf(id);
     setParticipantIds([...participantIds.slice(0, index), ...participantIds.slice(index + 1)]);
   }
 
+  function saveChangesAndClose() {
+    initialParticipantIds.forEach((id) => {
+      if (!participantIds.includes(id)) {
+        removeParticipantAPI({ variables: { id: meetingId, userId: id } });
+      }
+    });
+    participantIds.forEach((id) => {
+      if (!initialParticipantIds.includes(id)) {
+        addParticipantAPI({
+          variables: {
+            id: meetingId,
+            input: {
+              userId: id,
+              accessType: 'collaborator',
+            },
+          },
+        });
+      }
+    });
+    setIsOpen(false);
+  }
+
+  function toggleDropdown() {
+    return isSelectorOpen ? saveChangesAndClose() : setIsOpen(true);
+  }
+
   // New way of detecting clicking outside an element, using React hooks
   const selector = useRef();
-  const handleClick = (event) => {
-    // Means it's an outside click
-    if (!selector.current.contains(event.target)) {
-      // TODO: Save the participant changes
-      setIsOpen(false);
-    }
-  };
   useEffect(() => {
+    const handleClick = (event) => {
+      // Means it's a click outside the component.
+      if (!selector.current.contains(event.target)) saveChangesAndClose();
+    };
+
     document.addEventListener('mousedown', handleClick);
     return () => {
       document.removeEventListener('mousedown', handleClick);
     };
-  }, []);
+  });
 
   const { loading, error, data } = useQuery(meetingQuery, { variables: { id: meetingId } });
   if (loading) return null;
@@ -90,7 +114,9 @@ const MeetingProperties = ({ meetingId }) => {
 
   const { author, participants: initialParticipants } = data.meeting;
   if (!participantIds) {
-    setParticipantIds(initialParticipants.map(p => p.user.id));
+    const ids = initialParticipants.map(p => p.user.id);
+    setInitialParticipantIds(ids);
+    setParticipantIds(ids);
     return null;
   }
 
