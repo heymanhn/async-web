@@ -1,17 +1,11 @@
-/* eslint react/no-did-update-set-state: 0 */
-
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { withApollo } from 'react-apollo';
+import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import meetingQuery from 'graphql/meetingQuery';
 import fakeMembersQuery from 'graphql/fakeMembersQuery';
-import addParticipantMutation from 'graphql/addParticipantMutation';
-import removeParticipantMutation from 'graphql/removeParticipantMutation';
 
 import ParticipantAvatars from 'components/shared/ParticipantAvatars';
-
 import Member from './Member';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -79,178 +73,90 @@ const InnerMembersContainer = styled.div(({ theme: { colors } }) => ({
   marginTop: '-2px',
 }));
 
-class ParticipantsSelector extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      members: [],
-      isOpen: props.alwaysOpen,
-    };
-
-    this.handleAction = this.handleAction.bind(this);
-    this.handleOpen = this.handleOpen.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-    this.addParticipant = this.addParticipant.bind(this);
-    this.isParticipant = this.isParticipant.bind(this);
-    this.removeParticipant = this.removeParticipant.bind(this);
-    this.sortMembers = this.sortMembers.bind(this);
-  }
-
-  async componentDidMount() {
-    const { client } = this.props;
-
-    const response = await client.query({ query: fakeMembersQuery });
-
-    if (response.data && response.data.fakeMembers) {
-      const { fakeMembers: members } = response.data;
-      this.setState({ members });
-    }
-  }
-
-  async handleAction(id) {
-    return this.isParticipant(id) ? this.removeParticipant(id) : this.addParticipant(id);
-  }
-
-  handleClose() {
-    const { isOpen } = this.state;
-    const { alwaysOpen } = this.props;
-    if (!isOpen || alwaysOpen) return;
-
-    this.setState({ isOpen: false });
-  }
-
-  handleOpen() {
-    const { isOpen } = this.state;
-    const { alwaysOpen } = this.props;
+const ParticipantsSelector = ({
+  alwaysOpen,
+  authorId,
+  onAddParticipant,
+  onRemoveParticipant,
+  participantIds,
+  ...props
+}) => {
+  const [isOpen, setIsOpen] = useState(alwaysOpen);
+  function handleOpen() {
     if (isOpen || alwaysOpen) return;
-
-    this.setState({ isOpen: true });
+    setIsOpen(true);
+  }
+  function handleClose() {
+    if (!isOpen || alwaysOpen) return;
+    setIsOpen(false);
   }
 
-  addParticipant(id) {
-    const { members } = this.state;
-    const { client, meetingId } = this.props;
+  const { data } = useQuery(fakeMembersQuery);
+  if (!data.fakeMembers) return null;
+  let members = data.fakeMembers || [];
+  const organizer = members.find(l => l.id === authorId);
+  const others = members.filter(l => l.id !== authorId);
+  members = [organizer, ...others];
 
-    return client.mutate({
-      mutation: addParticipantMutation,
-      variables: {
-        id: meetingId,
-        input: {
-          userId: id,
-          accessType: 'collaborator',
-        },
-      },
-      update: (cache) => {
-        const member = members.find(m => m.id === id);
-        const { meeting } = cache.readQuery({ query: meetingQuery, variables: { id: meetingId } });
-        if (meeting.participants.findIndex(p => p.user.id === id) >= 0) return;
-
-        meeting.participants = meeting.participants.concat({
-          user: member,
-          __typename: '[Participant]',
-        });
-        cache.writeQuery({
-          query: meetingQuery,
-          variables: { id: meetingId },
-          data: { meeting },
-        });
-      },
-    });
+  function isParticipant(id) {
+    return participantIds.indexOf(id) >= 0;
   }
 
-  isParticipant(id) {
-    const { participants } = this.props;
-    return participants.findIndex(p => p.id === id) >= 0;
+  function handleAction(id) {
+    return isParticipant(id) ? onRemoveParticipant(id) : onAddParticipant(id);
   }
 
-  removeParticipant(id) {
-    const { client, meetingId, participants } = this.props;
-
-    return client.mutate({
-      mutation: removeParticipantMutation,
-      variables: {
-        id: meetingId,
-        userId: id,
-      },
-      update: (cache) => {
-        const index = participants.findIndex(p => p.id === id);
-        const { meeting } = cache.readQuery({ query: meetingQuery, variables: { id: meetingId } });
-        if (index >= 0) participants.splice(index, 1);
-
-        meeting.participants = participants.map(p => ({ user: p, __typename: '[Participant]' }));
-        cache.writeQuery({
-          query: meetingQuery,
-          variables: { id: meetingId },
-          data: { meeting },
-        });
-      },
-    });
-  }
-
-  sortMembers() {
-    const { members } = this.state;
-    const { authorId } = this.props;
-    if (!members.length) return [];
-
-    const meetingOrganizer = members.find(l => l.id === authorId);
-    const others = members.filter(l => l.id !== authorId);
-
-    return [meetingOrganizer, ...others];
-  }
-
-  render() {
-    const { isOpen } = this.state;
-    const { authorId, participants, ...props } = this.props;
-    const members = this.sortMembers();
-
-    return (
-      <Container
-        isOpen={isOpen}
-        onBlur={this.handleClose}
-        onClick={this.handleOpen}
-        onFocus={this.handleOpen}
-        tabIndex={0}
-        {...props}
-      >
-        <div>
-          <Title>PARTICIPANTS</Title>
-          <ParticipantAvatars authorId={authorId} participants={participants} />
-        </div>
-        {!!members.length && (
-          <MembersList isOpen={isOpen}>
-            <WhiteSeparator />
-            <InnerMembersContainer>
-              {members.map(member => (
-                <Member
-                  key={member.id}
-                  fullName={member.fullName}
-                  id={member.id}
-                  isOrganizer={member.id === authorId}
-                  isParticipant={this.isParticipant(member.id)}
-                  handleAction={this.handleAction}
-                  profilePictureUrl={member.profilePictureUrl}
-                  tabIndex={0}
-                />
-              ))}
-            </InnerMembersContainer>
-          </MembersList>
-        )}
-      </Container>
-    );
-  }
-}
+  return (
+    <Container
+      alwaysOpen={alwaysOpen}
+      isOpen={isOpen}
+      onBlur={handleClose}
+      onClick={handleOpen}
+      onFocus={handleOpen}
+      tabIndex={0}
+      {...props}
+    >
+      <div>
+        <Title>PARTICIPANTS</Title>
+        <ParticipantAvatars
+          authorId={authorId}
+          members={members}
+          participantIds={participantIds}
+        />
+      </div>
+      {!!members.length && (
+        <MembersList isOpen={isOpen}>
+          <WhiteSeparator />
+          <InnerMembersContainer>
+            {members.map(member => (
+              <Member
+                key={member.id}
+                fullName={member.fullName}
+                id={member.id}
+                isOrganizer={member.id === authorId}
+                isParticipant={isParticipant(member.id)}
+                handleAction={handleAction}
+                profilePictureUrl={member.profilePictureUrl}
+                tabIndex={0}
+              />
+            ))}
+          </InnerMembersContainer>
+        </MembersList>
+      )}
+    </Container>
+  );
+};
 
 ParticipantsSelector.propTypes = {
   alwaysOpen: PropTypes.bool,
   authorId: PropTypes.string.isRequired,
-  client: PropTypes.object.isRequired,
-  meetingId: PropTypes.string.isRequired,
-  participants: PropTypes.array.isRequired,
+  onAddParticipant: PropTypes.func.isRequired,
+  onRemoveParticipant: PropTypes.func.isRequired,
+  participantIds: PropTypes.array.isRequired,
 };
 
 ParticipantsSelector.defaultProps = {
   alwaysOpen: false,
 };
 
-export default withApollo(ParticipantsSelector);
+export default ParticipantsSelector;
