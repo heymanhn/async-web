@@ -14,33 +14,34 @@ const StyledAvatar = styled(Avatar)({
   marginRight: '-4px',
 });
 
-// Display the meeting organizer first in the list of participants
-const sortByMeetingOwnerFirst = (list, authorId) => {
-  if (!list.length) return [];
+const ParticipantAvatars = ({ authorId, members, participantIds }) => {
+  // Display the meeting organizer first in the list of participant avatars
+  function sortByMeetingOwnerFirst() {
+    if (!participantIds.length) return [];
 
-  const meetingOrganizer = list.find(l => l.id === authorId);
-  const others = list.filter(l => l.id !== authorId);
+    const orderedParticipantIds = [authorId, ...participantIds.filter(i => i !== authorId)];
+    return orderedParticipantIds.map(id => members.find(m => m.id === id));
+  }
 
-  return [meetingOrganizer, ...others];
+  return (
+    <Container>
+      {sortByMeetingOwnerFirst().map(p => (
+        <StyledAvatar
+          alt={p.fullName}
+          key={p.id}
+          size={30}
+          src={p.profilePictureUrl}
+          title={p.fullName}
+        />
+      ))}
+    </Container>
+  );
 };
-
-const ParticipantAvatars = ({ authorId, participants }) => (
-  <Container>
-    {sortByMeetingOwnerFirst(participants, authorId).map(p => (
-      <StyledAvatar
-        alt={p.fullName}
-        key={p.id}
-        size={30}
-        src={p.profilePictureUrl}
-        title={p.fullName}
-      />
-    ))}
-  </Container>
-);
 
 ParticipantAvatars.propTypes = {
   authorId: PropTypes.string.isRequired,
-  participants: PropTypes.array.isRequired,
+  members: PropTypes.array.isRequired,
+  participantIds: PropTypes.array.isRequired,
 };
 
 export default ParticipantAvatars;

@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import onClickOutside from 'react-onclickoutside';
-import { Query } from 'react-apollo';
+import { useMutation, useQuery } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import meetingQuery from 'graphql/meetingQuery';
+import addParticipantMutation from 'graphql/addParticipantMutation';
+import removeParticipantMutation from 'graphql/removeParticipantMutation';
 
 import ParticipantsSelector from './ParticipantsSelector';
 
@@ -51,72 +52,98 @@ const StyledParticipantsSelector = styled(ParticipantsSelector)({
   top: '60px',
 });
 
-class MeetingProperties extends Component {
-  constructor(props) {
-    super(props);
+const MeetingProperties = ({ meetingId }) => {
+  const [isSelectorOpen, setIsOpen] = useState(false);
+  const [participantIds, setParticipantIds] = useState(null);
+  const [initialParticipantIds, setInitialParticipantIds] = useState(null);
+  const [addParticipantAPI] = useMutation(addParticipantMutation);
+  const [removeParticipantAPI] = useMutation(removeParticipantMutation);
 
-    this.state = {
-      isParticipantSelectorOpen: false,
+  function addParticipant(id) {
+    setParticipantIds([...participantIds, id]);
+  }
+
+  function removeParticipant(id) {
+    const index = participantIds.indexOf(id);
+    setParticipantIds([...participantIds.slice(0, index), ...participantIds.slice(index + 1)]);
+  }
+
+  function saveChangesAndClose() {
+    initialParticipantIds.forEach((id) => {
+      if (!participantIds.includes(id)) {
+        removeParticipantAPI({ variables: { id: meetingId, userId: id } });
+      }
+    });
+    participantIds.forEach((id) => {
+      if (!initialParticipantIds.includes(id)) {
+        addParticipantAPI({
+          variables: {
+            id: meetingId,
+            input: {
+              userId: id,
+              accessType: 'collaborator',
+            },
+          },
+        });
+      }
+    });
+    setIsOpen(false);
+  }
+
+  function toggleDropdown() {
+    return isSelectorOpen ? saveChangesAndClose() : setIsOpen(true);
+  }
+
+  // New way of detecting clicking outside an element, using React hooks
+  const selector = useRef();
+  useEffect(() => {
+    const handleClick = (event) => {
+      // Means it's a click outside the component.
+      if (!selector.current.contains(event.target)) saveChangesAndClose();
     };
 
-    this.handleClickOutside = this.handleClickOutside.bind(this);
-    this.showParticipantsDropdown = this.showParticipantsDropdown.bind(this);
+    document.addEventListener('mousedown', handleClick);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+    };
+  });
+
+  const { loading, error, data } = useQuery(meetingQuery, { variables: { id: meetingId } });
+  if (loading) return null;
+  if (error || !data.meeting) return <div>{error}</div>;
+
+  const { author, participants: initialParticipants } = data.meeting;
+  if (!participantIds) {
+    const ids = initialParticipants.map(p => p.user.id);
+    setInitialParticipantIds(ids);
+    setParticipantIds(ids);
+    return null;
   }
 
-  handleClickOutside(event) {
-    event.stopPropagation();
-
-    this.setState({ isParticipantSelectorOpen: false });
-  }
-
-  showParticipantsDropdown() {
-    this.setState({ isParticipantSelectorOpen: true });
-  }
-
-  render() {
-    const { isParticipantSelectorOpen } = this.state;
-    const { meetingId } = this.props;
-
-    return (
-      <Query
-        query={meetingQuery}
-        variables={{ id: meetingId }}
-      >
-        {({ loading, error, data }) => {
-          if (loading) return null;
-          if (error || !data.meeting) return <div>{error}</div>;
-
-          const { author, participants } = data.meeting;
-          return (
-            <Container>
-              <VerticalDivider />
-              <ParticipantsIndicator>
-                <ParticipantsButton
-                  className="ignore-react-onclickoutside"
-                  onClick={this.showParticipantsDropdown}
-                >
-                  <StyledIcon icon={faUser} />
-                  <NumberOfParticipants>{participants.length}</NumberOfParticipants>
-                </ParticipantsButton>
-                {isParticipantSelectorOpen && (
-                  <StyledParticipantsSelector
-                    alwaysOpen
-                    authorId={author.id}
-                    meetingId={meetingId}
-                    participants={participants.map(p => p.user)}
-                  />
-                )}
-              </ParticipantsIndicator>
-            </Container>
-          );
-        }}
-      </Query>
-    );
-  }
-}
+  return (
+    <Container ref={selector}>
+      <VerticalDivider />
+      <ParticipantsIndicator>
+        <ParticipantsButton onClick={toggleDropdown}>
+          <StyledIcon icon={faUser} />
+          <NumberOfParticipants>{participantIds.length}</NumberOfParticipants>
+        </ParticipantsButton>
+        {isSelectorOpen && (
+          <StyledParticipantsSelector
+            alwaysOpen
+            authorId={author.id}
+            participantIds={participantIds}
+            onAddParticipant={addParticipant}
+            onRemoveParticipant={removeParticipant}
+          />
+        )}
+      </ParticipantsIndicator>
+    </Container>
+  );
+};
 
 MeetingProperties.propTypes = {
   meetingId: PropTypes.string.isRequired,
 };
 
-export default onClickOutside(MeetingProperties);
+export default MeetingProperties;
