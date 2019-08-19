@@ -22,6 +22,7 @@ function debounce(func, wait, immediate) {
 }
 
 // Not using IntersectionObserver yet due to browser support limitations
+// Requires a reference to the component being scrolled
 const useInfiniteScroll = (ref) => {
   const [shouldFetch, setShouldFetch] = useState(false);
 

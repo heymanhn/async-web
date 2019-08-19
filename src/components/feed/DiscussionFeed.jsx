@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { Query } from 'react-apollo';
+/* eslint no-underscore-dangle: 0 */
+import React, { useRef, useState } from 'react';
+import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import discussionFeedQuery from 'graphql/discussionFeedQuery';
 import withPageTracking from 'utils/withPageTracking';
 import { getLocalUser } from 'utils/auth';
+import useInfiniteScroll from 'utils/useInfiniteScroll';
 
 import Layout from 'components/Layout';
 
@@ -40,6 +42,50 @@ const DiscussionsContainer = styled.div({
 const DiscussionFeed = () => {
   const { userId: id } = getLocalUser();
   const [meetingIdToFilter, setMeetingIdToFilter] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const feedRef = useRef(null);
+  const [shouldFetch, setShouldFetch] = useInfiniteScroll(feedRef);
+
+  const queryParams = {};
+  if (meetingIdToFilter) queryParams.meeting_id = meetingIdToFilter;
+  const { loading, error, data, fetchMore } = useQuery(discussionFeedQuery, {
+    variables: { id, queryParams },
+  });
+  if (loading) return null;
+  if (error || !data.discussionFeed) return <div>{error}</div>;
+
+  const { items, pageToken } = data.discussionFeed;
+
+  function fetchMoreFeed() {
+    const newQueryParams = {};
+    if (meetingIdToFilter) newQueryParams.meeting_id = meetingIdToFilter;
+    if (pageToken) newQueryParams.page_token = pageToken;
+
+    fetchMore({
+      query: discussionFeedQuery,
+      variables: { id, queryParams: newQueryParams },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        const { items: previousItems } = previousResult.discussionFeed;
+        const { items: newItems, pageToken: newToken } = fetchMoreResult.discussionFeed;
+        setShouldFetch(false);
+        setIsFetching(false);
+
+        return {
+          discussionFeed: {
+            pageToken: newToken,
+            items: [...previousItems, ...newItems],
+            __typename: previousResult.discussionFeed.__typename,
+          },
+        };
+      },
+    });
+  }
+
+  if (shouldFetch && pageToken && !isFetching) {
+    setIsFetching(true);
+    fetchMoreFeed();
+  }
 
   return (
     <Layout
@@ -54,30 +100,15 @@ const DiscussionFeed = () => {
             selectedMeetingId={meetingIdToFilter}
           />
         </FiltersContainer>
-        <Query
-          query={discussionFeedQuery}
-          variables={{ id, meetingId: meetingIdToFilter || '' }}
-          fetchPolicy="no-cache"
-        >
-          {({ loading, error, data }) => {
-            if (loading) return null;
-            if (error || !data.discussionFeed) return <div>{error}</div>;
-
-            const { items } = data.discussionFeed;
-
-            return (
-              <DiscussionsContainer>
-                {items.map(i => (
-                  <DiscussionFeedItem
-                    key={i.conversation.id}
-                    conversation={i.conversation}
-                    meeting={i.meeting}
-                  />
-                ))}
-              </DiscussionsContainer>
-            );
-          }}
-        </Query>
+        <DiscussionsContainer ref={feedRef}>
+          {items.map(i => (
+            <DiscussionFeedItem
+              key={i.conversation.id}
+              conversation={i.conversation}
+              meeting={i.meeting}
+            />
+          ))}
+        </DiscussionsContainer>
       </Container>
     </Layout>
   );
