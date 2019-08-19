@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import withPageTracking from 'utils/withPageTracking';
 import meetingsQuery from 'graphql/meetingsQuery';
 import useInfiniteScroll from 'utils/useInfiniteScroll';
+import { snakedQueryParams } from 'utils/queryParams';
 
 import Layout from 'components/Layout';
 import MeetingRow from './MeetingRow';
@@ -41,7 +42,7 @@ const Inbox = () => {
   function fetchMoreMeetings() {
     fetchMore({
       query: meetingsQuery,
-      variables: { queryParams: { page_token: pageToken } },
+      variables: { queryParams: snakedQueryParams({ pageToken }) },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         const { items: previousItems } = previousResult.meetings;
         const { items: newItems, pageToken: newToken } = fetchMoreResult.meetings;

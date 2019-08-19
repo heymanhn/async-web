@@ -7,6 +7,7 @@ import discussionFeedQuery from 'graphql/discussionFeedQuery';
 import withPageTracking from 'utils/withPageTracking';
 import { getLocalUser } from 'utils/auth';
 import useInfiniteScroll from 'utils/useInfiniteScroll';
+import { snakedQueryParams } from 'utils/queryParams';
 
 import Layout from 'components/Layout';
 
@@ -59,12 +60,12 @@ const DiscussionFeed = () => {
 
   function fetchMoreFeed() {
     const newQueryParams = {};
-    if (meetingIdToFilter) newQueryParams.meeting_id = meetingIdToFilter;
-    if (pageToken) newQueryParams.page_token = pageToken;
+    if (meetingIdToFilter) newQueryParams.meetingId = meetingIdToFilter;
+    if (pageToken) newQueryParams.pageToken = pageToken;
 
     fetchMore({
       query: discussionFeedQuery,
-      variables: { id, queryParams: newQueryParams },
+      variables: { id, queryParams: snakedQueryParams(newQueryParams) },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         const { items: previousItems } = previousResult.discussionFeed;
         const { items: newItems, pageToken: newToken } = fetchMoreResult.discussionFeed;

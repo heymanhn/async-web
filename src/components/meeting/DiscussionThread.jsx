@@ -8,6 +8,7 @@ import meetingQuery from 'graphql/meetingQuery';
 import updateConversationMutation from 'graphql/updateConversationMutation';
 import withViewedReaction from 'utils/withViewedReaction';
 import useInfiniteScroll from 'utils/useInfiniteScroll';
+import { snakedQueryParams } from 'utils/queryParams';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionReply from 'components/discussion/DiscussionReply';
@@ -57,11 +58,11 @@ const DiscussionThread = ({
   // Why useCallback()? See the react-hooks/exhaustive-deps linter rule
   const fetchMessages = useCallback(async (cid, token) => {
     const queryParams = {};
-    if (token) queryParams.page_token = token; // Figure out the snake casing later...
+    if (token) queryParams.pageToken = token;
 
     const { data } = await client.query({
       query: conversationMessagesQuery,
-      variables: { id: cid, queryParams },
+      variables: { id: cid, queryParams: snakedQueryParams(queryParams) },
       fetchPolicy: 'no-cache',
     });
 
