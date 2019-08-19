@@ -219,7 +219,8 @@ class MeetingSpace extends Component {
                     />
                   ) : (
                     <StyledDiscussionThread
-                      conversation={selectedConvo}
+                      conversationId={selectedConvo.id}
+                      conversationTitle={selectedConvo.title}
                       meetingId={meetingId}
                     />
                   )}
