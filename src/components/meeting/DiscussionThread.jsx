@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
@@ -50,27 +50,57 @@ const DiscussionThread = ({
 
   const client = useApolloClient();
 
-  async function fetchMessages(conversationId) {
+  // Why useCallback()? See the react-hooks/exhaustive-deps linter rule
+  const fetchMessages = useCallback(async (cid) => {
     const { data } = await client.query({
       query: conversationMessagesQuery,
-      variables: { id: conversationId, queryParams: {} },
+      variables: { id: cid, queryParams: {} },
       fetchPolicy: 'no-cache',
     });
 
-    const { items, messageCount } = data.conversationMessages;
+    const { items, messageCount: newCount } = data.conversationMessages;
 
-    return { messages: (items || []).map(i => i.message), messageCount };
+    return { messages: (items || []).map(i => i.message), messageCount: newCount };
+  }, [client]);
+
+  /*
+   * When a message is selected, all the messages in the conversation after that message are no
+   * no longer displayed, replaced by any replies to the current message, if it is the first
+   * message of another conversation.
+  */
+  async function showFocusedConversation(newFocusedMessage) {
+    let newMessages = [];
+
+    if (!newFocusedMessage) {
+      // TODO: when parentConversation is implemented, have this code fetch the messages
+      // from the parent conversation, instead of from the root
+      const {
+        messages: parentMessages,
+        messageCount: newMessageCount,
+      } = await fetchMessages(conversationId);
+      setFocusedMessage(newFocusedMessage);
+      setMessageCount(newMessageCount);
+      setMessages(parentMessages);
+    } else {
+      const index = messages.findIndex(m => m.id === newFocusedMessage.id);
+
+      if (index === 0) return;
+      newMessages = messages.slice(0, index + 1);
+
+      const { childConversationId } = newFocusedMessage; // indicates nested conversation
+      if (childConversationId) {
+        markAsRead(childConversationId);
+        const { messages: childMessages } = await fetchMessages(childConversationId);
+
+        // Backend returns the originating message of the nested conversation as the first
+        // message in the list
+        newMessages = newMessages.concat(childMessages.slice(1));
+      }
+
+      setFocusedMessage(newFocusedMessage);
+      setMessages(newMessages);
+    }
   }
-
-  useEffect(async () => {
-    const { messages, messageCount } = await fetchMessages(conversationId);
-    setMessages(messages);
-    setMessageCount(messageCount);
-    setFocusedMessage(null);
-    setParentConversation(null);
-  }, [conversationId, messages, messageCount]);
-
-  if (!messages) return null;
 
   async function handleFocusOnMessage(message) {
     let newFocus;
@@ -109,47 +139,6 @@ const DiscussionThread = ({
     return message.replyCount || 0;
   }
 
-  /*
-   * When a message is selected, all the messages in the conversation after that message are no
-   * no longer displayed, replaced by any replies to the current message, if it is the first
-   * message of another conversation.
-  */
-  async function showFocusedConversation(focusedMessage) {
-    let newMessages = [];
-
-    if (!focusedMessage) {
-      // TODO: when parentConversation is implemented, have this code fetch the messages
-      // from the parent conversation, instead of from the root
-      const {
-        messages: parentMessages,
-        messageCount,
-      } = await fetchMessages(conversationId);
-      setFocusedMessage(focusedMessage);
-      setMessageCount(messageCount);
-      setMessages(parentMessages);
-    } else {
-      const index = messages.findIndex(m => m.id === focusedMessage.id);
-
-      if (index === 0) return;
-      newMessages = messages.slice(0, index + 1);
-
-      const { childConversationId } = focusedMessage; // indicates nested conversation
-      if (childConversationId) {
-        markAsRead(childConversationId);
-        const {
-          messages: childMessages,
-        } = await fetchMessages(childConversationId);
-
-        // Backend returns the originating message of the nested conversation as the first
-        // message in the list
-        newMessages = newMessages.concat(childMessages.slice(1));
-      }
-
-      setFocusedMessage(focusedMessage);
-      setMessages(newMessages);
-    }
-  }
-
   // Serves as an optimistic update to the messages state. Handles two cases:
   // 1. A new message is added to a conversation
   // 2. A message has been edited by the current user
@@ -179,37 +168,54 @@ const DiscussionThread = ({
     setMessages(newMessages);
   }
 
+  useEffect(() => {
+    async function fetchData() {
+      const {
+        messages: newMessages,
+        messageCount: newMessageCount,
+      } = await fetchMessages(conversationId);
+      setMessages(newMessages);
+      setMessageCount(newMessageCount);
+      setFocusedMessage(null);
+      setParentConversation(null);
+    }
+
+    fetchData();
+  }, [conversationId, messages, messageCount, fetchMessages]);
+
+  if (!messages) return null;
+
   return (
     <Container {...props}>
       <TitleEditor
         contentType="discussionTitle"
-        initialValue={conversation.title || 'Untitled Discussion'}
+        initialValue={conversationTitle || 'Untitled Discussion'}
         isPlainText
-        onSubmit={this.handleUpdateTitle}
+        onSubmit={handleUpdateTitle}
         saveOnBlur
       />
       <MessagesSection>
         {messages.map(m => (
           <React.Fragment key={m.id}>
             <DiscussionReply
-              afterSubmit={this.updateMessageInList}
+              afterSubmit={updateMessageInList}
               conversationId={m.conversationId}
-              handleFocusMessage={this.handleFocusOnMessage}
+              handleFocusMessage={handleFocusOnMessage}
               initialMode="display"
               key={m.id}
               meetingId={meetingId}
               message={m}
-              replyCount={this.replyCountForMessage(m)}
+              replyCount={replyCountForMessage(m)}
               size={(focusedMessage || messages[0]).id === m.id ? 'large' : 'small'}
-             source="discussion"
+              source="discussion"
             />
             <Separator />
           </React.Fragment>
         ))}
       </MessagesSection>
       <ReplyComposer
-        afterSubmit={this.updateMessageInList}
-        conversationId={conversation.id}
+        afterSubmit={updateMessageInList}
+        conversationId={conversationId}
         focusedMessage={focusedMessage}
         meetingId={meetingId}
       />
