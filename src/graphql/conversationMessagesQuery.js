@@ -23,6 +23,7 @@ export default gql`
         }
       }
       messageCount
+      pageToken
     }
   }
 `;

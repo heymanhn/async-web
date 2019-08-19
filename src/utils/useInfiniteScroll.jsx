@@ -1,5 +1,5 @@
 // Inspired by https://upmostly.com/tutorials/build-an-infinite-scroll-component-in-react-using-react-hooks
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 // https://davidwalsh.name/javascript-debounce-function
 // Returns a function, that, as long as it continues to be invoked, will not
@@ -21,27 +21,25 @@ function debounce(func, wait, immediate) {
   };
 }
 
-const useInfiniteScroll = (callback) => {
-  const [isFetching, setIsFetching] = useState(false);
+// Not using IntersectionObserver yet due to browser support limitations
+const useInfiniteScroll = (ref) => {
+  const [shouldFetch, setShouldFetch] = useState(false);
 
-  function handleScroll() {
-    const { documentElement: elem } = document;
-    const reachedBottom = window.innerHeight + elem.scrollTop !== elem.offsetHeight;
-    if (reachedBottom || isFetching) return;
-    setIsFetching(true);
-  }
+  const handleScroll = useCallback(() => {
+    const elem = ref.current;
+
+    // Subtracting 200px from the offsetHeight to trigger the fetching action sooner.
+    const reachedBottom = window.innerHeight + window.scrollY >= (elem.offsetHeight - 200);
+    if (!reachedBottom || shouldFetch) return;
+    setShouldFetch(true);
+  }, [shouldFetch, ref]);
 
   useEffect(() => {
     window.addEventListener('scroll', debounce(handleScroll, 500));
     return () => window.removeEventListener('scroll', debounce(handleScroll, 500));
-  }, []);
+  }, [handleScroll]);
 
-  useEffect(() => {
-    if (!isFetching) return;
-    callback();
-  }, [isFetching]);
-
-  return [isFetching, setIsFetching];
+  return [shouldFetch, setShouldFetch];
 };
 
 export default useInfiniteScroll;

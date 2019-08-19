@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
@@ -7,7 +7,7 @@ import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import meetingQuery from 'graphql/meetingQuery';
 import updateConversationMutation from 'graphql/updateConversationMutation';
 import withViewedReaction from 'utils/withViewedReaction';
-// import useInfiniteScroll from 'utils/useInfiniteScroll';
+import useInfiniteScroll from 'utils/useInfiniteScroll';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionReply from 'components/discussion/DiscussionReply';
@@ -47,21 +47,47 @@ const DiscussionThread = ({
   const [messageCount, setMessageCount] = useState(0);
   const [parentConversation, setParentConversation] = useState(null);
   const [focusedMessage, setFocusedMessage] = useState(null);
+  const [pageToken, setPageToken] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
 
+  const threadRef = useRef(null);
+  const [shouldFetch, setShouldFetch] = useInfiniteScroll(threadRef);
   const client = useApolloClient();
 
   // Why useCallback()? See the react-hooks/exhaustive-deps linter rule
-  const fetchMessages = useCallback(async (cid) => {
+  const fetchMessages = useCallback(async (cid, token) => {
+    const queryParams = {};
+    if (token) queryParams.page_token = token; // Figure out the snake casing later...
+
     const { data } = await client.query({
       query: conversationMessagesQuery,
-      variables: { id: cid, queryParams: {} },
+      variables: { id: cid, queryParams },
       fetchPolicy: 'no-cache',
     });
 
-    const { items, messageCount: newCount } = data.conversationMessages;
+    const { items, messageCount: newCount, pageToken: newToken } = data.conversationMessages;
 
-    return { messages: (items || []).map(i => i.message), messageCount: newCount };
+    return {
+      messages: (items || []).map(i => i.message),
+      messageCount: newCount,
+      pageToken: newToken,
+    };
   }, [client]);
+
+  async function fetchMoreMessages() {
+    // NOTE: not supporting infinite scroll yet if we're currently in a nested discussion.
+    if (!pageToken || parentConversation) return;
+
+    const {
+      messages: newMessages,
+      pageToken: newToken,
+    } = await fetchMessages(conversationId, pageToken);
+
+    setMessages([...messages, ...newMessages]);
+    setPageToken(newToken);
+    setShouldFetch(false);
+    setIsFetching(false);
+  }
 
   /*
    * When a message is selected, all the messages in the conversation after that message are no
@@ -173,20 +199,26 @@ const DiscussionThread = ({
       const {
         messages: newMessages,
         messageCount: newMessageCount,
+        pageToken: newToken,
       } = await fetchMessages(conversationId);
       setMessages(newMessages);
       setMessageCount(newMessageCount);
       setFocusedMessage(null);
       setParentConversation(null);
+      setPageToken(newToken);
     }
 
     fetchData();
-  }, [conversationId, messages, messageCount, fetchMessages]);
+  }, [conversationId, fetchMessages]);
 
   if (!messages) return null;
+  if (shouldFetch && pageToken && !isFetching) {
+    setIsFetching(true);
+    fetchMoreMessages();
+  }
 
   return (
-    <Container {...props}>
+    <Container ref={threadRef} {...props}>
       <TitleEditor
         contentType="discussionTitle"
         initialValue={conversationTitle || 'Untitled Discussion'}
