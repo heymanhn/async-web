@@ -21,6 +21,12 @@ const Container = styled.div(({ theme: { wideViewport } }) => ({
   padding: '30px 0',
 }));
 
+const LeftColumn = styled.div({
+  maxHeight: 'calc(100vh - 101px)',
+  overflow: 'auto',
+  position: 'fixed',
+});
+
 const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   justifyContent: 'space-between',
@@ -52,7 +58,7 @@ const DiscussionsContainer = styled.div({});
 
 const MainColumn = styled.div(({ theme: { colors } }) => ({
   borderTop: `1px solid ${colors.borderGrey}`,
-  margin: '0 20px',
+  margin: '0 20px 0 500px',
 }));
 
 const StyledDiscussionComposer = styled(DiscussionComposer)({
@@ -195,7 +201,7 @@ class MeetingSpace extends Component {
               title={title || 'Untitled Discussion'}
             >
               <Container>
-                <div>
+                <LeftColumn>
                   <StartDiscussionButton onClick={this.handleCreateDiscussion}>
                     <ButtonLabel>Start a discussion</ButtonLabel>
                     <PlusSign>+</PlusSign>
@@ -208,7 +214,7 @@ class MeetingSpace extends Component {
                       selectedConversationId={isComposing ? null : selectedConvo.id}
                     />
                   </DiscussionsContainer>
-                </div>
+                </LeftColumn>
                 <MainColumn>
                   {showComposer ? (
                     <StyledDiscussionComposer
