@@ -1,9 +1,11 @@
-import React from 'react';
-import { Query } from 'react-apollo';
+/* eslint no-underscore-dangle: 0 */
+import React, { useRef, useState } from 'react';
+import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import withPageTracking from 'utils/withPageTracking';
 import meetingsQuery from 'graphql/meetingsQuery';
+import useInfiniteScroll from 'utils/useInfiniteScroll';
 
 import Layout from 'components/Layout';
 import MeetingRow from './MeetingRow';
@@ -25,32 +27,59 @@ const PageTitle = styled.div({
   marginBottom: '20px',
 });
 
-const Inbox = () => (
-  <Query query={meetingsQuery}>
-    {({ loading, error, data }) => {
-      if (loading) return null;
-      if (error || !data.meetings) return <Container>Error fetching meetings</Container>;
+const Inbox = () => {
+  const listRef = useRef(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
 
-      const { items: meetingItems } = data.meetings;
+  const { loading, error, data, fetchMore } = useQuery(meetingsQuery);
+  if (loading) return null;
+  if (error || !data.meetings) return <Container>Error fetching meetings</Container>;
 
-      return (
-        <Layout>
-          <Container>
-            <InnerContainer>
-              <PageTitle>Your Meetings</PageTitle>
-              {meetingItems.map(item => (
-                <MeetingRow
-                  key={item.meeting.id}
-                  meeting={item.meeting}
-                  conversationCount={item.conversationCount}
-                />
-              ))}
-            </InnerContainer>
-          </Container>
-        </Layout>
-      );
-    }}
-  </Query>
-);
+  const { items: meetingItems, pageToken } = data.meetings;
+
+  function fetchMoreMeetings() {
+    fetchMore({
+      query: meetingsQuery,
+      variables: { queryParams: { page_token: pageToken } },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        const { items: previousItems } = previousResult.meetings;
+        const { items: newItems, pageToken: newToken } = fetchMoreResult.meetings;
+        setShouldFetch(false);
+        setIsFetching(false);
+
+        return {
+          meetings: {
+            pageToken: newToken,
+            items: [...previousItems, ...newItems],
+            __typename: previousResult.meetings.__typename,
+          },
+        };
+      },
+    });
+  }
+
+  if (shouldFetch && pageToken && !isFetching) {
+    setIsFetching(true);
+    fetchMoreMeetings();
+  }
+
+  return (
+    <Layout>
+      <Container>
+        <InnerContainer ref={listRef}>
+          <PageTitle>Your Meetings</PageTitle>
+          {meetingItems.map(item => (
+            <MeetingRow
+              key={item.meeting.id}
+              meeting={item.meeting}
+              conversationCount={item.conversationCount}
+            />
+          ))}
+        </InnerContainer>
+      </Container>
+    </Layout>
+  );
+};
 
 export default withPageTracking(Inbox, 'Inbox');

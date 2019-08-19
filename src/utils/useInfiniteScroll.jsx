@@ -28,6 +28,7 @@ const useInfiniteScroll = (ref) => {
 
   const handleScroll = useCallback(() => {
     const elem = ref.current;
+    if (!elem) return;
 
     // Subtracting 200px from the offsetHeight to trigger the fetching action sooner.
     const reachedBottom = window.innerHeight + window.scrollY >= (elem.offsetHeight - 200);
