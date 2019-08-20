@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query Meetings($id: String!) {
-    meetings @rest(type: "Meetings", path: "/meetings") {
-      items @type(name: "[Item]") {
+  query Meetings($queryParams: Object!) {
+    meetings(queryParams: $queryParams) @rest(type: "Meetings", path: "/meetings?{args.queryParams}") {
+      items @type(name: "[MeetingItem]") {
         meeting @type(name: "Meeting") {
           id
           title
@@ -24,6 +24,7 @@ export default gql`
         conversationCount
         userUnreadThreadCount
       }
+      pageToken
     }
   }
 `;

@@ -1,13 +1,14 @@
-/* eslint react/no-did-update-set-state: 0 */
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withApollo } from 'react-apollo';
+import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
 import meetingQuery from 'graphql/meetingQuery';
 import updateConversationMutation from 'graphql/updateConversationMutation';
 import withViewedReaction from 'utils/withViewedReaction';
+import useInfiniteScroll from 'utils/useInfiniteScroll';
+import { snakedQueryParams } from 'utils/queryParams';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionReply from 'components/discussion/DiscussionReply';
@@ -36,47 +37,99 @@ const Separator = styled.hr(({ theme: { colors } }) => ({
   margin: 0,
 }));
 
-class DiscussionThread extends Component {
-  constructor(props) {
-    super(props);
+const DiscussionThread = ({
+  conversationId,
+  conversationTitle,
+  markAsRead,
+  meetingId,
+  ...props
+}) => {
+  const [messages, setMessages] = useState(null);
+  const [messageCount, setMessageCount] = useState(0);
+  const [parentConversation, setParentConversation] = useState(null);
+  const [focusedMessage, setFocusedMessage] = useState(null);
+  const [pageToken, setPageToken] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
 
-    this.state = {
-      focusedMessage: null,
-      messages: null,
-      parentConversation: null,
-      messageCount: 0,
+  const threadRef = useRef(null);
+  const [shouldFetch, setShouldFetch] = useInfiniteScroll(threadRef);
+  const client = useApolloClient();
+
+  // Why useCallback()? See the react-hooks/exhaustive-deps linter rule
+  const fetchMessages = useCallback(async (cid, token) => {
+    const queryParams = {};
+    if (token) queryParams.pageToken = token;
+
+    const { data } = await client.query({
+      query: conversationMessagesQuery,
+      variables: { id: cid, queryParams: snakedQueryParams(queryParams) },
+      fetchPolicy: 'no-cache',
+    });
+
+    const { items, messageCount: newCount, pageToken: newToken } = data.conversationMessages;
+
+    return {
+      messages: (items || []).map(i => i.message),
+      messageCount: newCount,
+      pageToken: newToken,
     };
+  }, [client]);
 
-    this.handleFocusOnMessage = this.handleFocusOnMessage.bind(this);
-    this.handleUpdateTitle = this.handleUpdateTitle.bind(this);
-    this.fetchConversationMessages = this.fetchConversationMessages.bind(this);
-    this.replyCountForMessage = this.replyCountForMessage.bind(this);
-    this.showFocusedConversation = this.showFocusedConversation.bind(this);
-    this.sizeForMessage = this.sizeForMessage.bind(this);
-    this.updateMessageInList = this.updateMessageInList.bind(this);
+  async function fetchMoreMessages() {
+    // NOTE: not supporting infinite scroll yet if we're currently in a nested discussion.
+    if (!pageToken || parentConversation) return;
+
+    const {
+      messages: newMessages,
+      pageToken: newToken,
+    } = await fetchMessages(conversationId, pageToken);
+
+    setMessages([...messages, ...newMessages]);
+    setPageToken(newToken);
+    setShouldFetch(false);
+    setIsFetching(false);
   }
 
-  async componentDidMount() {
-    const { conversation } = this.props;
-    const { messages, messageCount } = await this.fetchConversationMessages(conversation.id);
-    this.setState({ messageCount, messages });
-  }
+  /*
+   * When a message is selected, all the messages in the conversation after that message are no
+   * no longer displayed, replaced by any replies to the current message, if it is the first
+   * message of another conversation.
+  */
+  async function showFocusedConversation(newFocusedMessage) {
+    let newMessages = [];
 
-  async componentDidUpdate(prevProps) {
-    const { conversation } = this.props;
-    if (conversation.id !== prevProps.conversation.id) {
-      const { messages, messageCount } = await this.fetchConversationMessages(conversation.id);
-      this.setState({
-        focusedMessage: null,
-        messageCount,
-        messages,
-        parentConversation: null,
-      });
+    if (!newFocusedMessage) {
+      // TODO: when parentConversation is implemented, have this code fetch the messages
+      // from the parent conversation, instead of from the root
+      const {
+        messages: parentMessages,
+        messageCount: newMessageCount,
+      } = await fetchMessages(conversationId);
+      setFocusedMessage(newFocusedMessage);
+      setMessageCount(newMessageCount);
+      setMessages(parentMessages);
+    } else {
+      const index = messages.findIndex(m => m.id === newFocusedMessage.id);
+
+      if (index === 0) return;
+      newMessages = messages.slice(0, index + 1);
+
+      const { childConversationId } = newFocusedMessage; // indicates nested conversation
+      if (childConversationId) {
+        markAsRead(childConversationId);
+        const { messages: childMessages } = await fetchMessages(childConversationId);
+
+        // Backend returns the originating message of the nested conversation as the first
+        // message in the list
+        newMessages = newMessages.concat(childMessages.slice(1));
+      }
+
+      setFocusedMessage(newFocusedMessage);
+      setMessages(newMessages);
     }
   }
 
-  async handleFocusOnMessage(message) {
-    const { focusedMessage, messages, parentConversation } = this.state;
+  async function handleFocusOnMessage(message) {
     let newFocus;
 
     if (message.id === messages[0].id) {
@@ -88,105 +141,35 @@ class DiscussionThread extends Component {
       newFocus = message;
     }
 
-    this.showFocusedConversation(newFocus);
+    showFocusedConversation(newFocus);
   }
 
-  async handleUpdateTitle({ text } = {}) {
-    const { client, conversation, meetingId } = this.props;
-
+  async function handleUpdateTitle({ text } = {}) {
     const input = { title: text };
-    const response = await client.mutate({
+    const { data } = await client.mutate({
       mutation: updateConversationMutation,
-      variables: { meetingId, conversationId: conversation.id, input },
+      variables: { meetingId, conversationId, input },
       refetchQueries: [{
         query: meetingQuery,
         variables: { id: meetingId },
       }],
     });
 
-    if (response.data) {
-      return Promise.resolve();
-    }
-
+    if (data) return Promise.resolve();
     return new Error('Error updating conversation title');
-  }
-
-  async fetchConversationMessages(conversationId) {
-    const { client } = this.props;
-    const response = await client.query({
-      query: conversationMessagesQuery,
-      variables: { id: conversationId, queryParams: {} },
-      fetchPolicy: 'no-cache',
-    });
-
-    if (response.data) {
-      const { items, messageCount } = response.data.conversationMessages;
-      return { messages: (items || []).map(i => i.message), messageCount };
-    }
-
-    return new Error('Error fetching conversation messages');
   }
 
   // The reply count for the first message in the root conversation is always the number
   // of messages in the conversation.
-  replyCountForMessage(message) {
-    const { messages, messageCount } = this.state;
+  function replyCountForMessage(message) {
     if (message.id === messages[0].id) return messageCount - 1 || 0;
     return message.replyCount || 0;
-  }
-
-  sizeForMessage(id) {
-    const { focusedMessage, messages } = this.state;
-    if (focusedMessage) return focusedMessage.id === id ? 'large' : 'small';
-
-    return messages[0].id === id ? 'large' : 'small';
-  }
-
-  /*
-   * When a message is selected, all the messages in the conversation after that message are no
-   * no longer displayed, replaced by any replies to the current message, if it is the first
-   * message of another conversation.
-  */
-  async showFocusedConversation(focusedMessage) {
-    const { messages } = this.state;
-    const { conversation, markAsRead } = this.props;
-    let newMessages = [];
-
-    if (!focusedMessage) {
-      // TODO: when parentConversation is implemented, have this code fetch the messages
-      // from the parent conversation, instead of from the root
-      const {
-        messages: parentMessages,
-        messageCount,
-      } = await this.fetchConversationMessages(conversation.id);
-      this.setState({ focusedMessage, messageCount, messages: parentMessages });
-    } else {
-      const index = messages.findIndex(m => m.id === focusedMessage.id);
-
-      if (index === 0) return;
-      newMessages = messages.slice(0, index + 1);
-
-      const { childConversationId } = focusedMessage; // indicates nested conversation
-      if (childConversationId) {
-        markAsRead(childConversationId);
-        const {
-          messages: childMessages,
-        } = await this.fetchConversationMessages(childConversationId);
-
-        // Backend returns the originating message of the nested conversation as the first
-        // message in the list
-        newMessages = newMessages.concat(childMessages.slice(1));
-      }
-
-      this.setState({ focusedMessage, messages: newMessages });
-    }
   }
 
   // Serves as an optimistic update to the messages state. Handles two cases:
   // 1. A new message is added to a conversation
   // 2. A message has been edited by the current user
-  updateMessageInList(updatedMessage) {
-    const { focusedMessage, messages } = this.state;
+  function updateMessageInList(updatedMessage) {
     const index = messages.findIndex(m => m.id === updatedMessage.id);
     let newMessages;
 
@@ -209,59 +192,79 @@ class DiscussionThread extends Component {
       ];
     }
 
-    this.setState({ messages: newMessages });
+    setMessages(newMessages);
   }
 
-  render() {
-    const { focusedMessage, messages } = this.state;
-    const { client, conversation, meetingId, ...props } = this.props;
+  useEffect(() => {
+    async function fetchData() {
+      const {
+        messages: newMessages,
+        messageCount: newMessageCount,
+        pageToken: newToken,
+      } = await fetchMessages(conversationId);
+      setMessages(newMessages);
+      setMessageCount(newMessageCount);
+      setFocusedMessage(null);
+      setParentConversation(null);
+      setPageToken(newToken);
+    }
 
-    if (!messages) return null;
+    fetchData();
+  }, [conversationId, fetchMessages]);
 
-    return (
-      <Container {...props}>
-        <TitleEditor
-          contentType="discussionTitle"
-          initialValue={conversation.title || 'Untitled Discussion'}
-          isPlainText
-          onSubmit={this.handleUpdateTitle}
-          saveOnBlur
-        />
-        <MessagesSection>
-          {messages.map(m => (
-            <React.Fragment key={m.id}>
-              <DiscussionReply
-                afterSubmit={this.updateMessageInList}
-                conversationId={m.conversationId}
-                handleFocusMessage={this.handleFocusOnMessage}
-                initialMode="display"
-                key={m.id}
-                meetingId={meetingId}
-                message={m}
-                replyCount={this.replyCountForMessage(m)}
-                size={this.sizeForMessage(m.id)}
-                source="discussion"
-              />
-              <Separator />
-            </React.Fragment>
-          ))}
-        </MessagesSection>
-        <ReplyComposer
-          afterSubmit={this.updateMessageInList}
-          conversationId={conversation.id}
-          focusedMessage={focusedMessage}
-          meetingId={meetingId}
-        />
-      </Container>
-    );
+  if (!messages) return null;
+  if (shouldFetch && pageToken && !isFetching) {
+    setIsFetching(true);
+    fetchMoreMessages();
   }
-}
+
+  return (
+    <Container ref={threadRef} {...props}>
+      <TitleEditor
+        contentType="discussionTitle"
+        initialValue={conversationTitle || 'Untitled Discussion'}
+        isPlainText
+        onSubmit={handleUpdateTitle}
+        saveOnBlur
+      />
+      <MessagesSection>
+        {messages.map(m => (
+          <React.Fragment key={m.id}>
+            <DiscussionReply
+              afterSubmit={updateMessageInList}
+              conversationId={m.conversationId}
+              handleFocusMessage={handleFocusOnMessage}
+              initialMode="display"
+              key={m.id}
+              meetingId={meetingId}
+              message={m}
+              replyCount={replyCountForMessage(m)}
+              size={(focusedMessage || messages[0]).id === m.id ? 'large' : 'small'}
+              source="discussion"
+            />
+            <Separator />
+          </React.Fragment>
+        ))}
+      </MessagesSection>
+      <ReplyComposer
+        afterSubmit={updateMessageInList}
+        conversationId={conversationId}
+        focusedMessage={focusedMessage}
+        meetingId={meetingId}
+      />
+    </Container>
+  );
+};
 
 DiscussionThread.propTypes = {
-  client: PropTypes.object.isRequired,
-  conversation: PropTypes.object.isRequired,
+  conversationId: PropTypes.string.isRequired,
+  conversationTitle: PropTypes.string,
   markAsRead: PropTypes.func.isRequired,
   meetingId: PropTypes.string.isRequired,
 };
 
-export default withApollo(withViewedReaction(DiscussionThread));
+DiscussionThread.defaultProps = {
+  conversationTitle: null,
+};
+
+export default withViewedReaction(DiscussionThread);

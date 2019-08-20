@@ -36,3 +36,19 @@ export const createQueryString = (params) => {
 
   return `?${qString}`;
 };
+
+export const snakedQueryParams = (params) => {
+  if (!Object.keys(params).length) return '';
+
+  const queryParams = params;
+  Object.keys(queryParams)
+    .forEach((k) => {
+      const snake_key = snake_case(k);
+      if (snake_key !== k) {
+        queryParams[`${snake_key}`] = queryParams[k];
+        delete queryParams[k];
+      }
+    });
+
+  return queryParams;
+};
