@@ -1,7 +1,12 @@
+/* eslint no-underscore-dangle: 0 */
 /* eslint jsx-a11y/accessible-emoji: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
+
+import meetingConversationsQuery from 'graphql/meetingConversationsQuery';
+import { snakedQueryParams } from 'utils/queryParams';
 
 import DiscussionsListCell from './DiscussionsListCell';
 
@@ -30,11 +35,20 @@ const ThinkingFace = styled.span({
 });
 
 const DiscussionsList = ({
-  conversations,
+  meetingId,
   onScrollTo,
   onSelectConversation,
   selectedConversationId,
 }) => {
+  const { loading, error, data } = useQuery(meetingConversationsQuery, {
+    variables: { id: meetingId, queryParams: snakedQueryParams({ excludeChildLevel: true }) },
+  });
+  if (loading) return null;
+  if (error || !data.meetingConversations) return <div>{error}</div>;
+
+  const { items } = data.meetingConversations;
+  const conversations = items.map(i => i.conversation);
+
   if (!conversations || !conversations.length) {
     return (
       <EmptyContainer>
@@ -60,7 +74,7 @@ const DiscussionsList = ({
 };
 
 DiscussionsList.propTypes = {
-  conversations: PropTypes.array.isRequired,
+  meetingId: PropTypes.string.isRequired,
   onScrollTo: PropTypes.func,
   onSelectConversation: PropTypes.func.isRequired,
   selectedConversationId: PropTypes.string,

@@ -208,7 +208,7 @@ class MeetingSpace extends Component {
                   </StartDiscussionButton>
                   <DiscussionsContainer ref={this.listRef}>
                     <DiscussionsList
-                      conversations={conversations || []}
+                      meetingId={meetingId}
                       onScrollTo={isFirstLoadWithConvoParam ? this.handleScrollToCell : undefined}
                       onSelectConversation={this.handleSelectConversation}
                       selectedConversationId={isComposing ? null : selectedConvo.id}
