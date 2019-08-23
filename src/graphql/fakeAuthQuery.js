@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query FakeAuth($email: String!) {
-    user(email: $email) @rest(type: "User", path: "/accounts/login?email={args.email}") {
+  query FakeAuth($code: String!) {
+    user(code: $code) @rest(type: "User", path: "/accounts/login?code={args.code}") {
       id
       token
     }
