@@ -47,7 +47,7 @@ const DiscussionsList = ({
   if (error || !data.meetingConversations) return <div>{error}</div>;
 
   const { items } = data.meetingConversations;
-  const conversations = items.map(i => i.conversation);
+  const conversations = (items || []).map(i => i.conversation);
 
   if (!conversations || !conversations.length) {
     return (
