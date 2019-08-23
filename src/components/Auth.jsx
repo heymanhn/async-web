@@ -39,16 +39,16 @@ class Auth extends Component {
     const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
 
     const { params } = this.state;
-    if (!params || !params.email || isLoggedIn) {
+    if (!params || !params.code || isLoggedIn) {
       this.setState({ loading: false });
       return;
     }
 
-    const { email } = params;
-    if (email) {
+    const { code } = params;
+    if (code) {
       try {
         const response = await client.query({
-          query: fakeAuthQuery, variables: { email },
+          query: fakeAuthQuery, variables: { code },
         });
 
         if (response.data && response.data.user) {
@@ -56,7 +56,7 @@ class Auth extends Component {
           setLocalUser({ userId, userToken });
           client.writeData({ data: { isLoggedIn: true } });
 
-          const { user: { id, fullName: name } } = response.data;
+          const { user: { id, fullName: name, email } } = response.data;
           window.analytics.identify(id, { name, email });
           this.setState({ loading: false });
         }
@@ -72,7 +72,7 @@ class Auth extends Component {
     const { error, loading, params } = this.state;
 
     if (loading) return <LoadingIndicator color="grey5" />;
-    if (error || !params || !params.email) return 'Cannot log in';
+    if (error || !params || !params.code) return 'Cannot log in';
 
     return <Redirect to="/feed" noThrow />;
   }
