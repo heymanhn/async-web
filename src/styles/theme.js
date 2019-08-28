@@ -42,7 +42,6 @@ export const theme = {
   wideViewport: '1220px',
   discussionWidth: '700px',
 
-  // Update with new colors for Project Async once ready
   colors: {
     blue: '#19a5e4',
     white: '#fff',
@@ -51,11 +50,12 @@ export const theme = {
     grey2: '#70828e',
     grey3: '#8798a4',
     grey4: '#a7b6c0',
-    grey5: '#c3c4c5',
-    grey6: '#dadcde',
+    grey5: '#c3d5e0',
+    grey6: '#d1dae3',
     grey7: '#f0f3f6',
 
     mainText: '#313f48',
+    contentText: '#3a4b56',
 
     bgBlue: '#eff9fd',
     hoverBlue: '#eaf9ff',
