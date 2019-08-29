@@ -1,21 +1,18 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  fragment ConversationMessage on Message {
+  fragment MeetingSpaceObject on Meeting {
     id
-    author @type(name: "Author") {
+    title
+    author @type(name: "User") {
       id
       fullName
       profilePictureUrl
     }
-    createdAt
-    updatedAt
     body @type(name: "Body") {
       formatter
       payload
       text
     }
-    conversationId
-    meetingId
   }
 `;

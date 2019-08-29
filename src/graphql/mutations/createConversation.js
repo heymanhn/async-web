@@ -1,21 +1,17 @@
 import gql from 'graphql-tag';
 
+import conversation from 'graphql/fragments/conversation';
+import conversationMessage from 'graphql/fragments/conversationMessage';
+
 export default gql`
   mutation CreateConversation($id: String!, $input: Object!) {
     createConversation(id: $id, input: $input) @rest(type: "Conversation", path: "/meetings/{args.id}/conversations", method: "POST") {
-      id
-      title
-      author
-      createdAt
+      ...ConversationObject
       messages @type(name: "[Message]") {
-        id
-        author
-        createdAt
-        body @type(name: "Body") {
-          formatter
-          payload
-        }
+        ...ConversationMessage
       }
     }
   }
+  ${conversation}
+  ${conversationMessage}
 `;
