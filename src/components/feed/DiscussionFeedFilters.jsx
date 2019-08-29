@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import meetingsQuery from 'graphql/meetingsQuery';
+import meetingsQuery from 'graphql/queries/meetings';
 import { snakedQueryParams } from 'utils/queryParams';
 import useInfiniteScroll from 'utils/useInfiniteScroll';
 

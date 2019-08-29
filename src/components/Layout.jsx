@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import mediaBreakpointQuery from 'graphql/mediaBreakpointQuery';
+import mediaBreakpointQuery from 'graphql/queries/mediaBreakpoint';
 import getBreakpoint from 'utils/mediaQuery';
 
 import GlobalStyles from 'components/style/GlobalStyles';

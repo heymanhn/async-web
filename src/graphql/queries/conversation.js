@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query Conversation($conversationId: String!) {
-    conversation(conversationId: $conversationId) @rest(type: "Conversation", path: "/conversations/{args.conversationId}", method: "GET") {
+  query Conversation($id: String!) {
+    conversation(id: $id) @rest(type: "Conversation", path: "/conversations/{args.id}", method: "GET") {
       id
       author @type(name: "Author") {
         id
@@ -17,5 +17,8 @@ export default gql`
         count
       }
     }
+    # messages(id: $id) @rest(type: "Messages", path: "/conversations/{args.id}/messages", method: "GET") {
+
+    # }
   }
 `;

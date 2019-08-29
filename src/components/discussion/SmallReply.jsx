@@ -8,7 +8,7 @@ import { useLazyQuery } from '@apollo/react-hooks';
 
 import styled from '@emotion/styled';
 
-import conversationQuery from 'graphql/conversationQuery';
+import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import withHover from 'utils/withHover';
 import { matchCurrentUserId } from 'utils/auth';

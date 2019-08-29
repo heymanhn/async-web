@@ -6,7 +6,7 @@ import Moment from 'react-moment';
 import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
-import conversationQuery from 'graphql/conversationQuery';
+import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import withHover from 'utils/withHover';
 

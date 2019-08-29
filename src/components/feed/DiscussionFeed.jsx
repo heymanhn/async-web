@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import discussionFeedQuery from 'graphql/discussionFeedQuery';
+import discussionFeedQuery from 'graphql/queries/discussionFeed';
 import withPageTracking from 'utils/withPageTracking';
 import { getLocalUser } from 'utils/auth';
 import useInfiniteScroll from 'utils/useInfiniteScroll';

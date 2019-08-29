@@ -5,8 +5,8 @@ import { navigate } from '@reach/router';
 import { Modal, Spinner } from 'reactstrap';
 import styled from '@emotion/styled';
 
-import addParticipantMutation from 'graphql/addParticipantMutation';
-import createMeetingMutation from 'graphql/createMeetingMutation';
+import addParticipantMutation from 'graphql/mutations/addParticipant';
+import createMeetingMutation from 'graphql/mutations/createMeeting';
 import { getLocalUser } from 'utils/auth';
 
 import RovalEditor from 'components/editor/RovalEditor';

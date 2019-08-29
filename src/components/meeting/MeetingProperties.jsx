@@ -6,9 +6,9 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 import { getLocalUser } from 'utils/auth';
 
-import meetingQuery from 'graphql/meetingQuery';
-import addParticipantMutation from 'graphql/addParticipantMutation';
-import removeParticipantMutation from 'graphql/removeParticipantMutation';
+import meetingQuery from 'graphql/queries/meeting';
+import addParticipantMutation from 'graphql/mutations/addParticipant';
+import removeParticipantMutation from 'graphql/mutations/removeParticipant';
 
 import ParticipantsSelector from './ParticipantsSelector';
 

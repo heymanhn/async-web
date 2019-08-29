@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
-import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
-import meetingQuery from 'graphql/meetingQuery';
-import updateConversationMutation from 'graphql/updateConversationMutation';
+import conversationMessagesQuery from 'graphql/queries/conversationMessages';
+import meetingQuery from 'graphql/queries/meeting';
+import updateConversationMutation from 'graphql/mutations/updateConversation';
 import withViewedReaction from 'utils/withViewedReaction';
 import useInfiniteScroll from 'utils/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';

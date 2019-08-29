@@ -7,7 +7,7 @@ import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import { clearLocalUser, getLocalUser } from 'utils/auth';
-import currentUserQuery from 'graphql/currentUserQuery';
+import currentUserQuery from 'graphql/queries/currentUser';
 
 import Avatar from 'components/shared/Avatar';
 

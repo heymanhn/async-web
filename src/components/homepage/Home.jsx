@@ -3,7 +3,7 @@ import { Query } from 'react-apollo';
 import { Redirect } from '@reach/router';
 import styled from '@emotion/styled';
 
-import isLoggedInQuery from 'graphql/isLoggedInQuery';
+import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import withPageTracking from 'utils/withPageTracking';
 
 import Layout from 'components/Layout';

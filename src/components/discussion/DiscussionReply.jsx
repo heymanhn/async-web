@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 
-import currentUserQuery from 'graphql/currentUserQuery';
-import createConversationMutation from 'graphql/createConversationMutation';
-import createConversationMessageMutation from 'graphql/createConversationMessageMutation';
-import meetingQuery from 'graphql/meetingQuery';
-import updateConversationMessageMutation from 'graphql/updateConversationMessageMutation';
+import currentUserQuery from 'graphql/queries/currentUser';
+import createConversationMutation from 'graphql/mutations/createConversation';
+import createConversationMessageMutation from 'graphql/mutations/createConversationMessage';
+import meetingQuery from 'graphql/queries/meeting';
+import updateConversationMessageMutation from 'graphql/mutations/updateConversationMessage';
 import { getLocalUser } from 'utils/auth';
 
 import LargeReply from 'components/discussion/LargeReply';

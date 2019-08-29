@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import meetingConversationsQuery from 'graphql/meetingConversationsQuery';
+import meetingConversationsQuery from 'graphql/queries/meetingConversations';
 import { snakedQueryParams } from 'utils/queryParams';
 
 import DiscussionsListCell from './DiscussionsListCell';

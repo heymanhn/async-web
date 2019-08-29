@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 
-import createReactionMutation from 'graphql/createReactionMutation';
-import conversationQuery from 'graphql/conversationQuery';
+import createReactionMutation from 'graphql/mutations/createReaction';
+import conversationQuery from 'graphql/queries/conversation';
 
 const getDisplayName = C => C.displayName || C.name || 'Component';
 
