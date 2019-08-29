@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import fakeMembersQuery from 'graphql/fakeMembersQuery';
-
+import organizationMembersQuery from 'graphql/organizationMembersQuery';
 import ParticipantAvatars from 'components/shared/ParticipantAvatars';
 import Member from './Member';
 
@@ -77,6 +76,7 @@ const InnerMembersContainer = styled.div(({ theme: { colors } }) => ({
 const ParticipantsSelector = ({
   alwaysOpen,
   authorId,
+  organizationId,
   onAddParticipant,
   onRemoveParticipant,
   participantIds,
@@ -92,9 +92,11 @@ const ParticipantsSelector = ({
     setIsOpen(false);
   }
 
-  const { data } = useQuery(fakeMembersQuery);
-  if (!data.fakeMembers) return null;
-  let members = data.fakeMembers || [];
+  const { data } = useQuery(organizationMembersQuery, {
+    variables: { id: organizationId },
+  });
+  if (!data.organizationMembers) return null;
+  let members = data.organizationMembers || [];
   const organizer = members.find(l => l.id === authorId);
   const others = members.filter(l => l.id !== authorId);
   members = [organizer, ...others];
@@ -151,6 +153,7 @@ const ParticipantsSelector = ({
 ParticipantsSelector.propTypes = {
   alwaysOpen: PropTypes.bool,
   authorId: PropTypes.string.isRequired,
+  organizationId: PropTypes.string.isRequired,
   onAddParticipant: PropTypes.func.isRequired,
   onRemoveParticipant: PropTypes.func.isRequired,
   participantIds: PropTypes.array.isRequired,

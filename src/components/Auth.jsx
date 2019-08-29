@@ -52,8 +52,8 @@ class Auth extends Component {
         });
 
         if (response.data && response.data.user) {
-          const { id: userId, token: userToken } = response.data.user;
-          setLocalUser({ userId, userToken });
+          const { id: userId, token: userToken, organizationId } = response.data.user;
+          setLocalUser({ userId, userToken, organizationId });
           client.writeData({ data: { isLoggedIn: true } });
 
           const { user: { id, fullName: name, email } } = response.data;

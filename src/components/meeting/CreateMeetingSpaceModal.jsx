@@ -109,7 +109,7 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
 }));
 
 const CreateMeetingSpaceModal = ({ isOpen, toggle, ...props }) => {
-  const { userId } = getLocalUser();
+  const { userId, organizationId } = getLocalUser();
 
   const [name, setName] = useState('');
   const [purpose, setPurpose] = useState('');
@@ -222,6 +222,7 @@ const CreateMeetingSpaceModal = ({ isOpen, toggle, ...props }) => {
         />
         <ParticipantsSelector
           authorId={userId}
+          organizationId={organizationId}
           onAddParticipant={addParticipant}
           onRemoveParticipant={removeParticipant}
           participantIds={participantIds}
