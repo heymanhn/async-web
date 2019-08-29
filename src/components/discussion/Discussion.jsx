@@ -26,7 +26,7 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '36px',
   fontWeight: 500,
-  marginBottom: '40px',
+  margin: '80px 0 30px',
   width: '100%',
   outline: 'none',
 }));

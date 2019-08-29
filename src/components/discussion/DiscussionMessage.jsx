@@ -17,9 +17,10 @@ const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
-  boxShadow: `0px 0px 3px ${colors.borderGrey}`,
+  boxShadow: `0px 0px 3px ${colors.grey7}`,
   cursor: 'default',
-  margin: '30px 0',
+  marginBottom: '30px',
+  padding: '20px 30px 25px',
 }));
 
 const MessageEditor = styled(RovalEditor)({
@@ -62,6 +63,7 @@ const DiscussionMessage = ({ message }) => {
         author={author}
         createdAt={createdAt}
         isEdited={createdAt !== updatedAt}
+        mode="display" // change this later
       />
       <MessageEditor
         initialValue={body.payload}
