@@ -11,7 +11,7 @@ import TopLevelDiscussion from './TopLevelDiscussion';
 const DiscussionFeedItem = ({ conversation, meeting }) => {
   const { id, messageCount, parentId, title } = conversation;
   const { loading, data, error } = useQuery(conversationQuery, {
-    variables: { conversationId: id },
+    variables: { id, queryParams: {} },
   });
   if (loading) return null;
   if (error || !data.conversation) return <div>{error}</div>;

@@ -97,7 +97,10 @@ const DiscussionsListCell = ({
     if (element && isSelected) onScrollTo(element);
   }, [isSelected, onScrollTo]);
 
-  const { loading, data } = useQuery(conversationQuery, { variables: { conversationId } });
+  const { loading, data } = useQuery(conversationQuery, {
+    variables: { id: conversationId },
+    queryParams: {},
+  });
   if (loading || !data.conversation) return null;
 
   const unreadCounts = data.conversation.unreadCounts || [];

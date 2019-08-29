@@ -89,29 +89,23 @@ const DiscussionFeed = () => {
   }
 
   return (
-    <Layout
-      hideFooter
-      mode="wide"
-      title="My Discussions"
-    >
-      <Container>
-        <FiltersContainer>
-          <DiscussionFeedFilters
-            onSelectFilter={setMeetingIdToFilter}
-            selectedMeetingId={meetingIdToFilter}
+    <Container>
+      <FiltersContainer>
+        <DiscussionFeedFilters
+          onSelectFilter={setMeetingIdToFilter}
+          selectedMeetingId={meetingIdToFilter}
+        />
+      </FiltersContainer>
+      <DiscussionsContainer ref={feedRef}>
+        {(items || []).map(i => (
+          <DiscussionFeedItem
+            key={i.conversation.id}
+            conversation={i.conversation}
+            meeting={i.meeting}
           />
-        </FiltersContainer>
-        <DiscussionsContainer ref={feedRef}>
-          {(items || []).map(i => (
-            <DiscussionFeedItem
-              key={i.conversation.id}
-              conversation={i.conversation}
-              meeting={i.meeting}
-            />
-          ))}
-        </DiscussionsContainer>
-      </Container>
-    </Layout>
+        ))}
+      </DiscussionsContainer>
+    </Container>
   );
 };
 

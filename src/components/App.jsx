@@ -78,7 +78,7 @@ const App = () => (
 
       <PrivateRoute path="/feed" component={DiscussionFeed} />
 
-      <PrivateRoute path="/spaces/:spaceId" component={MeetingSpace} />
+      <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />
 
       <PrivateRoute path="/discussions/:discussionId" component={Discussion} />
 

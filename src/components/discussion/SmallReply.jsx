@@ -15,7 +15,7 @@ import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
-import ContentHeader from './ContentHeader';
+// import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
 import HoverMenu from './HoverMenu';
 
@@ -118,7 +118,7 @@ const SmallReply = ({
   let isUnread = false;
 
   const [getChildConversation, { data }] = useLazyQuery(conversationQuery, {
-    variables: { conversationId: childConversationId },
+    variables: { id: childConversationId, queryParams: {} },
   });
   if (source === 'discussion' && childConversationId && !data) getChildConversation();
   if (data && data.conversation) {
@@ -141,9 +141,9 @@ const SmallReply = ({
         <HeaderSection>
           <Details>
             <Author mode={mode}>{author.fullName}</Author>
-            {mode === 'display' && (
+            {/* {mode === 'display' && (
               <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
-            )}
+            )} */}
           </Details>
           {mode === 'display' && conversationId && (
             <StyledHoverMenu

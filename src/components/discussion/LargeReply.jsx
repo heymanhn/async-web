@@ -9,7 +9,7 @@ import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
-import ContentHeader from './ContentHeader';
+// import ContentHeader from './ContentHeader';
 import ContentToolbar from './ContentToolbar';
 import HoverMenu from './HoverMenu';
 
@@ -106,9 +106,9 @@ const LargeReply = ({
             <AvatarWithMargin src={author.profilePictureUrl} size={45} />
             <Details>
               <Author>{author.fullName}</Author>
-              {mode === 'display' && (
+              {/* {mode === 'display' && (
                 <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
-              )}
+              )} */}
             </Details>
           </AuthorSection>
           <StyledHoverMenu
