@@ -1,7 +1,8 @@
 import gql from 'graphql-tag';
 
-import conversationWithMessageContext from 'graphql/fragments/conversationWithMessageContext';
+import conversation from 'graphql/fragments/conversation';
 import meetingSpace from 'graphql/fragments/meetingSpace';
+import messageContext from 'graphql/fragments/messageContext';
 
 export default gql`
   query Meeting($id: String!) {
@@ -15,11 +16,13 @@ export default gql`
           profilePictureUrl
         }
       }
-      conversations @type(name: "[Conversation]") {
-        ...ConversationWithMessageContext
+      conversations @type(name: "Conversation") {
+        ...ConversationObject
+        ...MessageContext
       }
     }
   }
-  ${conversationWithMessageContext}
+  ${conversation}
   ${meetingSpace}
+  ${messageContext}
 `;

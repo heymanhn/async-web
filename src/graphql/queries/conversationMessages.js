@@ -1,18 +1,12 @@
 import gql from 'graphql-tag';
 
-import conversationMessage from 'graphql/fragments/conversationMessage';
+import conversationMessageItems from 'graphql/fragments/conversationMessageItems';
 
 export default gql`
   query ConversationMessages($id: String!, $queryParams: Object!) {
-    conversationMessages(id: $id, queryParams: $queryParams) @rest(type: "Messages", path: "/conversations/{args.id}/messages?{args.queryParams}", method: "GET") {
-      items @type(name: "[Item]") {
-        message @type(name: "Message") {
-          ...ConversationMessage
-        }
-      }
-      messageCount
-      pageToken
+    conversationMessages(id: $id, queryParams: $queryParams) @rest(type: "MessagesResponse", path: "/conversations/{args.id}/messages?{args.queryParams}", method: "GET") {
+      ...ConversationMessageItems
     }
   }
-  ${conversationMessage}
+  ${conversationMessageItems}
 `;
