@@ -16,7 +16,7 @@ import { matchCurrentUserId } from 'utils/auth';
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
 // import ContentHeader from './ContentHeader';
-import ContentToolbar from './ContentToolbar';
+// import ContentToolbar from './ContentToolbar';
 import HoverMenu from './HoverMenu';
 
 const Container = styled.div(({ isUnread, mode, theme: { colors } }) => ({
@@ -167,7 +167,7 @@ const SmallReply = ({
           onSubmit={handleSubmit}
           contentType="smallReply"
         />
-        {mode === 'display' && conversationId && (
+        {/* {mode === 'display' && conversationId && (
           <ContentToolbar
             contentType="smallReply"
             conversationId={conversationId}
@@ -175,7 +175,7 @@ const SmallReply = ({
             onClickReply={handleFocusCurrentMessage}
             replyCount={replyCount}
           />
-        )}
+        )} */}
       </MainContainer>
     </Container>
   );

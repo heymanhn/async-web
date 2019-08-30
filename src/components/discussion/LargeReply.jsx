@@ -10,7 +10,7 @@ import { matchCurrentUserId } from 'utils/auth';
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
 // import ContentHeader from './ContentHeader';
-import ContentToolbar from './ContentToolbar';
+// import ContentToolbar from './ContentToolbar';
 import HoverMenu from './HoverMenu';
 
 const MessageSection = styled.div({
@@ -126,14 +126,14 @@ const LargeReply = ({
           contentType="largeReply"
         />
       </MessageSection>
-      {mode === 'display' && (
+      {/* {mode === 'display' && (
         <ContentToolbar
           contentType="largeReply"
           conversationId={conversationId}
           messageId={messageId}
           replyCount={replyCount}
         />
-      )}
+      )} */}
     </React.Fragment>
   );
 };

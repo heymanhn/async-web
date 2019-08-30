@@ -2,25 +2,25 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ contentType, isActive, theme: { colors } }) => ({
+const Container = styled.div(({ isActive, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
 
   background: isActive ? colors.hoverBlue : 'none',
   cursor: 'pointer',
-  padding: contentType === 'smallReply' ? '0 15px' : '0 20px',
-  height: contentType === 'smallReply' ? '32px' : '52px',
+  padding: '0 15px',
+  height: '36px',
 }));
 
-const Icon = styled.div(({ contentType }) => ({
-  fontSize: contentType === 'smallReply' ? '14px' : '24px',
+const Icon = styled.div({
+  fontSize: '18px',
   marginRight: '8px',
-}));
+});
 
-const ReactionCount = styled.div(({ isActive, contentType, theme: { colors } }) => ({
+const ReactionCount = styled.div(({ isActive, theme: { colors } }) => ({
   color: isActive ? colors.blue : colors.grey3,
-  fontSize: contentType === 'smallReply' ? '13px' : '14px',
+  fontSize: '14px',
   fontWeight: 500,
 }));
 
@@ -44,7 +44,6 @@ class ReactionCountDisplay extends Component {
 
   render() {
     const {
-      contentType,
       currentUserReactionId,
       icon,
       onAddReaction,
@@ -55,16 +54,12 @@ class ReactionCountDisplay extends Component {
 
     return (
       <Container
-        contentType={contentType}
         isActive={!!currentUserReactionId}
         onClick={this.handleClick}
         {...props}
       >
-        <Icon contentType={contentType}>{icon}</Icon>
-        <ReactionCount
-          isActive={!!currentUserReactionId}
-          contentType={contentType}
-        >
+        <Icon>{icon}</Icon>
+        <ReactionCount isActive={!!currentUserReactionId}>
           {reactionCount}
         </ReactionCount>
       </Container>
@@ -74,7 +69,6 @@ class ReactionCountDisplay extends Component {
 
 ReactionCountDisplay.propTypes = {
   code: PropTypes.string.isRequired,
-  contentType: PropTypes.string.isRequired,
   currentUserReactionId: PropTypes.string,
   icon: PropTypes.string.isRequired,
   onAddReaction: PropTypes.func.isRequired,

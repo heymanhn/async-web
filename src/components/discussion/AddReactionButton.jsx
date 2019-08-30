@@ -15,34 +15,23 @@ const Container = styled.div({
 const ButtonContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
-  color: colors.grey3,
+  color: colors.grey4,
 
   ':hover': {
-    color: colors.grey2,
+    color: colors.grey3,
   },
 }));
 
-const StyledIcon = styled(FontAwesomeIcon)(({ customsize }) => ({
+const StyledIcon = styled(FontAwesomeIcon)({
   cursor: 'pointer',
-  fontSize: customsize === 'small' ? '16px' : '18px',
-}));
+  fontSize: '16px',
+});
 
 const PlusSign = styled.div({
+  fontSize: '16px',
   fontWeight: 500,
-}, ({ size }) => {
-  if (size === 'small') {
-    return {
-      fontSize: '13px',
-      marginLeft: '1px',
-      marginTop: '-2px',
-    };
-  }
-
-  return {
-    fontSize: '15px',
-    marginLeft: '2px',
-    marginTop: '-4px',
-  };
+  marginLeft: '2px',
+  marginTop: '-4px',
 });
 
 class AddReactionButton extends Component {
@@ -83,8 +72,7 @@ class AddReactionButton extends Component {
       conversationId,
       messageId,
       onPickerStateChange,
-      size,
-      source,
+      placement,
       ...props
     } = this.props;
 
@@ -94,15 +82,15 @@ class AddReactionButton extends Component {
           className="ignore-react-onclickoutside"
           onClick={this.togglePicker}
         >
-          <StyledIcon customsize={size} icon={faLaugh} />
-          <PlusSign size={size}>+</PlusSign>
+          <StyledIcon icon={faLaugh} />
+          <PlusSign>+</PlusSign>
         </ButtonContainer>
         <ReactionPicker
           conversationId={conversationId}
           handleClose={this.handleClosePicker}
           isOpen={isPickerOpen}
           messageId={messageId}
-          placement={source === 'toolbar' ? 'above' : 'below'}
+          placement={placement}
         />
       </Container>
     );
@@ -113,13 +101,11 @@ AddReactionButton.propTypes = {
   conversationId: PropTypes.string.isRequired,
   messageId: PropTypes.string.isRequired,
   onPickerStateChange: PropTypes.func,
-  size: PropTypes.oneOf(['small', 'large']),
-  source: PropTypes.oneOf(['hoverMenu', 'toolbar']).isRequired,
+  placement: PropTypes.oneOf(['above', 'below']).isRequired,
 };
 
 AddReactionButton.defaultProps = {
   onPickerStateChange: () => {},
-  size: 'small',
 };
 
 export default AddReactionButton;

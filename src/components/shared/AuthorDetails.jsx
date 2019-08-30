@@ -69,7 +69,7 @@ AuthorDetails.propTypes = {
   author: PropTypes.object.isRequired,
   createdAt: PropTypes.number.isRequired,
   isEdited: PropTypes.bool,
-  mode: PropTypes.bool.isRequired,
+  mode: PropTypes.oneOf(['compose', 'display']).isRequired,
 };
 
 AuthorDetails.defaultProps = { isEdited: false };
