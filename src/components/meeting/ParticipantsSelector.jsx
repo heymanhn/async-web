@@ -135,7 +135,7 @@ const ParticipantsSelector = ({
               <Member
                 key={member.user.id}
                 fullName={member.user.fullName}
-                id={member.id}
+                id={member.user.id}
                 isOrganizer={member.user.id === authorId}
                 isParticipant={isParticipant(member.user.id)}
                 handleAction={handleAction}
