@@ -5,7 +5,7 @@ import { withApollo } from 'react-apollo';
 import currentUserQuery from 'graphql/queries/currentUser';
 import createConversationMutation from 'graphql/mutations/createConversation';
 import createConversationMessageMutation from 'graphql/mutations/createConversationMessage';
-import meetingQuery from 'graphql/queries/meeting';
+import meetingSpaceQuery from 'graphql/queries/meetingSpace';
 import updateConversationMessageMutation from 'graphql/mutations/updateConversationMessage';
 import { getLocalUser } from 'utils/auth';
 
@@ -67,7 +67,7 @@ class DiscussionReply extends Component {
         },
       },
       refetchQueries: [{
-        query: meetingQuery,
+        query: meetingSpaceQuery,
         variables: { id: meetingId },
       }],
     });

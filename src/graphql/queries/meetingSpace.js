@@ -5,8 +5,8 @@ import meetingSpace from 'graphql/fragments/meetingSpace';
 import messageContext from 'graphql/fragments/messageContext';
 
 export default gql`
-  query Meeting($id: String!) {
-    meeting(id: $id) @rest(type: "Meeting", path: "/meetings/{args.id}") {
+  query MeetingSpace($id: String!) {
+    meetingSpace(id: $id) @rest(type: "MeetingSpace", path: "/meetings/{args.id}") {
       ...MeetingSpaceObject
       participants @type(name: "[Participant]") {
         user @type(name: "User") {

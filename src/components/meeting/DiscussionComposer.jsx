@@ -4,7 +4,7 @@ import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import createConversationMutation from 'graphql/mutations/createConversation';
-import meetingQuery from 'graphql/queries/meeting';
+import meetingSpaceQuery from 'graphql/queries/meetingSpace';
 
 import RovalEditor from 'components/editor/RovalEditor';
 
@@ -91,7 +91,7 @@ class DiscussionComposer extends Component {
         },
       },
       refetchQueries: [{
-        query: meetingQuery,
+        query: meetingSpaceQuery,
         variables: { id },
       }],
       awaitRefetchQueries: true,

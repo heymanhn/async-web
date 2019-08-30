@@ -4,7 +4,7 @@ import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
 import conversationMessagesQuery from 'graphql/queries/conversationMessages';
-import meetingQuery from 'graphql/queries/meeting';
+import meetingSpaceQuery from 'graphql/queries/meetingSpace';
 import updateConversationMutation from 'graphql/mutations/updateConversation';
 import withViewedReaction from 'utils/withViewedReaction';
 import useInfiniteScroll from 'utils/useInfiniteScroll';
@@ -150,7 +150,7 @@ const DiscussionThread = ({
       mutation: updateConversationMutation,
       variables: { meetingId, conversationId, input },
       refetchQueries: [{
-        query: meetingQuery,
+        query: meetingSpaceQuery,
         variables: { id: meetingId },
       }],
     });

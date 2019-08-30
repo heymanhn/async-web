@@ -6,7 +6,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 import { getLocalUser } from 'utils/auth';
 
-import meetingQuery from 'graphql/queries/meeting';
+import meetingSpaceQuery from 'graphql/queries/meetingSpace';
 import addParticipantMutation from 'graphql/mutations/addParticipant';
 import removeParticipantMutation from 'graphql/mutations/removeParticipant';
 
@@ -109,9 +109,9 @@ const MeetingProperties = ({ meetingId }) => {
     };
   });
 
-  const { loading, error, data } = useQuery(meetingQuery, { variables: { id: meetingId } });
+  const { loading, error, data } = useQuery(meetingSpaceQuery, { variables: { id: meetingId } });
   if (loading) return null;
-  if (error || !data.meeting) return <div>{error}</div>;
+  if (error || !data.meetingSpace) return <div>{error}</div>;
 
   const { author, participants: initialParticipants } = data.meeting;
   const { organizationId } = getLocalUser();

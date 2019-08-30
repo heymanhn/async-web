@@ -7,6 +7,7 @@ import conversationQuery from 'graphql/queries/conversation';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from './DiscussionMessage';
+import NavigationBar from './NavigationBar';
 
 const Container = styled.div({
   height: '100vh',
@@ -26,7 +27,7 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '36px',
   fontWeight: 500,
-  margin: '80px 0 30px',
+  margin: '70px 0 30px',
   width: '100%',
   outline: 'none',
 }));
@@ -38,12 +39,16 @@ const Discussion = ({ discussionId }) => {
   if (loading) return null;
   if (error || !data.conversation) return <div>{error}</div>;
 
-  const { title } = data.conversation;
+  const { meetingId, title } = data.conversation;
   const { items, messageCount, pageToken } = data.messages;
   const messages = (items || []).map(i => i.message);
 
   return (
     <Container>
+      <NavigationBar
+        discussionTitle={title}
+        meetingId={meetingId}
+      />
       <DiscussionContainer>
         <TitleEditor
           contentType="discussionTitle"
