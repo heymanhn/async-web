@@ -1,22 +1,11 @@
 import gql from 'graphql-tag';
 
+import conversationMessage from 'graphql/fragments/conversationMessage';
+
 export default gql`
-  query ConversationMessage($cid: String!, $mid: String!) {
-    conversationMessage(cid: $cid, mid: $mid) @rest(type: "Message", path: "/conversations/{args.cid}/messages/{args.mid}", method: "GET") {
-      id
-      author @type(name: "Author") {
-        id
-        fullName
-        profilePictureUrl
-      }
-      createdAt
-      updatedAt
-      body @type(name: "Body") {
-        formatter
-        payload
-      }
-      childConversationId
-      replyCount
+  query ConversationMessage($conversationId: String!, $messageId: String!) {
+    conversationMessage(conversationId: $conversationId, messageId: $messageId) @rest(type: "Message", path: "/conversations/{args.conversationId}/messages/{args.messageId}", method: "GET") {
+      ...ConversationMessageObject
       reactions @type(name: "[Reaction]") {
         id
         code
@@ -28,4 +17,5 @@ export default gql`
       }
     }
   }
+  ${conversationMessage}
 `;

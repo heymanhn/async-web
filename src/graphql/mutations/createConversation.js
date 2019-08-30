@@ -8,7 +8,7 @@ export default gql`
     createConversation(id: $id, input: $input) @rest(type: "Conversation", path: "/meetings/{args.id}/conversations", method: "POST") {
       ...ConversationObject
       messages @type(name: "Message") {
-        ...ConversationMessage
+        ...ConversationMessageObject
       }
     }
   }

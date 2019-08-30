@@ -1,16 +1,16 @@
 import gql from 'graphql-tag';
 
 import conversationMessage from 'graphql/fragments/conversationMessage';
-import meetingSpace from 'graphql/fragments/meetingSpace';
+import meeting from 'graphql/fragments/meeting';
 
 export default gql`
   query Meetings($queryParams: Object!) {
     meetings(queryParams: $queryParams) @rest(type: "Meetings", path: "/meetings?{args.queryParams}") {
       items @type(name: "[MeetingItem]") {
         meeting @type(name: "Meeting") {
-          ...MeetingSpaceObject
+          ...MeetingObject
           lastMessage @type(name: "Message") {
-            ...ConversationMessage
+            ...ConversationMessageObject
           }
         }
         conversationCount
@@ -20,5 +20,5 @@ export default gql`
     }
   }
   ${conversationMessage}
-  ${meetingSpace}
+  ${meeting}
 `;

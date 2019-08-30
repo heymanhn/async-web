@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  fragment MeetingSpaceObject on Meeting {
+  fragment MeetingObject on Meeting {
     id
     title
     author @type(name: "User") {

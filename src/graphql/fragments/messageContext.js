@@ -6,7 +6,7 @@ export default gql`
   fragment MessageContext on Conversation {
     messageCount
     lastMessage @type(name: "Message") {
-      ...ConversationMessage
+      ...ConversationMessageObject
     }
   }
   ${conversationMessage}

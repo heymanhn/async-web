@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  fragment ConversationMessage on Message {
+  fragment ConversationMessageObject on Message {
     id
     author @type(name: "Author") {
       id
