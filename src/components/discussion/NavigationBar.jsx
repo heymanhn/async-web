@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
-import meetingSpaceQuery from 'graphql/queries/meetingSpace';
+import meetingQuery from 'graphql/queries/meeting';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -52,9 +52,9 @@ const DiscussionTitle = styled.div(({ theme: { colors } }) => ({
 
 const NavigationBar = ({ discussionTitle, meetingId }) => {
   let meetingSpaceTitle = '';
-  const { error, data } = useQuery(meetingSpaceQuery, { variables: { id: meetingId } });
-  if (error || !data.meetingSpace) return <div>{error}</div>;
-  if (data.meetingSpace) meetingSpaceTitle = data.meetingSpace.title;
+  const { error, data } = useQuery(meetingQuery, { variables: { id: meetingId } });
+  if (error || !data.meeting) return <div>{error}</div>;
+  if (data.meeting) meetingSpaceTitle = data.meeting.title;
 
   return (
     <Container>

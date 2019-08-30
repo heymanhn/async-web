@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import meetingSpaceQuery from 'graphql/queries/meetingSpace';
+import meetingQuery from 'graphql/queries/meeting';
 import withViewedReaction from 'utils/withViewedReaction';
 
 import Layout from 'components/Layout';
@@ -180,14 +180,14 @@ class MeetingSpace extends Component {
 
     return (
       <Query
-        query={meetingSpaceQuery}
+        query={meetingQuery}
         variables={{ id: meetingId }}
       >
         {({ loading, error, data }) => {
           if (loading) return null;
-          if (error || !data.meetingSpace) return <div>{error}</div>;
+          if (error || !data.meeting) return <div>{error}</div>;
 
-          const { conversations, title } = data.meetingSpace;
+          const { conversations, title } = data.meeting;
           const showComposer = isComposing || !conversations;
           const selectedConvo = this.findSelectedConversation(conversations);
           const isFirstLoadWithConvoParam = conversationId && !selectedConversationId;

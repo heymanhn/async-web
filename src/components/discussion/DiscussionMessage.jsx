@@ -131,7 +131,7 @@ const DiscussionMessage = ({ message }) => {
 //         },
 //       },
 //       refetchQueries: [{
-//         query: meetingSpaceQuery,
+//         query: meetingQuery,
 //         variables: { id: meetingId },
 //       }],
 //     });
