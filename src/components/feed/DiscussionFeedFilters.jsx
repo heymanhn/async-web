@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import meetingsQuery from 'graphql/queries/meetings';
 import { snakedQueryParams } from 'utils/queryParams';
-import useInfiniteScroll from 'utils/useInfiniteScroll';
+import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 
 import FilterItem from './FilterItem';
 
