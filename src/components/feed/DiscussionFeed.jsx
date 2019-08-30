@@ -102,7 +102,7 @@ const DiscussionFeed = () => {
           />
         </FiltersContainer>
         <DiscussionsContainer ref={feedRef}>
-          {items.map(i => (
+          {(items || []).map(i => (
             <DiscussionFeedItem
               key={i.conversation.id}
               conversation={i.conversation}

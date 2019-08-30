@@ -70,7 +70,7 @@ const Inbox = () => {
       <Container>
         <InnerContainer ref={listRef}>
           <PageTitle>Your Meetings</PageTitle>
-          {meetingItems.map(item => (
+          {(meetingItems || []).map(item => (
             <MeetingRow
               key={item.meeting.id}
               meeting={item.meeting}
