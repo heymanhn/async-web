@@ -1,5 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useApolloClient } from 'react-apollo';
+/* Provides APIs to access, add and remove reactions on a message
+ *
+ * The hook provides the following functionality:
+ * - func addReaction(code: String)
+ * - func removeReaction(id: String)
+ * - array of all the reactions to expect from a message
+ * - array of the reactions that users created for the given message
+ *
+ */
+
+import { useApolloClient, useQuery } from 'react-apollo';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import deleteReactionMutation from 'graphql/mutations/deleteReaction';
@@ -39,20 +48,10 @@ const reactionsReference = [
 ];
 
 const useReactions = ({ conversationId, messageId }) => {
-  const [reactions, setReactions] = useState([]);
   const client = useApolloClient();
 
-  const fetchReactions = useCallback(async ({ cid, mid }) => {
-    const { data } = await client.query({
-      query: conversationMessageQuery,
-      variables: { conversationId: cid, messageId: mid },
-    });
-
-    setReactions(data.conversationMessage.reactions);
-  }, [client]);
-
   async function addReaction(code) {
-    const { data } = await client.mutate({
+    client.mutate({
       mutation: createReactionMutation,
       variables: {
         input: {
@@ -62,37 +61,31 @@ const useReactions = ({ conversationId, messageId }) => {
           code,
         },
       },
+      refetchQueries: [{
+        query: conversationMessageQuery,
+        variables: { conversationId, messageId },
+      }],
     });
-
-    if (data.createReaction) {
-      fetchReactions({ cid: conversationId, mid: messageId });
-      return Promise.resolve(true);
-    }
-
-    return Promise.reject(new Error('Failed to add reaction to message'));
   }
 
   async function removeReaction(id) {
-    const { data } = await client.mutate({
+    client.mutate({
       mutation: deleteReactionMutation,
       variables: { id },
+      refetchQueries: [{
+        query: conversationMessageQuery,
+        variables: { conversationId, messageId },
+      }],
     });
-
-    if (data.deleteReaction) {
-      fetchReactions({ cid: conversationId, mid: messageId });
-      return Promise.resolve(true);
-    }
-
-    return Promise.reject(new Error('Failed to remove reaction to message'));
   }
 
-  useEffect(() => {
-    fetchReactions({ cid: conversationId, mid: messageId });
-  }, [conversationId, fetchReactions, messageId]);
+  const { data } = useQuery(conversationMessageQuery, {
+    variables: { conversationId, messageId },
+  });
 
   return {
     addReaction,
-    reactions,
+    reactions: data.conversationMessage ? data.conversationMessage.reactions : [],
     reactionsReference,
     removeReaction,
   };
