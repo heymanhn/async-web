@@ -13,8 +13,8 @@ const setUser = (user) => {
 };
 
 export const getLocalUser = () => isBrowser && getUser();
-export const setLocalUser = ({ userId, userToken }) => (
-  isBrowser ? setUser({ userId, userToken }) : false
+export const setLocalUser = ({ userId, userToken, organizationId }) => (
+  isBrowser ? setUser({ userId, userToken, organizationId }) : false
 );
 export const clearLocalUser = () => {
   if (!isBrowser) return;

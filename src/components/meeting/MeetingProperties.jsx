@@ -4,6 +4,7 @@ import { useMutation, useQuery } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
+import { getLocalUser } from 'utils/auth';
 
 import meetingQuery from 'graphql/meetingQuery';
 import addParticipantMutation from 'graphql/addParticipantMutation';
@@ -113,6 +114,8 @@ const MeetingProperties = ({ meetingId }) => {
   if (error || !data.meeting) return <div>{error}</div>;
 
   const { author, participants: initialParticipants } = data.meeting;
+  const { organizationId } = getLocalUser();
+
   if (!participantIds) {
     const ids = initialParticipants.map(p => p.user.id);
     setInitialParticipantIds(ids);
@@ -132,6 +135,7 @@ const MeetingProperties = ({ meetingId }) => {
           <StyledParticipantsSelector
             alwaysOpen
             authorId={author.id}
+            organizationId={organizationId}
             participantIds={participantIds}
             onAddParticipant={addParticipant}
             onRemoveParticipant={removeParticipant}
