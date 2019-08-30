@@ -20,18 +20,18 @@ const ParticipantAvatars = ({ authorId, members, participantIds }) => {
     if (!participantIds.length) return [];
 
     const orderedParticipantIds = [authorId, ...participantIds.filter(i => i !== authorId)];
-    return orderedParticipantIds.map(id => members.find(m => m.id === id));
+    return orderedParticipantIds.map(id => members.find(m => m.user.id === id));
   }
 
   return (
     <Container>
       {sortByMeetingOwnerFirst().map(p => (
         <StyledAvatar
-          alt={p.fullName}
-          key={p.id}
+          alt={p.user.fullName}
+          key={p.user.id}
           size={30}
-          src={p.profilePictureUrl}
-          title={p.fullName}
+          src={p.user.profilePictureUrl}
+          title={p.user.fullName}
         />
       ))}
     </Container>

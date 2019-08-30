@@ -96,9 +96,9 @@ const ParticipantsSelector = ({
     variables: { id: organizationId },
   });
   if (!data.organizationMembers) return null;
-  let members = data.organizationMembers || [];
-  const organizer = members.find(l => l.id === authorId);
-  const others = members.filter(l => l.id !== authorId);
+  let members = data.organizationMembers.members || [];
+  const organizer = members.find(l => l.user.id === authorId);
+  const others = members.filter(l => l.user.id !== authorId);
   members = [organizer, ...others];
 
   function isParticipant(id) {
@@ -133,13 +133,13 @@ const ParticipantsSelector = ({
           <InnerMembersContainer>
             {members.map(member => (
               <Member
-                key={member.id}
-                fullName={member.fullName}
+                key={member.user.id}
+                fullName={member.user.fullName}
                 id={member.id}
-                isOrganizer={member.id === authorId}
-                isParticipant={isParticipant(member.id)}
+                isOrganizer={member.user.id === authorId}
+                isParticipant={isParticipant(member.user.id)}
                 handleAction={handleAction}
-                profilePictureUrl={member.profilePictureUrl}
+                profilePictureUrl={member.user.profilePictureUrl}
                 tabIndex={0}
               />
             ))}
