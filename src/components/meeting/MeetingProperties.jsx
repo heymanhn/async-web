@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,9 +6,10 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 import { getLocalUser } from 'utils/auth';
 
-import meetingSpaceQuery from 'graphql/queries/meetingSpace';
+import meetingQuery from 'graphql/queries/meeting';
 import addParticipantMutation from 'graphql/mutations/addParticipant';
 import removeParticipantMutation from 'graphql/mutations/removeParticipant';
+import useClickOutside from 'utils/hooks/useClickOutside';
 
 import ParticipantsSelector from './ParticipantsSelector';
 
@@ -95,23 +96,11 @@ const MeetingProperties = ({ meetingId }) => {
     return isSelectorOpen ? saveChangesAndClose() : setIsOpen(true);
   }
 
-  // New way of detecting clicking outside an element, using React hooks
   const selector = useRef();
-  useEffect(() => {
-    const handleClick = (event) => {
-      // Means it's a click outside the component.
-      if (!selector.current.contains(event.target)) saveChangesAndClose();
-    };
-
-    document.addEventListener('mousedown', handleClick);
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-    };
-  });
-
-  const { loading, error, data } = useQuery(meetingSpaceQuery, { variables: { id: meetingId } });
+  useClickOutside({ handleClickOutside: saveChangesAndClose, ref: selector });
+  const { loading, error, data } = useQuery(meetingQuery, { variables: { id: meetingId } });
   if (loading) return null;
-  if (error || !data.meetingSpace) return <div>{error}</div>;
+  if (error || !data.meeting) return <div>{error}</div>;
 
   const { author, participants: initialParticipants } = data.meeting;
   const { organizationId } = getLocalUser();
