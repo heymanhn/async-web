@@ -8,8 +8,6 @@ import { getLocalUser } from 'utils/auth';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
 
-import Layout from 'components/Layout';
-
 import DiscussionFeedItem from './DiscussionFeedItem';
 import DiscussionFeedFilters from './DiscussionFeedFilters';
 

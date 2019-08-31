@@ -9,9 +9,8 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
-import { getLocalUser } from 'utils/auth';
 import withHover from 'utils/withHover';
-import { matchCurrentUserId } from 'utils/auth';
+import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
@@ -114,7 +113,7 @@ const SmallReply = ({
   source,
   ...props
 }) => {
-  const { body, childConversationId, createdAt, id: messageId, updatedAt } = message || {};
+  const { body, childConversationId, id: messageId } = message || {};
   let isUnread = false;
 
   const [getChildConversation, { data }] = useLazyQuery(conversationQuery, {
@@ -141,9 +140,6 @@ const SmallReply = ({
         <HeaderSection>
           <Details>
             <Author mode={mode}>{author.fullName}</Author>
-            {/* {mode === 'display' && (
-              <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
-            )} */}
           </Details>
           {mode === 'display' && conversationId && (
             <StyledHoverMenu

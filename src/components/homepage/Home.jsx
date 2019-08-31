@@ -18,7 +18,7 @@ const Container = styled.div(({ theme: { colors, maxViewport } }) => ({
 const Home = () => (
   <Query query={isLoggedInQuery}>
     {({ data }) => {
-      if (data.isLoggedIn) return <Redirect to="/feed" noThrow />;
+      if (data.isLoggedIn) return <Redirect to="/inbox" noThrow />;
 
       return (
         <Layout>
