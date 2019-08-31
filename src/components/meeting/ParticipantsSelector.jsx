@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import organizationMembersQuery from 'graphql/organizationMembersQuery';
+import organizationMembersQuery from 'graphql/queries/organizationMembers';
 import ParticipantAvatars from 'components/shared/ParticipantAvatars';
 import Member from './Member';
 
