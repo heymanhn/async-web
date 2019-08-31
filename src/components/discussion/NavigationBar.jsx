@@ -23,12 +23,24 @@ const Container = styled.div(({ theme: { colors } }) => ({
   zIndex: 1,
 }));
 
-const BackButton = styled.div({
+const StyledLink = styled(Link)({
+  textDecoration: 'none',
+  ':hover': {
+    textDecoration: 'none',
+  },
+});
+
+const BackButton = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
   cursor: 'pointer',
-});
+  color: colors.grey4,
+
+  ':hover': {
+    color: colors.grey3,
+  },
+}));
 
 const StyledChevron = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey3,
@@ -36,10 +48,9 @@ const StyledChevron = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   marginRight: '20px',
 }));
 
-const MeetingSpaceTitle = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey4,
+const MeetingSpaceTitle = styled.div({
   fontSize: '16px',
-}));
+});
 
 const Separator = styled.div(({ theme: { colors } }) => ({
   color: colors.grey5,
@@ -53,19 +64,21 @@ const DiscussionTitle = styled.div(({ theme: { colors } }) => ({
   fontWeight: 500,
 }));
 
-const NavigationBar = ({ discussionTitle, meetingId }) => {
+const NavigationBar = ({ discussionTitle, meetingId, ...props }) => {
   let meetingSpaceTitle = '';
   const { error, data } = useQuery(meetingQuery, { variables: { id: meetingId } });
   if (error || !data.meeting) return <div>{error}</div>;
   if (data.meeting) meetingSpaceTitle = data.meeting.title;
 
   return (
-    <Container>
+    <Container {...props}>
       {meetingSpaceTitle && (
-        <BackButton>
-          <StyledChevron icon={faChevronLeft} />
-          <MeetingSpaceTitle>{meetingSpaceTitle}</MeetingSpaceTitle>
-        </BackButton>
+        <StyledLink to={`/spaces/${meetingId}`}>
+          <BackButton>
+            <StyledChevron icon={faChevronLeft} />
+            <MeetingSpaceTitle>{meetingSpaceTitle}</MeetingSpaceTitle>
+          </BackButton>
+        </StyledLink>
       )}
       {discussionTitle && <Separator>/</Separator>}
       {discussionTitle && <DiscussionTitle>{discussionTitle}</DiscussionTitle>}

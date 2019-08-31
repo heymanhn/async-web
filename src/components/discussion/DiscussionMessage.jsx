@@ -55,11 +55,11 @@ const MessageEditor = styled(RovalEditor)({
   },
 });
 
-const DiscussionMessage = ({ message }) => {
+const DiscussionMessage = ({ message, ...props }) => {
   const { author, conversationId, createdAt, id, updatedAt, body } = message;
 
   return (
-    <Container>
+    <Container {...props}>
       <AuthorDetails
         author={author}
         createdAt={createdAt}

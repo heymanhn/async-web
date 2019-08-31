@@ -34,7 +34,7 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   outline: 'none',
 }));
 
-const Discussion = ({ discussionId }) => {
+const Discussion = ({ discussionId, ...props }) => {
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
@@ -81,7 +81,7 @@ const Discussion = ({ discussionId }) => {
   }
 
   return (
-    <Container>
+    <Container {...props}>
       <NavigationBar
         discussionTitle={title}
         meetingId={meetingId}
