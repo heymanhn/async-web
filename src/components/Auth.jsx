@@ -9,8 +9,8 @@ import {
   clearLocalUser,
 } from 'utils/auth';
 import { parseQueryString } from 'utils/queryParams';
-import fakeAuthQuery from 'graphql/fakeAuthQuery'; // Temporary, for the prototype
-import isLoggedInQuery from 'graphql/isLoggedInQuery';
+import fakeAuthQuery from 'graphql/queries/fakeAuth'; // Temporary, for the prototype
+import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import Layout from 'components/Layout';

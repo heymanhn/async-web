@@ -9,8 +9,6 @@ import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
-import ContentHeader from './ContentHeader';
-import ContentToolbar from './ContentToolbar';
 import HoverMenu from './HoverMenu';
 
 const MessageSection = styled.div({
@@ -96,7 +94,7 @@ const LargeReply = ({
   replyCount,
   ...props
 }) => {
-  const { body, createdAt, id: messageId, updatedAt } = message || {};
+  const { body } = message || {};
 
   return (
     <React.Fragment>
@@ -106,9 +104,6 @@ const LargeReply = ({
             <AvatarWithMargin src={author.profilePictureUrl} size={45} />
             <Details>
               <Author>{author.fullName}</Author>
-              {mode === 'display' && (
-                <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
-              )}
             </Details>
           </AuthorSection>
           <StyledHoverMenu
@@ -126,14 +121,6 @@ const LargeReply = ({
           contentType="largeReply"
         />
       </MessageSection>
-      {mode === 'display' && (
-        <ContentToolbar
-          contentType="largeReply"
-          conversationId={conversationId}
-          messageId={messageId}
-          replyCount={replyCount}
-        />
-      )}
     </React.Fragment>
   );
 };

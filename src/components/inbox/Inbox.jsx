@@ -1,11 +1,10 @@
-/* eslint no-underscore-dangle: 0 */
 import React, { useRef, useState } from 'react';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import withPageTracking from 'utils/withPageTracking';
-import meetingsQuery from 'graphql/meetingsQuery';
-import useInfiniteScroll from 'utils/useInfiniteScroll';
+import meetingsQuery from 'graphql/queries/meetings';
+import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
 
 import Layout from 'components/Layout';

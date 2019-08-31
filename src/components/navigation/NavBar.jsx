@@ -5,7 +5,7 @@ import { Link } from '@reach/router';
 import styled from '@emotion/styled';
 
 import logo from 'images/logo.png';
-import isLoggedInQuery from 'graphql/isLoggedInQuery';
+import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 
 import NotificationSystem from 'components/notifications/NotificationSystem';
 import MeetingProperties from 'components/meeting/MeetingProperties';

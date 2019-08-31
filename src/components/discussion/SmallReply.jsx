@@ -8,15 +8,14 @@ import { useLazyQuery } from '@apollo/react-hooks';
 
 import styled from '@emotion/styled';
 
-import conversationQuery from 'graphql/conversationQuery';
-import { getLocalUser } from 'utils/auth';
+import conversationQuery from 'graphql/queries/conversation';
 import withHover from 'utils/withHover';
-import { matchCurrentUserId } from 'utils/auth';
+import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
-import ContentHeader from './ContentHeader';
-import ContentToolbar from './ContentToolbar';
+// import ContentHeader from './ContentHeader';
+// import ContentToolbar from './ContentToolbar';
 import HoverMenu from './HoverMenu';
 
 const Container = styled.div(({ isUnread, mode, theme: { colors } }) => ({
@@ -114,11 +113,11 @@ const SmallReply = ({
   source,
   ...props
 }) => {
-  const { body, childConversationId, createdAt, id: messageId, updatedAt } = message || {};
+  const { body, childConversationId, id: messageId } = message || {};
   let isUnread = false;
 
   const [getChildConversation, { data }] = useLazyQuery(conversationQuery, {
-    variables: { conversationId: childConversationId },
+    variables: { id: childConversationId, queryParams: {} },
   });
   if (source === 'discussion' && childConversationId && !data) getChildConversation();
   if (data && data.conversation) {
@@ -141,9 +140,6 @@ const SmallReply = ({
         <HeaderSection>
           <Details>
             <Author mode={mode}>{author.fullName}</Author>
-            {mode === 'display' && (
-              <ContentHeader createdAt={createdAt} isEdited={createdAt !== updatedAt} />
-            )}
           </Details>
           {mode === 'display' && conversationId && (
             <StyledHoverMenu
@@ -167,7 +163,7 @@ const SmallReply = ({
           onSubmit={handleSubmit}
           contentType="smallReply"
         />
-        {mode === 'display' && conversationId && (
+        {/* {mode === 'display' && conversationId && (
           <ContentToolbar
             contentType="smallReply"
             conversationId={conversationId}
@@ -175,7 +171,7 @@ const SmallReply = ({
             onClickReply={handleFocusCurrentMessage}
             replyCount={replyCount}
           />
-        )}
+        )} */}
       </MainContainer>
     </Container>
   );

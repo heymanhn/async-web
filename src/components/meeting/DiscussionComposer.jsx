@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import createConversationMutation from 'graphql/createConversationMutation';
-import meetingQuery from 'graphql/meetingQuery';
+import createConversationMutation from 'graphql/mutations/createConversation';
+import meetingQuery from 'graphql/queries/meeting';
 
 import RovalEditor from 'components/editor/RovalEditor';
 

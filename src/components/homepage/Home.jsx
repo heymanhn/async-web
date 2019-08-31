@@ -3,7 +3,7 @@ import { Query } from 'react-apollo';
 import { Redirect } from '@reach/router';
 import styled from '@emotion/styled';
 
-import isLoggedInQuery from 'graphql/isLoggedInQuery';
+import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import withPageTracking from 'utils/withPageTracking';
 
 import Layout from 'components/Layout';
@@ -18,7 +18,7 @@ const Container = styled.div(({ theme: { colors, maxViewport } }) => ({
 const Home = () => (
   <Query query={isLoggedInQuery}>
     {({ data }) => {
-      if (data.isLoggedIn) return <Redirect to="/feed" noThrow />;
+      if (data.isLoggedIn) return <Redirect to="/inbox" noThrow />;
 
       return (
         <Layout>

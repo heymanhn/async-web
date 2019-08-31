@@ -10,9 +10,9 @@ import { faBell as solidBell } from '@fortawesome/free-solid-svg-icons';
 import { faBell as regularBell } from '@fortawesome/free-regular-svg-icons';
 import styled from '@emotion/styled';
 
-import currentUserQuery from 'graphql/currentUserQuery';
-import notificationsQuery from 'graphql/notificationsQuery';
-import updateCurrentUserMutation from 'graphql/updateCurrentUserMutation';
+import currentUserQuery from 'graphql/queries/currentUser';
+import notificationsQuery from 'graphql/queries/notifications';
+import updateCurrentUserMutation from 'graphql/mutations/updateCurrentUser';
 import { getLocalUser } from 'utils/auth';
 
 import NotificationsDropdown from './NotificationsDropdown';

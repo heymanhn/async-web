@@ -1,15 +1,12 @@
-/* eslint no-underscore-dangle: 0 */
 import React, { useRef, useState } from 'react';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import discussionFeedQuery from 'graphql/discussionFeedQuery';
+import discussionFeedQuery from 'graphql/queries/discussionFeed';
 import withPageTracking from 'utils/withPageTracking';
 import { getLocalUser } from 'utils/auth';
-import useInfiniteScroll from 'utils/useInfiniteScroll';
+import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
-
-import Layout from 'components/Layout';
 
 import DiscussionFeedItem from './DiscussionFeedItem';
 import DiscussionFeedFilters from './DiscussionFeedFilters';
@@ -89,29 +86,23 @@ const DiscussionFeed = () => {
   }
 
   return (
-    <Layout
-      hideFooter
-      mode="wide"
-      title="My Discussions"
-    >
-      <Container>
-        <FiltersContainer>
-          <DiscussionFeedFilters
-            onSelectFilter={setMeetingIdToFilter}
-            selectedMeetingId={meetingIdToFilter}
+    <Container>
+      <FiltersContainer>
+        <DiscussionFeedFilters
+          onSelectFilter={setMeetingIdToFilter}
+          selectedMeetingId={meetingIdToFilter}
+        />
+      </FiltersContainer>
+      <DiscussionsContainer ref={feedRef}>
+        {(items || []).map(i => (
+          <DiscussionFeedItem
+            key={i.conversation.id}
+            conversation={i.conversation}
+            meeting={i.meeting}
           />
-        </FiltersContainer>
-        <DiscussionsContainer ref={feedRef}>
-          {(items || []).map(i => (
-            <DiscussionFeedItem
-              key={i.conversation.id}
-              conversation={i.conversation}
-              meeting={i.meeting}
-            />
-          ))}
-        </DiscussionsContainer>
-      </Container>
-    </Layout>
+        ))}
+      </DiscussionsContainer>
+    </Container>
   );
 };
 

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 
-import createReactionMutation from 'graphql/createReactionMutation';
-import conversationQuery from 'graphql/conversationQuery';
+import createReactionMutation from 'graphql/mutations/createReaction';
+// import conversationQuery from 'graphql/queries/conversation';
 
 const getDisplayName = C => C.displayName || C.name || 'Component';
 
@@ -30,10 +30,11 @@ const withViewedReaction = (WrappedComponent) => {
             code: 'viewed',
           },
         },
-        refetchQueries: [{
-          query: conversationQuery,
-          variables: { conversationId },
-        }],
+        // HN: disabling this refetch for now until we write the new code for read/unread status
+        // refetchQueries: [{
+        //   query: conversationQuery,
+        //   variables: { id: conversationId },
+        // }],
       });
     }
 

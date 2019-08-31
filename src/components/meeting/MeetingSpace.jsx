@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import meetingQuery from 'graphql/meetingQuery';
+import meetingQuery from 'graphql/queries/meeting';
 import withViewedReaction from 'utils/withViewedReaction';
 
 import Layout from 'components/Layout';

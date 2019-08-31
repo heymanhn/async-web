@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 
-import conversationQuery from 'graphql/conversationQuery';
+import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 
 import ThreadedDiscussion from './ThreadedDiscussion';
@@ -11,7 +11,7 @@ import TopLevelDiscussion from './TopLevelDiscussion';
 const DiscussionFeedItem = ({ conversation, meeting }) => {
   const { id, messageCount, parentId, title } = conversation;
   const { loading, data, error } = useQuery(conversationQuery, {
-    variables: { conversationId: id },
+    variables: { id, queryParams: {} },
   });
   if (loading) return null;
   if (error || !data.conversation) return <div>{error}</div>;

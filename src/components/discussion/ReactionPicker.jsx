@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import onClickOutside from 'react-onclickoutside';
 import styled from '@emotion/styled';
 
 import { matchCurrentUserId } from 'utils/auth';
-import withReactions from 'utils/withReactions';
+import useClickOutside from 'utils/hooks/useClickOutside';
+import useReactions from 'utils/hooks/useReactions';
 
 import ReactionIcon from './ReactionIcon';
 
@@ -41,123 +41,88 @@ const ReactionsList = styled.div({
   flexDirection: 'row',
 });
 
-class ReactionPicker extends Component {
-  constructor(props) {
-    super(props);
+const ReactionPicker = ({
+  conversationId,
+  handleClose,
+  isOpen,
+  messageId,
+  placement,
+  ...props
+}) => {
+  const [reactionOnHover, setReactionOnHover] = useState(null);
+  const {
+    addReaction,
+    reactions,
+    reactionsReference,
+    removeReaction,
+  } = useReactions({ conversationId, messageId });
 
-    this.state = {
-      reactionOnHover: null,
-    };
-
-    this.handleAddReaction = this.handleAddReaction.bind(this);
-    this.handleClickOutside = this.handleClickOutside.bind(this);
-    this.handleExitHover = this.handleExitHover.bind(this);
-    this.handleHover = this.handleHover.bind(this);
-    this.handleRemoveReaction = this.handleRemoveReaction.bind(this);
-    this.hasReactedWith = this.hasReactedWith.bind(this);
-    this.calculateOffset = this.calculateOffset.bind(this);
-    this.userReactionForCode = this.userReactionForCode.bind(this);
-  }
-
-  handleAddReaction(code) {
-    const { addReaction, handleClose } = this.props;
+  function handleAddReaction(code) {
     handleClose();
     addReaction(code);
   }
 
-  handleClickOutside(event) {
-    const { isOpen, handleClose } = this.props;
-    event.stopPropagation();
-
-    if (isOpen) handleClose();
-  }
-
-  handleExitHover(code) {
-    const { reactionOnHover } = this.state;
+  function handleExitHover(code) {
     if (code !== reactionOnHover) return;
-
-    this.setState({ reactionOnHover: null });
+    setReactionOnHover(null);
   }
 
-  handleHover(code) {
-    this.setState({ reactionOnHover: code });
-  }
-
-  handleRemoveReaction(reactionId) {
-    const { removeReaction, handleClose } = this.props;
+  function handleRemoveReaction(reactionId) {
     handleClose();
     removeReaction(reactionId);
   }
 
-  hasReactedWith(code) {
-    const { reactions } = this.props;
-
+  function hasReactedWith(code) {
     return reactions.findIndex(r => matchCurrentUserId(r.author.id) && r.code === code) >= 0;
   }
 
-  // Aiming for an 8 pixel gap between the add reaction button and the picker,
-  // regardless of direction
-  calculateOffset() {
-    const { placement } = this.props;
-    return placement === 'below' ? 25 : -106; // Based on a single row of reactions
-  }
-
-  userReactionForCode(code) {
-    const { reactions } = this.props;
+  function userReactionForCode(code) {
     const reaction = reactions.find(r => r.code === code && matchCurrentUserId(r.author.id));
     return reaction ? reaction.id : null;
   }
 
-  render() {
-    const { reactionOnHover: hoverCode } = this.state;
-    const {
-      handleClose,
-      isOpen,
-      placement,
-      reactionsReference,
-      ...props
-    } = this.props;
+  const selector = useRef();
+  useClickOutside({ handleClickOutside: handleClose, ref: selector });
 
-    const title = hoverCode
-      ? reactionsReference.find(r => r.code === hoverCode).text : 'Pick a reaction';
+  const title = reactionOnHover
+    ? reactionsReference.find(r => r.code === reactionOnHover).text
+    : 'Pick a reaction';
 
-    return (
-      <Container
-        isOpen={isOpen}
-        offset={this.calculateOffset()}
-        placement={placement}
-        {...props}
-      >
-        <Title>{title}</Title>
-        <Divider />
-        <ReactionsList>
-          {reactionsReference.map(r => (
-            <ReactionIcon
-              key={r.code}
-              code={r.code}
-              existingReactionId={this.userReactionForCode(r.code)}
-              icon={r.icon}
-              isSelected={this.hasReactedWith(r.code)}
-              onAddReaction={this.handleAddReaction}
-              onExitHover={this.handleExitHover}
-              onHover={this.handleHover}
-              onRemoveReaction={this.handleRemoveReaction}
-            />
-          ))}
-        </ReactionsList>
-      </Container>
-    );
-  }
-}
+  return (
+    <Container
+      ref={selector}
+      isOpen={isOpen}
+      offset={placement === 'below' ? 25 : -106} // Aiming for an 8 pixel gap
+      placement={placement}
+      {...props}
+    >
+      <Title>{title}</Title>
+      <Divider />
+      <ReactionsList>
+        {reactionsReference.map(r => (
+          <ReactionIcon
+            key={r.code}
+            code={r.code}
+            existingReactionId={userReactionForCode(r.code)}
+            icon={r.icon}
+            isSelected={hasReactedWith(r.code)}
+            onAddReaction={handleAddReaction}
+            onExitHover={handleExitHover}
+            onHover={setReactionOnHover}
+            onRemoveReaction={handleRemoveReaction}
+          />
+        ))}
+      </ReactionsList>
+    </Container>
+  );
+};
 
 ReactionPicker.propTypes = {
-  addReaction: PropTypes.func.isRequired,
+  conversationId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
+  messageId: PropTypes.string.isRequired,
   placement: PropTypes.oneOf(['above', 'below']),
-  reactions: PropTypes.array.isRequired,
-  reactionsReference: PropTypes.array.isRequired,
-  removeReaction: PropTypes.func.isRequired,
 };
 
 ReactionPicker.defaultProps = {
@@ -165,4 +130,4 @@ ReactionPicker.defaultProps = {
   placement: 'above',
 };
 
-export default withReactions(onClickOutside(ReactionPicker));
+export default ReactionPicker;

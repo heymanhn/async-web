@@ -6,7 +6,7 @@ import Moment from 'react-moment';
 import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
-import conversationQuery from 'graphql/conversationQuery';
+import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import withHover from 'utils/withHover';
 
@@ -97,7 +97,10 @@ const DiscussionsListCell = ({
     if (element && isSelected) onScrollTo(element);
   }, [isSelected, onScrollTo]);
 
-  const { loading, data } = useQuery(conversationQuery, { variables: { conversationId } });
+  const { loading, data } = useQuery(conversationQuery, {
+    variables: { id: conversationId },
+    queryParams: {},
+  });
   if (loading || !data.conversation) return null;
 
   const unreadCounts = data.conversation.unreadCounts || [];

@@ -1,25 +1,17 @@
 import gql from 'graphql-tag';
 
+import conversationMessage from 'graphql/fragments/conversationMessage';
+import meeting from 'graphql/fragments/meeting';
+
 export default gql`
   query Meetings($queryParams: Object!) {
     meetings(queryParams: $queryParams) @rest(type: "Meetings", path: "/meetings?{args.queryParams}") {
       items @type(name: "[MeetingItem]") {
         meeting @type(name: "Meeting") {
-          id
-          title
-          author @type(name: "User") {
-            id
-          }
+          ...MeetingObject
           lastMessage @type(name: "Message") {
-            author @type(name: "Author") {
-              id
-              fullName
-              profilePictureUrl
-            }
-            createdAt
+            ...ConversationMessageObject
           }
-          createdAt
-          deadline
         }
         conversationCount
         userUnreadThreadCount
@@ -27,4 +19,6 @@ export default gql`
       pageToken
     }
   }
+  ${conversationMessage}
+  ${meeting}
 `;

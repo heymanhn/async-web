@@ -6,7 +6,7 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled/macro';
 
-import conversationMessagesQuery from 'graphql/conversationMessagesQuery';
+import conversationMessagesQuery from 'graphql/queries/conversationMessages';
 
 import DiscussionReply from 'components/discussion/DiscussionReply';
 import ReplyComposer from 'components/discussion/ReplyComposer';

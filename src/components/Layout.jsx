@@ -3,32 +3,13 @@ import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import mediaBreakpointQuery from 'graphql/mediaBreakpointQuery';
+import mediaBreakpointQuery from 'graphql/queries/mediaBreakpoint';
 import getBreakpoint from 'utils/mediaQuery';
 
-import NavBar from 'components/navigation/NavBar';
 import GlobalStyles from 'components/style/GlobalStyles';
 import Theme from 'components/style/Theme';
 
 const Container = styled.div({});
-
-const Footer = styled.footer(({ theme: { colors, mq } }) => ({
-  background: colors.bgGrey,
-  color: colors.formPlaceholderGrey,
-  fontSize: '14px',
-  padding: '30px',
-
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-
-  [mq('tabletUp')]: {
-    flexDirection: 'row',
-  },
-}));
-
-const Copyright = styled.div({});
 
 class Layout extends Component {
   constructor(props) {
@@ -56,23 +37,13 @@ class Layout extends Component {
   }
 
   render() {
-    const { children, hideFooter, meetingId, mode, title } = this.props;
+    const { children } = this.props;
 
     return (
       <Theme>
         <GlobalStyles />
         <Container>
-          <NavBar
-            meetingId={meetingId}
-            mode={mode}
-            title={title}
-          />
           {children}
-          {!hideFooter && (
-            <Footer>
-              <Copyright>Copyright © Roval</Copyright>
-            </Footer>
-          )}
         </Container>
       </Theme>
     );
@@ -82,17 +53,6 @@ class Layout extends Component {
 Layout.propTypes = {
   children: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
-  hideFooter: PropTypes.bool,
-  meetingId: PropTypes.string,
-  mode: PropTypes.oneOf(['normal', 'wide']),
-  title: PropTypes.string,
-};
-
-Layout.defaultProps = {
-  hideFooter: false,
-  meetingId: null,
-  mode: 'normal',
-  title: '',
 };
 
 export default withApollo(Layout);
