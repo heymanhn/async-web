@@ -9,7 +9,6 @@ import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
-import HoverMenu from './HoverMenu';
 
 const MessageSection = styled.div({
   display: 'flex',
@@ -76,11 +75,6 @@ const DiscussionEditor = styled(RovalEditor)({
   },
 });
 
-const StyledHoverMenu = styled(HoverMenu)({
-  position: 'absolute',
-  right: '0px',
-});
-
 const LargeReply = ({
   author,
   conversationId,
@@ -106,12 +100,6 @@ const LargeReply = ({
               <Author>{author.fullName}</Author>
             </Details>
           </AuthorSection>
-          <StyledHoverMenu
-            bgMode="grey"
-            isOpen={hover && mode === 'display'}
-            onEdit={handleToggleEditMode}
-            showEditButton={matchCurrentUserId(author.id)}
-          />
         </Header>
         <DiscussionEditor
           initialValue={body.payload}

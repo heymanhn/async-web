@@ -14,9 +14,6 @@ import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
-// import ContentHeader from './ContentHeader';
-// import ContentToolbar from './ContentToolbar';
-import HoverMenu from './HoverMenu';
 
 const Container = styled.div(({ isUnread, mode, theme: { colors } }) => ({
   display: 'flex',
@@ -94,11 +91,6 @@ const ReplyEditor = styled(RovalEditor)({
   },
 });
 
-const StyledHoverMenu = styled(HoverMenu)({
-  position: 'absolute',
-  right: '0px',
-});
-
 const SmallReply = ({
   author,
   conversationId,
@@ -141,19 +133,6 @@ const SmallReply = ({
           <Details>
             <Author mode={mode}>{author.fullName}</Author>
           </Details>
-          {mode === 'display' && conversationId && (
-            <StyledHoverMenu
-              conversationId={conversationId}
-              isOpen={hover && mode === 'display'}
-              messageId={messageId}
-              onEdit={handleToggleEditMode}
-              onReply={handleFocusCurrentMessage}
-              replyCount={replyCount}
-              showAddReactionButton
-              showEditButton={matchCurrentUserId(author.id)}
-              showReplyButton
-            />
-          )}
         </HeaderSection>
         <ReplyEditor
           initialHeight={120}

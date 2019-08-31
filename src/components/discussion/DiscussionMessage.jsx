@@ -12,6 +12,7 @@ import styled from '@emotion/styled/macro';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
+import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -23,6 +24,19 @@ const Container = styled.div(({ theme: { colors } }) => ({
   marginBottom: '30px',
   padding: '20px 30px 25px',
 }));
+
+const HeaderSection = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  position: 'relative',
+});
+
+const StyledHoverMenu = styled(HoverMenu)({
+  position: 'absolute',
+  right: '0px',
+});
 
 const MessageEditor = styled(RovalEditor)({
   fontSize: '16px',
@@ -60,12 +74,21 @@ const DiscussionMessage = ({ message, ...props }) => {
 
   return (
     <Container {...props}>
-      <AuthorDetails
-        author={author}
-        createdAt={createdAt}
-        isEdited={createdAt !== updatedAt}
-        mode="display" // change this later
-      />
+      <HeaderSection>
+        <AuthorDetails
+          author={author}
+          createdAt={createdAt}
+          isEdited={createdAt !== updatedAt}
+          mode="display" // change this later
+        />
+        {conversationId && (
+          <StyledHoverMenu
+            conversationId={conversationId}
+            isOpen
+            messageId={id}
+          />
+        )}
+      </HeaderSection>
       <MessageEditor
         initialValue={body.payload}
         mode="display" // change this later
