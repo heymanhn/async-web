@@ -17,7 +17,10 @@ const Container = styled.div(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
   height: '60px',
   padding: '0 30px',
+  position: 'sticky',
+  top: '0px',
   width: '100%',
+  zIndex: 1,
 }));
 
 const BackButton = styled.div({
