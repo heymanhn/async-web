@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import AddReactionButton from './AddReactionButton';
@@ -31,30 +30,17 @@ const ButtonContainer = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const VerticalDivider = styled.div(({ theme: { colors } }) => ({
-  borderRight: `1px solid ${colors.borderGrey}`,
-  height: '16px',
-  margin: '0px',
-}));
-
 const HoverMenu = ({
   conversationId,
   isOpen,
   messageId,
-  onAddReaction,
-  showAddReactionButton,
   ...props
 }) => {
   const [isPickerOpen, setPickerState] = useState(false);
 
-  const handleClickAddReactionButton = (event) => {
-    event.stopPropagation();
-    onAddReaction();
-  };
-
   return (
     <Container isOpen={isOpen || isPickerOpen} {...props}>
-      <ButtonContainer onClick={handleClickAddReactionButton}>
+      <ButtonContainer>
         <AddReactionButton
           conversationId={conversationId}
           messageId={messageId}
@@ -70,8 +56,6 @@ HoverMenu.propTypes = {
   conversationId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   messageId: PropTypes.string.isRequired,
-  onAddReaction: PropTypes.func.isRequired,
-  showReplyButton: PropTypes.bool,
 };
 
 export default HoverMenu;
