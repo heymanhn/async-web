@@ -1,4 +1,3 @@
-/* eslint no-underscore-dangle: 0 */
 /* eslint jsx-a11y/accessible-emoji: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';

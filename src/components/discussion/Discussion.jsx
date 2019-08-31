@@ -1,10 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
+import { snakedQueryParams } from 'utils/queryParams';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from './DiscussionMessage';
@@ -34,8 +35,9 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
 }));
 
 const Discussion = ({ discussionId }) => {
-  // const discussionRef = useRef(null);
-  // const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
+  const discussionRef = useRef(null);
+  const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
+  const [isFetching, setIsFetching] = useState(false);
 
   const { loading, error, data, fetchMore } = useQuery(conversationQuery, {
     variables: { id: discussionId, queryParams: {} },
@@ -44,13 +46,39 @@ const Discussion = ({ discussionId }) => {
   if (error || !data.conversation) return <div>{error}</div>;
 
   const { meetingId, title } = data.conversation;
-  const { items, messageCount, pageToken } = data.messages;
+  const { items, pageToken } = data.messages;
   const messages = (items || []).map(i => i.message);
 
-  // if (shouldFetch && pageToken && !isFetching) {
-  //   setIsFetching(true);
-  //   fetchMoreMessages();
-  // }
+  function fetchMoreMessages() {
+    const newQueryParams = {};
+    if (pageToken) newQueryParams.pageToken = pageToken;
+
+    fetchMore({
+      query: conversationQuery,
+      variables: { id: discussionId, queryParams: snakedQueryParams(newQueryParams) },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        const { items: previousItems } = previousResult.messages;
+        const { items: newItems, pageToken: newToken } = fetchMoreResult.messages;
+        setShouldFetch(false);
+        setIsFetching(false);
+
+        return {
+          conversation: fetchMoreResult.conversation,
+          messages: {
+            pageToken: newToken,
+            messageCount: fetchMoreResult.messages.messageCount,
+            items: [...previousItems, ...newItems],
+            __typename: fetchMoreResult.messages.__typename,
+          },
+        };
+      },
+    });
+  }
+
+  if (shouldFetch && pageToken && !isFetching) {
+    setIsFetching(true);
+    fetchMoreMessages();
+  }
 
   return (
     <Container>
@@ -58,7 +86,7 @@ const Discussion = ({ discussionId }) => {
         discussionTitle={title}
         meetingId={meetingId}
       />
-      <DiscussionContainer>
+      <DiscussionContainer ref={discussionRef}>
         <TitleEditor
           contentType="discussionTitle"
           initialValue={title || 'Untitled Discussion'}

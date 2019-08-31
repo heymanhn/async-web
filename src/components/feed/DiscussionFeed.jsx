@@ -1,4 +1,3 @@
-/* eslint no-underscore-dangle: 0 */
 import React, { useRef, useState } from 'react';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';

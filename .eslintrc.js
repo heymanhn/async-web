@@ -23,7 +23,8 @@ module.exports = {
     "object-curly-newline": 0,
     "react/forbid-prop-types": 0,
     "import/no-dynamic-require": 0,
-    "global-require": 0
+    "global-require": 0,
+    "no-underscore-dangle": 0
   },
   "settings": {
     "import/resolver": {
