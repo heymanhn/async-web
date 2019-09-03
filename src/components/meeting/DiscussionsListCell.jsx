@@ -8,7 +8,6 @@ import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
-import withHover from 'utils/withHover';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -175,4 +174,4 @@ DiscussionsListCell.defaultProps = {
   onScrollTo: () => {},
 };
 
-export default withHover(DiscussionsListCell);
+export default DiscussionsListCell;

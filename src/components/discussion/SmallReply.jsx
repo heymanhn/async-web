@@ -9,7 +9,6 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
-import withHover from 'utils/withHover';
 import { getLocalUser, matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
@@ -177,4 +176,4 @@ SmallReply.defaultProps = {
   replyCount: null,
 };
 
-export default withHover(SmallReply);
+export default SmallReply;

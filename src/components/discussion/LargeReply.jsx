@@ -4,7 +4,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
 
-import withHover from 'utils/withHover';
 import { matchCurrentUserId } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
@@ -130,4 +129,4 @@ LargeReply.defaultProps = {
   message: null,
 };
 
-export default withHover(LargeReply);
+export default LargeReply;
