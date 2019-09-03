@@ -51,7 +51,10 @@ const AddReactionButton = ({
     }
   }
   function handleOpenPicker() {
-    if (isOutsideClick) return setIsOutsideClick(false);
+    if (isOutsideClick) {
+      setIsOutsideClick(false);
+      return;
+    }
     handlePickerChange(true);
   }
   function handleClosePicker({ outsideClick } = {}) {

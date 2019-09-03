@@ -23,12 +23,24 @@ const ButtonContainer = styled.div(({ theme: { colors } }) => ({
   alignItems: 'center',
 
   color: colors.grey4,
-  padding: '0px 12px',
+  padding: '0px 10px',
 
   ':hover': {
-    color: colors.grey2,
+    color: colors.grey3,
   },
 }));
+
+const VerticalDivider = styled.div(({ theme: { colors } }) => ({
+  borderRight: `1px solid ${colors.borderGrey}`,
+  height: '100%',
+  margin: '0px',
+}));
+
+const MenuIcon = styled.div({
+  fontSize: '14px',
+  fontWeight: 500,
+  letterSpacing: '1px',
+});
 
 const HoverMenu = ({
   conversationId,
@@ -47,6 +59,12 @@ const HoverMenu = ({
           onPickerStateChange={setPickerState}
           placement="below"
         />
+      </ButtonContainer>
+      <VerticalDivider />
+      <ButtonContainer>
+        <MenuIcon>
+          •••
+        </MenuIcon>
       </ButtonContainer>
     </Container>
   );

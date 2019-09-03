@@ -10,6 +10,8 @@ import styled from '@emotion/styled/macro';
 // import updateConversationMessageMutation from 'graphql/mutations/updateConversationMessage';
 // import { getLocalUser } from 'utils/auth';
 
+import withHover from 'utils/withHover';
+
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
 import HoverMenu from './HoverMenu';
@@ -69,7 +71,7 @@ const MessageEditor = styled(RovalEditor)({
   },
 });
 
-const DiscussionMessage = ({ message, ...props }) => {
+const DiscussionMessage = ({ message, hover, ...props }) => {
   const { author, conversationId, createdAt, id, updatedAt, body } = message;
 
   return (
@@ -84,7 +86,7 @@ const DiscussionMessage = ({ message, ...props }) => {
         {conversationId && (
           <StyledHoverMenu
             conversationId={conversationId}
-            isOpen
+            isOpen={hover}
             messageId={id}
           />
         )}
@@ -262,6 +264,7 @@ const DiscussionMessage = ({ message, ...props }) => {
 // }
 
 DiscussionMessage.propTypes = {
+  hover: PropTypes.bool.isRequired,
   message: PropTypes.object,
 };
 
@@ -269,4 +272,4 @@ DiscussionMessage.defaultProps = {
   message: {},
 };
 
-export default DiscussionMessage;
+export default withHover(DiscussionMessage);
