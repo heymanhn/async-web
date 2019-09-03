@@ -40,6 +40,7 @@ const MenuIcon = styled.div({
   fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '1px',
+  marginTop: '-1px',
 });
 
 const HoverMenu = ({
