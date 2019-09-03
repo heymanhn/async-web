@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-// import { withApollo } from 'react-apollo';
+import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
 // import currentUserQuery from 'graphql/queries/currentUser';
-// import createConversationMutation from 'graphql/mutations/createConversation';
 // import createConversationMessageMutation from 'graphql/mutations/createConversationMessage';
 // import meetingQuery from 'graphql/queries/meeting';
-// import updateConversationMessageMutation from 'graphql/mutations/updateConversationMessage';
 // import { getLocalUser } from 'utils/auth';
 
+import createConversationMessageMutation from 'graphql/mutations/createConversationMessage';
+import updateConversationMessageMutation from 'graphql/mutations/updateConversationMessage';
 import useHover from 'utils/hooks/useHover';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
@@ -71,12 +71,45 @@ const MessageEditor = styled(RovalEditor)({
   },
 });
 
-const DiscussionMessage = ({ initialMode, message, ...props }) => {
-  const { author, conversationId, createdAt, id, updatedAt, body } = message;
+const DiscussionMessage = ({ initialMode, initialMessage, ...props }) => {
+  const client = useApolloClient();
   const [mode, setMode] = useState(initialMode);
   function setToDisplayMode() { setMode('display'); }
   function setToEditMode() { setMode('edit'); }
   const { hover, ...hoverProps } = useHover(mode !== 'display');
+
+  const [message, setMessage] = useState(initialMessage);
+  const { author, conversationId, createdAt, id: messageId, updatedAt, body } = message;
+
+  async function handleSubmit({ payload, text }) {
+
+    if (!conversationId) {
+      console.log("TODO: creating new conversation?");
+    }
+
+    const { data } = await client.mutate({
+      mutation: updateConversationMessageMutation,
+      variables: {
+        conversationId,
+        messageId,
+        input: {
+          body: {
+            formatter: 'slatejs',
+            text,
+            payload,
+          },
+        },
+      },
+    });
+
+    if (data.updateConversationMessage) {
+      setMessage(data.updateConversationMessage);
+      return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('Failed to save discussion message'));
+  }
+
 
   return (
     <Container {...hoverProps} {...props}>
@@ -92,7 +125,7 @@ const DiscussionMessage = ({ initialMode, message, ...props }) => {
             conversationId={conversationId}
             handleEdit={setToEditMode}
             isOpen={hover}
-            messageId={id}
+            messageId={messageId}
           />
         )}
       </HeaderSection>
@@ -100,15 +133,17 @@ const DiscussionMessage = ({ initialMode, message, ...props }) => {
         initialValue={body.payload}
         mode={mode}
         onCancel={setToDisplayMode}
-        // onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
         contentType="message"
       />
-      {mode === 'display' && <MessageReactions conversationId={conversationId} messageId={id} />}
+      {mode === 'display' && (
+        <MessageReactions conversationId={conversationId} messageId={messageId} />
+      )}
     </Container>
   );
 };
 
-// class DiscussionMessage extends Component {
+// class DiscussionReply extends Component {
 //   constructor(props) {
 //     super(props);
 
@@ -131,53 +166,6 @@ const DiscussionMessage = ({ initialMode, message, ...props }) => {
 //     const response = await client.query({ query: currentUserQuery, variables: { id: userId } });
 //     if (response.data) this.setState({ currentUser: response.data.user });
 //   }
-
-//   async handleSubmit({ payload, text }) {
-//     const { mode } = this.state;
-//     const {
-//       client,
-//       conversationId,
-//       meetingId,
-//       message,
-//       afterSubmit,
-//     } = this.props;
-
-//     // The currently focused message not having a conversation ID means we need to
-//     // create a new (nested) one
-//     if (!conversationId) return this.createNestedConversation({ payload, text });
-
-//     const mutation = mode === 'compose'
-//       ? createConversationMessageMutation : updateConversationMessageMutation;
-//     const response = await client.mutate({
-//       mutation,
-//       variables: {
-//         id: conversationId,
-//         mid: message.id,
-//         input: {
-//           meetingId,
-//           body: {
-//             formatter: 'slatejs',
-//             text,
-//             payload,
-//           },
-//         },
-//       },
-//       refetchQueries: [{
-//         query: meetingQuery,
-//         variables: { id: meetingId },
-//       }],
-//     });
-
-//     if (response.data) {
-//       const { createConversationMessage, updateConversationMessage } = response.data;
-//       const msg = mode === 'compose' ? createConversationMessage : updateConversationMessage;
-//       afterSubmit(msg);
-//       return Promise.resolve();
-//     }
-
-//     return Promise.reject(new Error('Failed to save discussion reply'));
-//   }
-
 //   handleCancel() {
 //     const { onCancelCompose } = this.props;
 //     const { mode } = this.state;
@@ -192,48 +180,6 @@ const DiscussionMessage = ({ initialMode, message, ...props }) => {
 
 //     handleFocusMessage(message);
 //   }
-
-//   async createNestedConversation({ payload, text }) {
-//     const { currentUser } = this.state;
-//     const { afterSubmit, client, focusedMessage, meetingId: id } = this.props;
-//     if (!focusedMessage) {
-//       return Promise.reject(
-//         new Error('No focused message found when creating nested conversation'),
-//       );
-//     }
-
-//     const response = await client.mutate({
-//       mutation: createConversationMutation,
-//       variables: {
-//         id,
-//         input: {
-//           parentId: focusedMessage.conversationId,
-//           messages: [
-//             focusedMessage,
-//             {
-//               body: {
-//                 formatter: 'slatejs',
-//                 text,
-//                 payload,
-//               },
-//             },
-//           ],
-//         },
-//       },
-//     });
-
-//     if (response.data) {
-//       // TEMP: Append author manually, because backend doesn't provide it yet.
-//       const newMessage = response.data.createConversation.messages[0];
-//       newMessage.author = currentUser;
-
-//       afterSubmit(newMessage);
-//       return Promise.resolve();
-//     }
-
-//     return Promise.reject(new Error('Failed to create nested conversation'));
-//   }
-
 //   toggleEditMode(event) {
 //     if (event) event.stopPropagation();
 //     this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
@@ -270,12 +216,12 @@ const DiscussionMessage = ({ initialMode, message, ...props }) => {
 
 DiscussionMessage.propTypes = {
   initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
-  message: PropTypes.object,
+  initialMessage: PropTypes.object,
 };
 
 DiscussionMessage.defaultProps = {
   initialMode: 'display',
-  message: {},
+  initialMessage: {},
 };
 
 export default DiscussionMessage;

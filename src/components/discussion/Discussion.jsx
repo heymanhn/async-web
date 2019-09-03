@@ -97,7 +97,7 @@ const Discussion = ({ discussionId, ...props }) => {
         {messages.map(m => (
           <DiscussionMessage
             key={m.id}
-            message={m}
+            initialMessage={m}
           />
         ))}
       </DiscussionContainer>
