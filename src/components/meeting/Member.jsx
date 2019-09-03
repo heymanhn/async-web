@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
-import withHover from 'utils/withHover';
+import useHover from 'utils/hooks/useHover';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -51,60 +51,51 @@ const StyledIcon = styled(FontAwesomeIcon)(({ hover, theme: { colors } }) => ({
 }));
 
 // Assumes that the meeting organizer is the first participant in the array
-class Member extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleClick(event) {
-    const { handleAction, id, isOrganizer } = this.props;
+const Member = ({
+  fullName,
+  handleAction,
+  id,
+  isOrganizer,
+  isParticipant,
+  profilePictureUrl,
+  ...props
+}) => {
+  const { hover, ...hoverProps } = useHover();
+  function handleClick(event) {
     event.preventDefault();
     event.stopPropagation();
 
     if (!isOrganizer) handleAction(id);
   }
 
-  render() {
-    const {
-      fullName,
-      hover,
-      isOrganizer,
-      isParticipant,
-      profilePictureUrl,
-      ...props
-    } = this.props;
-
-    return (
-      <MemberContainer
-        hover={hover}
-        isOrganizer={isOrganizer}
-        onMouseDown={this.handleClick}
-        {...props}
-      >
-        <Details>
-          <StyledAvatar src={profilePictureUrl} size={30} />
-          <Name>{fullName}</Name>
-        </Details>
-        <MetadataContainer>
-          {isOrganizer ? (
-            <OrganizerLabel>organizer</OrganizerLabel>
-          ) : (isParticipant && <StyledIcon hover={hover.toString()} icon={faCheck} />)}
-        </MetadataContainer>
-      </MemberContainer>
-    );
-  }
-}
+  return (
+    <MemberContainer
+      hover={hover}
+      isOrganizer={isOrganizer}
+      onMouseDown={handleClick}
+      {...hoverProps}
+      {...props}
+    >
+      <Details>
+        <StyledAvatar src={profilePictureUrl} size={30} />
+        <Name>{fullName}</Name>
+      </Details>
+      <MetadataContainer>
+        {isOrganizer ? (
+          <OrganizerLabel>organizer</OrganizerLabel>
+        ) : (isParticipant && <StyledIcon hover={hover.toString()} icon={faCheck} />)}
+      </MetadataContainer>
+    </MemberContainer>
+  );
+};
 
 Member.propTypes = {
   fullName: PropTypes.string.isRequired,
   handleAction: PropTypes.func.isRequired,
-  hover: PropTypes.bool.isRequired,
   id: PropTypes.string.isRequired,
   isOrganizer: PropTypes.bool.isRequired,
   isParticipant: PropTypes.bool.isRequired,
   profilePictureUrl: PropTypes.string.isRequired,
 };
 
-export default withHover(Member);
+export default Member;
