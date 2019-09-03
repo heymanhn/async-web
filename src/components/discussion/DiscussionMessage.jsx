@@ -81,7 +81,10 @@ const DiscussionMessage = ({ initialMode, initialMessage, ...props }) => {
   const [message, setMessage] = useState(initialMessage);
   const { author, conversationId, createdAt, id: messageId, updatedAt, body } = message;
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   async function handleSubmit({ payload, text }) {
+    setIsSubmitting(true);
 
     if (!conversationId) {
       console.log("TODO: creating new conversation?");
@@ -104,6 +107,7 @@ const DiscussionMessage = ({ initialMode, initialMessage, ...props }) => {
 
     if (data.updateConversationMessage) {
       setMessage(data.updateConversationMessage);
+      setIsSubmitting(false);
       return Promise.resolve();
     }
 
@@ -131,6 +135,7 @@ const DiscussionMessage = ({ initialMode, initialMessage, ...props }) => {
       </HeaderSection>
       <MessageEditor
         initialValue={body.payload}
+        isSubmitting={isSubmitting}
         mode={mode}
         onCancel={setToDisplayMode}
         onSubmit={handleSubmit}

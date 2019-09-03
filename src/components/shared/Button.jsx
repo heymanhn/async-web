@@ -24,7 +24,7 @@ const BlueContainer = styled(Container)(({ theme: { colors } }) => ({
   color: colors.white,
 
   [StyledSpinner]: {
-    border: `.1em solid ${colors.white}`,
+    border: `.08em solid ${colors.white}`,
     borderRightColor: 'transparent',
   },
 }));
@@ -35,7 +35,7 @@ const LightContainer = styled(Container)(({ theme: { colors } }) => ({
   color: colors.blue,
 
   [StyledSpinner]: {
-    border: `.1em solid ${colors.blue}`,
+    border: `.08em solid ${colors.blue}`,
     borderRightColor: 'transparent',
   },
 }));
