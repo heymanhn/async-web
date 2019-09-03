@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import AddReactionButton from './AddReactionButton';
+import MessageDropdown from './MessageDropdown';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: 'flex',
@@ -50,9 +51,13 @@ const HoverMenu = ({
   ...props
 }) => {
   const [isPickerOpen, setPickerState] = useState(false);
+  const [isDropdownOpen, setDropdownState] = useState(false);
+  function showDropdown() { setDropdownState(true); }
+  function closeDropdown() { setDropdownState(false); }
+  const shouldDisplay = isOpen || isPickerOpen || isDropdownOpen;
 
   return (
-    <Container isOpen={isOpen || isPickerOpen} {...props}>
+    <Container isOpen={shouldDisplay} {...props}>
       <ButtonContainer>
         <AddReactionButton
           conversationId={conversationId}
@@ -62,10 +67,14 @@ const HoverMenu = ({
         />
       </ButtonContainer>
       <VerticalDivider />
-      <ButtonContainer>
+      <ButtonContainer onClick={showDropdown}>
         <MenuIcon>
           •••
         </MenuIcon>
+        <MessageDropdown
+          handleClose={closeDropdown}
+          isOpen={isDropdownOpen}
+        />
       </ButtonContainer>
     </Container>
   );
