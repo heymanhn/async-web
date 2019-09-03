@@ -46,14 +46,19 @@ const MenuIcon = styled.div({
 
 const HoverMenu = ({
   conversationId,
+  handleEdit,
   isOpen,
   messageId,
   ...props
 }) => {
   const [isPickerOpen, setPickerState] = useState(false);
   const [isDropdownOpen, setDropdownState] = useState(false);
-  function showDropdown() { setDropdownState(true); }
-  function closeDropdown() { setDropdownState(false); }
+  function showDropdown() {
+    setDropdownState(true);
+  }
+  function closeDropdown() {
+    setDropdownState(false);
+  }
   const shouldDisplay = isOpen || isPickerOpen || isDropdownOpen;
 
   return (
@@ -73,6 +78,7 @@ const HoverMenu = ({
         </MenuIcon>
         <MessageDropdown
           handleClose={closeDropdown}
+          onEdit={handleEdit}
           isOpen={isDropdownOpen}
         />
       </ButtonContainer>
@@ -82,6 +88,7 @@ const HoverMenu = ({
 
 HoverMenu.propTypes = {
   conversationId: PropTypes.string.isRequired,
+  handleEdit: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   messageId: PropTypes.string.isRequired,
 };

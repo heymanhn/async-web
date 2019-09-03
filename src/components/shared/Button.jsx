@@ -11,7 +11,7 @@ const Container = styled.div({
   display: 'inline-block',
   fontWeight: 500,
   fontSize: '14px',
-  padding: '10px 20px',
+  padding: '9px 25px 10px',
   userSelect: 'none',
 });
 
@@ -40,6 +40,12 @@ const LightContainer = styled(Container)(({ theme: { colors } }) => ({
   },
 }));
 
+const GreyContainer = styled(Container)(({ theme: { colors } }) => ({
+  border: `1px solid ${colors.grey6}`,
+  backgroundColor: colors.white,
+  color: colors.grey3,
+}));
+
 const DisabledContainer = styled(Container)(({ theme: { colors } }) => ({
   backgroundColor: colors.buttonGrey,
   color: colors.grey6,
@@ -47,13 +53,9 @@ const DisabledContainer = styled(Container)(({ theme: { colors } }) => ({
 }));
 
 const getButtonType = (type, disabled) => {
-  if (disabled) {
-    return DisabledContainer;
-  }
-
-  if (type === 'light') {
-    return LightContainer;
-  }
+  if (disabled) return DisabledContainer;
+  if (type === 'light') return LightContainer;
+  if (type === 'grey') return GreyContainer;
 
   return BlueContainer;
 };
@@ -69,7 +71,7 @@ const Button = ({ type, title, disabled, loading, ...props }) => {
 };
 
 Button.propTypes = {
-  type: PropTypes.oneOf(['blue', 'light']),
+  type: PropTypes.oneOf(['blue', 'light', 'grey']),
   title: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   loading: PropTypes.bool,

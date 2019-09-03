@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 // import { withApollo } from 'react-apollo';
 import styled from '@emotion/styled/macro';
@@ -10,7 +10,7 @@ import styled from '@emotion/styled/macro';
 // import updateConversationMessageMutation from 'graphql/mutations/updateConversationMessage';
 // import { getLocalUser } from 'utils/auth';
 
-import withHover from 'utils/withHover';
+import useHover from 'utils/hooks/useHover';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
@@ -71,11 +71,15 @@ const MessageEditor = styled(RovalEditor)({
   },
 });
 
-const DiscussionMessage = ({ message, hover, ...props }) => {
+const DiscussionMessage = ({ initialMode, message, ...props }) => {
   const { author, conversationId, createdAt, id, updatedAt, body } = message;
+  const [mode, setMode] = useState(initialMode);
+  function setToDisplayMode() { setMode('display'); }
+  function setToEditMode() { setMode('edit'); }
+  const { hover, ...hoverProps } = useHover(mode !== 'display');
 
   return (
-    <Container {...props}>
+    <Container {...hoverProps} {...props}>
       <HeaderSection>
         <AuthorDetails
           author={author}
@@ -86,6 +90,7 @@ const DiscussionMessage = ({ message, hover, ...props }) => {
         {conversationId && (
           <StyledHoverMenu
             conversationId={conversationId}
+            handleEdit={setToEditMode}
             isOpen={hover}
             messageId={id}
           />
@@ -93,12 +98,12 @@ const DiscussionMessage = ({ message, hover, ...props }) => {
       </HeaderSection>
       <MessageEditor
         initialValue={body.payload}
-        mode="display" // change this later
-        // onCancel={handleCancel}
+        mode={mode}
+        onCancel={setToDisplayMode}
         // onSubmit={handleSubmit}
-        contentType="largeReply"
+        contentType="message"
       />
-      <MessageReactions conversationId={conversationId} messageId={id} />
+      {mode === 'display' && <MessageReactions conversationId={conversationId} messageId={id} />}
     </Container>
   );
 };
@@ -264,12 +269,13 @@ const DiscussionMessage = ({ message, hover, ...props }) => {
 // }
 
 DiscussionMessage.propTypes = {
-  hover: PropTypes.bool.isRequired,
+  initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
 };
 
 DiscussionMessage.defaultProps = {
+  initialMode: 'display',
   message: {},
 };
 
-export default withHover(DiscussionMessage);
+export default DiscussionMessage;

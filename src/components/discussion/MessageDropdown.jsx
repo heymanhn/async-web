@@ -56,13 +56,24 @@ const OptionName = styled.div(({ theme: { colors } }) => ({
   top: '1px',
 }));
 
-const MessageDropdown = ({ handleClose, handleEdit, handleDelete, isOpen, ...props }) => {
+const MessageDropdown = ({ handleClose, isOpen, onDelete, onEdit, ...props }) => {
   const selector = useRef();
-  const handleClickOutside = () => {
+  function handleClickOutside() {
     if (!isOpen) return;
     handleClose();
-  };
+  }
   useClickOutside({ handleClickOutside, ref: selector });
+
+  function handleDelete(event) {
+    event.stopPropagation();
+    handleClose();
+    onDelete();
+  }
+  function handleEdit(event) {
+    event.stopPropagation();
+    handleClose();
+    onEdit();
+  }
 
   return (
     <Container isOpen={isOpen} ref={selector} {...props}>
@@ -80,9 +91,9 @@ const MessageDropdown = ({ handleClose, handleEdit, handleDelete, isOpen, ...pro
 
 MessageDropdown.propTypes = {
   handleClose: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
-  handleEdit: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
 };
 
 export default MessageDropdown;

@@ -340,7 +340,6 @@ class RovalEditor extends Component {
     const {
       contentType,
       disableAutoFocus,
-      hideCancelButton,
       initialHeight,
       isPlainText,
       isSubmitting,
@@ -373,8 +372,6 @@ class RovalEditor extends Component {
         />
         {this.isEditOrComposeMode() && !isPlainText && (
           <EditorActions
-            contentType={contentType}
-            hideCancelButton={hideCancelButton}
             isSubmitting={isSubmitting}
             isSubmitDisabled={this.isValueEmpty()}
             mode={mode}
@@ -389,15 +386,13 @@ class RovalEditor extends Component {
 
 RovalEditor.propTypes = {
   contentType: PropTypes.oneOf([
-    'discussion',
-    'discussionTitle',
+    'discussion', // TODO: remove this when DiscussionComposer is gone
+    'discussionTitle', // TODO: remove this when DiscussionComposer is gone
     'meetingName',
     'meetingPurpose',
-    'largeReply',
-    'smallReply',
+    'message',
   ]).isRequired,
   disableAutoFocus: PropTypes.bool,
-  hideCancelButton: PropTypes.bool,
   initialHeight: PropTypes.number,
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
@@ -410,7 +405,6 @@ RovalEditor.propTypes = {
 
 RovalEditor.defaultProps = {
   disableAutoFocus: false,
-  hideCancelButton: false,
   initialHeight: null,
   initialValue: null,
   isPlainText: false,
