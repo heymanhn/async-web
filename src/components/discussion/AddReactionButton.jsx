@@ -58,7 +58,13 @@ const AddReactionButton = ({
     handlePickerChange(true);
   }
   function handleClosePicker({ outsideClick } = {}) {
-    if (outsideClick) setIsOutsideClick(true);
+    if (outsideClick) {
+      setIsOutsideClick(true);
+
+      // Hack to make sure the outsideClick state is only used for
+      // not re-opening the picker when the user clicks on the add reaction button
+      setTimeout(() => setIsOutsideClick(false), 300);
+    }
     handlePickerChange(false);
   }
 
