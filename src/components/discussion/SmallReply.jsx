@@ -9,7 +9,7 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
-import { getLocalUser, matchCurrentUserId } from 'utils/auth';
+import { getLocalUser } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
@@ -104,7 +104,7 @@ const SmallReply = ({
   source,
   ...props
 }) => {
-  const { body, childConversationId, id: messageId } = message || {};
+  const { body, childConversationId } = message || {};
   let isUnread = false;
 
   const [getChildConversation, { data }] = useLazyQuery(conversationQuery, {
@@ -141,15 +141,6 @@ const SmallReply = ({
           onSubmit={handleSubmit}
           contentType="smallReply"
         />
-        {/* {mode === 'display' && conversationId && (
-          <ContentToolbar
-            contentType="smallReply"
-            conversationId={conversationId}
-            messageId={messageId}
-            onClickReply={handleFocusCurrentMessage}
-            replyCount={replyCount}
-          />
-        )} */}
       </MainContainer>
     </Container>
   );

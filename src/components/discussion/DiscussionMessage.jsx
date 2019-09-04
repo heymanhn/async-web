@@ -92,7 +92,7 @@ const DiscussionMessage = ({
     setIsSubmitting(true);
 
     if (!conversationId) {
-      console.log("TODO: creating new conversation?");
+      console.log('TODO: creating new conversation...');
     }
 
     const { data } = await client.mutate({
