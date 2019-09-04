@@ -46,9 +46,11 @@ const MenuIcon = styled.div({
 
 const HoverMenu = ({
   conversationId,
-  handleEdit,
+  isAuthor,
   isOpen,
   messageId,
+  onDelete,
+  onEdit,
   ...props
 }) => {
   const [isPickerOpen, setPickerState] = useState(false);
@@ -72,23 +74,28 @@ const HoverMenu = ({
         />
       </ButtonContainer>
       <VerticalDivider />
-      <ButtonContainer onClick={showDropdown}>
-        <MenuIcon>
-          •••
-        </MenuIcon>
-        <MessageDropdown
-          handleClose={closeDropdown}
-          onEdit={handleEdit}
-          isOpen={isDropdownOpen}
-        />
-      </ButtonContainer>
+      {isAuthor && (
+        <ButtonContainer onClick={showDropdown}>
+          <MenuIcon>
+            •••
+          </MenuIcon>
+          <MessageDropdown
+            handleClose={closeDropdown}
+            isOpen={isDropdownOpen}
+            onDelete={onDelete}
+            onEdit={onEdit}
+          />
+        </ButtonContainer>
+      )}
     </Container>
   );
 };
 
 HoverMenu.propTypes = {
   conversationId: PropTypes.string.isRequired,
-  handleEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  isAuthor: PropTypes.bool.isRequired,
   isOpen: PropTypes.bool.isRequired,
   messageId: PropTypes.string.isRequired,
 };

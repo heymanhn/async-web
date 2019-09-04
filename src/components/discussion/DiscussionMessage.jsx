@@ -1,11 +1,14 @@
+/* eslint no-alert: 0 */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
-import createConversationMessageMutation from 'graphql/mutations/createConversationMessage';
-import updateConversationMessageMutation from 'graphql/mutations/updateConversationMessage';
+import createMessageMutation from 'graphql/mutations/createConversationMessage';
+import updateMessageMutation from 'graphql/mutations/updateConversationMessage';
+import deleteMessageMutation from 'graphql/mutations/deleteConversationMessage';
 import conversationQuery from 'graphql/queries/conversation';
+import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
@@ -86,6 +89,7 @@ const DiscussionMessage = ({
   const userToDisplay = author || currentUser;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { userId } = getLocalUser();
 
   // FUTURE: Handle case of creating a new discussion
   async function handleCreate({ payload, text }) {
@@ -96,7 +100,7 @@ const DiscussionMessage = ({
     }
 
     const { data } = await client.mutate({
-      mutation: createConversationMessageMutation,
+      mutation: createMessageMutation,
       variables: {
         conversationId,
         input: {
@@ -150,7 +154,7 @@ const DiscussionMessage = ({
     setIsSubmitting(true);
 
     const { data } = await client.mutate({
-      mutation: updateConversationMessageMutation,
+      mutation: updateMessageMutation,
       variables: {
         conversationId,
         messageId,
@@ -173,6 +177,46 @@ const DiscussionMessage = ({
     return Promise.reject(new Error('Failed to save discussion message'));
   }
 
+  async function handleDelete() {
+    const userChoice = window.confirm('Are you sure you want to delete this message?')
+    if (!userChoice) return;
+
+    client.mutate({
+      mutation: deleteMessageMutation,
+      variables: {
+        conversationId,
+        messageId,
+      },
+      update: (cache) => {
+        const {
+          conversation,
+          messages: { pageToken, items, __typename, messageCount },
+        } = cache.readQuery({
+          query: conversationQuery,
+          variables: { id: conversationId },
+        });
+
+        const index = items.findIndex(i => i.message.id === messageId);
+        cache.writeQuery({
+          query: conversationQuery,
+          variables: { id: conversationId },
+          data: {
+            conversation,
+            messages: {
+              messageCount: messageCount - 1,
+              pageToken,
+              items: [
+                ...items.slice(0, index),
+                ...items.slice(index + 1),
+              ],
+              __typename,
+            },
+          },
+        });
+      },
+    });
+  }
+
   function handleCancel() {
     if (mode === 'compose') {
       onCancel();
@@ -193,9 +237,11 @@ const DiscussionMessage = ({
         {messageId && (
           <StyledHoverMenu
             conversationId={conversationId}
-            handleEdit={setToEditMode}
+            isAuthor={userId === author.id}
             isOpen={hover}
             messageId={messageId}
+            onDelete={handleDelete}
+            onEdit={setToEditMode}
           />
         )}
       </HeaderSection>
