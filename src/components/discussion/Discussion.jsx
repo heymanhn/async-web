@@ -9,9 +9,12 @@ import { snakedQueryParams } from 'utils/queryParams';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from './DiscussionMessage';
+import MessageComposer from './MessageComposer';
 import NavigationBar from './NavigationBar';
 
-const Container = styled.div({});
+const Container = styled.div({
+  marginBottom: '60px',
+});
 
 const DiscussionContainer = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
@@ -34,13 +37,13 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   outline: 'none',
 }));
 
-const Discussion = ({ discussionId, ...props }) => {
+const Discussion = ({ conversationId, ...props }) => {
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
 
   const { loading, error, data, fetchMore } = useQuery(conversationQuery, {
-    variables: { id: discussionId, queryParams: {} },
+    variables: { id: conversationId, queryParams: {} },
   });
   if (loading) return null;
   if (error || !data.conversation) return <div>{error}</div>;
@@ -55,7 +58,7 @@ const Discussion = ({ discussionId, ...props }) => {
 
     fetchMore({
       query: conversationQuery,
-      variables: { id: discussionId, queryParams: snakedQueryParams(newQueryParams) },
+      variables: { id: conversationId, queryParams: snakedQueryParams(newQueryParams) },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         const { items: previousItems } = previousResult.messages;
         const { items: newItems, pageToken: newToken } = fetchMoreResult.messages;
@@ -97,16 +100,18 @@ const Discussion = ({ discussionId, ...props }) => {
         {messages.map(m => (
           <DiscussionMessage
             key={m.id}
+            conversationId={conversationId}
             initialMessage={m}
           />
         ))}
+        {!pageToken && <MessageComposer conversationId={conversationId} />}
       </DiscussionContainer>
     </Container>
   );
 };
 
 Discussion.propTypes = {
-  discussionId: PropTypes.string.isRequired,
+  conversationId: PropTypes.string.isRequired,
 };
 
 export default Discussion;

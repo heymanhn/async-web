@@ -80,7 +80,7 @@ const App = () => (
 
       <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />
 
-      <PrivateRoute path="/discussions/:discussionId" component={Discussion} />
+      <PrivateRoute path="/discussions/:conversationId" component={Discussion} />
 
       {/* TODO */}
       {/* <PrivateRoute path="/spaces/:meetingId/conversations/:conversationId/messages/:messageId" component={MeetingSpace} /> */}
