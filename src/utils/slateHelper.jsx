@@ -186,20 +186,11 @@ export const plugins = {
     ),
     ...markdownPlugins,
   ],
-  largeReply: [
+  message: [
     PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(
-      'Express your thoughts. Take your time',
-      theme.colors.textPlaceholder,
-    ),
-    ...markdownPlugins,
-  ],
-  smallReply: [
-    PasteLinkify(),
-    SoftBreak({ shift: true }),
-    createPlaceholderPlugin(
-      'Express your thoughts. Take your time',
+      'Post the first message to start this discussion. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
     ...markdownPlugins,

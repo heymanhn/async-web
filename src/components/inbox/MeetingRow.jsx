@@ -5,7 +5,7 @@ import Pluralize from 'pluralize';
 import Moment from 'react-moment';
 import styled from '@emotion/styled';
 
-import withHover from 'utils/withHover';
+import useHover from 'utils/hooks/useHover';
 
 const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   display: 'flex',
@@ -65,7 +65,8 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
+const MeetingRow = ({ conversationCount, meeting, ...props }) => {
+  const { hover, ...hoverProps } = useHover();
   const { createdAt, deadline, id, lastMessage, title } = meeting;
 
   const timestamp = lastMessage ? lastMessage.createdAt : createdAt;
@@ -96,7 +97,7 @@ const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
 
   return (
     <StyledLink to={`/spaces/${id}`}>
-      <Container hover={hover} {...props}>
+      <Container hover={hover} {...hoverProps} {...props}>
         <MeetingDetails>
           <Title hover={hover}>{title || 'Untitled Meeting Space'}</Title>
           <AdditionalInfo>
@@ -114,8 +115,7 @@ const MeetingRow = ({ conversationCount, hover, meeting, ...props }) => {
 
 MeetingRow.propTypes = {
   conversationCount: PropTypes.number.isRequired,
-  hover: PropTypes.bool.isRequired,
   meeting: PropTypes.object.isRequired,
 };
 
-export default withHover(MeetingRow);
+export default MeetingRow;

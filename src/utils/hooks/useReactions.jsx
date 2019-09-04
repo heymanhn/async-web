@@ -83,9 +83,15 @@ const useReactions = ({ conversationId, messageId }) => {
     variables: { conversationId, messageId },
   });
 
+  let reactions = [];
+  if (data.conversationMessage) {
+    const { reactions: reax } = data.conversationMessage;
+    if (reax) reactions = reax;
+  }
+
   return {
     addReaction,
-    reactions: data.conversationMessage ? data.conversationMessage.reactions : [],
+    reactions,
     reactionsReference,
     removeReaction,
   };

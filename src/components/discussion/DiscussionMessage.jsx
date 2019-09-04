@@ -1,17 +1,19 @@
-import React from 'react';
+/* eslint no-alert: 0 */
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-// import { withApollo } from 'react-apollo';
+import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
-// import currentUserQuery from 'graphql/queries/currentUser';
-// import createConversationMutation from 'graphql/mutations/createConversation';
-// import createConversationMessageMutation from 'graphql/mutations/createConversationMessage';
-// import meetingQuery from 'graphql/queries/meeting';
-// import updateConversationMessageMutation from 'graphql/mutations/updateConversationMessage';
-// import { getLocalUser } from 'utils/auth';
+import createMessageMutation from 'graphql/mutations/createConversationMessage';
+import updateMessageMutation from 'graphql/mutations/updateConversationMessage';
+import deleteMessageMutation from 'graphql/mutations/deleteConversationMessage';
+import conversationQuery from 'graphql/queries/conversation';
+import { getLocalUser } from 'utils/auth';
+import useHover from 'utils/hooks/useHover';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
+import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -23,6 +25,19 @@ const Container = styled.div(({ theme: { colors } }) => ({
   marginBottom: '30px',
   padding: '20px 30px 25px',
 }));
+
+const HeaderSection = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  position: 'relative',
+});
+
+const StyledHoverMenu = styled(HoverMenu)({
+  position: 'absolute',
+  right: '0px',
+});
 
 const MessageEditor = styled(RovalEditor)({
   fontSize: '16px',
@@ -55,195 +70,210 @@ const MessageEditor = styled(RovalEditor)({
   },
 });
 
-const DiscussionMessage = ({ message, ...props }) => {
-  const { author, conversationId, createdAt, id, updatedAt, body } = message;
+const DiscussionMessage = ({
+  conversationId,
+  currentUser,
+  initialMode,
+  initialMessage,
+  onCancel,
+  ...props
+}) => {
+  const client = useApolloClient();
+  const [mode, setMode] = useState(initialMode);
+  function setToDisplayMode() { setMode('display'); }
+  function setToEditMode() { setMode('edit'); }
+  const { hover, ...hoverProps } = useHover(mode !== 'display');
+
+  const [message, setMessage] = useState(initialMessage);
+  const { author, createdAt, id: messageId, updatedAt, body } = message || {};
+  const userToDisplay = author || currentUser;
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { userId } = getLocalUser();
+
+  // FUTURE: Handle case of creating a new discussion
+  async function handleCreate({ payload, text }) {
+    setIsSubmitting(true);
+
+    if (!conversationId) {
+      console.log('TODO: creating new conversation...');
+    }
+
+    const { data } = await client.mutate({
+      mutation: createMessageMutation,
+      variables: {
+        conversationId,
+        input: {
+          body: {
+            formatter: 'slatejs',
+            text,
+            payload,
+          },
+        },
+      },
+      update: (cache, { data: { createConversationMessage } }) => {
+        const {
+          conversation,
+          messages: { pageToken, items, __typename, messageCount },
+        } = cache.readQuery({
+          query: conversationQuery,
+          variables: { id: conversationId },
+        });
+
+        cache.writeQuery({
+          query: conversationQuery,
+          variables: { id: conversationId },
+          data: {
+            conversation,
+            messages: {
+              messageCount: messageCount + 1,
+              pageToken,
+              items: [
+                ...items,
+                {
+                  __typename: items[0].__typename,
+                  message: createConversationMessage,
+                },
+              ],
+              __typename,
+            },
+          },
+        });
+      },
+    });
+
+    if (data.createConversationMessage) {
+      setIsSubmitting(false);
+      return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('Failed to create discussion message'));
+  }
+
+  async function handleUpdate({ payload, text }) {
+    setIsSubmitting(true);
+
+    const { data } = await client.mutate({
+      mutation: updateMessageMutation,
+      variables: {
+        conversationId,
+        messageId,
+        input: {
+          body: {
+            formatter: 'slatejs',
+            text,
+            payload,
+          },
+        },
+      },
+    });
+
+    if (data.updateConversationMessage) {
+      setMessage(data.updateConversationMessage);
+      setIsSubmitting(false);
+      return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('Failed to save discussion message'));
+  }
+
+  async function handleDelete() {
+    const userChoice = window.confirm('Are you sure you want to delete this message?')
+    if (!userChoice) return;
+
+    client.mutate({
+      mutation: deleteMessageMutation,
+      variables: {
+        conversationId,
+        messageId,
+      },
+      update: (cache) => {
+        const {
+          conversation,
+          messages: { pageToken, items, __typename, messageCount },
+        } = cache.readQuery({
+          query: conversationQuery,
+          variables: { id: conversationId },
+        });
+
+        const index = items.findIndex(i => i.message.id === messageId);
+        cache.writeQuery({
+          query: conversationQuery,
+          variables: { id: conversationId },
+          data: {
+            conversation,
+            messages: {
+              messageCount: messageCount - 1,
+              pageToken,
+              items: [
+                ...items.slice(0, index),
+                ...items.slice(index + 1),
+              ],
+              __typename,
+            },
+          },
+        });
+      },
+    });
+  }
+
+  function handleCancel() {
+    if (mode === 'compose') {
+      onCancel();
+    } else {
+      setToDisplayMode();
+    }
+  }
 
   return (
-    <Container {...props}>
-      <AuthorDetails
-        author={author}
-        createdAt={createdAt}
-        isEdited={createdAt !== updatedAt}
-        mode="display" // change this later
-      />
+    <Container {...hoverProps} {...props}>
+      <HeaderSection>
+        <AuthorDetails
+          author={userToDisplay}
+          createdAt={createdAt}
+          isEdited={createdAt !== updatedAt}
+          mode={mode}
+        />
+        {messageId && (
+          <StyledHoverMenu
+            conversationId={conversationId}
+            isAuthor={userId === author.id}
+            isOpen={hover}
+            messageId={messageId}
+            onDelete={handleDelete}
+            onEdit={setToEditMode}
+          />
+        )}
+      </HeaderSection>
       <MessageEditor
-        initialValue={body.payload}
-        mode="display" // change this later
-        // onCancel={handleCancel}
-        // onSubmit={handleSubmit}
-        contentType="largeReply"
+        initialValue={mode !== 'compose' ? body.payload : null}
+        isSubmitting={isSubmitting}
+        mode={mode}
+        onCancel={handleCancel}
+        onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
+        contentType="message"
       />
-      <MessageReactions conversationId={conversationId} messageId={id} />
+      {mode === 'display' && (
+        <MessageReactions conversationId={conversationId} messageId={messageId} />
+      )}
     </Container>
   );
 };
 
-// class DiscussionMessage extends Component {
-//   constructor(props) {
-//     super(props);
-
-//     this.state = {
-//       currentUser: null,
-//       mode: props.initialMode,
-//     };
-
-//     this.handleCancel = this.handleCancel.bind(this);
-//     this.handleFocusCurrentMessage = this.handleFocusCurrentMessage.bind(this);
-//     this.handleSubmit = this.handleSubmit.bind(this);
-//     this.createNestedConversation = this.createNestedConversation.bind(this);
-//     this.toggleEditMode = this.toggleEditMode.bind(this);
-//   }
-
-//   async componentDidMount() {
-//     const { client } = this.props;
-//     const { userId } = getLocalUser();
-
-//     const response = await client.query({ query: currentUserQuery, variables: { id: userId } });
-//     if (response.data) this.setState({ currentUser: response.data.user });
-//   }
-
-//   async handleSubmit({ payload, text }) {
-//     const { mode } = this.state;
-//     const {
-//       client,
-//       conversationId,
-//       meetingId,
-//       message,
-//       afterSubmit,
-//     } = this.props;
-
-//     // The currently focused message not having a conversation ID means we need to
-//     // create a new (nested) one
-//     if (!conversationId) return this.createNestedConversation({ payload, text });
-
-//     const mutation = mode === 'compose'
-//       ? createConversationMessageMutation : updateConversationMessageMutation;
-//     const response = await client.mutate({
-//       mutation,
-//       variables: {
-//         id: conversationId,
-//         mid: message.id,
-//         input: {
-//           meetingId,
-//           body: {
-//             formatter: 'slatejs',
-//             text,
-//             payload,
-//           },
-//         },
-//       },
-//       refetchQueries: [{
-//         query: meetingQuery,
-//         variables: { id: meetingId },
-//       }],
-//     });
-
-//     if (response.data) {
-//       const { createConversationMessage, updateConversationMessage } = response.data;
-//       const msg = mode === 'compose' ? createConversationMessage : updateConversationMessage;
-//       afterSubmit(msg);
-//       return Promise.resolve();
-//     }
-
-//     return Promise.reject(new Error('Failed to save discussion reply'));
-//   }
-
-//   handleCancel() {
-//     const { onCancelCompose } = this.props;
-//     const { mode } = this.state;
-//     if (mode === 'edit') this.toggleEditMode();
-//     if (mode === 'compose') onCancelCompose();
-//   }
-
-//   handleFocusCurrentMessage() {
-//     const { mode } = this.state;
-//     const { initialMode, message, handleFocusMessage } = this.props;
-//     if (initialMode === 'compose' || mode !== 'display') return;
-
-//     handleFocusMessage(message);
-//   }
-
-//   async createNestedConversation({ payload, text }) {
-//     const { currentUser } = this.state;
-//     const { afterSubmit, client, focusedMessage, meetingId: id } = this.props;
-//     if (!focusedMessage) {
-//       return Promise.reject(
-//         new Error('No focused message found when creating nested conversation'),
-//       );
-//     }
-
-//     const response = await client.mutate({
-//       mutation: createConversationMutation,
-//       variables: {
-//         id,
-//         input: {
-//           parentId: focusedMessage.conversationId,
-//           messages: [
-//             focusedMessage,
-//             {
-//               body: {
-//                 formatter: 'slatejs',
-//                 text,
-//                 payload,
-//               },
-//             },
-//           ],
-//         },
-//       },
-//     });
-
-//     if (response.data) {
-//       // TEMP: Append author manually, because backend doesn't provide it yet.
-//       const newMessage = response.data.createConversation.messages[0];
-//       newMessage.author = currentUser;
-
-//       afterSubmit(newMessage);
-//       return Promise.resolve();
-//     }
-
-//     return Promise.reject(new Error('Failed to create nested conversation'));
-//   }
-
-//   toggleEditMode(event) {
-//     if (event) event.stopPropagation();
-//     this.setState(prevState => ({ mode: prevState.mode === 'edit' ? 'display' : 'edit' }));
-//   }
-
-//   render() {
-//     const { currentUser, mode } = this.state;
-//     const {
-//       conversationId,
-//       meetingId,
-//       message,
-//       onCancelCompose,
-//       size,
-//       ...props
-//     } = this.props;
-//     if (!message.author && !currentUser) return null; // edge case
-
-//     const fwdProps = {
-//       author: message.author || currentUser,
-//       conversationId,
-//       handleCancel: this.handleCancel,
-//       handleFocusCurrentMessage: this.handleFocusCurrentMessage,
-//       handleSubmit: this.handleSubmit,
-//       handleToggleEditMode: this.toggleEditMode,
-//       message,
-//       mode,
-//       noHover: mode !== 'display',
-//       ...props,
-//     };
-
-//     return size === 'large' ? <LargeReply {...fwdProps} /> : <SmallReply {...fwdProps} />;
-//   }
-// }
-
 DiscussionMessage.propTypes = {
-  message: PropTypes.object,
+  conversationId: PropTypes.string,
+  currentUser: PropTypes.object,
+  initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
+  initialMessage: PropTypes.object,
+  onCancel: PropTypes.func,
 };
 
 DiscussionMessage.defaultProps = {
-  message: {},
+  conversationId: null,
+  currentUser: null,
+  initialMode: 'display',
+  initialMessage: {},
+  onCancel: () => {},
 };
 
 export default DiscussionMessage;

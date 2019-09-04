@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLaugh } from '@fortawesome/free-regular-svg-icons';
@@ -34,68 +34,56 @@ const PlusSign = styled.div({
   marginTop: '-4px',
 });
 
-class AddReactionButton extends Component {
-  constructor(props) {
-    super(props);
+const AddReactionButton = ({
+  conversationId,
+  messageId,
+  onPickerStateChange,
+  placement,
+  ...props
+}) => {
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [isOutsideClick, setIsOutsideClick] = useState(false);
 
-    this.state = { isPickerOpen: false };
-
-    this.handleClosePicker = this.handleClosePicker.bind(this);
-    this.togglePicker = this.togglePicker.bind(this);
-  }
-
-  handleClosePicker() {
-    const { isPickerOpen } = this.state;
-    const { onPickerStateChange } = this.props;
-
-    if (isPickerOpen) {
-      onPickerStateChange(false);
-      this.setState({ isPickerOpen: false });
+  function handlePickerChange(newState) {
+    if (isPickerOpen !== newState) {
+      onPickerStateChange(newState);
+      setIsPickerOpen(newState);
     }
   }
+  function handleOpenPicker() {
+    if (isOutsideClick) {
+      setIsOutsideClick(false);
+      return;
+    }
+    handlePickerChange(true);
+  }
+  function handleClosePicker({ outsideClick } = {}) {
+    if (outsideClick) {
+      setIsOutsideClick(true);
 
-  togglePicker(event) {
-    event.stopPropagation();
-
-    const { onPickerStateChange } = this.props;
-
-    this.setState((prevState) => {
-      const newState = !prevState.isPickerOpen;
-      onPickerStateChange(newState);
-      return { isPickerOpen: !prevState.isPickerOpen };
-    });
+      // Hack to make sure the outsideClick state is only used for
+      // not re-opening the picker when the user clicks on the add reaction button
+      setTimeout(() => setIsOutsideClick(false), 300);
+    }
+    handlePickerChange(false);
   }
 
-  render() {
-    const { isPickerOpen } = this.state;
-    const {
-      conversationId,
-      messageId,
-      onPickerStateChange,
-      placement,
-      ...props
-    } = this.props;
-
-    return (
-      <Container {...props}>
-        <ButtonContainer
-          className="ignore-react-onclickoutside"
-          onClick={this.togglePicker}
-        >
-          <StyledIcon icon={faLaugh} />
-          <PlusSign>+</PlusSign>
-        </ButtonContainer>
-        <ReactionPicker
-          conversationId={conversationId}
-          handleClose={this.handleClosePicker}
-          isOpen={isPickerOpen}
-          messageId={messageId}
-          placement={placement}
-        />
-      </Container>
-    );
-  }
-}
+  return (
+    <Container {...props}>
+      <ButtonContainer onClick={handleOpenPicker}>
+        <StyledIcon icon={faLaugh} />
+        <PlusSign>+</PlusSign>
+      </ButtonContainer>
+      <ReactionPicker
+        conversationId={conversationId}
+        handleClose={handleClosePicker}
+        isOpen={isPickerOpen}
+        messageId={messageId}
+        placement={placement}
+      />
+    </Container>
+  );
+};
 
 AddReactionButton.propTypes = {
   conversationId: PropTypes.string.isRequired,

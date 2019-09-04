@@ -9,14 +9,10 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
-import withHover from 'utils/withHover';
-import { getLocalUser, matchCurrentUserId } from 'utils/auth';
+import { getLocalUser } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import RovalEditor from 'components/editor/RovalEditor';
-// import ContentHeader from './ContentHeader';
-// import ContentToolbar from './ContentToolbar';
-import HoverMenu from './HoverMenu';
 
 const Container = styled.div(({ isUnread, mode, theme: { colors } }) => ({
   display: 'flex',
@@ -94,11 +90,6 @@ const ReplyEditor = styled(RovalEditor)({
   },
 });
 
-const StyledHoverMenu = styled(HoverMenu)({
-  position: 'absolute',
-  right: '0px',
-});
-
 const SmallReply = ({
   author,
   conversationId,
@@ -113,7 +104,7 @@ const SmallReply = ({
   source,
   ...props
 }) => {
-  const { body, childConversationId, id: messageId } = message || {};
+  const { body, childConversationId } = message || {};
   let isUnread = false;
 
   const [getChildConversation, { data }] = useLazyQuery(conversationQuery, {
@@ -141,19 +132,6 @@ const SmallReply = ({
           <Details>
             <Author mode={mode}>{author.fullName}</Author>
           </Details>
-          {mode === 'display' && conversationId && (
-            <StyledHoverMenu
-              conversationId={conversationId}
-              isOpen={hover && mode === 'display'}
-              messageId={messageId}
-              onEdit={handleToggleEditMode}
-              onReply={handleFocusCurrentMessage}
-              replyCount={replyCount}
-              showAddReactionButton
-              showEditButton={matchCurrentUserId(author.id)}
-              showReplyButton
-            />
-          )}
         </HeaderSection>
         <ReplyEditor
           initialHeight={120}
@@ -163,15 +141,6 @@ const SmallReply = ({
           onSubmit={handleSubmit}
           contentType="smallReply"
         />
-        {/* {mode === 'display' && conversationId && (
-          <ContentToolbar
-            contentType="smallReply"
-            conversationId={conversationId}
-            messageId={messageId}
-            onClickReply={handleFocusCurrentMessage}
-            replyCount={replyCount}
-          />
-        )} */}
       </MainContainer>
     </Container>
   );
@@ -198,4 +167,4 @@ SmallReply.defaultProps = {
   replyCount: null,
 };
 
-export default withHover(SmallReply);
+export default SmallReply;
