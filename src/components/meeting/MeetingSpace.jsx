@@ -6,19 +6,22 @@ import styled from '@emotion/styled';
 import meetingQuery from 'graphql/queries/meeting';
 import withViewedReaction from 'utils/withViewedReaction';
 
-import Layout from 'components/Layout';
 import DiscussionsList from './DiscussionsList';
 import DiscussionComposer from './DiscussionComposer';
 import DiscussionThread from './DiscussionThread';
+import TitleBar from './TitleBar';
 
-const Container = styled.div(({ theme: { wideViewport } }) => ({
+const Container = styled.div({
+  marginBottom: '60px',
+});
+
+const DiscussionsContainer = styled.div(({ theme: { meetingSpaceViewport } }) => ({
   display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'flex-start',
+  flexDirection: 'column',
 
   margin: '0 auto',
-  maxWidth: wideViewport,
-  padding: '30px 0',
+  maxWidth: meetingSpaceViewport,
+  padding: '30px',
 }));
 
 const LeftColumn = styled.div({
@@ -53,8 +56,6 @@ const PlusSign = styled.div(({ theme: { colors } }) => ({
   fontWeight: 500,
   marginTop: '-4px',
 }));
-
-const DiscussionsContainer = styled.div({});
 
 const MainColumn = styled.div(({ theme: { colors } }) => ({
   borderTop: `1px solid ${colors.borderGrey}`,
@@ -175,7 +176,6 @@ class MeetingSpace extends Component {
   }
 
   render() {
-    const { isComposing, selectedConversationId } = this.state;
     const { conversationId, meetingId } = this.props;
 
     return (
@@ -188,51 +188,44 @@ class MeetingSpace extends Component {
           if (error || !data.meeting) return <div>{error}</div>;
 
           const { conversations, title } = data.meeting;
-          const showComposer = isComposing || !conversations;
-          const selectedConvo = this.findSelectedConversation(conversations);
-          const isFirstLoadWithConvoParam = conversationId && !selectedConversationId;
-          const hideCancelButton = !conversations || !conversations.length;
 
           return (
-            <Layout
-              hideFooter
-              meetingId={meetingId}
-              mode="wide"
-              title={title || 'Untitled Discussion'}
-            >
-              <Container>
-                <LeftColumn>
-                  <StartDiscussionButton onClick={this.handleCreateDiscussion}>
-                    <ButtonLabel>Start a discussion</ButtonLabel>
-                    <PlusSign>+</PlusSign>
-                  </StartDiscussionButton>
-                  <DiscussionsContainer ref={this.listRef}>
-                    <DiscussionsList
-                      meetingId={meetingId}
-                      onScrollTo={isFirstLoadWithConvoParam ? this.handleScrollToCell : undefined}
-                      onSelectConversation={this.handleSelectConversation}
-                      selectedConversationId={isComposing ? null : selectedConvo.id}
-                    />
-                  </DiscussionsContainer>
-                </LeftColumn>
-                <MainColumn>
-                  {showComposer ? (
-                    <StyledDiscussionComposer
-                      afterSubmit={this.showCreatedConversation}
-                      hideCancelButton={hideCancelButton}
-                      meetingId={meetingId}
-                      onCancelCompose={this.handleCancelCompose}
-                    />
-                  ) : (
-                    <StyledDiscussionThread
-                      conversationId={selectedConvo.id}
-                      conversationTitle={selectedConvo.title}
-                      meetingId={meetingId}
-                    />
-                  )}
-                </MainColumn>
-              </Container>
-            </Layout>
+            <Container>
+              <TitleBar meetingId={meetingId} title={title} />
+              <DiscussionsContainer>
+                Hello
+              </DiscussionsContainer>
+              {/* <LeftColumn>
+                <StartDiscussionButton onClick={this.handleCreateDiscussion}>
+                  <ButtonLabel>Start a discussion</ButtonLabel>
+                  <PlusSign>+</PlusSign>
+                </StartDiscussionButton>
+                <DiscussionsContainer ref={this.listRef}>
+                  <DiscussionsList
+                    meetingId={meetingId}
+                    onScrollTo={isFirstLoadWithConvoParam ? this.handleScrollToCell : undefined}
+                    onSelectConversation={this.handleSelectConversation}
+                    selectedConversationId={isComposing ? null : selectedConvo.id}
+                  />
+                </DiscussionsContainer>
+              </LeftColumn> */}
+              {/* <MainColumn>
+                {showComposer ? (
+                  <StyledDiscussionComposer
+                    afterSubmit={this.showCreatedConversation}
+                    hideCancelButton={hideCancelButton}
+                    meetingId={meetingId}
+                    onCancelCompose={this.handleCancelCompose}
+                  />
+                ) : (
+                  <StyledDiscussionThread
+                    conversationId={selectedConvo.id}
+                    conversationTitle={selectedConvo.title}
+                    meetingId={meetingId}
+                  />
+                )}
+              </MainColumn> */}
+            </Container>
           );
         }}
       </Query>

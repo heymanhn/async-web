@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
-import { getLocalUser } from 'utils/auth';
 
 import meetingQuery from 'graphql/queries/meeting';
 import addParticipantMutation from 'graphql/mutations/addParticipant';
 import removeParticipantMutation from 'graphql/mutations/removeParticipant';
 import useClickOutside from 'utils/hooks/useClickOutside';
+import { getLocalUser } from 'utils/auth';
 
 import ParticipantsSelector from './ParticipantsSelector';
 
@@ -18,12 +19,6 @@ const Container = styled.div({
   flexDirection: 'row',
   alignItems: 'center',
 });
-
-const VerticalDivider = styled.div(({ theme: { colors } }) => ({
-  borderRight: `1px solid ${colors.borderGrey}`,
-  height: '20px',
-  margin: '0 15px',
-}));
 
 const ParticipantsIndicator = styled.div({
   display: 'flex',
@@ -40,7 +35,7 @@ const ParticipantsButton = styled.div({
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey4,
-  fontSize: '16px',
+  fontSize: '14px',
   marginRight: '10px',
 }));
 
@@ -114,11 +109,10 @@ const MeetingProperties = ({ meetingId }) => {
 
   return (
     <Container ref={selector}>
-      <VerticalDivider />
       <ParticipantsIndicator>
         <ParticipantsButton onClick={toggleDropdown}>
           <StyledIcon icon={faUser} />
-          <NumberOfParticipants>{participantIds.length}</NumberOfParticipants>
+          <NumberOfParticipants>{Pluralize('participant', participantIds.length, true)}</NumberOfParticipants>
         </ParticipantsButton>
         {isSelectorOpen && (
           <StyledParticipantsSelector

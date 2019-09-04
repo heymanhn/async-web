@@ -20,12 +20,9 @@ const DiscussionContainer = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-
-  // Vertically center the page when content doesn't fit full height
-  minHeight: 'calc(100vh - 60px)', // 60px for the navigation bar
-
   margin: '0 auto',
   maxWidth: discussionViewport,
+  padding: '0 30px',
 }));
 
 const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
