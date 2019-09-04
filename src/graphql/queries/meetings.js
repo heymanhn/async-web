@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import conversationMessage from 'graphql/fragments/conversationMessage';
+import message from 'graphql/fragments/message';
 import meeting from 'graphql/fragments/meeting';
 
 export default gql`
@@ -10,7 +10,7 @@ export default gql`
         meeting @type(name: "Meeting") {
           ...MeetingObject
           lastMessage @type(name: "Message") {
-            ...ConversationMessageObject
+            ...MessageObject
           }
         }
         conversationCount
@@ -19,6 +19,6 @@ export default gql`
       pageToken
     }
   }
-  ${conversationMessage}
+  ${message}
   ${meeting}
 `;

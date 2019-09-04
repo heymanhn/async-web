@@ -7,8 +7,6 @@ import styled from '@emotion/styled';
 import meetingConversationsQuery from 'graphql/queries/meetingConversations';
 import { snakedQueryParams } from 'utils/queryParams';
 
-import DiscussionsListCell from './DiscussionsListCell';
-
 const Container = styled.div(({ theme: { colors } }) => ({
   border: `1px solid ${colors.borderGrey}`,
   margin: '15px 0 30px 20px',
@@ -59,14 +57,8 @@ const DiscussionsList = ({
 
   return (
     <Container>
-      {conversations.map(c => (
-        <DiscussionsListCell
-          key={c.id}
-          conversation={c}
-          onScrollTo={onScrollTo}
-          onSelectConversation={onSelectConversation}
-          isSelected={selectedConversationId === c.id}
-        />
+      {conversations.map(() => (
+        <div>hello</div>
       ))}
     </Container>
   );

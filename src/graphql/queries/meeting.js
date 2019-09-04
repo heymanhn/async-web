@@ -1,11 +1,10 @@
 import gql from 'graphql-tag';
 
-import conversation from 'graphql/fragments/conversation';
 import meeting from 'graphql/fragments/meeting';
-import messageContext from 'graphql/fragments/messageContext';
+import conversationItems from 'graphql/fragments/conversationItems';
 
 export default gql`
-  query Meeting($id: String!) {
+  query Meeting($id: String!, $queryParams: Object!) {
     meeting(id: $id) @rest(type: "Meeting", path: "/meetings/{args.id}") {
       ...MeetingObject
       participants @type(name: "[Participant]") {
@@ -16,13 +15,11 @@ export default gql`
           profilePictureUrl
         }
       }
-      conversations @type(name: "Conversation") {
-        ...ConversationObject
-        ...MessageContext
-      }
+    }
+    conversations(id: $id, queryParams: $queryParams) @rest(type: "ConversationsResponse", path: "/meetings/{args.id}/conversations?{args.queryParams}", method: "GET") {
+      ...ConversationItems
     }
   }
-  ${conversation}
   ${meeting}
-  ${messageContext}
+  ${conversationItems}
 `;

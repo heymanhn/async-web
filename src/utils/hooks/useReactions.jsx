@@ -12,7 +12,7 @@ import { useApolloClient, useQuery } from 'react-apollo';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import deleteReactionMutation from 'graphql/mutations/deleteReaction';
-import conversationMessageQuery from 'graphql/queries/conversationMessage';
+import messageQuery from 'graphql/queries/message';
 
 const reactionsReference = [
   {
@@ -62,7 +62,7 @@ const useReactions = ({ conversationId, messageId }) => {
         },
       },
       refetchQueries: [{
-        query: conversationMessageQuery,
+        query: messageQuery,
         variables: { conversationId, messageId },
       }],
     });
@@ -73,19 +73,19 @@ const useReactions = ({ conversationId, messageId }) => {
       mutation: deleteReactionMutation,
       variables: { id },
       refetchQueries: [{
-        query: conversationMessageQuery,
+        query: messageQuery,
         variables: { conversationId, messageId },
       }],
     });
   }
 
-  const { data } = useQuery(conversationMessageQuery, {
+  const { data } = useQuery(messageQuery, {
     variables: { conversationId, messageId },
   });
 
   let reactions = [];
-  if (data.conversationMessage) {
-    const { reactions: reax } = data.conversationMessage;
+  if (data.message) {
+    const { reactions: reax } = data.message;
     if (reax) reactions = reax;
   }
 
