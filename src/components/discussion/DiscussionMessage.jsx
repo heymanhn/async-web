@@ -108,16 +108,31 @@ const DiscussionMessage = ({
         },
       },
       update: (cache, { data: { createConversationMessage } }) => {
-        const { conversation, messages } = cache.readQuery({
-          query: conversationQuery, variables: { id: conversationId },
+        const {
+          conversation,
+          messages: { pageToken, items, __typename, messageCount },
+        } = cache.readQuery({
+          query: conversationQuery,
+          variables: { id: conversationId },
         });
-        messages.push(createConversationMessage);
+
         cache.writeQuery({
           query: conversationQuery,
           variables: { id: conversationId },
           data: {
             conversation,
-            messages,
+            messages: {
+              messageCount: messageCount + 1,
+              pageToken,
+              items: [
+                ...items,
+                {
+                  __typename: items[0].__typename,
+                  message: createConversationMessage,
+                },
+              ],
+              __typename,
+            },
           },
         });
       },
