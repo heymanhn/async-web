@@ -33,9 +33,7 @@ const Container = styled.div(({ initialHeight, mode }) => ({
 
 // Default styles for Roval editor UIs
 const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
-  '*': {
-    color: colors.contentText,
-  },
+  color: colors.contentText,
 
   'dl, ul, ol, blockquote, pre': {
     marginTop: '1em',
