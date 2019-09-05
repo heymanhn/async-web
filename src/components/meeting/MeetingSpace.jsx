@@ -54,12 +54,11 @@ const MeetingSpace = ({ meetingId }) => {
   if (loading || !data.meeting) return null;
 
   const { pageToken, items } = data.conversations;
-  const { title } = data.meeting;
   const conversations = (items || []).map(i => i.conversation);
 
   return (
     <Container>
-      <TitleBar meetingId={meetingId} title={title} />
+      <TitleBar meeting={data.meeting} />
       <DiscussionsContainer>
         {conversations.map(c => (
           <DiscussionRow key={c.id} conversation={c} />

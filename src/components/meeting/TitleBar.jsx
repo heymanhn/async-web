@@ -37,12 +37,19 @@ const Title = styled.div({
   marginBottom: '5px',
 });
 
-const TitleBar = ({ meetingId, title, ...props }) => (
+const TitleBar = ({
+  meeting: { author, id: meetingId, participants, title },
+  ...props
+}) => (
   <Container {...props}>
     <InnerContainer>
       <Details>
         <Title>{title}</Title>
-        <MeetingProperties meetingId={meetingId} />
+        <MeetingProperties
+          author={author}
+          initialParticipantIds={participants.map(p => p.user.id)}
+          meetingId={meetingId}
+        />
       </Details>
       <Actions>
         TBD
@@ -52,8 +59,7 @@ const TitleBar = ({ meetingId, title, ...props }) => (
 );
 
 TitleBar.propTypes = {
-  meetingId: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  meeting: PropTypes.object.isRequired,
 };
 
 export default TitleBar;

@@ -49,10 +49,9 @@ const StyledParticipantsSelector = styled(ParticipantsSelector)({
   top: '60px',
 });
 
-const MeetingProperties = ({ meetingId }) => {
+const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
   const [isSelectorOpen, setIsOpen] = useState(false);
-  const [participantIds, setParticipantIds] = useState(null);
-  const [initialParticipantIds, setInitialParticipantIds] = useState(null);
+  const [participantIds, setParticipantIds] = useState(initialParticipantIds);
   const [addParticipantAPI] = useMutation(addParticipantMutation);
   const [removeParticipantAPI] = useMutation(removeParticipantMutation);
 
@@ -93,19 +92,7 @@ const MeetingProperties = ({ meetingId }) => {
 
   const selector = useRef();
   useClickOutside({ handleClickOutside: saveChangesAndClose, ref: selector });
-  const { loading, error, data } = useQuery(meetingQuery, { variables: { id: meetingId } });
-  if (loading) return null;
-  if (error || !data.meeting) return <div>{error}</div>;
-
-  const { author, participants: initialParticipants } = data.meeting;
   const { organizationId } = getLocalUser();
-
-  if (!participantIds) {
-    const ids = initialParticipants.map(p => p.user.id);
-    setInitialParticipantIds(ids);
-    setParticipantIds(ids);
-    return null;
-  }
 
   return (
     <Container ref={selector}>
@@ -130,6 +117,8 @@ const MeetingProperties = ({ meetingId }) => {
 };
 
 MeetingProperties.propTypes = {
+  author: PropTypes.object.isRequired,
+  initialParticipantIds: PropTypes.array.isRequired,
   meetingId: PropTypes.string.isRequired,
 };
 
