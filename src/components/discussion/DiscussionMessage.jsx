@@ -117,12 +117,12 @@ const DiscussionMessage = ({
           messages: { pageToken, items, __typename, messageCount },
         } = cache.readQuery({
           query: conversationQuery,
-          variables: { id: conversationId },
+          variables: { id: conversationId, queryParams: {} },
         });
 
         cache.writeQuery({
           query: conversationQuery,
-          variables: { id: conversationId },
+          variables: { id: conversationId, queryParams: {} },
           data: {
             conversation,
             messages: {
@@ -193,13 +193,13 @@ const DiscussionMessage = ({
           messages: { pageToken, items, __typename, messageCount },
         } = cache.readQuery({
           query: conversationQuery,
-          variables: { id: conversationId },
+          variables: { id: conversationId, queryParams: {} },
         });
 
         const index = items.findIndex(i => i.message.id === messageId);
         cache.writeQuery({
           query: conversationQuery,
-          variables: { id: conversationId },
+          variables: { id: conversationId, queryParams: {} },
           data: {
             conversation,
             messages: {
