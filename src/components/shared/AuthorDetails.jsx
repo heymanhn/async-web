@@ -22,59 +22,63 @@ const Details = styled.div({
   alignItems: 'baseline',
 });
 
-const Author = styled.div({
+const Author = styled.div(({ size }) => ({
   fontWeight: 500,
-  fontSize: '14px',
-  marginRight: '20px',
-});
-
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  cursor: 'default',
-  fontSize: '14px',
+  fontSize: size === 'large' ? '14px' : '12px',
+  marginRight: '15px',
 }));
 
-const Separator = styled.span(({ theme: { colors } }) => ({
+const Timestamp = styled(Moment)(({ size, theme: { colors } }) => ({
   color: colors.grey3,
-  fontSize: '14px',
+  cursor: 'default',
+  fontSize: size === 'large' ? '14px' : '12px',
+}));
+
+const Separator = styled.span(({ size, theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: size === 'large' ? '14px' : '12px',
   margin: '0 10px',
 }));
 
-const EditedLabel = styled.span(({ theme: { colors } }) => ({
+const EditedLabel = styled.span(({ size, theme: { colors } }) => ({
   color: colors.grey3,
   cursor: 'default',
-  fontSize: '14px',
+  fontSize: size === 'large' ? '14px' : '12px',
 }));
 
-const separator = <Separator>&#8226;</Separator>;
-const editedLabel = <EditedLabel>Edited</EditedLabel>;
+const AuthorDetails = ({ author, createdAt, isEdited, mode, size }) => {
+  const separator = <Separator size={size}>&#8226;</Separator>;
+  const editedLabel = <EditedLabel size={size}>Edited</EditedLabel>;
 
-const AuthorDetails = ({ author, createdAt, isEdited, mode }) => (
-  <Container>
-    <AvatarWithMargin src={author.profilePictureUrl} size={32} />
-    <Details>
-      <Author>{author.fullName}</Author>
-      {mode === 'display' && (
-        <React.Fragment>
-          <Timestamp fromNow parse="X">{createdAt}</Timestamp>
-          {isEdited && separator}
-          {isEdited && editedLabel}
-        </React.Fragment>
-      )}
-    </Details>
-  </Container>
-);
+  return (
+    <Container>
+      <AvatarWithMargin src={author.profilePictureUrl} size={size === 'large' ? 32 : 24} />
+      <Details>
+        <Author size={size}>{author.fullName}</Author>
+        {mode === 'display' && (
+          <React.Fragment>
+            <Timestamp fromNow parse="X" size={size}>{createdAt}</Timestamp>
+            {isEdited && separator}
+            {isEdited && editedLabel}
+          </React.Fragment>
+        )}
+      </Details>
+    </Container>
+  );
+};
 
 AuthorDetails.propTypes = {
   author: PropTypes.object.isRequired,
   createdAt: PropTypes.number,
   isEdited: PropTypes.bool,
   mode: PropTypes.oneOf(['compose', 'display']).isRequired,
+  size: PropTypes.oneOf(['large', 'small']),
 };
 
 AuthorDetails.defaultProps = {
   createdAt: null,
   isEdited: false,
+  size: 'large',
 };
 
 export default AuthorDetails;

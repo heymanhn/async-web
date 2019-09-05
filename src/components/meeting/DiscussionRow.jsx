@@ -108,6 +108,7 @@ const DiscussionRow = ({ conversation, ...props }) => {
           author={author}
           createdAt={createdAt}
           mode="display"
+          size="small"
         />
       </Container>
     </StyledLink>
