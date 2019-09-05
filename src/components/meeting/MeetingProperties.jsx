@@ -1,12 +1,11 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation, useQuery } from 'react-apollo';
+import { useMutation } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
-import meetingQuery from 'graphql/queries/meeting';
 import addParticipantMutation from 'graphql/mutations/addParticipant';
 import removeParticipantMutation from 'graphql/mutations/removeParticipant';
 import useClickOutside from 'utils/hooks/useClickOutside';
@@ -24,6 +23,7 @@ const ParticipantsIndicator = styled.div({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
+  position: 'relative',
 });
 
 const ParticipantsButton = styled.div({
@@ -46,7 +46,7 @@ const NumberOfParticipants = styled.div(({ theme: { colors } }) => ({
 
 const StyledParticipantsSelector = styled(ParticipantsSelector)({
   position: 'absolute',
-  top: '60px',
+  top: '0px',
 });
 
 const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
