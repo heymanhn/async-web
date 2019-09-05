@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 import Pluralize from 'pluralize';
 import Truncate from 'react-truncate';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment, faSparkles } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled/macro';
 
 // import { getLocalUser } from 'utils/auth';
@@ -18,7 +20,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   width: '100%',
 
   ':hover': {
-    background: colors.bgGrey,
+    background: colors.lightestGrey,
   },
 }));
 
@@ -39,11 +41,23 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   },
 }));
 
-const ContextDisplay = styled.div(({ isUnread, theme: { colors } }) => ({
+const ContextDisplay = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: '5px',
+});
+
+const ContextIcon = styled(FontAwesomeIcon)(({ isunread, theme: { colors } }) => ({
+  color: isunread === 'true' ? colors.secondaryBlue : colors.grey5,
+  fontSize: '14px',
+  marginRight: '8px',
+}));
+
+const ContextLabel = styled.div(({ isUnread, theme: { colors } }) => ({
   color: isUnread ? colors.blue : colors.grey3,
   fontSize: '14px',
   fontWeight: isUnread ? 500 : 400,
-  marginBottom: '5px',
 }));
 
 const DiscussionTitle = styled.div(({ isUnread }) => ({
@@ -60,7 +74,7 @@ const MessagePreview = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DiscussionRow = ({ conversation, ...props }) => {
-  const { id: conversationId, lastMessage, messageCount, title } = conversation;
+  const { id: conversationId, lastMessage, messageCount, tags, title } = conversation;
   const { author, body, createdAt } = lastMessage;
   const { text } = body;
   const messagePreview = text ? text.replace(/\n/, ' ') : null;
@@ -80,16 +94,28 @@ const DiscussionRow = ({ conversation, ...props }) => {
   //   return userUnreadRecord ? userUnreadRecord.count : -1;
   // }
 
-  // TODO: unread states
   function showContext() {
     let displayText = '';
-    if (messageCount <= 1) {
+    let isUnread = false;
+    if (tags.includes('new_discussion')) {
       displayText = 'New discussion';
+      isUnread = true;
+    } else if (tags.includes('new_messages')) {
+      displayText = 'New messages';
+      isUnread = true;
     } else {
       displayText = Pluralize('message', messageCount, true);
     }
 
-    return <ContextDisplay>{displayText}</ContextDisplay>;
+    return (
+      <ContextDisplay>
+        <ContextIcon
+          icon={displayText === 'New discussion' ? faSparkles : faComment}
+          isunread={isUnread.toString()}
+        />
+        <ContextLabel isUnread={isUnread}>{displayText}</ContextLabel>
+      </ContextDisplay>
+    );
   }
 
   return (
