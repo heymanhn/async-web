@@ -40,7 +40,7 @@ const Discussion = ({ conversationId, ...props }) => {
   const [isFetching, setIsFetching] = useState(false);
 
   const { loading, error, data, fetchMore } = useQuery(conversationQuery, {
-    variables: { id: conversationId },
+    variables: { id: conversationId, queryParams: {} },
   });
   if (loading) return null;
   if (error || !data.conversation) return <div>{error}</div>;

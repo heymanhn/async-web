@@ -19,7 +19,8 @@ const Container = styled.div(({ hover, theme: { colors } }) => ({
 }));
 
 const StyledLink = styled(Link)(({ theme: { colors } }) => ({
-  color: colors.mainText,
+  // Setting !important because for some reason the 10th item's text was blue
+  color: `${colors.mainText} !important`,
   textDecoration: 'none',
 
   ':hover': {
@@ -28,9 +29,6 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   },
 
   ':last-of-type': {
-    color: colors.mainText,
-    textDecoration: 'none',
-
     [Container]: {
       borderBottom: `1px solid ${colors.borderGrey}`,
     },
