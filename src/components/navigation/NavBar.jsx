@@ -8,7 +8,6 @@ import logo from 'images/logo.png';
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 
 import NotificationSystem from 'components/notifications/NotificationSystem';
-import MeetingProperties from 'components/meeting/MeetingProperties';
 import AvatarDropdown from './AvatarDropdown';
 import CreateMeetingSpaceButton from './CreateMeetingSpaceButton';
 
@@ -99,7 +98,7 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 10px',
 }));
 
-const NavBar = ({ meetingId, mode, title }) => (
+const NavBar = ({ mode, title }) => (
   <Query query={isLoggedInQuery}>
     {({ data }) => (
       <NavigationBar>
@@ -113,7 +112,6 @@ const NavBar = ({ meetingId, mode, title }) => (
               />
             </Link>
             <Title>{title}</Title>
-            {meetingId && <MeetingProperties meetingId={meetingId} />}
             {data.saveStatus === 'success' && <SavedIndicator>Saved!</SavedIndicator>}
             {data.saveStatus === 'error' && <ErrorIndicator>Failed to save</ErrorIndicator>}
           </LeftContainer>
@@ -132,13 +130,8 @@ const NavBar = ({ meetingId, mode, title }) => (
 );
 
 NavBar.propTypes = {
-  meetingId: PropTypes.string,
   mode: PropTypes.oneOf(['normal', 'wide']).isRequired,
   title: PropTypes.string.isRequired,
-};
-
-NavBar.defaultProps = {
-  meetingId: null,
 };
 
 export default NavBar;

@@ -1,253 +1,113 @@
-import React, { createRef, Component } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Query } from 'react-apollo';
+import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import meetingQuery from 'graphql/queries/meeting';
-import withViewedReaction from 'utils/withViewedReaction';
+import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
+import { snakedQueryParams } from 'utils/queryParams';
+// import withViewedReaction from 'utils/withViewedReaction';
 
-import Layout from 'components/Layout';
-import DiscussionsList from './DiscussionsList';
-import DiscussionComposer from './DiscussionComposer';
-import DiscussionThread from './DiscussionThread';
+import DiscussionRow from './DiscussionRow';
+import TitleBar from './TitleBar';
 
-const Container = styled.div(({ theme: { wideViewport } }) => ({
+const Container = styled.div({
+  marginBottom: '60px',
+});
+
+const DiscussionsContainer = styled.div(({ theme: { meetingSpaceViewport } }) => ({
   display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'flex-start',
+  flexDirection: 'column',
 
   margin: '0 auto',
-  maxWidth: wideViewport,
-  padding: '30px 0',
+  maxWidth: meetingSpaceViewport,
+  padding: '30px',
 }));
 
-const LeftColumn = styled.div({
-  maxHeight: 'calc(100vh - 101px)',
-  overflow: 'auto',
-  position: 'fixed',
-});
+// const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
+//   display: 'flex',
+//   justifyContent: 'space-between',
+//   alignItems: 'center',
 
-const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
+//   background: colors.white,
+//   border: `1px solid ${colors.borderGrey}`,
+//   cursor: 'pointer',
+//   height: '48px',
+//   marginLeft: '20px',
+//   padding: '0 30px',
+//   width: '460px', // Define as a constant elsewhere?
+// }));
 
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  cursor: 'pointer',
-  height: '48px',
-  marginLeft: '20px',
-  padding: '0 30px',
-  width: '460px', // Define as a constant elsewhere?
-}));
+// const ButtonLabel = styled.div(({ theme: { colors } }) => ({
+//   color: colors.grey2,
+//   fontSize: '16px',
+//   fontWeight: 500,
+// }));
 
-const ButtonLabel = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  fontSize: '16px',
-  fontWeight: 500,
-}));
+// const PlusSign = styled.div(({ theme: { colors } }) => ({
+//   color: colors.grey3,
+//   fontSize: '24px',
+//   fontWeight: 500,
+//   marginTop: '-4px',
+// }));
 
-const PlusSign = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '24px',
-  fontWeight: 500,
-  marginTop: '-4px',
-}));
+const MeetingSpace = ({ meetingId }) => {
+  const discussionsListRef = useRef(null);
+  const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionsListRef);
+  const [isFetching, setIsFetching] = useState(false);
 
-const DiscussionsContainer = styled.div({});
+  const { loading, data, fetchMore } = useQuery(meetingQuery, {
+    variables: { id: meetingId, queryParams: {} },
+  });
+  if (loading || !data.meeting) return null;
 
-const MainColumn = styled.div(({ theme: { colors } }) => ({
-  borderTop: `1px solid ${colors.borderGrey}`,
-  margin: '0 20px 0 500px',
-}));
+  const { pageToken, items } = data.conversations;
+  const conversations = (items || []).map(i => i.conversation);
 
-const StyledDiscussionComposer = styled(DiscussionComposer)({
-  maxWidth: '700px',
-  width: '700px',
-});
+  // HN: Opportunity to DRY this up with the fetch handler for the discussion page?
+  function fetchMoreDiscussions() {
+    const newQueryParams = {};
+    if (pageToken) newQueryParams.pageToken = pageToken;
 
-const StyledDiscussionThread = styled(DiscussionThread)(({ theme: { colors } }) => ({
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderTop: 'none',
-  marginBottom: '30px',
-  maxWidth: '700px',
-  width: '700px',
-}));
+    fetchMore({
+      query: meetingQuery,
+      variables: { id: meetingId, queryParams: snakedQueryParams(newQueryParams) },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        const { items: previousItems } = previousResult.conversations;
+        const { items: newItems, pageToken: newToken } = fetchMoreResult.conversations;
+        setShouldFetch(false);
+        setIsFetching(false);
 
-class MeetingSpace extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isComposing: false,
-      selectedConversationId: null,
-    };
-
-    this.listRef = createRef();
-    this.handleCancelCompose = this.handleCancelCompose.bind(this);
-    this.handleCreateDiscussion = this.handleCreateDiscussion.bind(this);
-    this.handleScrollToCell = this.handleScrollToCell.bind(this);
-    this.handleSelectConversation = this.handleSelectConversation.bind(this);
-    this.findSelectedConversation = this.findSelectedConversation.bind(this);
-    this.resetDisplayURL = this.resetDisplayURL.bind(this);
-    this.showCreatedConversation = this.showCreatedConversation.bind(this);
-    this.updateDisplayURL = this.updateDisplayURL.bind(this);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { isComposing, selectedConversationId: cid } = this.state;
-
-    const switchConvo = cid && (cid !== prevState.selectedConversationId);
-    const cancelCompose = !isComposing && prevState.isComposing; // WHAT HAPPENED HERE?
-    if (switchConvo || cancelCompose) this.updateDisplayURL();
-
-    const switchToCompose = isComposing && !prevState.isComposing;
-    const clearSelectedConvo = !cid && prevState.selectedConversationId;
-    if (switchToCompose || clearSelectedConvo) this.resetDisplayURL();
-  }
-
-  handleCancelCompose() {
-    this.setState({ isComposing: false });
-  }
-
-  handleCreateDiscussion() {
-    this.setState({ isComposing: true });
-  }
-
-  handleScrollToCell(targetElement) {
-    const element = this.listRef.current;
-
-    if (!element) {
-      // The ref would be around by the next cycle
-      setTimeout(() => this.handleScrollToCell(targetElement), 0);
-      return;
-    }
-
-    // Give it some breathing room at the top
-    element.scrollTo({ top: targetElement.offsetTop - 200 });
-  }
-
-  handleSelectConversation(conversationId) {
-    const { markAsRead } = this.props;
-    markAsRead(conversationId);
-
-    this.setState({ isComposing: false, selectedConversationId: conversationId });
-  }
-
-  findSelectedConversation(conversations) {
-    const { selectedConversationId } = this.state;
-    const { conversationId, markAsRead } = this.props;
-
-    if (!conversations) return {};
-    if (conversationId && !selectedConversationId) {
-      markAsRead(conversationId);
-      return conversations.find(c => c.id === conversationId);
-    }
-    if (!selectedConversationId && conversations.length) return conversations[0];
-    return conversations.find(c => c.id === selectedConversationId) || {};
-  }
-
-  resetDisplayURL() {
-    const { meetingId } = this.props;
-    const url = `${origin}/spaces/${meetingId}`;
-    window.history.replaceState({}, `meeting space: ${meetingId}`, url);
-  }
-
-  async showCreatedConversation(conversationId) {
-    this.setState({
-      isComposing: false,
-      selectedConversationId: conversationId,
+        return {
+          meeting: fetchMoreResult.meeting,
+          conversations: {
+            pageToken: newToken,
+            totalHits: fetchMoreResult.conversations.totalHits,
+            items: [...previousItems, ...newItems],
+            __typename: fetchMoreResult.conversations.__typename,
+          },
+        };
+      },
     });
   }
 
-  // Updates the URL in the address bar to reflect this discussion
-  // https://developer.mozilla.org/en-US/docs/Web/API/History_API#Adding_and_modifying_history_entries
-  updateDisplayURL() {
-    const { selectedConversationId } = this.state;
-    const { meetingId } = this.props;
-    const { origin } = window.location;
-
-    if (!selectedConversationId) return this.resetDisplayURL();
-
-    const url = `${origin}/spaces/${meetingId}/conversations/${selectedConversationId}`;
-    return window.history.replaceState({}, `conversation: ${selectedConversationId}`, url);
+  if (shouldFetch && pageToken && !isFetching) {
+    setIsFetching(true);
+    fetchMoreDiscussions();
   }
 
-  render() {
-    const { isComposing, selectedConversationId } = this.state;
-    const { conversationId, meetingId } = this.props;
-
-    return (
-      <Query
-        query={meetingQuery}
-        variables={{ id: meetingId }}
-      >
-        {({ loading, error, data }) => {
-          if (loading) return null;
-          if (error || !data.meeting) return <div>{error}</div>;
-
-          const { conversations, title } = data.meeting;
-          const showComposer = isComposing || !conversations;
-          const selectedConvo = this.findSelectedConversation(conversations);
-          const isFirstLoadWithConvoParam = conversationId && !selectedConversationId;
-          const hideCancelButton = !conversations || !conversations.length;
-
-          return (
-            <Layout
-              hideFooter
-              meetingId={meetingId}
-              mode="wide"
-              title={title || 'Untitled Discussion'}
-            >
-              <Container>
-                <LeftColumn>
-                  <StartDiscussionButton onClick={this.handleCreateDiscussion}>
-                    <ButtonLabel>Start a discussion</ButtonLabel>
-                    <PlusSign>+</PlusSign>
-                  </StartDiscussionButton>
-                  <DiscussionsContainer ref={this.listRef}>
-                    <DiscussionsList
-                      meetingId={meetingId}
-                      onScrollTo={isFirstLoadWithConvoParam ? this.handleScrollToCell : undefined}
-                      onSelectConversation={this.handleSelectConversation}
-                      selectedConversationId={isComposing ? null : selectedConvo.id}
-                    />
-                  </DiscussionsContainer>
-                </LeftColumn>
-                <MainColumn>
-                  {showComposer ? (
-                    <StyledDiscussionComposer
-                      afterSubmit={this.showCreatedConversation}
-                      hideCancelButton={hideCancelButton}
-                      meetingId={meetingId}
-                      onCancelCompose={this.handleCancelCompose}
-                    />
-                  ) : (
-                    <StyledDiscussionThread
-                      conversationId={selectedConvo.id}
-                      conversationTitle={selectedConvo.title}
-                      meetingId={meetingId}
-                    />
-                  )}
-                </MainColumn>
-              </Container>
-            </Layout>
-          );
-        }}
-      </Query>
-    );
-  }
-}
+  return (
+    <Container>
+      <TitleBar meeting={data.meeting} />
+      <DiscussionsContainer ref={discussionsListRef}>
+        {conversations.map(c => <DiscussionRow key={c.id} conversation={c} />)}
+      </DiscussionsContainer>
+    </Container>
+  );
+};
 
 MeetingSpace.propTypes = {
-  conversationId: PropTypes.string, // conversation Id
-  markAsRead: PropTypes.func.isRequired,
   meetingId: PropTypes.string.isRequired,
 };
 
-MeetingSpace.defaultProps = {
-  conversationId: null,
-};
-
-export default withViewedReaction(MeetingSpace);
+export default MeetingSpace;

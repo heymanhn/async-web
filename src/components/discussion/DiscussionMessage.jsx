@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
-import createMessageMutation from 'graphql/mutations/createConversationMessage';
-import updateMessageMutation from 'graphql/mutations/updateConversationMessage';
-import deleteMessageMutation from 'graphql/mutations/deleteConversationMessage';
+import createMessageMutation from 'graphql/mutations/createMessage';
+import updateMessageMutation from 'graphql/mutations/updateMessage';
+import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
@@ -111,18 +111,18 @@ const DiscussionMessage = ({
           },
         },
       },
-      update: (cache, { data: { createConversationMessage } }) => {
+      update: (cache, { data: { createMessage } }) => {
         const {
           conversation,
           messages: { pageToken, items, __typename, messageCount },
         } = cache.readQuery({
           query: conversationQuery,
-          variables: { id: conversationId },
+          variables: { id: conversationId, queryParams: {} },
         });
 
         cache.writeQuery({
           query: conversationQuery,
-          variables: { id: conversationId },
+          variables: { id: conversationId, queryParams: {} },
           data: {
             conversation,
             messages: {
@@ -132,7 +132,7 @@ const DiscussionMessage = ({
                 ...items,
                 {
                   __typename: items[0].__typename,
-                  message: createConversationMessage,
+                  message: createMessage,
                 },
               ],
               __typename,
@@ -142,7 +142,7 @@ const DiscussionMessage = ({
       },
     });
 
-    if (data.createConversationMessage) {
+    if (data.createMessage) {
       setIsSubmitting(false);
       return Promise.resolve();
     }
@@ -168,8 +168,8 @@ const DiscussionMessage = ({
       },
     });
 
-    if (data.updateConversationMessage) {
-      setMessage(data.updateConversationMessage);
+    if (data.updateMessage) {
+      setMessage(data.updateMessage);
       setIsSubmitting(false);
       return Promise.resolve();
     }
@@ -178,7 +178,7 @@ const DiscussionMessage = ({
   }
 
   async function handleDelete() {
-    const userChoice = window.confirm('Are you sure you want to delete this message?')
+    const userChoice = window.confirm('Are you sure you want to delete this message?');
     if (!userChoice) return;
 
     client.mutate({
@@ -193,13 +193,13 @@ const DiscussionMessage = ({
           messages: { pageToken, items, __typename, messageCount },
         } = cache.readQuery({
           query: conversationQuery,
-          variables: { id: conversationId },
+          variables: { id: conversationId, queryParams: {} },
         });
 
         const index = items.findIndex(i => i.message.id === messageId);
         cache.writeQuery({
           query: conversationQuery,
-          variables: { id: conversationId },
+          variables: { id: conversationId, queryParams: {} },
           data: {
             conversation,
             messages: {

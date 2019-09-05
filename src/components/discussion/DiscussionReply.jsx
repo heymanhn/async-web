@@ -4,9 +4,6 @@ import { withApollo } from 'react-apollo';
 
 import currentUserQuery from 'graphql/queries/currentUser';
 import createConversationMutation from 'graphql/mutations/createConversation';
-import createConversationMessageMutation from 'graphql/mutations/createConversationMessage';
-import meetingQuery from 'graphql/queries/meeting';
-import updateConversationMessageMutation from 'graphql/mutations/updateConversationMessage';
 import { getLocalUser } from 'utils/auth';
 
 import LargeReply from 'components/discussion/LargeReply';
@@ -34,52 +31,6 @@ class DiscussionReply extends Component {
 
     const response = await client.query({ query: currentUserQuery, variables: { id: userId } });
     if (response.data) this.setState({ currentUser: response.data.user });
-  }
-
-  async handleSubmit({ payload, text }) {
-    const { mode } = this.state;
-    const {
-      client,
-      conversationId,
-      meetingId,
-      message,
-      afterSubmit,
-    } = this.props;
-
-    // The currently focused message not having a conversation ID means we need to
-    // create a new (nested) one
-    if (!conversationId) return this.createNestedConversation({ payload, text });
-
-    const mutation = mode === 'compose'
-      ? createConversationMessageMutation : updateConversationMessageMutation;
-    const response = await client.mutate({
-      mutation,
-      variables: {
-        id: conversationId,
-        mid: message.id,
-        input: {
-          meetingId,
-          body: {
-            formatter: 'slatejs',
-            text,
-            payload,
-          },
-        },
-      },
-      refetchQueries: [{
-        query: meetingQuery,
-        variables: { id: meetingId },
-      }],
-    });
-
-    if (response.data) {
-      const { createConversationMessage, updateConversationMessage } = response.data;
-      const msg = mode === 'compose' ? createConversationMessage : updateConversationMessage;
-      afterSubmit(msg);
-      return Promise.resolve();
-    }
-
-    return Promise.reject(new Error('Failed to save discussion reply'));
   }
 
   handleCancel() {
@@ -160,7 +111,7 @@ class DiscussionReply extends Component {
       conversationId,
       handleCancel: this.handleCancel,
       handleFocusCurrentMessage: this.handleFocusCurrentMessage,
-      handleSubmit: this.handleSubmit,
+      handleSubmit: () => {},
       handleToggleEditMode: this.toggleEditMode,
       message,
       mode,

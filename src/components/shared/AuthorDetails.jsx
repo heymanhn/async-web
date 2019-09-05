@@ -67,11 +67,14 @@ const AuthorDetails = ({ author, createdAt, isEdited, mode }) => (
 
 AuthorDetails.propTypes = {
   author: PropTypes.object.isRequired,
-  createdAt: PropTypes.number.isRequired,
+  createdAt: PropTypes.number,
   isEdited: PropTypes.bool,
   mode: PropTypes.oneOf(['compose', 'display']).isRequired,
 };
 
-AuthorDetails.defaultProps = { isEdited: false };
+AuthorDetails.defaultProps = {
+  createdAt: null,
+  isEdited: false,
+};
 
 export default AuthorDetails;
