@@ -3,11 +3,20 @@ import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 import Pluralize from 'pluralize';
 import Truncate from 'react-truncate';
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 
 // import { getLocalUser } from 'utils/auth';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
+
+const Container = styled.div(({ hover, theme: { colors } }) => ({
+  background: hover ? colors.bgGrey : colors.white,
+  border: `1px solid ${colors.borderGrey}`,
+  borderBottom: 'none',
+  cursor: 'pointer',
+  padding: '25px 30px',
+  width: '100%',
+}));
 
 const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   color: colors.mainText,
@@ -17,22 +26,19 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
     color: colors.mainText,
     textDecoration: 'none',
   },
-}));
 
-const Container = styled.div(({ hover, theme: { colors } }) => ({
-  background: hover ? colors.bgGrey : colors.white,
-  borderBottom: `1px solid ${colors.borderGrey}`,
-  cursor: 'pointer',
-  padding: '25px 30px',
-  width: '100%',
+  ':last-of-type': {
+    color: colors.mainText,
+    textDecoration: 'none',
 
-  // ':last-of-type': {
-  //   borderBottom: 'none',
-  // },
+    [Container]: {
+      borderBottom: `1px solid ${colors.borderGrey}`,
+    },
+  },
 }));
 
 const ContextDisplay = styled.div(({ isUnread, theme: { colors } }) => ({
-  color: isUnread ? colors.blue : colors.grey4,
+  color: isUnread ? colors.blue : colors.grey3,
   fontSize: '14px',
   fontWeight: isUnread ? 500 : 400,
   marginBottom: '5px',
