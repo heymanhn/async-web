@@ -9,13 +9,17 @@ import styled from '@emotion/styled/macro';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 
-const Container = styled.div(({ hover, theme: { colors } }) => ({
-  background: hover ? colors.bgGrey : colors.white,
+const Container = styled.div(({ theme: { colors } }) => ({
+  background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderBottom: 'none',
   cursor: 'pointer',
   padding: '25px 30px',
   width: '100%',
+
+  ':hover': {
+    background: colors.bgGrey,
+  },
 }));
 
 const StyledLink = styled(Link)(({ theme: { colors } }) => ({
