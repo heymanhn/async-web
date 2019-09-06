@@ -12,6 +12,5 @@ export default gql`
     }
     createdAt
     updatedAt
-    tags
   }
 `;
