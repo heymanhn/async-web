@@ -1,6 +1,3 @@
-// HERMAN TODO: Rewrite this component using the useReactions hook.
-// And only make the small version of this.
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';

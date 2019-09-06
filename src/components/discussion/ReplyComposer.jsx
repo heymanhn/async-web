@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import withViewedReaction from 'utils/withViewedReaction';
-
 import DiscussionReply from './DiscussionReply';
 
 const Container = styled.div(({ roundedCorner }) => ({
@@ -43,17 +41,11 @@ const ReplyComposer = ({
   afterSubmit,
   conversationId,
   focusedMessage,
-  markAsRead,
-  markAsReadOnClick,
   meetingId,
   ...props
 }) => {
   const [isComposing, setIsComposing] = useState(false);
 
-  function toggleComposeMode() {
-    if (!isComposing && markAsReadOnClick) markAsRead(conversationId);
-    setIsComposing(!isComposing);
-  }
   function disableComposeMode() {
     setIsComposing(false);
   }
@@ -63,7 +55,7 @@ const ReplyComposer = ({
   useEffect(disableComposeMode, [conversationId]);
 
   const addReplyButton = (
-    <Button onClick={toggleComposeMode}>
+    <Button>
       <PlusSign>+</PlusSign>
       <ButtonText>ADD A REPLY</ButtonText>
     </Button>
@@ -76,7 +68,6 @@ const ReplyComposer = ({
       focusedMessage={focusedMessage}
       initialMode="compose"
       meetingId={meetingId}
-      onCancelCompose={toggleComposeMode}
       source="replyComposer"
     />
   );
@@ -91,8 +82,6 @@ ReplyComposer.propTypes = {
   afterSubmit: PropTypes.func,
   conversationId: PropTypes.string.isRequired,
   focusedMessage: PropTypes.object,
-  markAsRead: PropTypes.func.isRequired,
-  markAsReadOnClick: PropTypes.bool,
   meetingId: PropTypes.string.isRequired,
   roundedCorner: PropTypes.bool,
 };
@@ -100,8 +89,7 @@ ReplyComposer.propTypes = {
 ReplyComposer.defaultProps = {
   afterSubmit: () => {},
   focusedMessage: null,
-  markAsReadOnClick: true,
   roundedCorner: false,
 };
 
-export default withViewedReaction(ReplyComposer);
+export default ReplyComposer;

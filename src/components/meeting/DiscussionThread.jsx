@@ -6,7 +6,6 @@ import styled from '@emotion/styled/macro';
 import conversationMessagesQuery from 'graphql/queries/conversationMessages';
 import meetingQuery from 'graphql/queries/meeting';
 import updateConversationMutation from 'graphql/mutations/updateConversation';
-import withViewedReaction from 'utils/withViewedReaction';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
 
@@ -40,7 +39,6 @@ const Separator = styled.hr(({ theme: { colors } }) => ({
 const DiscussionThread = ({
   conversationId,
   conversationTitle,
-  markAsRead,
   meetingId,
   ...props
 }) => {
@@ -116,7 +114,6 @@ const DiscussionThread = ({
 
       const { childConversationId } = newFocusedMessage; // indicates nested conversation
       if (childConversationId) {
-        markAsRead(childConversationId);
         const { messages: childMessages } = await fetchMessages(childConversationId);
 
         // Backend returns the originating message of the nested conversation as the first
@@ -259,7 +256,6 @@ const DiscussionThread = ({
 DiscussionThread.propTypes = {
   conversationId: PropTypes.string.isRequired,
   conversationTitle: PropTypes.string,
-  markAsRead: PropTypes.func.isRequired,
   meetingId: PropTypes.string.isRequired,
 };
 
@@ -267,4 +263,4 @@ DiscussionThread.defaultProps = {
   conversationTitle: null,
 };
 
-export default withViewedReaction(DiscussionThread);
+export default DiscussionThread;

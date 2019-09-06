@@ -4,9 +4,10 @@ import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import meetingQuery from 'graphql/queries/meeting';
+import { matchCurrentUserId } from 'utils/auth';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
-// import withViewedReaction from 'utils/withViewedReaction';
+import useViewedReaction from 'utils/hooks/useViewedReaction';
 
 import DiscussionRow from './DiscussionRow';
 import TitleBar from './TitleBar';
@@ -82,14 +83,21 @@ const MeetingSpace = ({ meetingId }) => {
   const discussionsListRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionsListRef);
   const [isFetching, setIsFetching] = useState(false);
+  const { markAsRead } = useViewedReaction(meetingId);
 
   const { loading, data, fetchMore } = useQuery(meetingQuery, {
     variables: { id: meetingId, queryParams: {} },
   });
   if (loading || !data.meeting) return null;
 
+  const { reactions } = data.meeting;
   const { pageToken, items } = data.conversations;
   const conversations = (items || []).map(i => i.conversation);
+
+  function hasCurrentUserViewed() {
+    return !!(reactions || []).find(r => r.code === 'viewed' && matchCurrentUserId(r.author.id));
+  }
+  if (!hasCurrentUserViewed()) markAsRead({ objectType: 'meeting' });
 
   // HN: Opportunity to DRY this up with the fetch handler for the discussion page?
   function fetchMoreDiscussions() {
