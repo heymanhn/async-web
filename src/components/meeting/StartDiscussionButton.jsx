@@ -4,13 +4,13 @@ import styled from '@emotion/styled';
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'center',
+  alignItems: 'baseline',
 
   background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   cursor: 'pointer',
-  padding: '5px 20px',
+  padding: '2px 20px 5px',
 }));
 
 const PlusSign = styled.div(({ theme: { colors } }) => ({
