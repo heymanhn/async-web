@@ -3,17 +3,16 @@ import { useApolloClient } from 'react-apollo';
 import createReactionMutation from 'graphql/mutations/createReaction';
 // import conversationQuery from 'graphql/queries/conversation';
 
-const useViewedReaction = (meetingId) => {
+const useViewedReaction = () => {
   const client = useApolloClient();
 
-  function markAsRead({ objectType, conversationId } = {}) {
+  function markAsRead({ objectType, objectId } = {}) {
     client.mutate({
       mutation: createReactionMutation,
       variables: {
         input: {
           objectType,
-          objectId: objectType === 'conversation' ? conversationId : meetingId,
-          parentId: meetingId,
+          objectId,
           code: 'viewed',
         },
       },

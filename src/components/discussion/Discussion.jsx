@@ -5,6 +5,8 @@ import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
+import useMountEffect from 'utils/hooks/useMountEffect';
+import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
 
 import RovalEditor from 'components/editor/RovalEditor';
@@ -38,6 +40,9 @@ const Discussion = ({ conversationId, ...props }) => {
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
+
+  const { markAsRead } = useViewedReaction();
+  useMountEffect(() => markAsRead({ objectType: 'conversation', objectId: conversationId }));
 
   const { loading, error, data, fetchMore } = useQuery(conversationQuery, {
     variables: { id: conversationId, queryParams: {} },

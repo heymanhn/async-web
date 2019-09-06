@@ -57,7 +57,6 @@ const useReactions = ({ conversationId, messageId }) => {
         input: {
           objectType: 'message',
           objectId: messageId,
-          parentId: conversationId,
           code,
         },
       },

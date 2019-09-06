@@ -83,7 +83,7 @@ const MeetingSpace = ({ meetingId }) => {
   const discussionsListRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionsListRef);
   const [isFetching, setIsFetching] = useState(false);
-  const { markAsRead } = useViewedReaction(meetingId);
+  const { markAsRead } = useViewedReaction();
 
   const { loading, data, fetchMore } = useQuery(meetingQuery, {
     variables: { id: meetingId, queryParams: {} },
@@ -97,7 +97,7 @@ const MeetingSpace = ({ meetingId }) => {
   function hasCurrentUserViewed() {
     return !!(reactions || []).find(r => r.code === 'viewed' && matchCurrentUserId(r.author.id));
   }
-  if (!hasCurrentUserViewed()) markAsRead({ objectType: 'meeting' });
+  if (!hasCurrentUserViewed()) markAsRead({ objectType: 'meeting', objectId: meetingId });
 
   // HN: Opportunity to DRY this up with the fetch handler for the discussion page?
   function fetchMoreDiscussions() {

@@ -6,7 +6,6 @@ export default gql`
     code
     objectType
     objectId
-    parentId
     author @type(name: "Author") {
       id
       fullName
