@@ -68,7 +68,7 @@ function bucketDiscussions(conversations) {
 
   conversations.forEach((c) => {
     const unreadTags = ['new_discussion', 'new_messages'];
-    if ((c.tags && unreadTags).length) {
+    if (c.tags.filter(t => unreadTags.includes(t)).length) {
       unreadDiscussions.push(c);
     } else {
       readDiscussions.push(c);
@@ -124,23 +124,27 @@ const MeetingSpace = ({ meetingId }) => {
   }
 
   const [unreadDiscussions, readDiscussions] = bucketDiscussions(conversations);
+  const unreadRows = (
+    <DiscussionList>
+      <ListLabel>UNREAD DISCUSSIONS</ListLabel>
+      {unreadDiscussions.map(c => <DiscussionRow key={c.id} conversation={c} />)}
+    </DiscussionList>
+  );
+  const readRows = (
+    <DiscussionList>
+      <ListLabel>
+        {unreadDiscussions.length > 0 ? 'FROM EARLIER' : 'CURRENT DISCUSSIONS'}
+      </ListLabel>
+      {readDiscussions.map(c => <DiscussionRow key={c.id} conversation={c} />)}
+    </DiscussionList>
+  );
 
   return (
     <Container>
       <TitleBar meeting={data.meeting} />
       <DiscussionsContainer ref={discussionsListRef}>
-        {unreadDiscussions.length > 0 && (
-          <DiscussionList>
-            <ListLabel>UNREAD DISCUSSIONS</ListLabel>
-            {unreadDiscussions.map(c => <DiscussionRow key={c.id} conversation={c} />)}
-          </DiscussionList>
-        )}
-        {readDiscussions.length > 0 && (
-          <DiscussionList>
-            <ListLabel>FROM EARLIER</ListLabel>
-            {readDiscussions.map(c => <DiscussionRow key={c.id} conversation={c} />)}
-          </DiscussionList>
-        )}
+        {unreadDiscussions.length > 0 && unreadRows}
+        {readDiscussions.length > 0 && readRows}
       </DiscussionsContainer>
     </Container>
   );

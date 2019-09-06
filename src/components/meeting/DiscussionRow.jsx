@@ -7,8 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faSparkles } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled/macro';
 
-// import { getLocalUser } from 'utils/auth';
-
 import AuthorDetails from 'components/shared/AuthorDetails';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -78,31 +76,14 @@ const DiscussionRow = ({ conversation, ...props }) => {
   const { author, body, createdAt } = lastMessage;
   const { text } = body;
   const messagePreview = text ? text.replace(/\n/, ' ') : null;
-  // const { userId } = getLocalUser();
-
-  /*
-   * TODO: Re-implement later
-   *
-   * Conditions that indicate unread:
-   * 1. no unreadCounts from the current user (user hasn't seen this thread at all)
-   * 2. user has an unreadCount where count > 0 (user hasn't read `count` messages)
-   *
-   * Return -1 if user hasn't read anything, or the number of unread messages
-   */
-  // function unreadMessageCount() {
-  //   const userUnreadRecord = unreadCounts.find(c => c.userId === userId);
-  //   return userUnreadRecord ? userUnreadRecord.count : -1;
-  // }
+  const isUnread = tags.filter(t => ['new_discussion', 'new_messages'].includes(t)).length > 0;
 
   function showContext() {
     let displayText = '';
-    let isUnread = false;
     if (tags.includes('new_discussion')) {
       displayText = 'New discussion';
-      isUnread = true;
     } else if (tags.includes('new_messages')) {
       displayText = 'New messages';
-      isUnread = true;
     } else {
       displayText = Pluralize('message', messageCount, true);
     }
@@ -122,7 +103,7 @@ const DiscussionRow = ({ conversation, ...props }) => {
     <StyledLink to={`/discussions/${conversationId}`}>
       <Container {...props}>
         {showContext()}
-        <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
+        <DiscussionTitle isUnread={isUnread}>{title || 'Untitled Discussion'}</DiscussionTitle>
         {messagePreview && (
           <MessagePreview>
             <Truncate lines={2}>
