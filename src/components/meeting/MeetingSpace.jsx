@@ -21,7 +21,18 @@ const DiscussionsContainer = styled.div(({ theme: { meetingSpaceViewport } }) =>
 
   margin: '0 auto',
   maxWidth: meetingSpaceViewport,
-  padding: '30px',
+  padding: '50px 30px',
+}));
+
+const DiscussionList = styled.div({
+  marginBottom: '50px',
+});
+
+const ListLabel = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '14px',
+  fontWeight: 500,
+  marginBottom: '15px',
 }));
 
 // const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
@@ -50,6 +61,22 @@ const DiscussionsContainer = styled.div(({ theme: { meetingSpaceViewport } }) =>
 //   fontWeight: 500,
 //   marginTop: '-4px',
 // }));
+
+function bucketDiscussions(conversations) {
+  const unreadDiscussions = [];
+  const readDiscussions = [];
+
+  conversations.forEach((c) => {
+    const unreadTags = ['new_discussion', 'new_messages'];
+    if (c.tags.filter(t => unreadTags.includes(t)).length) {
+      unreadDiscussions.push(c);
+    } else {
+      readDiscussions.push(c);
+    }
+  });
+
+  return [unreadDiscussions, readDiscussions];
+}
 
 const MeetingSpace = ({ meetingId }) => {
   const discussionsListRef = useRef(null);
@@ -96,11 +123,28 @@ const MeetingSpace = ({ meetingId }) => {
     fetchMoreDiscussions();
   }
 
+  const [unreadDiscussions, readDiscussions] = bucketDiscussions(conversations);
+  const unreadRows = (
+    <DiscussionList>
+      <ListLabel>UNREAD DISCUSSIONS</ListLabel>
+      {unreadDiscussions.map(c => <DiscussionRow key={c.id} conversation={c} />)}
+    </DiscussionList>
+  );
+  const readRows = (
+    <DiscussionList>
+      <ListLabel>
+        {unreadDiscussions.length > 0 ? 'FROM EARLIER' : 'CURRENT DISCUSSIONS'}
+      </ListLabel>
+      {readDiscussions.map(c => <DiscussionRow key={c.id} conversation={c} />)}
+    </DiscussionList>
+  );
+
   return (
     <Container>
       <TitleBar meeting={data.meeting} />
       <DiscussionsContainer ref={discussionsListRef}>
-        {conversations.map(c => <DiscussionRow key={c.id} conversation={c} />)}
+        {unreadDiscussions.length > 0 && unreadRows}
+        {readDiscussions.length > 0 && readRows}
       </DiscussionsContainer>
     </Container>
   );

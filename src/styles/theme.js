@@ -60,6 +60,7 @@ export const theme = {
 
     bgBlue: '#eff9fd',
     hoverBlue: '#eaf9ff',
+    secondaryBlue: '#86d9ff',
     selectedValueBlue: '#beeafe',
     lightestBlue: '#f3f9ff',
 
@@ -70,6 +71,7 @@ export const theme = {
     formGrey: '#f8f9fa',
     formBorderGrey: '#c3cdd4',
     formPlaceholderGrey: '#c3c3c3',
+    lightestGrey: '#fafdff',
 
     titlePlaceholder: '#dbdddf',
     textPlaceholder: '#c9cfd4',

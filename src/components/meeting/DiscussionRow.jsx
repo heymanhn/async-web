@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 import Pluralize from 'pluralize';
 import Truncate from 'react-truncate';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment, faSparkles } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled/macro';
-
-// import { getLocalUser } from 'utils/auth';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 
@@ -18,7 +18,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   width: '100%',
 
   ':hover': {
-    background: colors.bgGrey,
+    background: colors.lightestGrey,
   },
 }));
 
@@ -39,11 +39,23 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   },
 }));
 
-const ContextDisplay = styled.div(({ isUnread, theme: { colors } }) => ({
+const ContextDisplay = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: '5px',
+});
+
+const ContextIcon = styled(FontAwesomeIcon)(({ isunread, theme: { colors } }) => ({
+  color: isunread === 'true' ? colors.secondaryBlue : colors.grey5,
+  fontSize: '14px',
+  marginRight: '8px',
+}));
+
+const ContextLabel = styled.div(({ isUnread, theme: { colors } }) => ({
   color: isUnread ? colors.blue : colors.grey3,
   fontSize: '14px',
   fontWeight: isUnread ? 500 : 400,
-  marginBottom: '5px',
 }));
 
 const DiscussionTitle = styled.div(({ isUnread }) => ({
@@ -60,43 +72,38 @@ const MessagePreview = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DiscussionRow = ({ conversation, ...props }) => {
-  const { id: conversationId, lastMessage, messageCount, title } = conversation;
+  const { id: conversationId, lastMessage, messageCount, tags, title } = conversation;
   const { author, body, createdAt } = lastMessage;
   const { text } = body;
   const messagePreview = text ? text.replace(/\n/, ' ') : null;
-  // const { userId } = getLocalUser();
+  const isUnread = tags.filter(t => ['new_discussion', 'new_messages'].includes(t)).length > 0;
 
-  /*
-   * TODO: Re-implement later
-   *
-   * Conditions that indicate unread:
-   * 1. no unreadCounts from the current user (user hasn't seen this thread at all)
-   * 2. user has an unreadCount where count > 0 (user hasn't read `count` messages)
-   *
-   * Return -1 if user hasn't read anything, or the number of unread messages
-   */
-  // function unreadMessageCount() {
-  //   const userUnreadRecord = unreadCounts.find(c => c.userId === userId);
-  //   return userUnreadRecord ? userUnreadRecord.count : -1;
-  // }
-
-  // TODO: unread states
   function showContext() {
     let displayText = '';
-    if (messageCount <= 1) {
+    if (tags.includes('new_discussion')) {
       displayText = 'New discussion';
+    } else if (tags.includes('new_messages')) {
+      displayText = 'New messages';
     } else {
       displayText = Pluralize('message', messageCount, true);
     }
 
-    return <ContextDisplay>{displayText}</ContextDisplay>;
+    return (
+      <ContextDisplay>
+        <ContextIcon
+          icon={displayText === 'New discussion' ? faSparkles : faComment}
+          isunread={isUnread.toString()}
+        />
+        <ContextLabel isUnread={isUnread}>{displayText}</ContextLabel>
+      </ContextDisplay>
+    );
   }
 
   return (
     <StyledLink to={`/discussions/${conversationId}`}>
       <Container {...props}>
         {showContext()}
-        <DiscussionTitle>{title || 'Untitled Discussion'}</DiscussionTitle>
+        <DiscussionTitle isUnread={isUnread}>{title || 'Untitled Discussion'}</DiscussionTitle>
         {messagePreview && (
           <MessagePreview>
             <Truncate lines={2}>
