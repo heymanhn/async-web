@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 
 import createConversationMutation from 'graphql/mutations/createConversation';
 import currentUserQuery from 'graphql/queries/currentUser';
+import meetingQuery from 'graphql/queries/meeting';
 import { getLocalUser } from 'utils/auth';
 
 import RovalEditor from 'components/editor/RovalEditor';
@@ -56,6 +57,10 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
           }],
         },
       },
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id: meetingId, queryParams: {} },
+      }],
     });
 
     if (data2.createConversation) {
