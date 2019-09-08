@@ -4,8 +4,8 @@ import conversation from 'graphql/fragments/conversation';
 import message from 'graphql/fragments/message';
 
 export default gql`
-  mutation CreateConversation($id: String!, $input: Object!) {
-    createConversation(id: $id, input: $input) @rest(type: "Conversation", path: "/meetings/{args.id}/conversations", method: "POST") {
+  mutation CreateConversation($meetingId: String!, $input: Object!) {
+    createConversation(meetingId: $meetingId, input: $input) @rest(type: "Conversation", path: "/meetings/{args.meetingId}/conversations", method: "POST") {
       ...ConversationObject
       messages @type(name: "Message") {
         ...MessageObject

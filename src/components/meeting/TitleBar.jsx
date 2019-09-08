@@ -53,7 +53,7 @@ const TitleBar = ({
         />
       </Details>
       <Actions>
-        <StartDiscussionButton />
+        <StartDiscussionButton meetingId={meetingId} />
       </Actions>
     </InnerContainer>
   </Container>

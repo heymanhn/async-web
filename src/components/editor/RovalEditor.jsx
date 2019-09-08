@@ -241,7 +241,8 @@ class RovalEditor extends Component {
 
     await onSubmit({ text, payload });
 
-    if (mode === 'compose' && !isPlainText) this.clearEditorValue();
+    const { isSubmitting } = this.props;
+    if (mode === 'compose' && !isPlainText && !isSubmitting) this.clearEditorValue();
     if (mode === 'edit' || !keepOpen) this.handleCancel({ saved: true });
     if (keepOpen) this.editor.current.focus();
   }
@@ -338,6 +339,7 @@ class RovalEditor extends Component {
     const {
       contentType,
       disableAutoFocus,
+      forceDisableSubmit,
       initialHeight,
       isPlainText,
       isSubmitting,
@@ -371,7 +373,7 @@ class RovalEditor extends Component {
         {this.isEditOrComposeMode() && !isPlainText && (
           <EditorActions
             isSubmitting={isSubmitting}
-            isSubmitDisabled={this.isValueEmpty()}
+            isSubmitDisabled={this.isValueEmpty() || forceDisableSubmit}
             mode={mode}
             onCancel={this.handleCancel}
             onSubmit={this.handleSubmit}
@@ -391,6 +393,7 @@ RovalEditor.propTypes = {
     'message',
   ]).isRequired,
   disableAutoFocus: PropTypes.bool,
+  forceDisableSubmit: PropTypes.bool,
   initialHeight: PropTypes.number,
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
@@ -403,6 +406,7 @@ RovalEditor.propTypes = {
 
 RovalEditor.defaultProps = {
   disableAutoFocus: false,
+  forceDisableSubmit: false,
   initialHeight: null,
   initialValue: null,
   isPlainText: false,

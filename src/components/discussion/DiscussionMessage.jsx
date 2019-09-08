@@ -73,9 +73,11 @@ const MessageEditor = styled(RovalEditor)({
 const DiscussionMessage = ({
   conversationId,
   currentUser,
+  forceDisableSubmit,
   initialMode,
   initialMessage,
   onCancel,
+  onCreateDiscussion,
   ...props
 }) => {
   const client = useApolloClient();
@@ -91,13 +93,10 @@ const DiscussionMessage = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
 
-  // FUTURE: Handle case of creating a new discussion
   async function handleCreate({ payload, text }) {
     setIsSubmitting(true);
 
-    if (!conversationId) {
-      console.log('TODO: creating new conversation...');
-    }
+    if (!conversationId) return onCreateDiscussion({ payload, text });
 
     const { data } = await client.mutate({
       mutation: createMessageMutation,
@@ -218,6 +217,8 @@ const DiscussionMessage = ({
   }
 
   function handleCancel() {
+    if (!conversationId) return;
+
     if (mode === 'compose') {
       onCancel();
     } else {
@@ -246,6 +247,7 @@ const DiscussionMessage = ({
         )}
       </HeaderSection>
       <MessageEditor
+        forceDisableSubmit={forceDisableSubmit}
         initialValue={mode !== 'compose' ? body.payload : null}
         isSubmitting={isSubmitting}
         mode={mode}
@@ -263,17 +265,21 @@ const DiscussionMessage = ({
 DiscussionMessage.propTypes = {
   conversationId: PropTypes.string,
   currentUser: PropTypes.object,
+  forceDisableSubmit: PropTypes.bool,
   initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
   initialMessage: PropTypes.object,
   onCancel: PropTypes.func,
+  onCreateDiscussion: PropTypes.func,
 };
 
 DiscussionMessage.defaultProps = {
   conversationId: null,
   currentUser: null,
+  forceDisableSubmit: false,
   initialMode: 'display',
   initialMessage: {},
   onCancel: () => {},
+  onCreateDiscussion: () => {},
 };
 
 export default DiscussionMessage;
