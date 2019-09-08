@@ -87,6 +87,7 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
       <TitleEditor
         contentType="discussionTitle"
         isPlainText
+        mode="compose"
         onSubmit={handleSubmitTitle}
         saveOnBlur
       />

@@ -247,6 +247,7 @@ const DiscussionMessage = ({
         )}
       </HeaderSection>
       <MessageEditor
+        disableAutoFocus={mode === 'compose' && !conversationId}
         forceDisableSubmit={forceDisableSubmit}
         initialValue={mode !== 'compose' ? body.payload : null}
         isSubmitting={isSubmitting}
