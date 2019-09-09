@@ -6,13 +6,13 @@ const Container = styled.div(({ src, square, size }) => ({
   background: `url(${src})`,
   backgroundPosition: 'center',
   backgroundSize: 'cover',
-  borderRadius: square ? 'none' : '50%',
+  borderRadius: square ? '5px' : '50%',
   width: `${size}px`,
   height: `${size}px`,
 }));
 
-const Avatar = ({ className, square, src, size }) => (
-  <Container className={className} square={square} src={src} size={size} />
+const Avatar = ({ square, src, size, ...props }) => (
+  <Container square={square} src={src} size={size} {...props} />
 );
 
 Avatar.propTypes = {

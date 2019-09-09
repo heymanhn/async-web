@@ -7,7 +7,6 @@ import meetingsQuery from 'graphql/queries/meetings';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
 
-import Layout from 'components/Layout';
 import MeetingRow from './MeetingRow';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -65,20 +64,18 @@ const Inbox = () => {
   }
 
   return (
-    <Layout>
-      <Container>
-        <InnerContainer ref={listRef}>
-          <PageTitle>Your Meetings</PageTitle>
-          {(meetingItems || []).map(item => (
-            <MeetingRow
-              key={item.meeting.id}
-              meeting={item.meeting}
-              conversationCount={item.conversationCount}
-            />
-          ))}
-        </InnerContainer>
-      </Container>
-    </Layout>
+    <Container>
+      <InnerContainer ref={listRef}>
+        <PageTitle>Your Meetings</PageTitle>
+        {(meetingItems || []).map(item => (
+          <MeetingRow
+            key={item.meeting.id}
+            meeting={item.meeting}
+            conversationCount={item.conversationCount}
+          />
+        ))}
+      </InnerContainer>
+    </Container>
   );
 };
 

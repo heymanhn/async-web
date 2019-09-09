@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 
 import addParticipantMutation from 'graphql/mutations/addParticipant';
 import createMeetingMutation from 'graphql/mutations/createMeeting';
+import meetingsQuery from 'graphql/queries/meetings';
 import { getLocalUser } from 'utils/auth';
 
 import RovalEditor from 'components/editor/RovalEditor';
@@ -165,6 +166,9 @@ const CreateMeetingSpaceModal = ({ isOpen, toggle, ...props }) => {
       toggle();
       navigate(`/spaces/${data.createMeeting.id}`);
     },
+    refetchQueries: [{
+      query: meetingsQuery,
+    }],
   });
 
   // The UI concept of a "save + cancel button toolbar" should be DRY'ed up if this is permanent
