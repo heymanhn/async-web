@@ -1,14 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import organizationQuery from 'graphql/queries/organization';
 import { getLocalUser } from 'utils/auth';
 
+// NOTE TO ARUN: We need a default avatar if the URL provided by backend
+// doesn't resolve
+import defaultAvatar from 'images/icons/default-avatar.png';
+
 import Avatar from 'components/shared/Avatar';
+import MeetingSpacesList from './MeetingSpacesList';
 
 const Container = styled.div(({ theme: { colors } }) => ({
+  flexShrink: 0,
   background: colors.darkBlue,
   width: '250px',
 }));
@@ -45,10 +50,11 @@ const Sidebar = () => {
         <OrganizationLogo
           size={24}
           square
-          src={logo}
+          src={defaultAvatar}
         />
         <OrganizationTitle>{title}</OrganizationTitle>
       </OrganizationDisplay>
+      <MeetingSpacesList />
     </Container>
   );
 };
