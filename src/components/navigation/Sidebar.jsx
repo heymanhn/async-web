@@ -43,7 +43,7 @@ const Sidebar = () => {
   });
 
   if (loading || !data.organization) return null;
-  const { logo, title } = data.organization;
+  const { title } = data.organization; // TODO: Use the logo
 
   return (
     <Container>
