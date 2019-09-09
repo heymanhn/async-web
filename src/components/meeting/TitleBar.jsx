@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import MeetingProperties from './MeetingProperties';
+import StartDiscussionButton from './StartDiscussionButton';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -52,7 +53,7 @@ const TitleBar = ({
         />
       </Details>
       <Actions>
-        TBD
+        <StartDiscussionButton meetingId={meetingId} />
       </Actions>
     </InnerContainer>
   </Container>

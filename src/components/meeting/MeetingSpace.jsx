@@ -36,33 +36,6 @@ const ListLabel = styled.div(({ theme: { colors } }) => ({
   marginBottom: '15px',
 }));
 
-// const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
-//   display: 'flex',
-//   justifyContent: 'space-between',
-//   alignItems: 'center',
-
-//   background: colors.white,
-//   border: `1px solid ${colors.borderGrey}`,
-//   cursor: 'pointer',
-//   height: '48px',
-//   marginLeft: '20px',
-//   padding: '0 30px',
-//   width: '460px', // Define as a constant elsewhere?
-// }));
-
-// const ButtonLabel = styled.div(({ theme: { colors } }) => ({
-//   color: colors.grey2,
-//   fontSize: '16px',
-//   fontWeight: 500,
-// }));
-
-// const PlusSign = styled.div(({ theme: { colors } }) => ({
-//   color: colors.grey3,
-//   fontSize: '24px',
-//   fontWeight: 500,
-//   marginTop: '-4px',
-// }));
-
 const MeetingSpace = ({ meetingId }) => {
   const discussionsListRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionsListRef);
