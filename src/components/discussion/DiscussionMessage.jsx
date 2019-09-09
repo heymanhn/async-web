@@ -217,8 +217,6 @@ const DiscussionMessage = ({
   }
 
   function handleCancel() {
-    if (!conversationId) return;
-
     if (mode === 'compose') {
       onCancel();
     } else {
