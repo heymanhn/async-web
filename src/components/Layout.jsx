@@ -15,8 +15,6 @@ import Sidebar from 'components/navigation/Sidebar';
 const Container = styled.div({
   display: 'flex',
   flexDirection: 'row',
-
-  height: '100vh',
 });
 
 const Content = styled.div({

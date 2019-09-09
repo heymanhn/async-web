@@ -15,6 +15,7 @@ import MeetingSpacesList from './MeetingSpacesList';
 const Container = styled.div(({ theme: { colors } }) => ({
   flexShrink: 0,
   background: colors.darkBlue,
+  minHeight: '100vh',
   width: '250px',
 }));
 

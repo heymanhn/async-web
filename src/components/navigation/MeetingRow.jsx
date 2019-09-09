@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from '@reach/router';
 import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
@@ -7,16 +8,30 @@ const Container = styled.div(({ theme: { colors } }) => ({
   color: colors.grey6,
   fontSize: '14px',
   margin: '0 -20px',
-  padding: '10px 20px',
+  padding: '8px 20px',
+
+  ':hover': {
+    background: colors.darkHoverBlue,
+  },
 }));
 
+const StyledLink = styled(Link)({
+  textDecoration: 'none',
+
+  ':hover': {
+    textDecoration: 'none',
+  },
+});
+
 const MeetingRow = ({ meeting }) => {
-  const { title } = meeting;
+  const { id, title } = meeting;
 
   return (
-    <Container>
-      <Truncate width={170} trimWhitespace>{title}</Truncate>
-    </Container>
+    <StyledLink to={`/spaces/${id}`}>
+      <Container>
+        <Truncate width={170} trimWhitespace>{title}</Truncate>
+      </Container>
+    </StyledLink>
   );
 };
 

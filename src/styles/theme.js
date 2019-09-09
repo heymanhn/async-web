@@ -60,6 +60,7 @@ export const theme = {
 
     bgBlue: '#eff9fd',
     darkBlue: '#2d4d62',
+    darkHoverBlue: '#1f3a4d',
     hoverBlue: '#eaf9ff',
     secondaryBlue: '#86d9ff',
     selectedValueBlue: '#beeafe',
