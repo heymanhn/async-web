@@ -74,7 +74,7 @@ class Auth extends Component {
     if (loading) return <LoadingIndicator color="grey5" />;
     if (error || !params || !params.code) return 'Cannot log in';
 
-    return <Redirect to="/feed" noThrow />;
+    return <Redirect to="/" noThrow />;
   }
 
   render() {

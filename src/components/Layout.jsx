@@ -5,6 +5,7 @@ import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import mediaBreakpointQuery from 'graphql/queries/mediaBreakpoint';
+import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import getBreakpoint from 'utils/mediaQuery';
 
 import GlobalStyles from 'components/style/GlobalStyles';
@@ -23,6 +24,7 @@ const Content = styled.div({
 
 const Layout = ({ children }) => {
   const client = useApolloClient();
+  const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
 
   useEffect(() => {
     function handleWindowSizeChange() {
@@ -44,7 +46,7 @@ const Layout = ({ children }) => {
     <Theme>
       <GlobalStyles />
       <Container>
-        <Sidebar />
+        {isLoggedIn && <Sidebar />}
         <Content>
           {children}
         </Content>

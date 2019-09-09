@@ -1,6 +1,9 @@
 import React from 'react';
-import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
+
+// hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
+// Undo once that's fixed
+import { useLazyQuery } from '@apollo/react-hooks';
 
 import organizationQuery from 'graphql/queries/organization';
 import { getLocalUser } from 'utils/auth';
@@ -38,9 +41,15 @@ const OrganizationTitle = styled.div(({ theme: { colors } }) => ({
 
 const Sidebar = () => {
   const { organizationId } = getLocalUser();
-  const { loading, data } = useQuery(organizationQuery, {
+  const [getOrganization, { loading, data }] = useLazyQuery(organizationQuery, {
     variables: { id: organizationId },
   });
+
+  if (!organizationId) return null;
+  if (organizationId && !data) {
+    getOrganization();
+    return null;
+  }
 
   if (loading || !data.organization) return null;
   const { title } = data.organization; // TODO: Use the logo
