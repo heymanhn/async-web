@@ -32,8 +32,8 @@ const Discussion = ({
   }
 
   let fetchedTitle = null;
-  if (data && data.conversation && !meetingId) {
-    setMeetingId(data.conversation.meetingId);
+  if (data && data.conversation) {
+    if (!meetingId) setMeetingId(data.conversation.meetingId);
     fetchedTitle = data.conversation.title;
   }
 
