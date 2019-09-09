@@ -4,14 +4,14 @@ import { Link } from '@reach/router';
 import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ isUnread, theme: { colors } }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  color: colors.grey6,
+  color: isUnread ? colors.white : colors.grey6,
   fontSize: '14px',
   margin: '0 -20px',
   padding: '8px 20px',
-
+  fontWeight: isUnread ? 600 : 400,
   ':hover': {
     background: colors.darkHoverBlue,
   },
@@ -29,11 +29,10 @@ const BadgeCountContainer = styled.span(({ theme: { colors } }) => ({
   color: colors.white,
   background: colors.yellow,
   borderRadius: '10px',
-  width: '23px',
-  height: '19px',
   fontSize: '12px',
+  height: '20px',
+  padding: '1px 8px',
   fontWeight: 500,
-  textAlign: 'center',
 }));
 
 const MeetingRow = ({ meeting, badgeCount }) => {
@@ -41,11 +40,11 @@ const MeetingRow = ({ meeting, badgeCount }) => {
 
   return (
     <StyledLink to={`/spaces/${id}`}>
-      <Container>
+      <Container isUnread={badgeCount > 0}>
         <Truncate width={170} trimWhitespace>{title}</Truncate>
-        {badgeCount > 0 ? (
+        {badgeCount > 0 && (
           <BadgeCountContainer>{badgeCount}</BadgeCountContainer>
-        ) : undefined}
+        )}
       </Container>
     </StyledLink>
   );
