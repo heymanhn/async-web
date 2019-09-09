@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle } from '@fortawesome/pro-regular-svg-icons';
 import styled from '@emotion/styled';
 
 import CreateMeetingSpaceModal from 'components/meeting/CreateMeetingSpaceModal';
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '16px',
-  margin: '0 10px',
+  color: colors.grey4,
+  fontSize: '18px',
   textDecoration: 'none',
   cursor: 'pointer',
 
   ':hover': {
     textDecoration: 'none',
-    color: colors.grey2,
+    color: colors.grey5,
   },
 }));
 
@@ -29,7 +28,7 @@ const CreateMeetingSpaceButton = () => {
 
   return (
     <React.Fragment>
-      <StyledIcon icon={faPlus} onClick={launchModal} />
+      <StyledIcon icon={faPlusCircle} onClick={launchModal} />
       <CreateMeetingSpaceModal
         isOpen={isModalOpen}
         toggle={toggleModal}
