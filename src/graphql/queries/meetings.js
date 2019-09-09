@@ -14,7 +14,7 @@ export default gql`
           }
         }
         conversationCount
-        userUnreadThreadCount
+        badgeCount
       }
       pageToken
     }

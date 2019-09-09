@@ -5,6 +5,8 @@ import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
 const Container = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
   color: colors.grey6,
   fontSize: '14px',
   margin: '0 -20px',
@@ -23,18 +25,35 @@ const StyledLink = styled(Link)({
   },
 });
 
-const MeetingRow = ({ meeting }) => {
+const BadgeCountContainer = styled.span(({ theme: { colors } }) => ({
+  color: colors.white,
+  background: colors.yellow,
+  borderRadius: '10px',
+  width: '23px',
+  height: '19px',
+  fontSize: '12px',
+  fontWeight: 500,
+  textAlign: 'center',
+}));
+
+const MeetingRow = ({ meeting, badgeCount }) => {
   const { id, title } = meeting;
 
   return (
     <StyledLink to={`/spaces/${id}`}>
       <Container>
         <Truncate width={170} trimWhitespace>{title}</Truncate>
+        {badgeCount > 0 ? (
+          <BadgeCountContainer>{badgeCount}</BadgeCountContainer>
+        ) : undefined}
       </Container>
     </StyledLink>
   );
 };
 
-MeetingRow.propTypes = { meeting: PropTypes.object.isRequired };
+MeetingRow.propTypes = {
+  meeting: PropTypes.object.isRequired,
+  badgeCount: PropTypes.object.isRequired,
+};
 
 export default MeetingRow;
