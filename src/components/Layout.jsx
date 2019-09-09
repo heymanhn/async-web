@@ -1,7 +1,7 @@
 /* eslint react-hooks/exhaustive-deps: 0 */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient } from 'react-apollo';
+import { useApolloClient, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import mediaBreakpointQuery from 'graphql/queries/mediaBreakpoint';
@@ -24,7 +24,7 @@ const Content = styled.div({
 
 const Layout = ({ children }) => {
   const client = useApolloClient();
-  const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
+  const { data } = useQuery(isLoggedInQuery);
 
   useEffect(() => {
     function handleWindowSizeChange() {
@@ -42,11 +42,14 @@ const Layout = ({ children }) => {
     };
   }, []);
 
+  let showSidebar = false;
+  if (data) showSidebar = data.isLoggedIn;
+
   return (
     <Theme>
       <GlobalStyles />
       <Container>
-        {isLoggedIn && <Sidebar />}
+        {showSidebar && <Sidebar />}
         <Content>
           {children}
         </Content>

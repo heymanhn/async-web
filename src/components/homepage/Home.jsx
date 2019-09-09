@@ -6,8 +6,6 @@ import styled from '@emotion/styled';
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import withPageTracking from 'utils/withPageTracking';
 
-import Layout from 'components/Layout';
-
 const Container = styled.div(({ theme: { colors, maxViewport } }) => ({
   background: colors.white,
   margin: '0px auto',
@@ -21,11 +19,9 @@ const Home = () => (
       if (data.isLoggedIn) return <Redirect to="/inbox" noThrow />;
 
       return (
-        <Layout>
-          <Container>
-            <div>Hello. It&rsquo;s an asynchronous world.</div>
-          </Container>
-        </Layout>
+        <Container>
+          <div>Hello. It&rsquo;s an asynchronous world.</div>
+        </Container>
       );
     }}
   </Query>

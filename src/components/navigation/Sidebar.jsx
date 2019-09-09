@@ -45,6 +45,9 @@ const Sidebar = () => {
     variables: { id: organizationId },
   });
 
+  // Escape hatch to not render anything on this special route
+  if (window.location.pathname === '/logout') return null;
+
   if (!organizationId) return null;
   if (organizationId && !data) {
     getOrganization();

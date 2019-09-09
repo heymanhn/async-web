@@ -12,9 +12,6 @@ import { parseQueryString } from 'utils/queryParams';
 import fakeAuthQuery from 'graphql/queries/fakeAuth'; // Temporary, for the prototype
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 
-import LoadingIndicator from 'components/shared/LoadingIndicator';
-import Layout from 'components/Layout';
-
 const Container = styled.div(({ theme: { containerMargin, maxViewport } }) => ({
   margin: containerMargin,
   maxWidth: maxViewport,
@@ -71,7 +68,7 @@ class Auth extends Component {
   renderContents() {
     const { error, loading, params } = this.state;
 
-    if (loading) return <LoadingIndicator color="grey5" />;
+    if (loading) return <div>Logging in...</div>;
     if (error || !params || !params.code) return 'Cannot log in';
 
     return <Redirect to="/" noThrow />;
@@ -79,11 +76,9 @@ class Auth extends Component {
 
   render() {
     return (
-      <Layout>
-        <Container>
-          {this.renderContents()}
-        </Container>
-      </Layout>
+      <Container>
+        {this.renderContents()}
+      </Container>
     );
   }
 }
