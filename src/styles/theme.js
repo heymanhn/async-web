@@ -66,6 +66,7 @@ export const theme = {
     secondaryBlue: '#86d9ff',
     selectedValueBlue: '#beeafe',
     lightestBlue: '#f3f9ff',
+    sidebarBlue: '#4b93c2',
 
     buttonGrey: '#f1f1f1',
     bgGrey: '#fafbfc',

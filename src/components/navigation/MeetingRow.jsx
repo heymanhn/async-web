@@ -4,16 +4,15 @@ import { Link } from '@reach/router';
 import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ isUnread, theme: { colors } }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  color: isUnread ? colors.white : colors.grey6,
+const Container = styled.div(({ isSelected, isUnread, theme: { colors } }) => ({
+  background: isSelected ? colors.sidebarBlue : 'none',
+  color: (isSelected || isUnread) ? colors.bgGrey : colors.grey6,
   fontSize: '14px',
   margin: '0 -20px',
   padding: '8px 20px',
   fontWeight: isUnread ? 600 : 400,
   ':hover': {
-    background: colors.darkHoverBlue,
+    background: isSelected ? colors.sidebarBlue : colors.darkHoverBlue,
   },
 }));
 
@@ -35,12 +34,12 @@ const BadgeCountContainer = styled.span(({ theme: { colors } }) => ({
   fontWeight: 500,
 }));
 
-const MeetingRow = ({ meeting, badgeCount }) => {
+const MeetingRow = ({ badgeCount, isSelected, meeting, ...props }) => {
   const { id, title } = meeting;
 
   return (
     <StyledLink to={`/spaces/${id}`}>
-      <Container isUnread={badgeCount > 0}>
+      <Container isSelected={isSelected} isUnread={badgeCount > 0} {...props}>
         <Truncate width={170} trimWhitespace>{title}</Truncate>
         {badgeCount > 0 && (
           <BadgeCountContainer>{badgeCount}</BadgeCountContainer>
@@ -51,8 +50,9 @@ const MeetingRow = ({ meeting, badgeCount }) => {
 };
 
 MeetingRow.propTypes = {
-  meeting: PropTypes.object.isRequired,
   badgeCount: PropTypes.object.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  meeting: PropTypes.object.isRequired,
 };
 
 export default MeetingRow;
