@@ -50,7 +50,7 @@ const MeetingRow = ({ badgeCount, isSelected, meeting, ...props }) => {
 };
 
 MeetingRow.propTypes = {
-  badgeCount: PropTypes.object.isRequired,
+  badgeCount: PropTypes.number.isRequired,
   isSelected: PropTypes.bool.isRequired,
   meeting: PropTypes.object.isRequired,
 };
