@@ -43,17 +43,16 @@ const Discussion = ({
     fetchedTitle = data.conversation.title;
   }
 
+  if (!meetingId) return null;
+
   return (
     <Container {...props}>
-      {meetingId && (
-        <NavigationBar
-          discussionTitle={fetchedTitle}
-          meetingId={meetingId}
-        />
-      )}
-      {conversationId && !loading ? (
-        <DiscussionThread conversationId={conversationId} />
-      ) : (
+      <NavigationBar
+        discussionTitle={fetchedTitle}
+        meetingId={meetingId}
+      />
+      {conversationId && !loading && <DiscussionThread conversationId={conversationId} />}
+      {meetingId && !conversationId && (
         <DiscussionComposer afterSubmit={setConversationId} meetingId={meetingId} />
       )}
     </Container>

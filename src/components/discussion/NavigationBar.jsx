@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
+import { useLazyQuery } from '@apollo/react-hooks';
 import { Link } from '@reach/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
@@ -65,34 +65,36 @@ const DiscussionTitle = styled.div(({ theme: { colors } }) => ({
 }));
 
 const NavigationBar = ({ discussionTitle, meetingId, ...props }) => {
-  let meetingSpaceTitle = '';
-  const { error, data } = useQuery(meetingQuery, { variables: { id: meetingId } });
-  if (error || !data.meeting) return <div>{error}</div>;
-  if (data.meeting) meetingSpaceTitle = data.meeting.title;
+  let meetingTitle = '';
+  const [getMeeting, { data }] = useLazyQuery(meetingQuery, { variables: { id: meetingId } });
+
+  if (meetingId && !data) getMeeting();
+  if (data && data.meeting) meetingTitle = data.meeting.title;
 
   return (
     <Container {...props}>
-      {meetingSpaceTitle && (
+      {meetingTitle && meetingId && (
         <StyledLink to={`/spaces/${meetingId}`}>
           <BackButton>
             <StyledChevron icon={faChevronLeft} />
-            <MeetingSpaceTitle>{meetingSpaceTitle}</MeetingSpaceTitle>
+            <MeetingSpaceTitle>{meetingTitle}</MeetingSpaceTitle>
           </BackButton>
         </StyledLink>
       )}
-      {discussionTitle && <Separator>/</Separator>}
-      {discussionTitle && <DiscussionTitle>{discussionTitle}</DiscussionTitle>}
+      {meetingTitle && discussionTitle && <Separator>/</Separator>}
+      {meetingTitle && discussionTitle && <DiscussionTitle>{discussionTitle}</DiscussionTitle>}
     </Container>
   );
 };
 
 NavigationBar.propTypes = {
   discussionTitle: PropTypes.string,
-  meetingId: PropTypes.string.isRequired,
+  meetingId: PropTypes.string,
 };
 
 NavigationBar.defaultProps = {
   discussionTitle: null,
+  meetingId: null,
 };
 
 export default NavigationBar;
