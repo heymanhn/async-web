@@ -70,5 +70,6 @@ jobs:
       - run:
           name: Deploy to S3
           command: |
-            aws s3 sync build/ s3://async-web --cache-control max-age=172800 --delete |
+            aws s3 sync build/ s3://async-web --cache-control max-age=172800 --delete
             aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths /index.html
+            aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths /service-worker.js
