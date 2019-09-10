@@ -247,6 +247,7 @@ const DiscussionMessage = ({
       <MessageEditor
         disableAutoFocus={mode === 'compose' && !conversationId}
         forceDisableSubmit={forceDisableSubmit}
+        initialHeight={240} // Give Arun more breathing room :-)
         initialValue={mode !== 'compose' ? body.payload : null}
         isSubmitting={isSubmitting}
         mode={mode}
