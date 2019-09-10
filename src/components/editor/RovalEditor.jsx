@@ -45,9 +45,10 @@ const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
   },
 
   blockquote: {
-    borderLeft: `5px solid ${colors.borderGrey}`,
+    borderLeft: `3px solid ${colors.borderGrey}`,
     color: colors.grey2,
-    padding: '7px 12px',
+    padding: '0px 12px',
+    marginBottom: '10px',
   },
 
   hr: {
