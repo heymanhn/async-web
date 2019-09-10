@@ -16,11 +16,14 @@ import Avatar from 'components/shared/Avatar';
 import MeetingSpacesList from './MeetingSpacesList';
 import SwitchToButton from './SwitchToButton';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ theme: { colors, sidebarWidth } }) => ({
   flexShrink: 0,
   background: colors.darkBlue,
   minHeight: '100vh',
-  width: '250px',
+  overflowX: 'hidden',
+  position: 'fixed',
+  width: sidebarWidth,
+  zIndex: 1,
 }));
 
 const OrganizationDisplay = styled.div({
