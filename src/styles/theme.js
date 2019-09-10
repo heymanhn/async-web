@@ -42,6 +42,7 @@ export const theme = {
   meetingSpaceViewport: '720px',
   wideViewport: '1220px',
   discussionWidth: '700px',
+  sidebarWidth: '250px',
 
   colors: {
     blue: '#19a5e4',

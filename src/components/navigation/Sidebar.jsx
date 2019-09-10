@@ -14,12 +14,17 @@ import defaultAvatar from 'images/icons/default-avatar.png';
 
 import Avatar from 'components/shared/Avatar';
 import MeetingSpacesList from './MeetingSpacesList';
+import SwitchToButton from './SwitchToButton';
 
-const Container = styled.div(({ theme: { colors } }) => ({
-  flexShrink: 0,
+const Container = styled.div(({ theme: { colors, sidebarWidth } }) => ({
   background: colors.darkBlue,
-  minHeight: '100vh',
-  width: '250px',
+  overflowX: 'hidden',
+  overflowY: 'scroll',
+  position: 'fixed',
+  top: 0,
+  bottom: 0,
+  width: sidebarWidth,
+  zIndex: 1,
 }));
 
 const OrganizationDisplay = styled.div({
@@ -64,6 +69,10 @@ const Sidebar = () => {
         />
         <OrganizationTitle>{title}</OrganizationTitle>
       </OrganizationDisplay>
+
+      {/* Placeholder button row for now */}
+      <SwitchToButton />
+
       <MeetingSpacesList />
     </Container>
   );

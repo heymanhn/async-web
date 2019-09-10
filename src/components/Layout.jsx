@@ -13,14 +13,11 @@ import Theme from 'components/style/Theme';
 
 import Sidebar from 'components/navigation/Sidebar';
 
-const Container = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-});
+const Container = styled.div({});
 
-const Content = styled.div({
-  width: '100%',
-});
+const Content = styled.div(({ showSidebar, theme: { sidebarWidth } }) => ({
+  marginLeft: showSidebar ? sidebarWidth : 0,
+}));
 
 const Layout = ({ children }) => {
   const client = useApolloClient();
@@ -51,7 +48,7 @@ const Layout = ({ children }) => {
       <GlobalStyles />
       <Container>
         {showSidebar && <Sidebar />}
-        <Content>
+        <Content showSidebar={showSidebar}>
           {children}
         </Content>
       </Container>
