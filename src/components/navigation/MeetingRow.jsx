@@ -27,13 +27,19 @@ const StyledLink = styled(Link)({
   },
 });
 
-const BadgeCountContainer = styled.span(({ theme: { colors } }) => ({
+const BadgeCountContainer = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+
   color: colors.white,
   background: colors.yellow,
   borderRadius: '10px',
   fontSize: '12px',
-  height: '20px',
-  padding: '1px 8px',
+  height: '19px',
+  padding: '0px 8px',
+  position: 'relative',
+  top: '1px',
   fontWeight: 500,
 }));
 
