@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApolloClient } from 'react-apollo';
-import { Redirect } from '@reach/router';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 // hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
@@ -42,7 +42,7 @@ const Home = () => {
     const meetings = (items || []).map(i => i.meeting);
     const targetId = meetings[0].id;
 
-    return <Redirect to={`/spaces/${targetId}`} noThrow />;
+    navigate(`/spaces/${targetId}`);
   }
 
   return null;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo } from 'react-apollo';
-import { Redirect } from '@reach/router';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import {
@@ -71,7 +71,8 @@ class Auth extends Component {
     if (loading) return <div>Logging in...</div>;
     if (error || !params || !params.code) return 'Cannot log in';
 
-    return <Redirect to="/" noThrow />;
+    navigate('/');
+    return null;
   }
 
   render() {
