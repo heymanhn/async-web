@@ -30,7 +30,7 @@ const MeetingSpacesList = () => {
 
   if (loading || !data) return null;
   const { items } = data.meetings;
-  const meetings = (items || []).map(i => i.meeting);
+  const meetingItems = (items || []);
 
   return (
     <Container>
@@ -38,7 +38,13 @@ const MeetingSpacesList = () => {
         <Heading>MEETING SPACES</Heading>
         <CreateMeetingSpaceButton />
       </HeadingSection>
-      {meetings.map(m => <MeetingRow key={m.id} meeting={m} />)}
+      {meetingItems.map(mi => (
+        <MeetingRow
+          key={mi.meeting.id}
+          meeting={mi.meeting}
+          badgeCount={mi.badgeCount}
+        />
+      ))}
     </Container>
   );
 };
