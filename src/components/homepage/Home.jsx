@@ -46,6 +46,6 @@ const Home = () => {
   }
 
   return null;
-}
+};
 
 export default withPageTracking(Home, 'Logged Out Home');
