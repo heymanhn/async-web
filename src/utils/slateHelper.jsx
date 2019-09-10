@@ -181,7 +181,7 @@ export const plugins = {
     PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(
-      'Share your perspective with others in this meeting. Be as expressive as you like.',
+      'Post a message to start this discussion. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
     ...markdownPlugins,
@@ -190,7 +190,7 @@ export const plugins = {
     PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(
-      'Post the first message to start this discussion. Be as expressive as you like.',
+      'Share your perspective with others in this discussion. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
     ...markdownPlugins,

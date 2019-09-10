@@ -388,8 +388,8 @@ class RovalEditor extends Component {
 
 RovalEditor.propTypes = {
   contentType: PropTypes.oneOf([
-    'discussion', // TODO: remove this when DiscussionComposer is gone
-    'discussionTitle', // TODO: remove this when DiscussionComposer is gone
+    'discussion', // Equivalent to the first message of the discussion
+    'discussionTitle',
     'meetingName',
     'meetingPurpose',
     'message',

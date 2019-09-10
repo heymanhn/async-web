@@ -253,7 +253,7 @@ const DiscussionMessage = ({
         mode={mode}
         onCancel={handleCancel}
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
-        contentType="message"
+        contentType={conversationId ? 'message' : 'discussion'}
       />
       {mode === 'display' && (
         <MessageReactions conversationId={conversationId} messageId={messageId} />
