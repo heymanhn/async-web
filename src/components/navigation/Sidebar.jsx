@@ -17,11 +17,12 @@ import MeetingSpacesList from './MeetingSpacesList';
 import SwitchToButton from './SwitchToButton';
 
 const Container = styled.div(({ theme: { colors, sidebarWidth } }) => ({
-  flexShrink: 0,
   background: colors.darkBlue,
-  minHeight: '100vh',
   overflowX: 'hidden',
+  overflowY: 'scroll',
   position: 'fixed',
+  top: 0,
+  bottom: 0,
   width: sidebarWidth,
   zIndex: 1,
 }));
