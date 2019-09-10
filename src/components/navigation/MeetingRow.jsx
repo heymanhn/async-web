@@ -5,6 +5,9 @@ import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
 const Container = styled.div(({ isSelected, isUnread, theme: { colors } }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+
   background: isSelected ? colors.sidebarBlue : 'none',
   color: (isSelected || isUnread) ? colors.bgGrey : colors.grey6,
   fontSize: '14px',
