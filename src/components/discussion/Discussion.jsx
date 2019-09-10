@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import { useLazyQuery } from '@apollo/react-hooks';
 
 import conversationQuery from 'graphql/queries/conversation';
+import useSelectedMeeting from 'utils/hooks/useSelectedMeeting';
 
 import DiscussionComposer from './DiscussionComposer';
 import DiscussionThread from './DiscussionThread';
@@ -21,6 +22,7 @@ const Discussion = ({
   meetingId: initialMeetingId,
   ...props
 }) => {
+  const checkSelectedMeeting = useSelectedMeeting();
   const [conversationId, setConversationId] = useState(initialConversationId);
   const [meetingId, setMeetingId] = useState(initialMeetingId);
   const [getConversation, { loading, data }] = useLazyQuery(conversationQuery, {
@@ -33,7 +35,11 @@ const Discussion = ({
 
   let fetchedTitle = null;
   if (data && data.conversation) {
-    if (!meetingId) setMeetingId(data.conversation.meetingId);
+    if (!meetingId) {
+      setMeetingId(data.conversation.meetingId);
+    } else {
+      checkSelectedMeeting(data.conversation.meetingId);
+    }
     fetchedTitle = data.conversation.title;
   }
 

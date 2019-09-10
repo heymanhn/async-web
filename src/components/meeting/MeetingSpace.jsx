@@ -7,6 +7,7 @@ import meetingQuery from 'graphql/queries/meeting';
 import { matchCurrentUserId } from 'utils/auth';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
+import useSelectedMeeting from 'utils/hooks/useSelectedMeeting';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 
 import DiscussionRow from './DiscussionRow';
@@ -38,9 +39,12 @@ const ListLabel = styled.div(({ theme: { colors } }) => ({
 
 const MeetingSpace = ({ meetingId }) => {
   const discussionsListRef = useRef(null);
+  const checkSelectedMeeting = useSelectedMeeting();
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionsListRef);
   const [isFetching, setIsFetching] = useState(false);
   const { markAsRead } = useViewedReaction();
+
+  checkSelectedMeeting(meetingId);
 
   const { loading, data, fetchMore } = useQuery(meetingQuery, {
     variables: { id: meetingId, queryParams: {} },
