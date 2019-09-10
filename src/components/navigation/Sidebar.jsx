@@ -14,6 +14,7 @@ import defaultAvatar from 'images/icons/default-avatar.png';
 
 import Avatar from 'components/shared/Avatar';
 import MeetingSpacesList from './MeetingSpacesList';
+import SwitchToButton from './SwitchToButton';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   flexShrink: 0,
@@ -64,6 +65,10 @@ const Sidebar = () => {
         />
         <OrganizationTitle>{title}</OrganizationTitle>
       </OrganizationDisplay>
+
+      {/* Placeholder button row for now */}
+      <SwitchToButton />
+
       <MeetingSpacesList />
     </Container>
   );
