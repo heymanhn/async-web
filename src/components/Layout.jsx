@@ -43,7 +43,8 @@ const Layout = ({ children }) => {
   }, []);
 
   let showSidebar = false;
-  if (data) showSidebar = data.isLoggedIn;
+  // Include an escape hatch to not render the sidebar if logging out
+  if (data) showSidebar = data.isLoggedIn && window.location.pathname !== '/logout';
 
   return (
     <Theme>

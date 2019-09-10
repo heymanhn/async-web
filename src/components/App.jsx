@@ -59,7 +59,7 @@ const client = new ApolloClient({
 const generateDefaultData = () => ({
   isLoggedIn: isLocalTokenPresent(),
   mediaBreakpoint: getBreakpoint(),
-  saveStatus: null,
+  selectedMeetingId: null,
 });
 cache.writeData({ data: generateDefaultData() });
 client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaultData() })));

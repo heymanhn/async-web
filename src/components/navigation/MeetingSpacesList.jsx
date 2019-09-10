@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
+import localStateQuery from 'graphql/queries/localState';
 import meetingsQuery from 'graphql/queries/meetings';
 
 import CreateMeetingSpaceButton from './CreateMeetingSpaceButton';
@@ -26,11 +27,18 @@ const Heading = styled.div(({ theme: { colors } }) => ({
 }));
 
 const MeetingSpacesList = () => {
-  const { loading, data } = useQuery(meetingsQuery);
+  const { data: meetingsData } = useQuery(meetingsQuery);
+  const { data: localStateData } = useQuery(localStateQuery);
 
-  if (loading || !data) return null;
-  const { items } = data.meetings;
+  if (!meetingsData || !meetingsData.meetings) return null;
+  const { items } = meetingsData.meetings;
   const meetingItems = (items || []);
+
+  function isMeetingSelected(id) {
+    if (!localStateData) return false;
+    const { selectedMeetingId } = localStateData;
+    return id === selectedMeetingId;
+  }
 
   return (
     <Container>
@@ -43,6 +51,7 @@ const MeetingSpacesList = () => {
           key={mi.meeting.id}
           meeting={mi.meeting}
           badgeCount={mi.badgeCount}
+          isSelected={isMeetingSelected(mi.meeting.id)}
         />
       ))}
     </Container>
