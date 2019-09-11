@@ -27,7 +27,9 @@ const Heading = styled.div(({ theme: { colors } }) => ({
 }));
 
 const MeetingSpacesList = () => {
-  const { data: meetingsData } = useQuery(meetingsQuery);
+  const { data: meetingsData } = useQuery(meetingsQuery, {
+    variables: { queryParams: {} },
+  });
   const { data: localStateData } = useQuery(localStateQuery);
 
   if (!meetingsData || !meetingsData.meetings) return null;

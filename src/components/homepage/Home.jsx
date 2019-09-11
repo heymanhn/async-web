@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApolloClient } from 'react-apollo';
+import { useQuery } from 'react-apollo';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
@@ -19,11 +19,11 @@ const Container = styled.div(({ theme: { colors, maxViewport } }) => ({
 }));
 
 const Home = () => {
-  const client = useApolloClient();
-  const { isLoggedIn } = client.readQuery({ query: localStateQuery });
+  const { data: localStateData } = useQuery(localStateQuery);
   const [getMeetings, { data }] = useLazyQuery(meetingsQuery);
 
-  if (!isLoggedIn) {
+  if (!localStateData) return null;
+  if (localStateData && !localStateData.isLoggedIn) {
     return (
       <Container>
         <div>Hello. It&rsquo;s an asynchronous world.</div>
@@ -42,7 +42,7 @@ const Home = () => {
     const meetings = (items || []).map(i => i.meeting);
     const targetId = meetings[0].id;
 
-    navigate(`/spaces/${targetId}`);
+    navigate(`/spaces/${targetId}`, { replace: true });
   }
 
   return null;

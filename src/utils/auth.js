@@ -17,9 +17,10 @@ export const setLocalUser = ({ userId, userToken, organizationId }) => (
   isBrowser ? setUser({ userId, userToken, organizationId }) : false
 );
 export const clearLocalUser = () => {
-  if (!isBrowser) return;
+  if (!isBrowser) return Promise.reject(new Error('Not allowed'));
 
   setUser({});
+  return Promise.resolve();
 };
 
 export const isLocalTokenPresent = () => {

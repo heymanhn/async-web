@@ -11,7 +11,7 @@ const Logout = () => {
   async function handleLogout() {
     await clearLocalUser();
     await client.resetStore();
-    navigate('/');
+    navigate('/', { replace: true });
   }
 
   if (userId) handleLogout();

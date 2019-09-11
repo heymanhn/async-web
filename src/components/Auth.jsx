@@ -71,7 +71,7 @@ class Auth extends Component {
     if (loading) return <div>Logging in...</div>;
     if (error || !params || !params.code) return 'Cannot log in';
 
-    navigate('/');
+    navigate('/', { replace: true });
     return null;
   }
 

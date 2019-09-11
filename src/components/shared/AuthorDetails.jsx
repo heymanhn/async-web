@@ -71,7 +71,7 @@ AuthorDetails.propTypes = {
   author: PropTypes.object.isRequired,
   createdAt: PropTypes.number,
   isEdited: PropTypes.bool,
-  mode: PropTypes.oneOf(['compose', 'display']).isRequired,
+  mode: PropTypes.oneOf(['compose', 'display', 'edit']).isRequired,
   size: PropTypes.oneOf(['large', 'small']),
 };
 

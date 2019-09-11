@@ -10,7 +10,7 @@ const PrivateRoute = ({ component: Component, location, ...rest }) => (
   <Query query={isLoggedInQuery}>
     {({ data }) => {
       if (!data.isLoggedIn && location.pathname !== '/') {
-        navigate('/');
+        navigate('/', { replace: true });
         return null;
       }
 
