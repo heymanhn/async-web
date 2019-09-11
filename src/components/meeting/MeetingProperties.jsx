@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -52,11 +52,16 @@ const StyledParticipantsSelector = styled(ParticipantsSelector)({
 const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
   const [isSelectorOpen, setIsOpen] = useState(false);
 
-  const [previousParticipantIds, setPreviousParticipantIds] = useState(initialParticipantIds);
-  const [participantIds, setParticipantIds] = useState(initialParticipantIds);
+  const [previousParticipantIds, setPreviousParticipantIds] = useState([]);
+  const [participantIds, setParticipantIds] = useState([]);
 
   const [addParticipantAPI] = useMutation(addParticipantMutation);
   const [removeParticipantAPI] = useMutation(removeParticipantMutation);
+
+  useEffect(() => {
+    setPreviousParticipantIds(initialParticipantIds);
+    setParticipantIds(initialParticipantIds);
+  }, [meetingId]);
 
   function addParticipant(id) {
     setParticipantIds([...participantIds, id]);
