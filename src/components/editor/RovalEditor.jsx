@@ -240,7 +240,7 @@ class RovalEditor extends Component {
     const { isSubmitting } = this.props;
     if (isSubmitting) return;
     if (mode === 'compose' && !isPlainText) this.clearEditorValue();
-    if (mode !== 'edit') this.handleCancel({ saved: true });
+    this.handleCancel({ saved: true });
   }
 
   handleSubmitOnBlur(event, editor, next) {
