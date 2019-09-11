@@ -61,7 +61,7 @@ const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
   useEffect(() => {
     setPreviousParticipantIds(initialParticipantIds);
     setParticipantIds(initialParticipantIds);
-  }, [meetingId]);
+  }, [initialParticipantIds]);
 
   function addParticipant(id) {
     setParticipantIds([...participantIds, id]);
