@@ -112,11 +112,18 @@ class RovalEditor extends Component {
   handleBackspaceActions(next) {
     const editor = this.editor.current;
     const { value } = editor;
-    const { previousBlock } = value;
+    const { anchorBlock, previousBlock } = value;
 
     if (editor.isEmptyParagraph() && previousBlock && previousBlock.type === 'section-break') {
       next();
       return editor.removeNodeByKey(previousBlock.key);
+    }
+
+    if (editor.isEmptyParagraph()
+      && (editor.isWrappedBy('code-block') || editor.isWrappedBy('block-quote'))) {
+      return editor
+        .unwrapBlockByKey(anchorBlock.key)
+        .removeNodeByKey(anchorBlock.key);
     }
 
     // TODO: handle backspace behavior for deleting a bulleted list
@@ -163,20 +170,13 @@ class RovalEditor extends Component {
       return editor.setBlocks(DEFAULT_NODE);
     }
 
-    // Similar "double Enter" behavior to code blocks below
-    if (editor.isWrappedBy('block-quote') && !anchorBlock.text) {
-      return editor.setBlocks(DEFAULT_NODE).unwrapBlock('block-quote');
+    if (editor.isWrappedBy('code-block') && !anchorBlock.text) {
+      return editor.setBlocks(DEFAULT_NODE).unwrapBlock('code-block');
     }
 
-    if (anchorBlock.type === 'code-block') {
-      // Pressing enter on a blank line in a code block will reset to a paragraph
-      if (anchorBlock.text.endsWith('\n')) {
-        editor.deleteBackward(1); // Remove the first newline as well
-        next();
-        return editor.setBlocks(DEFAULT_NODE);
-      }
-
-      return editor.insertText('\n');
+    // Similar "double Enter" behavior to code blocks above
+    if (editor.isWrappedBy('block-quote') && !anchorBlock.text) {
+      return editor.setBlocks(DEFAULT_NODE).unwrapBlock('block-quote');
     }
 
     if (editor.hasActiveMark('code-snippet')) {
