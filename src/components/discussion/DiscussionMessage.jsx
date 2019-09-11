@@ -51,6 +51,12 @@ const MessageEditor = styled(RovalEditor)({
     marginTop: '1em',
   },
 
+  pre: {
+    div: {
+      marginTop: '0 !important',
+    },
+  },
+
   h1: {
     fontSize: '28px',
     fontWeight: 600,
