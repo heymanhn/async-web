@@ -168,6 +168,16 @@ const markdownPlugins = [
     before: /(--)$/,
     change: change => change.insertText('— '),
   }),
+  AutoReplace({
+    trigger: '`',
+    before: /^(``)$/,
+    change: (change) => {
+      change
+        .insertBlock(DEFAULT_NODE)
+        .moveBackward(1)
+        .wrapBlock('code-block');
+    },
+  }),
 ];
 
 export const plugins = {
