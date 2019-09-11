@@ -86,7 +86,7 @@ const ReactionPicker = ({
     if (!isOpen) return;
     handleClose({ outsideClick: true });
   };
-  useClickOutside({ handleClickOutside, ref: selector });
+  useClickOutside({ handleClickOutside, isOpen, ref: selector });
 
   const title = reactionOnHover
     ? reactionsReference.find(r => r.code === reactionOnHover).text

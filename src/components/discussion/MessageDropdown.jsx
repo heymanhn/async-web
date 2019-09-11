@@ -62,7 +62,7 @@ const MessageDropdown = ({ handleClose, isOpen, onDelete, onEdit, ...props }) =>
     if (!isOpen) return;
     handleClose();
   }
-  useClickOutside({ handleClickOutside, ref: selector });
+  useClickOutside({ handleClickOutside, isOpen, ref: selector });
 
   function handleDelete(event) {
     event.stopPropagation();

@@ -91,7 +91,11 @@ const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
   }
 
   const selector = useRef();
-  useClickOutside({ handleClickOutside: saveChangesAndClose, ref: selector });
+  useClickOutside({
+    handleClickOutside: saveChangesAndClose,
+    isOpen: isSelectorOpen,
+    ref: selector,
+  });
   const { organizationId } = getLocalUser();
 
   return (
