@@ -55,7 +55,6 @@ export const hotkeys = {
   // Actions
   isEnter: isHotkey('Enter'),
   isSubmit: isHotkey('mod+Enter'),
-  isSubmitAndKeepOpen: isHotkey('shift+Enter'),
   isCancel: isHotkey('Esc'),
   isBackspace: isHotkey('Backspace'),
 };

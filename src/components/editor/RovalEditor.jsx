@@ -188,12 +188,7 @@ class RovalEditor extends Component {
   }
 
   handleKeyDown(event, editor, next) {
-    const { mode } = this.props;
-
     // UX commands
-    if (mode === 'compose' && hotkeys.isSubmitAndKeepOpen(event)) {
-      return this.handleSubmit({ keepOpen: true });
-    }
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
     if (hotkeys.isCancel(event)) return this.handleCancel();
     if (hotkeys.isEnter(event)) return this.handleEnterActions(next);
@@ -232,7 +227,7 @@ class RovalEditor extends Component {
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
   // Parent components give us a method to perform the mutation; we give them the data to persist.
-  async handleSubmit({ keepOpen = false } = {}) {
+  async handleSubmit() {
     const { value } = this.state;
     const { isPlainText, mode, onSubmit } = this.props;
     if (this.isValueEmpty()) return;
@@ -245,8 +240,7 @@ class RovalEditor extends Component {
     const { isSubmitting } = this.props;
     if (isSubmitting) return;
     if (mode === 'compose' && !isPlainText) this.clearEditorValue();
-    if (mode === 'edit' || !keepOpen) this.handleCancel({ saved: true });
-    if (keepOpen) this.editor.current.focus();
+    if (mode !== 'edit') this.handleCancel({ saved: true });
   }
 
   handleSubmitOnBlur(event, editor, next) {
