@@ -51,7 +51,10 @@ const StyledParticipantsSelector = styled(ParticipantsSelector)({
 
 const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
   const [isSelectorOpen, setIsOpen] = useState(false);
+
+  const [previousParticipantIds, setPreviousParticipantIds] = useState(initialParticipantIds);
   const [participantIds, setParticipantIds] = useState(initialParticipantIds);
+
   const [addParticipantAPI] = useMutation(addParticipantMutation);
   const [removeParticipantAPI] = useMutation(removeParticipantMutation);
 
@@ -65,13 +68,13 @@ const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
   }
 
   function saveChangesAndClose() {
-    initialParticipantIds.forEach((id) => {
+    previousParticipantIds.forEach((id) => {
       if (!participantIds.includes(id)) {
         removeParticipantAPI({ variables: { id: meetingId, userId: id } });
       }
     });
     participantIds.forEach((id) => {
-      if (!initialParticipantIds.includes(id)) {
+      if (!previousParticipantIds.includes(id)) {
         addParticipantAPI({
           variables: {
             id: meetingId,
@@ -83,6 +86,7 @@ const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
         });
       }
     });
+    setPreviousParticipantIds(participantIds);
     setIsOpen(false);
   }
 
