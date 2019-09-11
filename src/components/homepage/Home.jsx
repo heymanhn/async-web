@@ -23,7 +23,7 @@ const Home = () => {
   const [getMeetings, { data }] = useLazyQuery(meetingsQuery);
 
   if (!localStateData) return null;
-  if (localStateData && !localStateData.isLoggedIn) {
+  if (!localStateData.isLoggedIn) {
     return (
       <Container>
         <div>Hello. It&rsquo;s an asynchronous world.</div>

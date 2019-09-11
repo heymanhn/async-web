@@ -1,22 +1,20 @@
 /* eslint react/prop-types: 0 */
 
 import React from 'react';
-import { Query } from 'react-apollo';
-import { navigate } from '@reach/router';
+import { useQuery } from 'react-apollo';
+import { Redirect } from '@reach/router';
 
-import isLoggedInQuery from 'graphql/queries/isLoggedIn';
+import localStateQuery from 'graphql/queries/localState';
 
-const PrivateRoute = ({ component: Component, location, ...rest }) => (
-  <Query query={isLoggedInQuery}>
-    {({ data }) => {
-      if (!data.isLoggedIn && location.pathname !== '/') {
-        navigate('/', { replace: true });
-        return null;
-      }
+const PrivateRoute = ({ component: Component, location, ...props }) => {
+  const { data } = useQuery(localStateQuery);
 
-      return <Component location={location} {...rest} />;
-    }}
-  </Query>
-);
+  if (!data) return null;
+  if (!data.isLoggedIn && location.pathname !== '/') {
+    return <Redirect to="/" noThrow />;
+  }
+
+  return <Component location={location} {...props} />;
+};
 
 export default PrivateRoute;
