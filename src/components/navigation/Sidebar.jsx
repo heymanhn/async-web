@@ -8,10 +8,6 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import organizationQuery from 'graphql/queries/organization';
 import { getLocalUser } from 'utils/auth';
 
-// NOTE TO ARUN: We need a default avatar if the URL provided by backend
-// doesn't resolve
-import defaultAvatar from 'images/icons/default-avatar.png';
-
 import Avatar from 'components/shared/Avatar';
 import MeetingSpacesList from './MeetingSpacesList';
 import SwitchToButton from './SwitchToButton';
@@ -57,7 +53,7 @@ const Sidebar = () => {
   }
 
   if (loading || !data.organization) return null;
-  const { title } = data.organization; // TODO: Use the logo
+  const { title, logo } = data.organization;
 
   return (
     <Container>
@@ -65,7 +61,7 @@ const Sidebar = () => {
         <OrganizationLogo
           size={24}
           square
-          src={defaultAvatar}
+          src={logo}
         />
         <OrganizationTitle>{title}</OrganizationTitle>
       </OrganizationDisplay>
