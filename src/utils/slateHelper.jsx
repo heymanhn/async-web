@@ -91,16 +91,13 @@ export const commands = {
     }
 
     // Simplest case: setting the list type as desired
-    //.unwrapBlock('code-block')
-    //.unwrapBlock('block-quote')
     return editor
+      .unwrapNonListBlocks()
       .setBlocks('list-item')
       .wrapBlock(type);
   },
 
   setWrappedBlock: (editor, type) => {
-    // const hasListItems = editor.hasBlock('list-item');
-
     // This means the user is looking to un-set the wrapped block
     if (editor.isWrappedBy(type)) {
       return editor
@@ -108,62 +105,44 @@ export const commands = {
         .unwrapBlock(type);
     }
 
-    // if (hasListItems) {
-    //   editor
-    //     .setBlocks(DEFAULT_NODE)
-    //     .unwrapBlock('bulleted-list')
-    //     .unwrapBlock('numbered-list')
-    //     .wrapBlock(type);
-    // }
-
-    return editor.wrapBlock(type);
+    return editor
+      .setBlocks(DEFAULT_NODE)
+      .unwrapOtherBlocks()
+      .wrapBlock(type);
   },
 
   /* Borrowed from @ianstormtaylor's slateJS example code:
    * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
+   *
+   * Handles everything but lists and block quotes.
    */
   setBlock: (editor, type) => {
-    // Handle everything but lists and block quotes.
-    // HN: PLEASE CLEAN THIS UP
-    const hasListItems = editor.hasBlock('list-item');
-
     if (['bulleted-list', 'numbered-list'].includes(type)) return editor.setListBlock(type);
     if (['block-quote', 'code-block'].includes(type)) return editor.setWrappedBlock(type);
 
     const isActive = editor.hasBlock(type);
 
-    if (hasListItems) {
-      return editor
-        .setBlocks(isActive ? DEFAULT_NODE : type)
-        .unwrapBlock('bulleted-list')
-        .unwrapBlock('numbered-list')
-        .unwrapBlock('code-block')
-        .unwrapBlock('block-quote');
-    }
-
     return editor
-      .unwrapBlock('block-quote')
-      .unwrapBlock('code-block')
+      .unwrapOtherBlocks()
       .setBlocks(isActive ? DEFAULT_NODE : type);
+  },
 
-    // } else if (editor.isWrappedBy(type)) {
-    //   // Handle the extra wrapping required for lists and block quotes
-    //   if (hasListItems) {
-    //     editor
-    //       .setBlocks(DEFAULT_NODE)
-    //       .unwrapBlock(type);
-    //   } else {
-    //     editor.setBlocks(DEFAULT_NODE).unwrapBlock('block-quote');
-    //   }
-    // } else if (hasListItems) {
-    //   editor
-    //     .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
-    //     .wrapBlock(type);
-    // } else if (type === 'bulleted-list' || type === 'numbered-list') {
-    //   editor.setBlocks('list-item').wrapBlock(type);
-    // } else {
-    //   editor.wrapBlock(type);
-    // }
+  unwrapListBlocks: (editor) => {
+    editor
+      .unwrapBlock('bulleted-list')
+      .unwrapBlock('numbered-list');
+  },
+
+  unwrapNonListBlocks: (editor) => {
+    editor
+      .unwrapBlock('block-quote')
+      .unwrapBlock('code-block');
+  },
+
+  unwrapOtherBlocks: (editor) => {
+    editor
+      .unwrapListBlocks()
+      .unwrapNonListBlocks();
   },
 };
 
