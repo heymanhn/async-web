@@ -20,7 +20,7 @@ const BlockButton = ({ editor, type }) => {
   const isActiveBlock = () => {
     let isActive = editor.hasBlock(type);
 
-    if (type === 'block-quote') {
+    if (['block-quote', 'code-block'].includes(type)) {
       const { value: { document, blocks } } = editor;
 
       if (blocks.size > 0) {

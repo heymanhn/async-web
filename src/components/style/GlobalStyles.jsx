@@ -96,6 +96,7 @@ const GlobalStyles = ({ theme: { colors, fontStack, codeFontStack, mq } }) => (
         borderRadius: '5px',
         fontFamily: `${codeFontStack}`,
         padding: '7px 12px',
+        whiteSpace: 'pre-wrap',
 
         span: {
           fontFamily: `${codeFontStack}`,
