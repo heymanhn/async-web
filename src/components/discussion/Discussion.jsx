@@ -45,13 +45,25 @@ const Discussion = ({
 
   if (!meetingId) return null;
 
+  function isUnread() {
+    const { tags } = data.conversation;
+    const safeTags = tags || [];
+    return safeTags.includes('new_messages') || safeTags.includes('new_discussion');
+  }
+
   return (
     <Container {...props}>
       <NavigationBar
         discussionTitle={fetchedTitle}
         meetingId={meetingId}
       />
-      {conversationId && !loading && <DiscussionThread conversationId={conversationId} />}
+      {conversationId && !loading && (
+        <DiscussionThread
+          conversationId={conversationId}
+          isUnread={isUnread()}
+          meetingId={meetingId}
+        />
+      )}
       {meetingId && !conversationId && (
         <DiscussionComposer afterSubmit={setConversationId} meetingId={meetingId} />
       )}

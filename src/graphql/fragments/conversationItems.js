@@ -9,7 +9,6 @@ export default gql`
       conversation @type(name: "Conversation") {
         ...ConversationObject
         ...MessageContext
-        tags
       }
     }
     pageToken

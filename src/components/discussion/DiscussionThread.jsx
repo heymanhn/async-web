@@ -31,13 +31,18 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   outline: 'none',
 }));
 
-const DiscussionThread = ({ conversationId }) => {
+const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
 
   const { markAsRead } = useViewedReaction();
-  useMountEffect(() => markAsRead({ objectType: 'conversation', objectId: conversationId }));
+  useMountEffect(() => markAsRead({
+    isUnread,
+    objectType: 'conversation',
+    objectId: conversationId,
+    parentId: meetingId,
+  }));
 
   const { loading, error, data, fetchMore } = useQuery(conversationQuery, {
     variables: { id: conversationId, queryParams: {} },
@@ -103,6 +108,8 @@ const DiscussionThread = ({ conversationId }) => {
 
 DiscussionThread.propTypes = {
   conversationId: PropTypes.string.isRequired,
+  isUnread: PropTypes.bool.isRequired,
+  meetingId: PropTypes.string.isRequired,
 };
 
 export default DiscussionThread;

@@ -59,7 +59,13 @@ const MeetingSpace = ({ meetingId }) => {
   function hasCurrentUserViewed() {
     return !!(reactions || []).find(r => r.code === 'viewed' && matchCurrentUserId(r.author.id));
   }
-  if (!hasCurrentUserViewed()) markAsRead({ objectType: 'meeting', objectId: meetingId });
+  if (!hasCurrentUserViewed()) {
+    markAsRead({
+      isUnread: true,
+      objectType: 'meeting',
+      objectId: meetingId,
+    });
+  }
 
   // HN: Opportunity to DRY this up with the fetch handler for the discussion page?
   function fetchMoreDiscussions() {
