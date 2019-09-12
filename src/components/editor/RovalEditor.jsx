@@ -206,6 +206,7 @@ class RovalEditor extends Component {
     if (hotkeys.isSmallFont(event)) return editor.setBlock('heading-three');
     if (hotkeys.isBulletedList(event)) return editor.setBlock('bulleted-list');
     if (hotkeys.isNumberedList(event)) return editor.setBlock('numbered-list');
+    if (hotkeys.isBlockQuote(event)) return editor.setBlock('block-quote');
     if (hotkeys.isCodeBlock(event)) return editor.setBlock('code-block');
 
     // Marks

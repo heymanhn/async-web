@@ -43,9 +43,10 @@ export const hotkeys = {
   isItalic: isHotkey('mod+i'),
   isUnderlined: isHotkey('mod+u'),
   isCodeSnippet: isHotkey('mod+k'),
-  isCodeBlock: isHotkey('mod+shift+k'),
 
   // Blocks
+  isBlockQuote: isHotkey('mod+shift+9'),
+  isCodeBlock: isHotkey('mod+shift+k'),
   isBulletedList: isHotkey('mod+shift+8'),
   isNumberedList: isHotkey('mod+shift+7'),
   isLargeFont: isHotkey('mod+opt+1'),
