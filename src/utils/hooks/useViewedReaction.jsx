@@ -47,6 +47,39 @@ const useViewedReaction = () => {
     });
   }
 
+  function updateMeetingsCache(cache, meetingId) {
+    const {
+      meetings: { items, pageToken, __typename },
+    } = cache.readQuery({
+      query: meetingsQuery,
+      variables: { queryParams: {} },
+    });
+
+    const index = items
+      .map(i => i.meeting)
+      .findIndex(m => m.id === meetingId);
+    const meetingItem = items[index];
+
+    cache.writeQuery({
+      query: meetingsQuery,
+      variables: { queryParams: {} },
+      data: {
+        meetings: {
+          pageToken,
+          items: [
+            ...items.slice(0, index),
+            {
+              ...meetingItem,
+              badgeCount: meetingItem.badgeCount - 1,
+            },
+            ...items.slice(index + 1),
+          ],
+          __typename,
+        },
+      },
+    });
+  }
+
   function markAsRead({ isUnread, objectType, objectId, parentId } = {}) {
     const meetingId = parentId || objectId;
 
@@ -69,7 +102,7 @@ const useViewedReaction = () => {
           updateMeetingCache(cache, meetingId, objectId);
         }
 
-        // updateMeetingsCache(cache, meetingId);
+        updateMeetingsCache(cache, meetingId);
       },
     });
   }
