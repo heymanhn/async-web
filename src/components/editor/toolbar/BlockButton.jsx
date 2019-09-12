@@ -20,6 +20,7 @@ const BlockButton = ({ editor, type }) => {
   const isActiveBlock = () => {
     let isActive = editor.hasBlock(type);
 
+    // TODO(HN): do the same for code blocks please
     if (type === 'block-quote') {
       const { value: { document, blocks } } = editor;
 

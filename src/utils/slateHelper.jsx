@@ -71,45 +71,98 @@ export const commands = {
     editor.unwrapInline('link');
   },
 
+  // Works for both bulleted and numbered lists
+  setListBlock: (editor, type) => {
+    const hasListItems = editor.hasBlock('list-item');
+
+    // This means the user is looking to un-set the list block
+    if (editor.isWrappedBy(type)) {
+      return editor
+        .setBlocks(DEFAULT_NODE)
+        .unwrapBlock(type);
+    }
+
+    // Converting a bulleted list to a numbered list, or vice versa
+    if (hasListItems) {
+      return editor
+        .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
+        .wrapBlock(type);
+    }
+
+    // Simplest case: setting the list type as desired
+    //.unwrapBlock('code-block')
+    //.unwrapBlock('block-quote')
+    return editor
+      .setBlocks('list-item')
+      .wrapBlock(type);
+  },
+
+  setWrappedBlock: (editor, type) => {
+    // const hasListItems = editor.hasBlock('list-item');
+
+    // This means the user is looking to un-set the wrapped block
+    if (editor.isWrappedBy(type)) {
+      return editor
+        .setBlocks(DEFAULT_NODE)
+        .unwrapBlock(type);
+    }
+
+    // if (hasListItems) {
+    //   editor
+    //     .setBlocks(DEFAULT_NODE)
+    //     .unwrapBlock('bulleted-list')
+    //     .unwrapBlock('numbered-list')
+    //     .wrapBlock(type);
+    // }
+
+    return editor.wrapBlock(type);
+  },
+
   /* Borrowed from @ianstormtaylor's slateJS example code:
    * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
    */
   setBlock: (editor, type) => {
     // Handle everything but lists and block quotes.
     // HN: PLEASE CLEAN THIS UP
-    const isList = editor.hasBlock('list-item');
-    if (type !== 'bulleted-list' && type !== 'numbered-list' && type !== 'block-quote') {
-      const isActive = editor.hasBlock(type);
+    const hasListItems = editor.hasBlock('list-item');
 
-      if (isList) {
-        editor
-          .setBlocks(isActive ? DEFAULT_NODE : type)
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list');
-      } else {
-        editor
-          .unwrapBlock('block-quote')
-          .setBlocks(isActive ? DEFAULT_NODE : type);
-      }
-    } else if (editor.isWrappedBy(type)) {
-      // Handle the extra wrapping required for lists and block quotes
-      if (isList) {
-        editor
-          .setBlocks(DEFAULT_NODE)
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list');
-      } else {
-        editor.setBlocks(DEFAULT_NODE).unwrapBlock('block-quote');
-      }
-    } else if (isList) {
-      editor
-        .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
-        .wrapBlock(type);
-    } else if (type === 'bulleted-list' || type === 'numbered-list') {
-      editor.setBlocks('list-item').wrapBlock(type);
-    } else {
-      editor.wrapBlock(type);
+    if (['bulleted-list', 'numbered-list'].includes(type)) return editor.setListBlock(type);
+    if (['block-quote', 'code-block'].includes(type)) return editor.setWrappedBlock(type);
+
+    const isActive = editor.hasBlock(type);
+
+    if (hasListItems) {
+      return editor
+        .setBlocks(isActive ? DEFAULT_NODE : type)
+        .unwrapBlock('bulleted-list')
+        .unwrapBlock('numbered-list')
+        .unwrapBlock('code-block')
+        .unwrapBlock('block-quote');
     }
+
+    return editor
+      .unwrapBlock('block-quote')
+      .unwrapBlock('code-block')
+      .setBlocks(isActive ? DEFAULT_NODE : type);
+
+    // } else if (editor.isWrappedBy(type)) {
+    //   // Handle the extra wrapping required for lists and block quotes
+    //   if (hasListItems) {
+    //     editor
+    //       .setBlocks(DEFAULT_NODE)
+    //       .unwrapBlock(type);
+    //   } else {
+    //     editor.setBlocks(DEFAULT_NODE).unwrapBlock('block-quote');
+    //   }
+    // } else if (hasListItems) {
+    //   editor
+    //     .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
+    //     .wrapBlock(type);
+    // } else if (type === 'bulleted-list' || type === 'numbered-list') {
+    //   editor.setBlocks('list-item').wrapBlock(type);
+    // } else {
+    //   editor.wrapBlock(type);
+    // }
   },
 };
 
