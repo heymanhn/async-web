@@ -44,6 +44,12 @@ const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
     marginTop: '3px',
   },
 
+  pre: {
+    span: {
+      letterSpacing: '-0.2px',
+    },
+  },
+
   blockquote: {
     borderLeft: `3px solid ${colors.borderGrey}`,
     color: colors.grey2,
