@@ -163,6 +163,8 @@ export const queries = {
   isWrappedBy: (editor, type) => editor.value.blocks.some(block => (
     !!editor.value.document.getClosest(block.key, parent => parent.type === type)
   )),
+  isWrappedByCodeOrQuote: editor => editor.isWrappedBy('code-block')
+    || editor.isWrappedBy('block-quote'),
 };
 
 /* ******************** */

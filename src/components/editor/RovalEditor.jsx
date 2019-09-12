@@ -125,11 +125,9 @@ class RovalEditor extends Component {
       return editor.removeNodeByKey(previousBlock.key);
     }
 
-    if (editor.isEmptyParagraph()
-      && (editor.isWrappedBy('code-block') || editor.isWrappedBy('block-quote'))) {
-      return editor
-        .unwrapBlockByKey(anchorBlock.key)
-        .removeNodeByKey(anchorBlock.key);
+    if (editor.isEmptyParagraph() && editor.isWrappedByCodeOrQuote()) {
+      editor.unwrapBlockByKey(anchorBlock.key);
+      return previousBlock ? editor.removeNodeByKey(anchorBlock.key) : next();
     }
 
     // TODO: handle backspace behavior for deleting a bulleted list
