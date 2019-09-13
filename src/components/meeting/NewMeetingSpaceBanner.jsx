@@ -32,7 +32,7 @@ const MessageText = styled.div(({ theme: { colors } }) => ({
   fontSize: '16px',
 }));
 
-const WelcomeBanner = ({ meetingId }) => (
+const NewMeetingSpaceBanner = ({ meetingId }) => (
   <MeetingSpaceBanner>
     <InnerContainer>
       <Message>
@@ -46,8 +46,8 @@ const WelcomeBanner = ({ meetingId }) => (
   </MeetingSpaceBanner>
 );
 
-WelcomeBanner.propTypes = {
+NewMeetingSpaceBanner.propTypes = {
   meetingId: PropTypes.string.isRequired,
 };
 
-export default WelcomeBanner;
+export default NewMeetingSpaceBanner;
