@@ -1,24 +1,26 @@
 import React from 'react';
-import { useApolloClient } from 'react-apollo';
-import { navigate } from '@reach/router';
+import { useApolloClient, useQuery } from 'react-apollo';
+import { Redirect } from '@reach/router';
 
-import { getLocalUser, clearLocalUser } from 'utils/auth';
+import isLoggedInQuery from 'graphql/queries/isLoggedIn';
+import { clearLocalUser } from 'utils/auth';
 
 const Logout = () => {
   const client = useApolloClient();
-  const { userId } = getLocalUser();
+  const { data } = useQuery(isLoggedInQuery);
+  if (!data) return null;
 
   async function handleLogout() {
     await clearLocalUser();
-    await client.resetStore();
-    navigate('/', { replace: true });
+    client.resetStore();
   }
 
-  if (userId) handleLogout();
+  if (data.isLoggedIn) {
+    handleLogout();
+    return <div>Logging out...</div>;
+  }
 
-  return (
-    <div>Logging out...</div>
-  );
+  return <Redirect to="/" noThrow />;
 };
 
 export default Logout;

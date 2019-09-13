@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { withApollo } from 'react-apollo';
-import { navigate } from '@reach/router';
-import styled from '@emotion/styled';
+import { useApolloClient, useQuery } from 'react-apollo';
+import { navigate, Redirect } from '@reach/router';
 
 import {
   setLocalUser,
@@ -12,81 +11,53 @@ import { parseQueryString } from 'utils/queryParams';
 import fakeAuthQuery from 'graphql/queries/fakeAuth'; // Temporary, for the prototype
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 
-const Container = styled.div(({ theme: { containerMargin, maxViewport } }) => ({
-  margin: containerMargin,
-  maxWidth: maxViewport,
-}));
+const Auth = ({ location }) => {
+  const client = useApolloClient();
+  const { data } = useQuery(isLoggedInQuery);
 
-class Auth extends Component {
-  constructor(props) {
-    super(props);
+  async function handleLogin(code) {
+    try {
+      const { data: fakeAuthData } = await client.query({
+        query: fakeAuthQuery,
+        variables: { code },
+      });
 
-    const { location: { search } } = this.props;
-    this.state = {
-      params: parseQueryString(search),
-      error: false,
-      loading: true,
-    };
+      if (fakeAuthData && fakeAuthData.user) {
+        const {
+          id: userId,
+          fullName: name,
+          email,
+          token: userToken,
+          organizationId,
+        } = fakeAuthData.user;
 
-    this.renderContents = this.renderContents.bind(this);
-  }
-
-  async componentDidMount() {
-    const { client } = this.props;
-    const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
-
-    const { params } = this.state;
-    if (!params || !params.code || isLoggedIn) {
-      this.setState({ loading: false });
-      return;
-    }
-
-    const { code } = params;
-    if (code) {
-      try {
-        const response = await client.query({
-          query: fakeAuthQuery, variables: { code },
-        });
-
-        if (response.data && response.data.user) {
-          const { id: userId, token: userToken, organizationId } = response.data.user;
-          setLocalUser({ userId, userToken, organizationId });
-          client.writeData({ data: { isLoggedIn: true } });
-
-          const { user: { id, fullName: name, email } } = response.data;
-          window.analytics.identify(id, { name, email });
-          this.setState({ loading: false });
-        }
-      } catch (err) {
-        client.resetStore();
-        clearLocalUser();
-        this.setState({ error: true, loading: false });
+        setLocalUser({ userId, userToken, organizationId });
+        window.analytics.identify(userId, { name, email });
+        client.writeData({ data: { isLoggedIn: true } });
+      } else {
+        Promise.reject(new Error('Failed to log in'));
       }
+    } catch (err) {
+      clearLocalUser();
+      client.resetStore();
+      navigate('/', { replace: true });
     }
   }
 
-  renderContents() {
-    const { error, loading, params } = this.state;
+  if (data) {
+    if (data.isLoggedIn) return <Redirect to="/" noThrow />;
 
-    if (loading) return <div>Logging in...</div>;
-    if (error || !params || !params.code) return 'Cannot log in';
+    const params = parseQueryString(location.search);
+    if (!params || !params.code) return <div>Cannot log in</div>;
 
-    navigate('/', { replace: true });
-    return null;
+    handleLogin(params.code);
   }
 
-  render() {
-    return (
-      <Container>
-        {this.renderContents()}
-      </Container>
-    );
-  }
-}
+  return <div>Logging in...</div>;
+};
 
 Auth.propTypes = {
-  client: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
 };
 
-export default withApollo(Auth);
+export default Auth;
