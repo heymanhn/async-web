@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 const Container = styled.div(({ avatarUrl, square, size }) => ({
-  background: `url(${avatarUrl})`,
+  background: `url('${avatarUrl}')`,
   backgroundPosition: 'center',
   backgroundSize: 'cover',
   borderRadius: square ? '5px' : '50%',
