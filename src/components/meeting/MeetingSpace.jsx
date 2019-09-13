@@ -13,6 +13,7 @@ import useViewedReaction from 'utils/hooks/useViewedReaction';
 import DiscussionRow from './DiscussionRow';
 import TitleBar from './TitleBar';
 import NewMeetingSpaceBanner from './NewMeetingSpaceBanner';
+import WelcomeBanner from './WelcomeBanner';
 
 const Container = styled.div({
   marginBottom: '60px',
@@ -103,13 +104,20 @@ const MeetingSpace = ({ meetingId }) => {
     <Container>
       <TitleBar meeting={data.meeting} />
       <DiscussionsContainer ref={discussionsListRef}>
-
         {conversations.length > 0 ? (
-          <DiscussionList>
-            <ListLabel>DISCUSSIONS</ListLabel>
-            {conversations.map(c => <DiscussionRow key={c.id} conversation={c} />)}
-          </DiscussionList>
-        ) : <NewMeetingSpaceBanner meetingId={data.meeting.id} />}
+          <React.Fragment>
+            {!hasCurrentUserViewed() && <WelcomeBanner />}
+            <DiscussionList>
+              <ListLabel>DISCUSSIONS</ListLabel>
+              {conversations.map(c => <DiscussionRow key={c.id} conversation={c} />)}
+            </DiscussionList>
+          </React.Fragment>
+        ) : (
+          <NewMeetingSpaceBanner
+            hasCurrentUserViewed={hasCurrentUserViewed()}
+            meetingId={data.meeting.id}
+          />
+        )}
       </DiscussionsContainer>
     </Container>
   );

@@ -11,14 +11,14 @@ const InnerContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  margin: '30px 0 40px',
+  margin: '30px 30px 35px',
 });
 
 const Message = styled.div({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  marginBottom: '10px',
+  marginBottom: '15px',
 });
 
 const Icon = styled.span({
@@ -32,21 +32,28 @@ const MessageText = styled.div(({ theme: { colors } }) => ({
   fontSize: '16px',
 }));
 
-const NewMeetingSpaceBanner = ({ meetingId }) => (
-  <MeetingSpaceBanner>
-    <InnerContainer>
-      <Message>
-        <Icon role="img" aria-label="Sparkles">✨</Icon>
-        <MessageText>
-          Welcome to the meeting space! Create a discussion to get started.
-        </MessageText>
-      </Message>
-      <StartDiscussionButton meetingId={meetingId} />
-    </InnerContainer>
-  </MeetingSpaceBanner>
-);
+const NewMeetingSpaceBanner = ({ hasCurrentUserViewed, meetingId }) => {
+  const actionMessage = 'Create a discussion to get started.';
+  const welcomeMessage = hasCurrentUserViewed
+    ? 'Welcome to the meeting space!'
+    : "Welcome! You've been added to this meeting space.";
+  const compositeMessage = `${welcomeMessage} ${actionMessage}`;
+
+  return (
+    <MeetingSpaceBanner>
+      <InnerContainer>
+        <Message>
+          <Icon role="img" aria-label="Sparkles">✨</Icon>
+          <MessageText>{compositeMessage}</MessageText>
+        </Message>
+        <StartDiscussionButton meetingId={meetingId} />
+      </InnerContainer>
+    </MeetingSpaceBanner>
+  );
+};
 
 NewMeetingSpaceBanner.propTypes = {
+  hasCurrentUserViewed: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
 };
 
