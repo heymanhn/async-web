@@ -16,7 +16,7 @@ import getBreakpoint from 'utils/mediaQuery';
 
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
-import Auth from 'components/Auth';
+import Login from 'components/Login';
 import Logout from 'components/Logout';
 import PrivateRoute from 'components/PrivateRoute';
 import MeetingSpace from 'components/meeting/MeetingSpace';
@@ -64,13 +64,10 @@ client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaul
 
 const App = () => (
   <Layout>
-    {/* Setting primary prop to `false` per: */}
-    {/* https://stackoverflow.com/questions/53058110/stop-reach-router-scrolling-down-the-page-after-navigating-to-new-page */}
-    <Router primary={false}>
+    <Router>
       <Home path="/" />
 
-      {/* Temporary login route */}
-      <Auth path="/login" />
+      <Login path="/login" />
       <Logout path="/logout" />
 
       <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />

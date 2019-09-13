@@ -11,7 +11,7 @@ import { parseQueryString } from 'utils/queryParams';
 import fakeAuthQuery from 'graphql/queries/fakeAuth'; // Temporary, for the prototype
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 
-const Auth = ({ location }) => {
+const Login = ({ location }) => {
   const client = useApolloClient();
   const { data } = useQuery(isLoggedInQuery);
 
@@ -56,8 +56,14 @@ const Auth = ({ location }) => {
   return <div>Logging in...</div>;
 };
 
-Auth.propTypes = {
-  location: PropTypes.object.isRequired,
+// NOTE: For some reason, Reach Router doesn't pass the location object to the Login component
+// when the app is first loaded. Setting the prop to optional for now.
+Login.propTypes = {
+  location: PropTypes.object,
 };
 
-export default Auth;
+Login.defaultProps = {
+  location: null,
+};
+
+export default Login;
