@@ -19,10 +19,8 @@ import Home from 'components/homepage/Home';
 import Auth from 'components/Auth';
 import Logout from 'components/Logout';
 import PrivateRoute from 'components/PrivateRoute';
-import Inbox from 'components/inbox/Inbox';
 import MeetingSpace from 'components/meeting/MeetingSpace';
 import Discussion from 'components/discussion/Discussion';
-import DiscussionFeed from 'components/feed/DiscussionFeed';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -75,18 +73,15 @@ const App = () => (
       <Auth path="/login" />
       <Logout path="/logout" />
 
-      {/* Keep this around for now */}
-      <PrivateRoute path="/inbox" component={Inbox} />
-
-      <PrivateRoute path="/feed" component={DiscussionFeed} />
-
       <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />
 
       <PrivateRoute path="/spaces/:meetingId/discussions/new" component={Discussion} />
       <PrivateRoute path="/discussions/:conversationId" component={Discussion} />
-
       {/* TODO */}
-      {/* <PrivateRoute path="/spaces/:meetingId/conversations/:conversationId/messages/:messageId" component={MeetingSpace} /> */}
+      {/* <PrivateRoute
+        path="/discussions/:conversationId/messages/:messageId"
+        component={Discussion}
+      /> */}
 
       {/* <NotFound default /> */}
     </Router>
