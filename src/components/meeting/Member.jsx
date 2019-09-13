@@ -77,7 +77,7 @@ const Member = ({
       {...props}
     >
       <Details>
-        <StyledAvatar src={profilePictureUrl} size={30} />
+        <StyledAvatar avatarUrl={profilePictureUrl} size={30} />
         <Name>{fullName}</Name>
       </Details>
       <MetadataContainer>

@@ -52,7 +52,7 @@ const MessageComposer = ({ conversationId }) => {
 
   const addReplyBox = (
     <Container onClick={startComposing} {...hoverProps}>
-      <AvatarWithMargin src={currentUser.profilePictureUrl} size={32} />
+      <AvatarWithMargin avatarUrl={currentUser.profilePictureUrl} size={32} />
       <AddReplyLabel>Add a reply...</AddReplyLabel>
     </Container>
   );

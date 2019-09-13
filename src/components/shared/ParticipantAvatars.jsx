@@ -28,9 +28,9 @@ const ParticipantAvatars = ({ authorId, members, participantIds }) => {
       {sortByMeetingOwnerFirst().map(p => (
         <StyledAvatar
           alt={p.user.fullName}
+          avatarUrl={p.user.profilePictureUrl}
           key={p.user.id}
           size={30}
-          src={p.user.profilePictureUrl}
           title={p.user.fullName}
         />
       ))}

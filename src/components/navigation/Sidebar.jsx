@@ -30,7 +30,7 @@ const OrganizationDisplay = styled.div({
   margin: '25px 20px 0',
 });
 
-const OrganizationLogo = styled(Avatar)({
+const OrganizationAvatar = styled(Avatar)({
   marginRight: '15px',
 });
 
@@ -58,10 +58,10 @@ const Sidebar = () => {
   return (
     <Container>
       <OrganizationDisplay>
-        <OrganizationLogo
+        <OrganizationAvatar
+          avatarUrl={logo}
           size={24}
           square
-          src={logo}
         />
         <OrganizationTitle>{title}</OrganizationTitle>
       </OrganizationDisplay>

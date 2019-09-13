@@ -52,7 +52,10 @@ const AuthorDetails = ({ author, createdAt, isEdited, mode, size }) => {
 
   return (
     <Container>
-      <AvatarWithMargin src={author.profilePictureUrl} size={size === 'large' ? 32 : 24} />
+      <AvatarWithMargin
+        avatarUrl={author.profilePictureUrl}
+        size={size === 'large' ? 32 : 24}
+      />
       <Details>
         <Author size={size}>{author.fullName}</Author>
         {mode === 'display' && (

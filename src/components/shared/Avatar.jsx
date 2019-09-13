@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ src, square, size }) => ({
-  background: `url(${src})`,
+const Container = styled.div(({ avatarUrl, square, size }) => ({
+  background: `url(${avatarUrl})`,
   backgroundPosition: 'center',
   backgroundSize: 'cover',
   borderRadius: square ? '5px' : '50%',
@@ -11,14 +11,14 @@ const Container = styled.div(({ src, square, size }) => ({
   height: `${size}px`,
 }));
 
-const Avatar = ({ square, src, size, ...props }) => (
-  <Container square={square} src={src} size={size} {...props} />
+const Avatar = ({ square, avatarUrl, size, ...props }) => (
+  <Container square={square} avatarUrl={avatarUrl} size={size} {...props} />
 );
 
 Avatar.propTypes = {
+  avatarUrl: PropTypes.any.isRequired,
   className: PropTypes.string,
   square: PropTypes.bool,
-  src: PropTypes.any.isRequired,
   size: PropTypes.number,
 };
 
