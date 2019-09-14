@@ -7,6 +7,7 @@ export default gql`
     items @type(name: "[MessageItem]") {
       message @type(name: "Message") {
         ...MessageObject
+        tags
       }
     }
     messageCount

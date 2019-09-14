@@ -12,6 +12,7 @@ import { snakedQueryParams } from 'utils/queryParams';
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from './DiscussionMessage';
 import MessageComposer from './MessageComposer';
+import NewRepliesIndicator from './NewRepliesIndicator';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
@@ -85,6 +86,12 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
     fetchMoreMessages();
   }
 
+  function firstNewMessageId() {
+    const targetMessage = messages.find(m => m.tags && m.tags.includes('new_message'));
+
+    return targetMessage ? targetMessage.id : null;
+  }
+
   return (
     <Container ref={discussionRef}>
       <TitleEditor
@@ -95,11 +102,13 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
         saveOnBlur
       />
       {messages.map(m => (
-        <DiscussionMessage
-          key={m.id}
-          conversationId={conversationId}
-          initialMessage={m}
-        />
+        <React.Fragment key={m.id}>
+          {firstNewMessageId() === m.id && m.id !== messages[0].id && <NewRepliesIndicator />}
+          <DiscussionMessage
+            conversationId={conversationId}
+            initialMessage={m}
+          />
+        </React.Fragment>
       ))}
       {!pageToken && <MessageComposer conversationId={conversationId} />}
     </Container>
