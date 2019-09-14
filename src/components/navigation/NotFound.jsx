@@ -17,7 +17,7 @@ const TitleSection = styled.div({
   flexDirection: 'row',
   alignItems: 'baseline',
   marginBottom: '15px',
-  marginTop: '-5vh',
+  marginTop: '-10vh',
 });
 
 const Icon = styled.span({

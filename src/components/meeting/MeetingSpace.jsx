@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
-import { Redirect } from '@reach/router';
 import styled from '@emotion/styled';
 
 import meetingQuery from 'graphql/queries/meeting';
@@ -11,6 +10,7 @@ import { snakedQueryParams } from 'utils/queryParams';
 import useSelectedMeeting from 'utils/hooks/useSelectedMeeting';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 
+import NotFound from 'components/navigation/NotFound';
 import DiscussionRow from './DiscussionRow';
 import TitleBar from './TitleBar';
 import NewMeetingSpaceBanner from './NewMeetingSpaceBanner';
@@ -53,7 +53,7 @@ const MeetingSpace = ({ meetingId }) => {
     variables: { id: meetingId, queryParams: {} },
   });
   if (loading) return null;
-  if (!data || !data.meeting || !data.conversations) return <Redirect to="/notfound" noThrow />;
+  if (!data || !data.meeting || !data.conversations) return <NotFound />;
 
   const { reactions } = data.meeting;
   const { pageToken, items } = data.conversations;

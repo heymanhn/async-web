@@ -9,6 +9,7 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import conversationQuery from 'graphql/queries/conversation';
 import useSelectedMeeting from 'utils/hooks/useSelectedMeeting';
 
+import NotFound from 'components/navigation/NotFound';
 import DiscussionComposer from './DiscussionComposer';
 import DiscussionThread from './DiscussionThread';
 import NavigationBar from './NavigationBar';
@@ -34,6 +35,7 @@ const Discussion = ({
   }
 
   let fetchedTitle = null;
+  if (!loading && (!data || !data.conversation)) return <NotFound />;
   if (data && data.conversation) {
     if (!meetingId) {
       setMeetingId(data.conversation.meetingId);
