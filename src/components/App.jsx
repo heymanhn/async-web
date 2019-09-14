@@ -18,6 +18,7 @@ import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
 import Login from 'components/Login';
 import Logout from 'components/Logout';
+import NotFound from 'components/navigation/NotFound';
 import PrivateRoute from 'components/PrivateRoute';
 import MeetingSpace from 'components/meeting/MeetingSpace';
 import Discussion from 'components/discussion/Discussion';
@@ -80,7 +81,7 @@ const App = () => (
         component={Discussion}
       /> */}
 
-      {/* <NotFound default /> */}
+      <NotFound default />
     </Router>
   </Layout>
 );
