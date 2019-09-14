@@ -125,6 +125,14 @@ const DiscussionMessage = ({
           variables: { id: conversationId, queryParams: {} },
         });
 
+        const newMessageItem = {
+          __typename: items[0].__typename,
+          message: {
+            ...createMessage,
+            tags: null,
+          },
+        };
+
         cache.writeQuery({
           query: conversationQuery,
           variables: { id: conversationId, queryParams: {} },
@@ -133,13 +141,7 @@ const DiscussionMessage = ({
             messages: {
               messageCount: messageCount + 1,
               pageToken,
-              items: [
-                ...items,
-                {
-                  __typename: items[0].__typename,
-                  message: createMessage,
-                },
-              ],
+              items: [...items, newMessageItem],
               __typename,
             },
           },

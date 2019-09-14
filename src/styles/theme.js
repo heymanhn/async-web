@@ -41,7 +41,6 @@ export const theme = {
   discussionViewport: '800px',
   meetingSpaceViewport: '720px',
   wideViewport: '1220px',
-  discussionWidth: '700px',
   sidebarWidth: '250px',
 
   colors: {
