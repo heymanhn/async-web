@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
+import { Redirect } from '@reach/router';
 import styled from '@emotion/styled';
 
 import meetingQuery from 'graphql/queries/meeting';
@@ -51,7 +52,8 @@ const MeetingSpace = ({ meetingId }) => {
   const { loading, data, fetchMore } = useQuery(meetingQuery, {
     variables: { id: meetingId, queryParams: {} },
   });
-  if (loading || !data.meeting) return null;
+  if (loading) return null;
+  if (!data || !data.meeting || !data.conversations) return <Redirect to="/notfound" noThrow />;
 
   const { reactions } = data.meeting;
   const { pageToken, items } = data.conversations;

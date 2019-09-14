@@ -81,7 +81,7 @@ const App = () => (
         component={Discussion}
       /> */}
 
-      <NotFound default />
+      <NotFound path="/notfound" default />
     </Router>
   </Layout>
 );
