@@ -168,6 +168,7 @@ const CreateMeetingSpaceModal = ({ isOpen, toggle, ...props }) => {
     },
     refetchQueries: [{
       query: meetingsQuery,
+      variables: { queryParams: {} },
     }],
   });
 
