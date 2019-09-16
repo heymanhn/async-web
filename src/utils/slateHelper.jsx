@@ -165,6 +165,9 @@ export const queries = {
   )),
   isWrappedByCodeOrQuote: editor => editor.isWrappedBy('code-block')
     || editor.isWrappedBy('block-quote'),
+  isWrappedByList: editor => editor.isWrappedBy('bulleted-list')
+    || editor.isWrappedBy('numbered-list'),
+  isWrappedByAnyBlock: editor => editor.isWrappedByCodeOrQuote() || editor.isWrappedByList(),
 };
 
 /* ******************** */
@@ -180,18 +183,13 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
 const markdownPlugins = [
   AutoReplace({
     trigger: 'space',
-    before: /^(>)$/,
-    change: change => change.wrapBlock('block-quote'),
-  }),
-  AutoReplace({
-    trigger: 'space',
     before: /^(-)$/,
-    change: change => change.setBlocks('list-item').wrapBlock('bulleted-list'),
+    change: change => change.setBlock('bulleted-list'),
   }),
   AutoReplace({
     trigger: 'space',
     before: /^(1.)$/,
-    change: change => change.setBlocks('list-item').wrapBlock('numbered-list'),
+    change: change => change.setBlock('numbered-list'),
   }),
   AutoReplace({
     trigger: '-',
@@ -204,13 +202,29 @@ const markdownPlugins = [
     change: change => change.insertText('— '),
   }),
   AutoReplace({
+    trigger: 'space',
+    before: /^(>)$/,
+    change: (change) => {
+      // Essentially undoing the autoReplace detection
+      if (change.isWrappedByAnyBlock()) return change.insertText('> ');
+
+      return change
+        .insertBlock(DEFAULT_NODE)
+        .moveBackward(1)
+        .setBlock('block-quote');
+    },
+  }),
+  AutoReplace({
     trigger: '`',
     before: /^(``)$/,
     change: (change) => {
-      change
+      // Essentially undoing the autoReplace detection
+      if (change.isWrappedByAnyBlock()) return change.insertText('```');
+
+      return change
         .insertBlock(DEFAULT_NODE)
         .moveBackward(1)
-        .wrapBlock('code-block');
+        .setBlock('code-block');
     },
   }),
 ];
