@@ -70,7 +70,7 @@ class RovalEditor extends Component {
     super(props);
 
     this.state = {
-      isClicked: false,
+      isMouseDown: false,
       isToolbarVisible: false,
       value: null,
     };
@@ -147,7 +147,7 @@ class RovalEditor extends Component {
   }
 
   handleClick() {
-    this.setState({ isClicked: true });
+    this.setState({ isMouseDown: false });
   }
 
   /*
@@ -226,8 +226,10 @@ class RovalEditor extends Component {
     return editor.toggleMark(mark);
   }
 
+  // Hide the toolbar as well so that there's no brief appearance of the toolbar in the new
+  // place where the user's mouse is down
   handleMouseDown() {
-    this.setState({ isClicked: false, isToolbarVisible: false });
+    this.setState({ isMouseDown: true, isToolbarVisible: false });
   }
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
@@ -321,11 +323,11 @@ class RovalEditor extends Component {
   }
 
   updateToolbar() {
-    const { isClicked, isToolbarVisible, value } = this.state;
+    const { isMouseDown, isToolbarVisible, value } = this.state;
     const { isPlainText } = this.props;
     const { fragment, selection } = value;
 
-    if (!isClicked || isPlainText) return;
+    if (isMouseDown || isPlainText) return;
 
     if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
       if (isToolbarVisible) this.setState({ isToolbarVisible: false });
