@@ -38,7 +38,7 @@ const Discussion = ({
   let conversation = null;
   if ((!loading && (!data || !data.conversation)) && !meetingId) return <NotFound />;
   if (data && data.conversation) {
-    conversation = { data };
+    ({ conversation } = data);
     if (!meetingId) {
       setMeetingId(conversation.meetingId);
     } else {
