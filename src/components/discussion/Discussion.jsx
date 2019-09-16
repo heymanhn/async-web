@@ -35,14 +35,16 @@ const Discussion = ({
   }
 
   let fetchedTitle = null;
+  let conversation = null;
   if ((!loading && (!data || !data.conversation)) && !meetingId) return <NotFound />;
   if (data && data.conversation) {
+    conversation = { data };
     if (!meetingId) {
-      setMeetingId(data.conversation.meetingId);
+      setMeetingId(conversation.meetingId);
     } else {
-      checkSelectedMeeting(data.conversation.meetingId);
+      checkSelectedMeeting(conversation.meetingId);
     }
-    fetchedTitle = data.conversation.title;
+    fetchedTitle = conversation.title;
   }
 
   function isUnread() {
@@ -64,7 +66,7 @@ const Discussion = ({
           meetingId={meetingId}
         />
       )}
-      {meetingId && !conversationId && (
+      {meetingId && !conversation && (
         <DiscussionComposer afterSubmit={setConversationId} meetingId={meetingId} />
       )}
     </Container>
