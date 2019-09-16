@@ -53,6 +53,15 @@ const Discussion = ({
     return safeTags.includes('new_messages') || safeTags.includes('new_discussion');
   }
 
+  function afterSubmit(value) {
+    setConversationId(value);
+
+    // Update the URL in the address bar to reflect the new discussion
+    const { origin } = window.location;
+    const url = `${origin}/discussions/${value}`;
+    return window.history.replaceState({}, `discussion: ${value}`, url);
+  }
+
   return (
     <Container {...props}>
       <NavigationBar
@@ -67,7 +76,7 @@ const Discussion = ({
         />
       )}
       {meetingId && !conversation && (
-        <DiscussionComposer afterSubmit={setConversationId} meetingId={meetingId} />
+        <DiscussionComposer afterSubmit={afterSubmit} meetingId={meetingId} />
       )}
     </Container>
   );
