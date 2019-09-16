@@ -35,7 +35,7 @@ const Discussion = ({
   }
 
   let fetchedTitle = null;
-  if (!loading && (!data || !data.conversation)) return <NotFound />;
+  if ((!loading && (!data || !data.conversation)) && !meetingId) return <NotFound />;
   if (data && data.conversation) {
     if (!meetingId) {
       setMeetingId(data.conversation.meetingId);
@@ -44,8 +44,6 @@ const Discussion = ({
     }
     fetchedTitle = data.conversation.title;
   }
-
-  if (!meetingId) return null;
 
   function isUnread() {
     const { tags } = data.conversation;
