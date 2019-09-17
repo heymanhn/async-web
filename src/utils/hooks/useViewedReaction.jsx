@@ -3,6 +3,7 @@ import { useApolloClient } from 'react-apollo';
 import createReactionMutation from 'graphql/mutations/createReaction';
 import meetingQuery from 'graphql/queries/meeting';
 import meetingsQuery from 'graphql/queries/meetings';
+import { MEETINGS_QUERY_SIZE } from 'graphql/constants';
 import { snakedQueryParams } from 'utils/queryParams';
 
 const useViewedReaction = () => {
@@ -53,7 +54,7 @@ const useViewedReaction = () => {
       meetings: { items, pageToken, __typename },
     } = cache.readQuery({
       query: meetingsQuery,
-      variables: { queryParams: snakedQueryParams({ size: 25 }) },
+      variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
     });
 
     const index = items

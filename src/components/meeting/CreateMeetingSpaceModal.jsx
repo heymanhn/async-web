@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 import addParticipantMutation from 'graphql/mutations/addParticipant';
 import createMeetingMutation from 'graphql/mutations/createMeeting';
 import meetingsQuery from 'graphql/queries/meetings';
+import { MEETINGS_QUERY_SIZE } from 'graphql/constants';
 import { snakedQueryParams } from 'utils/queryParams';
 import { getLocalUser } from 'utils/auth';
 
@@ -169,7 +170,7 @@ const CreateMeetingSpaceModal = ({ isOpen, toggle, ...props }) => {
     },
     refetchQueries: [{
       query: meetingsQuery,
-      variables: { queryParams: snakedQueryParams({ size: 25 }) },
+      variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
     }],
   });
 
