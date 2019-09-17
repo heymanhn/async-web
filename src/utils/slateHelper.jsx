@@ -265,12 +265,12 @@ export const renderBlock = (props, editor, next) => {
       return <blockquote {...attributes}>{children}</blockquote>;
     case 'bulleted-list':
       return <ul {...attributes}>{children}</ul>;
-    case 'heading-one':
-      return <h1 {...attributes}>{children}</h1>;
-    case 'heading-two':
+    case 'large-font':
       return <h2 {...attributes}>{children}</h2>;
-    case 'heading-three':
+    case 'medium-font':
       return <h3 {...attributes}>{children}</h3>;
+    case 'small-font':
+      return <h4 {...attributes}>{children}</h4>;
     case 'link':
       return (
         <a
@@ -336,8 +336,8 @@ export const renderMark = (props, editor, next) => {
 /* ******************** */
 
 export const singleUseBlocks = [
-  'heading-one',
-  'heading-two',
-  'heading-three',
+  'large-font',
+  'medium-font',
+  'small-font',
   'section-break',
 ];

@@ -53,10 +53,10 @@ const BlockButton = ({ editor, type }) => {
     editor.setBlock(type);
   };
 
-  if (type.includes('heading')) {
+  if (type.includes('font')) {
     return (
       <CustomHeadingIcon
-        number={type === 'heading-one' ? 1 : 2}
+        number={type === 'large-font' ? 1 : 2}
         isactive={isActiveBlock()}
         onMouseDown={handleClick}
       />

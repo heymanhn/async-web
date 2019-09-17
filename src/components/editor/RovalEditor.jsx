@@ -199,9 +199,9 @@ class RovalEditor extends Component {
     if (hotkeys.isBackspace(event)) return this.handleBackspaceActions(next);
 
     // Blocks
-    if (hotkeys.isLargeFont(event)) return editor.setBlock('heading-one');
-    if (hotkeys.isMediumFont(event)) return editor.setBlock('heading-two');
-    if (hotkeys.isSmallFont(event)) return editor.setBlock('heading-three');
+    if (hotkeys.isLargeFont(event)) return editor.setBlock('large-font');
+    if (hotkeys.isMediumFont(event)) return editor.setBlock('medium-font');
+    if (hotkeys.isSmallFont(event)) return editor.setBlock('small-font');
     if (hotkeys.isBulletedList(event)) return editor.setBlock('bulleted-list');
     if (hotkeys.isNumberedList(event)) return editor.setBlock('numbered-list');
     if (hotkeys.isBlockQuote(event)) return editor.setBlock('block-quote');

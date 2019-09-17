@@ -46,8 +46,8 @@ const Toolbar = React.forwardRef(({ coords, editor, isOpen }, ref) => {
       <MarkButton editor={editor} type="italic" />
       <VerticalDivider />
 
-      <BlockButton editor={editor} type="heading-one" />
-      <BlockButton editor={editor} type="heading-two" />
+      <BlockButton editor={editor} type="large-font" />
+      <BlockButton editor={editor} type="medium-font" />
       <BlockButton editor={editor} type="bulleted-list" />
       <VerticalDivider />
 
