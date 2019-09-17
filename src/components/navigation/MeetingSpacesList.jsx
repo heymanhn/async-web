@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 
 import localStateQuery from 'graphql/queries/localState';
 import meetingsQuery from 'graphql/queries/meetings';
+import { snakedQueryParams } from 'utils/queryParams';
 
 import CreateMeetingSpaceButton from './CreateMeetingSpaceButton';
 import MeetingRow from './MeetingRow';
@@ -28,7 +29,7 @@ const Heading = styled.div(({ theme: { colors } }) => ({
 
 const MeetingSpacesList = () => {
   const { data: meetingsData } = useQuery(meetingsQuery, {
-    variables: { queryParams: {} },
+    variables: { queryParams: snakedQueryParams({ size: 25 }) },
   });
   const { data: localStateData } = useQuery(localStateQuery);
 
