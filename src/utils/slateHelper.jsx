@@ -192,6 +192,21 @@ const markdownPlugins = [
     change: change => change.setBlock('numbered-list'),
   }),
   AutoReplace({
+    trigger: 'space',
+    before: /^(#)$/,
+    change: change => change.setBlock('heading-one'),
+  }),
+  AutoReplace({
+    trigger: 'space',
+    before: /^(##)$/,
+    change: change => change.setBlock('heading-two'),
+  }),
+  AutoReplace({
+    trigger: 'space',
+    before: /^(###)$/,
+    change: change => change.setBlock('heading-three'),
+  }),
+  AutoReplace({
     trigger: '-',
     before: /^(--)$/,
     change: change => change.setBlocks('section-break').insertBlock(DEFAULT_NODE),
