@@ -58,21 +58,27 @@ const MessageEditor = styled(RovalEditor)({
   },
 
   h1: {
-    fontSize: '28px',
+    fontSize: '1.5em',
     fontWeight: 600,
-    marginTop: '1.4em',
+    lineHeight: 1.2,
+    marginTop: '1.3em',
+    letterSpacing: '-0.002em',
   },
 
   h2: {
-    fontSize: '24px',
-    fontWeight: 500,
-    marginTop: '1.3em',
+    fontSize: '1.25em',
+    fontWeight: 600,
+    lineHeight: 1.2,
+    marginTop: '1.2em',
+    letterSpacing: '-0.002em',
   },
 
   h3: {
-    fontSize: '20px',
-    fontWeight: 500,
-    marginTop: '1.2em',
+    fontSize: '1em',
+    fontWeight: 600,
+    lineHeight: 1.12,
+    marginTop: '1.1em',
+    letterSpacing: '-0.002em',
   },
 });
 
