@@ -247,7 +247,7 @@ const DiscussionMessage = ({
           isEdited={createdAt !== updatedAt}
           mode={mode}
         />
-        {messageId && (
+        {messageId && mode === 'display' && (
           <StyledHoverMenu
             conversationId={conversationId}
             isAuthor={userId === author.id}
