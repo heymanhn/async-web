@@ -11,6 +11,7 @@ import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
 
+import Button from 'components/shared/Button';
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
 import HoverMenu from './HoverMenu';
@@ -80,6 +81,10 @@ const MessageEditor = styled(RovalEditor)({
     marginTop: '1.1em',
     letterSpacing: '-0.002em',
   },
+});
+
+const StyledButton = styled(Button)({
+  margin: 0,
 });
 
 const DiscussionMessage = ({
@@ -255,6 +260,14 @@ const DiscussionMessage = ({
             messageId={messageId}
             onDelete={handleDelete}
             onEdit={setToEditMode}
+          />
+        )}
+        {/* TEMPORARY */}
+        {mode !== 'display' && (
+          <StyledButton
+            onClick={() => {}}
+            type="grey"
+            title="Add image"
           />
         )}
       </HeaderSection>
