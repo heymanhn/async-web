@@ -68,7 +68,7 @@ const Discussion = ({
         discussionTitle={fetchedTitle}
         meetingId={meetingId}
       />
-      {conversationId && !loading && (
+      {conversationId && !loading && meetingId && (
         <DiscussionThread
           conversationId={conversationId}
           isUnread={isUnread()}
