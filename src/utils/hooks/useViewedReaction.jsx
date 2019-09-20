@@ -64,7 +64,7 @@ const useViewedReaction = () => {
 
     cache.writeQuery({
       query: meetingsQuery,
-      variables: { queryParams: {} },
+      variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
       data: {
         meetings: {
           pageToken,
