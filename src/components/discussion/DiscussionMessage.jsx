@@ -1,12 +1,14 @@
 /* eslint no-alert: 0 */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient } from 'react-apollo';
+import { useApolloClient, useMutation } from 'react-apollo';
+import { useDropzone } from 'react-dropzone';
 import styled from '@emotion/styled/macro';
 
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
+import uploadFileMutation from 'graphql/mutations/uploadFile';
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
@@ -109,6 +111,18 @@ const DiscussionMessage = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
+
+  const [uploadFile, { loading, error, data: fileData }] = useMutation(uploadFileMutation, {
+    variables: { messageId },
+  });
+  const { getInputProps, open, acceptedFiles } = useDropzone({
+    accept: 'image/*',
+    maxSize: 10485760, // 10MB max
+    multiple: false,
+    noDrag: true,
+    noClick: true,
+    noKeyboard: true,
+  });
 
   async function handleCreate({ payload, text }) {
     setIsSubmitting(true);
@@ -243,6 +257,14 @@ const DiscussionMessage = ({
     }
   }
 
+  if (acceptedFiles.length && !loading && !error && !fileData) {
+    uploadFile({ variables: { input: { file: acceptedFiles[0] } } });
+  }
+
+  if (fileData) {
+    console.log('file uploaded!');
+  }
+
   return (
     <Container {...hoverProps} {...props}>
       <HeaderSection>
@@ -264,11 +286,14 @@ const DiscussionMessage = ({
         )}
         {/* TEMPORARY */}
         {mode !== 'display' && (
-          <StyledButton
-            onClick={() => {}}
-            type="grey"
-            title="Add image"
-          />
+          <>
+            <input {...getInputProps()} />
+            <StyledButton
+              onClick={open}
+              type="grey"
+              title="Add image"
+            />
+          </>
         )}
       </HeaderSection>
       <MessageEditor

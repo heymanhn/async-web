@@ -12,6 +12,7 @@ import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
 import { getAuthHeader, isLocalTokenPresent } from 'utils/auth';
+import { fileSerializer } from 'utils/graphql';
 import getBreakpoint from 'utils/mediaQuery';
 
 import Layout from 'components/Layout';
@@ -30,6 +31,9 @@ const restLink = new RestLink({
   fieldNameDenormalizer: (key => snake_case(key)),
   headers: {
     'Content-Type': 'application/json',
+  },
+  bodySerializers: {
+    file: fileSerializer,
   },
 });
 
