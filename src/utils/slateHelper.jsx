@@ -1,10 +1,14 @@
-import React from 'react';
+/** @jsx jsx */
+/* eslint jsx-a11y/alt-text: 0 */
+
+// import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
 import AutoReplace from 'slate-auto-replace';
 import PasteLinkify from 'slate-paste-linkify';
 import SoftBreak from 'slate-soft-break';
 import { isHotkey } from 'is-hotkey';
 import { theme } from 'styles/theme';
+import { jsx } from '@emotion/core';
 
 /* ******************** */
 
@@ -273,9 +277,26 @@ export const plugins = {
 /* Methods for determining how to render elements in the editor  */
 
 export const renderBlock = (props, editor, next) => {
-  const { attributes, children, node } = props;
+  const { attributes, children, isFocused, node } = props;
 
   switch (node.type) {
+    // TEMPORARY CODE for rendering image blocks
+    case 'image': {
+      const src = node.data.get('src');
+      return (
+        <img
+          {...attributes}
+          src={src}
+          css={{
+            display: 'block',
+            margin: '0 auto',
+            maxWidth: '100%',
+            maxHeight: '20em',
+            boxShadow: `${isFocused ? '0 0 0 2px blue;' : 'none'}`,
+          }}
+        />
+      );
+    }
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
     case 'bulleted-list':

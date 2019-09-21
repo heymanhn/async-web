@@ -21,6 +21,7 @@ import {
 
 import EditorActions from './EditorActions';
 import Toolbar from './toolbar/Toolbar';
+import FileUploadButton from './FileUploadButton';
 
 const DEFAULT_NODE = 'paragraph';
 
@@ -29,6 +30,7 @@ const Container = styled.div(({ initialHeight, mode }) => ({
   flexDirection: 'column',
   justifyContent: 'space-between',
   minHeight: (mode === 'compose' && initialHeight) ? `${initialHeight}px` : 'initial',
+  position: 'relative',
 }));
 
 // Default styles for Roval editor UIs
@@ -346,6 +348,7 @@ class RovalEditor extends Component {
       initialHeight,
       isPlainText,
       isSubmitting,
+      messageId,
       mode,
       ...props
     } = this.props;
@@ -373,6 +376,13 @@ class RovalEditor extends Component {
           value={value}
           {...props}
         />
+        {/* TEMPORARY */}
+        {mode !== 'display' && messageId && (
+          <FileUploadButton
+            messageId={messageId}
+            onFileUploaded={() => {}} // TODO
+          />
+        )}
         {this.isEditOrComposeMode() && !isPlainText && (
           <EditorActions
             isSubmitting={isSubmitting}
@@ -401,6 +411,7 @@ RovalEditor.propTypes = {
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
   isSubmitting: PropTypes.bool,
+  messageId: PropTypes.string,
   mode: PropTypes.string,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
@@ -414,6 +425,7 @@ RovalEditor.defaultProps = {
   initialValue: null,
   isPlainText: false,
   isSubmitting: false,
+  messageId: null,
   mode: null,
   onCancel: () => {},
   onSubmit: () => {},

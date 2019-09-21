@@ -1,19 +1,16 @@
 /* eslint no-alert: 0 */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient, useMutation } from 'react-apollo';
-import { useDropzone } from 'react-dropzone';
+import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
-import uploadFileMutation from 'graphql/mutations/uploadFile';
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
 
-import Button from 'components/shared/Button';
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
 import HoverMenu from './HoverMenu';
@@ -85,10 +82,6 @@ const MessageEditor = styled(RovalEditor)({
   },
 });
 
-const StyledButton = styled(Button)({
-  margin: 0,
-});
-
 const DiscussionMessage = ({
   conversationId,
   currentUser,
@@ -111,18 +104,6 @@ const DiscussionMessage = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
-
-  const [uploadFile, { loading, error, data: fileData }] = useMutation(uploadFileMutation, {
-    variables: { messageId },
-  });
-  const { getInputProps, open, acceptedFiles } = useDropzone({
-    accept: 'image/*',
-    maxSize: 10485760, // 10MB max
-    multiple: false,
-    noDrag: true,
-    noClick: true,
-    noKeyboard: true,
-  });
 
   async function handleCreate({ payload, text }) {
     setIsSubmitting(true);
@@ -257,14 +238,6 @@ const DiscussionMessage = ({
     }
   }
 
-  if (acceptedFiles.length && !loading && !error && !fileData) {
-    uploadFile({ variables: { input: { file: acceptedFiles[0] } } });
-  }
-
-  if (fileData) {
-    console.log('file uploaded!');
-  }
-
   return (
     <Container {...hoverProps} {...props}>
       <HeaderSection>
@@ -284,17 +257,6 @@ const DiscussionMessage = ({
             onEdit={setToEditMode}
           />
         )}
-        {/* TEMPORARY */}
-        {mode !== 'display' && (
-          <>
-            <input {...getInputProps()} />
-            <StyledButton
-              onClick={open}
-              type="grey"
-              title="Add image"
-            />
-          </>
-        )}
       </HeaderSection>
       <MessageEditor
         disableAutoFocus={mode === 'compose' && !conversationId}
@@ -302,6 +264,7 @@ const DiscussionMessage = ({
         initialHeight={240} // Give Arun more breathing room :-)
         initialValue={mode !== 'compose' ? body.payload : null}
         isSubmitting={isSubmitting}
+        messageId={messageId} // Temporary
         mode={mode}
         onCancel={handleCancel}
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
