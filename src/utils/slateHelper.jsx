@@ -36,6 +36,9 @@ export const schema = {
     'section-break': {
       isVoid: true, // Needed so that we don't need to pass children to section breaks
     },
+    image: {
+      isVoid: true,
+    },
   },
 };
 

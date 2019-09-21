@@ -90,6 +90,7 @@ class RovalEditor extends Component {
     this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
     this.calculateToolbarPosition = this.calculateToolbarPosition.bind(this);
     this.clearEditorValue = this.clearEditorValue.bind(this);
+    this.insertImage = this.insertImage.bind(this);
     this.isValueEmpty = this.isValueEmpty.bind(this);
     this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
     this.loadInitialValue = this.loadInitialValue.bind(this);
@@ -279,6 +280,29 @@ class RovalEditor extends Component {
     this.setState({ value: Value.fromJSON(defaultValue) });
   }
 
+  /*
+   * TEMPORARY
+   * - Create an empty block. If the current block is empty, done.
+   * - Set the block to be an image, with the given url
+   */
+  insertImage(src) {
+    const editor = this.editor.current;
+
+    if (editor.isEmptyParagraph()) {
+      return editor.setBlock({
+        type: 'image',
+        data: { src },
+      });
+    }
+
+    return editor
+      .moveToEndOfBlock()
+      .insertBlock({
+        type: 'image',
+        data: { src },
+      });
+  }
+
   isValueEmpty() {
     const { value } = this.state;
     return !Plain.serialize(value);
@@ -380,7 +404,7 @@ class RovalEditor extends Component {
         {mode !== 'display' && messageId && (
           <FileUploadButton
             messageId={messageId}
-            onFileUploaded={() => {}} // TODO
+            onFileUploaded={this.insertImage}
           />
         )}
         {this.isEditOrComposeMode() && !isPlainText && (

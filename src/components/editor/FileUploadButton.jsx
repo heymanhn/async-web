@@ -23,11 +23,17 @@ const StyledButton = styled(Button)({
 });
 
 const FileUploadButton = ({ messageId, onFileUploaded }) => {
-  // Stupid state to make file upload work once only
-  const [isFileUploaded, setIsFileUploaded] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadStarted, setUploadStarted] = useState(false);
 
-  const [uploadFile, { loading, error, data }] = useMutation(uploadFileMutation, {
+  const [uploadFile] = useMutation(uploadFileMutation, {
     variables: { messageId },
+    onCompleted: (data) => {
+      if (data && data.uploadFile) {
+        const { url } = data.uploadFile;
+        onFileUploaded(url);
+      }
+    },
   });
   const { getInputProps, open, acceptedFiles } = useDropzone({
     accept: 'image/*',
@@ -38,21 +44,25 @@ const FileUploadButton = ({ messageId, onFileUploaded }) => {
     noKeyboard: true,
   });
 
-  if (acceptedFiles.length && !loading && !error && !data && !isFileUploaded) {
-    uploadFile({ variables: { input: { file: acceptedFiles[0] } } });
+  if (selectedFile && !uploadStarted) {
+    setUploadStarted(true);
+    uploadFile({ variables: { input: { file: selectedFile } } });
+  }
+  if (acceptedFiles.length > 0 && !selectedFile) {
+    setSelectedFile(acceptedFiles[0]);
   }
 
-  if (data && !isFileUploaded) {
-    const { url } = data.uploadFile;
-    onFileUploaded(url);
-    setIsFileUploaded(true);
+  function openFileDialog() {
+    if (selectedFile) setSelectedFile(null);
+    if (uploadStarted) setUploadStarted(false);
+    open();
   }
 
   return (
     <Container>
       <input {...getInputProps()} />
       <StyledButton
-        onClick={open}
+        onClick={openFileDialog}
         type="grey"
         title="Add image"
       />
