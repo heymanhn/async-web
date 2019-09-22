@@ -22,12 +22,11 @@ const StyledButton = styled(Button)({
   margin: 0,
 });
 
-const FileUploadButton = ({ messageId, onFileUploaded }) => {
+const FileUploadButton = ({ onFileUploaded }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadStarted, setUploadStarted] = useState(false);
 
   const [uploadFile] = useMutation(uploadFileMutation, {
-    variables: { messageId },
     onCompleted: (data) => {
       if (data && data.uploadFile) {
         const { url } = data.uploadFile;
@@ -71,7 +70,6 @@ const FileUploadButton = ({ messageId, onFileUploaded }) => {
 };
 
 FileUploadButton.propTypes = {
-  messageId: PropTypes.string.isRequired,
   onFileUploaded: PropTypes.func.isRequired,
 };
 

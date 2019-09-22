@@ -401,9 +401,8 @@ class RovalEditor extends Component {
           {...props}
         />
         {/* TEMPORARY */}
-        {mode !== 'display' && messageId && (
+        {mode !== 'display' && (
           <FileUploadButton
-            messageId={messageId}
             onFileUploaded={this.insertImage}
           />
         )}

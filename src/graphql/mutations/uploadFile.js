@@ -5,12 +5,11 @@ export default gql`
     uploadFile(messageId: $messageId, input: $input)
       @rest(
         type: "FileUpload",
-        path: "/messages/{args.messageId}/files",
+        path: "/attachments",
         method: "POST",
         bodySerializer: "file"
       ) {
-        objectId
-        fileId
+        id
         fileName
         fileSize
         fileS3Key
