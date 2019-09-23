@@ -1,14 +1,14 @@
-/** @jsx jsx */
 /* eslint jsx-a11y/alt-text: 0 */
 
-// import React from 'react';
+import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
 import AutoReplace from 'slate-auto-replace';
 import PasteLinkify from 'slate-paste-linkify';
 import SoftBreak from 'slate-soft-break';
 import { isHotkey } from 'is-hotkey';
+import styled from '@emotion/styled';
+
 import { theme } from 'styles/theme';
-import { jsx } from '@emotion/core';
 
 /* ******************** */
 
@@ -279,6 +279,14 @@ export const plugins = {
 
 /* Methods for determining how to render elements in the editor  */
 
+const StyledImage = styled.img(({ isFocused, theme: { colors } }) => ({
+  display: 'block',
+  margin: '10px auto',
+  maxWidth: '100%',
+  maxHeight: '20em',
+  boxShadow: `${isFocused ? `0 0 0 3px ${colors.blue}` : 'none'}`,
+}));
+
 export const renderBlock = (props, editor, next) => {
   const { attributes, children, isFocused, node } = props;
 
@@ -287,16 +295,10 @@ export const renderBlock = (props, editor, next) => {
     case 'image': {
       const src = node.data.get('src');
       return (
-        <img
+        <StyledImage
           {...attributes}
           src={src}
-          css={{
-            display: 'block',
-            margin: '0 auto',
-            maxWidth: '100%',
-            maxHeight: '20em',
-            boxShadow: `${isFocused ? '0 0 0 2px blue;' : 'none'}`,
-          }}
+          isFocused={isFocused}
         />
       );
     }
