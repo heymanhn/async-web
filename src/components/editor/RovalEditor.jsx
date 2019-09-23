@@ -198,7 +198,7 @@ class RovalEditor extends Component {
   handleKeyDown(event, editor, next) {
     // UX commands
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
-    if (hotkeys.isCancel(event)) return this.handleCancel();
+    if (hotkeys.isCancel(event) && this.isValueEmpty()) return this.handleCancel();
     if (hotkeys.isEnter(event)) return this.handleEnterActions(next);
     if (hotkeys.isBackspace(event)) return this.handleBackspaceActions(next);
 
