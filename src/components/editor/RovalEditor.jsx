@@ -147,8 +147,11 @@ class RovalEditor extends Component {
     this.setState({ value });
   }
 
-  handleClick() {
-    this.setState({ isMouseDown: false });
+  handleClick(event, editor, next) {
+    // Need to wrap in setTimeout because: https://github.com/ianstormtaylor/slate/issues/2434
+    setTimeout(() => this.setState({ isMouseDown: false }), 0);
+
+    return next();
   }
 
   /*
@@ -229,8 +232,11 @@ class RovalEditor extends Component {
 
   // Hide the toolbar as well so that there's no brief appearance of the toolbar in the new
   // place where the user's mouse is down
-  handleMouseDown() {
-    this.setState({ isMouseDown: true, isToolbarVisible: false });
+  handleMouseDown(event, editor, next) {
+    // Need to wrap in setTimeout because: https://github.com/ianstormtaylor/slate/issues/2434
+    setTimeout(() => this.setState({ isMouseDown: true, isToolbarVisible: false }), 0);
+
+    return next();
   }
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.

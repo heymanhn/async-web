@@ -291,7 +291,6 @@ export const renderBlock = (props, editor, next) => {
   const { attributes, children, isFocused, node } = props;
 
   switch (node.type) {
-    // TEMPORARY CODE for rendering image blocks
     case 'image': {
       const src = node.data.get('src');
       return (
