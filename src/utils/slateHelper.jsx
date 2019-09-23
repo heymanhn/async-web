@@ -1,9 +1,13 @@
+/* eslint jsx-a11y/alt-text: 0 */
+
 import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
 import AutoReplace from 'slate-auto-replace';
 import PasteLinkify from 'slate-paste-linkify';
 import SoftBreak from 'slate-soft-break';
 import { isHotkey } from 'is-hotkey';
+import styled from '@emotion/styled';
+
 import { theme } from 'styles/theme';
 
 /* ******************** */
@@ -31,6 +35,9 @@ export const schema = {
   blocks: {
     'section-break': {
       isVoid: true, // Needed so that we don't need to pass children to section breaks
+    },
+    image: {
+      isVoid: true,
     },
   },
 };
@@ -272,10 +279,28 @@ export const plugins = {
 
 /* Methods for determining how to render elements in the editor  */
 
+const StyledImage = styled.img(({ isFocused, theme: { colors } }) => ({
+  display: 'block',
+  margin: '10px auto',
+  maxWidth: '100%',
+  maxHeight: '20em',
+  boxShadow: `${isFocused ? `0 0 0 3px ${colors.blue}` : 'none'}`,
+}));
+
 export const renderBlock = (props, editor, next) => {
-  const { attributes, children, node } = props;
+  const { attributes, children, isFocused, node } = props;
 
   switch (node.type) {
+    case 'image': {
+      const src = node.data.get('src');
+      return (
+        <StyledImage
+          {...attributes}
+          src={src}
+          isFocused={isFocused}
+        />
+      );
+    }
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
     case 'bulleted-list':

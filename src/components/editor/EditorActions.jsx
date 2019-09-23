@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import Button from 'components/shared/Button';
+import FileUploadButton from './FileUploadButton';
 
 const Container = styled.div(({ showHint }) => ({
   display: 'flex',
@@ -33,6 +34,7 @@ const EditorActions = ({
   isSubmitting,
   mode,
   onCancel,
+  onFileUploaded,
   onSubmit,
 }) => {
   const handleSubmit = (event) => {
@@ -43,6 +45,8 @@ const EditorActions = ({
   return (
     <Container showHint={!isSubmitDisabled}>
       <ButtonsContainer>
+        {/* Temporary UI */}
+        <FileUploadButton onFileUploaded={onFileUploaded} />
         <StyledButton
           isDisabled={isSubmitDisabled}
           loading={isSubmitting}
@@ -70,6 +74,7 @@ EditorActions.propTypes = {
   isSubmitting: PropTypes.bool.isRequired,
   mode: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
+  onFileUploaded: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
 

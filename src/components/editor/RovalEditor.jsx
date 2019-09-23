@@ -88,6 +88,7 @@ class RovalEditor extends Component {
     this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
     this.calculateToolbarPosition = this.calculateToolbarPosition.bind(this);
     this.clearEditorValue = this.clearEditorValue.bind(this);
+    this.insertImage = this.insertImage.bind(this);
     this.isValueEmpty = this.isValueEmpty.bind(this);
     this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
     this.loadInitialValue = this.loadInitialValue.bind(this);
@@ -146,8 +147,11 @@ class RovalEditor extends Component {
     this.setState({ value });
   }
 
-  handleClick() {
-    this.setState({ isMouseDown: false });
+  handleClick(event, editor, next) {
+    // Need to wrap in setTimeout because: https://github.com/ianstormtaylor/slate/issues/2434
+    setTimeout(() => this.setState({ isMouseDown: false }), 0);
+
+    return next();
   }
 
   /*
@@ -228,8 +232,11 @@ class RovalEditor extends Component {
 
   // Hide the toolbar as well so that there's no brief appearance of the toolbar in the new
   // place where the user's mouse is down
-  handleMouseDown() {
-    this.setState({ isMouseDown: true, isToolbarVisible: false });
+  handleMouseDown(event, editor, next) {
+    // Need to wrap in setTimeout because: https://github.com/ianstormtaylor/slate/issues/2434
+    setTimeout(() => this.setState({ isMouseDown: true, isToolbarVisible: false }), 0);
+
+    return next();
   }
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
@@ -275,6 +282,29 @@ class RovalEditor extends Component {
 
   clearEditorValue() {
     this.setState({ value: Value.fromJSON(defaultValue) });
+  }
+
+  /*
+   * TEMPORARY
+   * - Create an empty block. If the current block is empty, done.
+   * - Set the block to be an image, with the given url
+   */
+  insertImage(src) {
+    const editor = this.editor.current;
+
+    if (editor.isEmptyParagraph()) {
+      return editor.setBlock({
+        type: 'image',
+        data: { src },
+      });
+    }
+
+    return editor
+      .moveToEndOfBlock()
+      .insertBlock({
+        type: 'image',
+        data: { src },
+      });
   }
 
   isValueEmpty() {
@@ -379,6 +409,7 @@ class RovalEditor extends Component {
             isSubmitDisabled={this.isValueEmpty() || forceDisableSubmit}
             mode={mode}
             onCancel={this.handleCancel}
+            onFileUploaded={this.insertImage} // For the temporary Add Image button
             onSubmit={this.handleSubmit}
           />
         )}
