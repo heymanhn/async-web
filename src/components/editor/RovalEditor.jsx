@@ -29,7 +29,6 @@ const Container = styled.div(({ initialHeight, mode }) => ({
   flexDirection: 'column',
   justifyContent: 'space-between',
   minHeight: (mode === 'compose' && initialHeight) ? `${initialHeight}px` : 'initial',
-  position: 'relative',
 }));
 
 // Default styles for Roval editor UIs
@@ -371,7 +370,6 @@ class RovalEditor extends Component {
       initialHeight,
       isPlainText,
       isSubmitting,
-      messageId,
       mode,
       ...props
     } = this.props;
@@ -428,7 +426,6 @@ RovalEditor.propTypes = {
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
   isSubmitting: PropTypes.bool,
-  messageId: PropTypes.string,
   mode: PropTypes.string,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
@@ -442,7 +439,6 @@ RovalEditor.defaultProps = {
   initialValue: null,
   isPlainText: false,
   isSubmitting: false,
-  messageId: null,
   mode: null,
   onCancel: () => {},
   onSubmit: () => {},

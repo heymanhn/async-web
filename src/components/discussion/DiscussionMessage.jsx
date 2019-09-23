@@ -264,7 +264,6 @@ const DiscussionMessage = ({
         initialHeight={240} // Give Arun more breathing room :-)
         initialValue={mode !== 'compose' ? body.payload : null}
         isSubmitting={isSubmitting}
-        messageId={messageId} // Temporary
         mode={mode}
         onCancel={handleCancel}
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}

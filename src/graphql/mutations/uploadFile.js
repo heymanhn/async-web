@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation uploadFile($messageId: String!, $input: Object!) {
-    uploadFile(messageId: $messageId, input: $input)
+  mutation uploadFile($input: Object!) {
+    uploadFile(input: $input)
       @rest(
         type: "FileUpload",
         path: "/attachments",
