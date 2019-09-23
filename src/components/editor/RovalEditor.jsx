@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import { Value } from 'slate';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
+import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import {
   commands,
   defaultValue,
-  hotkeys,
   plugins,
   queries,
   renderBlock,
@@ -195,20 +195,17 @@ class RovalEditor extends Component {
   }
 
   handleKeyDown(event, editor, next) {
-    // UX commands
+    const hotkeys = {
+      isEnter: isHotkey('Enter'),
+      isSubmit: isHotkey('mod+Enter'),
+      isCancel: isHotkey('Esc'),
+      isBackspace: isHotkey('Backspace'),
+    };
+
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
     if (hotkeys.isCancel(event) && this.isValueEmpty()) return this.handleCancel();
     if (hotkeys.isEnter(event)) return this.handleEnterActions(next);
     if (hotkeys.isBackspace(event)) return this.handleBackspaceActions(next);
-
-    // Blocks
-    if (hotkeys.isLargeFont(event)) return editor.setBlock('heading-one');
-    if (hotkeys.isMediumFont(event)) return editor.setBlock('heading-two');
-    if (hotkeys.isSmallFont(event)) return editor.setBlock('heading-three');
-    if (hotkeys.isBulletedList(event)) return editor.setBlock('bulleted-list');
-    if (hotkeys.isNumberedList(event)) return editor.setBlock('numbered-list');
-    if (hotkeys.isBlockQuote(event)) return editor.setBlock('block-quote');
-    if (hotkeys.isCodeBlock(event)) return editor.setBlock('code-block');
 
     return next();
   }

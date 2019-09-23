@@ -5,11 +5,11 @@ import PlaceholderPlugin from 'slate-react-placeholder';
 import AutoReplace from 'slate-auto-replace';
 import PasteLinkify from 'slate-paste-linkify';
 import SoftBreak from 'slate-soft-break';
-import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import { theme } from 'styles/theme';
 
+import ToggleBlockHotkeys from './plugins/toggleBlockHotkeys';
 import ToggleMarkHotkeys from './plugins/toggleMarkHotkeys';
 
 /* ******************** */
@@ -42,25 +42,6 @@ export const schema = {
       isVoid: true,
     },
   },
-};
-
-/* ******************** */
-
-export const hotkeys = {
-  // Blocks
-  isBlockQuote: isHotkey('mod+shift+9'),
-  isCodeBlock: isHotkey('mod+shift+k'),
-  isBulletedList: isHotkey('mod+shift+8'),
-  isNumberedList: isHotkey('mod+shift+7'),
-  isLargeFont: isHotkey('mod+opt+1'),
-  isMediumFont: isHotkey('mod+opt+2'),
-  isSmallFont: isHotkey('mod+opt+3'),
-
-  // Actions
-  isEnter: isHotkey('Enter'),
-  isSubmit: isHotkey('mod+Enter'),
-  isCancel: isHotkey('Esc'),
-  isBackspace: isHotkey('Backspace'),
 };
 
 /* ******************** */
@@ -260,6 +241,7 @@ export const plugins = {
       'Post a message to start this discussion. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
+    ToggleBlockHotkeys(),
     ToggleMarkHotkeys(),
     ...markdownPlugins,
   ],
@@ -270,6 +252,7 @@ export const plugins = {
       'Share your perspective with others in this discussion. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
+    ToggleBlockHotkeys(),
     ToggleMarkHotkeys(),
     ...markdownPlugins,
   ],
