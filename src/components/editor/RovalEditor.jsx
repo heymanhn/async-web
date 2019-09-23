@@ -21,7 +21,6 @@ import {
 
 import EditorActions from './EditorActions';
 import Toolbar from './toolbar/Toolbar';
-import FileUploadButton from './FileUploadButton';
 
 const DEFAULT_NODE = 'paragraph';
 
@@ -400,18 +399,13 @@ class RovalEditor extends Component {
           value={value}
           {...props}
         />
-        {/* TEMPORARY */}
-        {mode !== 'display' && (
-          <FileUploadButton
-            onFileUploaded={this.insertImage}
-          />
-        )}
         {this.isEditOrComposeMode() && !isPlainText && (
           <EditorActions
             isSubmitting={isSubmitting}
             isSubmitDisabled={this.isValueEmpty() || forceDisableSubmit}
             mode={mode}
             onCancel={this.handleCancel}
+            onFileUploaded={this.insertImage} // For the temporary Add Image button
             onSubmit={this.handleSubmit}
           />
         )}

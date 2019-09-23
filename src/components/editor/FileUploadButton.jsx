@@ -13,9 +13,7 @@ import uploadFileMutation from 'graphql/mutations/uploadFile';
 import Button from 'components/shared/Button';
 
 const Container = styled.div({
-  position: 'absolute',
-  top: '20px',
-  right: '20px',
+  marginRight: '10px',
 });
 
 const StyledButton = styled(Button)({
