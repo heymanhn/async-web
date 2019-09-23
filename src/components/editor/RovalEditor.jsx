@@ -17,8 +17,7 @@ import {
   renderInline,
   schema,
   singleUseBlocks,
-} from 'utils/slateHelper';
-
+} from './slateHelper';
 import EditorActions from './EditorActions';
 import Toolbar from './toolbar/Toolbar';
 
@@ -211,23 +210,7 @@ class RovalEditor extends Component {
     if (hotkeys.isBlockQuote(event)) return editor.setBlock('block-quote');
     if (hotkeys.isCodeBlock(event)) return editor.setBlock('code-block');
 
-    // Marks
-    let mark;
-
-    if (hotkeys.isBold(event)) {
-      mark = 'bold';
-    } else if (hotkeys.isItalic(event)) {
-      mark = 'italic';
-    } else if (hotkeys.isUnderlined(event)) {
-      mark = 'underlined';
-    } else if (hotkeys.isCodeSnippet(event)) {
-      mark = 'code-snippet';
-    } else {
-      return next();
-    }
-
-    event.preventDefault();
-    return editor.toggleMark(mark);
+    return next();
   }
 
   // Hide the toolbar as well so that there's no brief appearance of the toolbar in the new

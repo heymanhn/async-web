@@ -10,6 +10,8 @@ import styled from '@emotion/styled';
 
 import { theme } from 'styles/theme';
 
+import ToggleMarkHotkeys from './plugins/toggleMarkHotkeys';
+
 /* ******************** */
 
 export const defaultValue = {
@@ -45,12 +47,6 @@ export const schema = {
 /* ******************** */
 
 export const hotkeys = {
-  // Marks
-  isBold: isHotkey('mod+b'),
-  isItalic: isHotkey('mod+i'),
-  isUnderlined: isHotkey('mod+u'),
-  isCodeSnippet: isHotkey('mod+k'),
-
   // Blocks
   isBlockQuote: isHotkey('mod+shift+9'),
   isCodeBlock: isHotkey('mod+shift+k'),
@@ -264,6 +260,7 @@ export const plugins = {
       'Post a message to start this discussion. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
+    ToggleMarkHotkeys(),
     ...markdownPlugins,
   ],
   message: [
@@ -273,6 +270,7 @@ export const plugins = {
       'Share your perspective with others in this discussion. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
+    ToggleMarkHotkeys(),
     ...markdownPlugins,
   ],
 };
@@ -285,6 +283,10 @@ const StyledImage = styled.img(({ isFocused, theme: { colors } }) => ({
   maxWidth: '100%',
   maxHeight: '20em',
   boxShadow: `${isFocused ? `0 0 0 3px ${colors.blue}` : 'none'}`,
+
+  ':hover': {
+    boxShadow: `0 0 0 3px ${colors.blue}`,
+  },
 }));
 
 export const renderBlock = (props, editor, next) => {
