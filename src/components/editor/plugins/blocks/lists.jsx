@@ -2,7 +2,13 @@
 import React from 'react';
 import AutoReplace from 'slate-auto-replace';
 
-import { DEFAULT_NODE, AddCommands, AddQueries, RenderBlock } from '../helpers';
+import {
+  DEFAULT_NODE,
+  AddCommands,
+  AddQueries,
+  Hotkey,
+  RenderBlock,
+} from '../helpers';
 
 function Lists() {
   /* **** Commands **** */
@@ -81,11 +87,18 @@ function Lists() {
     }),
   ];
 
+  /* **** Hotkeys **** */
+  const hotkeys = [
+    Hotkey('mod+shift+7', editor => editor.setListBlock('numbered-list')),
+    Hotkey('mod+shift+8', editor => editor.setListBlock('bulleted-list')),
+  ];
+
   return [
     AddCommands({ setListBlock, unwrapListBlocks }),
     AddQueries({ isWrappedByList }),
     renderMethods,
     markdownShortcuts,
+    hotkeys,
   ];
 }
 

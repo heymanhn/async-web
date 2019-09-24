@@ -3,6 +3,10 @@ import { isHotkey } from 'is-hotkey';
 
 export const DEFAULT_NODE = 'paragraph';
 
+export const AddSchema = schemaObj => ({ schema: schemaObj });
+export const AddCommands = commandsObj => ({ commands: commandsObj });
+export const AddQueries = queriesObj => ({ queries: queriesObj });
+
 export const Hotkey = (combination, hotkeyFn) => ({
   onKeyDown(event, editor, next) {
     if (isHotkey(combination, event)) return editor.command(hotkeyFn);
@@ -26,7 +30,3 @@ export const RenderBlock = (blockToRender, componentFn) => ({
     return node.type === blockToRender ? componentFn(props) : next();
   },
 });
-
-export const AddSchema = schemaObj => ({ schema: schemaObj });
-export const AddCommands = commandsObj => ({ commands: commandsObj });
-export const AddQueries = queriesObj => ({ queries: queriesObj });
