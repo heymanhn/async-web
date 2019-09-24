@@ -12,6 +12,7 @@ import ToggleMarkHotkeys from './plugins/toggleMarkHotkeys';
 import Image from './plugins/blocks/image';
 import Lists from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
+import BlockQuote from './plugins/blocks/blockQuote';
 
 /* ******************** */
 
@@ -56,7 +57,7 @@ export const commands = {
 
     return editor
       .setBlocks(DEFAULT_NODE)
-      .unwrapOtherBlocks()
+      .unwrapOtherBlocks(type)
       .wrapBlock(type);
   },
 
@@ -142,19 +143,6 @@ const markdownPlugins = [
     change: change => change.insertText('— '),
   }),
   AutoReplace({
-    trigger: 'space',
-    before: /^(>)$/,
-    change: (change) => {
-      // Essentially undoing the autoReplace detection
-      if (change.isWrappedByAnyBlock()) return change.insertText('> ');
-
-      return change
-        .insertBlock(DEFAULT_NODE)
-        .moveBackward(1)
-        .setBlock('block-quote');
-    },
-  }),
-  AutoReplace({
     trigger: '`',
     before: /^(``)$/,
     change: (change) => {
@@ -186,7 +174,8 @@ export const plugins = {
     Image(),
     Lists(),
     Link(),
-    ...markdownPlugins,
+    BlockQuote(),
+    markdownPlugins,
   ],
   message: [
     SoftBreak({ shift: true }),
@@ -199,7 +188,8 @@ export const plugins = {
     Image(),
     Lists(),
     Link(),
-    ...markdownPlugins,
+    BlockQuote(),
+    markdownPlugins,
   ],
 };
 
@@ -209,8 +199,6 @@ export const renderBlock = (props, editor, next) => {
   const { attributes, children, node } = props;
 
   switch (node.type) {
-    case 'block-quote':
-      return <blockquote {...attributes}>{children}</blockquote>;
     case 'heading-one':
       return <h1 {...attributes}>{children}</h1>;
     case 'heading-two':

@@ -179,11 +179,6 @@ class RovalEditor extends Component {
       return editor.setBlocks(DEFAULT_NODE).unwrapBlock('code-block');
     }
 
-    // Similar "double Enter" behavior to code blocks above
-    if (editor.isWrappedBy('block-quote') && !anchorBlock.text) {
-      return editor.setBlocks(DEFAULT_NODE).unwrapBlock('block-quote');
-    }
-
     if (editor.hasActiveMark('code-snippet')) {
       next();
       return editor.removeMark('code-snippet');

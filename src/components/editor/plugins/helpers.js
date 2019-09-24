@@ -38,3 +38,11 @@ export const RenderInline = (inlineToRender, componentFn) => ({
     return node.type === inlineToRender ? componentFn(props) : next();
   },
 });
+
+export const CustomEnterAction = actionFn => ({
+  onKeyDown(event, editor, next) {
+    if (isHotkey('Enter', event)) return actionFn(editor, next);
+
+    return next();
+  },
+});
