@@ -50,7 +50,10 @@ const BlockButton = ({ editor, type }) => {
 
   const handleClick = (event) => {
     event.preventDefault();
-    editor.setBlock(type);
+
+    // HN: can I DRY this up in the lists plugin?
+    if (['bulleted-list', 'numbered-list'].includes(type)) return editor.setListBlock(type);
+    return editor.setBlock(type);
   };
 
   if (type.includes('heading')) {

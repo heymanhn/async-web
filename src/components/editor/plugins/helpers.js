@@ -1,6 +1,8 @@
 // Library of helper plugins, inspired by https://docs.slatejs.org/guides/plugins
 import { isHotkey } from 'is-hotkey';
 
+export const DEFAULT_NODE = 'paragraph';
+
 export const Hotkey = (combination, hotkeyFn) => ({
   onKeyDown(event, editor, next) {
     if (isHotkey(combination, event)) return editor.command(hotkeyFn);

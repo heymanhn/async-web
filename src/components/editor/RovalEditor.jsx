@@ -166,8 +166,7 @@ class RovalEditor extends Component {
     if (anchorBlock.type === 'list-item' && !anchorBlock.text) {
       return editor
         .setBlocks(DEFAULT_NODE)
-        .unwrapBlock('bulleted-list')
-        .unwrapBlock('numbered-list');
+        .unwrapListBlocks();
     }
 
     if (singleUseBlocks.includes(anchorBlock.type)) {

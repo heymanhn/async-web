@@ -11,6 +11,7 @@ import { theme } from 'styles/theme';
 import ToggleBlockHotkeys from './plugins/toggleBlockHotkeys';
 import ToggleMarkHotkeys from './plugins/toggleMarkHotkeys';
 import Image from './plugins/blocks/image';
+import Lists from './plugins/blocks/lists';
 
 /* ******************** */
 
@@ -53,31 +54,6 @@ export const commands = {
     editor.unwrapInline('link');
   },
 
-  // Works for both bulleted and numbered lists
-  setListBlock: (editor, type) => {
-    const hasListItems = editor.hasBlock('list-item');
-
-    // This means the user is looking to un-set the list block
-    if (editor.isWrappedBy(type)) {
-      return editor
-        .setBlocks(DEFAULT_NODE)
-        .unwrapBlock(type);
-    }
-
-    // Converting a bulleted list to a numbered list, or vice versa
-    if (hasListItems) {
-      return editor
-        .unwrapBlock(type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
-        .wrapBlock(type);
-    }
-
-    // Simplest case: setting the list type as desired
-    return editor
-      .unwrapNonListBlocks()
-      .setBlocks('list-item')
-      .wrapBlock(type);
-  },
-
   setWrappedBlock: (editor, type) => {
     // This means the user is looking to un-set the wrapped block
     if (editor.isWrappedBy(type)) {
@@ -93,7 +69,6 @@ export const commands = {
   },
 
   setBlock: (editor, type) => {
-    if (['bulleted-list', 'numbered-list'].includes(type)) return editor.setListBlock(type);
     if (['block-quote', 'code-block'].includes(type)) return editor.setWrappedBlock(type);
 
     const isActive = editor.hasBlock(type);
@@ -103,12 +78,7 @@ export const commands = {
       .setBlocks(isActive ? DEFAULT_NODE : type);
   },
 
-  unwrapListBlocks: (editor) => {
-    editor
-      .unwrapBlock('bulleted-list')
-      .unwrapBlock('numbered-list');
-  },
-
+  // HN: How do I abstract this? Into which plugin?
   unwrapNonListBlocks: (editor) => {
     editor
       .unwrapBlock('block-quote')
@@ -141,8 +111,6 @@ export const queries = {
   )),
   isWrappedByCodeOrQuote: editor => editor.isWrappedBy('code-block')
     || editor.isWrappedBy('block-quote'),
-  isWrappedByList: editor => editor.isWrappedBy('bulleted-list')
-    || editor.isWrappedBy('numbered-list'),
   isWrappedByAnyBlock: editor => editor.isWrappedByCodeOrQuote() || editor.isWrappedByList(),
 };
 
@@ -157,16 +125,6 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
 });
 
 const markdownPlugins = [
-  AutoReplace({
-    trigger: 'space',
-    before: /^(-)$/,
-    change: change => change.setBlock('bulleted-list'),
-  }),
-  AutoReplace({
-    trigger: 'space',
-    before: /^(1.)$/,
-    change: change => change.setBlock('numbered-list'),
-  }),
   AutoReplace({
     trigger: 'space',
     before: /^(#)$/,
@@ -235,7 +193,8 @@ export const plugins = {
     ),
     ToggleBlockHotkeys(),
     ToggleMarkHotkeys(),
-    ...Image(),
+    Image(),
+    Lists(),
     ...markdownPlugins,
   ],
   message: [
@@ -247,7 +206,8 @@ export const plugins = {
     ),
     ToggleBlockHotkeys(),
     ToggleMarkHotkeys(),
-    ...Image(),
+    Image(),
+    Lists(),
     ...markdownPlugins,
   ],
 };
@@ -260,8 +220,6 @@ export const renderBlock = (props, editor, next) => {
   switch (node.type) {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
-    case 'bulleted-list':
-      return <ul {...attributes}>{children}</ul>;
     case 'heading-one':
       return <h1 {...attributes}>{children}</h1>;
     case 'heading-two':
@@ -279,10 +237,6 @@ export const renderBlock = (props, editor, next) => {
           {children}
         </a>
       );
-    case 'list-item':
-      return <li {...attributes}>{children}</li>;
-    case 'numbered-list':
-      return <ol {...attributes}>{children}</ol>;
     case 'code-block':
       return <pre {...attributes}>{children}</pre>;
     case 'section-break':
