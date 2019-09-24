@@ -2,7 +2,6 @@ import { isHotkey } from 'is-hotkey';
 
 function ToggleBlockHotkeys() {
   const hotkeys = {
-    isCodeBlock: isHotkey('mod+shift+k'),
     isLargeFont: isHotkey('mod+opt+1'),
     isMediumFont: isHotkey('mod+opt+2'),
     isSmallFont: isHotkey('mod+opt+3'),
@@ -18,8 +17,6 @@ function ToggleBlockHotkeys() {
         block = 'heading-two';
       } else if (hotkeys.isSmallFont(event)) {
         block = 'heading-three';
-      } else if (hotkeys.isCodeBlock(event)) {
-        block = 'code-block';
       } else {
         return next();
       }

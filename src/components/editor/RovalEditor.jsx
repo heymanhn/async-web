@@ -175,10 +175,6 @@ class RovalEditor extends Component {
       return editor.setBlocks(DEFAULT_NODE);
     }
 
-    if (editor.isWrappedBy('code-block') && !anchorBlock.text) {
-      return editor.setBlocks(DEFAULT_NODE).unwrapBlock('code-block');
-    }
-
     if (editor.hasActiveMark('code-snippet')) {
       next();
       return editor.removeMark('code-snippet');

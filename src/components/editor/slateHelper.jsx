@@ -13,6 +13,7 @@ import Image from './plugins/blocks/image';
 import Lists from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
 import BlockQuote from './plugins/blocks/blockQuote';
+import CodeBlock from './plugins/blocks/codeBlock';
 
 /* ******************** */
 
@@ -142,19 +143,6 @@ const markdownPlugins = [
     before: /(--)$/,
     change: change => change.insertText('— '),
   }),
-  AutoReplace({
-    trigger: '`',
-    before: /^(``)$/,
-    change: (change) => {
-      // Essentially undoing the autoReplace detection
-      if (change.isWrappedByAnyBlock()) return change.insertText('```');
-
-      return change
-        .insertBlock(DEFAULT_NODE)
-        .moveBackward(1)
-        .setBlock('code-block');
-    },
-  }),
 ];
 
 export const plugins = {
@@ -163,6 +151,7 @@ export const plugins = {
   discussionTitle: [
     createPlaceholderPlugin('Untitled Discussion', theme.colors.titlePlaceholder),
   ],
+  // DRY THIS UP LATER
   discussion: [
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(
@@ -175,6 +164,7 @@ export const plugins = {
     Lists(),
     Link(),
     BlockQuote(),
+    CodeBlock(),
     markdownPlugins,
   ],
   message: [
@@ -189,6 +179,7 @@ export const plugins = {
     Lists(),
     Link(),
     BlockQuote(),
+    CodeBlock(),
     markdownPlugins,
   ],
 };
@@ -205,8 +196,6 @@ export const renderBlock = (props, editor, next) => {
       return <h2 {...attributes}>{children}</h2>;
     case 'heading-three':
       return <h3 {...attributes}>{children}</h3>;
-    case 'code-block':
-      return <pre {...attributes}>{children}</pre>;
     case 'section-break':
       return <hr {...attributes} />;
     default:
