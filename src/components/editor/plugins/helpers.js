@@ -26,5 +26,5 @@ export const RenderBlock = (blockToRender, componentFn) => ({
 });
 
 export const AddSchema = schemaObj => ({ schema: schemaObj });
-export const AddCommand = commandsObj => ({ commands: commandsObj });
-export const AddQuery = queriesObj => ({ queries: queriesObj });
+export const AddCommands = commandsObj => ({ commands: commandsObj });
+export const AddQueries = queriesObj => ({ queries: queriesObj });

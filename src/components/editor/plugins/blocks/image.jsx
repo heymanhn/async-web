@@ -2,7 +2,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { AddCommand, AddSchema, RenderBlock } from '../helpers';
+import { AddCommands, AddSchema, RenderBlock } from '../helpers';
 
 const StyledImage = styled.img(({ isFocused, readOnly, theme: { colors } }) => ({
   display: 'block',
@@ -19,7 +19,7 @@ const StyledImage = styled.img(({ isFocused, readOnly, theme: { colors } }) => (
 function Image() {
   function insertImage(editor, src) {
     if (editor.isEmptyParagraph()) {
-      return editor.setBlock({
+      return editor.setBlocks({
         type: 'image',
         data: { src },
       });
@@ -56,7 +56,7 @@ function Image() {
   };
 
   return [
-    AddCommand({ insertImage }),
+    AddCommands({ insertImage }),
     AddSchema(imageSchema),
     RenderBlock('image', renderImage),
   ];
