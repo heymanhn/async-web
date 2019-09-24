@@ -10,7 +10,7 @@ import { theme } from 'styles/theme';
 
 import ToggleBlockHotkeys from './plugins/toggleBlockHotkeys';
 import ToggleMarkHotkeys from './plugins/toggleMarkHotkeys';
-import Image from './plugins/image';
+import Image from './plugins/blocks/image';
 
 /* ******************** */
 
@@ -92,11 +92,6 @@ export const commands = {
       .wrapBlock(type);
   },
 
-  /* Borrowed from @ianstormtaylor's slateJS example code:
-   * https://github.com/ianstormtaylor/slate/blob/master/examples/rich-text/index.js
-   *
-   * Handles everything but lists and block quotes.
-   */
   setBlock: (editor, type) => {
     if (['bulleted-list', 'numbered-list'].includes(type)) return editor.setListBlock(type);
     if (['block-quote', 'code-block'].includes(type)) return editor.setWrappedBlock(type);
@@ -240,7 +235,7 @@ export const plugins = {
     ),
     ToggleBlockHotkeys(),
     ToggleMarkHotkeys(),
-    Image(),
+    ...Image(),
     ...markdownPlugins,
   ],
   message: [
@@ -252,7 +247,7 @@ export const plugins = {
     ),
     ToggleBlockHotkeys(),
     ToggleMarkHotkeys(),
-    Image(),
+    ...Image(),
     ...markdownPlugins,
   ],
 };
