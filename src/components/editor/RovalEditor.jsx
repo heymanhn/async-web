@@ -264,27 +264,9 @@ class RovalEditor extends Component {
     this.setState({ value: Value.fromJSON(defaultValue) });
   }
 
-  /*
-   * TEMPORARY
-   * - Create an empty block. If the current block is empty, done.
-   * - Set the block to be an image, with the given url
-   */
-  insertImage(src) {
+  insertImage(url) {
     const editor = this.editor.current;
-
-    if (editor.isEmptyParagraph()) {
-      return editor.setBlock({
-        type: 'image',
-        data: { src },
-      });
-    }
-
-    return editor
-      .moveToEndOfBlock()
-      .insertBlock({
-        type: 'image',
-        data: { src },
-      });
+    editor.insertImage(url);
   }
 
   isValueEmpty() {
@@ -389,7 +371,7 @@ class RovalEditor extends Component {
             isSubmitDisabled={this.isValueEmpty() || forceDisableSubmit}
             mode={mode}
             onCancel={this.handleCancel}
-            onFileUploaded={this.insertImage} // For the temporary Add Image button
+            onFileUploaded={this.insertImage}
             onSubmit={this.handleSubmit}
           />
         )}
