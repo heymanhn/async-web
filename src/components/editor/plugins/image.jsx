@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const StyledImage = styled.img(({ isFocused, theme: { colors } }) => ({
+const StyledImage = styled.img(({ isFocused, readOnly, theme: { colors } }) => ({
   display: 'block',
   margin: '10px auto',
   maxWidth: '100%',
@@ -9,7 +9,7 @@ const StyledImage = styled.img(({ isFocused, theme: { colors } }) => ({
   boxShadow: `${isFocused ? `0 0 0 3px ${colors.blue}` : 'none'}`,
 
   ':hover': {
-    boxShadow: `0 0 0 3px ${colors.blue}`,
+    boxShadow: readOnly ? 'none' : `0 0 0 3px ${colors.blue}`,
   },
 }));
 
@@ -34,7 +34,7 @@ function Image() {
     },
 
     renderBlock(props, editor, next) {
-      const { attributes, isFocused, node } = props;
+      const { attributes, isFocused, node, readOnly } = props;
 
       if (node.type === 'image') {
         const src = node.data.get('src');
@@ -43,6 +43,7 @@ function Image() {
             {...attributes}
             src={src}
             isFocused={isFocused}
+            readOnly={readOnly}
           />
         );
       }
