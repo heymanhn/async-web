@@ -30,3 +30,11 @@ export const RenderBlock = (blockToRender, componentFn) => ({
     return node.type === blockToRender ? componentFn(props) : next();
   },
 });
+
+export const RenderInline = (inlineToRender, componentFn) => ({
+  renderInline(props, editor, next) {
+    const { node } = props;
+
+    return node.type === inlineToRender ? componentFn(props) : next();
+  },
+});

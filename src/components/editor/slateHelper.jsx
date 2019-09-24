@@ -3,7 +3,6 @@
 import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
 import AutoReplace from 'slate-auto-replace';
-import PasteLinkify from 'slate-paste-linkify';
 import SoftBreak from 'slate-soft-break';
 
 import { theme } from 'styles/theme';
@@ -12,6 +11,7 @@ import ToggleBlockHotkeys from './plugins/toggleBlockHotkeys';
 import ToggleMarkHotkeys from './plugins/toggleMarkHotkeys';
 import Image from './plugins/blocks/image';
 import Lists from './plugins/blocks/lists';
+import Link from './plugins/inlines/link';
 
 /* ******************** */
 
@@ -46,14 +46,6 @@ export const schema = {
 
 const DEFAULT_NODE = 'paragraph';
 export const commands = {
-  wrapLink: (editor, url) => {
-    editor.wrapInline({ type: 'link', data: { url } });
-  },
-
-  unwrapLink: (editor) => {
-    editor.unwrapInline('link');
-  },
-
   setWrappedBlock: (editor, type) => {
     // This means the user is looking to un-set the wrapped block
     if (editor.isWrappedBy(type)) {
@@ -105,7 +97,6 @@ export const queries = {
     const { anchorBlock } = editor.value;
     return anchorBlock.type === 'paragraph' && !anchorBlock.text;
   },
-  isLinkActive: (editor, value) => value.inlines.some(i => i.type === 'link'),
   isWrappedBy: (editor, type) => editor.value.blocks.some(block => (
     !!editor.value.document.getClosest(block.key, parent => parent.type === type)
   )),
@@ -185,7 +176,6 @@ export const plugins = {
     createPlaceholderPlugin('Untitled Discussion', theme.colors.titlePlaceholder),
   ],
   discussion: [
-    PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Post a message to start this discussion. Be as expressive as you like.',
@@ -195,10 +185,10 @@ export const plugins = {
     ToggleMarkHotkeys(),
     Image(),
     Lists(),
+    Link(),
     ...markdownPlugins,
   ],
   message: [
-    PasteLinkify(),
     SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Share your perspective with others in this discussion. Be as expressive as you like.',
@@ -208,6 +198,7 @@ export const plugins = {
     ToggleMarkHotkeys(),
     Image(),
     Lists(),
+    Link(),
     ...markdownPlugins,
   ],
 };
@@ -226,17 +217,6 @@ export const renderBlock = (props, editor, next) => {
       return <h2 {...attributes}>{children}</h2>;
     case 'heading-three':
       return <h3 {...attributes}>{children}</h3>;
-    case 'link':
-      return (
-        <a
-          {...attributes}
-          href={node.data.get('url')}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {children}
-        </a>
-      );
     case 'code-block':
       return <pre {...attributes}>{children}</pre>;
     case 'section-break':
@@ -245,27 +225,6 @@ export const renderBlock = (props, editor, next) => {
       return next();
   }
 };
-
-export const renderInline = (props, editor, next) => {
-  const { node, attributes, children } = props;
-
-  switch (node.type) {
-    case 'link':
-      return (
-        <a
-          {...attributes}
-          href={node.data.get('url')}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {children}
-        </a>
-      );
-    default:
-      return next();
-  }
-};
-
 
 export const renderMark = (props, editor, next) => {
   const { attributes, children, mark } = props;

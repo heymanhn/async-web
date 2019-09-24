@@ -14,7 +14,6 @@ import {
   queries,
   renderBlock,
   renderMark,
-  renderInline,
   schema,
   singleUseBlocks,
 } from './slateHelper';
@@ -358,7 +357,6 @@ class RovalEditor extends Component {
           ref={this.editor}
           renderBlock={renderBlock}
           renderEditor={this.renderEditor}
-          renderInline={renderInline}
           renderMark={renderMark}
           schema={schema}
           value={value}
