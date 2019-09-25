@@ -7,11 +7,11 @@ import SoftBreak from 'slate-soft-break';
 
 import { theme } from 'styles/theme';
 
-import ToggleBlockHotkeys from './plugins/toggleBlockHotkeys';
 import Bold from './plugins/marks/bold';
 import Italic from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
 import CodeSnippet from './plugins/marks/codeSnippet';
+import Headings from './plugins/blocks/headings';
 import Image from './plugins/blocks/image';
 import Lists from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
@@ -122,21 +122,6 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
 
 const markdownPlugins = [
   AutoReplace({
-    trigger: 'space',
-    before: /^(#)$/,
-    change: change => change.setBlock('heading-one'),
-  }),
-  AutoReplace({
-    trigger: 'space',
-    before: /^(##)$/,
-    change: change => change.setBlock('heading-two'),
-  }),
-  AutoReplace({
-    trigger: 'space',
-    before: /^(###)$/,
-    change: change => change.setBlock('heading-three'),
-  }),
-  AutoReplace({
     trigger: '-',
     before: /^(--)$/,
     change: change => change.setBlocks('section-break').insertBlock(DEFAULT_NODE),
@@ -157,6 +142,7 @@ const coreEditorPlugins = [
   CodeSnippet(),
 
   // Blocks
+  Headings(),
   Lists(),
   BlockQuote(),
   CodeBlock(),
@@ -168,9 +154,6 @@ const coreEditorPlugins = [
   // Others
   SoftBreak({ shift: true }),
   markdownPlugins,
-
-  // TEMP: Hotkeys
-  ToggleBlockHotkeys(),
 ];
 
 export const plugins = {
@@ -198,15 +181,9 @@ export const plugins = {
 /* Methods for determining how to render elements in the editor  */
 
 export const renderBlock = (props, editor, next) => {
-  const { attributes, children, node } = props;
+  const { attributes, node } = props;
 
   switch (node.type) {
-    case 'heading-one':
-      return <h1 {...attributes}>{children}</h1>;
-    case 'heading-two':
-      return <h2 {...attributes}>{children}</h2>;
-    case 'heading-three':
-      return <h3 {...attributes}>{children}</h3>;
     case 'section-break':
       return <hr {...attributes} />;
     default:
@@ -217,8 +194,5 @@ export const renderBlock = (props, editor, next) => {
 /* ******************** */
 
 export const singleUseBlocks = [
-  'heading-one',
-  'heading-two',
-  'heading-three',
   'section-break',
 ];
