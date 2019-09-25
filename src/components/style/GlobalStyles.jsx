@@ -78,18 +78,6 @@ const GlobalStyles = ({ theme: { colors, fontStack, codeFontStack, mq } }) => (
           color: colors.blue,
         },
       },
-      code: {
-        background: colors.grey7,
-        border: `1px solid ${colors.codeBlockBorderGrey}`,
-        borderRadius: '3px',
-        color: colors.codeBlockRed,
-        fontFamily: `${codeFontStack}`,
-        padding: '1px 4px',
-
-        span: {
-          fontFamily: `${codeFontStack}`,
-        },
-      },
       pre: {
         background: colors.bgGrey,
         border: `1px solid ${colors.borderGrey}`,

@@ -8,7 +8,10 @@ import SoftBreak from 'slate-soft-break';
 import { theme } from 'styles/theme';
 
 import ToggleBlockHotkeys from './plugins/toggleBlockHotkeys';
-import ToggleMarkHotkeys from './plugins/toggleMarkHotkeys';
+import Bold from './plugins/marks/bold';
+import Italic from './plugins/marks/italic';
+import Underlined from './plugins/marks/underlined';
+import CodeSnippet from './plugins/marks/codeSnippet';
 import Image from './plugins/blocks/image';
 import Lists from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
@@ -145,42 +148,50 @@ const markdownPlugins = [
   }),
 ];
 
+// DRY THIS UP FURTHER LATER
+const coreEditorPlugins = [
+  // Marks
+  Bold(),
+  Italic(),
+  Underlined(),
+  CodeSnippet(),
+
+  // Blocks
+  Lists(),
+  BlockQuote(),
+  CodeBlock(),
+  Image(),
+
+  // Inlines
+  Link(),
+
+  // Others
+  SoftBreak({ shift: true }),
+  markdownPlugins,
+
+  // TEMP: Hotkeys
+  ToggleBlockHotkeys(),
+];
+
 export const plugins = {
   meetingTitle: [],
   meetingPurpose: [],
   discussionTitle: [
     createPlaceholderPlugin('Untitled Discussion', theme.colors.titlePlaceholder),
   ],
-  // DRY THIS UP LATER
   discussion: [
-    SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Post a message to start this discussion. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
-    ToggleBlockHotkeys(),
-    ToggleMarkHotkeys(),
-    Image(),
-    Lists(),
-    Link(),
-    BlockQuote(),
-    CodeBlock(),
-    markdownPlugins,
+    coreEditorPlugins,
   ],
   message: [
-    SoftBreak({ shift: true }),
     createPlaceholderPlugin(
       'Share your perspective with others in this discussion. Be as expressive as you like.',
       theme.colors.textPlaceholder,
     ),
-    ToggleBlockHotkeys(),
-    ToggleMarkHotkeys(),
-    Image(),
-    Lists(),
-    Link(),
-    BlockQuote(),
-    CodeBlock(),
-    markdownPlugins,
+    coreEditorPlugins,
   ],
 };
 
@@ -198,23 +209,6 @@ export const renderBlock = (props, editor, next) => {
       return <h3 {...attributes}>{children}</h3>;
     case 'section-break':
       return <hr {...attributes} />;
-    default:
-      return next();
-  }
-};
-
-export const renderMark = (props, editor, next) => {
-  const { attributes, children, mark } = props;
-
-  switch (mark.type) {
-    case 'bold':
-      return <strong {...attributes}>{children}</strong>;
-    case 'code-snippet':
-      return <code {...attributes}>{children}</code>;
-    case 'italic':
-      return <em {...attributes}>{children}</em>;
-    case 'underlined':
-      return <u {...attributes}>{children}</u>;
     default:
       return next();
   }

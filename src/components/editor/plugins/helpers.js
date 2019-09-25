@@ -9,7 +9,10 @@ export const AddQueries = queriesObj => ({ queries: queriesObj });
 
 export const Hotkey = (combination, hotkeyFn) => ({
   onKeyDown(event, editor, next) {
-    if (isHotkey(combination, event)) return editor.command(hotkeyFn);
+    if (isHotkey(combination, event)) {
+      event.preventDefault();
+      return editor.command(hotkeyFn);
+    }
 
     return next();
   },

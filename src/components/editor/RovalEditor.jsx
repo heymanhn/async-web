@@ -13,7 +13,6 @@ import {
   plugins,
   queries,
   renderBlock,
-  renderMark,
   schema,
   singleUseBlocks,
 } from './slateHelper';
@@ -348,7 +347,6 @@ class RovalEditor extends Component {
           ref={this.editor}
           renderBlock={renderBlock}
           renderEditor={this.renderEditor}
-          renderMark={renderMark}
           schema={schema}
           value={value}
           {...props}
