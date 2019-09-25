@@ -17,6 +17,18 @@ const StyledImage = styled.img(({ isFocused, readOnly, theme: { colors } }) => (
 }));
 
 function Image() {
+  /* **** Schema **** */
+
+  const imageSchema = {
+    blocks: {
+      image: {
+        isVoid: true,
+      },
+    },
+  };
+
+  /* **** Commands **** */
+
   function insertImage(editor, src) {
     if (editor.isEmptyParagraph()) {
       return editor.setBlocks({
@@ -33,6 +45,8 @@ function Image() {
       });
   }
 
+  /* **** Render methods **** */
+
   function renderImage(props) {
     const { attributes, isFocused, node, readOnly } = props;
 
@@ -47,17 +61,9 @@ function Image() {
     );
   }
 
-  const imageSchema = {
-    blocks: {
-      image: {
-        isVoid: true,
-      },
-    },
-  };
-
   return [
-    AddCommands({ insertImage }),
     AddSchema(imageSchema),
+    AddCommands({ insertImage }),
     RenderBlock('image', renderImage),
   ];
 }

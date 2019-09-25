@@ -12,9 +12,6 @@ import {
   defaultValue,
   plugins,
   queries,
-  renderBlock,
-  schema,
-  singleUseBlocks,
 } from './slateHelper';
 import EditorActions from './EditorActions';
 import Toolbar from './toolbar/Toolbar';
@@ -165,13 +162,6 @@ class RovalEditor extends Component {
       return editor
         .setBlocks(DEFAULT_NODE)
         .unwrapListBlocks();
-    }
-
-    if (singleUseBlocks.includes(anchorBlock.type)) {
-      if (editor.isAtBeginning()) return editor.insertBlock(DEFAULT_NODE);
-
-      next();
-      return editor.setBlocks(DEFAULT_NODE);
     }
 
     return next();
@@ -340,9 +330,7 @@ class RovalEditor extends Component {
           queries={queries}
           readOnly={mode === 'display'}
           ref={this.editor}
-          renderBlock={renderBlock}
           renderEditor={this.renderEditor}
-          schema={schema}
           value={value}
           {...props}
         />

@@ -1,6 +1,5 @@
 /* eslint jsx-a11y/alt-text: 0 */
 
-import React from 'react';
 import PlaceholderPlugin from 'slate-react-placeholder';
 import AutoReplace from 'slate-auto-replace';
 import SoftBreak from 'slate-soft-break';
@@ -12,6 +11,7 @@ import Italic from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
 import CodeSnippet from './plugins/marks/codeSnippet';
 import Headings from './plugins/blocks/headings';
+import SectionBreak from './plugins/blocks/sectionBreak';
 import Image from './plugins/blocks/image';
 import Lists from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
@@ -34,16 +34,6 @@ export const defaultValue = {
         ],
       },
     ],
-  },
-};
-
-/* ******************** */
-
-export const schema = {
-  blocks: {
-    'section-break': {
-      isVoid: true, // Needed so that we don't need to pass children to section breaks
-    },
   },
 };
 
@@ -122,11 +112,6 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
 
 const markdownPlugins = [
   AutoReplace({
-    trigger: '-',
-    before: /^(--)$/,
-    change: change => change.setBlocks('section-break').insertBlock(DEFAULT_NODE),
-  }),
-  AutoReplace({
     trigger: 'space',
     before: /(--)$/,
     change: change => change.insertText('— '),
@@ -146,6 +131,7 @@ const coreEditorPlugins = [
   Lists(),
   BlockQuote(),
   CodeBlock(),
+  SectionBreak(),
   Image(),
 
   // Inlines
@@ -177,22 +163,3 @@ export const plugins = {
     coreEditorPlugins,
   ],
 };
-
-/* Methods for determining how to render elements in the editor  */
-
-export const renderBlock = (props, editor, next) => {
-  const { attributes, node } = props;
-
-  switch (node.type) {
-    case 'section-break':
-      return <hr {...attributes} />;
-    default:
-      return next();
-  }
-};
-
-/* ******************** */
-
-export const singleUseBlocks = [
-  'section-break',
-];
