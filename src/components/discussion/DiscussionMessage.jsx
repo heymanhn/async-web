@@ -45,40 +45,12 @@ const MessageEditor = styled(RovalEditor)({
   fontWeight: 400,
   marginTop: '15px',
 
-  // HN: opportunity to DRY these up later once we find a pattern of typography
-  // across different editor use cases
-  'div:not(:first-of-type)': {
-    marginTop: '1em',
+  // Spacing for the paragraphs
+  div: {
+    marginBottom: '1em',
   },
-
-  pre: {
-    div: {
-      marginTop: '0 !important',
-    },
-  },
-
-  h1: {
-    fontSize: '1.5em',
-    fontWeight: 600,
-    lineHeight: 1.2,
-    marginTop: '1.3em',
-    letterSpacing: '-0.002em',
-  },
-
-  h2: {
-    fontSize: '1.25em',
-    fontWeight: 600,
-    lineHeight: 1.2,
-    marginTop: '1.2em',
-    letterSpacing: '-0.002em',
-  },
-
-  h3: {
-    fontSize: '1em',
-    fontWeight: 600,
-    lineHeight: 1.12,
-    marginTop: '1.1em',
-    letterSpacing: '-0.002em',
+  'div:last-of-type': {
+    marginBottom: 0,
   },
 });
 

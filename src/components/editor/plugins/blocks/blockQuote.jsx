@@ -1,6 +1,7 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 import AutoReplace from 'slate-auto-replace';
+import styled from '@emotion/styled';
 
 import {
   DEFAULT_NODE,
@@ -11,6 +12,14 @@ import {
 } from '../helpers';
 
 const BLOCK_QUOTE = 'block-quote';
+
+const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
+  marginTop: '1em',
+  borderLeft: `3px solid ${colors.borderGrey}`,
+  color: colors.grey2,
+  padding: '0px 12px',
+  marginBottom: '10px',
+}));
 
 function BlockQuote() {
   /* **** Schema **** */
@@ -29,7 +38,7 @@ function BlockQuote() {
   function renderBlockQuote(props) {
     const { attributes, children } = props;
 
-    return <blockquote {...attributes}>{children}</blockquote>;
+    return <StyledBlockQuote {...attributes}>{children}</StyledBlockQuote>;
   }
 
   /* **** Markdown **** */

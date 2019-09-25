@@ -1,6 +1,7 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 import AutoReplace from 'slate-auto-replace';
+import styled from '@emotion/styled';
 
 import {
   DEFAULT_NODE,
@@ -10,6 +11,13 @@ import {
 } from '../helpers';
 
 const SECTION_BREAK = 'section-break';
+
+const StyledSectionBreak = styled.hr(({ theme: { colors } }) => ({
+  borderRadius: '20px',
+  borderTop: `2px solid ${colors.borderGrey}`,
+  margin: '2em auto',
+  width: '120px',
+}));
 
 function SectionBreak() {
   /* **** Schema **** */
@@ -26,7 +34,7 @@ function SectionBreak() {
 
   function renderSectionBreak(props) {
     const { attributes } = props;
-    return <hr {...attributes} />;
+    return <StyledSectionBreak {...attributes} />;
   }
 
   /* **** Markdown **** */

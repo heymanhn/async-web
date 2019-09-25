@@ -1,6 +1,7 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 import AutoReplace from 'slate-auto-replace';
+import styled from '@emotion/styled';
 
 import {
   DEFAULT_NODE,
@@ -11,6 +12,26 @@ import {
 } from '../helpers';
 
 const CODE_BLOCK = 'code-block';
+
+const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
+  background: colors.bgGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  fontFamily: `${codeFontStack}`,
+  marginTop: '1em',
+  marginBottom: 0,
+  padding: '7px 12px',
+  whiteSpace: 'pre-wrap',
+
+  div: {
+    marginBottom: '0 !important',
+  },
+
+  span: {
+    fontFamily: `${codeFontStack}`,
+    letterSpacing: '-0.2px',
+  },
+}));
 
 function CodeBlock() {
   /* **** Schema **** */
@@ -29,7 +50,7 @@ function CodeBlock() {
   function renderCodeBlock(props) {
     const { attributes, children } = props;
 
-    return <pre {...attributes}>{children}</pre>;
+    return <StyledCodeBlock {...attributes}>{children}</StyledCodeBlock>;
   }
 
   /* **** Markdown **** */

@@ -1,6 +1,7 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 import AutoReplace from 'slate-auto-replace';
+import styled from '@emotion/styled';
 
 import {
   DEFAULT_NODE,
@@ -13,22 +14,43 @@ const LARGE_FONT = 'heading-one';
 const MEDIUM_FONT = 'heading-two';
 const SMALL_FONT = 'heading-three';
 
+const LargeFont = styled.h1({
+  fontSize: '24px',
+  fontWeight: 600,
+  lineHeight: '32px',
+  marginTop: '1.3em',
+});
+
+const MediumFont = styled.h2({
+  fontSize: '20px',
+  fontWeight: 600,
+  lineHeight: '26px',
+  marginTop: '1.2em',
+});
+
+const SmallFont = styled.h3({
+  fontSize: '16px',
+  fontWeight: 600,
+  lineHeight: '20px',
+  marginTop: '1.1em',
+});
+
 function Headings() {
   /* **** Render methods **** */
 
   function renderLargeFont(props) {
     const { attributes, children } = props;
-    return <h1 {...attributes}>{children}</h1>;
+    return <LargeFont {...attributes}>{children}</LargeFont>;
   }
 
   function renderMediumFont(props) {
     const { attributes, children } = props;
-    return <h2 {...attributes}>{children}</h2>;
+    return <MediumFont {...attributes}>{children}</MediumFont>;
   }
 
   function renderSmallFont(props) {
     const { attributes, children } = props;
-    return <h3 {...attributes}>{children}</h3>;
+    return <SmallFont {...attributes}>{children}</SmallFont>;
   }
 
   const renderMethods = [

@@ -1,6 +1,7 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 import AutoReplace from 'slate-auto-replace';
+import styled from '@emotion/styled';
 
 import {
   DEFAULT_NODE,
@@ -13,6 +14,20 @@ import {
 const BULLETED_LIST = 'bulleted-list';
 const NUMBERED_LIST = 'numbered-list';
 const LIST_ITEM = 'list-item';
+
+const BulletedList = styled.ul({
+  marginTop: '1em',
+  marginBottom: 0,
+});
+
+const NumberedList = styled.ol({
+  marginTop: '1em',
+  marginBottom: 0,
+});
+
+const ListItem = styled.li({
+  marginTop: '3px',
+});
 
 function Lists() {
   /* **** Commands **** */
@@ -57,17 +72,17 @@ function Lists() {
 
   function renderBulletedList(props) {
     const { attributes, children } = props;
-    return <ul {...attributes}>{children}</ul>;
+    return <BulletedList {...attributes}>{children}</BulletedList>;
   }
 
   function renderNumberedList(props) {
     const { attributes, children } = props;
-    return <ol {...attributes}>{children}</ol>;
+    return <NumberedList {...attributes}>{children}</NumberedList>;
   }
 
   function renderListItem(props) {
     const { attributes, children } = props;
-    return <li {...attributes}>{children}</li>;
+    return <ListItem {...attributes}>{children}</ListItem>;
   }
 
   const renderMethods = [
