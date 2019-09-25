@@ -6,9 +6,11 @@ import styled from '@emotion/styled';
 import {
   DEFAULT_NODE,
   AddSchema,
+  AddCommands,
   Hotkey,
   RenderBlock,
   CustomEnterAction,
+  CustomBackspaceAction,
 } from '../helpers';
 
 const CODE_BLOCK = 'code-block';
@@ -44,6 +46,12 @@ function CodeBlock() {
       },
     ],
   };
+
+  /* **** Commands **** */
+
+  function setCodeBlock(editor) {
+    return editor.setWrappedBlock(CODE_BLOCK);
+  }
 
   /* **** Render methods **** */
 
@@ -81,13 +89,27 @@ function CodeBlock() {
     return next();
   }
 
+  function exitOnBackspace(editor, next) {
+    const { value } = editor;
+    const { anchorBlock, previousBlock } = value;
+
+    if (editor.isEmptyParagraph() && editor.isWrappedBy(CODE_BLOCK)) {
+      editor.unwrapBlock(anchorBlock.key);
+      return previousBlock ? editor.removeNodeByKey(anchorBlock.key) : next();
+    }
+
+    return next();
+  }
+
   const hotkeys = [
     Hotkey('mod+shift+k', editor => editor.setWrappedBlock(CODE_BLOCK)),
     CustomEnterAction(exitBlockOnDoubleEnter),
+    CustomBackspaceAction(exitOnBackspace),
   ];
 
   return [
     AddSchema(codeBlockSchema),
+    AddCommands({ setCodeBlock }),
     RenderBlock(CODE_BLOCK, renderCodeBlock),
     markdownShortcuts,
     hotkeys,

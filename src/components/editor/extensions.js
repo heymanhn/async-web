@@ -36,8 +36,6 @@ export const commands = {
   },
 
   setBlock: (editor, type) => {
-    if (['block-quote', 'code-block'].includes(type)) return editor.setWrappedBlock(type);
-
     const isActive = editor.hasBlock(type);
 
     return editor

@@ -8,6 +8,7 @@ import {
   AddSchema,
   RenderBlock,
   CustomEnterAction,
+  CustomBackspaceAction,
 } from '../helpers';
 
 const SECTION_BREAK = 'section-break';
@@ -45,7 +46,7 @@ function SectionBreak() {
     change: change => change.setBlocks('section-break').insertBlock(DEFAULT_NODE),
   });
 
-  /* **** Custom enter key-press behaviors **** */
+  /* **** Hotkeys **** */
 
   function exitSectionBreakOnEnter(editor, next) {
     if (editor.hasBlock(SECTION_BREAK)) {
@@ -58,11 +59,29 @@ function SectionBreak() {
     return next();
   }
 
+  // Instead of selecting the section break, since it's a void block, delete it directly.
+  function removeSectionBreak(editor, next) {
+    const { value } = editor;
+    const { previousBlock } = value;
+
+    if (editor.isEmptyParagraph() && previousBlock && previousBlock.type === SECTION_BREAK) {
+      next();
+      return editor.removeNodeByKey(previousBlock.key);
+    }
+
+    return next();
+  }
+
+  const hotkeys = [
+    CustomEnterAction(exitSectionBreakOnEnter),
+    CustomBackspaceAction(removeSectionBreak),
+  ];
+
   return [
     AddSchema(sectionBreakSchema),
     RenderBlock(SECTION_BREAK, renderSectionBreak),
     markdownShortcut,
-    CustomEnterAction(exitSectionBreakOnEnter),
+    hotkeys,
   ];
 }
 

@@ -6,9 +6,11 @@ import styled from '@emotion/styled';
 import {
   DEFAULT_NODE,
   AddSchema,
+  AddCommands,
   Hotkey,
   RenderBlock,
   CustomEnterAction,
+  CustomBackspaceAction,
 } from '../helpers';
 
 const BLOCK_QUOTE = 'block-quote';
@@ -33,6 +35,12 @@ function BlockQuote() {
     ],
   };
 
+  /* **** Commands **** */
+
+  function setBlockQuote(editor) {
+    return editor.setWrappedBlock(BLOCK_QUOTE);
+  }
+
   /* **** Render methods **** */
 
   function renderBlockQuote(props) {
@@ -54,7 +62,7 @@ function BlockQuote() {
         return change
           .insertBlock(DEFAULT_NODE)
           .moveBackward(1)
-          .setBlock(BLOCK_QUOTE);
+          .setBlockQuote();
       },
     }),
   ];
@@ -69,13 +77,27 @@ function BlockQuote() {
     return next();
   }
 
+  function exitOnBackspace(editor, next) {
+    const { value } = editor;
+    const { anchorBlock, previousBlock } = value;
+
+    if (editor.isEmptyParagraph() && editor.isWrappedBy(BLOCK_QUOTE)) {
+      editor.unwrapBlock(anchorBlock.key);
+      return previousBlock ? editor.removeNodeByKey(anchorBlock.key) : next();
+    }
+
+    return next();
+  }
+
   const hotkeys = [
     Hotkey('mod+shift+9', editor => editor.setWrappedBlock(BLOCK_QUOTE)),
     CustomEnterAction(exitBlockOnDoubleEnter),
+    CustomBackspaceAction(exitOnBackspace),
   ];
 
   return [
     AddSchema(blockQuoteSchema),
+    AddCommands({ setBlockQuote }),
     RenderBlock(BLOCK_QUOTE, renderBlockQuote),
     markdownShortcuts,
     hotkeys,

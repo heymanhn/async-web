@@ -54,6 +54,8 @@ const BlockButton = ({ editor, type }) => {
 
     // HN: can I DRY this up in the lists plugin?
     if (['bulleted-list', 'numbered-list'].includes(type)) return editor.setListBlock(type);
+    if (type === 'block-quote') return editor.setBlockQuote();
+    if (type === 'code-block') return editor.setCodeBlock();
     return editor.setBlock(type);
   };
 

@@ -7,7 +7,7 @@ import Plain from 'slate-plain-serializer';
 import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
-import { DEFAULT_NODE, DEFAULT_VALUE } from './defaults';
+import { DEFAULT_VALUE } from './defaults';
 import {
   commands,
   plugins,
@@ -79,20 +79,6 @@ class RovalEditor extends Component {
   }
 
   handleBackspaceActions(next) {
-    const editor = this.editor.current;
-    const { value } = editor;
-    const { anchorBlock, previousBlock } = value;
-
-    if (editor.isEmptyParagraph() && previousBlock && previousBlock.type === 'section-break') {
-      next();
-      return editor.removeNodeByKey(previousBlock.key);
-    }
-
-    if (editor.isEmptyParagraph() && editor.isWrappedByCodeOrQuote()) {
-      editor.unwrapBlockByKey(anchorBlock.key);
-      return previousBlock ? editor.removeNodeByKey(anchorBlock.key) : next();
-    }
-
     // TODO: handle backspace behavior for deleting a bulleted list
 
     return next();

@@ -49,3 +49,11 @@ export const CustomEnterAction = actionFn => ({
     return next();
   },
 });
+
+export const CustomBackspaceAction = actionFn => ({
+  onKeyDown(event, editor, next) {
+    if (isHotkey('Backspace', event)) return actionFn(editor, next);
+
+    return next();
+  },
+});
