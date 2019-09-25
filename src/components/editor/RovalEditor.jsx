@@ -174,11 +174,6 @@ class RovalEditor extends Component {
       return editor.setBlocks(DEFAULT_NODE);
     }
 
-    if (editor.hasActiveMark('code-snippet')) {
-      next();
-      return editor.removeMark('code-snippet');
-    }
-
     return next();
   }
 

@@ -3,8 +3,10 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import {
+  DEFAULT_NODE,
   Hotkey,
   RenderMark,
+  CustomEnterAction,
 } from '../helpers';
 
 const CODE_SNIPPET = 'code-snippet';
@@ -29,9 +31,20 @@ function CodeSnippet() {
     return <StyledCodeSnippet {...attributes}>{children}</StyledCodeSnippet>;
   }
 
+  function unmarkSnippet(editor, next) {
+    if (editor.hasActiveMark(CODE_SNIPPET)) {
+      return editor
+        .insertBlock(DEFAULT_NODE)
+        .removeMark(CODE_SNIPPET);
+    }
+
+    return next();
+  }
+
   return [
     RenderMark(CODE_SNIPPET, renderCodeSnippet),
     Hotkey('mod+k', editor => editor.toggleMark(CODE_SNIPPET)),
+    CustomEnterAction(unmarkSnippet),
   ];
 }
 
