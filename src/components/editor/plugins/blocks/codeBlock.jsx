@@ -19,7 +19,7 @@ const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
   borderRadius: '5px',
   fontFamily: `${codeFontStack}`,
   marginTop: '1em',
-  marginBottom: 0,
+  marginBottom: '1em',
   padding: '7px 12px',
   whiteSpace: 'pre-wrap',
 

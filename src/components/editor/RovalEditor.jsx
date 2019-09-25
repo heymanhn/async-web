@@ -7,16 +7,14 @@ import Plain from 'slate-plain-serializer';
 import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
+import { DEFAULT_NODE, DEFAULT_VALUE } from './defaults';
 import {
   commands,
-  defaultValue,
   plugins,
   queries,
-} from './slateHelper';
+} from './extensions';
 import EditorActions from './EditorActions';
 import Toolbar from './toolbar/Toolbar';
-
-const DEFAULT_NODE = 'paragraph';
 
 const Container = styled.div(({ initialHeight, mode }) => ({
   display: 'flex',
@@ -46,7 +44,6 @@ class RovalEditor extends Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.handleEnterActions = this.handleEnterActions.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -119,28 +116,8 @@ class RovalEditor extends Component {
     return next();
   }
 
-  /*
-   * Special cases:
-   * 1. Pressing Enter while on a blank list item removes the blank list item and creates a
-   *    new default node block
-   */
-  handleEnterActions(next) {
-    const editor = this.editor.current;
-    const { value } = editor;
-    const { anchorBlock } = value;
-
-    if (anchorBlock.type === 'list-item' && !anchorBlock.text) {
-      return editor
-        .setBlocks(DEFAULT_NODE)
-        .unwrapListBlocks();
-    }
-
-    return next();
-  }
-
   handleKeyDown(event, editor, next) {
     const hotkeys = {
-      isEnter: isHotkey('Enter'),
       isSubmit: isHotkey('mod+Enter'),
       isCancel: isHotkey('Esc'),
       isBackspace: isHotkey('Backspace'),
@@ -148,7 +125,6 @@ class RovalEditor extends Component {
 
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
     if (hotkeys.isCancel(event) && this.isValueEmpty()) return this.handleCancel();
-    if (hotkeys.isEnter(event)) return this.handleEnterActions(next);
     if (hotkeys.isBackspace(event)) return this.handleBackspaceActions(next);
 
     return next();
@@ -205,7 +181,7 @@ class RovalEditor extends Component {
   }
 
   clearEditorValue() {
-    this.setState({ value: Value.fromJSON(defaultValue) });
+    this.setState({ value: Value.fromJSON(DEFAULT_VALUE) });
   }
 
   insertImage(url) {
@@ -230,7 +206,7 @@ class RovalEditor extends Component {
     if (isPlainText && initialValue) {
       value = Plain.deserialize(initialValue);
     } else {
-      const initialJSON = initialValue ? JSON.parse(initialValue) : defaultValue;
+      const initialJSON = initialValue ? JSON.parse(initialValue) : DEFAULT_VALUE;
       value = Value.fromJSON(initialJSON);
     }
 

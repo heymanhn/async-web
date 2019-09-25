@@ -1,10 +1,10 @@
-/* eslint jsx-a11y/alt-text: 0 */
-
 import PlaceholderPlugin from 'slate-react-placeholder';
 import AutoReplace from 'slate-auto-replace';
 import SoftBreak from 'slate-soft-break';
 
 import { theme } from 'styles/theme';
+
+import { DEFAULT_NODE } from './defaults';
 
 import Bold from './plugins/marks/bold';
 import Italic from './plugins/marks/italic';
@@ -18,28 +18,8 @@ import Link from './plugins/inlines/link';
 import BlockQuote from './plugins/blocks/blockQuote';
 import CodeBlock from './plugins/blocks/codeBlock';
 
-/* ******************** */
+/* **** Commands **** */
 
-export const defaultValue = {
-  document: {
-    nodes: [
-      {
-        object: 'block',
-        type: 'paragraph',
-        nodes: [
-          {
-            object: 'text',
-            text: '',
-          },
-        ],
-      },
-    ],
-  },
-};
-
-/* ******************** */
-
-const DEFAULT_NODE = 'paragraph';
 export const commands = {
   setWrappedBlock: (editor, type) => {
     // This means the user is looking to un-set the wrapped block
@@ -51,7 +31,7 @@ export const commands = {
 
     return editor
       .setBlocks(DEFAULT_NODE)
-      .unwrapOtherBlocks(type)
+      .unwrapAnyBlock(type)
       .wrapBlock(type);
   },
 
@@ -61,25 +41,22 @@ export const commands = {
     const isActive = editor.hasBlock(type);
 
     return editor
-      .unwrapOtherBlocks()
+      .unwrapAnyBlock()
       .setBlocks(isActive ? DEFAULT_NODE : type);
   },
 
-  // HN: How do I abstract this? Into which plugin?
-  unwrapNonListBlocks: (editor) => {
-    editor
-      .unwrapBlock('block-quote')
-      .unwrapBlock('code-block');
-  },
+  unwrapAnyBlock: (editor, type) => {
+    const parent = editor.getParentBlock();
+    if (!parent || parent.type === type) return;
 
-  unwrapOtherBlocks: (editor) => {
-    editor
-      .unwrapListBlocks()
-      .unwrapNonListBlocks();
+    editor.unwrapBlock(parent.type);
   },
 };
 
+/* **** Queries  **** */
+
 export const queries = {
+  getParentBlock: editor => editor.value.document.getClosestBlock(editor.value.anchorBlock.key),
   hasBlock: (editor, type) => editor.value.blocks.some(node => node.type === type),
   hasActiveMark: (editor, type) => editor.value.activeMarks.some(mark => mark.type === type),
   isAtBeginning: (editor) => {
@@ -97,10 +74,10 @@ export const queries = {
   )),
   isWrappedByCodeOrQuote: editor => editor.isWrappedBy('code-block')
     || editor.isWrappedBy('block-quote'),
-  isWrappedByAnyBlock: editor => editor.isWrappedByCodeOrQuote() || editor.isWrappedByList(),
+  isWrappedByAnyBlock: editor => !!editor.getParentBlock(),
 };
 
-/* ******************** */
+/* **** Plugins **** */
 
 const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
   placeholder: text,
@@ -110,15 +87,6 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
   },
 });
 
-const markdownPlugins = [
-  AutoReplace({
-    trigger: 'space',
-    before: /(--)$/,
-    change: change => change.insertText('— '),
-  }),
-];
-
-// DRY THIS UP FURTHER LATER
 const coreEditorPlugins = [
   // Marks
   Bold(),
@@ -139,7 +107,11 @@ const coreEditorPlugins = [
 
   // Others
   SoftBreak({ shift: true }),
-  markdownPlugins,
+  AutoReplace({
+    trigger: 'space',
+    before: /(--)$/,
+    change: change => change.insertText('— '),
+  }),
 ];
 
 export const plugins = {

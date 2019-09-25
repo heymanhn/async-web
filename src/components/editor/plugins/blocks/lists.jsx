@@ -3,12 +3,13 @@ import React from 'react';
 import AutoReplace from 'slate-auto-replace';
 import styled from '@emotion/styled';
 
+import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
-  DEFAULT_NODE,
   AddCommands,
   AddQueries,
   Hotkey,
   RenderBlock,
+  CustomEnterAction,
 } from '../helpers';
 
 const BULLETED_LIST = 'bulleted-list';
@@ -51,7 +52,7 @@ function Lists() {
 
     // Simplest case: setting the list type as desired
     return editor
-      .unwrapNonListBlocks()
+      .unwrapAnyBlock()
       .setBlocks(LIST_ITEM)
       .wrapBlock(type);
   }
@@ -107,9 +108,25 @@ function Lists() {
   ];
 
   /* **** Hotkeys **** */
+
+  // Pressing Enter while on a blank list item removes the blank list item and exits the list
+  function exitListAfterEmptyListItem(editor, next) {
+    const { value } = editor;
+    const { anchorBlock } = value;
+
+    if (anchorBlock.type === 'list-item' && !anchorBlock.text) {
+      return editor
+        .setBlocks(DEFAULT_NODE)
+        .unwrapListBlocks();
+    }
+
+    return next();
+  }
+
   const hotkeys = [
     Hotkey('mod+shift+7', editor => editor.setListBlock(NUMBERED_LIST)),
     Hotkey('mod+shift+8', editor => editor.setListBlock(BULLETED_LIST)),
+    CustomEnterAction(exitListAfterEmptyListItem),
   ];
 
   return [
