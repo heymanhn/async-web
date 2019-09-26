@@ -8,20 +8,6 @@ function SelectionToolbar() {
   // const [isOpen, setIsOpen] = useState(false);
 
   function displayToolbar(props, editor, next) {
-    // function updateToolbar() {
-    //   // const { isOpen, value } = this.state;
-    //   const { fragment, selection } = value;
-
-    //   if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
-    //     if (isToolbarVisible) this.setState({ isToolbarVisible: false });
-    //     return;
-    //   }
-
-    //   if (!isToolbarVisible) this.setState({ isToolbarVisible: true });
-    // }
-
-    // I Need to be able to do something about the mousedown event
-
     const { isMouseDown, mode, value } = props;
     const { selection } = value;
     const isOpen = mode !== 'display' && selection.isExpanded && !isMouseDown;

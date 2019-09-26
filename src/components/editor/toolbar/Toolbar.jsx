@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import { BoldButton } from '../plugins/marks/bold';
 import BlockButton from './BlockButton';
 import MarkButton from './MarkButton';
 
@@ -58,7 +59,9 @@ const Toolbar = ({ editor, isOpen }) => {
 
   return ReactDOM.createPortal(
     <Container ref={ref} coords={calculateToolbarPosition()} isOpen={isOpen}>
-      <div>Hi</div>
+      <BoldButton editor={editor} />
+      <VerticalDivider />
+
       {/* <MarkButton editor={editor} type="bold" />
       <MarkButton editor={editor} type="italic" />
       <VerticalDivider />

@@ -6,7 +6,7 @@ import { theme } from 'styles/theme';
 
 import { DEFAULT_NODE } from './defaults';
 
-import Bold from './plugins/marks/bold';
+import { BoldPlugin } from './plugins/marks/bold';
 import Italic from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
 import CodeSnippet from './plugins/marks/codeSnippet';
@@ -87,7 +87,7 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
 
 const coreEditorPlugins = [
   // Marks
-  Bold(),
+  BoldPlugin(),
   Italic(),
   Underlined(),
   CodeSnippet(),
