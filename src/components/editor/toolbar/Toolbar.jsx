@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import { BoldButton } from '../plugins/marks/bold';
-import BlockButton from './BlockButton';
-import MarkButton from './MarkButton';
+import { ItalicButton } from '../plugins/marks/italic';
+import { BlockQuoteButton } from '../plugins/blocks/blockQuote';
+// import { CodeBlockButton } from '../plugins/blocks/codeBlock';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -60,19 +61,16 @@ const Toolbar = ({ editor, isOpen }) => {
   return ReactDOM.createPortal(
     <Container ref={ref} coords={calculateToolbarPosition()} isOpen={isOpen}>
       <BoldButton editor={editor} />
+      <ItalicButton editor={editor} />
       <VerticalDivider />
 
-      {/* <MarkButton editor={editor} type="bold" />
-      <MarkButton editor={editor} type="italic" />
-      <VerticalDivider />
+      {/* <LargeFontButton editor={editor} />
+      <MediumFontButton editor={editor} />
+      <BulletedListButton editor={editor} />
+      <VerticalDivider /> */}
 
-      <BlockButton editor={editor} type="heading-one" />
-      <BlockButton editor={editor} type="heading-two" />
-      <BlockButton editor={editor} type="bulleted-list" />
-      <VerticalDivider />
-
-      <BlockButton editor={editor} type="block-quote" />
-      <BlockButton editor={editor} type="code-block" /> */}
+      <BlockQuoteButton editor={editor} />
+      {/* <CodeBlockButton editor={editor} /> */}
     </Container>,
     root,
   );

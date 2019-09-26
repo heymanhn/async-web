@@ -7,7 +7,7 @@ import { theme } from 'styles/theme';
 import { DEFAULT_NODE } from './defaults';
 
 import { BoldPlugin } from './plugins/marks/bold';
-import Italic from './plugins/marks/italic';
+import { ItalicPlugin } from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
 import CodeSnippet from './plugins/marks/codeSnippet';
 import Headings from './plugins/blocks/headings';
@@ -15,7 +15,7 @@ import SectionBreak from './plugins/blocks/sectionBreak';
 import Image from './plugins/blocks/image';
 import Lists from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
-import BlockQuote from './plugins/blocks/blockQuote';
+import { BlockQuotePlugin } from './plugins/blocks/blockQuote';
 import CodeBlock from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
 
@@ -88,14 +88,14 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
 const coreEditorPlugins = [
   // Marks
   BoldPlugin(),
-  Italic(),
+  ItalicPlugin(),
   Underlined(),
   CodeSnippet(),
 
   // Blocks
   Headings(),
   Lists(),
-  BlockQuote(),
+  BlockQuotePlugin(),
   CodeBlock(),
   SectionBreak(),
   Image(),

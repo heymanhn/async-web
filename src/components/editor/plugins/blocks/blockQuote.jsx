@@ -1,8 +1,10 @@
-/* eslint react/prop-types: 0 */
 import React from 'react';
+import PropTypes from 'prop-types';
 import AutoReplace from 'slate-auto-replace';
+import { faQuoteRight } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import {
   DEFAULT_NODE,
   AddSchema,
@@ -15,6 +17,43 @@ import {
 
 const BLOCK_QUOTE = 'block-quote';
 
+const Container = styled.div({
+  cursor: 'pointer',
+  margin: 0,
+});
+
+export function BlockQuoteButton({ editor, ...props }) {
+  function handleClick(event) {
+    event.preventDefault();
+    return editor.setBlockQuote();
+  }
+
+  function isActive() {
+    const { value: { document, blocks } } = editor;
+
+    if (blocks.size > 0) {
+      const parent = document.getParent(blocks.first().key);
+      return (parent && parent.type === BLOCK_QUOTE);
+    }
+
+    return false;
+  }
+
+  return (
+    <Container
+      onClick={handleClick}
+      onKeyDown={handleClick}
+      {...props}
+    >
+      <ButtonIcon icon={faQuoteRight} isActive={isActive()} />
+    </Container>
+  );
+}
+
+BlockQuoteButton.propTypes = {
+  editor: PropTypes.object.isRequired,
+};
+
 const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
   marginTop: '1em',
   borderLeft: `3px solid ${colors.borderGrey}`,
@@ -23,7 +62,7 @@ const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
   marginBottom: '10px',
 }));
 
-function BlockQuote() {
+export function BlockQuotePlugin() {
   /* **** Schema **** */
 
   const blockQuoteSchema = { blocks: { } };
@@ -44,7 +83,7 @@ function BlockQuote() {
   /* **** Render methods **** */
 
   function renderBlockQuote(props) {
-    const { attributes, children } = props;
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
 
     return <StyledBlockQuote {...attributes}>{children}</StyledBlockQuote>;
   }
@@ -103,5 +142,3 @@ function BlockQuote() {
     hotkeys,
   ];
 }
-
-export default BlockQuote;
