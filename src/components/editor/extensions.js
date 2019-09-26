@@ -66,13 +66,11 @@ export const queries = {
   isEmptyDocument: editor => editor.value.document.text === '',
   isEmptyParagraph: (editor) => {
     const { anchorBlock } = editor.value;
-    return anchorBlock.type === 'paragraph' && !anchorBlock.text;
+    return anchorBlock.type === DEFAULT_NODE && !anchorBlock.text;
   },
   isWrappedBy: (editor, type) => editor.value.blocks.some(block => (
     !!editor.value.document.getClosest(block.key, parent => parent.type === type)
   )),
-  isWrappedByCodeOrQuote: editor => editor.isWrappedBy('code-block')
-    || editor.isWrappedBy('block-quote'),
   isWrappedByAnyBlock: editor => !!editor.getParentBlock(),
 };
 
