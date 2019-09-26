@@ -16,7 +16,7 @@ import Image from './plugins/blocks/image';
 import Lists from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
 import { BlockQuotePlugin } from './plugins/blocks/blockQuote';
-import CodeBlock from './plugins/blocks/codeBlock';
+import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
 
 /* **** Commands **** */
@@ -96,7 +96,7 @@ const coreEditorPlugins = [
   Headings(),
   Lists(),
   BlockQuotePlugin(),
-  CodeBlock(),
+  CodeBlockPlugin(),
   SectionBreak(),
   Image(),
 

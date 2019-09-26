@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { BoldButton } from '../plugins/marks/bold';
 import { ItalicButton } from '../plugins/marks/italic';
 import { BlockQuoteButton } from '../plugins/blocks/blockQuote';
-// import { CodeBlockButton } from '../plugins/blocks/codeBlock';
+import { CodeBlockButton } from '../plugins/blocks/codeBlock';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -70,7 +70,7 @@ const Toolbar = ({ editor, isOpen }) => {
       <VerticalDivider /> */}
 
       <BlockQuoteButton editor={editor} />
-      {/* <CodeBlockButton editor={editor} /> */}
+      <CodeBlockButton editor={editor} />
     </Container>,
     root,
   );

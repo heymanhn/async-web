@@ -1,8 +1,10 @@
-/* eslint react/prop-types: 0 */
 import React from 'react';
+import PropTypes from 'prop-types';
 import AutoReplace from 'slate-auto-replace';
+import { faCode } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import {
   DEFAULT_NODE,
   AddSchema,
@@ -14,6 +16,43 @@ import {
 } from '../helpers';
 
 const CODE_BLOCK = 'code-block';
+
+const Container = styled.div({
+  cursor: 'pointer',
+  margin: 0,
+});
+
+export function CodeBlockButton({ editor, ...props }) {
+  function handleClick(event) {
+    event.preventDefault();
+    return editor.setCodeBlock();
+  }
+
+  function isActive() {
+    const { value: { document, blocks } } = editor;
+
+    if (blocks.size > 0) {
+      const parent = document.getParent(blocks.first().key);
+      return (parent && parent.type === CODE_BLOCK);
+    }
+
+    return false;
+  }
+
+  return (
+    <Container
+      onClick={handleClick}
+      onKeyDown={handleClick}
+      {...props}
+    >
+      <ButtonIcon icon={faCode} isActive={isActive()} />
+    </Container>
+  );
+}
+
+CodeBlockButton.propTypes = {
+  editor: PropTypes.object.isRequired,
+};
 
 const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
   background: colors.bgGrey,
@@ -35,7 +74,7 @@ const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
   },
 }));
 
-function CodeBlock() {
+export function CodeBlockPlugin() {
   /* **** Schema **** */
 
   const codeBlockSchema = { blocks: { } };
@@ -56,7 +95,7 @@ function CodeBlock() {
   /* **** Render methods **** */
 
   function renderCodeBlock(props) {
-    const { attributes, children } = props;
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
 
     return <StyledCodeBlock {...attributes}>{children}</StyledCodeBlock>;
   }
@@ -115,5 +154,3 @@ function CodeBlock() {
     hotkeys,
   ];
 }
-
-export default CodeBlock;
