@@ -137,31 +137,46 @@ function Lists() {
   }
 
   // Only if the two lists that border the empty block are of the same type
-  function mergeAdjacentLists(editor, next) {
-    if (editor.isEmptyParagraph()) {
-      next();
+  // NOTE: Not that happy with this implementation, seems a bit hacky. Disabling this functionality
+  // for now and adding a follow-up task to implement
+  // function mergeAdjacentLists(editor, next) {
+  //   if (editor.isAtBeginning()) {
+  //     next();
 
-      if (!editor.hasBlock(LIST_ITEM)) return null;
+  //     if (!editor.hasBlock(LIST_ITEM)) return null;
 
-      // Assuming that if a block has list items, it has to be wrapped by a type of list
-      const currentType = editor.getParentBlock().type;
-      editor.moveForward(1);
+  //     // Assuming that if a block has list items, it has to be wrapped by a type of list
+  //     const currentType = editor.getParentBlock().type;
+  //     const { offset } = editor.value.selection.anchor;
+  //     editor
+  //       .moveToEndOfBlock()
+  //       .moveForward(1);
 
-      if (!editor.hasBlock(LIST_ITEM) || editor.getParentBlock().type !== currentType) return null;
-      return editor
-        .unwrapListBlocks()
-        .deleteBackward(1);
-    }
+  //     if (!editor.hasBlock(LIST_ITEM) || editor.getParentBlock().type !== currentType) {
+  //       return editor
+  //         .moveBackward(1)
+  //         .moveTo(offset);
+  //     }
 
-    return next();
-  }
+
+  //     return editor
+  //       .unwrapListBlocks()
+  //       .deleteBackward(1)
+  //       .insertBlock(LIST_ITEM)
+  //       .deleteForward(1)
+  //       .moveBackward(1)
+  //       .moveTo(offset);
+  //   }
+
+  //   return next();
+  // }
 
   const hotkeys = [
     Hotkey('mod+shift+7', editor => editor.setListBlock(NUMBERED_LIST)),
     Hotkey('mod+shift+8', editor => editor.setListBlock(BULLETED_LIST)),
     CustomEnterAction(exitListAfterEmptyListItem),
     CustomBackspaceAction(resetListItemToParagraph),
-    CustomBackspaceAction(mergeAdjacentLists),
+    // CustomBackspaceAction(mergeAdjacentLists),
   ];
 
   return [
