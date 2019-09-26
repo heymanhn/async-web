@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
@@ -37,12 +37,29 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 5px',
 }));
 
-const Toolbar = React.forwardRef(({ coords, editor, isOpen }, ref) => {
+const Toolbar = ({ editor, isOpen }) => {
+  const ref = useRef(null);
+
   const root = window.document.getElementById('root');
 
+  // Figure out where the toolbar should be displayed based on the user's text selection
+  function calculateToolbarPosition() {
+    if (!isOpen) return {};
+
+    const native = window.getSelection();
+    const range = native.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    return {
+      top: `${rect.top + window.pageYOffset - ref.current.offsetHeight}px`,
+      left: `${rect.left + window.pageXOffset - ref.current.offsetWidth / 2 + rect.width / 2}px`,
+    };
+  }
+
   return ReactDOM.createPortal(
-    <Container ref={ref} coords={coords} isOpen={isOpen}>
-      <MarkButton editor={editor} type="bold" />
+    <Container ref={ref} coords={calculateToolbarPosition()} isOpen={isOpen}>
+      <div>Hi</div>
+      {/* <MarkButton editor={editor} type="bold" />
       <MarkButton editor={editor} type="italic" />
       <VerticalDivider />
 
@@ -52,18 +69,15 @@ const Toolbar = React.forwardRef(({ coords, editor, isOpen }, ref) => {
       <VerticalDivider />
 
       <BlockButton editor={editor} type="block-quote" />
-      <BlockButton editor={editor} type="code-block" />
+      <BlockButton editor={editor} type="code-block" /> */}
     </Container>,
     root,
   );
-});
-
-Toolbar.propTypes = {
-  coords: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
-  isOpen: PropTypes.bool,
 };
 
-Toolbar.defaultProps = { isOpen: false };
+Toolbar.propTypes = {
+  editor: PropTypes.object.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+};
 
 export default Toolbar;

@@ -42,6 +42,12 @@ export const RenderInline = (inlineToRender, componentFn) => ({
   },
 });
 
+export const RenderEditor = renderFn => ({
+  renderEditor(...props) {
+    return renderFn(...props);
+  },
+});
+
 export const CustomEnterAction = actionFn => ({
   onKeyDown(event, editor, next) {
     if (isHotkey('Enter', event)) return actionFn(editor, next);

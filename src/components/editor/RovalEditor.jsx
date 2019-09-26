@@ -14,7 +14,6 @@ import {
   queries,
 } from './extensions';
 import EditorActions from './EditorActions';
-import Toolbar from './toolbar/Toolbar';
 
 const Container = styled.div(({ initialHeight, mode }) => ({
   display: 'flex',
@@ -34,34 +33,29 @@ class RovalEditor extends Component {
 
     this.state = {
       isMouseDown: false,
-      isToolbarVisible: false,
       value: null,
     };
 
     this.editor = React.createRef();
-    this.toolbar = React.createRef();
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
-    this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
-    this.calculateToolbarPosition = this.calculateToolbarPosition.bind(this);
     this.clearEditorValue = this.clearEditorValue.bind(this);
     this.insertImage = this.insertImage.bind(this);
     this.isValueEmpty = this.isValueEmpty.bind(this);
     this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
     this.loadInitialValue = this.loadInitialValue.bind(this);
-    this.pluginsForType = this.pluginsForType.bind(this);
-    this.renderEditor = this.renderEditor.bind(this);
-    this.updateToolbar = this.updateToolbar.bind(this);
   }
 
   componentDidMount() {
     this.loadInitialValue();
   }
 
+  // TODO: Do i still need this?
   async componentDidUpdate(prevProps) {
     // The editor is only autofocused when initially mounted
     const { initialValue, mode } = this.props;
@@ -72,9 +66,9 @@ class RovalEditor extends Component {
     // Only set the content of the editor if it's changed (eg. loading a new meeting)
     if (initialValue !== prevProps.initialValue) {
       this.loadInitialValue();
-    } else {
-      this.updateToolbar();
-    }
+    }// else {
+    //   this.updateToolbar();
+    // }
   }
 
   handleCancel({ saved = false } = {}) {
@@ -86,13 +80,6 @@ class RovalEditor extends Component {
 
   handleChangeValue({ value }) {
     this.setState({ value });
-  }
-
-  handleClick(event, editor, next) {
-    // Need to wrap in setTimeout because: https://github.com/ianstormtaylor/slate/issues/2434
-    setTimeout(() => this.setState({ isMouseDown: false }), 0);
-
-    return next();
   }
 
   handleKeyDown(event, editor, next) {
@@ -107,13 +94,12 @@ class RovalEditor extends Component {
     return next();
   }
 
-  // Hide the toolbar as well so that there's no brief appearance of the toolbar in the new
-  // place where the user's mouse is down
-  handleMouseDown(event, editor, next) {
-    // Need to wrap in setTimeout because: https://github.com/ianstormtaylor/slate/issues/2434
-    setTimeout(() => this.setState({ isMouseDown: true, isToolbarVisible: false }), 0);
+  handleMouseDown() {
+    this.setState({ isMouseDown: true });
+  }
 
-    return next();
+  handleMouseUp() {
+    this.setState({ isMouseDown: false });
   }
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
@@ -141,22 +127,6 @@ class RovalEditor extends Component {
     if (saveOnBlur) this.handleSubmit();
   }
 
-  // Figure out where the toolbar should be displayed based on the user's text selection
-  calculateToolbarPosition() {
-    const { isToolbarVisible } = this.state;
-    if (!isToolbarVisible) return {};
-
-    const native = window.getSelection();
-    const range = native.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-    const toolbar = this.toolbar.current;
-
-    return {
-      top: `${rect.top + window.pageYOffset - toolbar.offsetHeight}px`,
-      left: `${rect.left + window.pageXOffset - toolbar.offsetWidth / 2 + rect.width / 2}px`,
-    };
-  }
-
   clearEditorValue() {
     this.setState({ value: Value.fromJSON(DEFAULT_VALUE) });
   }
@@ -176,6 +146,7 @@ class RovalEditor extends Component {
     return mode === 'compose' || mode === 'edit';
   }
 
+  // TODO: What to do with the toolbar component?
   loadInitialValue() {
     const { initialValue, isPlainText } = this.props;
     let value;
@@ -187,47 +158,12 @@ class RovalEditor extends Component {
       value = Value.fromJSON(initialJSON);
     }
 
-    this.setState({ value }, this.updateToolbar);
-  }
-
-  pluginsForType() {
-    const { contentType } = this.props;
-    return plugins[contentType];
-  }
-
-  renderEditor(props, editor, next) {
-    const { isToolbarVisible } = this.state;
-    const children = next();
-    return (
-      <React.Fragment>
-        {children}
-        <Toolbar
-          ref={this.toolbar}
-          coords={this.calculateToolbarPosition()}
-          editor={editor}
-          isOpen={isToolbarVisible}
-        />
-      </React.Fragment>
-    );
-  }
-
-  updateToolbar() {
-    const { isMouseDown, isToolbarVisible, value } = this.state;
-    const { isPlainText } = this.props;
-    const { fragment, selection } = value;
-
-    if (isMouseDown || isPlainText) return;
-
-    if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
-      if (isToolbarVisible) this.setState({ isToolbarVisible: false });
-      return;
-    }
-
-    if (!isToolbarVisible) this.setState({ isToolbarVisible: true });
+    this.setState({ value });
+    // this.setState({ value }, this.updateToolbar);
   }
 
   render() {
-    const { value } = this.state;
+    const { isMouseDown, value } = this.state;
     const {
       contentType,
       disableAutoFocus,
@@ -245,16 +181,16 @@ class RovalEditor extends Component {
         <StyledEditor
           autoFocus={!disableAutoFocus && this.isEditOrComposeMode()}
           commands={commands}
+          isMouseDown={isMouseDown}
           onBlur={this.handleSubmitOnBlur}
           onChange={this.handleChangeValue}
-          onClick={this.handleClick}
           onKeyDown={this.handleKeyDown}
           onMouseDown={this.handleMouseDown}
-          plugins={this.pluginsForType()}
+          onMouseUp={this.handleMouseUp}
+          plugins={plugins[contentType]}
           queries={queries}
           readOnly={mode === 'display'}
           ref={this.editor}
-          renderEditor={this.renderEditor}
           value={value}
           {...props}
         />
