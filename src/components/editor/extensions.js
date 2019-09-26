@@ -62,7 +62,8 @@ export const queries = {
     const { selection } = value;
     return selection.isCollapsed && selection.anchor.offset === 0;
   },
-  isEmpty: editor => editor.value.document.text === '',
+  isEmptyBlock: editor => !editor.value.anchorBlock.text,
+  isEmptyDocument: editor => editor.value.document.text === '',
   isEmptyParagraph: (editor) => {
     const { anchorBlock } = editor.value;
     return anchorBlock.type === 'paragraph' && !anchorBlock.text;
@@ -79,7 +80,7 @@ export const queries = {
 
 const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
   placeholder: text,
-  when: 'isEmpty',
+  when: 'isEmptyDocument',
   style: {
     color,
   },

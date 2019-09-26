@@ -40,7 +40,6 @@ class RovalEditor extends Component {
 
     this.editor = React.createRef();
     this.toolbar = React.createRef();
-    this.handleBackspaceActions = this.handleBackspaceActions.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -78,12 +77,6 @@ class RovalEditor extends Component {
     }
   }
 
-  handleBackspaceActions(next) {
-    // TODO: handle backspace behavior for deleting a bulleted list
-
-    return next();
-  }
-
   handleCancel({ saved = false } = {}) {
     const { mode, onCancel } = this.props;
 
@@ -106,12 +99,10 @@ class RovalEditor extends Component {
     const hotkeys = {
       isSubmit: isHotkey('mod+Enter'),
       isCancel: isHotkey('Esc'),
-      isBackspace: isHotkey('Backspace'),
     };
 
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
     if (hotkeys.isCancel(event) && this.isValueEmpty()) return this.handleCancel();
-    if (hotkeys.isBackspace(event)) return this.handleBackspaceActions(next);
 
     return next();
   }

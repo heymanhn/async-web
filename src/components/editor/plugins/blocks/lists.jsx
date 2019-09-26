@@ -10,6 +10,7 @@ import {
   Hotkey,
   RenderBlock,
   CustomEnterAction,
+  CustomBackspaceAction,
 } from '../helpers';
 
 const BULLETED_LIST = 'bulleted-list';
@@ -27,7 +28,7 @@ const NumberedList = styled.ol({
 });
 
 const ListItem = styled.li({
-  marginTop: '3px',
+  marginBottom: '5px',
 });
 
 function Lists() {
@@ -123,10 +124,44 @@ function Lists() {
     return next();
   }
 
+  // Consistency with other rich text editors, where pressing backspace on an empty list item
+  // resets the selection to a paragraph block
+  function resetListItemToParagraph(editor, next) {
+    if (editor.hasBlock(LIST_ITEM) && editor.isAtBeginning()) {
+      return editor
+        .unwrapListBlocks()
+        .setBlocks(DEFAULT_NODE);
+    }
+
+    return next();
+  }
+
+  // Only if the two lists that border the empty block are of the same type
+  function mergeAdjacentLists(editor, next) {
+    if (editor.isEmptyParagraph()) {
+      next();
+
+      if (!editor.hasBlock(LIST_ITEM)) return null;
+
+      // Assuming that if a block has list items, it has to be wrapped by a type of list
+      const currentType = editor.getParentBlock().type;
+      editor.moveForward(1);
+
+      if (!editor.hasBlock(LIST_ITEM) || editor.getParentBlock().type !== currentType) return null;
+      return editor
+        .unwrapListBlocks()
+        .deleteBackward(1);
+    }
+
+    return next();
+  }
+
   const hotkeys = [
     Hotkey('mod+shift+7', editor => editor.setListBlock(NUMBERED_LIST)),
     Hotkey('mod+shift+8', editor => editor.setListBlock(BULLETED_LIST)),
     CustomEnterAction(exitListAfterEmptyListItem),
+    CustomBackspaceAction(resetListItemToParagraph),
+    CustomBackspaceAction(mergeAdjacentLists),
   ];
 
   return [
