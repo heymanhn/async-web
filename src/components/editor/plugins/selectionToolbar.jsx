@@ -5,8 +5,6 @@ import { RenderEditor } from './helpers';
 import Toolbar from '../toolbar/Toolbar';
 
 function SelectionToolbar() {
-  // const [isOpen, setIsOpen] = useState(false);
-
   function displayToolbar(props, editor, next) {
     const { isMouseDown, mode, value } = props;
     const { selection } = value;

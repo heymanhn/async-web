@@ -3,8 +3,8 @@ import React from 'react';
 import AutoReplace from 'slate-auto-replace';
 import styled from '@emotion/styled';
 
+import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
-  DEFAULT_NODE,
   Hotkey,
   RenderBlock,
   CustomEnterAction,

@@ -5,8 +5,8 @@ import { faCode } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
+import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
-  DEFAULT_NODE,
   AddSchema,
   AddCommands,
   Hotkey,
@@ -16,6 +16,8 @@ import {
 } from '../helpers';
 
 const CODE_BLOCK = 'code-block';
+
+/* **** Toolbar button **** */
 
 const Container = styled.div({
   cursor: 'pointer',
@@ -73,6 +75,8 @@ const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
     letterSpacing: '-0.2px',
   },
 }));
+
+/* **** Slate plugin **** */
 
 export function CodeBlockPlugin() {
   /* **** Schema **** */

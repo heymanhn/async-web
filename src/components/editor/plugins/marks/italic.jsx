@@ -11,6 +11,8 @@ import {
 
 const ITALIC = 'italic';
 
+/* **** Toolbar button **** */
+
 const Container = styled.div({
   cursor: 'pointer',
   margin: 0,
@@ -38,6 +40,8 @@ export function ItalicButton({ editor, ...props }) {
 ItalicButton.propTypes = {
   editor: PropTypes.object.isRequired,
 };
+
+/* **** Slate plugin **** */
 
 export function ItalicPlugin() {
   function renderItalic(props) {

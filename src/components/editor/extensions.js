@@ -13,7 +13,7 @@ import CodeSnippet from './plugins/marks/codeSnippet';
 import Headings from './plugins/blocks/headings';
 import SectionBreak from './plugins/blocks/sectionBreak';
 import Image from './plugins/blocks/image';
-import Lists from './plugins/blocks/lists';
+import { ListsPlugin } from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
 import { BlockQuotePlugin } from './plugins/blocks/blockQuote';
 import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
@@ -94,7 +94,7 @@ const coreEditorPlugins = [
 
   // Blocks
   Headings(),
-  Lists(),
+  ListsPlugin(),
   BlockQuotePlugin(),
   CodeBlockPlugin(),
   SectionBreak(),

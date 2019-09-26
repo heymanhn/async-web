@@ -1,8 +1,6 @@
 // Library of helper plugins, inspired by https://docs.slatejs.org/guides/plugins
 import { isHotkey } from 'is-hotkey';
 
-export const DEFAULT_NODE = 'paragraph';
-
 export const AddSchema = schemaObj => ({ schema: schemaObj });
 export const AddCommands = commandsObj => ({ commands: commandsObj });
 export const AddQueries = queriesObj => ({ queries: queriesObj });

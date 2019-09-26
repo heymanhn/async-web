@@ -11,6 +11,8 @@ import {
 
 const BOLD = 'bold';
 
+/* **** Toolbar button **** */
+
 const Container = styled.div({
   cursor: 'pointer',
   margin: 0,
@@ -38,6 +40,8 @@ export function BoldButton({ editor, ...props }) {
 BoldButton.propTypes = {
   editor: PropTypes.object.isRequired,
 };
+
+/* **** Slate plugin **** */
 
 export function BoldPlugin() {
   function renderBold(props) {

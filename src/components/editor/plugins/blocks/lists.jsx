@@ -1,8 +1,10 @@
-/* eslint react/prop-types: 0 */
 import React from 'react';
+import PropTypes from 'prop-types';
 import AutoReplace from 'slate-auto-replace';
+import { faListUl } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
   AddCommands,
@@ -16,6 +18,48 @@ import {
 const BULLETED_LIST = 'bulleted-list';
 const NUMBERED_LIST = 'numbered-list';
 const LIST_ITEM = 'list-item';
+
+/* **** Toolbar button **** */
+
+const Container = styled.div({
+  cursor: 'pointer',
+  margin: 0,
+});
+
+export function BulletedListButton({ editor, ...props }) {
+  function handleClick(event) {
+    event.preventDefault();
+    return editor.setListBlock(BULLETED_LIST);
+  }
+
+  // For lists, need to traverse upwards to find whether the list type matches
+  function isActive() {
+    const { value: { document, blocks } } = editor;
+
+    if (blocks.size > 0) {
+      const parent = document.getParent(blocks.first().key);
+      return (editor.hasBlock(LIST_ITEM) && parent && parent.type === BULLETED_LIST);
+    }
+
+    return false;
+  }
+
+  return (
+    <Container
+      onClick={handleClick}
+      onKeyDown={handleClick}
+      {...props}
+    >
+      <ButtonIcon icon={faListUl} isActive={isActive()} />
+    </Container>
+  );
+}
+
+BulletedListButton.propTypes = {
+  editor: PropTypes.object.isRequired,
+};
+
+/* **** Slate plugin **** */
 
 const BulletedList = styled.ul({
   marginTop: '1em',
@@ -31,7 +75,7 @@ const ListItem = styled.li({
   marginBottom: '5px',
 });
 
-function Lists() {
+export function ListsPlugin() {
   /* **** Commands **** */
 
   function setListBlock(editor, type) {
@@ -73,17 +117,17 @@ function Lists() {
   /* **** Render methods **** */
 
   function renderBulletedList(props) {
-    const { attributes, children } = props;
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
     return <BulletedList {...attributes}>{children}</BulletedList>;
   }
 
   function renderNumberedList(props) {
-    const { attributes, children } = props;
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
     return <NumberedList {...attributes}>{children}</NumberedList>;
   }
 
   function renderListItem(props) {
-    const { attributes, children } = props;
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
     return <ListItem {...attributes}>{children}</ListItem>;
   }
 
@@ -157,8 +201,7 @@ function Lists() {
   //         .moveBackward(1)
   //         .moveTo(offset);
   //     }
-
-
+  //
   //     return editor
   //       .unwrapListBlocks()
   //       .deleteBackward(1)
@@ -187,5 +230,3 @@ function Lists() {
     hotkeys,
   ];
 }
-
-export default Lists;

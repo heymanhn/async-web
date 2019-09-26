@@ -2,8 +2,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
-  DEFAULT_NODE,
   Hotkey,
   RenderMark,
   CustomEnterAction,

@@ -5,8 +5,8 @@ import { faQuoteRight } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
+import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
-  DEFAULT_NODE,
   AddSchema,
   AddCommands,
   Hotkey,
@@ -16,6 +16,8 @@ import {
 } from '../helpers';
 
 const BLOCK_QUOTE = 'block-quote';
+
+/* **** Toolbar button **** */
 
 const Container = styled.div({
   cursor: 'pointer',
@@ -61,6 +63,8 @@ const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
   padding: '0px 12px',
   marginBottom: '10px',
 }));
+
+/* **** Slate plugin **** */
 
 export function BlockQuotePlugin() {
   /* **** Schema **** */
