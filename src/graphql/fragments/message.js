@@ -10,6 +10,7 @@ export default gql`
     }
     createdAt
     updatedAt
+    publishedAts
     body @type(name: "Body") {
       formatter
       payload

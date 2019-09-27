@@ -99,7 +99,7 @@ const DiscussionMessage = ({
   const { hover, ...hoverProps } = useHover(mode !== 'display');
 
   const [message, setMessage] = useState(initialMessage);
-  const { author, createdAt, id: messageId, updatedAt, body } = message || {};
+  const { author, createdAt, publishedAts, id: messageId, body } = message || {};
   const userToDisplay = author || currentUser;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -244,7 +244,7 @@ const DiscussionMessage = ({
         <AuthorDetails
           author={userToDisplay}
           createdAt={createdAt}
-          isEdited={createdAt !== updatedAt}
+          isEdited={publishedAts.length > 1}
           mode={mode}
         />
         {messageId && mode === 'display' && (
