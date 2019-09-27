@@ -42,6 +42,7 @@ class RovalEditor extends Component {
 
     this.editor = React.createRef();
     this.handleCancel = this.handleCancel.bind(this);
+    this.handlePressEscape = this.handlePressEscape.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -65,8 +66,17 @@ class RovalEditor extends Component {
 
   handleCancel({ saved = false } = {}) {
     const { mode, onCancel } = this.props;
+
     if (mode === 'edit' && !saved) this.loadInitialValue();
     onCancel();
+  }
+
+  handlePressEscape(editor) {
+    const { value } = this.state;
+    const { selection } = value;
+
+    if (selection.isExpanded) editor.moveToAnchor();
+    if (editor.isEmptyDocument()) this.handleCancel();
   }
 
   handleChangeValue(editor) {
@@ -84,32 +94,26 @@ class RovalEditor extends Component {
   }
 
   handleKeyDown(event, editor, next) {
-    const { value } = this.state;
-    const isValueEmpty = !Plain.serialize(value);
-
     const hotkeys = {
       isSubmit: isHotkey('mod+Enter'),
       isCancel: isHotkey('Esc'),
     };
 
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
-    if (hotkeys.isCancel(event) && isValueEmpty) return this.handleCancel();
+    if (hotkeys.isCancel(event)) return this.handlePressEscape(editor);
 
     return next();
-  }
-
-  handleMouseDown() {
-    this.setState({ isMouseDown: true });
   }
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
   // Parent components give us a method to perform the mutation; we give them the data to persist.
   async handleSubmit() {
+    const editor = this.editor.current;
+    if (editor.isEmptyDocument()) return;
+
     const { value } = this.state;
     const { isPlainText, mode, onSubmit } = this.props;
     const text = Plain.serialize(value);
-    if (!text) return;
-
     const payload = JSON.stringify(value.toJSON());
 
     const { isNewDiscussion } = await onSubmit({ text, payload });
@@ -119,8 +123,16 @@ class RovalEditor extends Component {
     this.handleCancel({ saved: true });
   }
 
+  // Need to wrap setState in a setTimeout call due to:
+  // https://github.com/ianstormtaylor/slate/issues/2434
+  handleMouseDown() {
+    setTimeout(() => this.setState({ isMouseDown: true }), 0);
+  }
+
+  // Need to wrap setState in a setTimeout call due to:
+  // https://github.com/ianstormtaylor/slate/issues/2434
   handleMouseUp() {
-    this.setState({ isMouseDown: false });
+    setTimeout(() => this.setState({ isMouseDown: false }), 0);
   }
 
   clearEditorValue() {
