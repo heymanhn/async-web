@@ -65,7 +65,7 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
 
     if (data2.createConversation) {
       afterSubmit(data2.createConversation.id);
-      return Promise.resolve();
+      return Promise.resolve({ isNewDiscussion: true });
     }
 
     return Promise.reject(new Error('Failed to create discussion'));

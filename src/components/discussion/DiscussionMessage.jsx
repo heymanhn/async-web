@@ -129,7 +129,7 @@ const DiscussionMessage = ({
 
     if (data.createMessage) {
       setIsSubmitting(false);
-      return Promise.resolve();
+      return Promise.resolve({});
     }
 
     return Promise.reject(new Error('Failed to create discussion message'));

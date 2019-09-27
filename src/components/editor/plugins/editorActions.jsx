@@ -34,9 +34,9 @@ function EditorActionsManager({ children, editor, editorProps: props }) {
     const text = Plain.serialize(value);
     const payload = JSON.stringify(value.toJSON());
 
-    await onSubmit({ text, payload });
+    const { isNewDiscussion } = await onSubmit({ text, payload });
 
-    if (isSubmitting) return;
+    if (isNewDiscussion) return;
     if (mode === 'compose' && !isPlainText) clearEditorValue();
     handleCancel({ saved: true });
   }
