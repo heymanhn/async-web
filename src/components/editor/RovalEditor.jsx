@@ -26,6 +26,11 @@ const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
   color: colors.contentText,
 }));
 
+/*
+ * NOTE: Due to https://github.com/ianstormtaylor/slate/issues/2927, SlateJS does not support
+ * defining editor functionality using functional components yet. Therefore, cannot rewrite
+ * this with support for Hooks.
+ */
 class RovalEditor extends Component {
   constructor(props) {
     super(props);
