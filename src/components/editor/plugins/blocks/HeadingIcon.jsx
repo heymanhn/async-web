@@ -4,11 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeading } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ isactive, number, theme: { colors } }) => ({
+const Container = styled.div(({ isActive, number, theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
 
-  color: isactive ? colors.selectedValueBlue : colors.bgGrey,
+  color: isActive ? colors.selectedValueBlue : colors.bgGrey,
   cursor: 'pointer',
   fontSize: number === 2 ? '12px' : 'initial',
   margin: '5px 10px',
@@ -30,15 +30,16 @@ const NumberDisplay = styled.span(({ number }) => ({
   left: '1px',
 }));
 
-const CustomHeadingIcon = ({ number, ...props }) => (
-  <Container number={number} {...props}>
+const HeadingIcon = ({ isActive, number, ...props }) => (
+  <Container isActive={isActive} number={number} {...props}>
     <FontAwesomeIcon icon={faHeading} />
     <NumberDisplay number={number}>{number}</NumberDisplay>
   </Container>
 );
 
-CustomHeadingIcon.propTypes = {
+HeadingIcon.propTypes = {
+  isActive: PropTypes.bool.isRequired,
   number: PropTypes.number.isRequired,
 };
 
-export default CustomHeadingIcon;
+export default HeadingIcon;

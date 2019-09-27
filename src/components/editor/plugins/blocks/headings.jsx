@@ -1,9 +1,10 @@
-/* eslint react/prop-types: 0 */
 import React from 'react';
+import PropTypes from 'prop-types';
 import AutoReplace from 'slate-auto-replace';
 import styled from '@emotion/styled';
 
 import { DEFAULT_NODE } from 'components/editor/defaults';
+import HeadingIcon from './HeadingIcon';
 import {
   Hotkey,
   RenderBlock,
@@ -13,6 +14,48 @@ import {
 const LARGE_FONT = 'heading-one';
 const MEDIUM_FONT = 'heading-two';
 const SMALL_FONT = 'heading-three';
+
+/* **** Toolbar buttons **** */
+
+const Container = styled.div({
+  cursor: 'pointer',
+  margin: 0,
+});
+
+function HeadingButton({ editor, headingType, ...props }) {
+  const isActive = editor.hasBlock(headingType);
+
+  function handleClick(event) {
+    event.preventDefault();
+    return editor.setBlock(headingType);
+  }
+
+  return (
+    <Container
+      onClick={handleClick}
+      onKeyDown={handleClick}
+      {...props}
+    >
+      <HeadingIcon
+        number={headingType === LARGE_FONT ? 1 : 2}
+        isActive={isActive}
+      />
+    </Container>
+  );
+}
+
+HeadingButton.propTypes = {
+  editor: PropTypes.object.isRequired,
+};
+
+export function LargeFontButton({ editor }) {
+  return <HeadingButton editor={editor} headingType={LARGE_FONT} />;
+}
+export function MediumFontButton({ editor }) {
+  return <HeadingButton editor={editor} headingType={MEDIUM_FONT} />;
+}
+
+/* **** Slate plugin **** */
 
 const LargeFont = styled.h1({
   fontSize: '24px',
@@ -35,21 +78,21 @@ const SmallFont = styled.h3({
   marginTop: '1.1em',
 });
 
-function Headings() {
+export function HeadingsPlugin() {
   /* **** Render methods **** */
 
   function renderLargeFont(props) {
-    const { attributes, children } = props;
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
     return <LargeFont {...attributes}>{children}</LargeFont>;
   }
 
   function renderMediumFont(props) {
-    const { attributes, children } = props;
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
     return <MediumFont {...attributes}>{children}</MediumFont>;
   }
 
   function renderSmallFont(props) {
-    const { attributes, children } = props;
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
     return <SmallFont {...attributes}>{children}</SmallFont>;
   }
 
@@ -106,5 +149,3 @@ function Headings() {
     hotkeys,
   ];
 }
-
-export default Headings;

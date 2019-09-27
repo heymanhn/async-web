@@ -10,7 +10,7 @@ import { BoldPlugin } from './plugins/marks/bold';
 import { ItalicPlugin } from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
 import CodeSnippet from './plugins/marks/codeSnippet';
-import Headings from './plugins/blocks/headings';
+import { HeadingsPlugin } from './plugins/blocks/headings';
 import SectionBreak from './plugins/blocks/sectionBreak';
 import Image from './plugins/blocks/image';
 import { ListsPlugin } from './plugins/blocks/lists';
@@ -93,7 +93,7 @@ const coreEditorPlugins = [
   CodeSnippet(),
 
   // Blocks
-  Headings(),
+  HeadingsPlugin(),
   ListsPlugin(),
   BlockQuotePlugin(),
   CodeBlockPlugin(),

@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 
 import { BoldButton } from '../plugins/marks/bold';
 import { ItalicButton } from '../plugins/marks/italic';
+import { LargeFontButton, MediumFontButton } from '../plugins/blocks/headings';
 import { BulletedListButton } from '../plugins/blocks/lists';
 import { BlockQuoteButton } from '../plugins/blocks/blockQuote';
 import { CodeBlockButton } from '../plugins/blocks/codeBlock';
@@ -65,8 +66,8 @@ const Toolbar = ({ editor, isOpen }) => {
       <ItalicButton editor={editor} />
       <VerticalDivider />
 
-      {/* <LargeFontButton editor={editor} />
-      <MediumFontButton editor={editor} /> */}
+      <LargeFontButton editor={editor} />
+      <MediumFontButton editor={editor} />
       <BulletedListButton editor={editor} />
       <VerticalDivider />
 
