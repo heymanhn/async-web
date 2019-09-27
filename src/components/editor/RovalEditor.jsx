@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Value } from 'slate';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
+import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import { DEFAULT_VALUE } from './defaults';
@@ -36,9 +37,12 @@ class RovalEditor extends Component {
 
     this.editor = React.createRef();
     this.handleBlur = this.handleBlur.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.clearEditorValue = this.clearEditorValue.bind(this);
     this.loadInitialValue = this.loadInitialValue.bind(this);
   }
@@ -73,12 +77,50 @@ class RovalEditor extends Component {
     return onSubmitOnBlur({ text });
   }
 
+  handleCancel({ saved = false } = {}) {
+    const { mode, onCancel } = this.props;
+    if (mode === 'edit' && !saved) this.loadInitialValue();
+    onCancel();
+  }
+
   handleChangeValue({ value }) {
     this.setState({ value });
   }
 
+  handleKeyDown(event, editor, next) {
+    const { value } = this.state;
+    const isValueEmpty = !Plain.serialize(value);
+
+    const hotkeys = {
+      isSubmit: isHotkey('mod+Enter'),
+      isCancel: isHotkey('Esc'),
+    };
+
+    if (hotkeys.isSubmit(event)) return this.handleSubmit();
+    if (hotkeys.isCancel(event) && isValueEmpty) return this.handleCancel();
+
+    return next();
+  }
+
   handleMouseDown() {
     this.setState({ isMouseDown: true });
+  }
+
+  // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
+  // Parent components give us a method to perform the mutation; we give them the data to persist.
+  async handleSubmit() {
+    const { value } = this.state;
+    const { isPlainText, mode, onSubmit } = this.props;
+    const text = Plain.serialize(value);
+    if (!text) return;
+
+    const payload = JSON.stringify(value.toJSON());
+
+    const { isNewDiscussion } = await onSubmit({ text, payload });
+
+    if (isNewDiscussion) return;
+    if (mode === 'compose' && !isPlainText) this.clearEditorValue();
+    this.handleCancel({ saved: true });
   }
 
   handleMouseUp() {
@@ -120,16 +162,16 @@ class RovalEditor extends Component {
       <Container mode={mode} initialHeight={initialHeight}>
         <StyledEditor
           autoFocus={!disableAutoFocus && isEditOrComposeMode}
-          clearEditorValue={this.clearEditorValue}
           commands={commands}
+          handleCancel={this.handleCancel}
+          handleSubmit={this.handleSubmit}
           isMouseDown={isMouseDown}
-          loadInitialValue={this.loadInitialValue}
           mode={mode}
           onBlur={this.handleBlur}
           onChange={this.handleChangeValue}
+          onKeyDown={this.handleKeyDown}
           onMouseDown={this.handleMouseDown}
           onMouseUp={this.handleMouseUp}
-          onSubmit={onSubmit}
           plugins={plugins[contentType]}
           queries={queries}
           readOnly={mode === 'display'}

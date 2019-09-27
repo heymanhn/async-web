@@ -156,7 +156,7 @@ const DiscussionMessage = ({
     if (data.updateMessage) {
       setMessage(data.updateMessage);
       setIsSubmitting(false);
-      return Promise.resolve();
+      return Promise.resolve({});
     }
 
     return Promise.reject(new Error('Failed to save discussion message'));
