@@ -108,7 +108,7 @@ export function CodeBlockPlugin() {
         return change
           .insertBlock(DEFAULT_NODE)
           .moveBackward(1)
-          .setBlock(CODE_BLOCK);
+          .setCodeBlock();
       },
     }),
   ];
@@ -136,7 +136,7 @@ export function CodeBlockPlugin() {
   }
 
   const hotkeys = [
-    Hotkey('mod+shift+k', editor => editor.setWrappedBlock(CODE_BLOCK)),
+    Hotkey('mod+shift+k', editor => editor.setCodeBlock()),
     CustomEnterAction(exitBlockOnDoubleEnter),
     CustomBackspaceAction(exitOnBackspace),
   ];
