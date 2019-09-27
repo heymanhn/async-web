@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Global } from '@emotion/core';
 import { withTheme } from 'emotion-theming';
 
-const GlobalStyles = ({ theme: { colors, fontStack, codeFontStack, mq } }) => (
+const GlobalStyles = ({ theme: { colors, fontStack, mq } }) => (
   <Global
     styles={{
       '*': {
@@ -76,30 +76,6 @@ const GlobalStyles = ({ theme: { colors, fontStack, codeFontStack, mq } }) => (
 
         ':hover, :visited, :active': {
           color: colors.blue,
-        },
-      },
-      code: {
-        background: colors.grey7,
-        border: `1px solid ${colors.codeBlockBorderGrey}`,
-        borderRadius: '3px',
-        color: colors.codeBlockRed,
-        fontFamily: `${codeFontStack}`,
-        padding: '1px 4px',
-
-        span: {
-          fontFamily: `${codeFontStack}`,
-        },
-      },
-      pre: {
-        background: colors.bgGrey,
-        border: `1px solid ${colors.borderGrey}`,
-        borderRadius: '5px',
-        fontFamily: `${codeFontStack}`,
-        padding: '7px 12px',
-        whiteSpace: 'pre-wrap',
-
-        span: {
-          fontFamily: `${codeFontStack}`,
         },
       },
     }}

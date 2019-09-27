@@ -65,17 +65,15 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
 
     if (data2.createConversation) {
       afterSubmit(data2.createConversation.id);
-      return Promise.resolve();
+      return Promise.resolve({ isNewDiscussion: true });
     }
 
     return Promise.reject(new Error('Failed to create discussion'));
   }
 
-  function handleSubmitTitle({ text }) {
-    // HACK due to https://github.com/ianstormtaylor/slate/issues/2434
-    if (title !== text) setTimeout(() => setTitle(text), 0);
-
-    return Promise.resolve();
+  async function handleSubmitTitle({ text }) {
+    if (title !== text) setTitle(text);
+    return Promise.resolve({});
   }
 
   function returnToMeetingSpace() {

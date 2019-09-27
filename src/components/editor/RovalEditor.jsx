@@ -4,25 +4,15 @@ import PropTypes from 'prop-types';
 import { Value } from 'slate';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
+import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
+import { DEFAULT_VALUE } from './defaults';
 import {
   commands,
-  defaultValue,
-  hotkeys,
   plugins,
   queries,
-  renderBlock,
-  renderMark,
-  renderInline,
-  schema,
-  singleUseBlocks,
-} from 'utils/slateHelper';
-
-import EditorActions from './EditorActions';
-import Toolbar from './toolbar/Toolbar';
-
-const DEFAULT_NODE = 'paragraph';
+} from './extensions';
 
 const Container = styled.div(({ initialHeight, mode }) => ({
   display: 'flex',
@@ -34,209 +24,82 @@ const Container = styled.div(({ initialHeight, mode }) => ({
 // Default styles for Roval editor UIs
 const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({
   color: colors.contentText,
-
-  'dl, ul, ol, blockquote, pre': {
-    marginTop: '1em',
-    marginBottom: 0,
-  },
-
-  li: {
-    marginTop: '3px',
-  },
-
-  pre: {
-    span: {
-      letterSpacing: '-0.2px',
-    },
-  },
-
-  blockquote: {
-    borderLeft: `3px solid ${colors.borderGrey}`,
-    color: colors.grey2,
-    padding: '0px 12px',
-    marginBottom: '10px',
-  },
-
-  hr: {
-    borderRadius: '20px',
-    borderTop: `2px solid ${colors.borderGrey}`,
-    margin: '2em auto',
-    width: '120px',
-  },
 }));
 
+/*
+ * NOTE: Due to https://github.com/ianstormtaylor/slate/issues/2927, SlateJS does not support
+ * defining editor functionality using functional components yet. Therefore, cannot rewrite
+ * this with support for Hooks.
+ */
 class RovalEditor extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isMouseDown: false,
-      isToolbarVisible: false,
       value: null,
     };
 
     this.editor = React.createRef();
-    this.toolbar = React.createRef();
-    this.handleBackspaceActions = this.handleBackspaceActions.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.handleEnterActions = this.handleEnterActions.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSubmitOnBlur = this.handleSubmitOnBlur.bind(this);
-    this.calculateToolbarPosition = this.calculateToolbarPosition.bind(this);
     this.clearEditorValue = this.clearEditorValue.bind(this);
-    this.insertImage = this.insertImage.bind(this);
-    this.isValueEmpty = this.isValueEmpty.bind(this);
-    this.isEditOrComposeMode = this.isEditOrComposeMode.bind(this);
     this.loadInitialValue = this.loadInitialValue.bind(this);
-    this.pluginsForType = this.pluginsForType.bind(this);
-    this.renderEditor = this.renderEditor.bind(this);
-    this.updateToolbar = this.updateToolbar.bind(this);
   }
 
   componentDidMount() {
     this.loadInitialValue();
   }
 
-  async componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     // The editor is only autofocused when initially mounted
-    const { initialValue, mode } = this.props;
+    const { mode } = this.props;
     if (mode === 'edit' && prevProps.mode === 'display') {
       this.editor.current.focus().moveToEndOfDocument();
     }
-
-    // Only set the content of the editor if it's changed (eg. loading a new meeting)
-    if (initialValue !== prevProps.initialValue) {
-      this.loadInitialValue();
-    } else {
-      this.updateToolbar();
-    }
-  }
-
-  handleBackspaceActions(next) {
-    const editor = this.editor.current;
-    const { value } = editor;
-    const { anchorBlock, previousBlock } = value;
-
-    if (editor.isEmptyParagraph() && previousBlock && previousBlock.type === 'section-break') {
-      next();
-      return editor.removeNodeByKey(previousBlock.key);
-    }
-
-    if (editor.isEmptyParagraph() && editor.isWrappedByCodeOrQuote()) {
-      editor.unwrapBlockByKey(anchorBlock.key);
-      return previousBlock ? editor.removeNodeByKey(anchorBlock.key) : next();
-    }
-
-    // TODO: handle backspace behavior for deleting a bulleted list
-
-    return next();
   }
 
   handleCancel({ saved = false } = {}) {
     const { mode, onCancel } = this.props;
-
     if (mode === 'edit' && !saved) this.loadInitialValue();
     onCancel();
   }
 
-  handleChangeValue({ value }) {
+  handleChangeValue(editor) {
+    const { saveOnBlur } = this.props;
+    const { value } = editor;
+    const { selection } = value;
+    const { isFocused } = selection;
+
+    if (!isFocused) {
+      const text = Plain.serialize(value);
+      if (saveOnBlur && text) this.handleSubmit();
+    }
+
     this.setState({ value });
   }
 
-  handleClick(event, editor, next) {
-    // Need to wrap in setTimeout because: https://github.com/ianstormtaylor/slate/issues/2434
-    setTimeout(() => this.setState({ isMouseDown: false }), 0);
-
-    return next();
-  }
-
-  /*
-   * Special cases:
-   * 1. Pressing Enter while on a blank list item removes the blank list item and creates a
-   *    new default node block
-   */
-  handleEnterActions(next) {
-    const editor = this.editor.current;
-    const { value } = editor;
-    const { anchorBlock } = value;
-
-    if (anchorBlock.type === 'list-item' && !anchorBlock.text) {
-      return editor
-        .setBlocks(DEFAULT_NODE)
-        .unwrapBlock('bulleted-list')
-        .unwrapBlock('numbered-list');
-    }
-
-    if (singleUseBlocks.includes(anchorBlock.type)) {
-      if (editor.isAtBeginning()) return editor.insertBlock(DEFAULT_NODE);
-
-      next();
-      return editor.setBlocks(DEFAULT_NODE);
-    }
-
-    if (editor.isWrappedBy('code-block') && !anchorBlock.text) {
-      return editor.setBlocks(DEFAULT_NODE).unwrapBlock('code-block');
-    }
-
-    // Similar "double Enter" behavior to code blocks above
-    if (editor.isWrappedBy('block-quote') && !anchorBlock.text) {
-      return editor.setBlocks(DEFAULT_NODE).unwrapBlock('block-quote');
-    }
-
-    if (editor.hasActiveMark('code-snippet')) {
-      next();
-      return editor.removeMark('code-snippet');
-    }
-
-    return next();
-  }
-
   handleKeyDown(event, editor, next) {
-    // UX commands
+    const { value } = this.state;
+    const isValueEmpty = !Plain.serialize(value);
+
+    const hotkeys = {
+      isSubmit: isHotkey('mod+Enter'),
+      isCancel: isHotkey('Esc'),
+    };
+
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
-    if (hotkeys.isCancel(event) && this.isValueEmpty()) return this.handleCancel();
-    if (hotkeys.isEnter(event)) return this.handleEnterActions(next);
-    if (hotkeys.isBackspace(event)) return this.handleBackspaceActions(next);
-
-    // Blocks
-    if (hotkeys.isLargeFont(event)) return editor.setBlock('heading-one');
-    if (hotkeys.isMediumFont(event)) return editor.setBlock('heading-two');
-    if (hotkeys.isSmallFont(event)) return editor.setBlock('heading-three');
-    if (hotkeys.isBulletedList(event)) return editor.setBlock('bulleted-list');
-    if (hotkeys.isNumberedList(event)) return editor.setBlock('numbered-list');
-    if (hotkeys.isBlockQuote(event)) return editor.setBlock('block-quote');
-    if (hotkeys.isCodeBlock(event)) return editor.setBlock('code-block');
-
-    // Marks
-    let mark;
-
-    if (hotkeys.isBold(event)) {
-      mark = 'bold';
-    } else if (hotkeys.isItalic(event)) {
-      mark = 'italic';
-    } else if (hotkeys.isUnderlined(event)) {
-      mark = 'underlined';
-    } else if (hotkeys.isCodeSnippet(event)) {
-      mark = 'code-snippet';
-    } else {
-      return next();
-    }
-
-    event.preventDefault();
-    return editor.toggleMark(mark);
-  }
-
-  // Hide the toolbar as well so that there's no brief appearance of the toolbar in the new
-  // place where the user's mouse is down
-  handleMouseDown(event, editor, next) {
-    // Need to wrap in setTimeout because: https://github.com/ianstormtaylor/slate/issues/2434
-    setTimeout(() => this.setState({ isMouseDown: true, isToolbarVisible: false }), 0);
+    if (hotkeys.isCancel(event) && isValueEmpty) return this.handleCancel();
 
     return next();
+  }
+
+  handleMouseDown() {
+    this.setState({ isMouseDown: true });
   }
 
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
@@ -244,77 +107,24 @@ class RovalEditor extends Component {
   async handleSubmit() {
     const { value } = this.state;
     const { isPlainText, mode, onSubmit } = this.props;
-    if (this.isValueEmpty()) return;
-
     const text = Plain.serialize(value);
+    if (!text) return;
+
     const payload = JSON.stringify(value.toJSON());
 
-    await onSubmit({ text, payload });
+    const { isNewDiscussion } = await onSubmit({ text, payload });
 
-    const { isSubmitting } = this.props;
-    if (isSubmitting) return;
+    if (isNewDiscussion) return;
     if (mode === 'compose' && !isPlainText) this.clearEditorValue();
     this.handleCancel({ saved: true });
   }
 
-  handleSubmitOnBlur(event, editor, next) {
-    const { saveOnBlur } = this.props;
-    next();
-
-    if (saveOnBlur) this.handleSubmit();
-  }
-
-  // Figure out where the toolbar should be displayed based on the user's text selection
-  calculateToolbarPosition() {
-    const { isToolbarVisible } = this.state;
-    if (!isToolbarVisible) return {};
-
-    const native = window.getSelection();
-    const range = native.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-    const toolbar = this.toolbar.current;
-
-    return {
-      top: `${rect.top + window.pageYOffset - toolbar.offsetHeight}px`,
-      left: `${rect.left + window.pageXOffset - toolbar.offsetWidth / 2 + rect.width / 2}px`,
-    };
+  handleMouseUp() {
+    this.setState({ isMouseDown: false });
   }
 
   clearEditorValue() {
-    this.setState({ value: Value.fromJSON(defaultValue) });
-  }
-
-  /*
-   * TEMPORARY
-   * - Create an empty block. If the current block is empty, done.
-   * - Set the block to be an image, with the given url
-   */
-  insertImage(src) {
-    const editor = this.editor.current;
-
-    if (editor.isEmptyParagraph()) {
-      return editor.setBlock({
-        type: 'image',
-        data: { src },
-      });
-    }
-
-    return editor
-      .moveToEndOfBlock()
-      .insertBlock({
-        type: 'image',
-        data: { src },
-      });
-  }
-
-  isValueEmpty() {
-    const { value } = this.state;
-    return !Plain.serialize(value);
-  }
-
-  isEditOrComposeMode() {
-    const { mode } = this.props;
-    return mode === 'compose' || mode === 'edit';
+    this.setState({ value: Value.fromJSON(DEFAULT_VALUE) });
   }
 
   loadInitialValue() {
@@ -324,95 +134,46 @@ class RovalEditor extends Component {
     if (isPlainText && initialValue) {
       value = Plain.deserialize(initialValue);
     } else {
-      const initialJSON = initialValue ? JSON.parse(initialValue) : defaultValue;
+      const initialJSON = initialValue ? JSON.parse(initialValue) : DEFAULT_VALUE;
       value = Value.fromJSON(initialJSON);
     }
 
-    this.setState({ value }, this.updateToolbar);
-  }
-
-  pluginsForType() {
-    const { contentType } = this.props;
-    return plugins[contentType];
-  }
-
-  renderEditor(props, editor, next) {
-    const { isToolbarVisible } = this.state;
-    const children = next();
-    return (
-      <React.Fragment>
-        {children}
-        <Toolbar
-          ref={this.toolbar}
-          coords={this.calculateToolbarPosition()}
-          editor={editor}
-          isOpen={isToolbarVisible}
-        />
-      </React.Fragment>
-    );
-  }
-
-  updateToolbar() {
-    const { isMouseDown, isToolbarVisible, value } = this.state;
-    const { isPlainText } = this.props;
-    const { fragment, selection } = value;
-
-    if (isMouseDown || isPlainText) return;
-
-    if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
-      if (isToolbarVisible) this.setState({ isToolbarVisible: false });
-      return;
-    }
-
-    if (!isToolbarVisible) this.setState({ isToolbarVisible: true });
+    this.setState({ value });
   }
 
   render() {
-    const { value } = this.state;
+    const { isMouseDown, value } = this.state;
     const {
       contentType,
       disableAutoFocus,
-      forceDisableSubmit,
       initialHeight,
-      isPlainText,
-      isSubmitting,
       mode,
+      onSubmit,
       ...props
     } = this.props;
     if (!value) return null;
+    const isEditOrComposeMode = mode === 'edit' || mode === 'compose';
 
     return (
       <Container mode={mode} initialHeight={initialHeight}>
         <StyledEditor
-          autoFocus={!disableAutoFocus && this.isEditOrComposeMode()}
+          autoFocus={!disableAutoFocus && isEditOrComposeMode}
           commands={commands}
-          onBlur={this.handleSubmitOnBlur}
+          handleCancel={this.handleCancel}
+          handleSubmit={this.handleSubmit}
+          isMouseDown={isMouseDown}
+          mode={mode}
           onChange={this.handleChangeValue}
-          onClick={this.handleClick}
           onKeyDown={this.handleKeyDown}
           onMouseDown={this.handleMouseDown}
-          plugins={this.pluginsForType()}
+          onMouseUp={this.handleMouseUp}
+          plugins={plugins[contentType]}
           queries={queries}
           readOnly={mode === 'display'}
           ref={this.editor}
-          renderBlock={renderBlock}
-          renderEditor={this.renderEditor}
-          renderInline={renderInline}
-          renderMark={renderMark}
-          schema={schema}
           value={value}
           {...props}
         />
-        {this.isEditOrComposeMode() && !isPlainText && (
-          <EditorActions
-            isSubmitting={isSubmitting}
-            isSubmitDisabled={this.isValueEmpty() || forceDisableSubmit}
-            mode={mode}
-            onCancel={this.handleCancel}
-            onFileUploaded={this.insertImage} // For the temporary Add Image button
-            onSubmit={this.handleSubmit}
-          />
-        )}
       </Container>
     );
   }
@@ -431,7 +192,6 @@ RovalEditor.propTypes = {
   initialHeight: PropTypes.number,
   initialValue: PropTypes.string,
   isPlainText: PropTypes.bool,
-  isSubmitting: PropTypes.bool,
   mode: PropTypes.string,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
@@ -444,7 +204,6 @@ RovalEditor.defaultProps = {
   initialHeight: null,
   initialValue: null,
   isPlainText: false,
-  isSubmitting: false,
   mode: null,
   onCancel: () => {},
   onSubmit: () => {},

@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import BlockButton from './BlockButton';
-import MarkButton from './MarkButton';
+import { BoldButton } from '../plugins/marks/bold';
+import { ItalicButton } from '../plugins/marks/italic';
+import { LargeFontButton, MediumFontButton } from '../plugins/blocks/headings';
+import { BulletedListButton } from '../plugins/blocks/lists';
+import { BlockQuoteButton } from '../plugins/blocks/blockQuote';
+import { CodeBlockButton } from '../plugins/blocks/codeBlock';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -37,33 +41,46 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 5px',
 }));
 
-const Toolbar = React.forwardRef(({ coords, editor, isOpen }, ref) => {
+const Toolbar = ({ editor, isOpen }) => {
+  const ref = useRef(null);
+
   const root = window.document.getElementById('root');
 
+  // Figure out where the toolbar should be displayed based on the user's text selection
+  function calculateToolbarPosition() {
+    if (!isOpen) return {};
+
+    const native = window.getSelection();
+    const range = native.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    return {
+      top: `${rect.top + window.pageYOffset - ref.current.offsetHeight}px`,
+      left: `${rect.left + window.pageXOffset - ref.current.offsetWidth / 2 + rect.width / 2}px`,
+    };
+  }
+
   return ReactDOM.createPortal(
-    <Container ref={ref} coords={coords} isOpen={isOpen}>
-      <MarkButton editor={editor} type="bold" />
-      <MarkButton editor={editor} type="italic" />
+    <Container ref={ref} coords={calculateToolbarPosition()} isOpen={isOpen}>
+      <BoldButton editor={editor} />
+      <ItalicButton editor={editor} />
       <VerticalDivider />
 
-      <BlockButton editor={editor} type="heading-one" />
-      <BlockButton editor={editor} type="heading-two" />
-      <BlockButton editor={editor} type="bulleted-list" />
+      <LargeFontButton editor={editor} />
+      <MediumFontButton editor={editor} />
+      <BulletedListButton editor={editor} />
       <VerticalDivider />
 
-      <BlockButton editor={editor} type="block-quote" />
-      <BlockButton editor={editor} type="code-block" />
+      <BlockQuoteButton editor={editor} />
+      <CodeBlockButton editor={editor} />
     </Container>,
     root,
   );
-});
-
-Toolbar.propTypes = {
-  coords: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
-  isOpen: PropTypes.bool,
 };
 
-Toolbar.defaultProps = { isOpen: false };
+Toolbar.propTypes = {
+  editor: PropTypes.object.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+};
 
 export default Toolbar;
