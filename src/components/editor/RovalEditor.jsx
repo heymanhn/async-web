@@ -106,10 +106,6 @@ class RovalEditor extends Component {
     return next();
   }
 
-  handleMouseDown() {
-    this.setState({ isMouseDown: true });
-  }
-
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
   // Parent components give us a method to perform the mutation; we give them the data to persist.
   async handleSubmit() {
@@ -127,8 +123,16 @@ class RovalEditor extends Component {
     this.exitComposeOrEditMode({ saved: true });
   }
 
+  // Need to wrap setState in a setTimeout call due to:
+  // https://github.com/ianstormtaylor/slate/issues/2434
+  handleMouseDown() {
+    setTimeout(() => this.setState({ isMouseDown: true }), 0);
+  }
+
+  // Need to wrap setState in a setTimeout call due to:
+  // https://github.com/ianstormtaylor/slate/issues/2434
   handleMouseUp() {
-    this.setState({ isMouseDown: false });
+    setTimeout(() => this.setState({ isMouseDown: false }), 0);
   }
 
   clearEditorValue() {
