@@ -42,6 +42,7 @@ class RovalEditor extends Component {
 
     this.editor = React.createRef();
     this.handleCancel = this.handleCancel.bind(this);
+    this.handlePressEscape = this.handlePressEscape.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -65,8 +66,18 @@ class RovalEditor extends Component {
 
   handleCancel({ saved = false } = {}) {
     const { mode, onCancel } = this.props;
+
     if (mode === 'edit' && !saved) this.loadInitialValue();
     onCancel();
+  }
+
+  handlePressEscape(editor) {
+    const { value } = this.state;
+    const { selection } = value;
+    const isValueEmpty = !Plain.serialize(value);
+
+    if (selection.isExpanded) editor.moveToAnchor();
+    if (isValueEmpty) this.handleCancel();
   }
 
   handleChangeValue(editor) {
@@ -84,16 +95,13 @@ class RovalEditor extends Component {
   }
 
   handleKeyDown(event, editor, next) {
-    const { value } = this.state;
-    const isValueEmpty = !Plain.serialize(value);
-
     const hotkeys = {
       isSubmit: isHotkey('mod+Enter'),
       isCancel: isHotkey('Esc'),
     };
 
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
-    if (hotkeys.isCancel(event) && isValueEmpty) return this.handleCancel();
+    if (hotkeys.isCancel(event)) return this.handlePressEscape(editor);
 
     return next();
   }
@@ -116,7 +124,7 @@ class RovalEditor extends Component {
 
     if (isNewDiscussion) return;
     if (mode === 'compose' && !isPlainText) this.clearEditorValue();
-    this.handleCancel({ saved: true });
+    this.exitComposeOrEditMode({ saved: true });
   }
 
   handleMouseUp() {
