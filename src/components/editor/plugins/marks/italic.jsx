@@ -16,17 +16,12 @@ const ITALIC = 'italic';
 export function ItalicButton({ editor, ...props }) {
   const isActive = editor.hasActiveMark(ITALIC);
 
-  function handleClick(event) {
-    event.preventDefault();
+  function handleClick() {
     editor.toggleMark(ITALIC);
   }
 
   return (
-    <ToolbarButton
-      onClick={handleClick}
-      onKeyDown={handleClick}
-      {...props}
-    >
+    <ToolbarButton handleClick={handleClick} {...props}>
       <ButtonIcon icon={faItalic} isActive={isActive} />
     </ToolbarButton>
   );

@@ -16,17 +16,12 @@ const BOLD = 'bold';
 export function BoldButton({ editor, ...props }) {
   const isActive = editor.hasActiveMark(BOLD);
 
-  function handleClick(event) {
-    event.preventDefault();
+  function handleClick() {
     editor.toggleMark(BOLD);
   }
 
   return (
-    <ToolbarButton
-      onClick={handleClick}
-      onKeyDown={handleClick}
-      {...props}
-    >
+    <ToolbarButton handleClick={handleClick} {...props}>
       <ButtonIcon icon={faBold} isActive={isActive} />
     </ToolbarButton>
   );

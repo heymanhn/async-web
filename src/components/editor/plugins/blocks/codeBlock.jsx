@@ -21,8 +21,7 @@ const CODE_BLOCK = 'code-block';
 /* **** Toolbar button **** */
 
 export function CodeBlockButton({ editor, ...props }) {
-  function handleClick(event) {
-    event.preventDefault();
+  function handleClick() {
     return editor.setCodeBlock();
   }
 
@@ -38,11 +37,7 @@ export function CodeBlockButton({ editor, ...props }) {
   }
 
   return (
-    <ToolbarButton
-      onClick={handleClick}
-      onKeyDown={handleClick}
-      {...props}
-    >
+    <ToolbarButton handleClick={handleClick} {...props}>
       <ButtonIcon icon={faCode} isActive={isActive()} />
     </ToolbarButton>
   );

@@ -10,14 +10,32 @@ const Container = styled.div({
   margin: 0,
 });
 
-const ToolbarButton = ({ children, ...props }) => (
-  <Container {...props}>
-    {children}
-  </Container>
-);
+const ToolbarButton = ({ children, handleClick, ...props }) => {
+  function handleAction(event) {
+    event.preventDefault();
+    return handleClick();
+  }
+
+  // Don't let the toolbar handle the event, so that it won't reset its visibility
+  function handleMouseDown(event) {
+    event.preventDefault();
+  }
+
+  return (
+    <Container
+      onClick={handleAction}
+      onMouseDown={handleMouseDown}
+      onKeyDown={handleAction}
+      {...props}
+    >
+      {children}
+    </Container>
+  );
+};
 
 ToolbarButton.propTypes = {
   children: PropTypes.object.isRequired,
+  handleClick: PropTypes.func.isRequired,
 };
 
 export default ToolbarButton;

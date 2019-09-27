@@ -21,17 +21,12 @@ const SMALL_FONT = 'heading-three';
 function HeadingButton({ editor, headingType, ...props }) {
   const isActive = editor.hasBlock(headingType);
 
-  function handleClick(event) {
-    event.preventDefault();
+  function handleClick() {
     return editor.setBlock(headingType);
   }
 
   return (
-    <ToolbarButton
-      onClick={handleClick}
-      onKeyDown={handleClick}
-      {...props}
-    >
+    <ToolbarButton handleClick={handleClick} {...props}>
       <HeadingIcon
         number={headingType === LARGE_FONT ? 1 : 2}
         isActive={isActive}

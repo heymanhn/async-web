@@ -21,8 +21,7 @@ const BLOCK_QUOTE = 'block-quote';
 /* **** Toolbar button **** */
 
 export function BlockQuoteButton({ editor, ...props }) {
-  function handleClick(event) {
-    event.preventDefault();
+  function handleClick() {
     return editor.setBlockQuote();
   }
 
@@ -38,11 +37,7 @@ export function BlockQuoteButton({ editor, ...props }) {
   }
 
   return (
-    <ToolbarButton
-      onClick={handleClick}
-      onKeyDown={handleClick}
-      {...props}
-    >
+    <ToolbarButton handleClick={handleClick} {...props}>
       <ButtonIcon icon={faQuoteRight} isActive={isActive()} />
     </ToolbarButton>
   );

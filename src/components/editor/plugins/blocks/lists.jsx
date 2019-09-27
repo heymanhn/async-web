@@ -23,8 +23,7 @@ const LIST_ITEM = 'list-item';
 /* **** Toolbar button **** */
 
 export function BulletedListButton({ editor, ...props }) {
-  function handleClick(event) {
-    event.preventDefault();
+  function handleClick() {
     return editor.setListBlock(BULLETED_LIST);
   }
 
@@ -41,11 +40,7 @@ export function BulletedListButton({ editor, ...props }) {
   }
 
   return (
-    <ToolbarButton
-      onClick={handleClick}
-      onKeyDown={handleClick}
-      {...props}
-    >
+    <ToolbarButton handleClick={handleClick} {...props}>
       <ButtonIcon icon={faListUl} isActive={isActive()} />
     </ToolbarButton>
   );
