@@ -1,6 +1,5 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
-import Plain from 'slate-plain-serializer';
 
 import EditorActionsRow from '../EditorActionsRow';
 import { RenderEditor } from './helpers';
@@ -13,18 +12,16 @@ function EditorActions() {
       handleSubmit,
       isSubmitting,
       mode,
-      value,
     } = props;
     const children = next();
     if (mode === 'display') return children;
 
-    const isValueEmpty = !Plain.serialize(value);
     return (
       <>
         {children}
         <EditorActionsRow
           isSubmitting={isSubmitting}
-          isSubmitDisabled={isValueEmpty || forceDisableSubmit}
+          isSubmitDisabled={editor.isEmptyDocument() || forceDisableSubmit}
           mode={mode}
           onCancel={handleCancel}
           onFileUploaded={editor.insertImage}

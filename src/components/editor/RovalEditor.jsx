@@ -74,10 +74,9 @@ class RovalEditor extends Component {
   handlePressEscape(editor) {
     const { value } = this.state;
     const { selection } = value;
-    const isValueEmpty = !Plain.serialize(value);
 
     if (selection.isExpanded) editor.moveToAnchor();
-    if (isValueEmpty) this.handleCancel();
+    if (editor.isEmptyDocument()) this.handleCancel();
   }
 
   handleChangeValue(editor) {
@@ -109,11 +108,12 @@ class RovalEditor extends Component {
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
   // Parent components give us a method to perform the mutation; we give them the data to persist.
   async handleSubmit() {
+    const editor = this.editor.current;
+    if (editor.isEmptyDocument()) return;
+
     const { value } = this.state;
     const { isPlainText, mode, onSubmit } = this.props;
     const text = Plain.serialize(value);
-    if (!text) return;
-
     const payload = JSON.stringify(value.toJSON());
 
     const { isNewDiscussion } = await onSubmit({ text, payload });

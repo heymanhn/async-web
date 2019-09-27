@@ -65,7 +65,17 @@ export const queries = {
     return selection.isCollapsed && selection.anchor.offset === 0;
   },
   isEmptyBlock: editor => !editor.value.anchorBlock.text,
-  isEmptyDocument: editor => editor.value.document.text === '',
+  isEmptyDocument: (editor) => {
+    const { value } = editor;
+    const { blocks } = value;
+
+    if (blocks.size === 1) {
+      const firstBlock = blocks.first();
+      return firstBlock.type === DEFAULT_NODE && !firstBlock.text;
+    }
+
+    return false;
+  },
   isEmptyParagraph: (editor) => {
     const { anchorBlock } = editor.value;
     return anchorBlock.type === DEFAULT_NODE && !anchorBlock.text;
