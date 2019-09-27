@@ -1,8 +1,8 @@
 import React from 'react';
 import { faBold } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
 
+import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import {
   Hotkey,
@@ -13,11 +13,6 @@ const BOLD = 'bold';
 
 /* **** Toolbar button **** */
 
-const Container = styled.div({
-  cursor: 'pointer',
-  margin: 0,
-});
-
 export function BoldButton({ editor, ...props }) {
   const isActive = editor.hasActiveMark(BOLD);
 
@@ -27,13 +22,13 @@ export function BoldButton({ editor, ...props }) {
   }
 
   return (
-    <Container
+    <ToolbarButton
       onClick={handleClick}
       onKeyDown={handleClick}
       {...props}
     >
       <ButtonIcon icon={faBold} isActive={isActive} />
-    </Container>
+    </ToolbarButton>
   );
 }
 

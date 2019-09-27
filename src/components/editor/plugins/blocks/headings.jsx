@@ -4,6 +4,7 @@ import AutoReplace from 'slate-auto-replace';
 import styled from '@emotion/styled';
 
 import { DEFAULT_NODE } from 'components/editor/defaults';
+import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import HeadingIcon from './HeadingIcon';
 import {
   Hotkey,
@@ -17,11 +18,6 @@ const SMALL_FONT = 'heading-three';
 
 /* **** Toolbar buttons **** */
 
-const Container = styled.div({
-  cursor: 'pointer',
-  margin: 0,
-});
-
 function HeadingButton({ editor, headingType, ...props }) {
   const isActive = editor.hasBlock(headingType);
 
@@ -31,7 +27,7 @@ function HeadingButton({ editor, headingType, ...props }) {
   }
 
   return (
-    <Container
+    <ToolbarButton
       onClick={handleClick}
       onKeyDown={handleClick}
       {...props}
@@ -40,7 +36,7 @@ function HeadingButton({ editor, headingType, ...props }) {
         number={headingType === LARGE_FONT ? 1 : 2}
         isActive={isActive}
       />
-    </Container>
+    </ToolbarButton>
   );
 }
 

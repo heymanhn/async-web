@@ -4,6 +4,7 @@ import AutoReplace from 'slate-auto-replace';
 import { faQuoteRight } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
@@ -18,11 +19,6 @@ import {
 const BLOCK_QUOTE = 'block-quote';
 
 /* **** Toolbar button **** */
-
-const Container = styled.div({
-  cursor: 'pointer',
-  margin: 0,
-});
 
 export function BlockQuoteButton({ editor, ...props }) {
   function handleClick(event) {
@@ -42,13 +38,13 @@ export function BlockQuoteButton({ editor, ...props }) {
   }
 
   return (
-    <Container
+    <ToolbarButton
       onClick={handleClick}
       onKeyDown={handleClick}
       {...props}
     >
       <ButtonIcon icon={faQuoteRight} isActive={isActive()} />
-    </Container>
+    </ToolbarButton>
   );
 }
 

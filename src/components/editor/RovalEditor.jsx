@@ -66,9 +66,7 @@ class RovalEditor extends Component {
     // Only set the content of the editor if it's changed (eg. loading a new meeting)
     if (initialValue !== prevProps.initialValue) {
       this.loadInitialValue();
-    }// else {
-    //   this.updateToolbar();
-    // }
+    }
   }
 
   handleCancel({ saved = false } = {}) {

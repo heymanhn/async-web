@@ -4,6 +4,7 @@ import AutoReplace from 'slate-auto-replace';
 import { faListUl } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
@@ -20,11 +21,6 @@ const NUMBERED_LIST = 'numbered-list';
 const LIST_ITEM = 'list-item';
 
 /* **** Toolbar button **** */
-
-const Container = styled.div({
-  cursor: 'pointer',
-  margin: 0,
-});
 
 export function BulletedListButton({ editor, ...props }) {
   function handleClick(event) {
@@ -45,13 +41,13 @@ export function BulletedListButton({ editor, ...props }) {
   }
 
   return (
-    <Container
+    <ToolbarButton
       onClick={handleClick}
       onKeyDown={handleClick}
       {...props}
     >
       <ButtonIcon icon={faListUl} isActive={isActive()} />
-    </Container>
+    </ToolbarButton>
   );
 }
 
