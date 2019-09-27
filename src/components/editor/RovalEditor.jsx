@@ -36,7 +36,6 @@ class RovalEditor extends Component {
     };
 
     this.editor = React.createRef();
-    this.handleBlur = this.handleBlur.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -51,30 +50,12 @@ class RovalEditor extends Component {
     this.loadInitialValue();
   }
 
-  // TODO: Do i still need this?
-  async componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     // The editor is only autofocused when initially mounted
-    const { initialValue, mode } = this.props;
+    const { mode } = this.props;
     if (mode === 'edit' && prevProps.mode === 'display') {
       this.editor.current.focus().moveToEndOfDocument();
     }
-
-    // Only set the content of the editor if it's changed (eg. loading a new meeting)
-    if (initialValue !== prevProps.initialValue) {
-      this.loadInitialValue();
-    }
-  }
-
-  handleBlur(event, editor, next) {
-    const { value } = this.state;
-    const { onSubmitOnBlur, saveOnBlur } = this.props;
-    next();
-
-    const isValueEmpty = !Plain.serialize(value);
-    if (!saveOnBlur || isValueEmpty) return null;
-
-    const text = Plain.serialize(value);
-    return onSubmitOnBlur({ text });
   }
 
   handleCancel({ saved = false } = {}) {
@@ -83,7 +64,17 @@ class RovalEditor extends Component {
     onCancel();
   }
 
-  handleChangeValue({ value }) {
+  handleChangeValue(editor) {
+    const { saveOnBlur } = this.props;
+    const { value } = editor;
+    const { selection } = value;
+    const { isFocused } = selection;
+
+    if (!isFocused) {
+      const text = Plain.serialize(value);
+      if (saveOnBlur && text) this.handleSubmit();
+    }
+
     this.setState({ value });
   }
 
@@ -167,7 +158,6 @@ class RovalEditor extends Component {
           handleSubmit={this.handleSubmit}
           isMouseDown={isMouseDown}
           mode={mode}
-          onBlur={this.handleBlur}
           onChange={this.handleChangeValue}
           onKeyDown={this.handleKeyDown}
           onMouseDown={this.handleMouseDown}
@@ -200,7 +190,6 @@ RovalEditor.propTypes = {
   mode: PropTypes.string,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
-  onSubmitOnBlur: PropTypes.func,
   saveOnBlur: PropTypes.bool,
 };
 
@@ -213,7 +202,6 @@ RovalEditor.defaultProps = {
   mode: null,
   onCancel: () => {},
   onSubmit: () => {},
-  onSubmitOnBlur: () => {},
   saveOnBlur: false,
 };
 

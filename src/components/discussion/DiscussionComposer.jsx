@@ -71,9 +71,9 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
     return Promise.reject(new Error('Failed to create discussion'));
   }
 
-  function handleSubmitTitle({ text }) {
-    // HACK due to https://github.com/ianstormtaylor/slate/issues/2434
-    if (title !== text) setTimeout(() => setTitle(text), 0);
+  async function handleSubmitTitle({ text }) {
+    if (title !== text) setTitle(text);
+    return Promise.resolve({});
   }
 
   function returnToMeetingSpace() {
@@ -86,7 +86,7 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
         contentType="discussionTitle"
         isPlainText
         mode="compose"
-        onSubmitOnBlur={handleSubmitTitle}
+        onSubmit={handleSubmitTitle}
         saveOnBlur
       />
       <DiscussionMessage
