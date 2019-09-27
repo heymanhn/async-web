@@ -18,6 +18,7 @@ import Link from './plugins/inlines/link';
 import { BlockQuotePlugin } from './plugins/blocks/blockQuote';
 import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
+import EditorActions from './plugins/editorActions';
 
 /* **** Commands **** */
 
@@ -110,6 +111,7 @@ const coreEditorPlugins = [
     before: /(--)$/,
     change: change => change.insertText('— '),
   }),
+  EditorActions(),
   SelectionToolbar(),
 ];
 

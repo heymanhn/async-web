@@ -29,7 +29,7 @@ const HintText = styled.div(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const EditorActions = ({
+const EditorActionsRow = ({
   isSubmitDisabled,
   isSubmitting,
   mode,
@@ -69,7 +69,7 @@ const EditorActions = ({
   );
 };
 
-EditorActions.propTypes = {
+EditorActionsRow.propTypes = {
   isSubmitDisabled: PropTypes.bool.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
   mode: PropTypes.string.isRequired,
@@ -78,4 +78,4 @@ EditorActions.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 
-export default EditorActions;
+export default EditorActionsRow;

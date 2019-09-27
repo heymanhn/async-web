@@ -74,8 +74,6 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
   function handleSubmitTitle({ text }) {
     // HACK due to https://github.com/ianstormtaylor/slate/issues/2434
     if (title !== text) setTimeout(() => setTitle(text), 0);
-
-    return Promise.resolve();
   }
 
   function returnToMeetingSpace() {
@@ -88,7 +86,7 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
         contentType="discussionTitle"
         isPlainText
         mode="compose"
-        onSubmit={handleSubmitTitle}
+        onSubmitOnBlur={handleSubmitTitle}
         saveOnBlur
       />
       <DiscussionMessage
