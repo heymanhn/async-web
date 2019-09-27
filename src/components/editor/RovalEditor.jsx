@@ -120,7 +120,7 @@ class RovalEditor extends Component {
 
     if (isNewDiscussion) return;
     if (mode === 'compose' && !isPlainText) this.clearEditorValue();
-    this.exitComposeOrEditMode({ saved: true });
+    this.handleCancel({ saved: true });
   }
 
   // Need to wrap setState in a setTimeout call due to:
