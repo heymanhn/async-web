@@ -89,11 +89,12 @@ export function BlockQuotePlugin() {
     AutoReplace({
       trigger: 'space',
       before: /^(>)$/,
-      change: (change) => {
+      change: (editor) => {
         // Essentially undoing the autoReplace detection
-        if (change.isWrappedByAnyBlock()) return change.insertText('> ');
+        if (editor.isWrappedByAnyBlock()) return editor.insertText('> ');
+        if (!editor.isEmptyBlock()) return editor.setBlockQuote();
 
-        return change
+        return editor
           .insertBlock(DEFAULT_NODE)
           .moveBackward(1)
           .setBlockQuote();

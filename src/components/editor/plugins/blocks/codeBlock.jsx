@@ -101,11 +101,12 @@ export function CodeBlockPlugin() {
     AutoReplace({
       trigger: '`',
       before: /^(``)$/,
-      change: (change) => {
+      change: (editor) => {
         // Essentially undoing the autoReplace detection
-        if (change.isWrappedByAnyBlock()) return change.insertText('```');
+        if (editor.isWrappedByAnyBlock()) return editor.insertText('```');
+        if (!editor.isEmptyBlock()) return editor.setCodeBlock();
 
-        return change
+        return editor
           .insertBlock(DEFAULT_NODE)
           .moveBackward(1)
           .setCodeBlock();
