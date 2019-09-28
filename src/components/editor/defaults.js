@@ -1,4 +1,5 @@
 export const DEFAULT_NODE = 'paragraph';
+export const DEFAULT_PLAIN_NODE = 'line';
 
 export const DEFAULT_VALUE = {
   document: {

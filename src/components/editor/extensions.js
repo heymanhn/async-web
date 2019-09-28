@@ -4,7 +4,7 @@ import SoftBreak from 'slate-soft-break';
 
 import { theme } from 'styles/theme';
 
-import { DEFAULT_NODE } from './defaults';
+import { DEFAULT_NODE, DEFAULT_PLAIN_NODE } from './defaults';
 
 import { BoldPlugin } from './plugins/marks/bold';
 import { ItalicPlugin } from './plugins/marks/italic';
@@ -67,11 +67,13 @@ export const queries = {
   isEmptyBlock: editor => !editor.value.anchorBlock.text,
   isEmptyDocument: (editor) => {
     const { value } = editor;
-    const { blocks } = value;
+    const { document: doc } = value;
+    const blocks = doc.getBlocks();
 
     if (blocks.size === 1) {
       const firstBlock = blocks.first();
-      return firstBlock.type === DEFAULT_NODE && !firstBlock.text;
+      const matchingTypes = [DEFAULT_NODE, DEFAULT_PLAIN_NODE];
+      return matchingTypes.includes(firstBlock.type) && !firstBlock.text;
     }
 
     return false;
@@ -93,6 +95,7 @@ const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
   when: 'isEmptyDocument',
   style: {
     color,
+    lineHeight: '18px',
   },
 });
 
