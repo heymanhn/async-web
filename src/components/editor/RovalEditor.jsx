@@ -116,9 +116,9 @@ class RovalEditor extends Component {
     const text = Plain.serialize(value);
     const payload = JSON.stringify(value.toJSON());
 
-    const { isNewDiscussion } = await onSubmit({ text, payload });
+    const response = await onSubmit({ text, payload });
 
-    if (isNewDiscussion) return;
+    if (!isPlainText && response && response.isNewDiscussion) return;
     if (mode === 'compose' && !isPlainText) this.clearEditorValue();
     this.handleCancel({ saved: true });
   }
