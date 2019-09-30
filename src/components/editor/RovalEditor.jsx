@@ -183,6 +183,7 @@ class RovalEditor extends Component {
           queries={queries}
           readOnly={mode === 'display'}
           ref={this.editor}
+          spellCheck={false}
           value={value}
           {...props}
         />
