@@ -19,6 +19,7 @@ import { BlockQuotePlugin } from './plugins/blocks/blockQuote';
 import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
 import EditorActions from './plugins/editorActions';
+import DragAndDrop from './plugins/dragAndDrop';
 
 /* **** Commands **** */
 
@@ -126,6 +127,7 @@ const coreEditorPlugins = [
   }),
   EditorActions(),
   SelectionToolbar(),
+  DragAndDrop(),
 ];
 
 export const plugins = {
