@@ -6,7 +6,7 @@ import { AddCommands, AddSchema, RenderBlock } from '../helpers';
 
 const StyledImage = styled.img(({ isFocused, readOnly, theme: { colors } }) => ({
   display: 'block',
-  margin: '10px auto',
+  margin: '20px auto',
   maxWidth: '100%',
   maxHeight: '20em',
   boxShadow: `${isFocused ? `0 0 0 3px ${colors.blue}` : 'none'}`,
