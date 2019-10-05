@@ -3,6 +3,9 @@ import { getEventTransfer } from 'slate-react';
 import { indicatorNode } from './blocks/dragAndDropIndicator';
 /*
  * Should be able to support dragging and dropping of any content in the editor
+ *
+ * TODO (HN): Support dragging and dropping after a code block, block quote, or other content type
+ * where the parent node of the text node is not either a top level paragraph block or a list block
  */
 function DragAndDrop() {
   return {
@@ -26,6 +29,7 @@ function DragAndDrop() {
       const sibling = document.getNextSibling(node.key);
 
       if (indicator) {
+        // Don't re-render the visual guide if it doesn't need to change position
         if (sibling && sibling.key === indicator.key) return next();
 
         return editor.moveNodeByKey(indicator.key, parent.key, index + 1);
