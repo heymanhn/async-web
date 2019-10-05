@@ -1,13 +1,38 @@
-import { getEventTransfer, findNode } from 'slate-react';
+import { getEventTransfer } from 'slate-react';
 
+import { indicatorNode } from './blocks/dragAndDropIndicator';
 /*
  * Should be able to support dragging and dropping of any content in the editor
  */
 function DragAndDrop() {
   return {
-    // onDragStart(event, editor, next) {
-    //   return next();
-    // },
+    // Render a visual guide, based on where in the content the user is dragging an element over
+    onDragOver(event, editor, next) {
+      const { value } = editor;
+      const { document } = value;
+
+      let node = editor.findNode(event.target);
+      if (node.object !== 'text') return next();
+
+      // HN: I don't have a better way to do this yet, but we want to be selecting the block
+      while (node.object === 'text') {
+        node = document.getParent(node.key);
+      }
+      const parent = document.getParent(node.key);
+      if (!parent) return next();
+
+      const index = parent.nodes.indexOf(node);
+      const indicator = editor.findDragAndDropIndicator();
+      const sibling = document.getNextSibling(node.key);
+
+      if (indicator) {
+        if (sibling && sibling.key === indicator.key) return next();
+
+        return editor.moveNodeByKey(indicator.key, parent.key, index + 1);
+      }
+
+      return editor.insertNodeByKey(parent.key, index + 1, indicatorNode);
+    },
 
     // HN: Custom implementation to handle dragging and dropping of images
     // within the content. Seems weird to have to subclass onDrop() like this,
@@ -19,7 +44,10 @@ function DragAndDrop() {
       const { startBlock } = value;
 
       if (type === 'fragment') {
-        const node = findNode(event.target, editor);
+        const indicator = editor.findDragAndDropIndicator();
+        if (indicator) editor.removeNodeByKey(indicator.key);
+
+        const node = editor.findNode(event.target);
         if (node.key === startBlock.key) return null;
 
         // TODO: Figure out the `A point should not reference a non-text node!` warnings.

@@ -23,7 +23,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   boxShadow: `0px 0px 3px ${colors.grey7}`,
   cursor: 'default',
   marginBottom: '30px',
-  padding: '20px 30px 25px',
+  padding: '20px 30px 20px',
 }));
 
 const HeaderSection = styled.div({
@@ -47,10 +47,8 @@ const MessageEditor = styled(RovalEditor)({
 
   // Spacing for the paragraphs
   div: {
-    marginBottom: '1em',
-  },
-  'div:last-of-type': {
-    marginBottom: 0,
+    marginTop: '0.5em',
+    marginBottom: '0.5em',
   },
 });
 

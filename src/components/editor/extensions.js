@@ -20,6 +20,7 @@ import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
 import EditorActions from './plugins/editorActions';
 import DragAndDrop from './plugins/dragAndDrop';
+import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
 
 /* **** Commands **** */
 
@@ -128,6 +129,7 @@ const coreEditorPlugins = [
   EditorActions(),
   SelectionToolbar(),
   DragAndDrop(),
+  DragAndDropIndicator(),
 ];
 
 export const plugins = {
