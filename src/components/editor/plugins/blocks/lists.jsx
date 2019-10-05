@@ -64,6 +64,7 @@ const NumberedList = styled.ol({
 
 const ListItem = styled.li({
   marginBottom: '5px',
+  width: '100%',
 });
 
 export function ListsPlugin() {

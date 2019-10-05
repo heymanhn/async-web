@@ -58,6 +58,7 @@ const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
   whiteSpace: 'pre-wrap',
 
   div: {
+    marginTop: '0 !important',
     marginBottom: '0 !important',
   },
 
