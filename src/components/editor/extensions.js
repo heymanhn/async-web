@@ -18,6 +18,7 @@ import Link from './plugins/inlines/link';
 import { BlockQuotePlugin } from './plugins/blocks/blockQuote';
 import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
+import CompositionMenu from './plugins/compositionMenu';
 import EditorActions from './plugins/editorActions';
 import DragAndDrop from './plugins/dragAndDrop';
 import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
@@ -128,6 +129,7 @@ const coreEditorPlugins = [
   }),
   EditorActions(),
   SelectionToolbar(),
+  CompositionMenu(),
   DragAndDrop(),
   DragAndDropIndicator(),
 ];
