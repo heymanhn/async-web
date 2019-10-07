@@ -49,20 +49,24 @@ const CompositionMenuButton = ({ isEmptyParagraph, query, ...props }) => {
     setIsMenuOpen(false);
   }
 
-  function calculateButtonPosition() {
+  function updateButtonPosition() {
     const native = window.getSelection();
     const range = native.getRangeAt(0);
     const rect = range.getBoundingClientRect();
 
-    return {
+    const newCoords = {
       top: `${rect.top + window.pageYOffset - 7}px`, // 7px is half of 15px button height
       left: `${rect.left + window.pageXOffset - 45}px`, // 30px margin + half of 30px width
     };
+
+    if (coords && newCoords.top === coords.top && newCoords.left === coords.left) return;
+
+    setCoords(newCoords);
   }
 
   const showButton = !isMenuOpen && isEmptyParagraph;
-  if (showButton && !coords) {
-    setTimeout(() => setCoords(calculateButtonPosition()), 0);
+  if (showButton) {
+    setTimeout(updateButtonPosition, 0);
   }
   if (!showButton && coords) setCoords(null);
 
