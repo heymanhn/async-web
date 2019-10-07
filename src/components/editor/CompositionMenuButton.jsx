@@ -6,51 +6,72 @@ import styled from '@emotion/styled';
 
 import CompositionMenu from './CompositionMenu';
 
-const ButtonContainer = styled.div(({ isVisible, rect, theme: { colors } }) => ({
+const ButtonContainer = styled.div(({ isVisible, theme: { colors } }) => ({
   display: isVisible ? 'flex' : 'none',
   justifyContent: 'center',
   alignItems: 'center',
+  top: '-10000px',
+  left: '-10000px',
+
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   cursor: 'pointer',
+  opacity: 0,
+  transition: 'opacity 0.1s',
   width: '30px',
   height: '30px',
   position: 'absolute',
-  top: `${rect.top + window.pageYOffset - 7}px`, // 7px is half of 15px button height
-  left: `${rect.left + window.pageXOffset - 45}px`, // 30px margin + half of 30px width
 
   ':hover': {
     background: colors.formGrey,
   },
-}));
+}), ({ coords, isVisible }) => {
+  if (!isVisible || !coords) return {};
+
+  const { top, left } = coords;
+  return { opacity: 1, top, left };
+});
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '14px',
 }));
 
-const CompositionMenuButton = ({ isEmptyParagraph, query, range, ...props }) => {
+const CompositionMenuButton = ({ isEmptyParagraph, query, ...props }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [coords, setCoords] = useState(null);
 
   function handleOpenMenu() {
     setIsMenuOpen(true);
-    setIsButtonVisible(false);
   }
   function handleCloseMenu() {
     setIsMenuOpen(false);
   }
 
-  if (!range) return null;
-  const rect = range.getBoundingClientRect();
+  function calculateButtonPosition() {
+    const native = window.getSelection();
+    const range = native.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    return {
+      top: `${rect.top + window.pageYOffset - 7}px`, // 7px is half of 15px button height
+      left: `${rect.left + window.pageXOffset - 45}px`, // 30px margin + half of 30px width
+    };
+  }
+
+  const showButton = !isMenuOpen && isEmptyParagraph;
+  if (showButton && !coords) {
+    setTimeout(() => setCoords(calculateButtonPosition()), 0);
+  }
+  if (!showButton && coords) setCoords(null);
 
   return (
     <>
       <ButtonContainer
-        isVisible={isButtonVisible && isEmptyParagraph}
+        coords={coords}
+        isVisible={showButton}
         onClick={handleOpenMenu}
-        rect={rect}
         {...props}
       >
         <StyledIcon icon={faPlus} />

@@ -7,11 +7,7 @@ import { RenderEditor } from './helpers';
 function CompositionMenu() {
   function displayMenu(props, editor, next) {
     const { mode } = props;
-    const { value } = editor;
-    const { selection } = value;
-
     const children = next();
-    const range = editor.findDOMRange(selection);
     if (mode === 'display') return children;
 
     return (
@@ -19,7 +15,6 @@ function CompositionMenu() {
         {children}
         <CompositionMenuButton
           isEmptyParagraph={editor.isEmptyParagraph()}
-          range={range}
         />
       </>
     );
