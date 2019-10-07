@@ -1,6 +1,5 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
-import { findDOMRange } from 'slate-react';
 
 import CompositionMenuButton from '../CompositionMenuButton';
 import { RenderEditor } from './helpers';
@@ -10,17 +9,17 @@ function CompositionMenu() {
     const { mode } = props;
     const { value } = editor;
     const { selection } = value;
-    const children = next();
-    if (mode === 'display') return children;
 
-    console.dir(selection);
+    const children = next();
+    const range = editor.findDOMRange(selection);
+    if (mode === 'display') return children;
 
     return (
       <>
         {children}
         <CompositionMenuButton
-          // isEmptyParagraph={editor.isEmptyParagraph()}
-          range={findDOMRange(selection)}
+          isEmptyParagraph={editor.isEmptyParagraph()}
+          range={range}
         />
       </>
     );

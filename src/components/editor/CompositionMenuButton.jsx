@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import CompositionMenu from './CompositionMenu';
 
-const ButtonContainer = styled.div(({ isVisible, theme: { colors } }) => ({
+const ButtonContainer = styled.div(({ isVisible, rect, theme: { colors } }) => ({
   display: isVisible ? 'flex' : 'none',
   justifyContent: 'center',
   alignItems: 'center',
@@ -16,6 +16,9 @@ const ButtonContainer = styled.div(({ isVisible, theme: { colors } }) => ({
   cursor: 'pointer',
   width: '30px',
   height: '30px',
+  position: 'absolute',
+  top: `${rect.top + window.pageYOffset - 7}px`, // 7px is half of 15px button height
+  left: `${rect.left + window.pageXOffset - 45}px`, // 30px margin + half of 30px width
 
   ':hover': {
     background: colors.formGrey,
@@ -39,14 +42,15 @@ const CompositionMenuButton = ({ isEmptyParagraph, query, range, ...props }) => 
     setIsMenuOpen(false);
   }
 
+  if (!range) return null;
   const rect = range.getBoundingClientRect();
-  console.dir(rect);
 
   return (
     <>
       <ButtonContainer
         isVisible={isButtonVisible && isEmptyParagraph}
         onClick={handleOpenMenu}
+        rect={rect}
         {...props}
       >
         <StyledIcon icon={faPlus} />
@@ -62,11 +66,12 @@ const CompositionMenuButton = ({ isEmptyParagraph, query, range, ...props }) => 
 CompositionMenuButton.propTypes = {
   isEmptyParagraph: PropTypes.bool.isRequired,
   query: PropTypes.string,
-  range: PropTypes.object.isRequired,
+  range: PropTypes.object,
 };
 
 CompositionMenuButton.defaultProps = {
   query: '',
+  range: null,
 };
 
 export default CompositionMenuButton;
