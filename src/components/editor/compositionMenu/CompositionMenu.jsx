@@ -18,7 +18,9 @@ const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '3px',
   boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+  maxHeight: '260px',
   opacity: 0,
+  overflow: 'auto',
   paddingBottom: '15px',
   position: 'absolute',
   top: '-10000px',
@@ -47,6 +49,11 @@ const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
   };
   useClickOutside({ handleClickOutside, isOpen, ref: menu });
 
+  // In the future, also need to reset the menu
+  function handleClick() {
+    handleClose();
+  }
+
   function calculateMenuPosition() {
     const native = window.getSelection();
     const range = native.getRangeAt(0);
@@ -57,10 +64,12 @@ const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
       left: `${rect.left + window.pageXOffset}px`,
     };
   }
+
   return (
     <Container
       coords={calculateMenuPosition()}
       isOpen={isOpen}
+      onClick={handleClick}
       ref={menu}
       {...props}
     >
