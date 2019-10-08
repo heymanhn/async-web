@@ -38,11 +38,17 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const CompositionMenuButton = ({ isEmptyParagraph, query, ...props }) => {
+const CompositionMenuButton = ({ editor, query, ...props }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [coords, setCoords] = useState(null);
 
-  function handleOpenMenu() {
+  // Don't let the button handle the event, so that it won't reset its visibility
+  function handleMouseDown(event) {
+    event.preventDefault();
+  }
+  function handleOpenMenu(event) {
+    event.preventDefault();
+    editor.focus();
     setIsMenuOpen(true);
   }
   function handleCloseMenu() {
@@ -64,10 +70,10 @@ const CompositionMenuButton = ({ isEmptyParagraph, query, ...props }) => {
     setCoords(newCoords);
   }
 
-  const showButton = !isMenuOpen && isEmptyParagraph;
-  if (showButton) {
-    setTimeout(updateButtonPosition, 0);
-  }
+  const { value } = editor;
+  const { selection } = value;
+  const showButton = selection.isFocused && !isMenuOpen && editor.isEmptyParagraph();
+  if (showButton) setTimeout(updateButtonPosition, 0);
   if (!showButton && coords) setCoords(null);
 
   return (
@@ -76,6 +82,7 @@ const CompositionMenuButton = ({ isEmptyParagraph, query, ...props }) => {
         coords={coords}
         isVisible={showButton}
         onClick={handleOpenMenu}
+        onMouseDown={handleMouseDown}
         {...props}
       >
         <StyledIcon icon={faPlus} />
@@ -89,7 +96,7 @@ const CompositionMenuButton = ({ isEmptyParagraph, query, ...props }) => {
 };
 
 CompositionMenuButton.propTypes = {
-  isEmptyParagraph: PropTypes.bool.isRequired,
+  editor: PropTypes.object.isRequired,
   query: PropTypes.string,
   range: PropTypes.object,
 };

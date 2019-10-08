@@ -13,9 +13,7 @@ function CompositionMenu() {
     return (
       <>
         {children}
-        <CompositionMenuButton
-          isEmptyParagraph={editor.isEmptyParagraph()}
-        />
+        <CompositionMenuButton editor={editor} />
       </>
     );
   }
