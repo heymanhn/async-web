@@ -1,7 +1,7 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 
-import CompositionMenuButton from '../CompositionMenuButton';
+import CompositionMenuButton from '../compositionMenu/CompositionMenuButton';
 import { RenderEditor } from './helpers';
 
 function CompositionMenu() {

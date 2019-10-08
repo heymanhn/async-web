@@ -88,6 +88,7 @@ const CompositionMenuButton = ({ editor, query, ...props }) => {
         <StyledIcon icon={faPlus} />
       </ButtonContainer>
       <CompositionMenu
+        editor={editor}
         handleClose={handleCloseMenu}
         isOpen={isMenuOpen}
       />

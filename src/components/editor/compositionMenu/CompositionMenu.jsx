@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
 
+import TextOption from '../plugins/blocks/text';
+
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
   background: colors.bgGrey,
@@ -14,6 +16,8 @@ const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   position: 'absolute',
   top: '-10000px',
   left: '-10000px',
+  width: '240px',
+  zIndex: 1,
 }), ({ coords, isOpen }) => {
   if (!isOpen || !coords) return {};
 
@@ -21,7 +25,14 @@ const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   return { opacity: 1, top, left };
 });
 
-const CompositionMenu = ({ handleClose, isOpen, query, ...props }) => {
+const SectionTitle = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey4,
+  fontWeight: 500,
+  fontSize: '12px',
+  margin: '15px 0 8px 20px',
+}));
+
+const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
   const menu = useRef();
   const handleClickOutside = () => {
     if (!isOpen) return;
@@ -46,12 +57,19 @@ const CompositionMenu = ({ handleClose, isOpen, query, ...props }) => {
       ref={menu}
       {...props}
     >
-      Hello
+      {/* TODO: Filter these lists down as I type */}
+      <SectionTitle>BASIC</SectionTitle>
+      <TextOption editor={editor} />
+
+      <SectionTitle>SECTIONS</SectionTitle>
+
+      <SectionTitle>MEDIA</SectionTitle>
     </Container>
   );
 };
 
 CompositionMenu.propTypes = {
+  editor: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   query: PropTypes.string,
