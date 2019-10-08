@@ -60,7 +60,7 @@ const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
   return (
     <Container
       coords={calculateMenuPosition()}
-      isOpen={true} // TODO: Undo this later
+      isOpen={isOpen}
       ref={menu}
       {...props}
     >

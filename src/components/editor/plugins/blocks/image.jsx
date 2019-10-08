@@ -1,31 +1,67 @@
 /* eslint react/prop-types: 0 */
-import React from 'react';
+import React, { useState } from 'react';
+import { useMutation } from 'react-apollo';
+import { useDropzone } from 'react-dropzone';
 import { faImage } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+import uploadFileMutation from 'graphql/mutations/uploadFile';
+
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-
 import { AddCommands, AddSchema, RenderBlock } from '../helpers';
 
 const IMAGE = 'image';
 
 /* **** Composition menu option **** */
+/* The image option uploads an image to the editor */
 
 export function ImageOption({ editor, ...props }) {
-  function handleClick() {
-    // TODO
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadStarted, setUploadStarted] = useState(false);
+
+  const [uploadFile] = useMutation(uploadFileMutation, {
+    onCompleted: (data) => {
+      if (data && data.uploadFile) {
+        const { url } = data.uploadFile;
+        editor.insertImage(url);
+      }
+    },
+  });
+  const { getInputProps, open, acceptedFiles } = useDropzone({
+    accept: 'image/*',
+    maxSize: 10485760, // 10MB max
+    multiple: false,
+    noDrag: true,
+    noClick: true,
+    noKeyboard: true,
+  });
+
+  if (selectedFile && !uploadStarted) {
+    setUploadStarted(true);
+    uploadFile({ variables: { input: { file: selectedFile } } });
+  }
+  if (acceptedFiles.length > 0 && !selectedFile) {
+    setSelectedFile(acceptedFiles[0]);
+  }
+
+  function openFileDialog() {
+    if (selectedFile) setSelectedFile(null);
+    if (uploadStarted) setUploadStarted(false);
+    open();
   }
 
   const icon = <OptionIcon icon={faImage} />;
-
   return (
-    <MenuOption
-      handleClick={handleClick}
-      icon={icon}
-      title="Image"
-      {...props}
-    />
+    <>
+      <input {...getInputProps()} />
+      <MenuOption
+        handleClick={openFileDialog}
+        icon={icon}
+        title="Image"
+        {...props}
+      />
+    </>
   );
 }
 
