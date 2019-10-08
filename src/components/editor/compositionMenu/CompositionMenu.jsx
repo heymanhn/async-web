@@ -5,6 +5,12 @@ import styled from '@emotion/styled';
 import useClickOutside from 'utils/hooks/useClickOutside';
 
 import TextOption from '../plugins/blocks/text';
+import { LargeTitleOption, SmallTitleOption } from '../plugins/blocks/headings';
+import { BulletedListOption, NumberedListOption, ChecklistOption } from '../plugins/blocks/lists';
+import { CodeBlockOption } from '../plugins/blocks/codeBlock';
+import { BlockQuoteOption } from '../plugins/blocks/blockQuote';
+import { SectionBreakOption } from '../plugins/blocks/sectionBreak';
+import { ImageOption } from '../plugins/blocks/image';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
@@ -13,6 +19,7 @@ const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   borderRadius: '3px',
   boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
   opacity: 0,
+  paddingBottom: '15px',
   position: 'absolute',
   top: '-10000px',
   left: '-10000px',
@@ -53,17 +60,26 @@ const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
   return (
     <Container
       coords={calculateMenuPosition()}
-      isOpen={isOpen}
+      isOpen={true} // TODO: Undo this later
       ref={menu}
       {...props}
     >
       {/* TODO: Filter these lists down as I type */}
       <SectionTitle>BASIC</SectionTitle>
       <TextOption editor={editor} />
+      <LargeTitleOption editor={editor} />
+      <SmallTitleOption editor={editor} />
 
       <SectionTitle>SECTIONS</SectionTitle>
+      <BulletedListOption editor={editor} />
+      <NumberedListOption editor={editor} />
+      <ChecklistOption editor={editor} />
+      <CodeBlockOption editor={editor} />
+      <BlockQuoteOption editor={editor} />
+      <SectionBreakOption editor={editor} />
 
       <SectionTitle>MEDIA</SectionTitle>
+      <ImageOption editor={editor} />
     </Container>
   );
 };

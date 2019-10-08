@@ -1,10 +1,35 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
+
+import MenuOption from 'components/editor/compositionMenu/MenuOption';
+import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 
 import { AddCommands, AddSchema, RenderBlock } from '../helpers';
 
 const IMAGE = 'image';
+
+/* **** Composition menu option **** */
+
+export function ImageOption({ editor, ...props }) {
+  function handleClick() {
+    // TODO
+  }
+
+  const icon = <OptionIcon icon={faImage} />;
+
+  return (
+    <MenuOption
+      handleClick={handleClick}
+      icon={icon}
+      title="Image"
+      {...props}
+    />
+  );
+}
+
+/* **** Slate plugin **** */
 
 const StyledImage = styled.img(({ isFocused, readOnly, theme: { colors } }) => ({
   display: 'block',

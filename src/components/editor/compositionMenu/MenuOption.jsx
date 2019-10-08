@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -22,13 +21,6 @@ const IconContainer = styled.div({
   marginLeft: '20px',
   width: '35px',
 });
-
-const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey4,
-  cursor: 'pointer',
-  fontSize: '18px',
-  marginTop: '2px',
-}));
 
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey1,
@@ -55,9 +47,7 @@ const MenuOption = ({ handleClick, icon, title, ...props }) => {
       onKeyDown={handleAction}
       {...props}
     >
-      <IconContainer>
-        <StyledIcon icon={icon} />
-      </IconContainer>
+      <IconContainer>{icon}</IconContainer>
       <Title>{title}</Title>
     </Container>
   );

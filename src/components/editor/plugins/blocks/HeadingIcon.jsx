@@ -38,8 +38,12 @@ const HeadingIcon = ({ isActive, number, ...props }) => (
 );
 
 HeadingIcon.propTypes = {
-  isActive: PropTypes.bool.isRequired,
+  isActive: PropTypes.bool,
   number: PropTypes.number.isRequired,
+};
+
+HeadingIcon.defaultProps = {
+  isActive: false,
 };
 
 export default HeadingIcon;

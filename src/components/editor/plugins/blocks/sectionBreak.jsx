@@ -1,7 +1,11 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 import AutoReplace from 'slate-auto-replace';
+import { faHorizontalRule } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
+
+import MenuOption from 'components/editor/compositionMenu/MenuOption';
+import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 
 import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
@@ -12,6 +16,28 @@ import {
 } from '../helpers';
 
 const SECTION_BREAK = 'section-break';
+
+
+/* **** Composition menu option **** */
+
+export function SectionBreakOption({ editor, ...props }) {
+  function handleClick() {
+    return editor.setBlock(SECTION_BREAK);
+  }
+
+  const icon = <OptionIcon icon={faHorizontalRule} />;
+
+  return (
+    <MenuOption
+      handleClick={handleClick}
+      icon={icon}
+      title="Section break"
+      {...props}
+    />
+  );
+}
+
+/* **** Slate plugin **** */
 
 const StyledSectionBreak = styled.hr(({ theme: { colors } }) => ({
   borderRadius: '20px',
