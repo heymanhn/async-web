@@ -49,11 +49,6 @@ const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
   };
   useClickOutside({ handleClickOutside, isOpen, ref: menu });
 
-  // In the future, also need to reset the menu
-  function handleClick() {
-    handleClose();
-  }
-
   function calculateMenuPosition() {
     const native = window.getSelection();
     const range = native.getRangeAt(0);
@@ -69,7 +64,7 @@ const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
     <Container
       coords={calculateMenuPosition()}
       isOpen={isOpen}
-      onClick={handleClick}
+      onClick={handleClose}
       ref={menu}
       {...props}
     >

@@ -40,7 +40,10 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 
 const CompositionMenuButton = ({ editor, query, ...props }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isKeyboardInvoked, setIsKeyboardInvoked] = useState(false);
   const [coords, setCoords] = useState(null);
+  const { value } = editor;
+  const { selection } = value;
 
   // Don't let the button handle the event, so that it won't reset its visibility
   function handleMouseDown(event) {
@@ -51,6 +54,8 @@ const CompositionMenuButton = ({ editor, query, ...props }) => {
     editor.focus();
     setIsMenuOpen(true);
   }
+
+  // In the future, also need to reset the menu
   function handleCloseMenu() {
     setIsMenuOpen(false);
   }
@@ -70,11 +75,16 @@ const CompositionMenuButton = ({ editor, query, ...props }) => {
     setCoords(newCoords);
   }
 
-  const { value } = editor;
-  const { selection } = value;
   const showButton = selection.isFocused && !isMenuOpen && editor.isEmptyParagraph();
   if (showButton) setTimeout(updateButtonPosition, 0);
   if (!showButton && coords) setCoords(null);
+
+  if (editor.isSlashCommand() && !isKeyboardInvoked) setIsKeyboardInvoked(true);
+  if (editor.isEmptyParagraph() && isKeyboardInvoked) {
+    setIsKeyboardInvoked(false);
+    setIsMenuOpen(false);
+  }
+  if (isKeyboardInvoked && !isMenuOpen) setIsMenuOpen(true);
 
   return (
     <>
