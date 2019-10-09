@@ -19,6 +19,7 @@ import {
 } from '../helpers';
 
 const BLOCK_QUOTE = 'block-quote';
+export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
 
 /* **** Toolbar button **** */
 
@@ -62,7 +63,7 @@ export function BlockQuoteOption({ editor, ...props }) {
     <MenuOption
       handleClick={handleClick}
       icon={icon}
-      title="Quote"
+      title={BLOCK_QUOTE_OPTION_TITLE}
       {...props}
     />
   );

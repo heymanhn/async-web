@@ -1,16 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
 
-import TextOption from '../plugins/blocks/text';
-import { LargeTitleOption, SmallTitleOption } from '../plugins/blocks/headings';
-import { BulletedListOption, NumberedListOption, ChecklistOption } from '../plugins/blocks/lists';
-import { CodeBlockOption } from '../plugins/blocks/codeBlock';
-import { BlockQuoteOption } from '../plugins/blocks/blockQuote';
-import { SectionBreakOption } from '../plugins/blocks/sectionBreak';
-import { ImageOption } from '../plugins/blocks/image';
+import optionsList from './optionsList';
+import MenuSection from './MenuSection';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
@@ -34,15 +29,12 @@ const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   return { opacity: 1, top, left };
 });
 
-const SectionTitle = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey4,
-  fontWeight: 500,
-  fontSize: '12px',
-  margin: '15px 0 8px 20px',
-}));
-
-const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
+const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
   const menu = useRef();
+  const [query, setQuery] = useState('');
+  const { value } = editor;
+  const { anchorBlock } = value;
+
   const handleClickOutside = () => {
     if (!isOpen) return;
     handleClose();
@@ -60,6 +52,32 @@ const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
     };
   }
 
+  function setSanitizedQuery() {
+    let newQuery = anchorBlock.text;
+    if (newQuery.startsWith('/')) newQuery = newQuery.substring(1);
+    if (newQuery !== query) setQuery(newQuery);
+  }
+  if (isOpen) setSanitizedQuery();
+  if (!isOpen && query) setQuery('');
+
+  function filteredOptions() {
+    return optionsList.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
+  }
+  function organizeMenuOptions() {
+    const optionsToOrganize = query ? filteredOptions() : optionsList;
+
+    // Neat way of finding unique values in an array using ES6 Sets
+    const sectionsToDisplay = [...new Set(optionsToOrganize.map(o => o.section))];
+
+    return sectionsToDisplay.map(s => ({
+      sectionTitle: s,
+      optionsList: optionsToOrganize.filter(o => o.section === s),
+    }));
+  }
+
+  const optionsToDisplay = organizeMenuOptions();
+  // TODO: No results UI
+
   return (
     <Container
       coords={calculateMenuPosition()}
@@ -68,22 +86,14 @@ const CompositionMenu = ({ editor, handleClose, isOpen, query, ...props }) => {
       ref={menu}
       {...props}
     >
-      {/* TODO: Filter these lists down as I type */}
-      <SectionTitle>BASIC</SectionTitle>
-      <TextOption editor={editor} />
-      <LargeTitleOption editor={editor} />
-      <SmallTitleOption editor={editor} />
-
-      <SectionTitle>SECTIONS</SectionTitle>
-      <BulletedListOption editor={editor} />
-      <NumberedListOption editor={editor} />
-      <ChecklistOption editor={editor} />
-      <CodeBlockOption editor={editor} />
-      <BlockQuoteOption editor={editor} />
-      <SectionBreakOption editor={editor} />
-
-      <SectionTitle>MEDIA</SectionTitle>
-      <ImageOption editor={editor} />
+      {optionsToDisplay.map(o => (
+        <MenuSection
+          key={o.sectionTitle}
+          editor={editor}
+          optionsList={o.optionsList}
+          sectionTitle={o.sectionTitle}
+        />
+      ))}
     </Container>
   );
 };
@@ -92,11 +102,6 @@ CompositionMenu.propTypes = {
   editor: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  query: PropTypes.string,
-};
-
-CompositionMenu.defaultProps = {
-  query: '',
 };
 
 export default CompositionMenu;

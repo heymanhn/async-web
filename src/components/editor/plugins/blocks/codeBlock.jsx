@@ -19,6 +19,7 @@ import {
 } from '../helpers';
 
 const CODE_BLOCK = 'code-block';
+export const CODE_BLOCK_OPTION_TITLE = 'Code block';
 
 /* **** Toolbar button **** */
 
@@ -83,7 +84,7 @@ export function CodeBlockOption({ editor, ...props }) {
     <MenuOption
       handleClick={handleClick}
       icon={icon}
-      title="Code block"
+      title={CODE_BLOCK_OPTION_TITLE}
       {...props}
     />
   );

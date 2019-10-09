@@ -16,7 +16,7 @@ import {
 } from '../helpers';
 
 const SECTION_BREAK = 'section-break';
-
+export const SECTION_BREAK_OPTION_TITLE = 'Section break';
 
 /* **** Composition menu option **** */
 
@@ -31,7 +31,7 @@ export function SectionBreakOption({ editor, ...props }) {
     <MenuOption
       handleClick={handleClick}
       icon={icon}
-      title="Section break"
+      title={SECTION_BREAK_OPTION_TITLE}
       {...props}
     />
   );
@@ -46,7 +46,7 @@ const StyledSectionBreak = styled.hr(({ theme: { colors } }) => ({
   width: '120px',
 }));
 
-function SectionBreak() {
+export function SectionBreak() {
   /* **** Schema **** */
 
   const sectionBreakSchema = {
@@ -110,5 +110,3 @@ function SectionBreak() {
     hotkeys,
   ];
 }
-
-export default SectionBreak;

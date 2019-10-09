@@ -18,8 +18,8 @@ const LARGE_FONT = 'heading-one';
 const MEDIUM_FONT = 'heading-two';
 const SMALL_FONT = 'heading-three';
 
-const LARGE_FONT_TEXT = 'Large title';
-const MEDIUM_FONT_TEXT = 'Small title';
+export const LARGE_TITLE_OPTION_TITLE = 'Large title';
+export const SMALL_TITLE_OPTION_TITLE = 'Small title';
 
 /* **** Toolbar buttons **** */
 
@@ -64,7 +64,7 @@ function HeadingOption({ editor, headingType, ...props }) {
     <MenuOption
       handleClick={handleClick}
       icon={icon}
-      title={headingType === LARGE_FONT ? LARGE_FONT_TEXT : MEDIUM_FONT_TEXT}
+      title={headingType === LARGE_FONT ? LARGE_TITLE_OPTION_TITLE : SMALL_TITLE_OPTION_TITLE}
       {...props}
     />
   );

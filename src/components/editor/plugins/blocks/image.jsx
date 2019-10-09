@@ -12,6 +12,7 @@ import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 import { AddCommands, AddSchema, RenderBlock } from '../helpers';
 
 const IMAGE = 'image';
+export const IMAGE_OPTION_TITLE = 'Image';
 
 /* **** Composition menu option **** */
 /* The image option uploads an image to the editor */
@@ -59,7 +60,7 @@ export function ImageOption({ editor, ...props }) {
       <MenuOption
         handleClick={openFileDialog}
         icon={icon}
-        title="Image"
+        title={IMAGE_OPTION_TITLE}
         {...props}
       />
     </>
@@ -80,7 +81,7 @@ const StyledImage = styled.img(({ isFocused, readOnly, theme: { colors } }) => (
   },
 }));
 
-function Image() {
+export function Image() {
   /* **** Schema **** */
 
   const imageSchema = {
@@ -131,5 +132,3 @@ function Image() {
     RenderBlock(IMAGE, renderImage),
   ];
 }
-
-export default Image;

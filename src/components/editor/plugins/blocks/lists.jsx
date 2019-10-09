@@ -28,10 +28,14 @@ ICONS[BULLETED_LIST] = faListUl;
 ICONS[NUMBERED_LIST] = faListOl;
 ICONS[CHECKLIST] = faTasks;
 
-const OPTION_TITLES = {};
-OPTION_TITLES[BULLETED_LIST] = 'Bulleted list';
-OPTION_TITLES[NUMBERED_LIST] = 'Numbered list';
-OPTION_TITLES[CHECKLIST] = 'Checklist';
+export const BULLETED_LIST_OPTION_TITLE = 'Bulleted list';
+export const NUMBERED_LIST_OPTION_TITLE = 'Numbered list';
+export const CHECKLIST_OPTION_TITLE = 'Checklist';
+
+const LIST_OPTION_TITLES = {};
+LIST_OPTION_TITLES[BULLETED_LIST] = BULLETED_LIST_OPTION_TITLE;
+LIST_OPTION_TITLES[NUMBERED_LIST] = NUMBERED_LIST_OPTION_TITLE;
+LIST_OPTION_TITLES[CHECKLIST] = CHECKLIST_OPTION_TITLE;
 
 /* **** Toolbar button **** */
 
@@ -76,7 +80,7 @@ function ListOption({ editor, listType, ...props }) {
     <MenuOption
       handleClick={handleClick}
       icon={icon}
-      title={OPTION_TITLES[listType]}
+      title={LIST_OPTION_TITLES[listType]}
       {...props}
     />
   );
