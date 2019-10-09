@@ -6,11 +6,13 @@ import { DEFAULT_NODE } from 'components/editor/defaults';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 
+export const TEXT_OPTION_TITLE = 'Text';
+
 /* **** Composition Menu option **** */
 
-function TextOption({ editor, ...props }) {
+export function TextOption({ editor, ...props }) {
   function handleClick() {
-    return editor.setBlock(DEFAULT_NODE);
+    return editor.clearBlock().setBlock(DEFAULT_NODE);
   }
 
   const icon = <OptionIcon icon={faText} />;
@@ -19,7 +21,7 @@ function TextOption({ editor, ...props }) {
     <MenuOption
       handleClick={handleClick}
       icon={icon}
-      title="Text"
+      title={TEXT_OPTION_TITLE}
       {...props}
     />
   );
@@ -28,5 +30,3 @@ function TextOption({ editor, ...props }) {
 TextOption.propTypes = {
   editor: PropTypes.object.isRequired,
 };
-
-export default TextOption;

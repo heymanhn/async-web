@@ -67,7 +67,7 @@ BulletedListButton.propTypes = {
 
 function ListOption({ editor, listType, ...props }) {
   function handleClick() {
-    return editor.setListBlock(listType);
+    return editor.clearBlock().setListBlock(listType);
   }
 
   const icon = <OptionIcon icon={ICONS[listType]} />;

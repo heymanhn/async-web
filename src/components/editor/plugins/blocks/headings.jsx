@@ -55,7 +55,7 @@ export function MediumFontButton({ editor }) {
 
 function HeadingOption({ editor, headingType, ...props }) {
   function handleClick() {
-    return editor.setBlock(headingType);
+    return editor.clearBlock().setBlock(headingType);
   }
 
   const icon = <HeadingOptionIcon number={headingType === LARGE_FONT ? 1 : 2} />;

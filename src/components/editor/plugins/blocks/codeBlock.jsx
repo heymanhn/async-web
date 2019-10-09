@@ -74,7 +74,7 @@ const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
 
 export function CodeBlockOption({ editor, ...props }) {
   function handleClick() {
-    return editor.setCodeBlock();
+    return editor.clearBlock().setCodeBlock();
   }
 
   const icon = <OptionIcon icon={faCode} />;

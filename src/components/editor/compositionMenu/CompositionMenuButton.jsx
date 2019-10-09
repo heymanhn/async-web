@@ -80,11 +80,12 @@ const CompositionMenuButton = ({ editor, query, ...props }) => {
   if (!showButton && coords) setCoords(null);
 
   if (editor.isSlashCommand() && !isKeyboardInvoked) setIsKeyboardInvoked(true);
-  if (editor.isEmptyParagraph() && isKeyboardInvoked) {
-    setIsKeyboardInvoked(false);
-    setIsMenuOpen(false);
+  if (isKeyboardInvoked) {
+    if (editor.isEmptyBlock()) {
+      setIsKeyboardInvoked(false);
+      setIsMenuOpen(false);
+    } else if (!isMenuOpen) setIsMenuOpen(true);
   }
-  if (isKeyboardInvoked && !isMenuOpen) setIsMenuOpen(true);
 
   return (
     <>

@@ -46,6 +46,7 @@ export function ImageOption({ editor, ...props }) {
   }
 
   function openFileDialog() {
+    editor.clearBlock();
     if (selectedFile) setSelectedFile(null);
     if (uploadStarted) setUploadStarted(false);
     open();

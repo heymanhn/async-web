@@ -24,7 +24,7 @@ const BLOCK_QUOTE = 'block-quote';
 
 export function BlockQuoteButton({ editor, ...props }) {
   function handleClick() {
-    return editor.setBlockQuote();
+    return editor.clearBlock().setBlockQuote();
   }
 
   function isActive() {

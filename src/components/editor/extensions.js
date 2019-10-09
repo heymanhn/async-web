@@ -26,6 +26,14 @@ import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
 /* **** Commands **** */
 
 export const commands = {
+  clearBlock: (editor) => {
+    if (editor.isEmptyBlock()) return null;
+    return editor
+      .moveAnchorToStartOfBlock()
+      .moveFocusToEndOfBlock()
+      .delete();
+  },
+
   setWrappedBlock: (editor, type) => {
     // This means the user is looking to un-set the wrapped block
     if (editor.isWrappedBy(type)) {
