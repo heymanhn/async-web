@@ -25,7 +25,7 @@ export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
 
 export function BlockQuoteButton({ editor, ...props }) {
   function handleClick() {
-    return editor.clearBlock().setBlockQuote();
+    return editor.setBlockQuote();
   }
 
   function isActive() {
@@ -54,7 +54,7 @@ BlockQuoteButton.propTypes = {
 
 export function BlockQuoteOption({ editor, ...props }) {
   function handleClick() {
-    return editor.setBlockQuote();
+    return editor.clearBlock().setBlockQuote();
   }
 
   const icon = <OptionIcon icon={faQuoteRight} />;

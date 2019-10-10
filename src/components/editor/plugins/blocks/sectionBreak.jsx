@@ -22,7 +22,10 @@ export const SECTION_BREAK_OPTION_TITLE = 'Section break';
 
 export function SectionBreakOption({ editor, ...props }) {
   function handleClick() {
-    return editor.clearBlock().setBlock(SECTION_BREAK);
+    return editor
+      .clearBlock()
+      .setBlock(SECTION_BREAK)
+      .insertBlock(DEFAULT_NODE);
   }
 
   const icon = <OptionIcon icon={faHorizontalRule} />;
