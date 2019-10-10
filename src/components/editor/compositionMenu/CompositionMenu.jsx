@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
+import useMountEffect from 'utils/hooks/useMountEffect';
 
 import optionsList from './optionsList';
 import MenuSection from './MenuSection';
@@ -62,10 +63,21 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
     };
   }
 
+  /*
+   * The compositionMenu plugin forwards a native keyboard event to this element
+   * when the user presses the up or down arrow keys while the menu is open. React
+   * doesn't listen to native events that are dispatched, so we have to add an event listener
+   * to the DOM element itself instead of using the onKeyDown prop on the React element.
+   *
+   * https://stackoverflow.com/questions/39065010/why-react-event-handler-is-not-called-on-dispatchevent
+   */
   function handleKeyDown(event) {
     console.log('event is...');
     console.log(event.key);
   }
+  useMountEffect(() => {
+    menuRef.current.addEventListener('keydown', handleKeyDown);
+  });
 
   function setSanitizedQuery() {
     let newQuery = anchorBlock.text;
@@ -97,7 +109,6 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
       coords={calculateMenuPosition()}
       isOpen={isOpen}
       onClick={handleClose}
-      onKeyDown={handleKeyDown}
       ref={menuRef}
       {...props}
     >
