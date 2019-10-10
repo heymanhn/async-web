@@ -39,9 +39,12 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const CompositionMenuButton = ({ editor, query, ...props }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isKeyboardInvoked, setIsKeyboardInvoked] = useState(false);
-  const [coords, setCoords] = useState(null);
+  const [state, setState] = useState({
+    coords: null,
+    isMenuOpen: false,
+    isMenuDismissed: false, // distinguishing a user action
+    isKeyboardInvoked: false,
+  });
   const { value } = editor;
   const { selection } = value;
 
@@ -49,46 +52,71 @@ const CompositionMenuButton = ({ editor, query, ...props }) => {
   function handleMouseDown(event) {
     event.preventDefault();
   }
+
+  // Only called when menu invoked via the button
   function handleOpenMenu(event) {
     event.preventDefault();
     editor.focus();
-    setIsMenuOpen(true);
+    setState(oldState => ({ ...oldState, isMenuOpen: true }));
   }
 
-  // In the future, also need to reset the menu
+  // The order of these setState calls matters
   function handleCloseMenu() {
-    setIsMenuOpen(false);
+    setState(oldState => ({
+      ...oldState,
+      isMenuOpen: false,
+      isMenuDismissed: true,
+      isKeyboardInvoked: false,
+    }));
   }
 
   function updateButtonPosition() {
     const native = window.getSelection();
     const range = native.getRangeAt(0);
     const rect = range.getBoundingClientRect();
+    const { coords } = state;
 
     const newCoords = {
       top: `${rect.top + window.pageYOffset - 7}px`, // 7px is half of 15px button height
       left: `${rect.left + window.pageXOffset - 45}px`, // 30px margin + half of 30px width
     };
 
-    if (coords && newCoords.top === coords.top && newCoords.left === coords.left) return;
+    if (coords && newCoords.top === state.coords.top && newCoords.left === coords.left) return;
 
-    setCoords(newCoords);
+    setState(oldState => ({ ...oldState, coords: newCoords }));
   }
 
   if (editor.isWrappedByAnyBlock()) return null;
 
+  const { coords, isMenuOpen, isMenuDismissed, isKeyboardInvoked } = state;
   const showButton = selection.isFocused
     && !isMenuOpen
     && editor.isEmptyParagraph();
 
   if (showButton) setTimeout(updateButtonPosition, 0);
-  if (!showButton && coords) setCoords(null);
-  if (editor.isSlashCommand() && !isKeyboardInvoked) setIsKeyboardInvoked(true);
-  if (isKeyboardInvoked) {
-    if (editor.isEmptyBlock()) {
-      setIsKeyboardInvoked(false);
-      setIsMenuOpen(false);
-    } else if (!isMenuOpen) setIsMenuOpen(true);
+  if (!showButton && coords) {
+    setState(oldState => ({ ...oldState, coords: null }));
+  }
+  if (editor.isSlashCommand() && !isKeyboardInvoked && !isMenuDismissed) {
+    setState(oldState => ({ ...oldState, isKeyboardInvoked: true }));
+  }
+  if (isKeyboardInvoked && !isMenuOpen) {
+    setState(oldState => ({ ...oldState, isMenuOpen: true }));
+  }
+
+  // In order to dismiss the menu when the user removes a slash command
+  if (editor.isEmptyBlock() && isKeyboardInvoked) {
+    setState(oldState => ({
+      ...oldState,
+      isKeyboardInvoked: false,
+      isMenuOpen: false,
+      isMenuDismissed: false,
+    }));
+  }
+
+  // Reset the dismiss flag so that the menu can be keyboard-invoked again
+  if (editor.isEmptyBlock() && !isKeyboardInvoked && isMenuDismissed) {
+    setState(oldState => ({ ...oldState, isMenuDismissed: false }));
   }
 
   return (
