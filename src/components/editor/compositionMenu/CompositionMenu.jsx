@@ -1,3 +1,4 @@
+/* eslint react/no-find-dom-node: 0 */
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
@@ -33,7 +34,7 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
   const menu = useRef();
   const [query, setQuery] = useState('');
   const { value } = editor;
-  const { anchorBlock } = value;
+  const { anchorBlock, document } = value;
 
   const handleClickOutside = () => {
     if (!isOpen) return;
@@ -41,10 +42,13 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
   };
   useClickOutside({ handleClickOutside, isOpen, ref: menu });
 
+  // Always position the menu behind the entire block, so that it doesn't move as the user types
   function calculateMenuPosition() {
-    const native = window.getSelection();
-    const range = native.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
+    const path = document.getPath(anchorBlock.key);
+    const element = editor.findDOMNode(path);
+    if (!element) return {};
+
+    const rect = element.getBoundingClientRect();
 
     return {
       top: `${rect.top + window.pageYOffset + 30}px`,

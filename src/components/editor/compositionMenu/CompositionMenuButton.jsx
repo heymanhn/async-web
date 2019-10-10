@@ -75,10 +75,14 @@ const CompositionMenuButton = ({ editor, query, ...props }) => {
     setCoords(newCoords);
   }
 
-  const showButton = selection.isFocused && !isMenuOpen && editor.isEmptyParagraph();
+  if (editor.isWrappedByAnyBlock()) return null;
+
+  const showButton = selection.isFocused
+    && !isMenuOpen
+    && editor.isEmptyParagraph();
+
   if (showButton) setTimeout(updateButtonPosition, 0);
   if (!showButton && coords) setCoords(null);
-
   if (editor.isSlashCommand() && !isKeyboardInvoked) setIsKeyboardInvoked(true);
   if (isKeyboardInvoked) {
     if (editor.isEmptyBlock()) {
