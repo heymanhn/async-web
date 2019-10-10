@@ -6,6 +6,9 @@ import { DEFAULT_NODE } from '../defaults';
 import { AddQueries, RenderEditor } from './helpers';
 
 function CompositionMenu() {
+  // This ref is forwarded down to the <CompositionMenu /> component
+  const menuRef = React.createRef();
+
   /* **** Queries **** */
 
   function isSlashCommand(editor) {
@@ -22,7 +25,7 @@ function CompositionMenu() {
     return (
       <>
         {children}
-        <CompositionMenuButton editor={editor} />
+        <CompositionMenuButton editor={editor} ref={menuRef} />
       </>
     );
   }

@@ -1,5 +1,5 @@
 /* eslint react/no-find-dom-node: 0 */
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -37,8 +37,7 @@ const NoResults = styled.div(({ theme: { colors } }) => ({
   marginTop: '15px',
 }));
 
-const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
-  const menu = useRef();
+const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...props }, menuRef) => {
   const [query, setQuery] = useState('');
   const { value } = editor;
   const { anchorBlock, document } = value;
@@ -47,7 +46,7 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
     if (!isOpen) return;
     handleClose();
   };
-  useClickOutside({ handleClickOutside, isOpen, ref: menu });
+  useClickOutside({ handleClickOutside, isOpen, ref: menuRef });
 
   // Always position the menu behind the entire block, so that it doesn't move as the user types
   function calculateMenuPosition() {
@@ -93,7 +92,7 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
       coords={calculateMenuPosition()}
       isOpen={isOpen}
       onClick={handleClose}
-      ref={menu}
+      ref={menuRef}
       {...props}
     >
       {optionsToDisplay.length > 0 ? optionsToDisplay.map(o => (
@@ -106,7 +105,7 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
       )) : <NoResults>No results</NoResults>}
     </Container>
   );
-};
+});
 
 CompositionMenu.propTypes = {
   editor: PropTypes.object.isRequired,
