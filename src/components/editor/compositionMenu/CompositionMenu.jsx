@@ -62,6 +62,11 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
     };
   }
 
+  function handleKeyDown(event) {
+    console.log('event is...');
+    console.log(event.key);
+  }
+
   function setSanitizedQuery() {
     let newQuery = anchorBlock.text;
     if (newQuery.startsWith('/')) newQuery = newQuery.substring(1);
@@ -92,6 +97,7 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
       coords={calculateMenuPosition()}
       isOpen={isOpen}
       onClick={handleClose}
+      onKeyDown={handleKeyDown}
       ref={menuRef}
       {...props}
     >
