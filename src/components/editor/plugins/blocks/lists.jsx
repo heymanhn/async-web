@@ -91,14 +91,14 @@ ListOption.propTypes = {
   listType: PropTypes.oneOf([BULLETED_LIST, NUMBERED_LIST, CHECKLIST]).isRequired,
 };
 
-export function BulletedListOption({ editor }) {
-  return <ListOption editor={editor} listType={BULLETED_LIST} />;
+export function BulletedListOption({ editor, ...props }) {
+  return <ListOption editor={editor} listType={BULLETED_LIST} {...props} />;
 }
-export function NumberedListOption({ editor }) {
-  return <ListOption editor={editor} listType={NUMBERED_LIST} />;
+export function NumberedListOption({ editor, ...props }) {
+  return <ListOption editor={editor} listType={NUMBERED_LIST} {...props} />;
 }
-export function ChecklistOption({ editor }) {
-  return <ListOption editor={editor} listType={CHECKLIST} />;
+export function ChecklistOption({ editor, ...props }) {
+  return <ListOption editor={editor} listType={CHECKLIST} {...props} />;
 }
 
 /* **** Slate plugin **** */

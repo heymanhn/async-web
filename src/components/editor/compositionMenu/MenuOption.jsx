@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ isSelected, theme: { colors } }) => ({
+  background: isSelected ? colors.grey7 : 'initial',
   cursor: 'pointer',
   display: 'flex',
   flexDirection: 'row',
@@ -29,7 +30,7 @@ const Title = styled.div(({ theme: { colors } }) => ({
   marginTop: '-2px',
 }));
 
-const MenuOption = ({ handleClick, icon, title, ...props }) => {
+const MenuOption = ({ handleClick, icon, selectedOption, title, ...props }) => {
   function handleAction(event) {
     event.preventDefault();
     return handleClick();
@@ -42,6 +43,7 @@ const MenuOption = ({ handleClick, icon, title, ...props }) => {
 
   return (
     <Container
+      isSelected={selectedOption === title}
       onClick={handleAction}
       onMouseDown={handleMouseDown}
       onKeyDown={handleAction}
@@ -56,7 +58,12 @@ const MenuOption = ({ handleClick, icon, title, ...props }) => {
 MenuOption.propTypes = {
   handleClick: PropTypes.func.isRequired,
   icon: PropTypes.object.isRequired,
+  selectedOption: PropTypes.string,
   title: PropTypes.string.isRequired,
+};
+
+MenuOption.defaultProps = {
+  selectedOption: null,
 };
 
 export default MenuOption;

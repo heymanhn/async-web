@@ -74,11 +74,11 @@ HeadingOption.propTypes = {
   editor: PropTypes.object.isRequired,
 };
 
-export function LargeTitleOption({ editor }) {
-  return <HeadingOption editor={editor} headingType={LARGE_FONT} />;
+export function LargeTitleOption({ editor, ...props }) {
+  return <HeadingOption editor={editor} headingType={LARGE_FONT} {...props} />;
 }
-export function SmallTitleOption({ editor }) {
-  return <HeadingOption editor={editor} headingType={MEDIUM_FONT} />;
+export function SmallTitleOption({ editor, ...props }) {
+  return <HeadingOption editor={editor} headingType={MEDIUM_FONT} {...props} />;
 }
 
 /* **** Slate plugin **** */

@@ -1,4 +1,5 @@
 /* eslint react/no-find-dom-node: 0 */
+/* eslint no-mixed-operators: 0 */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
@@ -38,8 +39,15 @@ const NoResults = styled.div(({ theme: { colors } }) => ({
   marginTop: '15px',
 }));
 
+// Neat trick to support modular arithmetic for negative numbers
+// https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
+function mod(x, n) {
+  return (x % n + n) % n;
+}
+
 const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...props }, menuRef) => {
   const [query, setQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const { value } = editor;
   const { anchorBlock, document } = value;
 
@@ -63,6 +71,12 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
     };
   }
 
+  function filteredOptions() {
+    if (!query) return optionsList;
+
+    return optionsList.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
+  }
+
   /*
    * The compositionMenu plugin forwards a native keyboard event to this element
    * when the user presses the up or down arrow keys while the menu is open. React
@@ -72,8 +86,12 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
    * https://stackoverflow.com/questions/39065010/why-react-event-handler-is-not-called-on-dispatchevent
    */
   function handleKeyDown(event) {
-    console.log('event is...');
-    console.log(event.key);
+    if (event.key === 'ArrowUp') {
+      setSelectedIndex(prevIndex => mod(prevIndex - 1, filteredOptions().length));
+    }
+    if (event.key === 'ArrowDown') {
+      setSelectedIndex(prevIndex => mod(prevIndex + 1, filteredOptions().length));
+    }
   }
   useMountEffect(() => {
     menuRef.current.addEventListener('keydown', handleKeyDown);
@@ -85,14 +103,12 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
     if (newQuery !== query) setQuery(newQuery);
   }
   if (isOpen) setSanitizedQuery();
-  if (!isOpen && query) setQuery('');
-
-  function filteredOptions() {
-    return optionsList.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
+  if (!isOpen) {
+    if (query) setQuery('');
+    if (selectedIndex > 0) setSelectedIndex(0);
   }
-  function organizeMenuOptions() {
-    const optionsToOrganize = query ? filteredOptions() : optionsList;
 
+  function organizeMenuOptions(optionsToOrganize) {
     // Neat way of finding unique values in an array using ES6 Sets
     const sectionsToDisplay = [...new Set(optionsToOrganize.map(o => o.section))];
 
@@ -102,7 +118,8 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
     }));
   }
 
-  const optionsToDisplay = organizeMenuOptions();
+  const optionsToSelect = filteredOptions();
+  const optionsToDisplay = organizeMenuOptions(optionsToSelect);
 
   return (
     <Container
@@ -118,6 +135,7 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
           editor={editor}
           optionsList={o.optionsList}
           sectionTitle={o.sectionTitle}
+          selectedOption={optionsToSelect[selectedIndex].title}
         />
       )) : <NoResults>No results</NoResults>}
     </Container>
