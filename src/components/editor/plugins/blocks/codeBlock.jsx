@@ -6,6 +6,8 @@ import styled from '@emotion/styled';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
+import MenuOption from 'components/editor/compositionMenu/MenuOption';
+import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
   AddSchema,
@@ -17,6 +19,7 @@ import {
 } from '../helpers';
 
 const CODE_BLOCK = 'code-block';
+export const CODE_BLOCK_OPTION_TITLE = 'Code block';
 
 /* **** Toolbar button **** */
 
@@ -67,6 +70,29 @@ const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
     letterSpacing: '-0.2px',
   },
 }));
+
+/* **** Composition menu option **** */
+
+export function CodeBlockOption({ editor, ...props }) {
+  function handleClick() {
+    return editor.clearBlock().setCodeBlock();
+  }
+
+  const icon = <OptionIcon icon={faCode} />;
+
+  return (
+    <MenuOption
+      handleClick={handleClick}
+      icon={icon}
+      title={CODE_BLOCK_OPTION_TITLE}
+      {...props}
+    />
+  );
+}
+
+CodeBlockOption.propTypes = {
+  editor: PropTypes.object.isRequired,
+};
 
 /* **** Slate plugin **** */
 

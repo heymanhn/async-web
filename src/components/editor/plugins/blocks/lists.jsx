@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AutoReplace from 'slate-auto-replace';
-import { faListUl } from '@fortawesome/free-solid-svg-icons';
+import { faListOl, faListUl, faTasks } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
+import MenuOption from 'components/editor/compositionMenu/MenuOption';
+import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
   AddCommands,
@@ -18,7 +20,22 @@ import {
 
 const BULLETED_LIST = 'bulleted-list';
 const NUMBERED_LIST = 'numbered-list';
+const CHECKLIST = 'checklist';
 const LIST_ITEM = 'list-item';
+
+const ICONS = {};
+ICONS[BULLETED_LIST] = faListUl;
+ICONS[NUMBERED_LIST] = faListOl;
+ICONS[CHECKLIST] = faTasks;
+
+export const BULLETED_LIST_OPTION_TITLE = 'Bulleted list';
+export const NUMBERED_LIST_OPTION_TITLE = 'Numbered list';
+export const CHECKLIST_OPTION_TITLE = 'Checklist';
+
+const LIST_OPTION_TITLES = {};
+LIST_OPTION_TITLES[BULLETED_LIST] = BULLETED_LIST_OPTION_TITLE;
+LIST_OPTION_TITLES[NUMBERED_LIST] = NUMBERED_LIST_OPTION_TITLE;
+LIST_OPTION_TITLES[CHECKLIST] = CHECKLIST_OPTION_TITLE;
 
 /* **** Toolbar button **** */
 
@@ -49,6 +66,40 @@ export function BulletedListButton({ editor, ...props }) {
 BulletedListButton.propTypes = {
   editor: PropTypes.object.isRequired,
 };
+
+/* **** Composition menu options **** */
+
+function ListOption({ editor, listType, ...props }) {
+  function handleClick() {
+    return editor.clearBlock().setListBlock(listType);
+  }
+
+  const icon = <OptionIcon icon={ICONS[listType]} />;
+
+  return (
+    <MenuOption
+      handleClick={handleClick}
+      icon={icon}
+      title={LIST_OPTION_TITLES[listType]}
+      {...props}
+    />
+  );
+}
+
+ListOption.propTypes = {
+  editor: PropTypes.object.isRequired,
+  listType: PropTypes.oneOf([BULLETED_LIST, NUMBERED_LIST, CHECKLIST]).isRequired,
+};
+
+export function BulletedListOption({ editor }) {
+  return <ListOption editor={editor} listType={BULLETED_LIST} />;
+}
+export function NumberedListOption({ editor }) {
+  return <ListOption editor={editor} listType={NUMBERED_LIST} />;
+}
+export function ChecklistOption({ editor }) {
+  return <ListOption editor={editor} listType={CHECKLIST} />;
+}
 
 /* **** Slate plugin **** */
 

@@ -6,6 +6,8 @@ import styled from '@emotion/styled';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
+import MenuOption from 'components/editor/compositionMenu/MenuOption';
+import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
   AddSchema,
@@ -17,6 +19,7 @@ import {
 } from '../helpers';
 
 const BLOCK_QUOTE = 'block-quote';
+export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
 
 /* **** Toolbar button **** */
 
@@ -47,6 +50,31 @@ BlockQuoteButton.propTypes = {
   editor: PropTypes.object.isRequired,
 };
 
+/* **** Composition menu option **** */
+
+export function BlockQuoteOption({ editor, ...props }) {
+  function handleClick() {
+    return editor.clearBlock().setBlockQuote();
+  }
+
+  const icon = <OptionIcon icon={faQuoteRight} />;
+
+  return (
+    <MenuOption
+      handleClick={handleClick}
+      icon={icon}
+      title={BLOCK_QUOTE_OPTION_TITLE}
+      {...props}
+    />
+  );
+}
+
+BlockQuoteOption.propTypes = {
+  editor: PropTypes.object.isRequired,
+};
+
+/* **** Slate plugin **** */
+
 const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
   marginTop: '1em',
   borderLeft: `3px solid ${colors.borderGrey}`,
@@ -54,8 +82,6 @@ const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
   padding: '0px 12px',
   marginBottom: '10px',
 }));
-
-/* **** Slate plugin **** */
 
 export function BlockQuotePlugin() {
   /* **** Schema **** */

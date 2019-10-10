@@ -24,7 +24,6 @@ function EditorActions() {
           isSubmitDisabled={editor.isEmptyDocument() || forceDisableSubmit}
           mode={mode}
           onCancel={handleCancel}
-          onFileUploaded={editor.insertImage}
           onSubmit={handleSubmit}
         />
       </>

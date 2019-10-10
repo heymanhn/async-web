@@ -5,7 +5,9 @@ import styled from '@emotion/styled';
 
 import { DEFAULT_NODE } from 'components/editor/defaults';
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
+import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import HeadingIcon from './HeadingIcon';
+import HeadingOptionIcon from './HeadingOptionIcon';
 import {
   Hotkey,
   RenderBlock,
@@ -15,6 +17,9 @@ import {
 const LARGE_FONT = 'heading-one';
 const MEDIUM_FONT = 'heading-two';
 const SMALL_FONT = 'heading-three';
+
+export const LARGE_TITLE_OPTION_TITLE = 'Large title';
+export const SMALL_TITLE_OPTION_TITLE = 'Small title';
 
 /* **** Toolbar buttons **** */
 
@@ -44,6 +49,36 @@ export function LargeFontButton({ editor }) {
 }
 export function MediumFontButton({ editor }) {
   return <HeadingButton editor={editor} headingType={MEDIUM_FONT} />;
+}
+
+/* **** Composition Menu option **** */
+
+function HeadingOption({ editor, headingType, ...props }) {
+  function handleClick() {
+    return editor.clearBlock().setBlock(headingType);
+  }
+
+  const icon = <HeadingOptionIcon number={headingType === LARGE_FONT ? 1 : 2} />;
+
+  return (
+    <MenuOption
+      handleClick={handleClick}
+      icon={icon}
+      title={headingType === LARGE_FONT ? LARGE_TITLE_OPTION_TITLE : SMALL_TITLE_OPTION_TITLE}
+      {...props}
+    />
+  );
+}
+
+HeadingOption.propTypes = {
+  editor: PropTypes.object.isRequired,
+};
+
+export function LargeTitleOption({ editor }) {
+  return <HeadingOption editor={editor} headingType={LARGE_FONT} />;
+}
+export function SmallTitleOption({ editor }) {
+  return <HeadingOption editor={editor} headingType={MEDIUM_FONT} />;
 }
 
 /* **** Slate plugin **** */

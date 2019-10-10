@@ -11,13 +11,14 @@ import { ItalicPlugin } from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
 import CodeSnippet from './plugins/marks/codeSnippet';
 import { HeadingsPlugin } from './plugins/blocks/headings';
-import SectionBreak from './plugins/blocks/sectionBreak';
-import Image from './plugins/blocks/image';
+import { SectionBreak } from './plugins/blocks/sectionBreak';
+import { Image } from './plugins/blocks/image';
 import { ListsPlugin } from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
 import { BlockQuotePlugin } from './plugins/blocks/blockQuote';
 import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
+import CompositionMenu from './plugins/compositionMenu';
 import EditorActions from './plugins/editorActions';
 import DragAndDrop from './plugins/dragAndDrop';
 import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
@@ -25,6 +26,14 @@ import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
 /* **** Commands **** */
 
 export const commands = {
+  clearBlock: (editor) => {
+    if (editor.isEmptyBlock()) return null;
+    return editor
+      .moveAnchorToStartOfBlock()
+      .moveFocusToEndOfBlock()
+      .delete();
+  },
+
   setWrappedBlock: (editor, type) => {
     // This means the user is looking to un-set the wrapped block
     if (editor.isWrappedBy(type)) {
@@ -128,6 +137,7 @@ const coreEditorPlugins = [
   }),
   EditorActions(),
   SelectionToolbar(),
+  CompositionMenu(),
   DragAndDrop(),
   DragAndDropIndicator(),
 ];
