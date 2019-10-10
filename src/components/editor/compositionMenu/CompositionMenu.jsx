@@ -30,6 +30,13 @@ const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   return { opacity: 1, top, left };
 });
 
+const NoResults = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '14px',
+  marginLeft: '20px',
+  marginTop: '15px',
+}));
+
 const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
   const menu = useRef();
   const [query, setQuery] = useState('');
@@ -80,7 +87,6 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
   }
 
   const optionsToDisplay = organizeMenuOptions();
-  // TODO: No results UI
 
   return (
     <Container
@@ -90,14 +96,14 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
       ref={menu}
       {...props}
     >
-      {optionsToDisplay.map(o => (
+      {optionsToDisplay.length > 0 ? optionsToDisplay.map(o => (
         <MenuSection
           key={o.sectionTitle}
           editor={editor}
           optionsList={o.optionsList}
           sectionTitle={o.sectionTitle}
         />
-      ))}
+      )) : <NoResults>No results</NoResults>}
     </Container>
   );
 };
