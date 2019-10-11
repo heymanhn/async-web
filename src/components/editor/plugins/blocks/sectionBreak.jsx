@@ -20,19 +20,19 @@ export const SECTION_BREAK_OPTION_TITLE = 'Section break';
 
 /* **** Composition menu option **** */
 
-export function SectionBreakOption({ editor, ...props }) {
-  function handleClick() {
-    return editor
-      .clearBlock()
-      .setBlock(SECTION_BREAK)
-      .insertBlock(DEFAULT_NODE);
-  }
+export function handleSectionBreakOption(editor) {
+  return editor
+    .clearBlock()
+    .setBlock(SECTION_BREAK)
+    .insertBlock(DEFAULT_NODE);
+}
 
+export function SectionBreakOption({ editor, ...props }) {
   const icon = <OptionIcon icon={faHorizontalRule} />;
 
   return (
     <MenuOption
-      handleClick={handleClick}
+      handleClick={() => handleSectionBreakOption(editor)}
       icon={icon}
       title={SECTION_BREAK_OPTION_TITLE}
       {...props}

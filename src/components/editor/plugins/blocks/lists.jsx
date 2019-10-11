@@ -69,16 +69,27 @@ BulletedListButton.propTypes = {
 
 /* **** Composition menu options **** */
 
-function ListOption({ editor, listType, ...props }) {
-  function handleClick() {
-    return editor.clearBlock().setListBlock(listType);
-  }
+export function handleBulletedListOption(editor) {
+  return editor.clearBlock().setListBlock(BULLETED_LIST);
+}
+export function handleNumberedListOption(editor) {
+  return editor.clearBlock().setListBlock(NUMBERED_LIST);
+}
+export function handleChecklistOption(editor) {
+  return editor.clearBlock().setListBlock(CHECKLIST);
+}
 
+const listOptionHandlers = {};
+listOptionHandlers[BULLETED_LIST] = handleBulletedListOption;
+listOptionHandlers[NUMBERED_LIST] = handleNumberedListOption;
+listOptionHandlers[CHECKLIST] = handleChecklistOption;
+
+function ListOption({ editor, listType, ...props }) {
   const icon = <OptionIcon icon={ICONS[listType]} />;
 
   return (
     <MenuOption
-      handleClick={handleClick}
+      handleClick={() => listOptionHandlers[listType](editor)}
       icon={icon}
       title={LIST_OPTION_TITLES[listType]}
       {...props}
@@ -91,14 +102,14 @@ ListOption.propTypes = {
   listType: PropTypes.oneOf([BULLETED_LIST, NUMBERED_LIST, CHECKLIST]).isRequired,
 };
 
-export function BulletedListOption({ editor }) {
-  return <ListOption editor={editor} listType={BULLETED_LIST} />;
+export function BulletedListOption({ editor, ...props }) {
+  return <ListOption editor={editor} listType={BULLETED_LIST} {...props} />;
 }
-export function NumberedListOption({ editor }) {
-  return <ListOption editor={editor} listType={NUMBERED_LIST} />;
+export function NumberedListOption({ editor, ...props }) {
+  return <ListOption editor={editor} listType={NUMBERED_LIST} {...props} />;
 }
-export function ChecklistOption({ editor }) {
-  return <ListOption editor={editor} listType={CHECKLIST} />;
+export function ChecklistOption({ editor, ...props }) {
+  return <ListOption editor={editor} listType={CHECKLIST} {...props} />;
 }
 
 /* **** Slate plugin **** */

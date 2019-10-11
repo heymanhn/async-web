@@ -73,16 +73,15 @@ const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
 
 /* **** Composition menu option **** */
 
+export function handleCodeBlockOption(editor) {
+  return editor.clearBlock().setCodeBlock();
+}
 export function CodeBlockOption({ editor, ...props }) {
-  function handleClick() {
-    return editor.clearBlock().setCodeBlock();
-  }
-
   const icon = <OptionIcon icon={faCode} />;
 
   return (
     <MenuOption
-      handleClick={handleClick}
+      handleClick={() => handleCodeBlockOption(editor)}
       icon={icon}
       title={CODE_BLOCK_OPTION_TITLE}
       {...props}

@@ -71,12 +71,14 @@ class RovalEditor extends Component {
     onCancel();
   }
 
-  handlePressEscape(editor) {
+  handlePressEscape(editor, next) {
     const { value } = this.state;
     const { selection } = value;
 
     if (selection.isExpanded) editor.moveToAnchor();
-    if (editor.isEmptyDocument()) this.handleCancel();
+    if (editor.isEmptyDocument()) return this.handleCancel();
+
+    return next();
   }
 
   handleChangeValue(editor) {
@@ -100,7 +102,7 @@ class RovalEditor extends Component {
     };
 
     if (hotkeys.isSubmit(event)) return this.handleSubmit();
-    if (hotkeys.isCancel(event)) return this.handlePressEscape(editor);
+    if (hotkeys.isCancel(event)) return this.handlePressEscape(editor, next);
 
     return next();
   }

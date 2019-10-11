@@ -3,9 +3,12 @@ import React from 'react';
 
 import CompositionMenuButton from '../compositionMenu/CompositionMenuButton';
 import { DEFAULT_NODE } from '../defaults';
-import { AddQueries, RenderEditor } from './helpers';
+import { AddQueries, Hotkey, RenderEditor } from './helpers';
 
 function CompositionMenu() {
+  // This ref is forwarded down to the <CompositionMenu /> component
+  const menuRef = React.createRef();
+
   /* **** Queries **** */
 
   function isSlashCommand(editor) {
@@ -22,14 +25,37 @@ function CompositionMenu() {
     return (
       <>
         {children}
-        <CompositionMenuButton editor={editor} />
+        <CompositionMenuButton editor={editor} ref={menuRef} />
       </>
     );
   }
 
+  /* **** Hotkeys for selecting menu items **** */
+  /* Only forward the keyboard event if the menu is open */
+
+  function propagateKeyDown(key, editor, next, event) {
+    const menu = menuRef.current;
+    if (!menu) return next();
+
+    const rect = menu.getBoundingClientRect();
+    if (!rect.width && !rect.height) return next(); // means menu is not open
+
+    event.preventDefault();
+    const keyboardEvent = new KeyboardEvent('keydown', { key });
+    return menu.dispatchEvent(keyboardEvent);
+  }
+
+  const hotkeys = [
+    Hotkey('down', (...args) => propagateKeyDown('ArrowDown', ...args)),
+    Hotkey('up', (...args) => propagateKeyDown('ArrowUp', ...args)),
+    Hotkey('Enter', (...args) => propagateKeyDown('Enter', ...args)),
+    Hotkey('Esc', (...args) => propagateKeyDown('Esc', ...args)),
+  ];
+
   return [
     AddQueries({ isSlashCommand }),
     RenderEditor(displayMenu),
+    hotkeys,
   ];
 }
 

@@ -1,5 +1,6 @@
 /* eslint react/no-find-dom-node: 0 */
-import React, { useRef, useState } from 'react';
+/* eslint no-mixed-operators: 0 */
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -37,9 +38,15 @@ const NoResults = styled.div(({ theme: { colors } }) => ({
   marginTop: '15px',
 }));
 
-const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
-  const menu = useRef();
+// Neat trick to support modular arithmetic for negative numbers
+// https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
+function mod(x, n) {
+  return (x % n + n) % n;
+}
+
+const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...props }, menuRef) => {
   const [query, setQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const { value } = editor;
   const { anchorBlock, document } = value;
 
@@ -47,7 +54,7 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
     if (!isOpen) return;
     handleClose();
   };
-  useClickOutside({ handleClickOutside, isOpen, ref: menu });
+  useClickOutside({ handleClickOutside, isOpen, ref: menuRef });
 
   // Always position the menu behind the entire block, so that it doesn't move as the user types
   function calculateMenuPosition() {
@@ -63,20 +70,62 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
     };
   }
 
+  function filteredOptions() {
+    if (!query) return optionsList;
+
+    return optionsList.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
+  }
+
+  /*
+   * The compositionMenu plugin forwards a native keyboard event to this element
+   * when the user presses the up or down arrow keys while the menu is open. React
+   * doesn't listen to native events that are dispatched, so we have to add an event listener
+   * to the DOM element itself instead of using the onKeyDown prop on the React element.
+   *
+   * https://stackoverflow.com/questions/39065010/why-react-event-handler-is-not-called-on-dispatchevent
+   */
+  useEffect(() => {
+    function handleKeyDown(event) {
+      const optionsToSelect = filteredOptions();
+
+      if (event.key === 'ArrowUp') {
+        setSelectedIndex(prevIndex => mod(prevIndex - 1, optionsToSelect.length));
+      }
+      if (event.key === 'ArrowDown') {
+        setSelectedIndex(prevIndex => mod(prevIndex + 1, optionsToSelect.length));
+      }
+      if (event.key === 'Enter') {
+        if (!optionsToSelect.length) return;
+
+        const { handleSelect } = optionsToSelect[selectedIndex];
+        handleSelect(editor);
+      }
+      if (event.key === 'Esc') handleClose();
+    }
+
+    const menuElement = menuRef.current;
+    menuElement.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      menuElement.removeEventListener('keydown', handleKeyDown);
+    };
+  });
+
   function setSanitizedQuery() {
     let newQuery = anchorBlock.text;
     if (newQuery.startsWith('/')) newQuery = newQuery.substring(1);
-    if (newQuery !== query) setQuery(newQuery);
+    if (newQuery !== query) {
+      setQuery(newQuery);
+      setSelectedIndex(0);
+    }
   }
   if (isOpen) setSanitizedQuery();
-  if (!isOpen && query) setQuery('');
-
-  function filteredOptions() {
-    return optionsList.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
+  if (!isOpen) {
+    if (query) setQuery('');
+    if (selectedIndex > 0) setSelectedIndex(0);
   }
-  function organizeMenuOptions() {
-    const optionsToOrganize = query ? filteredOptions() : optionsList;
 
+  function organizeMenuOptions(optionsToOrganize) {
     // Neat way of finding unique values in an array using ES6 Sets
     const sectionsToDisplay = [...new Set(optionsToOrganize.map(o => o.section))];
 
@@ -86,14 +135,15 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
     }));
   }
 
-  const optionsToDisplay = organizeMenuOptions();
+  const optionsToSelect = filteredOptions();
+  const optionsToDisplay = organizeMenuOptions(optionsToSelect);
 
   return (
     <Container
       coords={calculateMenuPosition()}
       isOpen={isOpen}
       onClick={handleClose}
-      ref={menu}
+      ref={menuRef}
       {...props}
     >
       {optionsToDisplay.length > 0 ? optionsToDisplay.map(o => (
@@ -102,11 +152,12 @@ const CompositionMenu = ({ editor, handleClose, isOpen, ...props }) => {
           editor={editor}
           optionsList={o.optionsList}
           sectionTitle={o.sectionTitle}
+          selectedOption={optionsToSelect[selectedIndex].title}
         />
       )) : <NoResults>No results</NoResults>}
     </Container>
   );
-};
+});
 
 CompositionMenu.propTypes = {
   editor: PropTypes.object.isRequired,

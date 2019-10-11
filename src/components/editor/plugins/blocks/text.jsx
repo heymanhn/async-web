@@ -10,16 +10,16 @@ export const TEXT_OPTION_TITLE = 'Text';
 
 /* **** Composition Menu option **** */
 
-export function TextOption({ editor, ...props }) {
-  function handleClick() {
-    return editor.clearBlock().setBlock(DEFAULT_NODE);
-  }
+export function handleTextOption(editor) {
+  return editor.clearBlock().setBlock(DEFAULT_NODE);
+}
 
+export function TextOption({ editor, ...props }) {
   const icon = <OptionIcon icon={faText} />;
 
   return (
     <MenuOption
-      handleClick={handleClick}
+      handleClick={() => handleTextOption(editor)}
       icon={icon}
       title={TEXT_OPTION_TITLE}
       {...props}

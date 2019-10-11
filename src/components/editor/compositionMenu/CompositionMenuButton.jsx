@@ -38,7 +38,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const CompositionMenuButton = ({ editor, query, ...props }) => {
+const CompositionMenuButton = React.forwardRef(({ editor, query, ...props }, menuRef) => {
   const [state, setState] = useState({
     coords: null,
     isMenuOpen: false,
@@ -131,13 +131,14 @@ const CompositionMenuButton = ({ editor, query, ...props }) => {
         <StyledIcon icon={faPlus} />
       </ButtonContainer>
       <CompositionMenu
+        ref={menuRef}
         editor={editor}
         handleClose={handleCloseMenu}
         isOpen={isMenuOpen}
       />
     </>
   );
-};
+});
 
 CompositionMenuButton.propTypes = {
   editor: PropTypes.object.isRequired,
