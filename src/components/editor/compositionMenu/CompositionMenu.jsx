@@ -86,12 +86,21 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
    */
   useEffect(() => {
     function handleKeyDown(event) {
+      const optionsToSelect = filteredOptions();
+
       if (event.key === 'ArrowUp') {
-        setSelectedIndex(prevIndex => mod(prevIndex - 1, filteredOptions().length));
+        setSelectedIndex(prevIndex => mod(prevIndex - 1, optionsToSelect.length));
       }
       if (event.key === 'ArrowDown') {
-        setSelectedIndex(prevIndex => mod(prevIndex + 1, filteredOptions().length));
+        setSelectedIndex(prevIndex => mod(prevIndex + 1, optionsToSelect.length));
       }
+      if (event.key === 'Enter') {
+        if (!optionsToSelect.length) return;
+
+        const { handleSelect } = optionsToSelect[selectedIndex];
+        handleSelect(editor);
+      }
+      if (event.key === 'Esc') handleClose();
     }
 
     const menuElement = menuRef.current;
