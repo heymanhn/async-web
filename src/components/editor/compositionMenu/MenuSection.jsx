@@ -9,28 +9,20 @@ const SectionTitle = styled.div(({ theme: { colors } }) => ({
   margin: '15px 0 8px 20px',
 }));
 
-const MenuSection = ({ editor, optionsList, sectionTitle, selectedOption }) => (
+const MenuSection = ({
+  optionsList,
+  sectionTitle,
+  ...props
+}) => (
   <>
     <SectionTitle>{sectionTitle}</SectionTitle>
-    {optionsList.map(({ title, Component }) => (
-      <Component
-        key={title}
-        editor={editor}
-        selectedOption={selectedOption}
-      />
-    ))}
+    {optionsList.map(({ title, Component }) => <Component key={title} {...props} />)}
   </>
 );
 
 MenuSection.propTypes = {
-  editor: PropTypes.object.isRequired,
   optionsList: PropTypes.array.isRequired,
   sectionTitle: PropTypes.string.isRequired,
-  selectedOption: PropTypes.string,
-};
-
-MenuSection.defaultProps = {
-  selectedOption: null,
 };
 
 export default MenuSection;

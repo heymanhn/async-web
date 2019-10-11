@@ -69,27 +69,16 @@ BulletedListButton.propTypes = {
 
 /* **** Composition menu options **** */
 
-export function handleBulletedListOption(editor) {
-  return editor.clearBlock().setListBlock(BULLETED_LIST);
-}
-export function handleNumberedListOption(editor) {
-  return editor.clearBlock().setListBlock(NUMBERED_LIST);
-}
-export function handleChecklistOption(editor) {
-  return editor.clearBlock().setListBlock(CHECKLIST);
-}
-
-const listOptionHandlers = {};
-listOptionHandlers[BULLETED_LIST] = handleBulletedListOption;
-listOptionHandlers[NUMBERED_LIST] = handleNumberedListOption;
-listOptionHandlers[CHECKLIST] = handleChecklistOption;
-
 function ListOption({ editor, listType, ...props }) {
+  function handleListOption() {
+    return editor.clearBlock().setListBlock(listType);
+  }
+
   const icon = <OptionIcon icon={ICONS[listType]} />;
 
   return (
     <MenuOption
-      handleClick={() => listOptionHandlers[listType](editor)}
+      handleInvoke={handleListOption}
       icon={icon}
       title={LIST_OPTION_TITLES[listType]}
       {...props}

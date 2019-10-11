@@ -47,6 +47,7 @@ function mod(x, n) {
 const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...props }, menuRef) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [optionToInvoke, setOptionToInvoke] = useState(null);
   const { value } = editor;
   const { anchorBlock, document } = value;
 
@@ -97,8 +98,8 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
       if (event.key === 'Enter') {
         if (!optionsToSelect.length) return;
 
-        const { handleSelect } = optionsToSelect[selectedIndex];
-        handleSelect(editor);
+        const option = optionsToSelect[selectedIndex];
+        setOptionToInvoke(option.title);
       }
       if (event.key === 'Esc') handleClose();
     }
@@ -150,7 +151,9 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
         <MenuSection
           key={o.sectionTitle}
           editor={editor}
+          afterOptionInvoked={() => setOptionToInvoke(null)}
           optionsList={o.optionsList}
+          optionToInvoke={optionToInvoke}
           sectionTitle={o.sectionTitle}
           selectedOption={optionsToSelect[selectedIndex].title}
         />

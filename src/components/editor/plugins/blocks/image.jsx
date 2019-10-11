@@ -58,7 +58,7 @@ export function ImageOption({ editor, ...props }) {
     <>
       <input {...getInputProps()} />
       <MenuOption
-        handleClick={openFileDialog}
+        handleInvoke={openFileDialog}
         icon={icon}
         title={IMAGE_OPTION_TITLE}
         {...props}

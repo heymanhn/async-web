@@ -30,7 +30,15 @@ const Title = styled.div(({ theme: { colors } }) => ({
   marginTop: '-2px',
 }));
 
-const MenuOption = ({ handleClick, icon, selectedOption, title, ...props }) => {
+const MenuOption = ({
+  afterOptionInvoked,
+  handleInvoke,
+  icon,
+  optionToInvoke,
+  selectedOption,
+  title,
+  ...props
+}) => {
   const optionRef = useRef(null);
 
   useEffect(() => {
@@ -45,14 +53,17 @@ const MenuOption = ({ handleClick, icon, selectedOption, title, ...props }) => {
   }, [selectedOption, title]);
 
   function handleAction(event) {
-    event.preventDefault();
-    return handleClick();
+    if (event) event.preventDefault();
+    handleInvoke();
+    return afterOptionInvoked();
   }
 
   // Don't let the toolbar handle the event, so that it won't reset its visibility
   function handleMouseDown(event) {
     event.preventDefault();
   }
+
+  if (optionToInvoke === title) handleAction();
 
   return (
     <Container
@@ -70,13 +81,16 @@ const MenuOption = ({ handleClick, icon, selectedOption, title, ...props }) => {
 };
 
 MenuOption.propTypes = {
-  handleClick: PropTypes.func.isRequired,
+  afterOptionInvoked: PropTypes.func.isRequired,
+  handleInvoke: PropTypes.func.isRequired,
   icon: PropTypes.object.isRequired,
+  optionToInvoke: PropTypes.string,
   selectedOption: PropTypes.string,
   title: PropTypes.string.isRequired,
 };
 
 MenuOption.defaultProps = {
+  optionToInvoke: null,
   selectedOption: null,
 };
 
