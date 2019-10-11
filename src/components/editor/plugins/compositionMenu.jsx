@@ -33,30 +33,29 @@ function CompositionMenu() {
   /* **** Hotkeys for selecting menu items **** */
   /* Only forward the keyboard event if the menu is open */
 
-  function handleArrowKey(key, editor, next, event) {
+  function propagateKeyDown(key, editor, next, event) {
     const menu = menuRef.current;
-    const rect = menu.getBoundingClientRect();
+    if (!menu) return next();
 
-    if (!rect.width && !rect.height) return next();
+    const rect = menu.getBoundingClientRect();
+    if (!rect.width && !rect.height) return next(); // means menu is not open
 
     event.preventDefault();
     const keyboardEvent = new KeyboardEvent('keydown', { key });
     return menu.dispatchEvent(keyboardEvent);
   }
 
-  function handleDownArrow(...args) {
-    return handleArrowKey('ArrowDown', ...args);
-  }
-
-  function handleUpArrow(...args) {
-    return handleArrowKey('ArrowUp', ...args);
-  }
+  const hotkeys = [
+    Hotkey('down', (...args) => propagateKeyDown('ArrowDown', ...args)),
+    Hotkey('up', (...args) => propagateKeyDown('ArrowUp', ...args)),
+    Hotkey('Enter', (...args) => propagateKeyDown('Enter', ...args)),
+    Hotkey('Esc', (...args) => propagateKeyDown('Esc', ...args)),
+  ];
 
   return [
     AddQueries({ isSlashCommand }),
     RenderEditor(displayMenu),
-    Hotkey('down', handleDownArrow),
-    Hotkey('up', handleUpArrow),
+    hotkeys,
   ];
 }
 
