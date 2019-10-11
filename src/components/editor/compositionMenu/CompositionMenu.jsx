@@ -105,7 +105,10 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
   function setSanitizedQuery() {
     let newQuery = anchorBlock.text;
     if (newQuery.startsWith('/')) newQuery = newQuery.substring(1);
-    if (newQuery !== query) setQuery(newQuery);
+    if (newQuery !== query) {
+      setQuery(newQuery);
+      setSelectedIndex(0);
+    }
   }
   if (isOpen) setSanitizedQuery();
   if (!isOpen) {
