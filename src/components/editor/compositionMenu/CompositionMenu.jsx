@@ -1,11 +1,10 @@
 /* eslint react/no-find-dom-node: 0 */
 /* eslint no-mixed-operators: 0 */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
-import useMountEffect from 'utils/hooks/useMountEffect';
 
 import optionsList from './optionsList';
 import MenuSection from './MenuSection';
@@ -85,16 +84,22 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
    *
    * https://stackoverflow.com/questions/39065010/why-react-event-handler-is-not-called-on-dispatchevent
    */
-  function handleKeyDown(event) {
-    if (event.key === 'ArrowUp') {
-      setSelectedIndex(prevIndex => mod(prevIndex - 1, filteredOptions().length));
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === 'ArrowUp') {
+        setSelectedIndex(prevIndex => mod(prevIndex - 1, filteredOptions().length));
+      }
+      if (event.key === 'ArrowDown') {
+        setSelectedIndex(prevIndex => mod(prevIndex + 1, filteredOptions().length));
+      }
     }
-    if (event.key === 'ArrowDown') {
-      setSelectedIndex(prevIndex => mod(prevIndex + 1, filteredOptions().length));
-    }
-  }
-  useMountEffect(() => {
-    menuRef.current.addEventListener('keydown', handleKeyDown);
+
+    const menuElement = menuRef.current;
+    menuElement.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      menuElement.removeEventListener('keydown', handleKeyDown);
+    };
   });
 
   function setSanitizedQuery() {

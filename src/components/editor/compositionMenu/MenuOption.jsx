@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -31,6 +31,19 @@ const Title = styled.div(({ theme: { colors } }) => ({
 }));
 
 const MenuOption = ({ handleClick, icon, selectedOption, title, ...props }) => {
+  const optionRef = useRef(null);
+
+  useEffect(() => {
+    if (selectedOption === title) {
+      // the options argument is not supported in IE:
+      // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+      //
+      // NOTE (HN): In the future when we have the menu showing up in either direction,
+      // we can support aligning the scroll to the bottom or top.
+      optionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [selectedOption, title]);
+
   function handleAction(event) {
     event.preventDefault();
     return handleClick();
@@ -47,6 +60,7 @@ const MenuOption = ({ handleClick, icon, selectedOption, title, ...props }) => {
       onClick={handleAction}
       onMouseDown={handleMouseDown}
       onKeyDown={handleAction}
+      ref={optionRef}
       {...props}
     >
       <IconContainer>{icon}</IconContainer>
