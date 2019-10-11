@@ -35,7 +35,7 @@ import {
 } from '../plugins/blocks/sectionBreak';
 import {
   IMAGE_OPTION_TITLE,
-  handleImageOption,
+  // TODO: handleImageOption,
   ImageOption,
 } from '../plugins/blocks/image';
 
@@ -107,7 +107,7 @@ const optionsList = [
     section: MEDIA_SECTION,
     title: IMAGE_OPTION_TITLE,
     Component: ImageOption,
-    handleSelect: handleImageOption,
+    // TODO: handleSelect: handleImageOption,
   },
 ];
 
