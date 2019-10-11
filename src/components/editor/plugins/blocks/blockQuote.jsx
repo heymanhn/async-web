@@ -52,16 +52,16 @@ BlockQuoteButton.propTypes = {
 
 /* **** Composition menu option **** */
 
-export function BlockQuoteOption({ editor, ...props }) {
-  function handleClick() {
-    return editor.clearBlock().setBlockQuote();
-  }
+export function handleBlockQuoteOption(editor) {
+  return editor.clearBlock().setBlockQuote();
+}
 
+export function BlockQuoteOption({ editor, ...props }) {
   const icon = <OptionIcon icon={faQuoteRight} />;
 
   return (
     <MenuOption
-      handleClick={handleClick}
+      handleClick={() => handleBlockQuoteOption(editor)}
       icon={icon}
       title={BLOCK_QUOTE_OPTION_TITLE}
       {...props}

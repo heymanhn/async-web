@@ -53,16 +53,23 @@ export function MediumFontButton({ editor }) {
 
 /* **** Composition Menu option **** */
 
-function HeadingOption({ editor, headingType, ...props }) {
-  function handleClick() {
-    return editor.clearBlock().setBlock(headingType);
-  }
+export function handleLargeTitleOption(editor) {
+  return editor.clearBlock().setBlock(LARGE_FONT);
+}
+export function handleSmallTitleOption(editor) {
+  return editor.clearBlock().setBlock(MEDIUM_FONT);
+}
 
+const headingsOptionHandlers = {};
+headingsOptionHandlers[LARGE_FONT] = handleLargeTitleOption;
+headingsOptionHandlers[MEDIUM_FONT] = handleSmallTitleOption;
+
+function HeadingOption({ editor, headingType, ...props }) {
   const icon = <HeadingOptionIcon number={headingType === LARGE_FONT ? 1 : 2} />;
 
   return (
     <MenuOption
-      handleClick={handleClick}
+      handleClick={() => headingsOptionHandlers[headingType](editor)}
       icon={icon}
       title={headingType === LARGE_FONT ? LARGE_TITLE_OPTION_TITLE : SMALL_TITLE_OPTION_TITLE}
       {...props}
