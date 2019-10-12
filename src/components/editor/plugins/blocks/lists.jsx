@@ -147,7 +147,8 @@ export function ListsPlugin() {
     if (editor.hasListItems()) {
       return editor
         .unwrapListBlocks()
-        .wrapBlock(type);
+        .wrapBlock(type)
+        .setBlocks(listItemType);
     }
 
     // Simplest case: setting the list type as desired
