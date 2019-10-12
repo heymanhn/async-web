@@ -17,11 +17,13 @@ import {
   CustomEnterAction,
   CustomBackspaceAction,
 } from '../helpers';
+import ChecklistItem from './ChecklistItem';
 
 const BULLETED_LIST = 'bulleted-list';
 const NUMBERED_LIST = 'numbered-list';
 const CHECKLIST = 'checklist';
 const LIST_ITEM = 'list-item';
+const CHECKLIST_ITEM = 'checklist-item';
 
 const ICONS = {};
 ICONS[BULLETED_LIST] = faListUl;
@@ -118,11 +120,20 @@ const ListItem = styled.li({
   width: '100%',
 });
 
+const Checklist = styled.ul({
+  marginTop: '1em',
+  marginBottom: 0,
+});
+
 export function ListsPlugin() {
   /* **** Commands **** */
 
   function setListBlock(editor, type) {
-    const hasListItems = editor.hasBlock(LIST_ITEM);
+    const defaultChecklistItem = {
+      type: CHECKLIST_ITEM,
+      data: { isChecked: false },
+    };
+    const listItemType = type === CHECKLIST ? defaultChecklistItem : LIST_ITEM;
 
     // This means the user is looking to un-set the list block
     if (editor.isWrappedBy(type)) {
@@ -131,8 +142,8 @@ export function ListsPlugin() {
         .unwrapBlock(type);
     }
 
-    // Converting a bulleted list to a numbered list, or vice versa
-    if (hasListItems) {
+    // Switching to a different type of list
+    if (editor.hasListItems()) {
       return editor
         .unwrapListBlocks()
         .wrapBlock(type);
@@ -141,17 +152,22 @@ export function ListsPlugin() {
     // Simplest case: setting the list type as desired
     return editor
       .unwrapAnyBlock()
-      .setBlocks(LIST_ITEM)
+      .setBlocks(listItemType)
       .wrapBlock(type);
   }
 
   function unwrapListBlocks(editor) {
     return editor
       .unwrapBlock(BULLETED_LIST)
-      .unwrapBlock(NUMBERED_LIST);
+      .unwrapBlock(NUMBERED_LIST)
+      .unwrapBlock(CHECKLIST);
   }
 
   /* **** Queries **** */
+
+  function hasListItems(editor) {
+    return editor.hasBlock(LIST_ITEM) || editor.hasBlock(CHECKLIST_ITEM);
+  }
 
   function isWrappedByList(editor) {
     return editor.isWrappedBy(BULLETED_LIST) || editor.isWrappedBy(NUMBERED_LIST);
@@ -169,15 +185,26 @@ export function ListsPlugin() {
     return <NumberedList {...attributes}>{children}</NumberedList>;
   }
 
+  function renderChecklist(props) {
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
+    return <Checklist {...attributes}>{children}</Checklist>;
+  }
+
   function renderListItem(props) {
     const { attributes, children } = props; /* eslint react/prop-types: 0 */
     return <ListItem {...attributes}>{children}</ListItem>;
   }
 
+  function renderChecklistItem(props) {
+    return <ChecklistItem {...props} />;
+  }
+
   const renderMethods = [
     RenderBlock(BULLETED_LIST, renderBulletedList),
     RenderBlock(NUMBERED_LIST, renderNumberedList),
+    RenderBlock(CHECKLIST, renderChecklist),
     RenderBlock(LIST_ITEM, renderListItem),
+    RenderBlock(CHECKLIST_ITEM, renderChecklistItem),
   ];
 
   /* **** Markdown **** */
@@ -192,6 +219,11 @@ export function ListsPlugin() {
       trigger: 'space',
       before: /^(1.)$/,
       change: change => change.setListBlock(NUMBERED_LIST),
+    }),
+    AutoReplace({
+      trigger: 'space',
+      before: /^(\[\])$/,
+      change: change => change.setListBlock(CHECKLIST),
     }),
   ];
 
@@ -260,6 +292,7 @@ export function ListsPlugin() {
   const hotkeys = [
     Hotkey('mod+shift+7', editor => editor.setListBlock(NUMBERED_LIST)),
     Hotkey('mod+shift+8', editor => editor.setListBlock(BULLETED_LIST)),
+    Hotkey('mod+shift+0', editor => editor.setListBlock(CHECKLIST)),
     CustomEnterAction(exitListAfterEmptyListItem),
     CustomBackspaceAction(resetListItemToParagraph),
     // CustomBackspaceAction(mergeAdjacentLists),
@@ -267,7 +300,7 @@ export function ListsPlugin() {
 
   return [
     AddCommands({ setListBlock, unwrapListBlocks }),
-    AddQueries({ isWrappedByList }),
+    AddQueries({ hasListItems, isWrappedByList }),
     renderMethods,
     markdownShortcuts,
     hotkeys,
