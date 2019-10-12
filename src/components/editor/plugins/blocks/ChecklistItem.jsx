@@ -5,16 +5,19 @@ import { faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faCheckSquare } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
-const Container = styled.div({
+const Container = styled.li({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
+  marginBottom: '5px',
+  width: '100%',
 });
 
 const IconContainer = styled.div({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  margin: '0 !important',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ ischecked, theme: { colors } }) => ({
@@ -23,16 +26,17 @@ const StyledIcon = styled(FontAwesomeIcon)(({ ischecked, theme: { colors } }) =>
 }));
 
 const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
-  color: isChecked ? colors.grey4 : 'initial',
+  color: isChecked ? colors.grey4 : colors.contentText,
   fontSize: '16px',
-  marginLeft: '10px',
+  margin: '0 0 0 10px !important',
 }));
 
 const ChecklistItem = ({ attributes, children, editor, node }) => {
   const isChecked = node.data.get('isChecked');
   const icon = isChecked ? faCheckSquare : faSquare;
 
-  function handleClick() {
+  function handleClick(event) {
+    event.preventDefault();
     return editor.setBlocks({ data: { isChecked: !isChecked } });
   }
 

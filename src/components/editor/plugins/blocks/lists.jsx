@@ -123,6 +123,7 @@ const ListItem = styled.li({
 const Checklist = styled.ul({
   marginTop: '1em',
   marginBottom: 0,
+  paddingLeft: '16px',
 });
 
 export function ListsPlugin() {
@@ -231,10 +232,7 @@ export function ListsPlugin() {
 
   // Pressing Enter while on a blank list item removes the blank list item and exits the list
   function exitListAfterEmptyListItem(editor, next) {
-    const { value } = editor;
-    const { anchorBlock } = value;
-
-    if (anchorBlock.type === 'list-item' && !anchorBlock.text) {
+    if (editor.hasListItems() && editor.isEmptyBlock()) {
       return editor
         .setBlocks(DEFAULT_NODE)
         .unwrapListBlocks();
