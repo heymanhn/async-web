@@ -49,7 +49,7 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [optionToInvoke, setOptionToInvoke] = useState(null);
   const { value } = editor;
-  const { anchorBlock, document } = value;
+  const { startBlock, document } = value;
 
   const handleClickOutside = () => {
     if (!isOpen) return;
@@ -59,7 +59,7 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
 
   // Always position the menu behind the entire block, so that it doesn't move as the user types
   function calculateMenuPosition() {
-    const path = document.getPath(anchorBlock.key);
+    const path = document.getPath(startBlock.key);
     const element = editor.findDOMNode(path);
     if (!element) return {};
 
@@ -113,7 +113,7 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
   });
 
   function setSanitizedQuery() {
-    let newQuery = anchorBlock.text;
+    let newQuery = startBlock.text;
     if (newQuery.startsWith('/')) newQuery = newQuery.substring(1);
     if (newQuery !== query) {
       setQuery(newQuery);

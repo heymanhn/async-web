@@ -12,8 +12,8 @@ function CompositionMenu() {
   /* **** Queries **** */
 
   function isSlashCommand(editor) {
-    const { anchorBlock } = editor.value;
-    return anchorBlock.type === DEFAULT_NODE && anchorBlock.text === '/';
+    const { startBlock } = editor.value;
+    return startBlock.type === DEFAULT_NODE && startBlock.text === '/';
   }
 
   /* **** Render the menu **** */

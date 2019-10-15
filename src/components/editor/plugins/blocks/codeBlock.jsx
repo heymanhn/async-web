@@ -153,11 +153,11 @@ export function CodeBlockPlugin() {
 
   function exitOnBackspace(editor, next) {
     const { value } = editor;
-    const { anchorBlock, previousBlock } = value;
+    const { startBlock, previousBlock } = value;
 
     if (editor.isEmptyParagraph() && editor.isWrappedBy(CODE_BLOCK)) {
-      editor.unwrapBlock(anchorBlock.key);
-      return previousBlock ? editor.removeNodeByKey(anchorBlock.key) : next();
+      editor.unwrapBlock(startBlock.key);
+      return previousBlock ? editor.removeNodeByKey(startBlock.key) : next();
     }
 
     return next();
