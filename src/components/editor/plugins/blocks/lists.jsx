@@ -219,7 +219,7 @@ export function ListsPlugin() {
     }),
     AutoReplace({
       trigger: 'space',
-      before: /^(1.)$/,
+      before: /^(1\.)$/,
       change: change => change.setListBlock(NUMBERED_LIST),
     }),
     AutoReplace({
