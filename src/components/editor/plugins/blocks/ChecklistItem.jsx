@@ -37,12 +37,16 @@ const ChecklistItem = ({ attributes, children, editor, node }) => {
 
   function handleClick(event) {
     event.preventDefault();
-    return editor.setBlocks({ data: { isChecked: !isChecked } });
+    return editor.setNodeByKey(node.key, { data: { isChecked: !isChecked } });
+  }
+
+  function handleMouseDown(event) {
+    event.preventDefault();
   }
 
   return (
     <Container {...attributes}>
-      <IconContainer onClick={handleClick}>
+      <IconContainer onClick={handleClick} onMouseDown={handleMouseDown}>
         <StyledIcon ischecked={isChecked.toString()} icon={icon} />
       </IconContainer>
       <Contents isChecked={isChecked}>
