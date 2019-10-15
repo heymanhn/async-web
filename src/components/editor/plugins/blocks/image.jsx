@@ -9,7 +9,14 @@ import uploadFileMutation from 'graphql/mutations/uploadFile';
 
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-import { AddCommands, AddSchema, RenderBlock } from '../helpers';
+import { DEFAULT_NODE } from 'components/editor/defaults';
+import {
+  AddCommands,
+  AddSchema,
+  CustomBackspaceAction,
+  CustomEnterAction,
+  RenderBlock,
+} from '../helpers';
 
 const IMAGE = 'image';
 export const IMAGE_OPTION_TITLE = 'Image';
@@ -126,9 +133,36 @@ export function Image() {
     );
   }
 
+  /* **** Custom keyboard actions **** */
+
+  function insertNewBlockOnEnter(editor, next) {
+    if (editor.hasBlock(IMAGE)) {
+      return editor.insertBlock(DEFAULT_NODE);
+    }
+
+    return next();
+  }
+
+  // Need to ensure there's at least a text block present in the composer before the image
+  // is deleted.
+  function ensureBlockPresentOnRemove(editor, next) {
+    if (editor.hasBlock(IMAGE)) {
+      const { startBlock } = editor.value;
+      const { key } = startBlock;
+
+      return editor
+        .insertBlock(DEFAULT_NODE)
+        .removeNodeByKey(key);
+    }
+
+    return next();
+  }
+
   return [
     AddSchema(imageSchema),
     AddCommands({ insertImage }),
     RenderBlock(IMAGE, renderImage),
+    CustomBackspaceAction(ensureBlockPresentOnRemove),
+    CustomEnterAction(insertNewBlockOnEnter),
   ];
 }
