@@ -71,7 +71,8 @@ const DiscussionMessage = ({
   const { hover, ...hoverProps } = useHover(mode !== 'display');
 
   const [message, setMessage] = useState(initialMessage);
-  const { author, createdAt, id: messageId, updatedAt, body } = message || {};
+  const { createdAt, id: messageId, updatedAt, body } = message || {};
+  const author = message.author || currentUser;
   const userToDisplay = author || currentUser;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
