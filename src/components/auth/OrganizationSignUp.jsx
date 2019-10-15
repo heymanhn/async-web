@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation, useApolloClient } from 'react-apollo';
+import { useMutation, useQuery, useApolloClient } from 'react-apollo';
 import { Redirect, navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
+import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import createUserMutation from 'graphql/mutations/createUser';
 import {
   setLocalUser,
@@ -65,7 +66,8 @@ const OrganizationSignUp = ({ organizationId }) => {
     },
   });
 
-  if (!organizationId) return <Redirect to="/" />;
+  const { data } = useQuery(isLoggedInQuery);
+  if ((data && data.isLoggedIn) || !organizationId) return <Redirect to="/" noThrow />;
 
   return (
     <Container>

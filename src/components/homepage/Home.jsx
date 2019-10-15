@@ -95,10 +95,12 @@ const Home = () => {
       const targetId = meetings[0].id;
 
       navigate(`/spaces/${targetId}`, { replace: true });
+    } else {
+      return <div>You are logged in</div>;
     }
   }
 
-  return <div>You are logged in</div>;
+  return null;
 };
 
 export default withPageTracking(Home, 'Logged Out Home');
