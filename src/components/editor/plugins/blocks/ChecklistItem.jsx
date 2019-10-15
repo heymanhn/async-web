@@ -35,18 +35,32 @@ const ChecklistItem = ({ attributes, children, editor, node }) => {
   const isChecked = node.data.get('isChecked');
   const icon = isChecked ? faCheckSquare : faSquare;
 
-  function handleClick(event) {
+  async function handleClick(event) {
     event.preventDefault();
-    return editor.setNodeByKey(node.key, { data: { isChecked: !isChecked } });
+    const { readOnly } = editor;
+    const change = editor.setNodeByKey(node.key, { data: { isChecked: !isChecked } });
+
+    // Needed so that the handleSubmit logic doesn't block the editor from updating correctly
+    if (readOnly) setTimeout(change.props.handleSubmit, 0);
+
+    return change;
   }
 
   function handleMouseDown(event) {
     event.preventDefault();
   }
 
+  function handleMouseUp(event) {
+    event.preventDefault();
+  }
+
   return (
     <Container {...attributes}>
-      <IconContainer onClick={handleClick} onMouseDown={handleMouseDown}>
+      <IconContainer
+        onClick={handleClick}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+      >
         <StyledIcon ischecked={isChecked.toString()} icon={icon} />
       </IconContainer>
       <Contents isChecked={isChecked}>
