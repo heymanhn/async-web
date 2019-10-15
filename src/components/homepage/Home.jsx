@@ -90,12 +90,15 @@ const Home = () => {
     // Assumes that an organization has at least one meeting space
     const { items } = data.meetings;
     const meetings = (items || []).map(i => i.meeting);
-    const targetId = meetings[0].id;
 
-    navigate(`/spaces/${targetId}`, { replace: true });
+    if (meetings.length) {
+      const targetId = meetings[0].id;
+
+      navigate(`/spaces/${targetId}`, { replace: true });
+    }
   }
 
-  return null;
+  return <div>You are logged in</div>;
 };
 
 export default withPageTracking(Home, 'Logged Out Home');
