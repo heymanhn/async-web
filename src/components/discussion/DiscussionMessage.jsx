@@ -73,7 +73,7 @@ const DiscussionMessage = ({
   const [message, setMessage] = useState(initialMessage);
   const { createdAt, id: messageId, updatedAt, body } = message || {};
   const author = message.author || currentUser;
-  const userToDisplay = author || currentUser;
+  const userToDisplay = author;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
