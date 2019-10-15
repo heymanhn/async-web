@@ -94,7 +94,6 @@ export function SectionBreak() {
     const { previousBlock } = value;
 
     if (editor.isEmptyParagraph() && previousBlock && previousBlock.type === SECTION_BREAK) {
-      next();
       return editor.removeNodeByKey(previousBlock.key);
     }
 

@@ -67,7 +67,11 @@ export const commands = {
 /* **** Queries  **** */
 
 export const queries = {
-  getParentBlock: editor => editor.value.document.getClosestBlock(editor.value.startBlock.key),
+  getParentBlock: (editor) => {
+    const { document, startBlock } = editor.value;
+    if (!startBlock) return null;
+    return document.getClosestBlock(startBlock.key);
+  },
   hasBlock: (editor, type) => editor.value.blocks.some(node => node.type === type),
   hasActiveMark: (editor, type) => editor.value.activeMarks.some(mark => mark.type === type),
   isAtBeginning: (editor) => {
