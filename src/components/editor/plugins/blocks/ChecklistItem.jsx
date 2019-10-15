@@ -13,12 +13,13 @@ const Container = styled.li({
   width: '100%',
 });
 
-const IconContainer = styled.div({
+const IconContainer = styled.div(({ isAuthor }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  cursor: isAuthor ? 'pointer' : 'not-allowed',
   margin: '0 !important',
-});
+}));
 
 const StyledIcon = styled(FontAwesomeIcon)(({ ischecked, theme: { colors } }) => ({
   color: ischecked === 'true' ? colors.grey3 : colors.grey4,
@@ -34,32 +35,30 @@ const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
 const ChecklistItem = ({ attributes, children, editor, node }) => {
   const isChecked = node.data.get('isChecked');
   const icon = isChecked ? faCheckSquare : faSquare;
+  const { props } = editor;
+  const { isAuthor } = props; /* eslint react/prop-types: 0 */
 
   async function handleClick(event) {
     event.preventDefault();
+    if (!isAuthor) return;
+
     const { readOnly } = editor;
     const change = editor.setNodeByKey(node.key, { data: { isChecked: !isChecked } });
 
     // Needed so that the handleSubmit logic doesn't block the editor from updating correctly
     if (readOnly) setTimeout(change.props.handleSubmit, 0);
-
-    return change;
   }
 
   function handleMouseDown(event) {
     event.preventDefault();
   }
 
-  function handleMouseUp(event) {
-    event.preventDefault();
-  }
-
   return (
     <Container {...attributes}>
       <IconContainer
+        isAuthor={isAuthor}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
       >
         <StyledIcon ischecked={isChecked.toString()} icon={icon} />
       </IconContainer>

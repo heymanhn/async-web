@@ -76,6 +76,7 @@ const DiscussionMessage = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
+  const isAuthor = userId === author.id;
 
   async function handleCreate({ payload, text }) {
     setIsSubmitting(true);
@@ -222,7 +223,7 @@ const DiscussionMessage = ({
         {messageId && mode === 'display' && (
           <StyledHoverMenu
             conversationId={conversationId}
-            isAuthor={userId === author.id}
+            isAuthor={isAuthor}
             isOpen={hover}
             messageId={messageId}
             onDelete={handleDelete}
@@ -235,6 +236,7 @@ const DiscussionMessage = ({
         forceDisableSubmit={forceDisableSubmit}
         initialHeight={240} // Give Arun more breathing room :-)
         initialValue={mode !== 'compose' ? body.payload : null}
+        isAuthor={isAuthor}
         isSubmitting={isSubmitting}
         mode={mode}
         onCancel={handleCancel}
