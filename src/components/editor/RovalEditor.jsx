@@ -113,7 +113,7 @@ class RovalEditor extends Component {
     const editor = this.editor.current;
     if (editor.isEmptyDocument()) return;
 
-    const { value } = this.state;
+    const { value } = editor;
     const { isPlainText, mode, onSubmit } = this.props;
     const text = Plain.serialize(value);
     const payload = JSON.stringify(value.toJSON());
@@ -122,7 +122,7 @@ class RovalEditor extends Component {
 
     if (!isPlainText && response && response.isNewDiscussion) return;
     if (mode === 'compose' && !isPlainText) this.clearEditorValue();
-    this.handleCancel({ saved: true });
+    if (mode !== 'display') this.handleCancel({ saved: true });
   }
 
   // Need to wrap setState in a setTimeout call due to:
