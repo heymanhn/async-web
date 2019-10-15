@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useMutation } from 'react-apollo';
 import { useDropzone } from 'react-dropzone';
 import { faImage } from '@fortawesome/free-solid-svg-icons';
@@ -25,8 +25,12 @@ export const IMAGE_OPTION_TITLE = 'Image';
 /* The image option uploads an image to the editor */
 
 export function ImageOption({ editor, ...props }) {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadStarted, setUploadStarted] = useState(false);
+  const initialState = {
+    selectedFile: null,
+    uploadStarted: false,
+  };
+  const [state, setState] = useState(initialState);
+  const { selectedFile, uploadStarted } = state;
 
   const [uploadFile] = useMutation(uploadFileMutation, {
     onCompleted: (data) => {
@@ -36,27 +40,31 @@ export function ImageOption({ editor, ...props }) {
       }
     },
   });
-  const { getInputProps, open, acceptedFiles } = useDropzone({
+
+  const onDrop = useCallback((acceptedFiles) => {
+    if (acceptedFiles.length > 0) {
+      setState(oldState => ({ ...oldState, selectedFile: acceptedFiles[0] }));
+    }
+  }, []);
+
+  const { getInputProps, open } = useDropzone({
     accept: 'image/*',
     maxSize: 10485760, // 10MB max
     multiple: false,
     noDrag: true,
     noClick: true,
     noKeyboard: true,
+    onDrop,
   });
 
   if (selectedFile && !uploadStarted) {
-    setUploadStarted(true);
+    setState(oldState => ({ ...oldState, uploadStarted: true }));
     uploadFile({ variables: { input: { file: selectedFile } } });
-  }
-  if (acceptedFiles.length > 0 && !selectedFile) {
-    setSelectedFile(acceptedFiles[0]);
   }
 
   function openFileDialog() {
     editor.clearBlock();
-    if (selectedFile) setSelectedFile(null);
-    if (uploadStarted) setUploadStarted(false);
+    setState(initialState);
     open();
   }
 
