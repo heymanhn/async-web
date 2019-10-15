@@ -245,7 +245,7 @@ export function ListsPlugin() {
   // Consistency with other rich text editors, where pressing backspace on an empty list item
   // resets the selection to a paragraph block
   function resetListItemToParagraph(editor, next) {
-    if (editor.hasBlock(LIST_ITEM) && editor.isAtBeginning()) {
+    if (editor.hasListItems() && editor.isAtBeginning()) {
       return editor
         .unwrapListBlocks()
         .setBlocks(DEFAULT_NODE);
