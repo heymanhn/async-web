@@ -90,9 +90,14 @@ const Home = () => {
     // Assumes that an organization has at least one meeting space
     const { items } = data.meetings;
     const meetings = (items || []).map(i => i.meeting);
-    const targetId = meetings[0].id;
 
-    navigate(`/spaces/${targetId}`, { replace: true });
+    if (meetings.length) {
+      const targetId = meetings[0].id;
+
+      navigate(`/spaces/${targetId}`, { replace: true });
+    } else {
+      return <div>You are logged in</div>;
+    }
   }
 
   return null;
