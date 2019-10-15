@@ -67,7 +67,7 @@ export const commands = {
 /* **** Queries  **** */
 
 export const queries = {
-  getParentBlock: editor => editor.value.document.getClosestBlock(editor.value.anchorBlock.key),
+  getParentBlock: editor => editor.value.document.getClosestBlock(editor.value.startBlock.key),
   hasBlock: (editor, type) => editor.value.blocks.some(node => node.type === type),
   hasActiveMark: (editor, type) => editor.value.activeMarks.some(mark => mark.type === type),
   isAtBeginning: (editor) => {
@@ -75,7 +75,7 @@ export const queries = {
     const { selection } = value;
     return selection.isCollapsed && selection.anchor.offset === 0;
   },
-  isEmptyBlock: editor => !editor.value.anchorBlock.text,
+  isEmptyBlock: editor => !editor.value.startBlock.text,
   isEmptyDocument: (editor) => {
     const { value } = editor;
     const { document: doc } = value;
@@ -90,8 +90,8 @@ export const queries = {
     return false;
   },
   isEmptyParagraph: (editor) => {
-    const { anchorBlock } = editor.value;
-    return anchorBlock.type === DEFAULT_NODE && !anchorBlock.text;
+    const { startBlock } = editor.value;
+    return startBlock.type === DEFAULT_NODE && !startBlock.text;
   },
   isWrappedBy: (editor, type) => editor.value.blocks.some(block => (
     !!editor.value.document.getClosest(block.key, parent => parent.type === type)

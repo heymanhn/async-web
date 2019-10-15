@@ -140,11 +140,11 @@ export function BlockQuotePlugin() {
 
   function exitOnBackspace(editor, next) {
     const { value } = editor;
-    const { anchorBlock, previousBlock } = value;
+    const { startBlock, previousBlock } = value;
 
     if (editor.isEmptyParagraph() && editor.isWrappedBy(BLOCK_QUOTE)) {
-      editor.unwrapBlock(anchorBlock.key);
-      return previousBlock ? editor.removeNodeByKey(anchorBlock.key) : next();
+      editor.unwrapBlock(startBlock.key);
+      return previousBlock ? editor.removeNodeByKey(startBlock.key) : next();
     }
 
     return next();
