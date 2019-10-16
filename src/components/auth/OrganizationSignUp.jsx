@@ -34,7 +34,12 @@ const InputField = styled.input({
   width: '200px',
 });
 
-const OrganizationSignUp = ({ organizationId }) => {
+/*
+ * Either organizationId or inviteCode must be provided.
+ * organizationId: someone needing to create an account to join an existing organization
+ * inviteCode: create an account and the organization
+ */
+const OrganizationSignUp = ({ organizationId, inviteCode }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,6 +52,7 @@ const OrganizationSignUp = ({ organizationId }) => {
         email,
         password,
         organizationId,
+        inviteCode,
       },
     },
     onCompleted: (data) => {
@@ -56,7 +62,8 @@ const OrganizationSignUp = ({ organizationId }) => {
       window.analytics.identify(userId, { name: fullName, email });
       client.writeData({ data: { isLoggedIn: true, isOnboarding: true } });
 
-      navigate(`/organizations/${organizationId}/invites`);
+      const returnPath = inviteCode ? '/organizations' : `/organizations/${organizationId}/invites`;
+      navigate(returnPath);
     },
     onError: (err) => {
       clearLocalUser();
@@ -66,8 +73,9 @@ const OrganizationSignUp = ({ organizationId }) => {
     },
   });
 
+  const requiredFieldsPresent = organizationId || inviteCode;
   const { data } = client.readQuery({ query: isLoggedInQuery });
-  if ((data && data.isLoggedIn) || !organizationId) return <Redirect to="/" noThrow />;
+  if ((data && data.isLoggedIn) || !requiredFieldsPresent) return <Redirect to="/" noThrow />;
 
   return (
     <Container>
@@ -104,10 +112,12 @@ const OrganizationSignUp = ({ organizationId }) => {
 
 OrganizationSignUp.propTypes = {
   organizationId: PropTypes.string,
+  inviteCode: PropTypes.string,
 };
 
 OrganizationSignUp.defaultProps = {
   organizationId: null,
+  inviteCode: null,
 };
 
 export default OrganizationSignUp;

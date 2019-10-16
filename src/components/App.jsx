@@ -21,6 +21,7 @@ import Login from 'components/Login';
 import Logout from 'components/Logout';
 import NotFound from 'components/navigation/NotFound';
 import OrganizationSignUp from 'components/auth/OrganizationSignUp';
+import OrganizationCreate from 'components/auth/OrganizationCreate';
 import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
 import MeetingSpace from 'components/meeting/MeetingSpace';
@@ -74,8 +75,9 @@ const App = () => (
   <Layout>
     <Router>
       <Home path="/" />
-
+      <OrganizationSignUp path="/register/:inviteCode" />
       <OrganizationSignUp path="/organizations/:organizationId/join" />
+      <OrganizationCreate path="/organizations" />
       <InviteTeam path="/organizations/:organizationId/invites" />
       <Login path="/login" />
       <Logout path="/logout" />
