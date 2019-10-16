@@ -44,7 +44,7 @@ const OrganizationTitle = styled.div(({ theme: { colors } }) => ({
 
 // Temporary UI
 const StyledButton = styled(Button)({
-  padding: '5px 20px',
+  padding: '3px 15px',
   margin: '20px',
 });
 

@@ -11,27 +11,41 @@ import {
 } from 'utils/auth';
 
 import Button from 'components/shared/Button';
+import { OnboardingInputField } from 'styles/shared';
+import OnboardingContainer from './OnboardingContainer';
 
-const Container = styled.div({
+const FieldsContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  marginTop: '100px',
+  marginTop: '25px',
+  width: '300px',
 });
 
-const Title = styled.div({
-  fontSize: '20px',
-  fontWeight: 600,
+const Label = styled.div(({ theme: { colors } }) => ({
+  alignSelf: 'flex-start',
+  color: colors.grey3,
+  fontSize: '14px',
+  fontWeight: 500,
+  marginBottom: '5px',
+}));
+
+const StyledButton = styled(Button)({
+  marginTop: '15px',
+  textAlign: 'center',
+  width: '300px',
 });
 
-const Label = styled.label({
+const RequestAccessMessage = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '12px',
+  marginTop: '12px',
+}));
 
-});
-
-const InputField = styled.input({
-  fontSize: '16px',
-  width: '200px',
-});
+const RequestAccessButton = styled.span(({ theme: { colors } }) => ({
+  color: colors.blue,
+  cursor: 'pointer',
+  paddingLeft: '3px',
+}));
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -66,27 +80,32 @@ const Login = () => {
   if (isLoggedIn) return <Redirect to="/" noThrow />;
 
   return (
-    <Container>
-      <Title>Welcome back</Title>
+    <OnboardingContainer title="Welcome back">
+      <FieldsContainer>
+        <Label htmlFor="email">EMAIL</Label>
+        <OnboardingInputField
+          name="email"
+          onChange={event => setEmail(event.target.value)}
+          type="email"
+          value={email}
+        />
 
-      <Label htmlFor="email">Email</Label>
-      <InputField
-        name="email"
-        onChange={event => setEmail(event.target.value)}
-        type="email"
-        value={email}
-      />
-
-      <Label htmlFor="password">Password</Label>
-      <InputField
-        name="password"
-        onChange={event => setPassword(event.target.value)}
-        type="password"
-        value={password}
-      />
-
-      <Button onClick={createSession} title="Sign in" />
-    </Container>
+        <Label htmlFor="password">PASSWORD</Label>
+        <OnboardingInputField
+          name="password"
+          onChange={event => setPassword(event.target.value)}
+          type="password"
+          value={password}
+        />
+      </FieldsContainer>
+      <StyledButton onClick={createSession} title="Sign in" />
+      <RequestAccessMessage>
+        Need to get your team on Roval?
+        <RequestAccessButton onClick={() => navigate('mailto:info@roval.co')}>
+          Request early access
+        </RequestAccessButton>
+      </RequestAccessMessage>
+    </OnboardingContainer>
   );
 };
 
