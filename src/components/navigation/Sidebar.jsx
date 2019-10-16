@@ -1,4 +1,5 @@
 import React from 'react';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 // hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
@@ -9,7 +10,7 @@ import organizationQuery from 'graphql/queries/organization';
 import { getLocalUser } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
-import Logout from 'components/Logout';
+import Button from 'components/shared/Button';
 import MeetingSpacesList from './MeetingSpacesList';
 import SwitchToButton from './SwitchToButton';
 
@@ -41,6 +42,12 @@ const OrganizationTitle = styled.div(({ theme: { colors } }) => ({
   fontWeight: 500,
 }));
 
+// Temporary UI
+const StyledButton = styled(Button)({
+  padding: '5px 20px',
+  margin: '20px',
+});
+
 const Sidebar = () => {
   const { organizationId } = getLocalUser();
   const [getOrganization, { loading, data }] = useLazyQuery(organizationQuery, {
@@ -71,7 +78,11 @@ const Sidebar = () => {
       <SwitchToButton />
 
       <MeetingSpacesList />
-      <Logout />
+      <StyledButton
+        onClick={() => navigate('/logout')}
+        title="Sign out"
+        type="grey"
+      />
     </Container>
   );
 };
