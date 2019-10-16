@@ -12,27 +12,46 @@ import {
 } from 'utils/auth';
 
 import Button from 'components/shared/Button';
+import { OnboardingInputField } from 'styles/shared';
+import OnboardingContainer from './OnboardingContainer';
 
-const Container = styled.div({
+const Description = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '16px',
+  marginBottom: '25px',
+}));
+
+const FieldsContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  marginTop: '100px',
+  width: '300px',
 });
 
-const Title = styled.div({
-  fontSize: '20px',
-  fontWeight: 600,
+const Label = styled.div(({ theme: { colors } }) => ({
+  alignSelf: 'flex-start',
+  color: colors.grey3,
+  fontSize: '14px',
+  fontWeight: 500,
+  marginBottom: '5px',
+}));
+
+const StyledButton = styled(Button)({
+  marginTop: '15px',
+  textAlign: 'center',
+  width: '300px',
 });
 
-const Label = styled.label({
+const LoginMessage = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '12px',
+  marginTop: '12px',
+}));
 
-});
-
-const InputField = styled.input({
-  fontSize: '16px',
-  width: '200px',
-});
+const SignInButton = styled.span(({ theme: { colors } }) => ({
+  color: colors.blue,
+  cursor: 'pointer',
+  paddingLeft: '3px',
+}));
 
 /*
  * Either organizationId or inviteCode must be provided.
@@ -78,35 +97,40 @@ const OrganizationSignUp = ({ organizationId, inviteCode }) => {
   if ((data && data.isLoggedIn) || !requiredFieldsPresent) return <Redirect to="/" noThrow />;
 
   return (
-    <Container>
-      <Title>Welcome to Roval</Title>
+    <OnboardingContainer title="Welcome to Roval!">
+      <Description>Create an account to get started.</Description>
+      <FieldsContainer>
+        <Label htmlFor="name">NAME</Label>
+        <OnboardingInputField
+          name="name"
+          onChange={event => setFullName(event.target.value)}
+          type="text"
+          value={fullName}
+        />
 
-      <Label htmlFor="name">Full Name</Label>
-      <InputField
-        name="name"
-        onChange={event => setFullName(event.target.value)}
-        type="text"
-        value={fullName}
-      />
+        <Label htmlFor="email">EMAIL</Label>
+        <OnboardingInputField
+          name="email"
+          onChange={event => setEmail(event.target.value)}
+          type="email"
+          value={email}
+        />
 
-      <Label htmlFor="email">Email</Label>
-      <InputField
-        name="email"
-        onChange={event => setEmail(event.target.value)}
-        type="email"
-        value={email}
-      />
-
-      <Label htmlFor="password">Password</Label>
-      <InputField
-        name="password"
-        onChange={event => setPassword(event.target.value)}
-        type="password"
-        value={password}
-      />
-
-      <Button onClick={createUser} title="Sign up" />
-    </Container>
+        <Label htmlFor="password">PASSWORD</Label>
+        <OnboardingInputField
+          name="password"
+          onChange={event => setPassword(event.target.value)}
+          placeholder="Minimum 8 characters"
+          type="password"
+          value={password}
+        />
+      </FieldsContainer>
+      <StyledButton onClick={createUser} title="Sign up" />
+      <LoginMessage>
+        Already have an account?
+        <SignInButton onClick={() => navigate('/login')}>Sign in</SignInButton>
+      </LoginMessage>
+    </OnboardingContainer>
   );
 };
 
