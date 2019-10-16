@@ -73,8 +73,9 @@ const OrganizationSignUp = ({ organizationId, inviteCode }) => {
     },
   });
 
+  const requiredFieldsPresent = organizationId || inviteCode;
   const { data } = client.readQuery({ query: isLoggedInQuery });
-  if ((data && data.isLoggedIn) || !(organizationId || inviteCode)) return <Redirect to="/" noThrow />;
+  if ((data && data.isLoggedIn) || !requiredFieldsPresent) return <Redirect to="/" noThrow />;
 
   return (
     <Container>
