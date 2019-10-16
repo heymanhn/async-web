@@ -32,6 +32,8 @@ const StyledImage = styled.img({
 const Title = styled.div({
   fontSize: '24px',
   fontWeight: 500,
+  textAlign: 'center',
+  width: '300px',
 });
 
 const OnboardingContainer = ({ children, title }) => (

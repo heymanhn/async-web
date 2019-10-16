@@ -58,7 +58,7 @@ const SignInButton = styled.span(({ theme: { colors } }) => ({
  * organizationId: someone needing to create an account to join an existing organization
  * inviteCode: create an account and the organization
  */
-const OrganizationSignUp = ({ organizationId, inviteCode }) => {
+const SignUp = ({ organizationId, inviteCode }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -134,14 +134,14 @@ const OrganizationSignUp = ({ organizationId, inviteCode }) => {
   );
 };
 
-OrganizationSignUp.propTypes = {
+SignUp.propTypes = {
   organizationId: PropTypes.string,
   inviteCode: PropTypes.string,
 };
 
-OrganizationSignUp.defaultProps = {
+SignUp.defaultProps = {
   organizationId: null,
   inviteCode: null,
 };
 
-export default OrganizationSignUp;
+export default SignUp;
