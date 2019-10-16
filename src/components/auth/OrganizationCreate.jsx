@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMutation, useApolloClient } from 'react-apollo';
+import { useMutation } from 'react-apollo';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
@@ -26,7 +26,6 @@ const InputField = styled.input({
 
 const OrganizationCreate = () => {
   const [title, setTitle] = useState('');
-  const client = useApolloClient();
 
   const [createOrganization] = useMutation(createOrganizationMutation, {
     variables: {
@@ -36,7 +35,6 @@ const OrganizationCreate = () => {
     },
     onCompleted: (data) => {
       const { id: organizationId } = data.createOrganization;
-      client.writeData({ data: { createdOrganization: true, isOnboarding: true } });
 
       navigate(`/organizations/${organizationId}/invites`);
     },

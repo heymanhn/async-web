@@ -34,6 +34,11 @@ const InputField = styled.input({
   width: '200px',
 });
 
+/*
+ * Either organizationId or inviteCode must be provided.
+ * organizationId: someone needing to create an account to join an existing organization
+ * inviteCode: create an account and the organization
+ */
 const OrganizationSignUp = ({ organizationId, inviteCode }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
