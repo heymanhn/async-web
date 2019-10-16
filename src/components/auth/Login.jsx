@@ -50,6 +50,7 @@ const Login = () => {
 
       setLocalUser({ userId, userToken, organizationId });
       window.analytics.identify(userId, { name: fullName, email });
+      client.writeData({ data: { isLoggedIn: true } });
 
       navigate('/');
     },
