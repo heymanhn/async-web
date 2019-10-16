@@ -6,22 +6,17 @@ import styled from '@emotion/styled';
 import createOrganizationMutation from 'graphql/mutations/createOrganization';
 
 import Button from 'components/shared/Button';
+import { OnboardingInputField } from 'styles/shared';
+import OnboardingContainer from './OnboardingContainer';
 
-const Container = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  marginTop: '100px',
+const FieldsContainer = styled.div({
+  marginTop: '30px',
 });
 
-const Title = styled.div({
-  fontSize: '20px',
-  fontWeight: 600,
-});
-
-const InputField = styled.input({
-  fontSize: '16px',
-  width: '200px',
+const StyledButton = styled(Button)({
+  marginTop: '15px',
+  textAlign: 'center',
+  width: '300px',
 });
 
 const OrganizationCreate = () => {
@@ -44,17 +39,19 @@ const OrganizationCreate = () => {
   });
 
   return (
-    <Container>
-      <Title>What’s the name of your company or team?</Title>
-      <InputField
-        name="name"
-        onChange={event => setTitle(event.target.value)}
-        type="text"
-        value={title}
-      />
+    <OnboardingContainer title="What’s the name of your company or team?">
+      <FieldsContainer>
+        <OnboardingInputField
+          name="organizationName"
+          onChange={event => setTitle(event.target.value)}
+          placeholder="e.g. Acme"
+          type="text"
+          value={title}
+        />
+      </FieldsContainer>
 
-      <Button onClick={createOrganization} title="Next" />
-    </Container>
+      <StyledButton onClick={createOrganization} title="Next" />
+    </OnboardingContainer>
   );
 };
 
