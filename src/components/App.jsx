@@ -21,6 +21,7 @@ import Login from 'components/Login';
 import Logout from 'components/Logout';
 import NotFound from 'components/navigation/NotFound';
 import OrganizationSignUp from 'components/auth/OrganizationSignUp';
+import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
 import MeetingSpace from 'components/meeting/MeetingSpace';
 import Discussion from 'components/discussion/Discussion';
@@ -62,6 +63,7 @@ const client = new ApolloClient({
 // Initialize the local graphql cache
 const generateDefaultData = () => ({
   isLoggedIn: isLocalTokenPresent(),
+  isOnboarding: false,
   mediaBreakpoint: getBreakpoint(),
   selectedMeetingId: null,
 });
@@ -74,6 +76,7 @@ const App = () => (
       <Home path="/" />
 
       <OrganizationSignUp path="/organizations/:organizationId/join" />
+      <InviteTeam path="/organizations/:organizationId/invites" />
       <Login path="/login" />
       <Logout path="/logout" />
 

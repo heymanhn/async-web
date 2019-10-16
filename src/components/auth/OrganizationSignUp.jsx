@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation, useQuery, useApolloClient } from 'react-apollo';
+import { useMutation, useApolloClient } from 'react-apollo';
 import { Redirect, navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
@@ -54,9 +54,9 @@ const OrganizationSignUp = ({ organizationId }) => {
 
       setLocalUser({ userId, userToken, organizationId });
       window.analytics.identify(userId, { name: fullName, email });
-      client.writeData({ data: { isLoggedIn: true } });
+      client.writeData({ data: { isLoggedIn: true, isOnboarding: true } });
 
-      navigate('/');
+      navigate(`/organizations/${organizationId}/invites`);
     },
     onError: (err) => {
       clearLocalUser();
@@ -66,7 +66,7 @@ const OrganizationSignUp = ({ organizationId }) => {
     },
   });
 
-  const { data } = useQuery(isLoggedInQuery);
+  const { data } = client.readQuery({ query: isLoggedInQuery });
   if ((data && data.isLoggedIn) || !organizationId) return <Redirect to="/" noThrow />;
 
   return (
