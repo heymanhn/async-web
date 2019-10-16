@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApolloClient, useQuery } from 'react-apollo';
-import { Redirect } from '@reach/router';
+import { navigate } from '@reach/router';
+import Button from 'components/shared/Button';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import { clearLocalUser } from 'utils/auth';
@@ -13,14 +14,12 @@ const Logout = () => {
   async function handleLogout() {
     await clearLocalUser();
     client.resetStore();
+    navigate('/');
   }
 
-  if (data.isLoggedIn) {
-    handleLogout();
-    return <div>Logging out...</div>;
-  }
-
-  return <Redirect to="/" noThrow />;
+  return (
+    <Button onClick={handleLogout} title="Sign out" />
+  );
 };
 
 export default Logout;

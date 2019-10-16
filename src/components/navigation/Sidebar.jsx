@@ -9,6 +9,7 @@ import organizationQuery from 'graphql/queries/organization';
 import { getLocalUser } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
+import Logout from 'components/Logout';
 import MeetingSpacesList from './MeetingSpacesList';
 import SwitchToButton from './SwitchToButton';
 
@@ -70,6 +71,7 @@ const Sidebar = () => {
       <SwitchToButton />
 
       <MeetingSpacesList />
+      <Logout />
     </Container>
   );
 };
