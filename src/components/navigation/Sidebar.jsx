@@ -43,9 +43,15 @@ const OrganizationTitle = styled.div(({ theme: { colors } }) => ({
 }));
 
 // Temporary UI
+const SignOutButtonContainer = styled.div(({ theme: { colors } }) => ({
+  background: colors.darkBlue,
+  position: 'sticky',
+  bottom: '20px',
+  padding: '20px',
+}));
+
 const StyledButton = styled(Button)({
   padding: '3px 15px',
-  margin: '20px',
 });
 
 const Sidebar = () => {
@@ -78,11 +84,13 @@ const Sidebar = () => {
       <SwitchToButton />
 
       <MeetingSpacesList />
-      <StyledButton
-        onClick={() => navigate('/logout')}
-        title="Sign out"
-        type="grey"
-      />
+      <SignOutButtonContainer>
+        <StyledButton
+          onClick={() => navigate('/logout')}
+          title="Sign out"
+          type="grey"
+        />
+      </SignOutButtonContainer>
     </Container>
   );
 };
