@@ -62,8 +62,8 @@ const Login = () => {
     },
   });
 
-  const { data } = client.readQuery({ query: isLoggedInQuery });
-  if (data && data.isLoggedIn) return <Redirect to="/" noThrow />;
+  const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
+  if (isLoggedIn) return <Redirect to="/" noThrow />;
 
   return (
     <Container>

@@ -93,8 +93,8 @@ const SignUp = ({ organizationId, inviteCode }) => {
   });
 
   const requiredFieldsPresent = organizationId || inviteCode;
-  const { data } = client.readQuery({ query: isLoggedInQuery });
-  if ((data && data.isLoggedIn) || !requiredFieldsPresent) return <Redirect to="/" noThrow />;
+  const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
+  if (isLoggedIn || !requiredFieldsPresent) return <Redirect to="/" noThrow />;
 
   return (
     <OnboardingContainer title="Welcome to Roval!">
