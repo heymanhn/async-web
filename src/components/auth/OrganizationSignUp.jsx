@@ -12,13 +12,7 @@ import {
 } from 'utils/auth';
 
 import Button from 'components/shared/Button';
-
-const Container = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  marginTop: '100px',
-});
+import OnboardingContainer from './OnboardingContainer';
 
 const Title = styled.div({
   fontSize: '20px',
@@ -78,7 +72,7 @@ const OrganizationSignUp = ({ organizationId, inviteCode }) => {
   if ((data && data.isLoggedIn) || !requiredFieldsPresent) return <Redirect to="/" noThrow />;
 
   return (
-    <Container>
+    <OnboardingContainer>
       <Title>Welcome to Roval</Title>
 
       <Label htmlFor="name">Full Name</Label>
@@ -106,7 +100,7 @@ const OrganizationSignUp = ({ organizationId, inviteCode }) => {
       />
 
       <Button onClick={createUser} title="Sign up" />
-    </Container>
+    </OnboardingContainer>
   );
 };
 
