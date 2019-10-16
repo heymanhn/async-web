@@ -8,9 +8,7 @@ const OuterContainer = styled.div({
   display: 'flex',
   alignItems: 'flex-start',
   justifyContent: 'center',
-  marginTop: '100px',
   width: '100%',
-  height: '100vh',
 });
 
 const InnerContainer = styled.div(({ theme: { colors } }) => ({
@@ -20,6 +18,7 @@ const InnerContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
+  marginTop: '100px',
   padding: '50px',
   width: '600px',
 }));
