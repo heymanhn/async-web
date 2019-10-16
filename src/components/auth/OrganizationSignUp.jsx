@@ -41,6 +41,18 @@ const StyledButton = styled(Button)({
   width: '300px',
 });
 
+const LoginMessage = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '12px',
+  marginTop: '12px',
+}));
+
+const SignInButton = styled.span(({ theme: { colors } }) => ({
+  color: colors.blue,
+  cursor: 'pointer',
+  paddingLeft: '3px',
+}));
+
 /*
  * Either organizationId or inviteCode must be provided.
  * organizationId: someone needing to create an account to join an existing organization
@@ -114,6 +126,10 @@ const OrganizationSignUp = ({ organizationId, inviteCode }) => {
         />
       </FieldsContainer>
       <StyledButton onClick={createUser} title="Sign up" />
+      <LoginMessage>
+        Already have an account?
+        <SignInButton onClick={() => navigate('/login')}>Sign in</SignInButton>
+      </LoginMessage>
     </OnboardingContainer>
   );
 };
