@@ -42,13 +42,13 @@ const OrganizationCreate = () => {
     <OnboardingContainer title="What’s the name of your company or team?">
       <FieldsContainer>
         <OnboardingInputField
+          name="organizationName"
           onChange={event => setTitle(event.target.value)}
           placeholder="e.g. Acme"
           type="text"
           value={title}
         />
       </FieldsContainer>
-
 
       <StyledButton onClick={createOrganization} title="Next" />
     </OnboardingContainer>

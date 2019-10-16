@@ -7,29 +7,26 @@ import styled from '@emotion/styled';
 import createInvitesMutation from 'graphql/mutations/createInvites';
 
 import Button from 'components/shared/Button';
+import { OnboardingInputField } from 'styles/shared';
+import OnboardingContainer from './OnboardingContainer';
 
-const Container = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  marginTop: '100px',
-});
-
-const Title = styled.div({
-  fontSize: '20px',
-  fontWeight: 600,
-});
-
-const InputField = styled.input({
-  fontSize: '16px',
-  width: '200px',
+const FieldsContainer = styled.div({
+  marginTop: '30px',
+  width: '300px',
 });
 
 const SkipStep = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey4,
+  color: colors.grey3,
   cursor: 'pointer',
-  fontSize: '14px',
+  fontSize: '12px',
+  marginTop: '12px',
 }));
+
+const StyledButton = styled(Button)({
+  marginTop: '15px',
+  textAlign: 'center',
+  width: '300px',
+});
 
 const InviteTeam = ({ organizationId }) => {
   const [firstEmail, setFirstEmail] = useState('');
@@ -61,38 +58,39 @@ const InviteTeam = ({ organizationId }) => {
   if (!organizationId) return <Redirect to="/" noThrow />;
 
   return (
-    <Container>
-      <Title>Invite your team by email</Title>
+    <OnboardingContainer title="Invite your team by email">
+      <FieldsContainer>
+        <OnboardingInputField
+          name="firstEmail"
+          onChange={event => setFirstEmail(event.target.value)}
+          placeholder="jane@example.com"
+          type="email"
+          value={firstEmail}
+        />
+        <OnboardingInputField
+          name="secondEmail"
+          onChange={event => setSecondEmail(event.target.value)}
+          placeholder="jack@example.com"
+          type="email"
+          value={secondEmail}
+        />
+        <OnboardingInputField
+          name="thirdEmail"
+          onChange={event => setThirdEmail(event.target.value)}
+          placeholder="jess@example.com"
+          type="email"
+          value={thirdEmail}
+        />
+      </FieldsContainer>
 
-      <InputField
-        name="firstEmail"
-        onChange={event => setFirstEmail(event.target.value)}
-        type="email"
-        value={firstEmail}
-      />
-
-      <InputField
-        name="secondEmail"
-        onChange={event => setSecondEmail(event.target.value)}
-        type="email"
-        value={secondEmail}
-      />
-
-      <InputField
-        name="thirdEmail"
-        onChange={event => setThirdEmail(event.target.value)}
-        type="email"
-        value={thirdEmail}
-      />
-
-      <Button
+      <StyledButton
         isDisabled={!gatherEmails().length}
         onClick={handleCreateInvites}
-        title="Invite Teammates"
+        title="Send invites"
       />
 
-      <SkipStep onClick={() => navigate('/')}>Skip</SkipStep>
-    </Container>
+      <SkipStep onClick={() => navigate('/')}>Not now, thanks</SkipStep>
+    </OnboardingContainer>
   );
 };
 
