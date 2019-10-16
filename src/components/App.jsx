@@ -17,7 +17,7 @@ import getBreakpoint from 'utils/mediaQuery';
 
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
-import Login from 'components/Login';
+import Login from 'components/auth/Login';
 import Logout from 'components/Logout';
 import NotFound from 'components/navigation/NotFound';
 import SignUp from 'components/auth/SignUp';

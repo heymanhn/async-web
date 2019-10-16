@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { useMutation, useApolloClient } from 'react-apollo';
 import { Redirect, navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
-import createUserMutation from 'graphql/mutations/createUser';
+import createSessionMutation from 'graphql/mutations/createSession';
 import {
   setLocalUser,
   clearLocalUser,
@@ -15,15 +14,10 @@ import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
 import OnboardingContainer from './OnboardingContainer';
 
-const Description = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '16px',
-  marginBottom: '25px',
-}));
-
 const FieldsContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
+  marginTop: '25px',
   width: '300px',
 });
 
@@ -41,48 +35,38 @@ const StyledButton = styled(Button)({
   width: '300px',
 });
 
-const LoginMessage = styled.div(({ theme: { colors } }) => ({
+const RequestAccessMessage = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '12px',
   marginTop: '12px',
 }));
 
-const SignInButton = styled.span(({ theme: { colors } }) => ({
+const RequestAccessButton = styled.span(({ theme: { colors } }) => ({
   color: colors.blue,
   cursor: 'pointer',
   paddingLeft: '3px',
 }));
 
-/*
- * Either organizationId or inviteCode must be provided.
- * organizationId: someone needing to create an account to join an existing organization
- * inviteCode: create an account and the organization
- */
-const SignUp = ({ organizationId, inviteCode }) => {
-  const [fullName, setFullName] = useState('');
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const client = useApolloClient();
 
-  const [createUser] = useMutation(createUserMutation, {
+  const [createSession] = useMutation(createSessionMutation, {
     variables: {
       input: {
-        fullName,
         email,
         password,
-        organizationId,
-        inviteCode,
       },
     },
     onCompleted: (data) => {
-      const { id: userId, token: userToken } = data.createUser;
+      const { id: userId, token: userToken, fullName, organizationId } = data.createSession;
 
       setLocalUser({ userId, userToken, organizationId });
       window.analytics.identify(userId, { name: fullName, email });
-      client.writeData({ data: { isLoggedIn: true, isOnboarding: true } });
+      client.writeData({ data: { isLoggedIn: true } });
 
-      const returnPath = inviteCode ? '/organizations' : `/organizations/${organizationId}/invites`;
-      navigate(returnPath);
+      navigate('/');
     },
     onError: (err) => {
       clearLocalUser();
@@ -92,22 +76,12 @@ const SignUp = ({ organizationId, inviteCode }) => {
     },
   });
 
-  const requiredFieldsPresent = organizationId || inviteCode;
   const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
-  if (isLoggedIn || !requiredFieldsPresent) return <Redirect to="/" noThrow />;
+  if (isLoggedIn) return <Redirect to="/" noThrow />;
 
   return (
-    <OnboardingContainer title="Welcome to Roval!">
-      <Description>Create an account to get started.</Description>
+    <OnboardingContainer title="Welcome back">
       <FieldsContainer>
-        <Label htmlFor="name">NAME</Label>
-        <OnboardingInputField
-          name="name"
-          onChange={event => setFullName(event.target.value)}
-          type="text"
-          value={fullName}
-        />
-
         <Label htmlFor="email">EMAIL</Label>
         <OnboardingInputField
           name="email"
@@ -120,28 +94,19 @@ const SignUp = ({ organizationId, inviteCode }) => {
         <OnboardingInputField
           name="password"
           onChange={event => setPassword(event.target.value)}
-          placeholder="Minimum 8 characters"
           type="password"
           value={password}
         />
       </FieldsContainer>
-      <StyledButton onClick={createUser} title="Sign up" />
-      <LoginMessage>
-        Already have an account?
-        <SignInButton onClick={() => navigate('/login')}>Sign in</SignInButton>
-      </LoginMessage>
+      <StyledButton onClick={createSession} title="Sign in" />
+      <RequestAccessMessage>
+        Need to get your team on Roval?
+        <RequestAccessButton onClick={() => navigate('mailto:info@roval.co')}>
+          Request early access
+        </RequestAccessButton>
+      </RequestAccessMessage>
     </OnboardingContainer>
   );
 };
 
-SignUp.propTypes = {
-  organizationId: PropTypes.string,
-  inviteCode: PropTypes.string,
-};
-
-SignUp.defaultProps = {
-  organizationId: null,
-  inviteCode: null,
-};
-
-export default SignUp;
+export default Login;
