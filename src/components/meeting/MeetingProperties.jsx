@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 import addParticipantMutation from 'graphql/mutations/addParticipant';
 import removeParticipantMutation from 'graphql/mutations/removeParticipant';
 import useClickOutside from 'utils/hooks/useClickOutside';
-import { getLocalUser } from 'utils/auth';
+import { getLocalAppState } from 'utils/auth';
 
 import ParticipantsSelector from './ParticipantsSelector';
 
@@ -105,7 +105,7 @@ const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
     isOpen: isSelectorOpen,
     ref: selector,
   });
-  const { organizationId } = getLocalUser();
+  const { organizationId } = getLocalAppState();
 
   return (
     <Container ref={selector}>

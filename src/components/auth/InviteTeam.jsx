@@ -5,6 +5,7 @@ import { Redirect, navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import createInvitesMutation from 'graphql/mutations/createInvites';
+import { setLocalAppState } from 'utils/auth';
 
 import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
@@ -33,16 +34,19 @@ const InviteTeam = ({ organizationId }) => {
   const [secondEmail, setSecondEmail] = useState('');
   const [thirdEmail, setThirdEmail] = useState('');
   const client = useApolloClient();
-  client.writeData({ data: { isOnboarding: false } });
+
+  function handleSkip() {
+    setLocalAppState({ isOnboarding: false });
+    client.writeData({ data: { isOnboarding: false } });
+    navigate('/');
+  }
 
   function gatherEmails() {
     return [firstEmail, secondEmail, thirdEmail].filter(e => e !== '');
   }
 
   const [createInvites] = useMutation(createInvitesMutation, {
-    onCompleted: () => {
-      navigate('/');
-    },
+    onCompleted: handleSkip,
     onError: (err) => {
       console.dir(err); // TODO: Error handling on the page
     },
@@ -89,7 +93,7 @@ const InviteTeam = ({ organizationId }) => {
         title="Send invites"
       />
 
-      <SkipStep onClick={() => navigate('/')}>Not now, thanks</SkipStep>
+      <SkipStep onClick={handleSkip}>Not now, thanks</SkipStep>
     </OnboardingContainer>
   );
 };
