@@ -14,3 +14,7 @@ export function track(event, properties) {
 export function identify(userId, properties) {
   window.analytics.identify(userId, properties);
 }
+
+export function reset() {
+  window.analytics.reset();
+}

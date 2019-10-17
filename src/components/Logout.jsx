@@ -4,6 +4,7 @@ import { Redirect } from '@reach/router';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import { clearLocalUser, clearLocalAppState } from 'utils/auth';
+import { reset } from 'utils/analytics';
 
 const Logout = () => {
   const client = useApolloClient();
@@ -13,6 +14,8 @@ const Logout = () => {
   async function handleLogout() {
     await clearLocalUser();
     await clearLocalAppState();
+    reset();
+
     client.resetStore();
   }
 
