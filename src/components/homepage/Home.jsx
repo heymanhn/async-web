@@ -42,7 +42,7 @@ const Home = () => {
 
       navigate(`/spaces/${targetId}`, { replace: true });
     } else {
-      return <div>You are logged in</div>;
+      return <div>You are logged in, but you should not be on this page.</div>;
     }
   }
 
