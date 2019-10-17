@@ -46,6 +46,10 @@ const OrganizationTitle = styled.div(({ theme: { colors } }) => ({
 
 // Temporary UI
 const SignOutButtonContainer = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+
   background: colors.darkBlue,
   position: 'sticky',
   bottom: '0px',
@@ -86,7 +90,14 @@ const Sidebar = () => {
       <SwitchToButton />
 
       <MeetingSpacesList />
+
+      {/* NOTE: Temporary buttons here */}
       <SignOutButtonContainer>
+        <StyledButton
+          onClick={() => navigate(`/organizations/${organizationId}/invites`)}
+          title="Send invites"
+          type="grey"
+        />
         <StyledButton
           onClick={() => navigate('/logout')}
           title="Sign out"
