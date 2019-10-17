@@ -1,12 +1,10 @@
-import useMountEffect from 'utils/hooks/useMountEffect';
-
 /*
  * These calls seem redundant for now, but will be valuable when we need to do extra
  * processing for some/all of them
  */
 
-export function usePageTracking(pageTitle) {
-  useMountEffect(() => window.analytics.page(pageTitle));
+export function page(pageTitle, properties) {
+  window.analytics.page(pageTitle, properties);
 }
 
 export function track(event, properties) {
