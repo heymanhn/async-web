@@ -15,6 +15,8 @@ import MeetingSpacesList from './MeetingSpacesList';
 import SwitchToButton from './SwitchToButton';
 
 const Container = styled.div(({ theme: { colors, sidebarWidth } }) => ({
+  display: 'flex',
+  flexDirection: 'column',
   background: colors.darkBlue,
   overflowX: 'hidden',
   overflowY: 'scroll',
@@ -46,7 +48,7 @@ const OrganizationTitle = styled.div(({ theme: { colors } }) => ({
 const SignOutButtonContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.darkBlue,
   position: 'sticky',
-  bottom: '20px',
+  bottom: '0px',
   padding: '20px',
 }));
 
