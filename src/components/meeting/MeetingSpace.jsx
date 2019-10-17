@@ -9,6 +9,8 @@ import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
 import useSelectedMeeting from 'utils/hooks/useSelectedMeeting';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
+import useMountEffect from 'utils/hooks/useMountEffect';
+import { page } from 'utils/analytics';
 
 import NotFound from 'components/navigation/NotFound';
 import DiscussionRow from './DiscussionRow';
@@ -46,6 +48,7 @@ const MeetingSpace = ({ meetingId }) => {
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionsListRef);
   const [isFetching, setIsFetching] = useState(false);
   const { markAsRead } = useViewedReaction();
+  useMountEffect(() => page('Meeting Space', { meetingSpaceId: meetingId }));
 
   checkSelectedMeeting(meetingId);
 
