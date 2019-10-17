@@ -10,8 +10,9 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import localStateQuery from 'graphql/queries/localState';
 import meetingsQuery from 'graphql/queries/meetings';
 import { getLocalAppState } from 'utils/auth';
-import withPageTracking from 'utils/withPageTracking';
+import { usePageTracking } from 'utils/analytics';
 import { site } from 'data/siteMetadata.json';
+
 import EmailCaptureForm from './EmailCaptureForm';
 
 const Container = styled.div(({ theme: { colors, maxViewport } }) => ({
@@ -58,6 +59,8 @@ const Description = styled.p({
 });
 
 const Home = () => {
+  usePageTracking('Logged Out Home');
+
   const { data: localStateData } = useQuery(localStateQuery);
   const [getMeetings, { data }] = useLazyQuery(meetingsQuery);
 
@@ -112,4 +115,4 @@ const Home = () => {
   return null;
 };
 
-export default withPageTracking(Home, 'Logged Out Home');
+export default Home;
