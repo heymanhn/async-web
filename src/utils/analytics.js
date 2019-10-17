@@ -15,6 +15,10 @@ export function identify(userId, properties) {
   window.analytics.identify(userId, properties);
 }
 
+export function group(groupId, properties) {
+  window.analytics.group(groupId, properties);
+}
+
 export function reset() {
   window.analytics.reset();
 }

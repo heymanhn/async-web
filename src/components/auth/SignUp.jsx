@@ -13,7 +13,7 @@ import {
   clearLocalAppState,
 } from 'utils/auth';
 import useMountEffect from 'utils/hooks/useMountEffect';
-import { identify, page } from 'utils/analytics';
+import { group, identify, page } from 'utils/analytics';
 
 import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
@@ -91,7 +91,8 @@ const SignUp = ({ organizationId, inviteCode }) => {
         },
       });
 
-      identify(userId, { name: fullName, email });
+      identify(userId, { name: fullName, email, inviteCode });
+      if (organizationId) group(organizationId);
 
       const returnPath = inviteCode ? '/organizations' : `/organizations/${organizationId}/invites`;
       navigate(returnPath);
