@@ -4,6 +4,7 @@ import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import createOrganizationMutation from 'graphql/mutations/createOrganization';
+import { setLocalAppState } from 'utils/auth';
 
 import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
@@ -31,6 +32,7 @@ const OrganizationCreate = () => {
     onCompleted: (data) => {
       const { id: organizationId } = data.createOrganization;
 
+      setLocalAppState({ organizationId });
       navigate(`/organizations/${organizationId}/invites`);
     },
     onError: (err) => {

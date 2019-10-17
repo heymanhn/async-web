@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { useLazyQuery } from '@apollo/react-hooks';
 
 import organizationQuery from 'graphql/queries/organization';
-import { getLocalUser } from 'utils/auth';
+import { getLocalAppState } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import Button from 'components/shared/Button';
@@ -57,7 +57,7 @@ const StyledButton = styled(Button)({
 });
 
 const Sidebar = () => {
-  const { organizationId } = getLocalUser();
+  const { organizationId } = getLocalAppState();
   const [getOrganization, { loading, data }] = useLazyQuery(organizationQuery, {
     variables: { id: organizationId },
   });

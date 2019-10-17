@@ -9,6 +9,8 @@ import createUserMutation from 'graphql/mutations/createUser';
 import {
   setLocalUser,
   clearLocalUser,
+  setLocalAppState,
+  clearLocalAppState,
 } from 'utils/auth';
 
 import Button from 'components/shared/Button';
@@ -77,15 +79,23 @@ const SignUp = ({ organizationId, inviteCode }) => {
     onCompleted: (data) => {
       const { id: userId, token: userToken } = data.createUser;
 
-      setLocalUser({ userId, userToken, organizationId });
+      setLocalUser({ userId, userToken });
+      setLocalAppState({ organizationId, isOnboarding: true });
+      client.writeData({
+        data: {
+          isLoggedIn: true,
+          isOnboarding: true,
+        },
+      });
+
       window.analytics.identify(userId, { name: fullName, email });
-      client.writeData({ data: { isLoggedIn: true, isOnboarding: true } });
 
       const returnPath = inviteCode ? '/organizations' : `/organizations/${organizationId}/invites`;
       navigate(returnPath);
     },
-    onError: (err) => {
-      clearLocalUser();
+    onError: async (err) => {
+      await clearLocalUser();
+      await clearLocalAppState();
       client.resetStore();
 
       console.dir(err); // TODO: Error handling on the page

@@ -8,6 +8,8 @@ import createSessionMutation from 'graphql/mutations/createSession';
 import {
   setLocalUser,
   clearLocalUser,
+  setLocalAppState,
+  clearLocalAppState,
 } from 'utils/auth';
 
 import Button from 'components/shared/Button';
@@ -62,14 +64,16 @@ const Login = () => {
     onCompleted: (data) => {
       const { id: userId, token: userToken, fullName, organizationId } = data.createSession;
 
-      setLocalUser({ userId, userToken, organizationId });
-      window.analytics.identify(userId, { name: fullName, email });
+      setLocalUser({ userId, userToken });
+      setLocalAppState({ organizationId });
       client.writeData({ data: { isLoggedIn: true } });
 
+      window.analytics.identify(userId, { name: fullName, email });
       navigate('/');
     },
     onError: (err) => {
       clearLocalUser();
+      clearLocalAppState();
       client.resetStore();
 
       console.dir(err); // TODO: Error handling on the page

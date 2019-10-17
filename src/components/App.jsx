@@ -11,7 +11,7 @@ import { ApolloLink, concat } from 'apollo-link';
 import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
-import { getAuthHeader, isLocalTokenPresent } from 'utils/auth';
+import { getAuthHeader, isLocalTokenPresent, isUserOnboarding } from 'utils/auth';
 import { fileSerializer } from 'utils/graphql';
 import getBreakpoint from 'utils/mediaQuery';
 
@@ -64,7 +64,7 @@ const client = new ApolloClient({
 // Initialize the local graphql cache
 const generateDefaultData = () => ({
   isLoggedIn: isLocalTokenPresent(),
-  isOnboarding: false,
+  isOnboarding: isUserOnboarding(),
   mediaBreakpoint: getBreakpoint(),
   selectedMeetingId: null,
 });

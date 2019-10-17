@@ -5,7 +5,6 @@ import { useApolloClient, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import mediaBreakpointQuery from 'graphql/queries/mediaBreakpoint';
-import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import localStateQuery from 'graphql/queries/localState';
 import getBreakpoint from 'utils/mediaQuery';
 
@@ -22,8 +21,7 @@ const Content = styled.div(({ showSidebar, theme: { sidebarWidth } }) => ({
 
 const Layout = ({ children }) => {
   const client = useApolloClient();
-  const { data } = useQuery(isLoggedInQuery);
-  const { isOnboarding } = client.readQuery({ query: localStateQuery });
+  const { data } = useQuery(localStateQuery);
 
   useEffect(() => {
     function handleWindowSizeChange() {
@@ -44,7 +42,7 @@ const Layout = ({ children }) => {
   let showSidebar = false;
   // Include an escape hatch to not render the sidebar if logging out
   if (data) {
-    const { isLoggedIn } = data;
+    const { isLoggedIn, isOnboarding } = data;
     showSidebar = isLoggedIn && !isOnboarding && window.location.pathname !== '/logout';
   }
 

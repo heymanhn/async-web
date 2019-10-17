@@ -10,7 +10,7 @@ import createMeetingMutation from 'graphql/mutations/createMeeting';
 import meetingsQuery from 'graphql/queries/meetings';
 import { MEETINGS_QUERY_SIZE } from 'graphql/constants';
 import { snakedQueryParams } from 'utils/queryParams';
-import { getLocalUser } from 'utils/auth';
+import { getLocalUser, getLocalAppState } from 'utils/auth';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import ParticipantsSelector from './ParticipantsSelector';
@@ -112,7 +112,8 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
 }));
 
 const CreateMeetingSpaceModal = ({ isOpen, toggle, ...props }) => {
-  const { userId, organizationId } = getLocalUser();
+  const { userId } = getLocalUser();
+  const { organizationId } = getLocalAppState();
 
   const [name, setName] = useState('');
   const [purpose, setPurpose] = useState('');

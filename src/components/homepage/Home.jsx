@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-apollo';
-import { navigate } from '@reach/router';
+import { navigate, Redirect } from '@reach/router';
 import styled from '@emotion/styled';
 
 // hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
@@ -9,6 +9,7 @@ import { useLazyQuery } from '@apollo/react-hooks';
 
 import localStateQuery from 'graphql/queries/localState';
 import meetingsQuery from 'graphql/queries/meetings';
+import { getLocalAppState } from 'utils/auth';
 import withPageTracking from 'utils/withPageTracking';
 import { site } from 'data/siteMetadata.json';
 import EmailCaptureForm from './EmailCaptureForm';
@@ -61,7 +62,10 @@ const Home = () => {
   const [getMeetings, { data }] = useLazyQuery(meetingsQuery);
 
   if (!localStateData) return null;
-  if (!localStateData.isLoggedIn) {
+  const { isLoggedIn, isOnboarding } = localStateData;
+  const { organizationId } = getLocalAppState();
+
+  if (!isLoggedIn) {
     return (
       <Container>
         <Section type="blue" id="headlines">
@@ -79,6 +83,11 @@ const Home = () => {
         </Section>
       </Container>
     );
+  }
+
+  if (isOnboarding) {
+    const path = organizationId ? `/organizations/${organizationId}/invites` : '/organizations';
+    return <Redirect to={path} noThrow />;
   }
 
   if (!data) {

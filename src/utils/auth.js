@@ -1,5 +1,7 @@
 const isBrowser = typeof window !== 'undefined';
 
+/* **** Current user data **** */
+
 const getUser = () => {
   if (window.localStorage.currentUser) {
     return JSON.parse(window.localStorage.currentUser);
@@ -13,8 +15,8 @@ const setUser = (user) => {
 };
 
 export const getLocalUser = () => isBrowser && getUser();
-export const setLocalUser = ({ userId, userToken, organizationId }) => (
-  isBrowser ? setUser({ userId, userToken, organizationId }) : false
+export const setLocalUser = ({ userId, userToken }) => (
+  isBrowser ? setUser({ userId, userToken }) : false
 );
 export const clearLocalUser = () => {
   if (!isBrowser) return Promise.reject(new Error('Not allowed'));
@@ -45,4 +47,43 @@ export const matchCurrentUserId = (id) => {
 
   const { userId } = getUser();
   return userId === id;
+};
+
+/* **** Local app state **** */
+
+const getAppState = () => {
+  if (window.localStorage.appState) {
+    return JSON.parse(window.localStorage.appState);
+  }
+
+  return {};
+};
+
+const setAppState = (appState) => {
+  window.localStorage.appState = JSON.stringify(appState);
+};
+
+export const getLocalAppState = () => isBrowser && getAppState();
+export const setLocalAppState = ({ organizationId, isOnboarding }) => {
+  if (!isBrowser) return false;
+
+  const appState = { ...getAppState() };
+  if (organizationId !== undefined) appState.organizationId = organizationId;
+  if (isOnboarding !== undefined) appState.isOnboarding = isOnboarding;
+
+  return setAppState(appState);
+};
+
+export const isUserOnboarding = () => {
+  if (!isBrowser) return false;
+
+  const appState = getAppState();
+  return !!appState.isOnboarding;
+};
+
+export const clearLocalAppState = () => {
+  if (!isBrowser) return Promise.reject(new Error('Not allowed'));
+
+  setLocalAppState({});
+  return Promise.resolve();
 };
