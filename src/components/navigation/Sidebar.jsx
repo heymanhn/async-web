@@ -95,7 +95,7 @@ const Sidebar = () => {
       <SignOutButtonContainer>
         <StyledButton
           onClick={() => navigate(`/organizations/${organizationId}/invites`)}
-          title="Send invites"
+          title="Invite people"
           type="grey"
         />
         <StyledButton
