@@ -48,7 +48,7 @@ const Toolbar = ({ editor, isOpen }) => {
 
   // Figure out where the toolbar should be displayed based on the user's text selection
   function calculateToolbarPosition() {
-    if (!isOpen) return {};
+    if (!isOpen || !ref.current) return {};
 
     const native = window.getSelection();
     const range = native.getRangeAt(0);
