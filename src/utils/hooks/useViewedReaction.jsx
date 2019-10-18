@@ -10,13 +10,19 @@ const useViewedReaction = () => {
   const client = useApolloClient();
 
   function updateMeetingCache(cache, meetingId, conversationId) {
-    const {
-      meeting,
-      conversations: { pageToken, items, __typename, totalHits },
-    } = cache.readQuery({
+    const data = cache.readQuery({
       query: meetingQuery,
       variables: { id: meetingId, queryParams: {} },
     });
+
+    // It's possible for the meeting space data to not be in the cache, such as when the discussion
+    // page is loaded directly.
+    if (!data) return;
+
+    const {
+      meeting,
+      conversations: { pageToken, items, __typename, totalHits },
+    } = data;
 
     const index = items
       .map(i => i.conversation)
@@ -50,12 +56,13 @@ const useViewedReaction = () => {
   }
 
   function updateMeetingsCache(cache, meetingId) {
-    const {
-      meetings: { items, pageToken, __typename },
-    } = cache.readQuery({
+    const data = cache.readQuery({
       query: meetingsQuery,
       variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
     });
+
+    if (!data) return;
+    const { meetings: { items, pageToken, __typename } } = data;
 
     const index = items
       .map(i => i.meeting)

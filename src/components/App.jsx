@@ -55,6 +55,19 @@ const authMiddleware = new ApolloLink((operation, forward) => {
  * https://github.com/apollographql/apollo-client/pull/4499
  */
 const cache = new InMemoryCache();
+
+// TODO: Monkey-patching in a fix for an open issue suggesting that
+// `readQuery` should return null or undefined if the query is not yet in the
+// cache: https://github.com/apollographql/apollo-feature-requests/issues/1
+cache.originalReadQuery = cache.readQuery;
+cache.readQuery = (...args) => {
+  try {
+    return cache.originalReadQuery(...args);
+  } catch (err) {
+    return undefined;
+  }
+};
+
 const client = new ApolloClient({
   link: concat(authMiddleware, restLink),
   cache,
