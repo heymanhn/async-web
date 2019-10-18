@@ -1,13 +1,15 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
+import { useMutation, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
+import updateConversationMutation from 'graphql/mutations/updateConversation';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useMountEffect from 'utils/hooks/useMountEffect';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
+import { track } from 'utils/analytics';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from './DiscussionMessage';
@@ -36,6 +38,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
+  const [updateConversation] = useMutation(updateConversationMutation);
 
   const { markAsRead } = useViewedReaction();
   useMountEffect(() => markAsRead({
@@ -86,6 +89,25 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
     fetchMoreMessages();
   }
 
+  async function handleUpdateTitle({ text }) {
+    const { data: updateConvoData } = await updateConversation({
+      variables: {
+        conversationId,
+        meetingId,
+        input: {
+          title: text,
+        },
+      },
+    });
+
+    if (updateConvoData.updateConversation) {
+      track('Discussion title updated', { discussionId: conversationId });
+      return Promise.resolve({});
+    }
+
+    return Promise.reject(new Error('Failed to update discussion'));
+  }
+
   function firstNewMessageId() {
     const targetMessage = messages.find(m => m.tags && m.tags.includes('new_message'));
 
@@ -98,7 +120,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
         contentType="discussionTitle"
         initialValue={title || 'Untitled Discussion'}
         isPlainText
-        onSubmit={() => { }}
+        onSubmit={handleUpdateTitle}
         saveOnBlur
       />
       {messages.map(m => (
