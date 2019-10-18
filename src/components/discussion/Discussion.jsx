@@ -9,7 +9,7 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import conversationQuery from 'graphql/queries/conversation';
 import useSelectedMeeting from 'utils/hooks/useSelectedMeeting';
 import useMountEffect from 'utils/hooks/useMountEffect';
-import { page, track } from 'utils/analytics';
+import { track } from 'utils/analytics';
 
 import NotFound from 'components/navigation/NotFound';
 import DiscussionComposer from './DiscussionComposer';
@@ -33,12 +33,12 @@ const Discussion = ({
   });
 
   useMountEffect(() => {
-    const title = conversationId ? 'Discussion' : 'New Discussion';
+    const title = conversationId ? 'Discussion' : 'New discussion';
     const properties = {};
     if (conversationId) properties.discussionId = conversationId;
     if (meetingId) properties.meetingSpaceId = meetingId;
 
-    page(title, properties);
+    track(`${title} viewed`, properties);
   });
 
   if (conversationId && !data) {

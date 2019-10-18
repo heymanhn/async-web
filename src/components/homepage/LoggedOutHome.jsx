@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import useMountEffect from 'utils/hooks/useMountEffect';
-import { page } from 'utils/analytics';
+import { track } from 'utils/analytics';
 import { site } from 'data/siteMetadata.json';
 
 import EmailCaptureForm from './EmailCaptureForm';
@@ -51,7 +51,7 @@ const Description = styled.p({
 });
 
 const LoggedOutHome = () => {
-  useMountEffect(() => page('Logged out Home'));
+  useMountEffect(() => track('Logged out homepage viewed'));
 
   return (
     <Container>

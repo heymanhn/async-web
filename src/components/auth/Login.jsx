@@ -11,8 +11,7 @@ import {
   setLocalAppState,
   clearLocalAppState,
 } from 'utils/auth';
-import useMountEffect from 'utils/hooks/useMountEffect';
-import { identify, page, track } from 'utils/analytics';
+import { identify, track } from 'utils/analytics';
 
 import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
@@ -55,7 +54,6 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const client = useApolloClient();
-  useMountEffect(() => page('Login page'));
 
   const [createSession] = useMutation(createSessionMutation, {
     variables: {
