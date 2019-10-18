@@ -110,15 +110,6 @@ export const queries = {
 
 /* **** Plugins **** */
 
-const createPlaceholderPlugin = (text, color) => PlaceholderPlugin({
-  placeholder: text,
-  when: 'isEmptyDocument',
-  style: {
-    color,
-    lineHeight: '18px',
-  },
-});
-
 const coreEditorPlugins = [
   // Marks
   BoldPlugin(),
@@ -151,23 +142,38 @@ const coreEditorPlugins = [
   DragAndDropIndicator(),
 ];
 
+const createTitlePlaceholder = text => PlaceholderPlugin({
+  placeholder: text,
+  when: 'isEmptyDocument',
+  style: {
+    color: theme.colors.titlePlaceholder,
+    lineHeight: '43px',
+  },
+});
+
+const createContentPlaceholder = text => PlaceholderPlugin({
+  placeholder: text,
+  when: 'isEmptyDocument',
+  style: {
+    color: theme.colors.textPlaceholder,
+    lineHeight: '18px',
+  },
+});
+
+
 export const plugins = {
   meetingTitle: [],
   meetingPurpose: [],
-  discussionTitle: [
-    createPlaceholderPlugin('Untitled Discussion', theme.colors.titlePlaceholder),
-  ],
+  discussionTitle: [createTitlePlaceholder('Untitled Discussion')],
   discussion: [
-    createPlaceholderPlugin(
+    createContentPlaceholder(
       'Post a message to start this discussion. Be as expressive as you like.',
-      theme.colors.textPlaceholder,
     ),
     coreEditorPlugins,
   ],
   message: [
-    createPlaceholderPlugin(
+    createContentPlaceholder(
       'Share your perspective with others in this discussion. Be as expressive as you like.',
-      theme.colors.textPlaceholder,
     ),
     coreEditorPlugins,
   ],
