@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import AutoReplace from 'slate-auto-replace';
 import styled from '@emotion/styled';
 
-import { DEFAULT_NODE } from 'components/editor/defaults';
+import {
+  DEFAULT_NODE,
+  TOOLBAR_SOURCE,
+  COMPOSITION_MENU_SOURCE,
+  HOTKEY_SOURCE,
+ } from 'components/editor/defaults';
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import HeadingIcon from './HeadingIcon';
@@ -27,7 +32,7 @@ function HeadingButton({ editor, headingType, ...props }) {
   const isActive = editor.hasBlock(headingType);
 
   function handleClick() {
-    return editor.setBlock(headingType);
+    return editor.setBlock(headingType, TOOLBAR_SOURCE);
   }
 
   return (
@@ -55,7 +60,7 @@ export function MediumFontButton({ editor }) {
 
 function HeadingOption({ editor, headingType, ...props }) {
   function handleHeadingOption() {
-    return editor.clearBlock().setBlock(headingType);
+    return editor.clearBlock().setBlock(headingType, COMPOSITION_MENU_SOURCE);
   }
 
   const icon = <HeadingOptionIcon number={headingType === LARGE_FONT ? 1 : 2} />;
@@ -163,9 +168,9 @@ export function HeadingsPlugin() {
 
   /* **** Hotkeys **** */
   const hotkeys = [
-    Hotkey('mod+opt+1', editor => editor.setBlock(LARGE_FONT)),
-    Hotkey('mod+opt+2', editor => editor.setBlock(MEDIUM_FONT)),
-    Hotkey('mod+opt+3', editor => editor.setBlock(SMALL_FONT)),
+    Hotkey('mod+opt+1', editor => editor.setBlock(LARGE_FONT, HOTKEY_SOURCE)),
+    Hotkey('mod+opt+2', editor => editor.setBlock(MEDIUM_FONT, HOTKEY_SOURCE)),
+    Hotkey('mod+opt+3', editor => editor.setBlock(SMALL_FONT, HOTKEY_SOURCE)),
     CustomEnterAction(exitHeadingBlockOnEnter),
   ];
 

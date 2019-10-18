@@ -3,9 +3,9 @@ import AutoReplace from 'slate-auto-replace';
 import SoftBreak from 'slate-soft-break';
 
 import { theme } from 'styles/theme';
+import { track } from 'utils/analytics';
 
 import { DEFAULT_NODE, DEFAULT_PLAIN_NODE } from './defaults';
-
 import { BoldPlugin } from './plugins/marks/bold';
 import { ItalicPlugin } from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
@@ -48,8 +48,11 @@ export const commands = {
       .wrapBlock(type);
   },
 
-  setBlock: (editor, type) => {
+  setBlock: (editor, type, source) => {
     const isActive = editor.hasBlock(type);
+
+    // We're not interested in text blocks...
+    if (!isActive && type !== DEFAULT_NODE) track('Block inserted to content', { type, source });
 
     return editor
       .unwrapAnyBlock()

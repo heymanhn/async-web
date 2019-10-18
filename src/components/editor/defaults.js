@@ -17,3 +17,8 @@ export const DEFAULT_VALUE = {
     ],
   },
 };
+
+export const TOOLBAR_SOURCE = 'toolbar';
+export const COMPOSITION_MENU_SOURCE = 'compositionMenu';
+export const HOTKEY_SOURCE = 'hotkey';
+export const MARKDOWN_SOURCE = 'markdown';
