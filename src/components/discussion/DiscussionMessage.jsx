@@ -10,6 +10,7 @@ import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
+import { track } from 'utils/analytics';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
@@ -130,7 +131,10 @@ const DiscussionMessage = ({
     });
 
     if (data.createMessage) {
+      const { id } = data.createMessage;
       setIsSubmitting(false);
+      track('New message posted', { messageId: id, discussionId: conversationId });
+
       return Promise.resolve({});
     }
 
@@ -158,6 +162,7 @@ const DiscussionMessage = ({
     if (data.updateMessage) {
       setMessage(data.updateMessage);
       setIsSubmitting(false);
+      track('Message edited', { messageId, discussionId: conversationId });
       return Promise.resolve({});
     }
 

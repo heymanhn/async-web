@@ -12,6 +12,8 @@ import {
   setLocalAppState,
   clearLocalAppState,
 } from 'utils/auth';
+import useMountEffect from 'utils/hooks/useMountEffect';
+import { group, identify, page, track } from 'utils/analytics';
 
 import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
@@ -65,6 +67,7 @@ const SignUp = ({ organizationId, inviteCode }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const client = useApolloClient();
+  useMountEffect(() => page('Sign Up page'));
 
   const [createUser] = useMutation(createUserMutation, {
     variables: {
@@ -88,7 +91,10 @@ const SignUp = ({ organizationId, inviteCode }) => {
         },
       });
 
-      window.analytics.identify(userId, { name: fullName, email });
+      // Analytics calls
+      identify(userId, { name: fullName, email, inviteCode });
+      if (organizationId) group(organizationId);
+      track('Signed up');
 
       const returnPath = inviteCode ? '/organizations' : `/organizations/${organizationId}/invites`;
       navigate(returnPath);

@@ -8,7 +8,13 @@ import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-import { DEFAULT_NODE } from 'components/editor/defaults';
+import {
+  DEFAULT_NODE,
+  COMPOSITION_MENU_SOURCE,
+  HOTKEY_SOURCE,
+  MARKDOWN_SOURCE,
+  TOOLBAR_SOURCE,
+} from 'components/editor/defaults';
 import {
   AddSchema,
   AddCommands,
@@ -25,7 +31,7 @@ export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
 
 export function BlockQuoteButton({ editor, ...props }) {
   function handleClick() {
-    return editor.setBlockQuote();
+    return editor.setBlockQuote(TOOLBAR_SOURCE);
   }
 
   function isActive() {
@@ -54,7 +60,7 @@ BlockQuoteButton.propTypes = {
 
 export function BlockQuoteOption({ editor, ...props }) {
   function handleBlockQuoteOption() {
-    return editor.clearBlock().setBlockQuote();
+    return editor.clearBlock().setBlockQuote(COMPOSITION_MENU_SOURCE);
   }
 
   const icon = <OptionIcon icon={faQuoteRight} />;
@@ -97,8 +103,8 @@ export function BlockQuotePlugin() {
 
   /* **** Commands **** */
 
-  function setBlockQuote(editor) {
-    return editor.setWrappedBlock(BLOCK_QUOTE);
+  function setBlockQuote(editor, source) {
+    return editor.setWrappedBlock(BLOCK_QUOTE, source);
   }
 
   /* **** Render methods **** */
@@ -118,12 +124,12 @@ export function BlockQuotePlugin() {
       change: (editor) => {
         // Essentially undoing the autoReplace detection
         if (editor.isWrappedByAnyBlock()) return editor.insertText('> ');
-        if (!editor.isEmptyBlock()) return editor.setBlockQuote();
+        if (!editor.isEmptyBlock()) return editor.setBlockQuote(MARKDOWN_SOURCE);
 
         return editor
           .insertBlock(DEFAULT_NODE)
           .moveBackward(1)
-          .setBlockQuote();
+          .setBlockQuote(MARKDOWN_SOURCE);
       },
     }),
   ];
@@ -151,7 +157,7 @@ export function BlockQuotePlugin() {
   }
 
   const hotkeys = [
-    Hotkey('mod+shift+9', editor => editor.setWrappedBlock(BLOCK_QUOTE)),
+    Hotkey('mod+shift+9', editor => editor.setBlockQuote(HOTKEY_SOURCE)),
     CustomEnterAction(exitBlockOnDoubleEnter),
     CustomBackspaceAction(exitOnBackspace),
   ];

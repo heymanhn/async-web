@@ -8,11 +8,12 @@
  *
  */
 
-import { useApolloClient, useQuery } from 'react-apollo';
+import { useMutation, useQuery } from 'react-apollo';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import deleteReactionMutation from 'graphql/mutations/deleteReaction';
 import messageQuery from 'graphql/queries/message';
+import { track } from 'utils/analytics';
 
 const reactionsReference = [
   {
@@ -48,11 +49,11 @@ const reactionsReference = [
 ];
 
 const useReactions = ({ conversationId, messageId }) => {
-  const client = useApolloClient();
+  const [execAddReaction] = useMutation(createReactionMutation);
+  const [execRemoveReaction] = useMutation(deleteReactionMutation);
 
   async function addReaction(code) {
-    client.mutate({
-      mutation: createReactionMutation,
+    await execAddReaction({
       variables: {
         input: {
           objectType: 'message',
@@ -65,17 +66,20 @@ const useReactions = ({ conversationId, messageId }) => {
         variables: { conversationId, messageId },
       }],
     });
+
+    track('Reaction added', { reaction: code, messageId });
   }
 
-  async function removeReaction(id) {
-    client.mutate({
-      mutation: deleteReactionMutation,
+  async function removeReaction(id, code) {
+    await execRemoveReaction({
       variables: { id },
       refetchQueries: [{
         query: messageQuery,
         variables: { conversationId, messageId },
       }],
     });
+
+    track('Reaction removed', { reaction: code, messageId });
   }
 
   const { data } = useQuery(messageQuery, {

@@ -8,6 +8,8 @@ import { useLazyQuery } from '@apollo/react-hooks';
 
 import conversationQuery from 'graphql/queries/conversation';
 import useSelectedMeeting from 'utils/hooks/useSelectedMeeting';
+import useMountEffect from 'utils/hooks/useMountEffect';
+import { page, track } from 'utils/analytics';
 
 import NotFound from 'components/navigation/NotFound';
 import DiscussionComposer from './DiscussionComposer';
@@ -29,6 +31,16 @@ const Discussion = ({
   const [getConversation, { loading, data }] = useLazyQuery(conversationQuery, {
     variables: { id: conversationId, queryParams: {} },
   });
+
+  useMountEffect(() => {
+    const title = conversationId ? 'Discussion' : 'New Discussion';
+    const properties = {};
+    if (conversationId) properties.discussionId = conversationId;
+    if (meetingId) properties.meetingSpaceId = meetingId;
+
+    page(title, properties);
+  });
+
   if (conversationId && !data) {
     getConversation();
     return null;
@@ -55,6 +67,7 @@ const Discussion = ({
 
   function afterSubmit(value) {
     setConversationId(value);
+    track('New discussion created', { discussionId: value, meetingSpaceId: meetingId });
 
     // Update the URL in the address bar to reflect the new discussion
     const { origin } = window.location;

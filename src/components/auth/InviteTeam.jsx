@@ -5,7 +5,10 @@ import { Redirect, navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import createInvitesMutation from 'graphql/mutations/createInvites';
+import localStateQuery from 'graphql/queries/localState';
 import { setLocalAppState } from 'utils/auth';
+import useMountEffect from 'utils/hooks/useMountEffect';
+import { page } from 'utils/analytics';
 
 import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
@@ -34,6 +37,8 @@ const InviteTeam = ({ organizationId }) => {
   const [secondEmail, setSecondEmail] = useState('');
   const [thirdEmail, setThirdEmail] = useState('');
   const client = useApolloClient();
+  const { isOnboarding } = client.readQuery({ query: localStateQuery });
+  useMountEffect(() => page('Onboarding: Invite Team', { isOnboarding }));
 
   function handleSkip() {
     setLocalAppState({ isOnboarding: false });

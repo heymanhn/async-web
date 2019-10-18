@@ -10,6 +10,7 @@ import addParticipantMutation from 'graphql/mutations/addParticipant';
 import removeParticipantMutation from 'graphql/mutations/removeParticipant';
 import useClickOutside from 'utils/hooks/useClickOutside';
 import { getLocalAppState } from 'utils/auth';
+import { track } from 'utils/analytics';
 
 import ParticipantsSelector from './ParticipantsSelector';
 
@@ -72,24 +73,38 @@ const MeetingProperties = ({ author, initialParticipantIds, meetingId }) => {
     setParticipantIds([...participantIds.slice(0, index), ...participantIds.slice(index + 1)]);
   }
 
+  async function handleAddParticipant(userId) {
+    await addParticipantAPI({
+      variables: {
+        id: meetingId,
+        input: {
+          userId,
+          accessType: 'collaborator',
+        },
+      },
+    });
+
+    track('Participant added to meeting space', {
+      meetingSpaceId: meetingId,
+      userId,
+    });
+  }
+
+  async function handleRemoveParticipant(userId) {
+    await removeParticipantAPI({ variables: { id: meetingId, userId } });
+
+    track('Participant removed from meeting space', {
+      meetingSpaceId: meetingId,
+      userId,
+    });
+  }
+
   function saveChangesAndClose() {
     previousParticipantIds.forEach((id) => {
-      if (!participantIds.includes(id)) {
-        removeParticipantAPI({ variables: { id: meetingId, userId: id } });
-      }
+      if (!participantIds.includes(id)) handleRemoveParticipant(id);
     });
     participantIds.forEach((id) => {
-      if (!previousParticipantIds.includes(id)) {
-        addParticipantAPI({
-          variables: {
-            id: meetingId,
-            input: {
-              userId: id,
-              accessType: 'collaborator',
-            },
-          },
-        });
-      }
+      if (!previousParticipantIds.includes(id)) handleAddParticipant(id);
     });
     setPreviousParticipantIds(participantIds);
     setIsOpen(false);

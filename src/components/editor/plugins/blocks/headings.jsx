@@ -3,7 +3,13 @@ import PropTypes from 'prop-types';
 import AutoReplace from 'slate-auto-replace';
 import styled from '@emotion/styled';
 
-import { DEFAULT_NODE } from 'components/editor/defaults';
+import {
+  DEFAULT_NODE,
+  COMPOSITION_MENU_SOURCE,
+  HOTKEY_SOURCE,
+  MARKDOWN_SOURCE,
+  TOOLBAR_SOURCE,
+} from 'components/editor/defaults';
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import HeadingIcon from './HeadingIcon';
@@ -27,7 +33,7 @@ function HeadingButton({ editor, headingType, ...props }) {
   const isActive = editor.hasBlock(headingType);
 
   function handleClick() {
-    return editor.setBlock(headingType);
+    return editor.setBlock(headingType, TOOLBAR_SOURCE);
   }
 
   return (
@@ -55,7 +61,7 @@ export function MediumFontButton({ editor }) {
 
 function HeadingOption({ editor, headingType, ...props }) {
   function handleHeadingOption() {
-    return editor.clearBlock().setBlock(headingType);
+    return editor.clearBlock().setBlock(headingType, COMPOSITION_MENU_SOURCE);
   }
 
   const icon = <HeadingOptionIcon number={headingType === LARGE_FONT ? 1 : 2} />;
@@ -134,17 +140,17 @@ export function HeadingsPlugin() {
     AutoReplace({
       trigger: 'space',
       before: /^(#)$/,
-      change: change => change.setBlock(LARGE_FONT),
+      change: change => change.setBlock(LARGE_FONT, MARKDOWN_SOURCE),
     }),
     AutoReplace({
       trigger: 'space',
       before: /^(##)$/,
-      change: change => change.setBlock(MEDIUM_FONT),
+      change: change => change.setBlock(MEDIUM_FONT, MARKDOWN_SOURCE),
     }),
     AutoReplace({
       trigger: 'space',
       before: /^(###)$/,
-      change: change => change.setBlock(SMALL_FONT),
+      change: change => change.setBlock(SMALL_FONT, MARKDOWN_SOURCE),
     }),
   ];
 
@@ -163,9 +169,9 @@ export function HeadingsPlugin() {
 
   /* **** Hotkeys **** */
   const hotkeys = [
-    Hotkey('mod+opt+1', editor => editor.setBlock(LARGE_FONT)),
-    Hotkey('mod+opt+2', editor => editor.setBlock(MEDIUM_FONT)),
-    Hotkey('mod+opt+3', editor => editor.setBlock(SMALL_FONT)),
+    Hotkey('mod+opt+1', editor => editor.setBlock(LARGE_FONT, HOTKEY_SOURCE)),
+    Hotkey('mod+opt+2', editor => editor.setBlock(MEDIUM_FONT, HOTKEY_SOURCE)),
+    Hotkey('mod+opt+3', editor => editor.setBlock(SMALL_FONT, HOTKEY_SOURCE)),
     CustomEnterAction(exitHeadingBlockOnEnter),
   ];
 

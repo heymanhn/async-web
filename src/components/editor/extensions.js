@@ -3,9 +3,9 @@ import AutoReplace from 'slate-auto-replace';
 import SoftBreak from 'slate-soft-break';
 
 import { theme } from 'styles/theme';
+import { track } from 'utils/analytics';
 
 import { DEFAULT_NODE, DEFAULT_PLAIN_NODE } from './defaults';
-
 import { BoldPlugin } from './plugins/marks/bold';
 import { ItalicPlugin } from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
@@ -34,7 +34,7 @@ export const commands = {
       .delete();
   },
 
-  setWrappedBlock: (editor, type) => {
+  setWrappedBlock: (editor, type, source) => {
     // This means the user is looking to un-set the wrapped block
     if (editor.isWrappedBy(type)) {
       return editor
@@ -42,14 +42,19 @@ export const commands = {
         .unwrapBlock(type);
     }
 
+    track('Block inserted to content', { type, source });
+
     return editor
       .setBlocks(DEFAULT_NODE)
       .unwrapAnyBlock(type)
       .wrapBlock(type);
   },
 
-  setBlock: (editor, type) => {
+  setBlock: (editor, type, source) => {
     const isActive = editor.hasBlock(type);
+
+    // We're not interested in text blocks...
+    if (!isActive && type !== DEFAULT_NODE) track('Block inserted to content', { type, source });
 
     return editor
       .unwrapAnyBlock()

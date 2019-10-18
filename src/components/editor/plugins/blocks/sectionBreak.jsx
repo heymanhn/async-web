@@ -7,7 +7,11 @@ import styled from '@emotion/styled';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 
-import { DEFAULT_NODE } from 'components/editor/defaults';
+import {
+  DEFAULT_NODE,
+  COMPOSITION_MENU_SOURCE,
+  MARKDOWN_SOURCE,
+} from 'components/editor/defaults';
 import {
   AddSchema,
   RenderBlock,
@@ -24,7 +28,7 @@ export function SectionBreakOption({ editor, ...props }) {
   function handleSectionBreakOption() {
     return editor
       .clearBlock()
-      .setBlock(SECTION_BREAK)
+      .setBlock(SECTION_BREAK, COMPOSITION_MENU_SOURCE)
       .insertBlock(DEFAULT_NODE);
   }
 
@@ -72,7 +76,7 @@ export function SectionBreak() {
   const markdownShortcut = AutoReplace({
     trigger: '-',
     before: /^(--)$/,
-    change: change => change.setBlocks('section-break').insertBlock(DEFAULT_NODE),
+    change: change => change.setBlock(SECTION_BREAK, MARKDOWN_SOURCE).insertBlock(DEFAULT_NODE),
   });
 
   /* **** Hotkeys **** */
