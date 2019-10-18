@@ -9,6 +9,7 @@ import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useMountEffect from 'utils/hooks/useMountEffect';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
+import { getLocalUser } from 'utils/auth';
 import { track } from 'utils/analytics';
 
 import RovalEditor from 'components/editor/RovalEditor';
@@ -54,7 +55,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
   if (loading) return null;
   if (error || !data.messages) return <div>{error}</div>;
 
-  const { title } = data.conversation;
+  const { author, title } = data.conversation;
   const { items, pageToken } = data.messages;
   const messages = (items || []).map(i => i.message);
 
@@ -114,12 +115,17 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
     return targetMessage ? targetMessage.id : null;
   }
 
+  const { userId } = getLocalUser();
+  const isAuthor = userId === author.id;
+
   return (
     <Container ref={discussionRef}>
       <TitleEditor
         contentType="discussionTitle"
+        disableAutoFocus
         initialValue={title || 'Untitled Discussion'}
         isPlainText
+        mode={isAuthor ? 'compose' : 'display'}
         onSubmit={handleUpdateTitle}
         saveOnBlur
       />
