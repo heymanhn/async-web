@@ -39,7 +39,9 @@ class ReactionCountDisplay extends Component {
       onAddReaction,
       onRemoveReaction,
     } = this.props;
-    return currentUserReactionId ? onRemoveReaction(currentUserReactionId) : onAddReaction(code);
+    return currentUserReactionId
+      ? onRemoveReaction(currentUserReactionId, code)
+      : onAddReaction(code);
   }
 
   render() {

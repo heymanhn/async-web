@@ -67,9 +67,9 @@ const ReactionPicker = ({
     setReactionOnHover(null);
   }
 
-  function handleRemoveReaction(reactionId) {
+  function handleRemoveReaction(reactionId, code) {
     handleClose();
-    removeReaction(reactionId);
+    removeReaction(reactionId, code);
   }
 
   function hasReactedWith(code) {

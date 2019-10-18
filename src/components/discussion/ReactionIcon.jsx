@@ -31,7 +31,7 @@ class ReactionIcon extends Component {
   handleClick(event) {
     event.stopPropagation();
     const { code, existingReactionId, isSelected, onAddReaction, onRemoveReaction } = this.props;
-    return isSelected ? onRemoveReaction(existingReactionId) : onAddReaction(code);
+    return isSelected ? onRemoveReaction(existingReactionId, code) : onAddReaction(code);
   }
 
   handleExitHover() {

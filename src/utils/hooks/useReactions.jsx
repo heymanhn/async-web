@@ -13,6 +13,7 @@ import { useApolloClient, useQuery } from 'react-apollo';
 import createReactionMutation from 'graphql/mutations/createReaction';
 import deleteReactionMutation from 'graphql/mutations/deleteReaction';
 import messageQuery from 'graphql/queries/message';
+import { track } from 'utils/analytics';
 
 const reactionsReference = [
   {
@@ -60,6 +61,7 @@ const useReactions = ({ conversationId, messageId }) => {
           code,
         },
       },
+      onCompleted: () => track('Reaction added', { reaction: code, messageId }),
       refetchQueries: [{
         query: messageQuery,
         variables: { conversationId, messageId },
@@ -67,10 +69,11 @@ const useReactions = ({ conversationId, messageId }) => {
     });
   }
 
-  async function removeReaction(id) {
+  async function removeReaction(id, code) {
     client.mutate({
       mutation: deleteReactionMutation,
       variables: { id },
+      onCompleted: () => track('Reaction removed', { reaction: code, messageId }),
       refetchQueries: [{
         query: messageQuery,
         variables: { conversationId, messageId },
