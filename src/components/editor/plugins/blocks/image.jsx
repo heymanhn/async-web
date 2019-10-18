@@ -6,10 +6,14 @@ import { faImage } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import uploadFileMutation from 'graphql/mutations/uploadFile';
+import { track } from 'utils/analytics';
 
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-import { DEFAULT_NODE } from 'components/editor/defaults';
+import {
+  DEFAULT_NODE,
+  COMPOSITION_MENU_SOURCE,
+} from 'components/editor/defaults';
 import {
   AddCommands,
   AddSchema,
@@ -36,7 +40,7 @@ export function ImageOption({ editor, ...props }) {
     onCompleted: (data) => {
       if (data && data.uploadFile) {
         const { url } = data.uploadFile;
-        editor.insertImage(url);
+        editor.insertImage(url, COMPOSITION_MENU_SOURCE);
       }
     },
   });
@@ -109,11 +113,13 @@ export function Image() {
 
   /* **** Commands **** */
 
-  function insertImage(editor, src) {
+  function insertImage(editor, imageSource, source) {
+    track('Image inserted to content', { source });
+
     if (editor.isEmptyParagraph()) {
       return editor.setBlocks({
         type: IMAGE,
-        data: { src },
+        data: { src: imageSource },
       });
     }
 
@@ -121,7 +127,7 @@ export function Image() {
       .moveToEndOfBlock()
       .insertBlock({
         type: IMAGE,
-        data: { src },
+        data: { src: imageSource },
       });
   }
 

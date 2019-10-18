@@ -4,11 +4,19 @@ import AutoReplace from 'slate-auto-replace';
 import { faListOl, faListUl, faTasks } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
+import { track } from 'utils/analytics';
+
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-import { DEFAULT_NODE } from 'components/editor/defaults';
+import {
+  DEFAULT_NODE,
+  COMPOSITION_MENU_SOURCE,
+  HOTKEY_SOURCE,
+  MARKDOWN_SOURCE,
+  TOOLBAR_SOURCE,
+} from 'components/editor/defaults';
 import {
   AddCommands,
   AddQueries,
@@ -43,7 +51,7 @@ LIST_OPTION_TITLES[CHECKLIST] = CHECKLIST_OPTION_TITLE;
 
 export function BulletedListButton({ editor, ...props }) {
   function handleClick() {
-    return editor.setListBlock(BULLETED_LIST);
+    return editor.setListBlock(BULLETED_LIST, TOOLBAR_SOURCE);
   }
 
   // For lists, need to traverse upwards to find whether the list type matches
@@ -73,7 +81,7 @@ BulletedListButton.propTypes = {
 
 function ListOption({ editor, listType, ...props }) {
   function handleListOption() {
-    return editor.clearBlock().setListBlock(listType);
+    return editor.clearBlock().setListBlock(listType, COMPOSITION_MENU_SOURCE);
   }
 
   const icon = <OptionIcon icon={ICONS[listType]} />;
@@ -129,7 +137,7 @@ const Checklist = styled.ul({
 export function ListsPlugin() {
   /* **** Commands **** */
 
-  function setListBlock(editor, type) {
+  function setListBlock(editor, type, source) {
     const defaultChecklistItem = {
       type: CHECKLIST_ITEM,
       data: { isChecked: false },
@@ -142,6 +150,8 @@ export function ListsPlugin() {
         .setBlocks(DEFAULT_NODE)
         .unwrapBlock(type);
     }
+
+    track('Block inserted to content', { type, source });
 
     // Switching to a different type of list
     if (editor.hasListItems()) {
@@ -215,17 +225,17 @@ export function ListsPlugin() {
     AutoReplace({
       trigger: 'space',
       before: /^(-)$/,
-      change: change => change.setListBlock(BULLETED_LIST),
+      change: change => change.setListBlock(BULLETED_LIST, MARKDOWN_SOURCE),
     }),
     AutoReplace({
       trigger: 'space',
       before: /^(1\.)$/,
-      change: change => change.setListBlock(NUMBERED_LIST),
+      change: change => change.setListBlock(NUMBERED_LIST, MARKDOWN_SOURCE),
     }),
     AutoReplace({
       trigger: 'space',
       before: /^(\[\])$/,
-      change: change => change.setListBlock(CHECKLIST),
+      change: change => change.setListBlock(CHECKLIST, MARKDOWN_SOURCE),
     }),
   ];
 
@@ -289,9 +299,9 @@ export function ListsPlugin() {
   // }
 
   const hotkeys = [
-    Hotkey('mod+shift+7', editor => editor.setListBlock(NUMBERED_LIST)),
-    Hotkey('mod+shift+8', editor => editor.setListBlock(BULLETED_LIST)),
-    Hotkey('mod+shift+0', editor => editor.setListBlock(CHECKLIST)),
+    Hotkey('mod+shift+7', editor => editor.setListBlock(NUMBERED_LIST, HOTKEY_SOURCE)),
+    Hotkey('mod+shift+8', editor => editor.setListBlock(BULLETED_LIST, HOTKEY_SOURCE)),
+    Hotkey('mod+shift+0', editor => editor.setListBlock(CHECKLIST, HOTKEY_SOURCE)),
     CustomEnterAction(exitListAfterEmptyListItem),
     CustomBackspaceAction(resetListItemToParagraph),
     // CustomBackspaceAction(mergeAdjacentLists),

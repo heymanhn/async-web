@@ -8,7 +8,13 @@ import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-import { DEFAULT_NODE } from 'components/editor/defaults';
+import {
+  DEFAULT_NODE,
+  COMPOSITION_MENU_SOURCE,
+  HOTKEY_SOURCE,
+  MARKDOWN_SOURCE,
+  TOOLBAR_SOURCE,
+} from 'components/editor/defaults';
 import {
   AddSchema,
   AddCommands,
@@ -25,7 +31,7 @@ export const CODE_BLOCK_OPTION_TITLE = 'Code block';
 
 export function CodeBlockButton({ editor, ...props }) {
   function handleClick() {
-    return editor.setCodeBlock();
+    return editor.setCodeBlock(TOOLBAR_SOURCE);
   }
 
   function isActive() {
@@ -75,7 +81,7 @@ const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
 
 export function CodeBlockOption({ editor, ...props }) {
   function handleCodeBlockOption() {
-    return editor.clearBlock().setCodeBlock();
+    return editor.clearBlock().setCodeBlock(COMPOSITION_MENU_SOURCE);
   }
 
   const icon = <OptionIcon icon={faCode} />;
@@ -110,8 +116,8 @@ export function CodeBlockPlugin() {
 
   /* **** Commands **** */
 
-  function setCodeBlock(editor) {
-    return editor.setWrappedBlock(CODE_BLOCK);
+  function setCodeBlock(editor, source) {
+    return editor.setWrappedBlock(CODE_BLOCK, source);
   }
 
   /* **** Render methods **** */
@@ -131,12 +137,12 @@ export function CodeBlockPlugin() {
       change: (editor) => {
         // Essentially undoing the autoReplace detection
         if (editor.isWrappedByAnyBlock()) return editor.insertText('```');
-        if (!editor.isEmptyBlock()) return editor.setCodeBlock();
+        if (!editor.isEmptyBlock()) return editor.setCodeBlock(MARKDOWN_SOURCE);
 
         return editor
           .insertBlock(DEFAULT_NODE)
           .moveBackward(1)
-          .setCodeBlock();
+          .setCodeBlock(MARKDOWN_SOURCE);
       },
     }),
   ];
@@ -164,7 +170,7 @@ export function CodeBlockPlugin() {
   }
 
   const hotkeys = [
-    Hotkey('mod+shift+k', editor => editor.setCodeBlock()),
+    Hotkey('mod+shift+k', editor => editor.setCodeBlock(HOTKEY_SOURCE)),
     CustomEnterAction(exitBlockOnDoubleEnter),
     CustomBackspaceAction(exitOnBackspace),
   ];

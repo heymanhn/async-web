@@ -34,13 +34,15 @@ export const commands = {
       .delete();
   },
 
-  setWrappedBlock: (editor, type) => {
+  setWrappedBlock: (editor, type, source) => {
     // This means the user is looking to un-set the wrapped block
     if (editor.isWrappedBy(type)) {
       return editor
         .setBlocks(DEFAULT_NODE)
         .unwrapBlock(type);
     }
+
+    track('Block inserted to content', { type, source });
 
     return editor
       .setBlocks(DEFAULT_NODE)

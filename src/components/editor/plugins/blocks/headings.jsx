@@ -5,10 +5,11 @@ import styled from '@emotion/styled';
 
 import {
   DEFAULT_NODE,
-  TOOLBAR_SOURCE,
   COMPOSITION_MENU_SOURCE,
   HOTKEY_SOURCE,
- } from 'components/editor/defaults';
+  MARKDOWN_SOURCE,
+  TOOLBAR_SOURCE,
+} from 'components/editor/defaults';
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import HeadingIcon from './HeadingIcon';
@@ -139,17 +140,17 @@ export function HeadingsPlugin() {
     AutoReplace({
       trigger: 'space',
       before: /^(#)$/,
-      change: change => change.setBlock(LARGE_FONT),
+      change: change => change.setBlock(LARGE_FONT, MARKDOWN_SOURCE),
     }),
     AutoReplace({
       trigger: 'space',
       before: /^(##)$/,
-      change: change => change.setBlock(MEDIUM_FONT),
+      change: change => change.setBlock(MEDIUM_FONT, MARKDOWN_SOURCE),
     }),
     AutoReplace({
       trigger: 'space',
       before: /^(###)$/,
-      change: change => change.setBlock(SMALL_FONT),
+      change: change => change.setBlock(SMALL_FONT, MARKDOWN_SOURCE),
     }),
   ];
 
