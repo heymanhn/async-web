@@ -11,6 +11,7 @@ import meetingsQuery from 'graphql/queries/meetings';
 import { MEETINGS_QUERY_SIZE } from 'graphql/constants';
 import { snakedQueryParams } from 'utils/queryParams';
 import { getLocalUser, getLocalAppState } from 'utils/auth';
+import { track } from 'utils/analytics';
 
 import RovalEditor from 'components/editor/RovalEditor';
 import ParticipantsSelector from './ParticipantsSelector';
@@ -167,7 +168,11 @@ const CreateMeetingSpaceModal = ({ isOpen, toggle, ...props }) => {
         });
       });
       toggle();
-      navigate(`/spaces/${data.createMeeting.id}`);
+      track('New meeting space created', {
+        meetingSpaceId: meetingId,
+        participantCount: participantIds.length,
+      });
+      navigate(`/spaces/${meetingId}`);
     },
     refetchQueries: [{
       query: meetingsQuery,
