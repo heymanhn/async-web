@@ -162,6 +162,7 @@ const DiscussionMessage = ({
     if (data.updateMessage) {
       setMessage(data.updateMessage);
       setIsSubmitting(false);
+      track('Message edited', { messageId, discussionId: conversationId });
       return Promise.resolve({});
     }
 
