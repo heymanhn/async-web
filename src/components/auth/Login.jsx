@@ -12,7 +12,7 @@ import {
   clearLocalAppState,
 } from 'utils/auth';
 import useMountEffect from 'utils/hooks/useMountEffect';
-import { identify, page } from 'utils/analytics';
+import { identify, page, track } from 'utils/analytics';
 
 import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
@@ -72,6 +72,7 @@ const Login = () => {
       client.writeData({ data: { isLoggedIn: true } });
 
       identify(userId, { name: fullName, email });
+      track('Logged in');
       navigate('/');
     },
     onError: (err) => {
