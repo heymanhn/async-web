@@ -6,7 +6,6 @@ import localStateQuery from 'graphql/queries/localState';
 import meetingsQuery from 'graphql/queries/meetings';
 import { MEETINGS_QUERY_SIZE } from 'graphql/constants';
 import { snakedQueryParams } from 'utils/queryParams';
-import usePusher from 'utils/hooks/usePusher';
 
 import CreateMeetingSpaceButton from './CreateMeetingSpaceButton';
 import MeetingRow from './MeetingRow';
@@ -35,12 +34,6 @@ const MeetingSpacesList = () => {
     variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
   });
   const { data: localStateData } = useQuery(localStateQuery);
-
-  function updateMeetingSpaces(data) {
-    console.dir(data);
-    console.log('hi');
-  }
-  usePusher(updateMeetingSpaces);
 
   if (!meetingsData || !meetingsData.meetings) return null;
   const { items } = meetingsData.meetings;
