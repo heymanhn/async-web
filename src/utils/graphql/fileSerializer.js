@@ -1,6 +1,4 @@
-/* eslint import/prefer-default-export: 0 */
-
-export const fileSerializer = (data, headers) => {
+export default function fileSerializer(data, headers) {
   const formData = new FormData();
   Object.keys(data).forEach((key) => {
     formData.append(key, data[key]);
@@ -24,4 +22,4 @@ export const fileSerializer = (data, headers) => {
   headers.delete('Content-Type');
 
   return { body: formData, headers };
-};
+}

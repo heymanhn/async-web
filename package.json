@@ -21,6 +21,7 @@
     "apollo-link-rest": "^0.7.3",
     "bootstrap": "^4.3.1",
     "camelcase": "^5.3.1",
+    "camelcase-keys": "^6.1.0",
     "emotion-theming": "^10.0.10",
     "graphql": "^14.3.1",
     "graphql-anywhere": "^4.2.4",

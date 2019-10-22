@@ -12,7 +12,8 @@ import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
 import { getAuthHeader, isLocalTokenPresent, isUserOnboarding } from 'utils/auth';
-import { fileSerializer } from 'utils/graphql';
+import fileSerializer from 'utils/graphql/fileSerializer';
+import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
 import usePusher from 'utils/hooks/usePusher';
 
@@ -72,7 +73,7 @@ cache.readQuery = (...args) => {
 const client = new ApolloClient({
   link: concat(authMiddleware, restLink),
   cache,
-  resolvers: {},
+  resolvers: localResolvers,
 });
 
 // Initialize the local graphql cache

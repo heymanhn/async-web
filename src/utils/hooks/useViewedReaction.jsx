@@ -55,40 +55,6 @@ const useViewedReaction = () => {
     });
   }
 
-  function updateMeetingsCache(cache, meetingId) {
-    const data = cache.readQuery({
-      query: meetingsQuery,
-      variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
-    });
-
-    if (!data) return;
-    const { meetings: { items, pageToken, __typename } } = data;
-
-    const index = items
-      .map(i => i.meeting)
-      .findIndex(m => m.id === meetingId);
-    const meetingItem = items[index];
-
-    cache.writeQuery({
-      query: meetingsQuery,
-      variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
-      data: {
-        meetings: {
-          pageToken,
-          items: [
-            ...items.slice(0, index),
-            {
-              ...meetingItem,
-              badgeCount: meetingItem.badgeCount - 1,
-            },
-            ...items.slice(index + 1),
-          ],
-          __typename,
-        },
-      },
-    });
-  }
-
   function markAsRead({ isUnread, objectType, objectId, parentId } = {}) {
     const meetingId = parentId || objectId;
 
@@ -110,8 +76,6 @@ const useViewedReaction = () => {
         if (objectType === 'conversation') {
           updateMeetingCache(cache, meetingId, objectId);
         }
-
-        updateMeetingsCache(cache, meetingId);
       },
     });
   }
