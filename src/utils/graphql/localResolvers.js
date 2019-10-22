@@ -46,7 +46,8 @@ function updateMeetingBadgeCount(_root, { meetingId, badgeCount }, { client }) {
  * Only mutates the cache if a query was run for the meeting
  * TODO: handle case of new discussion
  */
-function addNewMessageToMeetingSpace(_root, { meetingId, conversationId, message }, { client }) {
+function addNewMessageToMeetingSpace(_root, { meetingId, message }, { client }) {
+  const { conversationId } = message;
   const data = client.readQuery({
     query: meetingQuery,
     variables: { id: meetingId, queryParams: {} },
@@ -59,6 +60,19 @@ function addNewMessageToMeetingSpace(_root, { meetingId, conversationId, message
   const { meeting, conversations: { pageToken, items, __typename, totalHits } } = data;
   const { item: conversationItem, index } = findInItems(items, 'conversation', conversationId);
   const { conversation } = conversationItem;
+
+  // Not the most elegant solution but will suffice for now. Might not be a good long term solution
+  // to have pusher return full objects because of the inconsistency between these objects and
+  // apollo cache objects
+  const { lastMessage } = conversation;
+  const { body, author } = lastMessage;
+  const { body: newBody, author: newAuthor } = message;
+  const newLastMessage = {
+    ...lastMessage,
+    ...message,
+    author: { ...author, ...newAuthor },
+    body: { ...body, ...newBody },
+  };
 
   client.writeQuery({
     query: meetingQuery,
@@ -75,7 +89,7 @@ function addNewMessageToMeetingSpace(_root, { meetingId, conversationId, message
             conversation: {
               ...conversation,
               tags: ['new_messages'],
-              lastMessage: message,
+              lastMessage: newLastMessage,
             },
           },
           ...items.slice(index + 1),

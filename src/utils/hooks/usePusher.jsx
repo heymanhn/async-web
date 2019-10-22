@@ -4,6 +4,7 @@ import Pusher from 'pusher-js';
 import camelcaseKeys from 'camelcase-keys';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
+import addNewMessageToMeetingSpaceMtn from 'graphql/mutations/local/addNewMessageToMeetingSpace';
 import updateMeetingBadgeCountMutation from 'graphql/mutations/local/updateMeetingBadgeCount';
 import { getLocalUser } from 'utils/auth';
 
@@ -40,7 +41,14 @@ const usePusher = () => {
     function handleNewMessage(pusherData) {
       const camelData = camelcaseKeys(pusherData, { deep: true });
 
-      const { meetingId, message } = camelData;
+      client.mutate({
+        mutation: addNewMessageToMeetingSpaceMtn,
+        variables: camelData,
+      });
+
+      // client.mutate({
+      //   mutation:
+      // })
     }
 
     function handleNewMeeting(data) {
