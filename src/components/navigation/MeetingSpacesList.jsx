@@ -52,6 +52,11 @@ const MeetingSpacesList = () => {
     return id === selectedMeetingId;
   }
 
+  function numUnreadConversations(item) {
+    const { unreadConversationIds } = item;
+    return unreadConversationIds ? unreadConversationIds.length : 0;
+  }
+
   return (
     <Container>
       <HeadingSection>
@@ -62,7 +67,7 @@ const MeetingSpacesList = () => {
         <MeetingRow
           key={mi.meeting.id}
           meeting={mi.meeting}
-          badgeCount={mi.badgeCount}
+          badgeCount={numUnreadConversations(mi)}
           isSelected={isMeetingSelected(mi.meeting.id)}
         />
       ))}

@@ -55,7 +55,7 @@ const useViewedReaction = () => {
     });
   }
 
-  function updateMeetingsCache(cache, meetingId) {
+  function updateMeetingsCache(cache, meetingId, conversationId) {
     const data = cache.readQuery({
       query: meetingsQuery,
       variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
@@ -68,6 +68,7 @@ const useViewedReaction = () => {
       .map(i => i.meeting)
       .findIndex(m => m.id === meetingId);
     const meetingItem = items[index];
+    const newUnreadConvos = meetingItem.unreadConversationIds.filter(i => i !== conversationId);
 
     cache.writeQuery({
       query: meetingsQuery,
@@ -79,7 +80,7 @@ const useViewedReaction = () => {
             ...items.slice(0, index),
             {
               ...meetingItem,
-              badgeCount: meetingItem.badgeCount - 1,
+              unreadConversationIds: newUnreadConvos,
             },
             ...items.slice(index + 1),
           ],
@@ -111,7 +112,7 @@ const useViewedReaction = () => {
           updateMeetingCache(cache, meetingId, objectId);
         }
 
-        updateMeetingsCache(cache, meetingId);
+        updateMeetingsCache(cache, meetingId, objectId);
       },
     });
   }

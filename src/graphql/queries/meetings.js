@@ -14,7 +14,7 @@ export default gql`
           }
         }
         conversationCount
-        badgeCount
+        unreadConversationIds
       }
       pageToken
     }
