@@ -22,6 +22,7 @@ import CompositionMenu from './plugins/compositionMenu';
 import EditorActions from './plugins/editorActions';
 import DragAndDrop from './plugins/dragAndDrop';
 import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
+import Drafts from './plugins/drafts';
 
 /* **** Commands **** */
 
@@ -140,6 +141,7 @@ const coreEditorPlugins = [
   CompositionMenu(),
   DragAndDrop(),
   DragAndDropIndicator(),
+  Drafts(),
 ];
 
 const createTitlePlaceholder = text => PlaceholderPlugin({

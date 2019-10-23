@@ -1,20 +1,21 @@
 import gql from 'graphql-tag';
 
+import author from './author';
+import body from './body';
+
 export default gql`
   fragment MessageObject on Message {
     id
     author @type(name: "Author") {
-      id
-      fullName
-      profilePictureUrl
+      ...AuthorObject
+    }
+    body @type(name: "Body") {
+      ...BodyObject
     }
     createdAt
     updatedAt
-    body @type(name: "Body") {
-      formatter
-      payload
-      text
-    }
     conversationId
   }
+  ${author}
+  ${body}
 `;
