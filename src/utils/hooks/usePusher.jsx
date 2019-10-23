@@ -30,7 +30,6 @@ const usePusher = () => {
     if (!isLoggedInData || !isLoggedInData.isLoggedIn) return undefined;
     const { userId } = getLocalUser();
 
-    Pusher.logToConsole = true; // Disable before committing
     const pusher = new Pusher(REACT_APP_PUSHER_APP_KEY, {
       authEndpoint: `${REACT_APP_ASYNC_API_URL}/pusher/auth`,
       cluster: REACT_APP_PUSHER_APP_CLUSTER,
