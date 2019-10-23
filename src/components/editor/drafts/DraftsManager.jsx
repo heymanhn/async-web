@@ -4,9 +4,11 @@ import styled from '@emotion/styled';
 
 const Label = styled.div(({ theme: { colors } }) => ({
   position: 'absolute',
-  color: colors.grey5,
+  alignSelf: 'flex-end',
+  color: colors.grey6,
   fontSize: '14px',
   fontWeight: 500,
+  marginTop: '-27px', // hardcoding the position for now
 }));
 
 const DraftsManager = ({ editor }) => {
