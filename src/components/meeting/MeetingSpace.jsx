@@ -47,6 +47,7 @@ const MeetingSpace = ({ meetingId }) => {
   const checkSelectedMeeting = useSelectedMeeting();
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionsListRef);
   const [isFetching, setIsFetching] = useState(false);
+  const [isAddedParticipant, setIsAddedParticipant] = useState(false);
   const { markAsRead } = useViewedReaction();
   useMountEffect(() => track('Meeting space viewed', { meetingSpaceId: meetingId }));
 
@@ -65,7 +66,8 @@ const MeetingSpace = ({ meetingId }) => {
   function hasCurrentUserViewed() {
     return !!(reactions || []).find(r => r.code === 'viewed' && matchCurrentUserId(r.author.id));
   }
-  if (!hasCurrentUserViewed()) {
+  if (!hasCurrentUserViewed() && !isAddedParticipant) {
+    setIsAddedParticipant(true);
     markAsRead({
       isUnread: true,
       objectType: 'meeting',
@@ -119,7 +121,7 @@ const MeetingSpace = ({ meetingId }) => {
           </React.Fragment>
         ) : (
           <NewMeetingSpaceBanner
-            hasCurrentUserViewed={hasCurrentUserViewed()}
+            isAddedParticipant={isAddedParticipant}
             meetingId={data.meeting.id}
           />
         )}

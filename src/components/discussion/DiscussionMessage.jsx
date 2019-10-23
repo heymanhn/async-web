@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
+import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessageToConversation';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
@@ -97,34 +98,12 @@ const DiscussionMessage = ({
           },
         },
       },
-      update: (cache, { data: { createMessage } }) => {
-        const {
-          conversation,
-          messages: { pageToken, items, __typename, messageCount },
-        } = cache.readQuery({
-          query: conversationQuery,
-          variables: { id: conversationId, queryParams: {} },
-        });
-
-        const newMessageItem = {
-          __typename: items[0].__typename,
-          message: {
-            ...createMessage,
-            tags: null,
-          },
-        };
-
-        cache.writeQuery({
-          query: conversationQuery,
-          variables: { id: conversationId, queryParams: {} },
-          data: {
-            conversation,
-            messages: {
-              messageCount: messageCount + 1,
-              pageToken,
-              items: [...items, newMessageItem],
-              __typename,
-            },
+      update: (_cache, { data: { createMessage } }) => {
+        client.mutate({
+          mutation: addNewMessageToConversationMtn,
+          variables: {
+            isUnread: false,
+            message: createMessage,
           },
         });
       },

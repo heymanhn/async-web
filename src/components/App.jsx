@@ -12,8 +12,10 @@ import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
 import { getAuthHeader, isLocalTokenPresent, isUserOnboarding } from 'utils/auth';
-import { fileSerializer } from 'utils/graphql';
+import fileSerializer from 'utils/graphql/fileSerializer';
+import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
+import usePusher from 'utils/hooks/usePusher';
 
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
@@ -71,7 +73,7 @@ cache.readQuery = (...args) => {
 const client = new ApolloClient({
   link: concat(authMiddleware, restLink),
   cache,
-  resolvers: {},
+  resolvers: localResolvers,
 });
 
 // Initialize the local graphql cache
@@ -84,31 +86,35 @@ const generateDefaultData = () => ({
 cache.writeData({ data: generateDefaultData() });
 client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaultData() })));
 
-const App = () => (
-  <Layout>
-    <Router>
-      <Home path="/" />
-      <SignUp path="/register/:inviteCode" />
-      <SignUp path="/organizations/:organizationId/join" />
-      <CreateOrganization path="/organizations" />
-      <InviteTeam path="/organizations/:organizationId/invites" />
-      <Login path="/login" />
-      <Logout path="/logout" />
+const App = () => {
+  usePusher();
 
-      <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />
+  return (
+    <Layout>
+      <Router>
+        <Home path="/" />
+        <SignUp path="/register/:inviteCode" />
+        <SignUp path="/organizations/:organizationId/join" />
+        <CreateOrganization path="/organizations" />
+        <InviteTeam path="/organizations/:organizationId/invites" />
+        <Login path="/login" />
+        <Logout path="/logout" />
 
-      <PrivateRoute path="/spaces/:meetingId/discussions/new" component={Discussion} />
-      <PrivateRoute path="/discussions/:conversationId" component={Discussion} />
-      {/* TODO */}
-      {/* <PrivateRoute
+        <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />
+
+        <PrivateRoute path="/spaces/:meetingId/discussions/new" component={Discussion} />
+        <PrivateRoute path="/discussions/:conversationId" component={Discussion} />
+        {/* TODO */}
+        {/* <PrivateRoute
         path="/discussions/:conversationId/messages/:messageId"
         component={Discussion}
       /> */}
 
-      <NotFound path="/notfound" default />
-    </Router>
-  </Layout>
-);
+        <NotFound path="/notfound" default />
+      </Router>
+    </Layout>
+  );
+};
 
 const ApolloApp = () => (
   <ApolloProvider client={client}>
