@@ -32,11 +32,11 @@ const MessageText = styled.div(({ theme: { colors } }) => ({
   fontSize: '16px',
 }));
 
-const NewMeetingSpaceBanner = ({ hasCurrentUserViewed, meetingId }) => {
+const NewMeetingSpaceBanner = ({ isAddedParticipant, meetingId }) => {
   const actionMessage = 'Create a discussion to get started.';
-  const welcomeMessage = hasCurrentUserViewed
-    ? 'Welcome to the meeting space!'
-    : "Welcome! You've been added to this meeting space.";
+  const welcomeMessage = isAddedParticipant
+    ? "Welcome! You've been added to this meeting space."
+    : 'Welcome to the meeting space!';
   const compositeMessage = `${welcomeMessage} ${actionMessage}`;
 
   return (
@@ -53,7 +53,7 @@ const NewMeetingSpaceBanner = ({ hasCurrentUserViewed, meetingId }) => {
 };
 
 NewMeetingSpaceBanner.propTypes = {
-  hasCurrentUserViewed: PropTypes.bool.isRequired,
+  isAddedParticipant: PropTypes.bool.isRequired,
   meetingId: PropTypes.string.isRequired,
 };
 
