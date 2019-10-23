@@ -14,5 +14,6 @@ export default gql`
       payload
       text
     }
+    createdAt
   }
 `;

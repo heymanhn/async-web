@@ -9,9 +9,6 @@ export default gql`
       items @type(name: "[MeetingItem]") {
         meeting @type(name: "Meeting") {
           ...MeetingObject
-          lastMessage @type(name: "Message") {
-            ...MessageObject
-          }
         }
         conversationCount
         badgeCount

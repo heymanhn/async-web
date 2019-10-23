@@ -8,6 +8,8 @@ function findInItems(items, type, id) {
   const index = items
     .map(i => i[type])
     .findIndex(o => o.id === id);
+
+  if (index < 0) return { item: null, index };
   return { item: items[index], index };
 }
 
@@ -20,6 +22,8 @@ function updateMeetingBadgeCount(_root, { meetingId, badgeCount }, { client }) {
 
   const { meetings: { items, pageToken, __typename } } = data;
   const { item: meetingItem, index } = findInItems(items, 'meeting', meetingId);
+
+  if (index < 0) return null; // In case the meeting hasn't showed up in the cache yet
 
   client.writeQuery({
     query: meetingsQuery,
@@ -195,10 +199,61 @@ function addNewMessageToConversation(_root, { isUnread, message }, { client }) {
   return null;
 }
 
+function addNewMeetingToMeetings(_root, { meeting }, { client }) {
+  const data = client.readQuery({
+    query: meetingsQuery,
+    variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
+  });
+  if (!data) return null;
+
+  const {
+    author: newAuthor,
+    conversationCount,
+    createdAt: newCreatedAt,
+    id: newId,
+    title: newTitle,
+  } = meeting;
+  const { meetings: { items, pageToken, __typename } } = data;
+  const { meeting: oldMeeting } = items[0];
+  const { author } = oldMeeting;
+
+  const newMeetingItem = {
+    __typename: items[0].__typename,
+    meeting: {
+      __typename: oldMeeting.__typename,
+      author: {
+        __typename: author.__typename,
+        ...newAuthor,
+      },
+      body: null,
+      createdAt: newCreatedAt,
+      id: newId,
+      title: newTitle,
+    },
+    badgeCount: 1, // The badge_count event will set it too, but might as well do it here first.
+    conversationCount,
+  };
+
+  client.writeQuery({
+    query: meetingsQuery,
+    variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
+    data: {
+      meetings: {
+        pageToken,
+        items: [newMeetingItem, ...items],
+        __typename,
+      },
+    },
+  });
+
+  return null;
+}
+
 const localResolvers = {
   Mutation: {
     addNewMessageToConversation,
     addNewMessageToMeetingSpace,
+    addNewMeetingToMeetings,
     markConversationAsRead,
     updateMeetingBadgeCount,
   },

@@ -6,14 +6,15 @@ import camelcaseKeys from 'camelcase-keys';
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import addNewMessageToMeetingSpaceMtn from 'graphql/mutations/local/addNewMessageToMeetingSpace';
 import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessageToConversation';
+import addNewMeetingToMeetingsMtn from 'graphql/mutations/local/addNewMeetingToMeetings';
 import updateMeetingBadgeCountMutation from 'graphql/mutations/local/updateMeetingBadgeCount';
 import { getLocalUser } from 'utils/auth';
 
 const NEW_MESSAGE_EVENT = 'new_message';
-const NEW_MEETING_EVENT = 'new_meeting';
-const EDIT_MESSAGE_EVENT = 'edit_message';
+const EDIT_MEETING_EVENT = 'edit_meeting';
 const BADGE_COUNT_EVENT = 'badge_count';
-// const EDIT_MEETING_EVENT = 'edit_meeting'; TODO later, no one can update a meeting yet
+// const NEW_MEETING_EVENT = 'new_meeting'; TODO later
+// const EDIT_MESSAGE_EVENT = 'edit_message'; TODO later
 
 const {
   REACT_APP_ASYNC_API_URL,
@@ -57,35 +58,32 @@ const usePusher = () => {
       });
     }
 
-    function handleNewMeeting(data) {
-      console.log('TODO: handle new meeting');
-      console.dir(data);
-    }
+    function handleEditMeeting(pusherData) {
+      const meeting = camelcaseKeys(pusherData, { deep: true });
 
-    function handleEditMessage(data) {
-      console.log('TODO: handle edit message');
-      console.dir(data);
+      client.mutate({
+        mutation: addNewMeetingToMeetingsMtn,
+        variables: { meeting },
+      });
     }
 
     function handleBadgeCount(pusherData) {
       const camelData = camelcaseKeys(pusherData, { deep: true });
       const { meetingId, badgeCount } = camelData;
 
-      return client.mutate({
+      client.mutate({
         mutation: updateMeetingBadgeCountMutation,
         variables: { meetingId, badgeCount },
       });
     }
 
     channel.bind(NEW_MESSAGE_EVENT, handleNewMessage);
-    channel.bind(NEW_MEETING_EVENT, handleNewMeeting);
-    channel.bind(EDIT_MESSAGE_EVENT, handleEditMessage);
+    channel.bind(EDIT_MEETING_EVENT, handleEditMeeting);
     channel.bind(BADGE_COUNT_EVENT, handleBadgeCount);
 
     return () => {
       channel.unbind(NEW_MESSAGE_EVENT, handleNewMessage);
-      channel.unbind(NEW_MEETING_EVENT, handleNewMeeting);
-      channel.unbind(EDIT_MESSAGE_EVENT, handleEditMessage);
+      channel.unbind(EDIT_MEETING_EVENT, handleEditMeeting);
       channel.unbind(BADGE_COUNT_EVENT, handleBadgeCount);
     };
   }, [isLoggedInData, client]);
