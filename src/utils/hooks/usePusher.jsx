@@ -69,8 +69,7 @@ const usePusher = () => {
 
     function handleBadgeCount(pusherData) {
       const camelData = camelcaseKeys(pusherData, { deep: true });
-      const { meeting, badgeCount } = camelData;
-      const { id: meetingId } = meeting;
+      const { meetingId, badgeCount } = camelData;
 
       return client.mutate({
         mutation: updateMeetingBadgeCountMutation,
