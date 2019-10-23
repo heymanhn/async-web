@@ -1,5 +1,6 @@
 import meetingQuery from 'graphql/queries/meeting';
 import meetingsQuery from 'graphql/queries/meetings';
+import conversationQuery from 'graphql/queries/conversation';
 import { MEETINGS_QUERY_SIZE } from 'graphql/constants';
 import { snakedQueryParams } from 'utils/queryParams';
 
@@ -111,8 +112,6 @@ function markConversationAsRead(_root, { conversationId, meetingId }, { client }
     variables: { id: meetingId, queryParams: {} },
   });
 
-  // It's possible for the meeting space data to not be in the cache, such as when the discussion
-  // page is loaded directly.
   if (!data) return null;
 
   const { meeting, conversations: { pageToken, items, __typename, totalHits } } = data;
@@ -146,28 +145,59 @@ function markConversationAsRead(_root, { conversationId, meetingId }, { client }
   return null;
 }
 
-// TODO
+function addNewMessageToConversation(_root, { isUnread, message }, { client }) {
+  const { body: newBody, author: newAuthor, conversationId } = message;
 
-// function addNewMessageToConversation(_root, { conversationId, message }, { cache }) {
-//   const data = cache.readQuery({
-//     query: meetingQuery,
-//     variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
-//   });
+  const data = client.readQuery({
+    query: conversationQuery,
+    variables: { id: conversationId, queryParams: {} },
+  });
+  if (!data) return null;
 
-//   if (!data) return;
+  const {
+    conversation,
+    messages: { pageToken, items, __typename, messageCount },
+  } = data;
+  const { message: oldMessage } = items[0];
+  const { author, body } = oldMessage;
 
+  const newMessageItem = {
+    __typename: items[0].__typename,
+    message: {
+      __typename: oldMessage.__typename,
+      ...message,
+      author: {
+        __typename: author.__typename,
+        ...newAuthor,
+      },
+      body: {
+        __typename: body.__typename,
+        ...newBody,
+      },
+      tags: isUnread ? ['new_message'] : null,
+    },
+  };
 
-//   const data2 = client.readQuery({
-//     query: meetingQuery,
-//     variables: { id: meeting_id, queryParams: {} },
-//   });
+  client.writeQuery({
+    query: conversationQuery,
+    variables: { id: conversationId, queryParams: {} },
+    data: {
+      conversation,
+      messages: {
+        messageCount: messageCount + 1,
+        pageToken,
+        items: [...items, newMessageItem],
+        __typename,
+      },
+    },
+  });
 
-//   if (!data2) return;
-// }
+  return null;
+}
 
 const localResolvers = {
   Mutation: {
-    // addNewMessageToConversation,
+    addNewMessageToConversation,
     addNewMessageToMeetingSpace,
     markConversationAsRead,
     updateMeetingBadgeCount,

@@ -5,6 +5,7 @@ import camelcaseKeys from 'camelcase-keys';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import addNewMessageToMeetingSpaceMtn from 'graphql/mutations/local/addNewMessageToMeetingSpace';
+import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessageToConversation';
 import updateMeetingBadgeCountMutation from 'graphql/mutations/local/updateMeetingBadgeCount';
 import { getLocalUser } from 'utils/auth';
 
@@ -40,15 +41,20 @@ const usePusher = () => {
 
     function handleNewMessage(pusherData) {
       const camelData = camelcaseKeys(pusherData, { deep: true });
+      const { message } = camelData;
 
       client.mutate({
         mutation: addNewMessageToMeetingSpaceMtn,
         variables: camelData,
       });
 
-      // client.mutate({
-      //   mutation:
-      // })
+      client.mutate({
+        mutation: addNewMessageToConversationMtn,
+        variables: {
+          isUnread: true,
+          message,
+        },
+      });
     }
 
     function handleNewMeeting(data) {
