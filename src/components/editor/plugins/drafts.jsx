@@ -1,7 +1,7 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 
-import DraftsManager from '../drafts/DraftsManager';
+import DraftSavedIndicator from '../drafts/DraftSavedIndicator';
 import { RenderEditor } from './helpers';
 
 function Drafts() {
@@ -14,7 +14,7 @@ function Drafts() {
     return (
       <>
         {children}
-        <DraftsManager editor={editor} />
+        <DraftSavedIndicator editor={editor} />
       </>
     );
   }

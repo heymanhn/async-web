@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -11,14 +11,14 @@ const Label = styled.div(({ theme: { colors } }) => ({
   marginTop: '-27px', // hardcoding the position for now
 }));
 
-const DraftsManager = ({ editor }) => {
+const DraftSavedIndicator = ({ editor }) => {
   console.dir(editor);
 
   return <Label>Draft saved</Label>;
 };
 
-DraftsManager.propTypes = {
+DraftSavedIndicator.propTypes = {
   editor: PropTypes.object.isRequired,
 };
 
-export default DraftsManager;
+export default DraftSavedIndicator;
