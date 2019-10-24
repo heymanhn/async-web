@@ -7,14 +7,14 @@ import { RenderEditor } from './helpers';
 function Drafts() {
   /* **** Render the indicator, and pass the editor ref to it **** */
   function displayDraftsIndicator(props, editor, next) {
-    const { mode } = props;
+    const { mode, onSaveDraft } = props;
     const children = next();
     if (mode !== 'compose') return children;
 
     return (
       <>
         {children}
-        <DraftSavedIndicator editor={editor} />
+        <DraftSavedIndicator editor={editor} onSaveDraft={onSaveDraft} />
       </>
     );
   }
