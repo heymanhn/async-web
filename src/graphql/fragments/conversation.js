@@ -1,5 +1,7 @@
 import gql from 'graphql-tag';
 
+import body from 'graphql/fragments/body';
+
 export default gql`
   fragment ConversationObject on Conversation {
     id
@@ -13,5 +15,11 @@ export default gql`
     createdAt
     updatedAt
     tags
+    draft @type(name: "MessageDraft") {
+      body @type(name: "Body") {
+        ...BodyObject
+      }
+    }
   }
+  ${body}
 `;

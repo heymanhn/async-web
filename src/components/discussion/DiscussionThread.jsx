@@ -55,7 +55,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
   if (loading) return null;
   if (error || !data.messages) return <div>{error}</div>;
 
-  const { author, title } = data.conversation;
+  const { author, draft, title } = data.conversation;
   const { items, pageToken } = data.messages;
   const messages = (items || []).map(i => i.message);
 
@@ -138,7 +138,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
           />
         </React.Fragment>
       ))}
-      {!pageToken && <MessageComposer conversationId={conversationId} />}
+      {!pageToken && <MessageComposer conversationId={conversationId} draft={draft} />}
     </Container>
   );
 };

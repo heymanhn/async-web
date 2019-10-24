@@ -8,6 +8,7 @@ import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessag
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
+import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
@@ -59,6 +60,7 @@ const MessageEditor = styled(RovalEditor)({
 const DiscussionMessage = ({
   conversationId,
   currentUser,
+  draft,
   forceDisableSubmit,
   initialMode,
   initialMessage,
@@ -80,6 +82,27 @@ const DiscussionMessage = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
   const isAuthor = userId === author.id;
+
+  async function handleSaveDraft({ payload, text }) {
+    const { data } = await client.mutate({
+      mutation: createMessageDraftMutation,
+      variables: {
+        conversationId,
+        input: {
+          body: {
+            formatter: 'slatejs',
+            text,
+            payload,
+          },
+        },
+      },
+      // TODO (HN): add the saved draft to cache OR refetch the conversation query
+    });
+
+    if (data.createMessageDraft) return Promise.resolve();
+
+    return Promise.reject(new Error('Failed to create discussion message'));
+  }
 
   async function handleCreate({ payload, text }) {
     setIsSubmitting(true);
@@ -196,6 +219,12 @@ const DiscussionMessage = ({
     }
   }
 
+  function loadInitialContent() {
+    if (draft) return draft.body.payload;
+
+    return mode !== 'compose' ? body.payload : null;
+  }
+
   return (
     <Container {...hoverProps} {...props}>
       <HeaderSection>
@@ -220,11 +249,12 @@ const DiscussionMessage = ({
         disableAutoFocus={mode === 'compose' && !conversationId}
         forceDisableSubmit={forceDisableSubmit}
         initialHeight={240} // Give Arun more breathing room :-)
-        initialValue={mode !== 'compose' ? body.payload : null}
+        initialValue={loadInitialContent()}
         isAuthor={isAuthor}
         isSubmitting={isSubmitting}
         mode={mode}
         onCancel={handleCancel}
+        onSaveDraft={handleSaveDraft}
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
         contentType={conversationId ? 'message' : 'discussion'}
       />
@@ -238,6 +268,7 @@ const DiscussionMessage = ({
 DiscussionMessage.propTypes = {
   conversationId: PropTypes.string,
   currentUser: PropTypes.object,
+  draft: PropTypes.object,
   forceDisableSubmit: PropTypes.bool,
   initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
   initialMessage: PropTypes.object,
@@ -248,6 +279,7 @@ DiscussionMessage.propTypes = {
 DiscussionMessage.defaultProps = {
   conversationId: null,
   currentUser: null,
+  draft: null,
   forceDisableSubmit: false,
   initialMode: 'display',
   initialMessage: {},
