@@ -9,6 +9,7 @@ import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
+import meetingQuery from 'graphql/queries/meeting';
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
@@ -64,6 +65,7 @@ const DiscussionMessage = ({
   forceDisableSubmit,
   initialMode,
   initialMessage,
+  meetingId,
   onCancel,
   onCreateDiscussion,
   ...props
@@ -96,7 +98,10 @@ const DiscussionMessage = ({
           },
         },
       },
-      // TODO (HN): add the saved draft to cache OR refetch the conversation query
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id: meetingId, queryParams: {} },
+      }],
     });
 
     if (data.createMessageDraft) return Promise.resolve();
@@ -121,6 +126,10 @@ const DiscussionMessage = ({
           },
         },
       },
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id: meetingId, queryParams: {} },
+      }],
       update: (_cache, { data: { createMessage } }) => {
         client.mutate({
           mutation: addNewMessageToConversationMtn,
@@ -272,6 +281,7 @@ DiscussionMessage.propTypes = {
   forceDisableSubmit: PropTypes.bool,
   initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
   initialMessage: PropTypes.object,
+  meetingId: PropTypes.string,
   onCancel: PropTypes.func,
   onCreateDiscussion: PropTypes.func,
 };
@@ -283,6 +293,7 @@ DiscussionMessage.defaultProps = {
   forceDisableSubmit: false,
   initialMode: 'display',
   initialMessage: {},
+  meetingId: null,
   onCancel: () => {},
   onCreateDiscussion: () => {},
 };
