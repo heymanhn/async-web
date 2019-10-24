@@ -11,14 +11,14 @@ import {
 } from 'utils/auth';
 import { identify, track } from 'utils/analytics';
 import { parseQueryString } from 'utils/queryParams';
-import demoAuthQuery from 'graphql/queries/demoLogin'; // Temporary, for the prototype
+import demoAuthQuery from 'graphql/queries/demoLogin';
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 
 const DemoLogin = ({ location }) => {
   const client = useApolloClient();
   const { data } = useQuery(isLoggedInQuery);
 
-  async function handleLogin(code) {
+  async function handleDemoLogin(code) {
     try {
       const { data: demoAuthData } = await client.query({
         query: demoAuthQuery,
@@ -57,7 +57,7 @@ const DemoLogin = ({ location }) => {
     const params = parseQueryString(location.search);
     if (!params || !params.code) return <div>Cannot log in</div>;
 
-    handleLogin(params.code);
+    handleDemoLogin(params.code);
   }
 
   return <div>Logging in...</div>;
