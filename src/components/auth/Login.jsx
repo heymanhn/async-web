@@ -82,6 +82,13 @@ const Login = () => {
     },
   });
 
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      createSession();
+    }
+  }
+
   const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
   if (isLoggedIn) return <Redirect to="/" noThrow />;
 
@@ -102,6 +109,7 @@ const Login = () => {
           onChange={event => setPassword(event.target.value)}
           type="password"
           value={password}
+          onKeyPress={handleKeyPress}
         />
       </FieldsContainer>
       <StyledButton onClick={createSession} title="Sign in" />

@@ -64,6 +64,13 @@ const InviteTeam = ({ organizationId }) => {
     createInvites({ variables: { organizationId, input: { emails } } });
   }
 
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleCreateInvites();
+    }
+  }
+
   if (!organizationId) return <Redirect to="/" noThrow />;
 
   return (
@@ -75,6 +82,7 @@ const InviteTeam = ({ organizationId }) => {
           placeholder="jane@example.com"
           type="email"
           value={firstEmail}
+          onKeyPress={handleKeyPress}
         />
         <OnboardingInputField
           name="secondEmail"
@@ -82,6 +90,7 @@ const InviteTeam = ({ organizationId }) => {
           placeholder="jack@example.com"
           type="email"
           value={secondEmail}
+          onKeyPress={handleKeyPress}
         />
         <OnboardingInputField
           name="thirdEmail"
@@ -89,6 +98,7 @@ const InviteTeam = ({ organizationId }) => {
           placeholder="jess@example.com"
           type="email"
           value={thirdEmail}
+          onKeyPress={handleKeyPress}
         />
       </FieldsContainer>
 

@@ -44,6 +44,13 @@ const OrganizationCreate = () => {
     },
   });
 
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      createOrganization();
+    }
+  }
+
   return (
     <OnboardingContainer title="What’s the name of your company or team?">
       <FieldsContainer>
@@ -53,6 +60,7 @@ const OrganizationCreate = () => {
           placeholder="e.g. Acme"
           type="text"
           value={title}
+          onKeyPress={handleKeyPress}
         />
       </FieldsContainer>
 
