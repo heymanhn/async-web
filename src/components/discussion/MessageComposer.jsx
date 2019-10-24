@@ -35,8 +35,8 @@ const AddReplyLabel = styled.div({
   fontSize: '16px',
 });
 
-const MessageComposer = ({ conversationId }) => {
-  const [isComposing, setIsComposing] = useState(false);
+const MessageComposer = ({ conversationId, draft }) => {
+  const [isComposing, setIsComposing] = useState(!!draft);
   function startComposing() { setIsComposing(true); }
   function stopComposing() { setIsComposing(false); }
 
@@ -61,6 +61,7 @@ const MessageComposer = ({ conversationId }) => {
     <DiscussionMessage
       currentUser={currentUser}
       conversationId={conversationId}
+      draft={draft}
       initialMode="compose"
       onCancel={stopComposing}
     />
@@ -69,6 +70,11 @@ const MessageComposer = ({ conversationId }) => {
 
 MessageComposer.propTypes = {
   conversationId: PropTypes.string.isRequired,
+  draft: PropTypes.object,
+};
+
+MessageComposer.defaultProps = {
+  draft: null,
 };
 
 export default MessageComposer;
