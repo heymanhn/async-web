@@ -43,7 +43,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 const ButtonLabel = styled.div({
   fontSize: '14px',
   marginTop: '1px',
-})
+});
 
 const HintText = styled.div(({ hover, theme: { colors } }) => ({
   color: colors.grey3,

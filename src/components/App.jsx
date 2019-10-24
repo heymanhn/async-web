@@ -20,6 +20,7 @@ import usePusher from 'utils/hooks/usePusher';
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
 import Login from 'components/auth/Login';
+import DemoLogin from 'components/auth/DemoLogin';
 import Logout from 'components/Logout';
 import NotFound from 'components/navigation/NotFound';
 import SignUp from 'components/auth/SignUp';
@@ -98,6 +99,7 @@ const App = () => {
         <CreateOrganization path="/organizations" />
         <InviteTeam path="/organizations/:organizationId/invites" />
         <Login path="/login" />
+        <DemoLogin path="/demo/login" />
         <Logout path="/logout" />
 
         <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />
