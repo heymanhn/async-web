@@ -108,6 +108,13 @@ const SignUp = ({ organizationId, inviteCode }) => {
     },
   });
 
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      createUser();
+    }
+  }
+
   const requiredFieldsPresent = organizationId || inviteCode;
   const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
   if (isLoggedIn || !requiredFieldsPresent) return <Redirect to="/" noThrow />;
@@ -139,6 +146,7 @@ const SignUp = ({ organizationId, inviteCode }) => {
           placeholder="Minimum 8 characters"
           type="password"
           value={password}
+          onKeyPress={handleKeyPress}
         />
       </FieldsContainer>
       <StyledButton onClick={createUser} title="Sign up" />
