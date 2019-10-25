@@ -94,9 +94,10 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
       <DiscussionMessage
         currentUser={currentUser}
         forceDisableSubmit={!title}
-        onCreateDiscussion={handleCreateDiscussion}
         initialMode="compose"
+        meetingId={meetingId}
         onCancel={returnToMeetingSpace}
+        onCreateDiscussion={handleCreateDiscussion}
       />
     </Container>
   );
