@@ -138,7 +138,13 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
           />
         </React.Fragment>
       ))}
-      {!pageToken && <MessageComposer conversationId={conversationId} draft={draft} />}
+      {!pageToken && (
+        <MessageComposer
+          conversationId={conversationId}
+          draft={draft}
+          meetingId={meetingId}
+        />
+      )}
     </Container>
   );
 };

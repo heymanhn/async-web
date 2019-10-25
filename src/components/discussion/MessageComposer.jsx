@@ -35,7 +35,7 @@ const AddReplyLabel = styled.div({
   fontSize: '16px',
 });
 
-const MessageComposer = ({ conversationId, draft }) => {
+const MessageComposer = ({ conversationId, draft, meetingId }) => {
   const [isComposing, setIsComposing] = useState(!!draft);
   function startComposing() { setIsComposing(true); }
   function stopComposing() { setIsComposing(false); }
@@ -63,6 +63,7 @@ const MessageComposer = ({ conversationId, draft }) => {
       conversationId={conversationId}
       draft={draft}
       initialMode="compose"
+      meetingId={meetingId}
       onCancel={stopComposing}
     />
   ) : addReplyBox;
@@ -71,6 +72,7 @@ const MessageComposer = ({ conversationId, draft }) => {
 MessageComposer.propTypes = {
   conversationId: PropTypes.string.isRequired,
   draft: PropTypes.object,
+  meetingId: PropTypes.string.isRequired,
 };
 
 MessageComposer.defaultProps = {

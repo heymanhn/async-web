@@ -4,11 +4,15 @@ import PropTypes from 'prop-types';
 import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
+import addDraftToConversationMtn from 'graphql/mutations/local/addDraftToConversation';
+import deleteDraftFromConversationMtn from 'graphql/mutations/local/deleteDraftFromConversation';
 import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessageToConversation';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
+import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
+import meetingQuery from 'graphql/queries/meeting';
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
@@ -64,6 +68,7 @@ const DiscussionMessage = ({
   forceDisableSubmit,
   initialMode,
   initialMessage,
+  meetingId,
   onCancel,
   onCreateDiscussion,
   ...props
@@ -84,6 +89,9 @@ const DiscussionMessage = ({
   const isAuthor = userId === author.id;
 
   async function handleSaveDraft({ payload, text }) {
+    // HN: Catching this case for now. Will support creating drafts for new conversations soon.
+    if (!conversationId) return Promise.resolve();
+
     const { data } = await client.mutate({
       mutation: createMessageDraftMutation,
       variables: {
@@ -96,12 +104,41 @@ const DiscussionMessage = ({
           },
         },
       },
-      // TODO (HN): add the saved draft to cache OR refetch the conversation query
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id: meetingId, queryParams: {} },
+      }],
+      update: (_cache, { data: { createMessageDraft } }) => {
+        client.mutate({
+          mutation: addDraftToConversationMtn,
+          variables: {
+            conversationId,
+            draft: createMessageDraft,
+          },
+        });
+      },
     });
 
     if (data.createMessageDraft) return Promise.resolve();
 
     return Promise.reject(new Error('Failed to create discussion message'));
+  }
+
+  function handleDeleteDraft() {
+    return client.mutate({
+      mutation: deleteMessageDraftMutation,
+      variables: { conversationId },
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id: meetingId, queryParams: {} },
+      }],
+      update: () => {
+        client.mutate({
+          mutation: deleteDraftFromConversationMtn,
+          variables: { conversationId },
+        });
+      },
+    });
   }
 
   async function handleCreate({ payload, text }) {
@@ -121,6 +158,10 @@ const DiscussionMessage = ({
           },
         },
       },
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id: meetingId, queryParams: {} },
+      }],
       update: (_cache, { data: { createMessage } }) => {
         client.mutate({
           mutation: addNewMessageToConversationMtn,
@@ -251,9 +292,11 @@ const DiscussionMessage = ({
         initialHeight={240} // Give Arun more breathing room :-)
         initialValue={loadInitialContent()}
         isAuthor={isAuthor}
+        isDraftSaved={!!draft}
         isSubmitting={isSubmitting}
         mode={mode}
         onCancel={handleCancel}
+        onDiscardDraft={handleDeleteDraft}
         onSaveDraft={handleSaveDraft}
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
         contentType={conversationId ? 'message' : 'discussion'}
@@ -272,6 +315,7 @@ DiscussionMessage.propTypes = {
   forceDisableSubmit: PropTypes.bool,
   initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
   initialMessage: PropTypes.object,
+  meetingId: PropTypes.string,
   onCancel: PropTypes.func,
   onCreateDiscussion: PropTypes.func,
 };
@@ -283,6 +327,7 @@ DiscussionMessage.defaultProps = {
   forceDisableSubmit: false,
   initialMode: 'display',
   initialMessage: {},
+  meetingId: null,
   onCancel: () => {},
   onCreateDiscussion: () => {},
 };

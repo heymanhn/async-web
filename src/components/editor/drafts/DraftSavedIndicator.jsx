@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Plain from 'slate-plain-serializer';
 import styled from '@emotion/styled';
@@ -23,6 +23,7 @@ const DraftSavedIndicator = ({ editor, onSaveDraft }) => {
     isDraftSaved: false,
     isTyping: false,
     timerStarted: false,
+    timer: null,
   });
 
   async function handleSaveDraft(contents) {
@@ -30,37 +31,43 @@ const DraftSavedIndicator = ({ editor, onSaveDraft }) => {
     const text = Plain.serialize(value);
     const payload = JSON.stringify(value.toJSON());
 
-    if (payload !== contents) return setState(oldState => ({ ...oldState, isTyping: false }));
+    if (payload !== contents) {
+      return setState(oldState => ({ ...oldState, isTyping: false, timer: null }));
+    }
 
     await onSaveDraft({ text, payload });
 
-    setState(oldState => ({
+    const timer = setTimeout(
+      () => setState(oldState => ({ ...oldState, isDraftSaved: false, timer: null })),
+      INDICATOR_DURATION,
+    );
+
+    return setState(oldState => ({
       ...oldState,
       contents: payload,
       isTyping: false,
       isDraftSaved: true,
+      timer,
     }));
-
-    setTimeout(
-      () => setState(oldState => ({ ...oldState, isDraftSaved: false })),
-      INDICATOR_DURATION,
-    );
-
-    return null;
   }
 
   function handleTrackTyping(contents) {
     const { value } = editor;
     const newContents = JSON.stringify(value.toJSON());
 
+    let timer;
     if (newContents !== contents) {
-      setTimeout(() => handleTrackTyping(newContents), DEBOUNCE_INTERVAL);
+      timer = setTimeout(() => handleTrackTyping(newContents), DEBOUNCE_INTERVAL);
     } else {
-      setTimeout(() => handleSaveDraft(contents), IDLE_INTERVAL);
+      timer = setTimeout(() => handleSaveDraft(contents), IDLE_INTERVAL);
     }
+
+    setState(oldState => ({ ...oldState, timer }));
   }
 
-  const { contents, isDraftSaved, isTyping } = state;
+  const { contents, isDraftSaved, isTyping, timer } = state;
+  useEffect(() => (() => clearTimeout(timer)), [timer]);
+
   if (currentContents !== contents && !isTyping) {
     setState(oldState => ({ ...oldState, isTyping: true }));
     handleTrackTyping(contents);

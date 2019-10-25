@@ -50,6 +50,7 @@ class RovalEditor extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.clearEditorValue = this.clearEditorValue.bind(this);
     this.loadInitialValue = this.loadInitialValue.bind(this);
+    this.loadDefaultValue = this.loadDefaultValue.bind(this);
   }
 
   componentDidMount() {
@@ -65,9 +66,10 @@ class RovalEditor extends Component {
   }
 
   handleCancel({ saved = false } = {}) {
-    const { mode, onCancel } = this.props;
+    const { isDraftSaved, mode, onCancel } = this.props;
 
-    if (mode === 'edit' && !saved) this.loadInitialValue();
+    if (isDraftSaved) this.loadDefaultValue();
+    if ((mode === 'edit') && !saved) this.loadInitialValue();
     onCancel();
   }
 
@@ -141,6 +143,12 @@ class RovalEditor extends Component {
     this.setState({ value: Value.fromJSON(DEFAULT_VALUE) });
   }
 
+  loadDefaultValue() {
+    const value = Value.fromJSON(DEFAULT_VALUE);
+
+    this.setState({ value });
+  }
+
   loadInitialValue() {
     const { initialValue, isPlainText } = this.props;
     let value;
@@ -205,6 +213,7 @@ RovalEditor.propTypes = {
   forceDisableSubmit: PropTypes.bool,
   initialHeight: PropTypes.number,
   initialValue: PropTypes.string,
+  isDraftSaved: PropTypes.bool,
   isPlainText: PropTypes.bool,
   mode: PropTypes.string,
   onCancel: PropTypes.func,
@@ -217,6 +226,7 @@ RovalEditor.defaultProps = {
   forceDisableSubmit: false,
   initialHeight: null,
   initialValue: null,
+  isDraftSaved: false,
   isPlainText: false,
   mode: null,
   onCancel: () => {},
