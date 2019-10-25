@@ -10,8 +10,10 @@ function EditorActions() {
       forceDisableSubmit,
       handleCancel,
       handleSubmit,
+      isDraftSaved,
       isSubmitting,
       mode,
+      onDiscardDraft,
     } = props;
     const children = next();
     if (mode === 'display') return children;
@@ -20,10 +22,12 @@ function EditorActions() {
       <>
         {children}
         <EditorActionsRow
+          isDraftSaved={isDraftSaved}
           isSubmitting={isSubmitting}
           isSubmitDisabled={editor.isEmptyDocument() || forceDisableSubmit}
           mode={mode}
           onCancel={handleCancel}
+          onDiscardDraft={onDiscardDraft}
           onSubmit={handleSubmit}
         />
       </>

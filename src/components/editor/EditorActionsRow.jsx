@@ -29,16 +29,23 @@ const HintText = styled.div(({ theme: { colors } }) => ({
 }));
 
 const EditorActionsRow = ({
+  isDraftSaved,
   isSubmitDisabled,
   isSubmitting,
   mode,
   onCancel,
+  onDiscardDraft,
   onSubmit,
 }) => {
-  const handleSubmit = (event) => {
+  function handleSubmit(event) {
     event.stopPropagation();
     return isSubmitDisabled ? null : onSubmit();
-  };
+  }
+
+  function handleDiscardDraft() {
+    onDiscardDraft();
+    onCancel();
+  }
 
   return (
     <Container showHint={!isSubmitDisabled}>
@@ -50,11 +57,19 @@ const EditorActionsRow = ({
           title={mode === 'compose' ? 'Post' : 'Save'}
           type="light"
         />
-        <StyledButton
-          onClick={onCancel}
-          title="Cancel"
-          type="grey"
-        />
+        {isDraftSaved ? (
+          <StyledButton
+            onClick={handleDiscardDraft}
+            title="Discard Draft"
+            type="grey"
+          />
+        ) : (
+          <StyledButton
+            onClick={onCancel}
+            title="Cancel"
+            type="grey"
+          />
+        )}
       </ButtonsContainer>
       {!isSubmitDisabled && (
         <HintText>
@@ -66,11 +81,17 @@ const EditorActionsRow = ({
 };
 
 EditorActionsRow.propTypes = {
+  isDraftSaved: PropTypes.bool.isRequired,
   isSubmitDisabled: PropTypes.bool.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
   mode: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
+  onDiscardDraft: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
+};
+
+EditorActionsRow.defaultProps = {
+  onDiscardDraft: () => {},
 };
 
 export default EditorActionsRow;

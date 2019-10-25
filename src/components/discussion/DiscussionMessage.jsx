@@ -4,11 +4,13 @@ import PropTypes from 'prop-types';
 import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
+import addDraftToConversationMtn from 'graphql/mutations/local/addDraftToConversation';
 import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessageToConversation';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
+import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
 import meetingQuery from 'graphql/queries/meeting';
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
@@ -102,11 +104,31 @@ const DiscussionMessage = ({
         query: meetingQuery,
         variables: { id: meetingId, queryParams: {} },
       }],
+      update: (_cache, { data: { createMessageDraft } }) => {
+        client.mutate({
+          mutation: addDraftToConversationMtn,
+          variables: {
+            conversationId,
+            draft: createMessageDraft,
+          },
+        });
+      },
     });
 
     if (data.createMessageDraft) return Promise.resolve();
 
     return Promise.reject(new Error('Failed to create discussion message'));
+  }
+
+  function handleDeleteDraft() {
+    return client.mutate({
+      mutation: deleteMessageDraftMutation,
+      variables: { conversationId },
+      refetchQueries: [{
+        query: meetingQuery,
+        variables: { id: meetingId, queryParams: {} },
+      }],
+    });
   }
 
   async function handleCreate({ payload, text }) {
@@ -260,9 +282,11 @@ const DiscussionMessage = ({
         initialHeight={240} // Give Arun more breathing room :-)
         initialValue={loadInitialContent()}
         isAuthor={isAuthor}
+        isDraftSaved={!!draft}
         isSubmitting={isSubmitting}
         mode={mode}
         onCancel={handleCancel}
+        onDiscardDraft={handleDeleteDraft}
         onSaveDraft={handleSaveDraft}
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
         contentType={conversationId ? 'message' : 'discussion'}

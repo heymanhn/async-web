@@ -149,6 +149,30 @@ function markConversationAsRead(_root, { conversationId, meetingId }, { client }
   return null;
 }
 
+function addDraftToConversation(_root, { conversationId, draft }, { client }) {
+  const data = client.readQuery({
+    query: conversationQuery,
+    variables: { id: conversationId, queryParams: {} },
+  });
+  if (!data) return null;
+
+  const { conversation, messages } = data;
+
+  client.writeQuery({
+    query: conversationQuery,
+    variables: { id: conversationId, queryParams: {} },
+    data: {
+      conversation: {
+        ...conversation,
+        draft,
+      },
+      messages,
+    },
+  });
+
+  return null;
+}
+
 function addNewMessageToConversation(_root, { isUnread, message }, { client }) {
   const { body: newBody, author: newAuthor, conversationId } = message;
 
@@ -251,6 +275,7 @@ function addNewMeetingToMeetings(_root, { meeting }, { client }) {
 
 const localResolvers = {
   Mutation: {
+    addDraftToConversation,
     addNewMessageToConversation,
     addNewMessageToMeetingSpace,
     addNewMeetingToMeetings,
