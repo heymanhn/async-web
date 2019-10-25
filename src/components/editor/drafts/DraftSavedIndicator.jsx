@@ -66,7 +66,7 @@ const DraftSavedIndicator = ({ editor, onSaveDraft }) => {
   }
 
   const { contents, isDraftSaved, isTyping, timer } = state;
-  useEffect(() => (() => clearTimeout(timer)));
+  useEffect(() => (() => clearTimeout(timer)), [timer]);
 
   if (currentContents !== contents && !isTyping) {
     setState(oldState => ({ ...oldState, isTyping: true }));
