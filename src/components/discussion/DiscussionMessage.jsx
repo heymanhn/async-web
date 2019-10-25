@@ -5,6 +5,7 @@ import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled/macro';
 
 import addDraftToConversationMtn from 'graphql/mutations/local/addDraftToConversation';
+import deleteDraftFromConversationMtn from 'graphql/mutations/local/deleteDraftFromConversation';
 import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessageToConversation';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
@@ -128,6 +129,12 @@ const DiscussionMessage = ({
         query: meetingQuery,
         variables: { id: meetingId, queryParams: {} },
       }],
+      update: () => {
+        client.mutate({
+          mutation: deleteDraftFromConversationMtn,
+          variables: { conversationId },
+        });
+      },
     });
   }
 

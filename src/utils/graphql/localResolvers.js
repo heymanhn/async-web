@@ -173,6 +173,11 @@ function addDraftToConversation(_root, { conversationId, draft }, { client }) {
   return null;
 }
 
+// Cheeky. I know. But it works
+function deleteDraftFromConversation(_root, { conversationId }, { client }) {
+  return addDraftToConversation(_root, { conversationId, draft: null }, { client });
+}
+
 function addNewMessageToConversation(_root, { isUnread, message }, { client }) {
   const { body: newBody, author: newAuthor, conversationId } = message;
 
@@ -279,6 +284,7 @@ const localResolvers = {
     addNewMessageToConversation,
     addNewMessageToMeetingSpace,
     addNewMeetingToMeetings,
+    deleteDraftFromConversation,
     markConversationAsRead,
     updateMeetingBadgeCount,
   },
