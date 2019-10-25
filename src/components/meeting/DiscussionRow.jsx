@@ -78,9 +78,13 @@ const DraftLabel = styled.span(({ theme: { colors } }) => ({
 
 const DiscussionRow = ({ conversation, ...props }) => {
   const { id: conversationId, draft, lastMessage, messageCount, tags, title } = conversation;
-  const { author, body, createdAt } = lastMessage;
-  const { body: draftBody } = draft || {};
-  const { text } = draftBody || body;
+
+  // Pull these properties either from the last message of the conversation, or from the draft
+  const { author } = lastMessage || conversation;
+  const { body } = draft || lastMessage;
+  const { createdAt } = draft ? {} : lastMessage;
+  const { text } = body;
+
   const messagePreview = text ? text.replace(/\n/, ' ') : null;
   const isUnread = tags.filter(t => ['new_discussion', 'new_messages'].includes(t)).length > 0;
 

@@ -60,7 +60,7 @@ const AuthorDetails = ({ author, createdAt, isEdited, mode, size }) => {
         <Author size={size}>{author.fullName}</Author>
         {mode === 'display' && (
           <React.Fragment>
-            <Timestamp fromNow parse="X" size={size}>{createdAt}</Timestamp>
+            {createdAt && <Timestamp fromNow parse="X" size={size}>{createdAt}</Timestamp>}
             {isEdited && separator}
             {isEdited && editedLabel}
           </React.Fragment>

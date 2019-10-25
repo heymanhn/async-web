@@ -89,13 +89,16 @@ const DiscussionMessage = ({
   const isAuthor = userId === author.id;
 
   async function handleSaveDraft({ payload, text }) {
-    // HN: Catching this case for now. Will support creating drafts for new conversations soon.
-    if (!conversationId) return Promise.resolve();
+    let draftConversationId = conversationId;
+    if (!draftConversationId) {
+      const { conversationId: cid } = await onCreateDiscussion();
+      draftConversationId = cid;
+    }
 
     const { data } = await client.mutate({
       mutation: createMessageDraftMutation,
       variables: {
-        conversationId,
+        conversationId: draftConversationId,
         input: {
           body: {
             formatter: 'slatejs',
@@ -112,7 +115,7 @@ const DiscussionMessage = ({
         client.mutate({
           mutation: addDraftToConversationMtn,
           variables: {
-            conversationId,
+            conversationId: draftConversationId,
             draft: createMessageDraft,
           },
         });
