@@ -71,10 +71,16 @@ const MessagePreview = styled.div(({ theme: { colors } }) => ({
   marginBottom: '15px',
 }));
 
+const DraftLabel = styled.span(({ theme: { colors } }) => ({
+  color: colors.codeBlockRed,
+  marginRight: '3px',
+}));
+
 const DiscussionRow = ({ conversation, ...props }) => {
-  const { id: conversationId, lastMessage, messageCount, tags, title } = conversation;
+  const { id: conversationId, draft, lastMessage, messageCount, tags, title } = conversation;
   const { author, body, createdAt } = lastMessage;
-  const { text } = body;
+  const { body: draftBody } = draft || {};
+  const { text } = draftBody || body;
   const messagePreview = text ? text.replace(/\n/, ' ') : null;
   const isUnread = tags.filter(t => ['new_discussion', 'new_messages'].includes(t)).length > 0;
 
@@ -106,6 +112,7 @@ const DiscussionRow = ({ conversation, ...props }) => {
         <DiscussionTitle isUnread={isUnread}>{title || 'Untitled Discussion'}</DiscussionTitle>
         {messagePreview && (
           <MessagePreview>
+            {!!draft && <DraftLabel>Draft:</DraftLabel>}
             <Truncate lines={2}>
               {messagePreview}
             </Truncate>
