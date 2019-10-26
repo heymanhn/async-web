@@ -132,35 +132,33 @@ const DiscussionMessage = ({
     const { data } = await client.mutate({
       mutation: deleteMessageDraftMutation,
       variables: { conversationId },
-      refetchQueries: [{
-        query: meetingQuery,
-        variables: { id: meetingId, queryParams: {} },
-      }],
-      update: (cache) => {
-        const { messages: { messageCount } } = cache.readQuery({
-          query: conversationQuery,
-          variables: { id: conversationId, queryParams: {} },
-        });
-
-        if (!messageCount) {
-          client.mutate({
-            mutation: deleteConversationMutation,
-            variables: { conversationId, meetingId },
-            refetchQueries: [{
-              query: meetingQuery,
-              variables: { id: meetingId, queryParams: {} },
-            }],
-          });
-        } else {
-          client.mutate({
-            mutation: deleteDraftFromConversationMtn,
-            variables: { conversationId },
-          });
-        }
-      },
     });
 
-    if (data.deleteMessageDraft) return Promise.resolve();
+    if (data.deleteMessageDraft) {
+      const { messages: { messageCount } } = client.readQuery({
+        query: conversationQuery,
+        variables: { id: conversationId, queryParams: {} },
+      });
+
+      if (!messageCount) {
+        await client.mutate({
+          mutation: deleteConversationMutation,
+          variables: { conversationId, meetingId },
+          refetchQueries: [{
+            query: meetingQuery,
+            variables: { id: meetingId, queryParams: {} },
+          }],
+          awaitRefetchQueries: true,
+        });
+      } else {
+        client.mutate({
+          mutation: deleteDraftFromConversationMtn,
+          variables: { conversationId },
+        });
+      }
+
+      return Promise.resolve();
+    }
 
     return Promise.reject(new Error('Failed to delete message draft'));
   }
