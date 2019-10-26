@@ -42,8 +42,8 @@ const EditorActionsRow = ({
     return isSubmitDisabled ? null : onSubmit();
   }
 
-  function handleDiscardDraft() {
-    onDiscardDraft();
+  async function handleDiscardDraft() {
+    await onDiscardDraft();
     onCancel();
   }
 

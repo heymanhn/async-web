@@ -94,6 +94,8 @@ const DiscussionRow = ({ conversation, ...props }) => {
       displayText = 'New discussion';
     } else if (tags.includes('new_messages')) {
       displayText = 'New messages';
+    } else if (!messageCount) {
+      displayText = 'Not posted yet';
     } else {
       displayText = Pluralize('message', messageCount, true);
     }

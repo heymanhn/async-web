@@ -56,7 +56,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
   if (error || !data.messages) return <div>{error}</div>;
 
   const { author, draft, title } = data.conversation;
-  const { items, pageToken } = data.messages;
+  const { items, messageCount, pageToken } = data.messages;
   const messages = (items || []).map(i => i.message);
 
   function fetchMoreMessages() {
@@ -143,6 +143,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
           conversationId={conversationId}
           draft={draft}
           meetingId={meetingId}
+          messageCount={messageCount}
         />
       )}
     </Container>
