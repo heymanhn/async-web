@@ -12,6 +12,7 @@ import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
 import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
+import deleteConversationMutation from 'graphql/mutations/deleteConversation';
 import meetingQuery from 'graphql/queries/meeting';
 import conversationQuery from 'graphql/queries/conversation';
 import { getLocalUser } from 'utils/auth';
@@ -89,13 +90,16 @@ const DiscussionMessage = ({
   const isAuthor = userId === author.id;
 
   async function handleSaveDraft({ payload, text }) {
-    // HN: Catching this case for now. Will support creating drafts for new conversations soon.
-    if (!conversationId) return Promise.resolve();
+    let draftConversationId = conversationId;
+    if (!draftConversationId) {
+      const { conversationId: cid } = await onCreateDiscussion();
+      draftConversationId = cid;
+    }
 
     const { data } = await client.mutate({
       mutation: createMessageDraftMutation,
       variables: {
-        conversationId,
+        conversationId: draftConversationId,
         input: {
           body: {
             formatter: 'slatejs',
@@ -112,7 +116,7 @@ const DiscussionMessage = ({
         client.mutate({
           mutation: addDraftToConversationMtn,
           variables: {
-            conversationId,
+            conversationId: draftConversationId,
             draft: createMessageDraft,
           },
         });
@@ -121,24 +125,42 @@ const DiscussionMessage = ({
 
     if (data.createMessageDraft) return Promise.resolve();
 
-    return Promise.reject(new Error('Failed to create discussion message'));
+    return Promise.reject(new Error('Failed to save message draft'));
   }
 
-  function handleDeleteDraft() {
-    return client.mutate({
+  async function handleDeleteDraft() {
+    const { data } = await client.mutate({
       mutation: deleteMessageDraftMutation,
       variables: { conversationId },
-      refetchQueries: [{
-        query: meetingQuery,
-        variables: { id: meetingId, queryParams: {} },
-      }],
-      update: () => {
+    });
+
+    if (data.deleteMessageDraft) {
+      const { messages: { messageCount } } = client.readQuery({
+        query: conversationQuery,
+        variables: { id: conversationId, queryParams: {} },
+      });
+
+      if (!messageCount) {
+        await client.mutate({
+          mutation: deleteConversationMutation,
+          variables: { conversationId, meetingId },
+          refetchQueries: [{
+            query: meetingQuery,
+            variables: { id: meetingId, queryParams: {} },
+          }],
+          awaitRefetchQueries: true,
+        });
+      } else {
         client.mutate({
           mutation: deleteDraftFromConversationMtn,
           variables: { conversationId },
         });
-      },
-    });
+      }
+
+      return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('Failed to delete message draft'));
   }
 
   async function handleCreate({ payload, text }) {

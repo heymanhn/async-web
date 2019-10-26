@@ -41,22 +41,23 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
   if (loading || !data.user) return null;
   const currentUser = data.user;
 
-  async function handleCreateDiscussion({ payload, text }) {
+  async function handleCreateDiscussion({ payload, text } = {}) {
+    const input = { title };
+
+    // It's possible to create a discussion without an initial message
+    if (payload && text) {
+      input.messages = [{
+        body: {
+          formatter: 'slatejs',
+          text,
+          payload,
+        },
+      }];
+    }
+
     const { data: data2 } = await client.mutate({
       mutation: createConversationMutation,
-      variables: {
-        meetingId,
-        input: {
-          title,
-          messages: [{
-            body: {
-              formatter: 'slatejs',
-              text,
-              payload,
-            },
-          }],
-        },
-      },
+      variables: { meetingId, input },
       refetchQueries: [{
         query: meetingQuery,
         variables: { id: meetingId, queryParams: {} },
@@ -64,8 +65,9 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
     });
 
     if (data2.createConversation) {
-      afterSubmit(data2.createConversation.id);
-      return Promise.resolve({ isNewDiscussion: true });
+      const { id: conversationId } = data2.createConversation;
+      afterSubmit(conversationId);
+      return Promise.resolve({ conversationId, isNewDiscussion: true });
     }
 
     return Promise.reject(new Error('Failed to create discussion'));
@@ -92,9 +94,10 @@ const DiscussionComposer = ({ afterSubmit, meetingId }) => {
       <DiscussionMessage
         currentUser={currentUser}
         forceDisableSubmit={!title}
-        onCreateDiscussion={handleCreateDiscussion}
         initialMode="compose"
+        meetingId={meetingId}
         onCancel={returnToMeetingSpace}
+        onCreateDiscussion={handleCreateDiscussion}
       />
     </Container>
   );

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import currentUserQuery from 'graphql/queries/currentUser';
@@ -35,7 +36,7 @@ const AddReplyLabel = styled.div({
   fontSize: '16px',
 });
 
-const MessageComposer = ({ conversationId, draft, meetingId }) => {
+const MessageComposer = ({ conversationId, draft, meetingId, messageCount }) => {
   const [isComposing, setIsComposing] = useState(!!draft);
   function startComposing() { setIsComposing(true); }
   function stopComposing() { setIsComposing(false); }
@@ -57,6 +58,12 @@ const MessageComposer = ({ conversationId, draft, meetingId }) => {
     </Container>
   );
 
+  function handleCancel() {
+    stopComposing();
+
+    if (!messageCount) navigate(`/spaces/${meetingId}`);
+  }
+
   return isComposing ? (
     <DiscussionMessage
       currentUser={currentUser}
@@ -64,7 +71,7 @@ const MessageComposer = ({ conversationId, draft, meetingId }) => {
       draft={draft}
       initialMode="compose"
       meetingId={meetingId}
-      onCancel={stopComposing}
+      onCancel={handleCancel}
     />
   ) : addReplyBox;
 };
@@ -73,6 +80,7 @@ MessageComposer.propTypes = {
   conversationId: PropTypes.string.isRequired,
   draft: PropTypes.object,
   meetingId: PropTypes.string.isRequired,
+  messageCount: PropTypes.number.isRequired,
 };
 
 MessageComposer.defaultProps = {
