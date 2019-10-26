@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Plain from 'slate-plain-serializer';
 import styled from '@emotion/styled';
 
+import useMountEffect from 'utils/hooks/useMountEffect';
+
 const DEBOUNCE_INTERVAL = 1000;
 const IDLE_INTERVAL = 2000;
 const INDICATOR_DURATION = 8000;
@@ -16,15 +18,24 @@ const Label = styled.div(({ theme: { colors } }) => ({
   marginTop: '-27px', // hardcoding the position for now
 }));
 
-const DraftSavedIndicator = ({ editor, onSaveDraft }) => {
+const DraftSavedIndicator = ({ editor, isDraftSaved, onSaveDraft }) => {
   const currentContents = JSON.stringify(editor.value.toJSON());
   const [state, setState] = useState({
     contents: currentContents,
-    isDraftSaved: false,
     isTyping: false,
+    showIndicator: isDraftSaved,
     timerStarted: false,
     timer: null,
   });
+
+  function setDismissTimer() {
+    const timer = setTimeout(
+      () => setState(oldState => ({ ...oldState, showIndicator: false, timer: null })),
+      INDICATOR_DURATION,
+    );
+
+    setState(oldState => ({ ...oldState, timer }));
+  }
 
   async function handleSaveDraft(contents) {
     const { value } = editor;
@@ -37,18 +48,14 @@ const DraftSavedIndicator = ({ editor, onSaveDraft }) => {
 
     await onSaveDraft({ text, payload });
 
-    const timer = setTimeout(
-      () => setState(oldState => ({ ...oldState, isDraftSaved: false, timer: null })),
-      INDICATOR_DURATION,
-    );
-
-    return setState(oldState => ({
+    setState(oldState => ({
       ...oldState,
       contents: payload,
       isTyping: false,
-      isDraftSaved: true,
-      timer,
+      showIndicator: true,
     }));
+
+    return setDismissTimer();
   }
 
   function handleTrackTyping(contents) {
@@ -65,19 +72,25 @@ const DraftSavedIndicator = ({ editor, onSaveDraft }) => {
     setState(oldState => ({ ...oldState, timer }));
   }
 
-  const { contents, isDraftSaved, isTyping, timer } = state;
+  const { contents, showIndicator, isTyping, timer } = state;
   useEffect(() => (() => clearTimeout(timer)), [timer]);
+
+  // Show the indicator initially to remind users that this is a saved draft
+  useMountEffect(() => {
+    if (isDraftSaved && showIndicator) setDismissTimer();
+  });
 
   if (currentContents !== contents && !isTyping) {
     setState(oldState => ({ ...oldState, isTyping: true }));
     handleTrackTyping(contents);
   }
 
-  return isDraftSaved ? <Label>Draft saved</Label> : null;
+  return showIndicator ? <Label>Draft saved</Label> : null;
 };
 
 DraftSavedIndicator.propTypes = {
   editor: PropTypes.object.isRequired,
+  isDraftSaved: PropTypes.bool.isRequired,
   onSaveDraft: PropTypes.func.isRequired,
 };
 
