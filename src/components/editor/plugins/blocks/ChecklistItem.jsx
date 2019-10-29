@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 const Container = styled.li({
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'center',
+  alignItems: 'baseline',
   marginBottom: '5px',
   width: '100%',
 });
@@ -19,6 +19,8 @@ const IconContainer = styled.div(({ isAuthor }) => ({
   justifyContent: 'center',
   cursor: isAuthor ? 'pointer' : 'not-allowed',
   margin: '0 !important',
+  position: 'relative',
+  top: '1px',
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)(({ ischecked, theme: { colors } }) => ({
