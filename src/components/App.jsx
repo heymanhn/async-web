@@ -82,6 +82,7 @@ const generateDefaultData = () => ({
   isLoggedIn: isLocalTokenPresent(),
   isOnboarding: isUserOnboarding(),
   mediaBreakpoint: getBreakpoint(),
+  pendingMessages: [],
   selectedMeetingId: null,
 });
 cache.writeData({ data: generateDefaultData() });

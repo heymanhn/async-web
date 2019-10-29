@@ -1,3 +1,4 @@
+import localStateQuery from 'graphql/queries/localState';
 import meetingQuery from 'graphql/queries/meeting';
 import meetingsQuery from 'graphql/queries/meetings';
 import conversationQuery from 'graphql/queries/conversation';
@@ -228,6 +229,67 @@ function addNewMessageToConversation(_root, { isUnread, message }, { client }) {
   return null;
 }
 
+function addNewPendingMessage(_root, { message }, { client }) {
+  const { pendingMessages } = client.readQuery({ query: localStateQuery });
+
+  const { author: newAuthor, body: newBody } = message;
+  const newMessage = {
+    __typename: 'Message',
+    ...message,
+    author: {
+      __typename: 'Author',
+      ...newAuthor,
+    },
+    body: {
+      __typename: 'Body',
+      ...newBody,
+    },
+    tags: ['new_message'],
+  };
+
+  client.writeData({ data: { pendingMessages: [...pendingMessages, newMessage] } });
+
+  return null;
+}
+
+function addPendingMessagesToConversation(_root, { conversationId }, { client }) {
+  const { pendingMessages } = client.readQuery({ query: localStateQuery });
+
+  const data = client.readQuery({
+    query: conversationQuery,
+    variables: { id: conversationId, queryParams: {} },
+  });
+  if (!data) return null;
+
+  const {
+    conversation,
+    messages: { pageToken, items, __typename, messageCount },
+  } = data;
+
+  const pendingMessageItems = pendingMessages.map(m => ({
+    __typename: items[0].__typename,
+    message: m,
+  }));
+
+  client.writeQuery({
+    query: conversationQuery,
+    variables: { id: conversationId, queryParams: {} },
+    data: {
+      conversation,
+      messages: {
+        messageCount: messageCount + pendingMessageItems.length,
+        pageToken,
+        items: [...items, ...pendingMessageItems],
+        __typename,
+      },
+    },
+  });
+
+  client.writeData({ data: { pendingMessages: [] } });
+
+  return null;
+}
+
 function addNewMeetingToMeetings(_root, { meeting }, { client }) {
   const data = client.readQuery({
     query: meetingsQuery,
@@ -281,6 +343,8 @@ function addNewMeetingToMeetings(_root, { meeting }, { client }) {
 const localResolvers = {
   Mutation: {
     addDraftToConversation,
+    addNewPendingMessage,
+    addPendingMessagesToConversation,
     addNewMessageToConversation,
     addNewMessageToMeetingSpace,
     addNewMeetingToMeetings,
