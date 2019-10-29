@@ -123,6 +123,17 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
     return Promise.reject(new Error('Failed to update discussion'));
   }
 
+  function handleAddPendingMessages() {
+    addPendingMessage();
+
+    markAsRead({
+      isUnread: false,
+      objectType: 'conversation',
+      objectId: conversationId,
+      parentId: meetingId,
+    });
+  }
+
   function firstNewMessageId() {
     const targetMessage = messages.find(m => m.tags && m.tags.includes('new_message'));
 
@@ -155,7 +166,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
       {pendingMessageCount > 0 && (
         <PendingMessagesIndicator
           count={pendingMessageCount}
-          onClick={addPendingMessage}
+          onClick={handleAddPendingMessages}
         />
       )}
       {!pageToken && (
