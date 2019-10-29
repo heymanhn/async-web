@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation, useQuery } from 'react-apollo';
+import { useApolloClient, useMutation, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
@@ -39,6 +39,7 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
 }));
 
 const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
+  const client = useApolloClient();
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
@@ -47,12 +48,16 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
   const [addPendingMessage] = useMutation(addPendingMessagesMtn, { variables: { conversationId } });
 
   const { markAsRead } = useViewedReaction();
-  useMountEffect(() => markAsRead({
-    isUnread,
-    objectType: 'conversation',
-    objectId: conversationId,
-    parentId: meetingId,
-  }));
+  useMountEffect(() => {
+    client.writeData({ data: { pendingMessages: [] } });
+
+    markAsRead({
+      isUnread,
+      objectType: 'conversation',
+      objectId: conversationId,
+      parentId: meetingId,
+    });
+  });
 
   const { loading, error, data, fetchMore } = useQuery(conversationQuery, {
     variables: { id: conversationId, queryParams: {} },

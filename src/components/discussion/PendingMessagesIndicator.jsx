@@ -12,9 +12,11 @@ const Container = styled.div(({ theme: { colors } }) => ({
   fontWeight: 500,
   margin: '0 auto',
   marginBottom: '-31px',
+  opacity: 1,
   padding: '5px 25px',
   position: 'relative',
   top: '-48px',
+  transition: 'opacity 0.2s',
 }));
 
 const PendingMessagesIndicator = ({ count, ...props }) => (
