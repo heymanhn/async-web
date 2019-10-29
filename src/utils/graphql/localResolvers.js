@@ -1,3 +1,4 @@
+import localStateQuery from 'graphql/queries/localState';
 import meetingQuery from 'graphql/queries/meeting';
 import meetingsQuery from 'graphql/queries/meetings';
 import conversationQuery from 'graphql/queries/conversation';
@@ -228,6 +229,29 @@ function addNewMessageToConversation(_root, { isUnread, message }, { client }) {
   return null;
 }
 
+function addNewPendingMessage(_root, { message }, { client }) {
+  const { pendingMessages } = client.readQuery({ query: localStateQuery });
+
+  const { author: newAuthor, body: newBody } = message;
+  const newMessage = {
+    __typename: 'Message',
+    ...message,
+    author: {
+      __typename: 'Author',
+      ...newAuthor,
+    },
+    body: {
+      __typename: 'Body',
+      ...newBody,
+    },
+    tags: [],
+  };
+
+  client.writeData({ data: { pendingMessages: [...pendingMessages, newMessage] } });
+
+  return null;
+}
+
 function addNewMeetingToMeetings(_root, { meeting }, { client }) {
   const data = client.readQuery({
     query: meetingsQuery,
@@ -281,6 +305,7 @@ function addNewMeetingToMeetings(_root, { meeting }, { client }) {
 const localResolvers = {
   Mutation: {
     addDraftToConversation,
+    addNewPendingMessage,
     addNewMessageToConversation,
     addNewMessageToMeetingSpace,
     addNewMeetingToMeetings,

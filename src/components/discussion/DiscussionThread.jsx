@@ -4,6 +4,7 @@ import { useMutation, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import conversationQuery from 'graphql/queries/conversation';
+import localStateQuery from 'graphql/queries/localState';
 import updateConversationMutation from 'graphql/mutations/updateConversation';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useMountEffect from 'utils/hooks/useMountEffect';
@@ -16,6 +17,7 @@ import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from './DiscussionMessage';
 import MessageComposer from './MessageComposer';
 import NewRepliesIndicator from './NewRepliesIndicator';
+import PendingMessagesIndicator from './PendingMessagesIndicator';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
@@ -39,6 +41,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
+  const [pendingMessageCount, setPendingMessageCount] = useState(0);
   const [updateConversation] = useMutation(updateConversationMutation);
 
   const { markAsRead } = useViewedReaction();
@@ -52,12 +55,21 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
   const { loading, error, data, fetchMore } = useQuery(conversationQuery, {
     variables: { id: conversationId, queryParams: {} },
   });
+  const { data: localData } = useQuery(localStateQuery);
+
   if (loading) return null;
   if (error || !data.messages) return <div>{error}</div>;
 
   const { author, draft, title } = data.conversation;
   const { items, messageCount, pageToken } = data.messages;
   const messages = (items || []).map(i => i.message);
+
+  if (localData) {
+    const { pendingMessages } = localData;
+    if (pendingMessages && pendingMessages.length !== pendingMessageCount) {
+      setPendingMessageCount(pendingMessages.length);
+    }
+  }
 
   function fetchMoreMessages() {
     const newQueryParams = {};
@@ -138,6 +150,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
           />
         </React.Fragment>
       ))}
+      {pendingMessageCount > 0 && <PendingMessagesIndicator count={pendingMessageCount} />}
       {!pageToken && (
         <MessageComposer
           conversationId={conversationId}

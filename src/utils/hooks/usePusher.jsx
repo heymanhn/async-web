@@ -4,11 +4,13 @@ import Pusher from 'pusher-js';
 import camelcaseKeys from 'camelcase-keys';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
+import addNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
 import addNewMessageToMeetingSpaceMtn from 'graphql/mutations/local/addNewMessageToMeetingSpace';
 import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessageToConversation';
 import addNewMeetingToMeetingsMtn from 'graphql/mutations/local/addNewMeetingToMeetings';
 import updateMeetingBadgeCountMutation from 'graphql/mutations/local/updateMeetingBadgeCount';
 import { getLocalUser } from 'utils/auth';
+import { isDiscussionOpen } from 'utils/navigation';
 
 const NEW_MESSAGE_EVENT = 'new_message';
 const EDIT_MEETING_EVENT = 'edit_meeting';
@@ -42,19 +44,27 @@ const usePusher = () => {
     function handleNewMessage(pusherData) {
       const camelData = camelcaseKeys(pusherData, { deep: true });
       const { message } = camelData;
+      const { conversationId } = message;
 
       client.mutate({
         mutation: addNewMessageToMeetingSpaceMtn,
         variables: camelData,
       });
 
-      client.mutate({
-        mutation: addNewMessageToConversationMtn,
-        variables: {
-          isUnread: true,
-          message,
-        },
-      });
+      if (isDiscussionOpen(conversationId)) {
+        client.mutate({
+          mutation: addNewPendingMessage,
+          variables: { message },
+        });
+      } else {
+        client.mutate({
+          mutation: addNewMessageToConversationMtn,
+          variables: {
+            isUnread: true,
+            message,
+          },
+        });
+      }
     }
 
     function handleEditMeeting(pusherData) {
