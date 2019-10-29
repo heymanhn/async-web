@@ -244,10 +244,48 @@ function addNewPendingMessage(_root, { message }, { client }) {
       __typename: 'Body',
       ...newBody,
     },
-    tags: [],
+    tags: ['new_message'],
   };
 
   client.writeData({ data: { pendingMessages: [...pendingMessages, newMessage] } });
+
+  return null;
+}
+
+function addPendingMessagesToConversation(_root, { conversationId }, { client }) {
+  const { pendingMessages } = client.readQuery({ query: localStateQuery });
+
+  const data = client.readQuery({
+    query: conversationQuery,
+    variables: { id: conversationId, queryParams: {} },
+  });
+  if (!data) return null;
+
+  const {
+    conversation,
+    messages: { pageToken, items, __typename, messageCount },
+  } = data;
+
+  const pendingMessageItems = pendingMessages.map(m => ({
+    __typename: items[0].__typename,
+    message: m,
+  }));
+
+  client.writeQuery({
+    query: conversationQuery,
+    variables: { id: conversationId, queryParams: {} },
+    data: {
+      conversation,
+      messages: {
+        messageCount: messageCount + pendingMessageItems.length,
+        pageToken,
+        items: [...items, ...pendingMessageItems],
+        __typename,
+      },
+    },
+  });
+
+  client.writeData({ data: { pendingMessages: [] } });
 
   return null;
 }
@@ -306,6 +344,7 @@ const localResolvers = {
   Mutation: {
     addDraftToConversation,
     addNewPendingMessage,
+    addPendingMessagesToConversation,
     addNewMessageToConversation,
     addNewMessageToMeetingSpace,
     addNewMeetingToMeetings,

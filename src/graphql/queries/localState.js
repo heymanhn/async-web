@@ -8,6 +8,7 @@ export default gql`
     isOnboarding @client
     pendingMessages @client {
       ...MessageObject
+      tags
     }
     selectedMeetingId @client
   }

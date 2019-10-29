@@ -7,6 +7,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.blue,
   borderRadius: '20px',
   color: colors.white,
+  cursor: 'pointer',
   fontSize: '14px',
   fontWeight: 500,
   margin: '0 auto',

@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import conversationQuery from 'graphql/queries/conversation';
 import localStateQuery from 'graphql/queries/localState';
 import updateConversationMutation from 'graphql/mutations/updateConversation';
+import addPendingMessagesMtn from 'graphql/mutations/local/addPendingMessagesToConversation';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useMountEffect from 'utils/hooks/useMountEffect';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
@@ -43,6 +44,7 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
   const [isFetching, setIsFetching] = useState(false);
   const [pendingMessageCount, setPendingMessageCount] = useState(0);
   const [updateConversation] = useMutation(updateConversationMutation);
+  const [addPendingMessage] = useMutation(addPendingMessagesMtn, { variables: { conversationId } });
 
   const { markAsRead } = useViewedReaction();
   useMountEffect(() => markAsRead({
@@ -150,7 +152,12 @@ const DiscussionThread = ({ conversationId, isUnread, meetingId }) => {
           />
         </React.Fragment>
       ))}
-      {pendingMessageCount > 0 && <PendingMessagesIndicator count={pendingMessageCount} />}
+      {pendingMessageCount > 0 && (
+        <PendingMessagesIndicator
+          count={pendingMessageCount}
+          onClick={addPendingMessage}
+        />
+      )}
       {!pageToken && (
         <MessageComposer
           conversationId={conversationId}
