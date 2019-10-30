@@ -48,6 +48,48 @@ function updateMeetingBadgeCount(_root, { meetingId, badgeCount }, { client }) {
   return null;
 }
 
+function updateMeetingInMeetings(_root, { meeting }, { client }) {
+  const { body, id: meetingId, title } = meeting;
+  const data = client.readQuery({
+    query: meetingsQuery,
+    variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
+  });
+  if (!data) return null;
+
+  const { meetings: { items, pageToken, __typename } } = data;
+  const { item: meetingItem, index } = findInItems(items, 'meeting', meetingId);
+  const { meeting: oldMeeting } = meetingItem;
+
+  client.writeQuery({
+    query: meetingsQuery,
+    variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
+    data: {
+      meetings: {
+        pageToken,
+        items: [
+          ...items.slice(0, index),
+          {
+            ...meetingItem,
+            meeting: {
+              ...oldMeeting,
+              // Only the title and the purpose of the meeting can be updated
+              title,
+              body: {
+                __typename: 'Body',
+                ...body,
+              },
+            },
+          },
+          ...items.slice(index + 1),
+        ],
+        __typename,
+      },
+    },
+  });
+
+  return null;
+}
+
 /*
  * Only mutates the cache if a query was run for the meeting
  * TODO: handle case of new discussion
@@ -349,6 +391,7 @@ const localResolvers = {
     deleteDraftFromConversation,
     markConversationAsRead,
     updateMeetingBadgeCount,
+    updateMeetingInMeetings,
   },
 };
 

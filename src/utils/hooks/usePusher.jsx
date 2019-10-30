@@ -3,14 +3,18 @@ import { useApolloClient, useQuery } from 'react-apollo';
 import Pusher from 'pusher-js';
 import camelcaseKeys from 'camelcase-keys';
 
+import { MEETINGS_QUERY_SIZE } from 'graphql/constants';
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
+import meetingsQuery from 'graphql/queries/meetings';
 import addNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
 import addNewMessageToMeetingSpaceMtn from 'graphql/mutations/local/addNewMessageToMeetingSpace';
 import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessageToConversation';
 import addNewMeetingToMeetingsMtn from 'graphql/mutations/local/addNewMeetingToMeetings';
 import updateMeetingBadgeCountMutation from 'graphql/mutations/local/updateMeetingBadgeCount';
+import updateMeetingInMeetingsMtn from 'graphql/mutations/local/updateMeetingInMeetings';
 import { getLocalUser } from 'utils/auth';
 import { isDiscussionOpen } from 'utils/navigation';
+import { snakedQueryParams } from 'utils/queryParams';
 
 const NEW_MESSAGE_EVENT = 'new_message';
 const EDIT_MEETING_EVENT = 'edit_meeting';
@@ -70,8 +74,26 @@ const usePusher = () => {
     function handleEditMeeting(pusherData) {
       const meeting = camelcaseKeys(pusherData, { deep: true });
 
-      client.mutate({
-        mutation: addNewMeetingToMeetingsMtn,
+      const data = client.readQuery({
+        query: meetingsQuery,
+        variables: { queryParams: snakedQueryParams({ size: MEETINGS_QUERY_SIZE }) },
+      });
+      if (!data) return null;
+
+      const { meetings: { items } } = data;
+      const index = items
+        .map(i => i.meeting)
+        .findIndex(m => m.id === meeting.id);
+
+      if (index < 0) {
+        return client.mutate({
+          mutation: addNewMeetingToMeetingsMtn,
+          variables: { meeting },
+        });
+      }
+
+      return client.mutate({
+        mutation: updateMeetingInMeetingsMtn,
         variables: { meeting },
       });
     }
