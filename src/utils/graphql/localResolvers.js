@@ -192,20 +192,18 @@ function addNewMessageToConversation(_root, { isUnread, message }, { client }) {
     conversation,
     messages: { pageToken, items, __typename, messageCount },
   } = data;
-  const { message: oldMessage } = items[0];
-  const { author, body } = oldMessage;
 
   const newMessageItem = {
-    __typename: items[0].__typename,
+    __typename: 'MessageItem',
     message: {
-      __typename: oldMessage.__typename,
+      __typename: 'Message',
       ...message,
       author: {
-        __typename: author.__typename,
+        __typename: 'Author',
         ...newAuthor,
       },
       body: {
-        __typename: body.__typename,
+        __typename: 'Body',
         ...newBody,
       },
       tags: isUnread ? ['new_message'] : null,
@@ -220,7 +218,7 @@ function addNewMessageToConversation(_root, { isUnread, message }, { client }) {
       messages: {
         messageCount: messageCount + 1,
         pageToken,
-        items: [...items, newMessageItem],
+        items: [...(items || []), newMessageItem],
         __typename,
       },
     },
