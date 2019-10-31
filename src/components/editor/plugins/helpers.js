@@ -61,6 +61,12 @@ export const CustomBackspaceAction = actionFn => ({
   },
 });
 
+export const CustomDropAction = actionFn => ({
+  onDrop(event, editor, next) {
+    return actionFn(event, editor, next);
+  },
+});
+
 export const CustomPasteAction = actionFn => ({
   onPaste(event, editor, next) {
     return actionFn(event, editor, next);
