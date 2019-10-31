@@ -28,8 +28,7 @@ export function SectionBreakOption({ editor, ...props }) {
   function handleSectionBreakOption() {
     return editor
       .clearBlock()
-      .setBlock(SECTION_BREAK, COMPOSITION_MENU_SOURCE)
-      .insertBlock(DEFAULT_NODE);
+      .setBlock(SECTION_BREAK, COMPOSITION_MENU_SOURCE);
   }
 
   const icon = <OptionIcon icon={faHorizontalRule} />;
