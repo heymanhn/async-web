@@ -13,12 +13,14 @@ import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 import {
   DEFAULT_NODE,
   COMPOSITION_MENU_SOURCE,
+  CUT_PASTE_SOURCE,
 } from 'components/editor/defaults';
 import {
   AddCommands,
   AddSchema,
   CustomBackspaceAction,
   CustomEnterAction,
+  CustomPasteAction,
   RenderBlock,
 } from '../helpers';
 
@@ -172,11 +174,41 @@ export function Image() {
     return next();
   }
 
+  // Inspired by https://stackoverflow.com/questions/6333814/
+  async function insertImageOnPaste(event, editor, next) {
+    const { clipboardData } = event;
+    const { items } = clipboardData;
+
+    let image;
+    for (let i = 0; i < items.length; i += 1) {
+      const item = items[i];
+      if (item.kind === 'file' && item.type.includes('image')) {
+        image = item.getAsFile();
+        break;
+      }
+    }
+    if (!image) return next();
+
+    const client = window.Roval.apolloClient; // Using a global variable until I find a better way
+    const { data } = await client.mutate({
+      mutation: uploadFileMutation,
+      variables: { input: { file: image } },
+    });
+
+    if (data && data.uploadFile) {
+      const { url } = data.uploadFile;
+      return editor.insertImage(url, CUT_PASTE_SOURCE);
+    }
+
+    return next();
+  }
+
   return [
     AddSchema(imageSchema),
     AddCommands({ insertImage }),
     RenderBlock(IMAGE, renderImage),
     CustomBackspaceAction(ensureBlockPresentOnRemove),
     CustomEnterAction(insertNewBlockOnEnter),
+    CustomPasteAction(insertImageOnPaste),
   ];
 }
