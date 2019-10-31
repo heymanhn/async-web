@@ -32,6 +32,7 @@ const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
   color: isChecked ? colors.grey4 : colors.contentText,
   fontSize: '16px',
   margin: '0 0 0 10px !important',
+  flexWrap: 'wrap',
 }));
 
 const ChecklistItem = ({ attributes, children, editor, node }) => {
