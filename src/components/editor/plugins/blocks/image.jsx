@@ -20,6 +20,7 @@ import {
   AddSchema,
   CustomBackspaceAction,
   CustomEnterAction,
+  CustomDropAction,
   CustomPasteAction,
   RenderBlock,
 } from '../helpers';
@@ -175,10 +176,7 @@ export function Image() {
   }
 
   // Inspired by https://stackoverflow.com/questions/6333814/
-  async function insertImageOnPaste(event, editor, next) {
-    const { clipboardData } = event;
-    const { items } = clipboardData;
-
+  async function uploadAndInsertImage(items, editor, next) {
     let image;
     for (let i = 0; i < items.length; i += 1) {
       const item = items[i];
@@ -203,12 +201,29 @@ export function Image() {
     return next();
   }
 
+  async function insertImageOnPaste(event, editor, next) {
+    const { clipboardData } = event;
+    const { items } = clipboardData;
+
+    const response = await uploadAndInsertImage(items, editor, next);
+    return response;
+  }
+
+  async function insertImageOnDrop(event, editor, next) {
+    const { dataTransfer } = event;
+    const { items } = dataTransfer;
+
+    const response = await uploadAndInsertImage(items, editor, next);
+    return response;
+  }
+
   return [
     AddSchema(imageSchema),
     AddCommands({ insertImage }),
     RenderBlock(IMAGE, renderImage),
     CustomBackspaceAction(ensureBlockPresentOnRemove),
     CustomEnterAction(insertNewBlockOnEnter),
+    CustomDropAction(insertImageOnDrop),
     CustomPasteAction(insertImageOnPaste),
   ];
 }
