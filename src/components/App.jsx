@@ -88,6 +88,9 @@ const generateDefaultData = () => ({
 cache.writeData({ data: generateDefaultData() });
 client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaultData() })));
 
+// TEMP: set client as a global variable for non-React usages
+window.Roval = { apolloClient: client };
+
 const App = () => {
   usePusher();
 
