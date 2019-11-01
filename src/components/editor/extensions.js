@@ -23,6 +23,7 @@ import EditorActions from './plugins/editorActions';
 import DragAndDrop from './plugins/dragAndDrop';
 import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
 import Drafts from './plugins/drafts';
+import ImageLoadingIndicator from './plugins/blocks/imageLoadingIndicator';
 
 /* **** Commands **** */
 
@@ -142,6 +143,7 @@ const coreEditorPlugins = [
   DragAndDrop(),
   DragAndDropIndicator(),
   Drafts(),
+  ImageLoadingIndicator(),
 ];
 
 const createTitlePlaceholder = text => PlaceholderPlugin({

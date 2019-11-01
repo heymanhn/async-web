@@ -43,7 +43,11 @@ export function ImageOption({ editor, ...props }) {
     onCompleted: (data) => {
       if (data && data.uploadFile) {
         const { url } = data.uploadFile;
-        editor.insertImage(url, COMPOSITION_MENU_SOURCE);
+        editor
+          .removeImageLoadingIndicator()
+          .insertImage(url, COMPOSITION_MENU_SOURCE);
+      } else {
+        editor.removeImageLoadingIndicator();
       }
     },
   });
@@ -66,6 +70,7 @@ export function ImageOption({ editor, ...props }) {
 
   if (selectedFile && !uploadStarted) {
     setState(oldState => ({ ...oldState, uploadStarted: true }));
+    editor.insertImageLoadingIndicator();
     uploadFile({ variables: { input: { file: selectedFile } } });
   }
 
@@ -188,6 +193,7 @@ export function Image() {
     if (!image) return next();
 
     const client = window.Roval.apolloClient; // Using a global variable until I find a better way
+    editor.insertImageLoadingIndicator();
     const { data } = await client.mutate({
       mutation: uploadFileMutation,
       variables: { input: { file: image } },
@@ -195,9 +201,12 @@ export function Image() {
 
     if (data && data.uploadFile) {
       const { url } = data.uploadFile;
-      return editor.insertImage(url, CUT_PASTE_SOURCE);
+      return editor
+        .removeImageLoadingIndicator()
+        .insertImage(url, CUT_PASTE_SOURCE);
     }
 
+    editor.removeImageLoadingIndicator();
     return next();
   }
 

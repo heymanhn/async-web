@@ -32,17 +32,11 @@ function DragAndDropIndicator() {
   /* **** Commands **** */
 
   function insertDragAndDropIndicator(editor) {
-    if (editor.isEmptyParagraph()) {
-      return editor.setBlocks({
-        type: DRAG_AND_DROP_INDICATOR,
-      });
-    }
+    if (editor.isEmptyParagraph()) return editor.setBlocks(DRAG_AND_DROP_INDICATOR);
 
     return editor
       .moveToEndOfBlock()
-      .insertBlock({
-        type: DRAG_AND_DROP_INDICATOR,
-      });
+      .insertBlock(DRAG_AND_DROP_INDICATOR);
   }
 
   /* **** Queries **** */
