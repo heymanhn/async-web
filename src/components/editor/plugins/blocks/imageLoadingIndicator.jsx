@@ -3,6 +3,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
+import { DEFAULT_NODE } from 'components/editor/defaults';
 import {
   AddCommands,
   AddQueries,
@@ -52,7 +53,11 @@ export default function ImageLoadingIndicator() {
 
   function removeImageLoadingIndicator(editor) {
     const indicator = editor.findImageLoadingIndicator();
-    if (indicator) editor.removeNodeByKey(indicator.key);
+    if (indicator) {
+      editor
+        .insertBlock(DEFAULT_NODE)
+        .removeNodeByKey(indicator.key);
+    }
 
     return editor;
   }
