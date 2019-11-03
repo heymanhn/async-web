@@ -20,8 +20,9 @@ import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
 import CompositionMenu from './plugins/compositionMenu';
 import EditorActions from './plugins/editorActions';
-import DragAndDrop from './plugins/dragAndDrop';
-import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
+// HN: Not supporting drag and drop guides for now
+// import DragAndDrop from './plugins/dragAndDrop';
+// import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
 import Drafts from './plugins/drafts';
 import ImageLoadingIndicator from './plugins/blocks/imageLoadingIndicator';
 
@@ -140,8 +141,11 @@ const coreEditorPlugins = [
   EditorActions(),
   SelectionToolbar(),
   CompositionMenu(),
-  DragAndDrop(),
-  DragAndDropIndicator(),
+
+  // HN: Not supporting drag and drop guides for now
+  // DragAndDrop(),
+  // DragAndDropIndicator(),
+
   Drafts(),
   ImageLoadingIndicator(),
 ];
