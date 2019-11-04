@@ -159,30 +159,10 @@ const createTitlePlaceholder = text => PlaceholderPlugin({
   },
 });
 
-const createContentPlaceholder = text => PlaceholderPlugin({
-  placeholder: text,
-  when: 'isEmptyDocument',
-  style: {
-    color: theme.colors.textPlaceholder,
-    lineHeight: '18px',
-  },
-});
-
-
 export const plugins = {
   meetingTitle: [],
   meetingPurpose: [],
   discussionTitle: [createTitlePlaceholder('Untitled Discussion')],
-  discussion: [
-    createContentPlaceholder(
-      'Post a message to start this discussion. Be as expressive as you like.',
-    ),
-    coreEditorPlugins,
-  ],
-  message: [
-    createContentPlaceholder(
-      'Share your perspective with others in this discussion. Be as expressive as you like.',
-    ),
-    coreEditorPlugins,
-  ],
+  discussion: [coreEditorPlugins],
+  message: [coreEditorPlugins],
 };
