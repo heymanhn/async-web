@@ -10,6 +10,7 @@ const Container = styled.div(({ isVisible, theme: { colors } }) => ({
   top: '-10000px',
   left: '-10000px',
   position: 'absolute',
+  pointerEvents: 'none',
 }), ({ coords, isVisible }) => {
   if (!isVisible || !coords) return {};
 
