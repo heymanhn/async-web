@@ -77,7 +77,7 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
     const elemXOffset = rect.left + window.pageXOffset;
     const BLOCK_HEIGHT = 30;
 
-    if (elemYOffset > window.innerHeight / 2) {
+    if (rect.top > window.innerHeight / 2) {
       const options = filteredOptions();
       const sectionCount = [...new Set(options.map(o => o.section))].length;
       const optionCount = options.length;
