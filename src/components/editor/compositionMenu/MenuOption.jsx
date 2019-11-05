@@ -48,7 +48,7 @@ const MenuOption = ({
       //
       // NOTE (HN): In the future when we have the menu showing up in either direction,
       // we can support aligning the scroll to the bottom or top.
-      optionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      optionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [selectedOption, title]);
 
