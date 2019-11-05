@@ -9,13 +9,15 @@ import useClickOutside from 'utils/hooks/useClickOutside';
 import optionsList from './optionsList';
 import MenuSection from './MenuSection';
 
+const MAX_MENU_HEIGHT = 260;
+
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
   background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '3px',
   boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-  maxHeight: '260px',
+  maxHeight: `${MAX_MENU_HEIGHT}px`,
   opacity: 0,
   overflow: 'auto',
   paddingBottom: '15px',
@@ -57,24 +59,48 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
   };
   useClickOutside({ handleClickOutside, isOpen, ref: menuRef });
 
-  // Always position the menu behind the entire block, so that it doesn't move as the user types
+  function filteredOptions() {
+    if (!query) return optionsList;
+
+    return optionsList.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
+  }
+
+  // Displays the menu either above or below the current block, based on the block's
+  // relative position on the page
   function calculateMenuPosition() {
     const path = document.getPath(startBlock.key);
     const element = editor.findDOMNode(path);
     if (!element) return {};
 
     const rect = element.getBoundingClientRect();
+    const elemYOffset = rect.top + window.pageYOffset;
+    const elemXOffset = rect.left + window.pageXOffset;
+    const BLOCK_HEIGHT = 30;
+
+    if (rect.top > window.innerHeight / 2) {
+      const options = filteredOptions();
+      const sectionCount = [...new Set(options.map(o => o.section))].length;
+      const optionCount = options.length;
+
+      // TODO(HN): not the best way to implement this. Improve later
+      const SECTION_HEIGHT = 43;
+      const OPTION_HEIGHT = 32;
+      const NO_RESULTS_HEIGHT = 53;
+      const calculatedHeight = optionCount
+        ? (sectionCount * SECTION_HEIGHT) + (optionCount * OPTION_HEIGHT) + 15 // bottom padding
+        : NO_RESULTS_HEIGHT;
+      const offsetHeight = Math.min(calculatedHeight, MAX_MENU_HEIGHT);
+
+      return {
+        top: `${elemYOffset - offsetHeight - 5}px`,
+        left: `${elemXOffset}px`,
+      };
+    }
 
     return {
-      top: `${rect.top + window.pageYOffset + 30}px`,
-      left: `${rect.left + window.pageXOffset}px`,
+      top: `${elemYOffset + BLOCK_HEIGHT}px`,
+      left: `${elemXOffset}px`,
     };
-  }
-
-  function filteredOptions() {
-    if (!query) return optionsList;
-
-    return optionsList.filter(({ title }) => title.toLowerCase().includes(query.toLowerCase()));
   }
 
   /*
