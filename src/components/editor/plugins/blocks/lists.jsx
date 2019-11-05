@@ -221,21 +221,31 @@ export function ListsPlugin() {
 
   /* **** Markdown **** */
 
+  function markdownListBlock(editor, type, matchString) {
+    if (!editor.isEmptyParagraph() || editor.isWrappedByAnyBlock()) {
+      return editor
+        .insertText(matchString)
+        .moveToEndOfBlock();
+    }
+
+    return editor.setListBlock(type, MARKDOWN_SOURCE);
+  }
+
   const markdownShortcuts = [
     AutoReplace({
       trigger: 'space',
       before: /^(-)$/,
-      change: change => change.setListBlock(BULLETED_LIST, MARKDOWN_SOURCE),
+      change: editor => markdownListBlock(editor, BULLETED_LIST, '- '),
     }),
     AutoReplace({
       trigger: 'space',
       before: /^(1\.)$/,
-      change: change => change.setListBlock(NUMBERED_LIST, MARKDOWN_SOURCE),
+      change: editor => markdownListBlock(editor, NUMBERED_LIST, '1. '),
     }),
     AutoReplace({
       trigger: 'space',
       before: /^(\[\])$/,
-      change: change => change.setListBlock(CHECKLIST, MARKDOWN_SOURCE),
+      change: editor => markdownListBlock(editor, CHECKLIST, '[] '),
     }),
   ];
 
