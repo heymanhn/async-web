@@ -131,7 +131,7 @@ const CompositionMenuButton = React.forwardRef(({ editor, query, ...props }, men
       >
         <StyledIcon icon={faPlus} />
       </ButtonContainer>
-      <CompositionMenuPlaceholder isVisible={showButton} />
+      {showButton && <CompositionMenuPlaceholder isVisible={showButton} />}
       <CompositionMenu
         ref={menuRef}
         editor={editor}
