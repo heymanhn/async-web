@@ -40,10 +40,14 @@ const CompositionMenuPlaceholder = ({ isVisible }) => {
 
     if (coords && newCoords.top === coords.top && newCoords.left === coords.left) return;
 
+    if (!isVisible) {
+      newCoords.top = -10000;
+      newCoords.left = -10000;
+    }
+
     setCoords(newCoords);
   }
 
-  if (!isVisible) return null;
   setTimeout(updatePlaceholderPosition, 0);
 
   return (

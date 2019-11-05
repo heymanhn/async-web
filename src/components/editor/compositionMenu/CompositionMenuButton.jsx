@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/pro-light-svg-icons';
 import styled from '@emotion/styled';
 
+import CompositionMenuPlaceholder from './CompositionMenuPlaceholder';
 import CompositionMenu from './CompositionMenu';
 
 const ButtonContainer = styled.div(({ isVisible, theme: { colors } }) => ({
@@ -130,6 +131,7 @@ const CompositionMenuButton = React.forwardRef(({ editor, query, ...props }, men
       >
         <StyledIcon icon={faPlus} />
       </ButtonContainer>
+      <CompositionMenuPlaceholder isVisible={showButton} />
       <CompositionMenu
         ref={menuRef}
         editor={editor}

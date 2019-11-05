@@ -2,7 +2,6 @@
 import React from 'react';
 
 import CompositionMenuButton from '../compositionMenu/CompositionMenuButton';
-import CompositionMenuPlaceholder from '../compositionMenu/CompositionMenuPlaceholder';
 import { DEFAULT_NODE } from '../defaults';
 import { AddQueries, Hotkey, RenderEditor } from './helpers';
 
@@ -23,12 +22,10 @@ function CompositionMenu() {
     const children = next();
     if (mode === 'display') return children;
 
-    const isPlaceholderVisible = editor.isEmptyParagraph();
     return (
       <>
         {children}
         <CompositionMenuButton editor={editor} ref={menuRef} />
-        <CompositionMenuPlaceholder isVisible={isPlaceholderVisible} />
       </>
     );
   }
