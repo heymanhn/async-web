@@ -39,7 +39,7 @@ const reactionsReference = [
   {
     code: 'thinking_face',
     icon: '🤔',
-    text: 'Confused',
+    text: 'Thinking',
   },
   {
     code: 'clap',
