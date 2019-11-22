@@ -5,6 +5,7 @@ export default gql`
     createUser(input: $input) @rest(type: "User", path: "/users", method: "POST") {
       id
       token
+      organizationId
     }
   }
 `;
