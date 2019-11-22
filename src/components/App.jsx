@@ -17,6 +17,7 @@ import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
 import usePusher from 'utils/hooks/usePusher';
 
+// Roval v1
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
 import Login from 'components/auth/Login';
@@ -29,6 +30,9 @@ import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
 import MeetingSpace from 'components/meeting/MeetingSpace';
 import Discussion from 'components/discussion/Discussion';
+
+// Roval v2
+import Document from 'components/document/Document';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -110,11 +114,8 @@ const App = () => {
 
         <PrivateRoute path="/spaces/:meetingId/discussions/new" component={Discussion} />
         <PrivateRoute path="/discussions/:conversationId" component={Discussion} />
-        {/* TODO */}
-        {/* <PrivateRoute
-        path="/discussions/:conversationId/messages/:messageId"
-        component={Discussion}
-      /> */}
+
+        <PrivateRoute path="/d/:documentId" component={Document} />
 
         <NotFound path="/notfound" default />
       </Router>

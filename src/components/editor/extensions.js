@@ -112,7 +112,6 @@ export const queries = {
 };
 
 /* **** Plugins **** */
-
 const coreEditorPlugins = [
   // Marks
   BoldPlugin(),
@@ -138,19 +137,23 @@ const coreEditorPlugins = [
     before: /(--)$/,
     change: change => change.insertText('— '),
   }),
-  EditorActions(),
   SelectionToolbar(),
   CompositionMenu(),
+];
+
+const discussionPlugins = [
+  ...coreEditorPlugins,
 
   // HN: Not supporting drag and drop guides for now
   // DragAndDrop(),
   // DragAndDropIndicator(),
 
   Drafts(),
+  EditorActions(),
   ImageLoadingIndicator(),
 ];
 
-const createTitlePlaceholder = text => PlaceholderPlugin({
+const createDiscussionTitlePlaceholder = text => PlaceholderPlugin({
   placeholder: text,
   when: 'isEmptyDocument',
   style: {
@@ -159,10 +162,23 @@ const createTitlePlaceholder = text => PlaceholderPlugin({
   },
 });
 
+const createDocumentTitlePlaceholder = text => PlaceholderPlugin({
+  placeholder: text,
+  when: 'isEmptyDocument',
+  style: {
+    color: theme.colors.titlePlaceholder,
+    lineHeight: '49px',
+  },
+});
+
 export const plugins = {
   meetingTitle: [],
   meetingPurpose: [],
-  discussionTitle: [createTitlePlaceholder('Untitled Discussion')],
-  discussion: [coreEditorPlugins],
-  message: [coreEditorPlugins],
+  discussionTitle: [createDiscussionTitlePlaceholder('Untitled Discussion')],
+  discussion: discussionPlugins,
+  message: discussionPlugins,
+
+  // Roval v2
+  documentTitle: [createDocumentTitlePlaceholder('Untitled Document')],
+  document: coreEditorPlugins,
 };

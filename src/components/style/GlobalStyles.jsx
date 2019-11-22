@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Global } from '@emotion/core';
 import { withTheme } from 'emotion-theming';
 
-const GlobalStyles = ({ theme: { colors, fontStack, mq } }) => (
+const GlobalStyles = ({ bgColor, theme: { colors, fontStack, mq } }) => (
   <Global
     styles={{
       '*': {
@@ -14,7 +14,7 @@ const GlobalStyles = ({ theme: { colors, fontStack, mq } }) => (
         MozOsxFontSmoothing: 'grayscale',
       },
       'html, body': {
-        background: colors.bgGrey,
+        background: colors[bgColor],
         color: colors.mainText,
         fontWeight: 400,
         margin: 0,
@@ -83,7 +83,12 @@ const GlobalStyles = ({ theme: { colors, fontStack, mq } }) => (
 );
 
 GlobalStyles.propTypes = {
+  bgColor: PropTypes.string,
   theme: PropTypes.object.isRequired,
+};
+
+GlobalStyles.defaultProps = {
+  bgColor: 'bgGrey',
 };
 
 export default withTheme(GlobalStyles);

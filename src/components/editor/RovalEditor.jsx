@@ -208,6 +208,10 @@ RovalEditor.propTypes = {
     'meetingName',
     'meetingPurpose',
     'message',
+
+    // New to Roval v2
+    'documentTitle',
+    'document',
   ]).isRequired,
   disableAutoFocus: PropTypes.bool,
   forceDisableSubmit: PropTypes.bool,
