@@ -80,7 +80,6 @@ const SignUp = ({ inviteCode }) => {
     },
     onCompleted: (data) => {
       const { id: userId, token: userToken, organizationId } = data.createUser;
-      console.log(organizationId);
 
       setLocalUser({ userId, userToken });
       if (organizationId) setLocalAppState({ organizationId, isOnboarding: true });
