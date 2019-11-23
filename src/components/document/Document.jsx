@@ -15,14 +15,15 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   justifyContent: 'center',
   margin: '0 auto',
   maxWidth: discussionViewport,
+  minHeight: '100vh',
   padding: '0 30px',
 }));
 
 const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   color: colors.contentText,
-  fontSize: '36px',
+  fontSize: '42px',
   fontWeight: 500,
-  margin: '60px 30px 40px',
+  marginBottom: '15px',
   width: '100%',
   outline: 'none',
 }));

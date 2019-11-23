@@ -167,7 +167,16 @@ const createDocumentTitlePlaceholder = text => PlaceholderPlugin({
   when: 'isEmptyDocument',
   style: {
     color: theme.colors.titlePlaceholder,
-    lineHeight: '49px',
+    lineHeight: '48px',
+  },
+});
+
+const createDocumentPlaceholder = text => PlaceholderPlugin({
+  placeholder: text,
+  when: 'isEmptyDocument',
+  style: {
+    color: theme.colors.textPlaceholder,
+    lineHeight: '19px',
   },
 });
 
@@ -180,5 +189,5 @@ export const plugins = {
 
   // Roval v2
   documentTitle: [createDocumentTitlePlaceholder('Untitled Document')],
-  document: coreEditorPlugins,
+  document: [createDocumentPlaceholder('Say what you have to say'), ...coreEditorPlugins],
 };
