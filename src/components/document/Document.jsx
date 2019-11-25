@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
+import { useMutation, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
+import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import { getLocalUser } from 'utils/auth';
+import { track } from 'utils/analytics';
 
 import NotFound from 'components/navigation/NotFound';
 import RovalEditor from 'components/editor/RovalEditor';
@@ -43,6 +45,7 @@ const DocumentEditor = styled(RovalEditor)({
 });
 
 const Document = ({ documentId }) => {
+  const [updateDocument] = useMutation(updateDocumentMutation);
   const { loading, error, data } = useQuery(documentQuery, {
     variables: { id: documentId, queryParams: {} },
   });
@@ -51,30 +54,70 @@ const Document = ({ documentId }) => {
   if (error || !data.document) return <NotFound />;
 
   const { body, owner, title } = data.document;
-  const { payload } = body || {};
+  const { payload: contents } = body || {};
 
   // TODO: This will change later, when we introduce the concept of multiple co-authors
   const { userId } = getLocalUser();
   const isAuthor = userId === owner.id;
 
+  async function handleUpdateTitle({ text }) {
+    const { data: updateDocumentTitleData } = await updateDocument({
+      variables: {
+        documentId,
+        input: {
+          title: text,
+        },
+      },
+    });
+
+    if (updateDocumentTitleData.updateDocument) {
+      track('Document title updated', { documentId });
+      return Promise.resolve({});
+    }
+
+    return Promise.reject(new Error('Failed to update document title'));
+  }
+
+  async function handleUpdateBody({ payload, text }) {
+    const { data: updateDocumentBodyData } = await updateDocument({
+      variables: {
+        documentId,
+        input: {
+          body: {
+            formatter: 'slatejs',
+            text,
+            payload,
+          },
+        },
+      },
+    });
+
+    if (updateDocumentBodyData.updateDocument) {
+      return Promise.resolve({});
+    }
+
+    return Promise.reject(new Error('Failed to save discussion message'));
+  }
+
   return (
     <Container>
       <TitleEditor
         contentType="documentTitle"
-        disableAutoFocus={false} // TODO: Enable this when hooking up with real data
+        disableAutoFocus={!!title}
         initialValue={title}
         isPlainText
         mode={isAuthor ? 'compose' : 'display'}
-        // Coming soon: onSubmit={handleUpdateTitle}
-        // Coming soon: saveOnBlur
+        onSubmit={handleUpdateTitle}
+        saveOnBlur
       />
       <DocumentEditor
         contentType="document"
-        disableAutoFocus
-        initialValue={payload}
+        disableAutoFocus={!contents}
+        initialValue={contents}
         isAuthor={isAuthor}
         mode={isAuthor ? 'compose' : 'display'}
-        // Coming soon: onSubmit={handleUpdate}
+        onSubmit={handleUpdateBody}
+        saveOnBlur // TEMP: For now
       />
     </Container>
   );

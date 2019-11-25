@@ -112,6 +112,7 @@ class RovalEditor extends Component {
   // This method abstracts the nitty gritty of preparing SlateJS data for persistence.
   // Parent components give us a method to perform the mutation; we give them the data to persist.
   async handleSubmit() {
+    const { contentType } = this.props; // TEMP CODE
     const editor = this.editor.current;
     if (editor.isEmptyDocument()) return;
 
@@ -123,7 +124,7 @@ class RovalEditor extends Component {
     const response = await onSubmit({ text, payload });
 
     if (!isPlainText && response && response.isNewDiscussion) return;
-    if (mode === 'compose' && !isPlainText) this.clearEditorValue();
+    if (mode === 'compose' && !isPlainText && contentType !== 'document') this.clearEditorValue();
     if (mode !== 'display') this.handleCancel({ saved: true });
   }
 
