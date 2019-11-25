@@ -148,6 +148,7 @@ const coreEditorPlugins = [
   }),
   SelectionToolbar(),
   CompositionMenu(),
+  ImageLoadingIndicator(),
 ];
 
 const discussionPlugins = [
@@ -159,7 +160,6 @@ const discussionPlugins = [
 
   Drafts(),
   EditorActions(),
-  ImageLoadingIndicator(),
 ];
 
 const createDiscussionTitlePlaceholder = text => PlaceholderPlugin({
