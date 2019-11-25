@@ -10,6 +10,7 @@ import { track } from 'utils/analytics';
 
 import NotFound from 'components/navigation/NotFound';
 import RovalEditor from 'components/editor/RovalEditor';
+import HeaderBar from './HeaderBar';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
@@ -68,6 +69,10 @@ const Document = ({ documentId }) => {
           title: text,
         },
       },
+      refetchQueries: [{
+        query: documentQuery,
+        variables: { id: documentId, queryParams: {} },
+      }],
     });
 
     if (updateDocumentTitleData.updateDocument) {
@@ -100,26 +105,29 @@ const Document = ({ documentId }) => {
   }
 
   return (
-    <Container>
-      <TitleEditor
-        contentType="documentTitle"
-        disableAutoFocus={!!title}
-        initialValue={title}
-        isPlainText
-        mode={isAuthor ? 'compose' : 'display'}
-        onSubmit={handleUpdateTitle}
-        saveOnBlur
-      />
-      <DocumentEditor
-        contentType="document"
-        disableAutoFocus={!contents}
-        initialValue={contents}
-        isAuthor={isAuthor}
-        mode={isAuthor ? 'compose' : 'display'}
-        onSubmit={handleUpdateBody}
-        saveOnBlur // TEMP: For now
-      />
-    </Container>
+    <>
+      <HeaderBar documentTitle={title} />
+      <Container>
+        <TitleEditor
+          contentType="documentTitle"
+          disableAutoFocus={!!title}
+          initialValue={title}
+          isPlainText
+          mode={isAuthor ? 'compose' : 'display'}
+          onSubmit={handleUpdateTitle}
+          saveOnBlur
+        />
+        <DocumentEditor
+          contentType="document"
+          disableAutoFocus={!contents}
+          initialValue={contents}
+          isAuthor={isAuthor}
+          mode={isAuthor ? 'compose' : 'display'}
+          onSubmit={handleUpdateBody}
+          saveOnBlur // TEMP: For now
+        />
+      </Container>
+    </>
   );
 };
 
