@@ -1,6 +1,6 @@
 import { breakpoints } from 'styles/theme';
 
-const getBreakpoint = () => {
+export default function getBreakpoint() {
   const width = window.innerWidth;
   if (width <= 0) return null;
 
@@ -14,6 +14,4 @@ const getBreakpoint = () => {
   }
 
   return null;
-};
-
-export default getBreakpoint;
+}

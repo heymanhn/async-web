@@ -75,6 +75,7 @@ export const theme = {
     formGrey: '#f8f9fa',
     formBorderGrey: '#c3cdd4',
     formPlaceholderGrey: '#c3c3c3',
+    headerBarGrey: '#fcfdfe',
     lightestGrey: '#fafdff',
 
     titlePlaceholder: '#dbdddf',

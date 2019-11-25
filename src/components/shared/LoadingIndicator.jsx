@@ -10,25 +10,27 @@ const Container = styled.div({
   justifyContent: 'center',
 });
 
-const StyledSpinner = styled(Spinner)(({ color, theme: { colors } }) => ({
+const StyledSpinner = styled(Spinner)(({ color, size, theme: { colors } }) => ({
   border: `.05em solid ${colors[color]}`,
   borderRightColor: 'transparent',
-  width: '20px',
-  height: '20px',
+  width: `${size}px`,
+  height: `${size}px`,
 }));
 
-const LoadingIndicator = ({ color, ...props }) => (
+const LoadingIndicator = ({ color, size, ...props }) => (
   <Container {...props}>
-    <StyledSpinner color={color} />
+    <StyledSpinner color={color} size={size} />
   </Container>
 );
 
 LoadingIndicator.propTypes = {
   color: PropTypes.string,
+  size: PropTypes.number,
 };
 
 LoadingIndicator.defaultProps = {
   color: 'blue',
+  size: 20,
 };
 
 export default LoadingIndicator;
