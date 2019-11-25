@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/pro-regular-svg-icons';
 import styled from '@emotion/styled';
 
 // hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
@@ -13,6 +11,7 @@ import { getLocalAppState } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import DropdownMenu from 'components/navigation/DropdownMenu';
+import NewDocumentButton from './NewDocumentButton';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -43,32 +42,9 @@ const OrganizationAvatar = styled(Avatar)({
 const DocumentTitle = styled.div(({ theme: { colors } }) => ({
   color: colors.grey1,
   fontSize: '14px',
+  position: 'relative',
+  top: '2px',
 }));
-
-const NewDocumentButton = styled.div(({ theme: { colors } }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  cursor: 'pointer',
-  color: colors.grey2,
-  height: '28px',
-  padding: '0 15px',
-}));
-
-const StyledPlus = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '12px',
-  marginRight: '8px',
-}));
-
-const ButtonTitle = styled.div({
-  fontSize: '12px',
-  fontWeight: 500,
-});
 
 const HeaderBar = ({ documentTitle, ...props }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -103,12 +79,9 @@ const HeaderBar = ({ documentTitle, ...props }) => {
           isOpen={isDropdownOpen}
           organizationId={organizationId}
         />
-        <DocumentTitle>{documentTitle}</DocumentTitle>
+        <DocumentTitle>{documentTitle || 'Untitled Document'}</DocumentTitle>
       </MenuSection>
-      <NewDocumentButton>
-        <StyledPlus icon={faPlus} />
-        <ButtonTitle>New Document</ButtonTitle>
-      </NewDocumentButton>
+      <NewDocumentButton />
     </Container>
   );
 };
