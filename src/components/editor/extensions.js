@@ -1,6 +1,7 @@
 import PlaceholderPlugin from 'slate-react-placeholder';
 import AutoReplace from 'slate-auto-replace';
 import SoftBreak from 'slate-soft-break';
+import styled from '@emotion/styled';
 
 import { theme } from 'styles/theme';
 import { track } from 'utils/analytics';
@@ -20,11 +21,13 @@ import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
 import CompositionMenu from './plugins/compositionMenu';
 import EditorActions from './plugins/editorActions';
+
 // HN: Not supporting drag and drop guides for now
 // import DragAndDrop from './plugins/dragAndDrop';
 // import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
 import Drafts from './plugins/drafts';
 import ImageLoadingIndicator from './plugins/blocks/imageLoadingIndicator';
+import CustomBodyPlaceholder from './plugins/customBodyPlaceholder';
 
 /* **** Commands **** */
 
@@ -101,6 +104,12 @@ export const queries = {
 
     return false;
   },
+  isEmptyAndUnfocusedDocument: (editor) => {
+    const { value } = editor;
+    const { selection } = value;
+
+    return editor.isEmptyDocument() && !selection.isFocused;
+  },
   isEmptyParagraph: (editor) => {
     const { startBlock } = editor.value;
     return startBlock.type === DEFAULT_NODE && !startBlock.text;
@@ -159,6 +168,7 @@ const createDiscussionTitlePlaceholder = text => PlaceholderPlugin({
   style: {
     color: theme.colors.titlePlaceholder,
     lineHeight: '43px',
+    opacity: 1,
   },
 });
 
@@ -168,16 +178,18 @@ const createDocumentTitlePlaceholder = text => PlaceholderPlugin({
   style: {
     color: theme.colors.titlePlaceholder,
     lineHeight: '48px',
+    opacity: 1,
   },
 });
 
-const createDocumentPlaceholder = text => PlaceholderPlugin({
+const DocumentPlaceholder = styled.div({
+  lineHeight: '26px',
+});
+
+const createDocumentPlaceholder = text => CustomBodyPlaceholder({
   placeholder: text,
-  when: 'isEmptyDocument',
-  style: {
-    color: theme.colors.textPlaceholder,
-    lineHeight: '19px',
-  },
+  when: 'isEmptyAndUnfocusedDocument',
+  Component: DocumentPlaceholder,
 });
 
 export const plugins = {
@@ -189,5 +201,5 @@ export const plugins = {
 
   // Roval v2
   documentTitle: [createDocumentTitlePlaceholder('Untitled Document')],
-  document: [createDocumentPlaceholder('Say what you have to say'), ...coreEditorPlugins],
+  document: [...coreEditorPlugins, createDocumentPlaceholder('Say what you have to say')],
 };
