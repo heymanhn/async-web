@@ -102,8 +102,7 @@ const App = () => {
     <Layout>
       <Router>
         <Home path="/" />
-        <SignUp path="/register/:inviteCode" />
-        <SignUp path="/organizations/:organizationId/join" />
+        <SignUp path="/invites/:inviteCode" />
         <CreateOrganization path="/organizations" />
         <InviteTeam path="/organizations/:organizationId/invites" />
         <Login path="/login" />

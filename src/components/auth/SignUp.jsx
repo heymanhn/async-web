@@ -62,7 +62,7 @@ const SignInButton = styled.span(({ theme: { colors } }) => ({
  * organizationId: someone needing to create an account to join an existing organization
  * inviteCode: create an account and the organization
  */
-const SignUp = ({ organizationId, inviteCode }) => {
+const SignUp = ({ inviteCode }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -75,15 +75,14 @@ const SignUp = ({ organizationId, inviteCode }) => {
         fullName,
         email,
         password,
-        organizationId,
         inviteCode,
       },
     },
     onCompleted: (data) => {
-      const { id: userId, token: userToken } = data.createUser;
+      const { id: userId, token: userToken, organizationId } = data.createUser;
 
       setLocalUser({ userId, userToken });
-      setLocalAppState({ organizationId, isOnboarding: true });
+      if (organizationId) setLocalAppState({ organizationId, isOnboarding: true });
       client.writeData({
         data: {
           isLoggedIn: true,
@@ -96,7 +95,7 @@ const SignUp = ({ organizationId, inviteCode }) => {
       if (organizationId) group(organizationId);
       track('Signed up');
 
-      const returnPath = inviteCode ? '/organizations' : `/organizations/${organizationId}/invites`;
+      const returnPath = organizationId ? `/organizations/${organizationId}/invites` : '/organizations';
       navigate(returnPath);
     },
     onError: async (err) => {
@@ -115,9 +114,8 @@ const SignUp = ({ organizationId, inviteCode }) => {
     }
   }
 
-  const requiredFieldsPresent = organizationId || inviteCode;
   const { isLoggedIn } = client.readQuery({ query: isLoggedInQuery });
-  if (isLoggedIn || !requiredFieldsPresent) return <Redirect to="/" noThrow />;
+  if (isLoggedIn || !inviteCode) return <Redirect to="/" noThrow />;
 
   return (
     <OnboardingContainer title="Welcome to Roval!">
@@ -159,12 +157,10 @@ const SignUp = ({ organizationId, inviteCode }) => {
 };
 
 SignUp.propTypes = {
-  organizationId: PropTypes.string,
   inviteCode: PropTypes.string,
 };
 
 SignUp.defaultProps = {
-  organizationId: null,
   inviteCode: null,
 };
 
