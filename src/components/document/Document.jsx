@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
@@ -11,6 +11,7 @@ import { track } from 'utils/analytics';
 import NotFound from 'components/navigation/NotFound';
 import RovalEditor from 'components/editor/RovalEditor';
 import HeaderBar from './HeaderBar';
+import LastUpdatedIndicator from './LastUpdatedIndicator';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
@@ -46,6 +47,7 @@ const DocumentEditor = styled(RovalEditor)({
 });
 
 const Document = ({ documentId }) => {
+  const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
   const [updateDocument] = useMutation(updateDocumentMutation);
   const { loading, error, data } = useQuery(documentQuery, {
     variables: { id: documentId, queryParams: {} },
@@ -77,6 +79,7 @@ const Document = ({ documentId }) => {
 
     if (updateDocumentTitleData.updateDocument) {
       track('Document title updated', { documentId });
+      setUpdatedTimestamp(Date.now());
       return Promise.resolve({});
     }
 
@@ -98,6 +101,7 @@ const Document = ({ documentId }) => {
     });
 
     if (updateDocumentBodyData.updateDocument) {
+      setUpdatedTimestamp(Date.now());
       return Promise.resolve({});
     }
 
@@ -126,6 +130,7 @@ const Document = ({ documentId }) => {
           onSubmit={handleUpdateBody}
           saveOnBlur // TEMP: For now
         />
+        {updatedTimestamp && <LastUpdatedIndicator timestamp={updatedTimestamp} />}
       </Container>
     </>
   );
