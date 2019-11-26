@@ -28,6 +28,7 @@ import EditorActions from './plugins/editorActions';
 import Drafts from './plugins/drafts';
 import ImageLoadingIndicator from './plugins/blocks/imageLoadingIndicator';
 import CustomBodyPlaceholder from './plugins/customBodyPlaceholder';
+import AutoSave from './plugins/autoSave';
 
 /* **** Commands **** */
 
@@ -201,5 +202,8 @@ export const plugins = {
 
   // Roval v2
   documentTitle: [createDocumentTitlePlaceholder('Untitled Document')],
-  document: [...coreEditorPlugins, createDocumentPlaceholder('Say what you have to say')],
+  document: [
+    ...coreEditorPlugins,
+    AutoSave(),
+    createDocumentPlaceholder('Say what you have to say')],
 };
