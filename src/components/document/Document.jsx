@@ -17,9 +17,9 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  margin: '60px auto',
+  margin: '0 auto',
   maxWidth: discussionViewport,
-  minHeight: '100vh',
+  minHeight: 'calc(100vh - 54px)', // Header is 54px tall
   padding: '0 30px',
 }));
 
@@ -27,6 +27,7 @@ const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '42px',
   fontWeight: 500,
+  marginTop: '60px',
   marginBottom: '15px',
   width: '100%',
   outline: 'none',
@@ -36,6 +37,7 @@ const DocumentEditor = styled(RovalEditor)({
   fontSize: '16px',
   lineHeight: '26px',
   fontWeight: 400,
+  marginBottom: '80px',
 
   // Spacing for the paragraphs
   // TODO (HN): Define these margins in a styled component for paragraph block types
