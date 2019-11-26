@@ -17,7 +17,7 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  margin: '0 auto',
+  margin: '60px auto',
   maxWidth: discussionViewport,
   minHeight: '100vh',
   padding: '0 30px',
