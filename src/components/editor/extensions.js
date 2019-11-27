@@ -29,6 +29,7 @@ import Drafts from './plugins/drafts';
 import ImageLoadingIndicator from './plugins/blocks/imageLoadingIndicator';
 import CustomBodyPlaceholder from './plugins/customBodyPlaceholder';
 import AutoSave from './plugins/autoSave';
+import AutoScroll from './plugins/autoScroll';
 
 /* **** Commands **** */
 
@@ -205,5 +206,6 @@ export const plugins = {
   document: [
     ...coreEditorPlugins,
     AutoSave(),
+    AutoScroll(),
     createDocumentPlaceholder('Say what you have to say')],
 };
