@@ -45,9 +45,6 @@ const MenuOption = ({
     if (selectedOption === title) {
       // the options argument is not supported in IE:
       // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
-      //
-      // NOTE (HN): In the future when we have the menu showing up in either direction,
-      // we can support aligning the scroll to the bottom or top.
       optionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [selectedOption, title]);
