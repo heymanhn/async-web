@@ -19,7 +19,7 @@ export const RenderMark = (markToRender, componentFn) => ({
   renderMark(props, editor, next) {
     const { mark } = props;
 
-    return mark.type === markToRender ? componentFn(props) : next();
+    return mark.type === markToRender ? componentFn(props, editor) : next();
   },
 });
 
@@ -36,14 +36,6 @@ export const RenderInline = (inlineToRender, componentFn) => ({
     const { node } = props;
 
     return node.type === inlineToRender ? componentFn(props) : next();
-  },
-});
-
-export const RenderAnnotation = (annotationToRender, componentFn) => ({
-  renderAnnotation(props, editor, next) {
-    const { annotation } = props;
-
-    return annotation.type === annotationToRender ? componentFn(props) : next();
   },
 });
 

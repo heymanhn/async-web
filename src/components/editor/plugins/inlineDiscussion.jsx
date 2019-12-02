@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
-import { RenderAnnotation } from './helpers';
+import { RenderMark } from './helpers';
 
 const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
 
@@ -13,17 +13,7 @@ const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
 
 export function StartDiscussionButton({ editor, ...props }) {
   function handleClick() {
-    const { value } = editor;
-    const { selection } = value;
-    const { anchor, focus } = selection;
-
-    const randomNumber = Math.floor(Math.random() * Math.floor(100000)); // Temporary
-    return editor.addAnnotation({
-      key: `${INLINE_DISCUSSION_ANNOTATION}-${randomNumber}`,
-      type: INLINE_DISCUSSION_ANNOTATION,
-      anchor,
-      focus,
-    });
+    return editor.addMark(INLINE_DISCUSSION_ANNOTATION);
   }
 
   return (
@@ -41,17 +31,22 @@ StartDiscussionButton.propTypes = {
 
 const Highlight = styled.span(({ theme: { colors } }) => ({
   background: colors.highlightYellow,
+  cursor: 'pointer',
   padding: '2px 5px',
 }));
 
 export function InlineDiscussion() {
   /* **** Render methods **** */
-
-  function renderInlineDiscussion(props) {
+  function renderInlineDiscussion(props, editor) {
     const { attributes, children } = props; /* eslint react/prop-types: 0 */
 
-    return <Highlight {...attributes}>{children}</Highlight>;
+    function removeHighlight() {
+      console.log('hi');
+      return editor.removeMark(INLINE_DISCUSSION_ANNOTATION);
+    }
+
+    return <Highlight {...attributes} onClick={removeHighlight}>{children}</Highlight>;
   }
 
-  return [RenderAnnotation(INLINE_DISCUSSION_ANNOTATION, renderInlineDiscussion)];
+  return [RenderMark(INLINE_DISCUSSION_ANNOTATION, renderInlineDiscussion)];
 }
