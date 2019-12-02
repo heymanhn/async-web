@@ -9,6 +9,7 @@ import { LargeFontButton, MediumFontButton } from '../plugins/blocks/headings';
 import { BulletedListButton } from '../plugins/blocks/lists';
 import { BlockQuoteButton } from '../plugins/blocks/blockQuote';
 import { CodeBlockButton } from '../plugins/blocks/codeBlock';
+import { StartDiscussionButton } from '../plugins/inlineDiscussion';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -73,6 +74,9 @@ const Toolbar = ({ editor, isOpen }) => {
 
       <BlockQuoteButton editor={editor} />
       <CodeBlockButton editor={editor} />
+      <VerticalDivider />
+
+      <StartDiscussionButton editor={editor} />
     </Container>,
     root,
   );
