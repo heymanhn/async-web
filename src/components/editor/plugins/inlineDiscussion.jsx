@@ -45,23 +45,6 @@ const Highlight = styled.span(({ theme: { colors } }) => ({
 }));
 
 export function InlineDiscussion() {
-  /* **** Schema **** */
-
-  // const codeBlockSchema = { blocks: {} };
-  // codeBlockSchema.blocks[CODE_BLOCK] = {
-  //   nodes: [
-  //     {
-  //       match: { type: DEFAULT_NODE },
-  //     },
-  //   ],
-  // };
-
-  /* **** Commands **** */
-
-  // function setCodeBlock(editor, source) {
-  //   return editor.setWrappedBlock(CODE_BLOCK, source);
-  // }
-
   /* **** Render methods **** */
 
   function renderInlineDiscussion(props) {
