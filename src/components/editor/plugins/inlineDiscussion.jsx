@@ -13,7 +13,7 @@ const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
 
 export function StartDiscussionButton({ editor, ...props }) {
   function handleClick() {
-    return editor.addMark(INLINE_DISCUSSION_ANNOTATION);
+    return editor.withoutSaving(() => editor.addMark(INLINE_DISCUSSION_ANNOTATION));
   }
 
   return (
@@ -41,8 +41,7 @@ export function InlineDiscussion() {
     const { attributes, children } = props; /* eslint react/prop-types: 0 */
 
     function removeHighlight() {
-      console.log('hi');
-      return editor.removeMark(INLINE_DISCUSSION_ANNOTATION);
+      return editor.withoutSaving(() => editor.removeMark(INLINE_DISCUSSION_ANNOTATION));
     }
 
     return <Highlight {...attributes} onClick={removeHighlight}>{children}</Highlight>;
