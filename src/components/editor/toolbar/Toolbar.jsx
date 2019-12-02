@@ -42,7 +42,7 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 5px',
 }));
 
-const Toolbar = ({ editor, isOpen }) => {
+const Toolbar = ({ editor, isOpen, mode }) => {
   const ref = useRef(null);
 
   const root = window.document.getElementById('root');
@@ -61,8 +61,8 @@ const Toolbar = ({ editor, isOpen }) => {
     };
   }
 
-  return ReactDOM.createPortal(
-    <Container ref={ref} coords={calculateToolbarPosition()} isOpen={isOpen}>
+  const editingButtons = (
+    <>
       <BoldButton editor={editor} />
       <ItalicButton editor={editor} />
       <VerticalDivider />
@@ -75,7 +75,12 @@ const Toolbar = ({ editor, isOpen }) => {
       <BlockQuoteButton editor={editor} />
       <CodeBlockButton editor={editor} />
       <VerticalDivider />
+    </>
+  );
 
+  return ReactDOM.createPortal(
+    <Container ref={ref} coords={calculateToolbarPosition()} isOpen={isOpen}>
+      {mode !== 'display' ? editingButtons : null}
       <StartDiscussionButton editor={editor} />
     </Container>,
     root,
@@ -85,6 +90,7 @@ const Toolbar = ({ editor, isOpen }) => {
 Toolbar.propTypes = {
   editor: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  mode: PropTypes.string.isRequired,
 };
 
 export default Toolbar;
