@@ -8,7 +8,7 @@ function SelectionToolbar() {
   function displayToolbar(props, editor, next) {
     const { isMouseDown, mode, value } = props;
     const { selection } = value;
-    const isOpen = mode !== 'display' && selection.isExpanded && !isMouseDown;
+    const isOpen = selection.isExpanded && !isMouseDown;
     const children = next();
 
     return (
@@ -17,6 +17,7 @@ function SelectionToolbar() {
         <Toolbar
           editor={editor}
           isOpen={isOpen}
+          mode={mode}
         />
       </>
     );

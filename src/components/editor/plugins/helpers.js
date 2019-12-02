@@ -39,6 +39,14 @@ export const RenderInline = (inlineToRender, componentFn) => ({
   },
 });
 
+export const RenderAnnotation = (annotationToRender, componentFn) => ({
+  renderAnnotation(props, editor, next) {
+    const { annotation } = props;
+
+    return annotation.type === annotationToRender ? componentFn(props) : next();
+  },
+});
+
 export const RenderEditor = renderFn => ({
   renderEditor(...props) {
     return renderFn(...props);

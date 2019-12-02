@@ -68,6 +68,8 @@ export const theme = {
     lightestBlue: '#f3f9ff',
     sidebarBlue: '#4b93c2',
 
+    highlightYellow: '#fff495',
+
     buttonGrey: '#f1f1f1',
     bgGrey: '#fafbfc',
     borderGrey: '#e4e9ec',
