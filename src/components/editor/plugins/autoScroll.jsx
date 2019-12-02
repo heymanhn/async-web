@@ -17,10 +17,11 @@ function AutoScroll() {
   }
 
   function autoScrollDetection(props, editor, next) {
-    const { mode } = props;
     const children = next();
+    const { value } = editor;
+    const { selection } = value;
 
-    if (mode === 'display') return children;
+    if (selection.isBlurred) return children;
 
     setTimeout(updateWindowPosition, 0);
 
