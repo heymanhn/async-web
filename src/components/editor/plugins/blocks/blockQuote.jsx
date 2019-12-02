@@ -82,11 +82,10 @@ BlockQuoteOption.propTypes = {
 /* **** Slate plugin **** */
 
 const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
-  marginTop: '1em',
   borderLeft: `3px solid ${colors.borderGrey}`,
   color: colors.grey2,
-  padding: '0px 12px',
-  marginBottom: '10px',
+  padding: '0px 16px',
+  fontStyle: 'italic',
 }));
 
 export function BlockQuotePlugin() {

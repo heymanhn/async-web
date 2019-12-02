@@ -114,21 +114,25 @@ export function ChecklistOption({ editor, ...props }) {
 /* **** Slate plugin **** */
 
 const BulletedList = styled.ul({
+  fontSize: '1.1rem',
   marginTop: '1em',
   marginBottom: 0,
 });
 
 const NumberedList = styled.ol({
+  fontSize: '1.1rem',
   marginTop: '1em',
   marginBottom: 0,
 });
 
 const ListItem = styled.li({
+  fontSize: '1.1rem',
   marginBottom: '5px',
   width: '100%',
 });
 
 const Checklist = styled.ul({
+  fontSize: '1.1rem',
   marginTop: '1em',
   marginBottom: 0,
   paddingLeft: '16px',

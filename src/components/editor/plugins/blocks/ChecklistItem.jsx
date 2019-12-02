@@ -30,7 +30,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ ischecked, theme: { colors } }) =>
 
 const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
   color: isChecked ? colors.grey4 : colors.contentText,
-  fontSize: '16px',
+  fontSize: '1.1em',
   margin: '0 0 0 10px !important',
   flexWrap: 'wrap',
 }));

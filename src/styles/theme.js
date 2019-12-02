@@ -20,9 +20,10 @@ export const theme = {
   mq,
 
   fontStack: [
-    'Helvetica Neue',
+    'Inter UI',
     '-apple-system',
     'BlinkMacSystemFont',
+    'Helvetica Neue',
     'sans-serif',
   ].join(','),
 
