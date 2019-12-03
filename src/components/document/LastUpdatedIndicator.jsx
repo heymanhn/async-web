@@ -29,7 +29,6 @@ const Label = styled.div({
 
 const Timestamp = styled(Moment)({
   marginLeft: '4px',
-  marginTop: '2px',
 });
 
 const LastUpdatedIndicator = ({ timestamp }) => (
