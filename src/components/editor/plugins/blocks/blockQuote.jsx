@@ -83,9 +83,12 @@ BlockQuoteOption.propTypes = {
 
 const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
   borderLeft: `3px solid ${colors.borderGrey}`,
-  color: colors.grey2,
   padding: '0px 16px',
   fontStyle: 'italic',
+
+  div: {
+    color: colors.grey2,
+  },
 }));
 
 export function BlockQuotePlugin() {
