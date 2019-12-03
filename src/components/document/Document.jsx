@@ -13,12 +13,12 @@ import RovalEditor from 'components/editor/RovalEditor';
 import HeaderBar from './HeaderBar';
 import LastUpdatedIndicator from './LastUpdatedIndicator';
 
-const Container = styled.div(({ theme: { discussionViewport } }) => ({
+const Container = styled.div(({ theme: { documentViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
   margin: '0 auto',
-  maxWidth: discussionViewport,
+  maxWidth: documentViewport,
   minHeight: 'calc(100vh - 54px)', // Header is 54px tall
   padding: '0 30px',
 }));

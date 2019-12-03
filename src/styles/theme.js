@@ -39,6 +39,7 @@ export const theme = {
   containerMargin: '50px auto',
   documentContainerMargin: '60px auto',
   shortMargin: '30px auto',
+  documentViewport: '740px',
   discussionViewport: '800px',
   meetingSpaceViewport: '720px',
   wideViewport: '1220px',
