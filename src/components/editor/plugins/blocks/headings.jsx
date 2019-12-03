@@ -93,23 +93,24 @@ const LargeFont = styled.h1({
   fontSize: '28px',
   fontWeight: 600,
   lineHeight: '36px',
-  margin: '30px 0px 12px',
-  letterSpacing: '-.03em',
+  letterSpacing: '-0.02em',
+  margin: '30px 0px -10px',
 });
 
 const MediumFont = styled.h2({
   fontSize: '22px',
   fontWeight: 600,
   lineHeight: '28px',
-  margin: '18px 0px 6px',
-  letterSpacing: '-.018em',
+  letterSpacing: '-0.018em',
+  margin: '18px 0px -10px',
 });
 
 const SmallFont = styled.h3({
-  fontSize: '17px',
+  fontSize: '16px',
   fontWeight: 600,
   lineHeight: '22px',
-  letterSpacing: '-.015em',
+  letterSpacing: '-0.011em',
+  margin: '12px 0px -10px',
 });
 
 export function HeadingsPlugin() {
