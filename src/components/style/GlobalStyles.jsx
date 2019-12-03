@@ -9,7 +9,6 @@ const GlobalStyles = ({ bgColor, theme: { colors, fontStack, mq } }) => (
       '*': {
         boxSizing: 'border-box',
         fontFamily: fontStack,
-        letterSpacing: '-0.01em',
         WebkitFontSmoothing: 'antialiased',
         MozOsxFontSmoothing: 'grayscale',
       },
@@ -68,7 +67,7 @@ const GlobalStyles = ({ bgColor, theme: { colors, fontStack, mq } }) => (
       p: {
         fontSize: '16px',
         fontWeight: 400,
-        lineHeight: '25px',
+        lineHeight: '26px',
       },
       a: {
         textDecoration: 'none',

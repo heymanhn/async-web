@@ -59,7 +59,7 @@ export const theme = {
     grey7: '#f0f3f6',
 
     mainText: '#313f48',
-    contentText: '#3a4b56',
+    contentText: '#232d34',
 
     bgBlue: '#eff9fd',
     darkBlue: '#2d4d62',

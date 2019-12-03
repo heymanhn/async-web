@@ -34,11 +34,12 @@ TextOption.propTypes = {
 };
 
 /* Slate Plugin */
-const TextBlock = styled.div({
-  fontSize: '1.1em',
-  marginTop: '0.8em',
-  marginBottom: '1.2em',
-});
+const TextBlock = styled.div(({ theme: { colors } }) => ({
+  color: colors.contentText,
+  fontSize: '16px',
+  marginTop: '12px',
+  marginBottom: '20px',
+}));
 
 export function TextBlockPlugin() {
   function renderTextBlock(props) {
