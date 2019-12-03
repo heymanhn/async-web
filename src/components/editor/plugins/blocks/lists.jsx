@@ -114,27 +114,27 @@ export function ChecklistOption({ editor, ...props }) {
 /* **** Slate plugin **** */
 
 const BulletedList = styled.ul({
-  fontSize: '1.1rem',
-  marginTop: '1em',
-  marginBottom: 0,
+  fontSize: '16px',
+  marginTop: '12px',
+  marginBottom: '20px',
 });
 
 const NumberedList = styled.ol({
-  fontSize: '1.1rem',
-  marginTop: '1em',
-  marginBottom: 0,
+  fontSize: '16px',
+  marginTop: '12px',
+  marginBottom: '20px',
 });
 
 const ListItem = styled.li({
-  fontSize: '1.1rem',
+  fontSize: '16px',
   marginBottom: '5px',
   width: '100%',
 });
 
 const Checklist = styled.ul({
-  fontSize: '1.1rem',
-  marginTop: '1em',
-  marginBottom: 0,
+  fontSize: '16px',
+  marginTop: '12px',
+  marginBottom: '20px',
   paddingLeft: '16px',
 });
 
