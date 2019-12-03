@@ -11,6 +11,7 @@ import { BoldPlugin } from './plugins/marks/bold';
 import { ItalicPlugin } from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
 import CodeSnippet from './plugins/marks/codeSnippet';
+import { TextBlockPlugin } from './plugins/blocks/text';
 import { HeadingsPlugin } from './plugins/blocks/headings';
 import { SectionBreak } from './plugins/blocks/sectionBreak';
 import { Image } from './plugins/blocks/image';
@@ -132,6 +133,7 @@ const coreEditorPlugins = [
   CodeSnippet(),
 
   // Blocks
+  TextBlockPlugin(),
   HeadingsPlugin(),
   ListsPlugin(),
   BlockQuotePlugin(),

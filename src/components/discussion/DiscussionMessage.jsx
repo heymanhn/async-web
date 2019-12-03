@@ -52,14 +52,6 @@ const MessageEditor = styled(RovalEditor)({
   lineHeight: '26px',
   fontWeight: 400,
   marginTop: '15px',
-
-  // Spacing for the paragraphs
-  // TODO (HN): Define these margins in a styled component for paragraph block types
-  // Hint: use a plugin
-  div: {
-    marginTop: '0.5em',
-    marginBottom: '0.5em',
-  },
 });
 
 const DiscussionMessage = ({

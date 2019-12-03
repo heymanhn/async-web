@@ -13,12 +13,12 @@ import RovalEditor from 'components/editor/RovalEditor';
 import HeaderBar from './HeaderBar';
 import LastUpdatedIndicator from './LastUpdatedIndicator';
 
-const Container = styled.div(({ theme: { discussionViewport } }) => ({
+const Container = styled.div(({ theme: { documentViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
   margin: '0 auto',
-  maxWidth: discussionViewport,
+  maxWidth: documentViewport,
   minHeight: 'calc(100vh - 54px)', // Header is 54px tall
   padding: '0 30px',
 }));
@@ -26,7 +26,9 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '42px',
-  fontWeight: 500,
+  fontWeight: 600,
+  letterSpacing: '-0.022em',
+  lineHeight: '54px',
   marginTop: '60px',
   marginBottom: '15px',
   width: '100%',
@@ -38,14 +40,6 @@ const DocumentEditor = styled(RovalEditor)({
   lineHeight: '26px',
   fontWeight: 400,
   marginBottom: '80px',
-
-  // Spacing for the paragraphs
-  // TODO (HN): Define these margins in a styled component for paragraph block types
-  // Hint: use a plugin
-  div: {
-    marginTop: '0.5em',
-    marginBottom: '0.5em',
-  },
 });
 
 const Document = ({ documentId }) => {

@@ -20,9 +20,10 @@ export const theme = {
   mq,
 
   fontStack: [
-    'Helvetica Neue',
+    'Inter UI',
     '-apple-system',
     'BlinkMacSystemFont',
+    'Helvetica Neue',
     'sans-serif',
   ].join(','),
 
@@ -38,6 +39,7 @@ export const theme = {
   containerMargin: '50px auto',
   documentContainerMargin: '60px auto',
   shortMargin: '30px auto',
+  documentViewport: '740px',
   discussionViewport: '800px',
   meetingSpaceViewport: '720px',
   wideViewport: '1220px',
@@ -57,7 +59,7 @@ export const theme = {
     grey7: '#f0f3f6',
 
     mainText: '#313f48',
-    contentText: '#3a4b56',
+    contentText: '#232d34',
 
     bgBlue: '#eff9fd',
     darkBlue: '#2d4d62',

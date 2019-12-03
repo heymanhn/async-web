@@ -5,6 +5,7 @@ import App from 'components/App';
 import * as serviceWorker from './serviceWorker';
 
 // Web fonts
+import 'inter-ui';
 import 'typeface-roboto'; // For the Material-UI library
 import 'typeface-source-code-pro'; // For code blocks
 

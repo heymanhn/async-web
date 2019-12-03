@@ -90,24 +90,27 @@ export function SmallTitleOption({ editor, ...props }) {
 /* **** Slate plugin **** */
 
 const LargeFont = styled.h1({
-  fontSize: '24px',
+  fontSize: '28px',
   fontWeight: 600,
-  lineHeight: '32px',
-  marginTop: '1.3em',
+  lineHeight: '36px',
+  letterSpacing: '-0.02em',
+  margin: '30px 0px -10px',
 });
 
 const MediumFont = styled.h2({
-  fontSize: '20px',
+  fontSize: '22px',
   fontWeight: 600,
-  lineHeight: '26px',
-  marginTop: '1.2em',
+  lineHeight: '28px',
+  letterSpacing: '-0.018em',
+  margin: '18px 0px -10px',
 });
 
 const SmallFont = styled.h3({
   fontSize: '16px',
   fontWeight: 600,
-  lineHeight: '20px',
-  marginTop: '1.1em',
+  lineHeight: '22px',
+  letterSpacing: '-0.011em',
+  margin: '12px 0px -10px',
 });
 
 export function HeadingsPlugin() {
