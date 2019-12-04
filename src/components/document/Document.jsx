@@ -124,7 +124,6 @@ const Document = ({ documentId }) => {
           isAuthor={isAuthor}
           mode={isAuthor ? 'compose' : 'display'}
           onSubmit={handleUpdateBody}
-          saveOnBlur // TEMP: For now
         />
         {updatedTimestamp && <LastUpdatedIndicator timestamp={updatedTimestamp} />}
       </Container>
