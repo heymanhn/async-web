@@ -226,11 +226,7 @@ export function ListsPlugin() {
   /* **** Markdown **** */
 
   function markdownListBlock(editor, type, matchString) {
-    if (!editor.isEmptyParagraph() || editor.isWrappedByAnyBlock()) {
-      return editor
-        .insertText(matchString)
-        .moveToEndOfBlock();
-    }
+    if (editor.isWrappedByAnyBlock()) return editor.insertText(matchString);
 
     return editor.setListBlock(type, MARKDOWN_SOURCE);
   }

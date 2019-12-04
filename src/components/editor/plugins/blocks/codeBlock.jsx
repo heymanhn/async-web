@@ -137,7 +137,7 @@ export function CodeBlockPlugin() {
       before: /^(``)$/,
       change: (editor) => {
         // Essentially undoing the autoReplace detection
-        if (editor.isWrappedByAnyBlock()) return editor.insertText('```').moveToEndOfBlock();
+        if (editor.isWrappedByAnyBlock()) return editor.insertText('```');
         if (!editor.isEmptyBlock()) return editor.setCodeBlock(MARKDOWN_SOURCE);
 
         return editor
