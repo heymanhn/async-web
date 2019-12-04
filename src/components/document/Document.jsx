@@ -52,8 +52,11 @@ const Document = ({ documentId }) => {
   if (loading) return null;
   if (error || !data.document) return <NotFound />;
 
-  const { body, owner, title } = data.document;
+  const { body, owner, title, updatedAt } = data.document;
   const { payload: contents } = body || {};
+  if (!updatedTimestamp && updatedAt) {
+    setUpdatedTimestamp(updatedAt * 1000);
+  }
 
   // TODO: This will change later, when we introduce the concept of multiple co-authors
   const { userId } = getLocalUser();
