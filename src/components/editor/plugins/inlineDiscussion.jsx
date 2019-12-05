@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { faCommentPlus } from '@fortawesome/pro-solid-svg-icons';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import InlineDiscussion from 'components/document/InlineDiscussion';
+import InlineDiscussionModal from 'components/document/InlineDiscussionModal';
 import { RenderMark } from './helpers';
 
 const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
@@ -12,14 +13,28 @@ const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
 /* **** Toolbar button **** */
 
 export function StartDiscussionButton({ editor, ...props }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   function handleClick() {
-    return editor.withoutSaving(() => editor.addMark(INLINE_DISCUSSION_ANNOTATION));
+    setIsModalOpen(true);
+    // return editor.withoutSaving(() => editor.addMark(INLINE_DISCUSSION_ANNOTATION));
+  }
+
+  function handleClose() {
+    setIsModalOpen(false);
   }
 
   return (
-    <ToolbarButton handleClick={handleClick} {...props}>
-      <ButtonIcon icon={faCommentPlus} isActive={false} />
-    </ToolbarButton>
+    <>
+      <ToolbarButton handleClick={handleClick} {...props}>
+        <ButtonIcon icon={faCommentPlus} isActive={false} />
+      </ToolbarButton>
+      <InlineDiscussionModal
+        editor={editor}
+        handleClose={handleClose}
+        isOpen={isModalOpen}
+      />
+    </>
   );
 }
 
