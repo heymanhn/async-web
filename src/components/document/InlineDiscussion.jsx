@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const HOVER_GRACE_PERIOD = 200;
+const HIDE_PREVIEW_WAIT_INTERVAL = 200;
+const SHOW_PREVIEW_WAIT_INTERVAL = 800;
 
-const Container = styled.span({
-});
+const Container = styled.span({ });
 
 const Highlight = styled.span(({ theme: { colors } }) => ({
   background: colors.highlightYellow,
@@ -38,22 +38,28 @@ const InlineDiscussion = ({ attributes, children, handleClick }) => {
   const [isPreviewHover, setIsPreviewHover] = useState(false);
 
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
-  const isPreviewHoverRef = useRef(isPreviewHover);
-  isPreviewHoverRef.current = isPreviewHover;
+  const isHighlightHoverRef = useRef(isHighlightHover);
+  isHighlightHoverRef.current = isHighlightHover;
 
   function handleHighlightHoverOn() {
     setIsHighlightHover(true);
-    setIsPreviewHover(true);
-  }
-  function handleHighlightHoverOff() {
-    setIsPreviewHover(false);
     setTimeout(() => {
-      if (!isPreviewHoverRef.current) setIsHighlightHover(false);
-    }, HOVER_GRACE_PERIOD);
+      if (isHighlightHoverRef.current) setIsPreviewHover(true);
+    }, SHOW_PREVIEW_WAIT_INTERVAL);
   }
+
+  function handleHighlightHoverOff() {
+    setIsHighlightHover(false);
+    setTimeout(() => {
+      if (!isHighlightHoverRef.current) setIsPreviewHover(false);
+    }, HIDE_PREVIEW_WAIT_INTERVAL);
+  }
+
   function handlePreviewHoverOn() {
+    setIsHighlightHover(true);
     setIsPreviewHover(true);
   }
+
   function handlePreviewHoverOff() {
     setIsPreviewHover(false);
     setIsHighlightHover(false);
@@ -67,13 +73,11 @@ const InlineDiscussion = ({ attributes, children, handleClick }) => {
       onMouseOver={handleHighlightHoverOn}
       onClick={handleClick}
     >
-      <Highlight
-        {...attributes}
-      >
+      <Highlight {...attributes}>
         {children}
       </Highlight>
       <Preview
-        isOpen={isHighlightHover || isPreviewHover}
+        isOpen={isPreviewHover}
         onBlur={handlePreviewHoverOff}
         onFocus={handlePreviewHoverOn}
         onMouseOut={handlePreviewHoverOff}
