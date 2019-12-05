@@ -16,6 +16,10 @@ export function StartDiscussionButton({ editor, ...props }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   function handleClick() {
+    // Just doing a deselection for now.
+    // Next step: Pass the selection range to the modal
+    editor.deselect();
+
     setIsModalOpen(true);
     // return editor.withoutSaving(() => editor.addMark(INLINE_DISCUSSION_ANNOTATION));
   }

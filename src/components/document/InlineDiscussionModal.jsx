@@ -1,17 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from '@emotion/styled';
 
 import Modal from 'components/shared/Modal';
 
+const StyledModal = styled(Modal)({
+  alignSelf: 'center',
+});
+
 const InlineDiscussionModal = ({ editor, handleClose, isOpen, ...props }) => {
   return (
-    <Modal
+    <StyledModal
       handleClose={handleClose}
       isOpen={isOpen}
       {...props}
     >
       <div>Hello!</div>
-    </Modal>
+    </StyledModal>
   );
 };
 

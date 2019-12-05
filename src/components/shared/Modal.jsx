@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 
 const Backdrop = styled.div(({ color, theme: { colors } }) => ({
   background: `${colors[color]}`,
+  opacity: 0.75,
   position: 'fixed',
   top: 0,
   left: 0,
@@ -14,6 +15,9 @@ const Backdrop = styled.div(({ color, theme: { colors } }) => ({
 }));
 
 const Container = styled.div({
+  display: 'flex',
+  justifyContent: 'center',
+
   position: 'fixed',
   top: 0,
   left: 0,
@@ -24,30 +28,21 @@ const Container = styled.div({
   zIndex: 1050,
 });
 
-const Dialog = styled.div({
+const Dialog = styled.div(({ theme: { colors, documentViewport } }) => ({
+  background: colors.white,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
   margin: '100px auto',
-});
+  width: documentViewport,
+}));
 
-const Modal = ({ backdropColor, children, isOpen, ...props }) => {
+const Modal = ({ backdropColor, children, handleClose, isOpen, ...props }) => {
   const root = window.document.getElementById('root');
-
-  // // Figure out where the toolbar should be displayed based on the user's text selection
-  // function calculateToolbarPosition() {
-  //   if (!isOpen || !ref.current) return {};
-
-  //   const native = window.getSelection();
-  //   const range = native.getRangeAt(0);
-  //   const rect = range.getBoundingClientRect();
-
-  //   return {
-  //     top: `${rect.top + window.pageYOffset - ref.current.offsetHeight}px`,
-  //     left: `${rect.left + window.pageXOffset - ref.current.offsetWidth / 2 + rect.width / 2}px`,
-  //   };
-  // }
 
   return isOpen ? ReactDOM.createPortal(
     <>
-      <Container>
+      <Container onClick={handleClose}>
         <Dialog {...props}>
           {children}
         </Dialog>
@@ -61,11 +56,12 @@ const Modal = ({ backdropColor, children, isOpen, ...props }) => {
 Modal.propTypes = {
   backdropColor: PropTypes.string,
   children: PropTypes.array.isRequired,
+  handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
 
 Modal.defaultProps = {
-  overlayColor: 'white',
+  backdropColor: 'white',
 };
 
 export default Modal;
