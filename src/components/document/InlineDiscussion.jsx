@@ -7,9 +7,11 @@ const SHOW_PREVIEW_WAIT_INTERVAL = 800;
 
 const Container = styled.span({ });
 
-const Highlight = styled.span(({ theme: { colors } }) => ({
-  background: colors.highlightYellow,
+const Highlight = styled.span(({ isHover, theme: { colors } }) => ({
+  background: isHover ? colors.highlightYellow : 'none',
+  borderBottom: isHover ? 'none' : `2px solid ${colors.highlightYellow}`,
   cursor: 'pointer',
+  opacity: isHover ? 0.9 : 1,
   padding: '2px 0px',
 }));
 
@@ -73,7 +75,7 @@ const InlineDiscussion = ({ attributes, children, handleClick }) => {
       onMouseOver={handleHighlightHoverOn}
       onClick={handleClick}
     >
-      <Highlight {...attributes}>
+      <Highlight isHover={isHighlightHover} {...attributes}>
         {children}
       </Highlight>
       <Preview
