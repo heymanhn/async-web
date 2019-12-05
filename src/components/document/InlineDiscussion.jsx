@@ -13,7 +13,7 @@ const Highlight = styled.span(({ theme: { colors } }) => ({
   padding: '2px 0px',
 }));
 
-const Preview = styled.div(({ theme: { colors, documentViewport } }) => ({
+const Preview = styled.div(({ isOpen, theme: { colors, documentViewport } }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -22,11 +22,15 @@ const Preview = styled.div(({ theme: { colors, documentViewport } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
+  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
   cursor: 'default',
   height: '60px',
   margin: '-2px -30px 0',
+  opacity: isOpen ? 1 : 0,
   padding: '0 25px',
+  transition: 'opacity 0.2s',
   width: documentViewport,
+  zIndex: isOpen ? 1 : -1,
 }));
 
 const InlineDiscussion = ({ attributes, children, handleClick }) => {
@@ -68,17 +72,16 @@ const InlineDiscussion = ({ attributes, children, handleClick }) => {
       >
         {children}
       </Highlight>
-      {(isHighlightHover || isPreviewHover) && (
-        <Preview
-          onBlur={handlePreviewHoverOff}
-          onFocus={handlePreviewHoverOn}
-          onMouseOut={handlePreviewHoverOff}
-          onMouseOver={handlePreviewHoverOn}
-          onClick={handleClick}
-        >
-          Hello testing testing
-        </Preview>
-      )}
+      <Preview
+        isOpen={isHighlightHover || isPreviewHover}
+        onBlur={handlePreviewHoverOff}
+        onFocus={handlePreviewHoverOn}
+        onMouseOut={handlePreviewHoverOff}
+        onMouseOver={handlePreviewHoverOn}
+        onClick={handleClick}
+      >
+        Hello testing testing
+      </Preview>
     </Container>
   );
 };
