@@ -31,7 +31,7 @@ import ImageLoadingIndicator from './plugins/blocks/imageLoadingIndicator';
 import CustomBodyPlaceholder from './plugins/customBodyPlaceholder';
 import AutoSave from './plugins/autoSave';
 import AutoScroll from './plugins/autoScroll';
-import { InlineDiscussion } from './plugins/inlineDiscussion';
+import { InlineDiscussionPlugin } from './plugins/inlineDiscussion';
 
 /* **** Commands **** */
 
@@ -210,6 +210,6 @@ export const plugins = {
     ...coreEditorPlugins,
     AutoSave(),
     AutoScroll(),
-    InlineDiscussion(),
+    InlineDiscussionPlugin(),
     createDocumentPlaceholder('Say what you have to say')],
 };

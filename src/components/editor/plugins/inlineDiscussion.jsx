@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { faCommentPlus } from '@fortawesome/pro-solid-svg-icons';
-import styled from '@emotion/styled';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
+import InlineDiscussion from 'components/document/InlineDiscussion';
 import { RenderMark } from './helpers';
 
 const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
@@ -29,13 +29,8 @@ StartDiscussionButton.propTypes = {
 
 /* **** Slate plugin **** */
 
-const Highlight = styled.span(({ theme: { colors } }) => ({
-  background: colors.highlightYellow,
-  cursor: 'pointer',
-  padding: '2px 5px',
-}));
 
-export function InlineDiscussion() {
+export function InlineDiscussionPlugin() {
   /* **** Render methods **** */
   function renderInlineDiscussion(props, editor) {
     const { attributes, children } = props; /* eslint react/prop-types: 0 */
@@ -44,7 +39,11 @@ export function InlineDiscussion() {
       return editor.withoutSaving(() => editor.removeMark(INLINE_DISCUSSION_ANNOTATION));
     }
 
-    return <Highlight {...attributes} onClick={removeHighlight}>{children}</Highlight>;
+    return (
+      <InlineDiscussion attributes={attributes} handleClick={removeHighlight}>
+        {children}
+      </InlineDiscussion>
+    );
   }
 
   return [RenderMark(INLINE_DISCUSSION_ANNOTATION, renderInlineDiscussion)];
