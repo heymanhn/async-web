@@ -75,7 +75,7 @@ const InlineDiscussion = ({ attributes, children, handleClick }) => {
       onMouseOver={handleHighlightHoverOn}
       onClick={handleClick}
     >
-      <Highlight isHover={isHighlightHover} {...attributes}>
+      <Highlight isHover={isHighlightHover || isPreviewHover} {...attributes}>
         {children}
       </Highlight>
       <Preview
