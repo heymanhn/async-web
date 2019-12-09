@@ -42,10 +42,11 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 5px',
 }));
 
-const Toolbar = ({ editor, isOpen, mode }) => {
+const Toolbar = ({ editor, editorProps, isOpen, mode }) => {
   const ref = useRef(null);
 
   const root = window.document.getElementById('root');
+  const { contentType, documentId, handleShowDiscussion } = editorProps;
 
   // Figure out where the toolbar should be displayed based on the user's text selection
   function calculateToolbarPosition() {
@@ -74,14 +75,23 @@ const Toolbar = ({ editor, isOpen, mode }) => {
 
       <BlockQuoteButton editor={editor} />
       <CodeBlockButton editor={editor} />
-      <VerticalDivider />
     </>
   );
 
   return ReactDOM.createPortal(
     <Container ref={ref} coords={calculateToolbarPosition()} isOpen={isOpen}>
       {mode !== 'display' ? editingButtons : null}
-      <StartDiscussionButton editor={editor} />
+      {/* HN: Is there any way to do this more elegantly? */}
+      {contentType === 'document' && (
+        <>
+          <VerticalDivider />
+          <StartDiscussionButton
+            documentId={documentId}
+            editor={editor}
+            handleShowDiscussion={handleShowDiscussion}
+          />
+        </>
+      )}
     </Container>,
     root,
   );
@@ -89,6 +99,7 @@ const Toolbar = ({ editor, isOpen, mode }) => {
 
 Toolbar.propTypes = {
   editor: PropTypes.object.isRequired,
+  editorProps: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
   mode: PropTypes.string.isRequired,
 };

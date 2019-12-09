@@ -16,6 +16,7 @@ function SelectionToolbar() {
         {children}
         <Toolbar
           editor={editor}
+          editorProps={props}
           isOpen={isOpen}
           mode={mode}
         />

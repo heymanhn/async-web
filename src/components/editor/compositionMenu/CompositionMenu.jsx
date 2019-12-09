@@ -111,6 +111,9 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
    *
    * https://stackoverflow.com/questions/39065010/why-react-event-handler-is-not-called-on-dispatchevent
    */
+
+  // HN: Need to consider case where when there are multiple editors, the composition menu might need to show up
+  // in multiple places.
   useEffect(() => {
     function handleKeyDown(event) {
       const optionsToSelect = filteredOptions();
@@ -131,6 +134,7 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
     }
 
     const menuElement = menuRef.current;
+    if (!isOpen || !menuElement) return () => { };
     menuElement.addEventListener('keydown', handleKeyDown);
 
     return () => {

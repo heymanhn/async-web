@@ -211,5 +211,7 @@ export const plugins = {
     AutoSave(),
     AutoScroll(),
     InlineDiscussionPlugin(),
-    createDocumentPlaceholder('Say what you have to say')],
+    createDocumentPlaceholder('Say what you have to say'),
+  ],
+  discussionReply: discussionPlugins,
 };

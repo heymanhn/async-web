@@ -1,49 +1,37 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { faCommentPlus } from '@fortawesome/pro-solid-svg-icons';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import InlineDiscussion from 'components/document/InlineDiscussion';
-import InlineDiscussionModal from 'components/document/InlineDiscussionModal';
 import { RenderMark } from './helpers';
 
 const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
 
 /* **** Toolbar button **** */
 
-export function StartDiscussionButton({ editor, ...props }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+export function StartDiscussionButton({ documentId, editor, handleShowDiscussion, ...props }) {
   function handleClick() {
-    // Just doing a deselection for now.
     // Next step: Pass the selection range to the modal
-    editor.deselect();
+    editor.moveToEnd();
 
-    setIsModalOpen(true);
+    // Hack, will fix later
+    setTimeout(handleShowDiscussion, 0);
     // return editor.withoutSaving(() => editor.addMark(INLINE_DISCUSSION_ANNOTATION));
   }
 
-  function handleClose() {
-    setIsModalOpen(false);
-  }
-
   return (
-    <>
-      <ToolbarButton handleClick={handleClick} {...props}>
-        <ButtonIcon icon={faCommentPlus} isActive={false} />
-      </ToolbarButton>
-      <InlineDiscussionModal
-        editor={editor}
-        handleClose={handleClose}
-        isOpen={isModalOpen}
-      />
-    </>
+    <ToolbarButton handleClick={handleClick} {...props}>
+      <ButtonIcon icon={faCommentPlus} isActive={false} />
+    </ToolbarButton>
   );
 }
 
 StartDiscussionButton.propTypes = {
+  documentId: PropTypes.string.isRequired,
   editor: PropTypes.object.isRequired,
+  handleShowDiscussion: PropTypes.func.isRequired,
 };
 
 /* **** Slate plugin **** */

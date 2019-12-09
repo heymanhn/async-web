@@ -182,6 +182,7 @@ class RovalEditor extends Component {
         <StyledEditor
           autoFocus={!disableAutoFocus && isEditOrComposeMode}
           commands={commands}
+          contentType={contentType}
           handleCancel={this.handleCancel}
           handleSubmit={this.handleSubmit}
           isMouseDown={isMouseDown}
@@ -213,6 +214,7 @@ RovalEditor.propTypes = {
     // New to Roval v2
     'documentTitle',
     'document',
+    'discussionReply',
   ]).isRequired,
   disableAutoFocus: PropTypes.bool,
   forceDisableSubmit: PropTypes.bool,
