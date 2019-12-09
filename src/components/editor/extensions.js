@@ -22,6 +22,7 @@ import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
 import CompositionMenu from './plugins/compositionMenu';
 import EditorActions from './plugins/editorActions';
+import InlineEditorActions from './plugins/inlineEditorActions';
 
 // HN: Not supporting drag and drop guides for now
 // import DragAndDrop from './plugins/dragAndDrop';
@@ -167,6 +168,12 @@ const discussionPlugins = [
   EditorActions(),
 ];
 
+const inlineDiscussionPlugins = [
+  ...coreEditorPlugins,
+  Drafts(),
+  InlineEditorActions(),
+];
+
 const createDiscussionTitlePlaceholder = text => PlaceholderPlugin({
   placeholder: text,
   when: 'isEmptyDocument',
@@ -213,5 +220,5 @@ export const plugins = {
     InlineDiscussionPlugin(),
     createDocumentPlaceholder('Say what you have to say'),
   ],
-  discussionReply: discussionPlugins,
+  discussionReply: inlineDiscussionPlugins,
 };

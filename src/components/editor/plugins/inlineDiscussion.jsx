@@ -14,7 +14,7 @@ const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
 export function StartDiscussionButton({ documentId, editor, handleShowDiscussion, ...props }) {
   function handleClick() {
     // Next step: Pass the selection range to the modal
-    editor.moveToEnd();
+    editor.moveToEnd().blur();
 
     // Hack, will fix later
     setTimeout(handleShowDiscussion, 0);
