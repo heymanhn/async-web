@@ -43,7 +43,7 @@ const Modal = ({ backdropColor, children, handleClose, isOpen, ...props }) => {
   return isOpen ? ReactDOM.createPortal(
     <>
       <Container onClick={handleClose}>
-        <Dialog {...props}>
+        <Dialog onClick={e => e.stopPropagation()} {...props}>
           {children}
         </Dialog>
       </Container>
