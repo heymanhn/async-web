@@ -40,6 +40,8 @@ const Dialog = styled.div(({ theme: { colors, documentViewport } }) => ({
 const Modal = ({ backdropColor, children, handleClose, isOpen, ...props }) => {
   const root = window.document.getElementById('root');
 
+  document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+
   return isOpen ? ReactDOM.createPortal(
     <>
       <Container onClick={handleClose}>
