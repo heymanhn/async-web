@@ -314,6 +314,7 @@ const DiscussionMessage = ({
         onSaveDraft={handleSaveDraft}
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
         contentType={conversationId ? 'message' : 'discussion'}
+        resourceId={conversationId}
       />
       {mode === 'display' && (
         <MessageReactions conversationId={conversationId} messageId={messageId} />

@@ -1,11 +1,11 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation uploadFile($input: Object!) {
-    uploadFile(input: $input)
+  mutation uploadFile($resourceId: String!, $input: Object!) {
+    uploadFile(resourceId: $resourceId, input: $input)
       @rest(
         type: "FileUpload",
-        path: "/attachments",
+        path: "/resources/{args.resourceId}/attachments",
         method: "POST",
         bodySerializer: "file"
       ) {

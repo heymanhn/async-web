@@ -127,6 +127,7 @@ const Document = ({ documentId }) => {
           isAuthor={isAuthor}
           mode={isAuthor ? 'compose' : 'display'}
           onSubmit={handleUpdateBody}
+          resourceId={documentId}
         />
         {updatedTimestamp && <LastUpdatedIndicator timestamp={updatedTimestamp} />}
       </Container>
