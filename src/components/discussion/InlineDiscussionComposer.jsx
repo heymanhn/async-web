@@ -11,7 +11,7 @@ import { getLocalUser } from 'utils/auth';
 
 import DiscussionReply from './DiscussionReply';
 
-const InlineDiscussionComposer = ({ documentId, handleClose }) => {
+const InlineDiscussionComposer = ({ afterSubmit, documentId, handleClose }) => {
   const client = useApolloClient();
   const { userId } = getLocalUser();
   const { loading, data: currentUserData } = useQuery(currentUserQuery, {
@@ -24,7 +24,7 @@ const InlineDiscussionComposer = ({ documentId, handleClose }) => {
   async function handleCreateDiscussion({ payload, text } = {}) {
     const input = {};
 
-    // It's possible to create a discussion without an initial message, such as
+    // It's possible to create a discussion without an initial reply, such as
     // when creating a draft for the first reply to a discussion
     if (payload && text) {
       input.replies = [{
@@ -43,7 +43,7 @@ const InlineDiscussionComposer = ({ documentId, handleClose }) => {
 
     if (createDiscussionData.createDiscussion) {
       const { id: discussionId } = createDiscussionData.createDiscussion;
-      // afterSubmit(conversationId);
+      afterSubmit(discussionId);
       return Promise.resolve({ discussionId, isNewDiscussion: true });
     }
 
@@ -62,7 +62,7 @@ const InlineDiscussionComposer = ({ documentId, handleClose }) => {
 };
 
 InlineDiscussionComposer.propTypes = {
-  // afterSubmit: PropTypes.func.isRequired,
+  afterSubmit: PropTypes.func.isRequired,
   documentId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
 };

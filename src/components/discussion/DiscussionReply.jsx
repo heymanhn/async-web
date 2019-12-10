@@ -294,7 +294,7 @@ const DiscussionReply = ({
       </HeaderSection>
       <ReplyEditor
         contentType="discussionReply"
-        initialHeight={160} // Give Arun more breathing room :-)
+        initialHeight={160}
         initialValue={loadInitialContent()}
         isAuthor={isAuthor}
         isSubmitting={isSubmitting}
