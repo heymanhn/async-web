@@ -46,7 +46,13 @@ function mod(x, n) {
   return (x % n + n) % n;
 }
 
-const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...props }, menuRef) => {
+const CompositionMenu = React.forwardRef(({
+  editor,
+  handleClose,
+  isModal,
+  isOpen,
+  ...props
+}, menuRef) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [optionToInvoke, setOptionToInvoke] = useState(null);
@@ -73,8 +79,11 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
     if (!element) return {};
 
     const rect = element.getBoundingClientRect();
-    const elemYOffset = rect.top + window.pageYOffset;
-    const elemXOffset = rect.left + window.pageXOffset;
+
+    const windowYOffset = isModal ? 0 : window.pageYOffset;
+    const windowXOffset = isModal ? 0 : window.pageXOffset;
+    const elemYOffset = rect.top + windowYOffset;
+    const elemXOffset = rect.left + windowXOffset;
     const BLOCK_HEIGHT = 30;
 
     if (rect.top > window.innerHeight / 2) {
@@ -111,9 +120,6 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
    *
    * https://stackoverflow.com/questions/39065010/why-react-event-handler-is-not-called-on-dispatchevent
    */
-
-  // HN: Need to consider case where when there are multiple editors, the composition menu might need to show up
-  // in multiple places.
   useEffect(() => {
     function handleKeyDown(event) {
       const optionsToSelect = filteredOptions();
@@ -195,7 +201,12 @@ const CompositionMenu = React.forwardRef(({ editor, handleClose, isOpen, ...prop
 CompositionMenu.propTypes = {
   editor: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
+  isModal: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
+};
+
+CompositionMenu.defaultProps = {
+  isModal: false,
 };
 
 export default CompositionMenu;

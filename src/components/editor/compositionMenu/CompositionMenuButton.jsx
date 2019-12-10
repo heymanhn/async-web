@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/pro-light-svg-icons';
@@ -39,7 +39,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const CompositionMenuButton = React.forwardRef(({ editor, query, ...props }, menuRef) => {
+const CompositionMenuButton = React.forwardRef(({ editor, isModal, query, ...props }, menuRef) => {
   const [state, setState] = useState({
     coords: null,
     isMenuOpen: false,
@@ -77,9 +77,12 @@ const CompositionMenuButton = React.forwardRef(({ editor, query, ...props }, men
     const rect = range.getBoundingClientRect();
     const { coords } = state;
 
+    const windowYOffset = isModal ? 0 : window.pageYOffset;
+    const windowXOffset = isModal ? 0 : window.pageXOffset;
+
     const newCoords = {
-      top: `${rect.top + window.pageYOffset - 7}px`, // 7px is half of 15px button height
-      left: `${rect.left + window.pageXOffset - 45}px`, // 30px margin + half of 30px width
+      top: `${rect.top + windowYOffset - 7}px`, // 7px is half of 15px button height
+      left: `${rect.left + windowXOffset - 45}px`, // 30px margin + half of 30px width
     };
 
     if (coords && newCoords.top === state.coords.top && newCoords.left === coords.left) return;
@@ -131,11 +134,12 @@ const CompositionMenuButton = React.forwardRef(({ editor, query, ...props }, men
       >
         <StyledIcon icon={faPlus} />
       </ButtonContainer>
-      {showButton && <CompositionMenuPlaceholder isVisible={showButton} />}
+      {showButton && <CompositionMenuPlaceholder isModal={isModal} isVisible={showButton} />}
       <CompositionMenu
         ref={menuRef}
         editor={editor}
         handleClose={handleCloseMenu}
+        isModal={isModal}
         isOpen={isMenuOpen}
       />
     </>
@@ -144,11 +148,13 @@ const CompositionMenuButton = React.forwardRef(({ editor, query, ...props }, men
 
 CompositionMenuButton.propTypes = {
   editor: PropTypes.object.isRequired,
+  isModal: PropTypes.bool,
   query: PropTypes.string,
   range: PropTypes.object,
 };
 
 CompositionMenuButton.defaultProps = {
+  isModal: false,
   query: '',
   range: null,
 };

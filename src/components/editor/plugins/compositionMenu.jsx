@@ -5,7 +5,7 @@ import CompositionMenuButton from '../compositionMenu/CompositionMenuButton';
 import { DEFAULT_NODE } from '../defaults';
 import { AddQueries, Hotkey, RenderEditor } from './helpers';
 
-function CompositionMenu() {
+function CompositionMenu({ isModal } = {}) {
   // This ref is forwarded down to the <CompositionMenu /> component
   const menuRef = React.createRef();
 
@@ -25,7 +25,7 @@ function CompositionMenu() {
     return (
       <>
         {children}
-        <CompositionMenuButton editor={editor} ref={menuRef} />
+        <CompositionMenuButton editor={editor} isModal={!!isModal} ref={menuRef} />
       </>
     );
   }
