@@ -22,9 +22,10 @@ const StyledModal = styled(Modal)({
 const DiscussionModal = ({
   discussionId: initialDiscussionId,
   documentId: initialDocumentId,
-  editor,
+  documentEditor,
   handleClose,
   isOpen,
+  selection,
   ...props
 }) => {
   // TODO: Repurpose most of the logic in <Discussion /> here
@@ -64,8 +65,18 @@ const DiscussionModal = ({
     return safeTags.includes('new_replies') || safeTags.includes('new_discussion');
   }
 
-  function afterSubmit(value) {
+  function afterCreate(value) {
+    const { start, end } = selection;
+
     setDiscussionId(value);
+    documentEditor.withoutSaving(() => {
+      documentEditor
+        .focus()
+        .moveStartTo(start.key, start.offset)
+        .moveEndTo(end.key, end.offset)
+        .addMark('inline-discussion')
+        .blur();
+    });
     track('New discussion created', { discussionId: value, documentId });
 
     // Update the URL in the address bar to reflect the new discussion
@@ -74,9 +85,15 @@ const DiscussionModal = ({
     // return window.history.replaceState({}, `discussion: ${value}`, url);
   }
 
+  function handleCloseModal() {
+    setDiscussionId(null);
+
+    handleClose();
+  }
+
   return (
     <StyledModal
-      handleClose={handleClose}
+      handleClose={handleCloseModal}
       isOpen={isOpen}
       {...props}
     >
@@ -89,9 +106,9 @@ const DiscussionModal = ({
       )}
       {documentId && !discussion && (
         <InlineDiscussionComposer
-          afterSubmit={afterSubmit}
+          afterCreate={afterCreate}
           documentId={documentId}
-          handleClose={handleClose}
+          handleClose={handleCloseModal}
         />
       )}
     </StyledModal>
@@ -100,10 +117,11 @@ const DiscussionModal = ({
 
 DiscussionModal.propTypes = {
   discussionId: PropTypes.string,
+  documentEditor: PropTypes.object.isRequired,
   documentId: PropTypes.string,
-  editor: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  selection: PropTypes.object.isRequired,
 };
 
 DiscussionModal.defaultProps = {

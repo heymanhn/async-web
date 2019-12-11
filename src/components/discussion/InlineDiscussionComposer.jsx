@@ -11,7 +11,7 @@ import { getLocalUser } from 'utils/auth';
 
 import DiscussionReply from './DiscussionReply';
 
-const InlineDiscussionComposer = ({ afterSubmit, documentId, handleClose }) => {
+const InlineDiscussionComposer = ({ afterCreate, documentId, handleClose }) => {
   const client = useApolloClient();
   const { userId } = getLocalUser();
   const { loading, data: currentUserData } = useQuery(currentUserQuery, {
@@ -21,20 +21,8 @@ const InlineDiscussionComposer = ({ afterSubmit, documentId, handleClose }) => {
   if (loading || !currentUserData.user) return null;
   const currentUser = currentUserData.user;
 
-  async function handleCreateDiscussion({ payload, text } = {}) {
+  async function handleCreateDiscussion() {
     const input = {};
-
-    // It's possible to create a discussion without an initial reply, such as
-    // when creating a draft for the first reply to a discussion
-    if (payload && text) {
-      input.replies = [{
-        body: {
-          formatter: 'slatejs',
-          text,
-          payload,
-        },
-      }];
-    }
 
     const { data: createDiscussionData } = await client.mutate({
       mutation: createDiscussionMutation,
@@ -43,7 +31,6 @@ const InlineDiscussionComposer = ({ afterSubmit, documentId, handleClose }) => {
 
     if (createDiscussionData.createDiscussion) {
       const { id: discussionId } = createDiscussionData.createDiscussion;
-      afterSubmit(discussionId);
       return Promise.resolve({ discussionId, isNewDiscussion: true });
     }
 
@@ -52,6 +39,7 @@ const InlineDiscussionComposer = ({ afterSubmit, documentId, handleClose }) => {
 
   return (
     <DiscussionReply
+      afterCreate={afterCreate}
       currentUser={currentUser}
       initialMode="compose"
       documentId={documentId}
@@ -62,7 +50,7 @@ const InlineDiscussionComposer = ({ afterSubmit, documentId, handleClose }) => {
 };
 
 InlineDiscussionComposer.propTypes = {
-  afterSubmit: PropTypes.func.isRequired,
+  afterCreate: PropTypes.func.isRequired,
   documentId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
 };

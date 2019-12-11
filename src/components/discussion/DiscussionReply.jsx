@@ -52,6 +52,7 @@ const ReplyEditor = styled(RovalEditor)({
 });
 
 const DiscussionReply = ({
+  afterCreate,
   currentUser,
   discussionId,
   documentId,
@@ -107,7 +108,10 @@ const DiscussionReply = ({
       },
     });
 
-    if (data.createReplyDraft) return Promise.resolve();
+    if (data.createReplyDraft) {
+      afterCreate(draftDiscussionId);
+      return Promise.resolve();
+    }
 
     return Promise.reject(new Error('Failed to save reply draft'));
   }
@@ -150,12 +154,16 @@ const DiscussionReply = ({
   async function handleCreate({ payload, text }) {
     setIsSubmitting(true);
 
-    if (!discussionId) return onCreateDiscussion({ payload, text });
+    let replyDiscussionId = discussionId;
+    if (!replyDiscussionId) {
+      const { discussionId: did } = await onCreateDiscussion();
+      replyDiscussionId = did;
+    }
 
     const { data } = await client.mutate({
       mutation: createReplyMutation,
       variables: {
-        discussionId,
+        discussionId: replyDiscussionId,
         input: {
           body: {
             formatter: 'slatejs',
@@ -183,6 +191,7 @@ const DiscussionReply = ({
       const { id } = data.createReply;
       setIsSubmitting(false);
       track('New reply posted', { replyId: id, discussionId });
+      afterCreate(replyDiscussionId);
 
       return Promise.resolve({});
     }
@@ -309,6 +318,7 @@ const DiscussionReply = ({
 };
 
 DiscussionReply.propTypes = {
+  afterCreate: PropTypes.func,
   currentUser: PropTypes.object.isRequired,
   discussionId: PropTypes.string,
   documentId: PropTypes.string.isRequired,
@@ -320,6 +330,7 @@ DiscussionReply.propTypes = {
 };
 
 DiscussionReply.defaultProps = {
+  afterCreate: () => {},
   discussionId: null,
   draft: null,
   initialMode: 'display',
