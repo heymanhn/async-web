@@ -73,7 +73,12 @@ const DiscussionModal = ({
       documentEditor
         .moveStartTo(start.key, start.offset)
         .moveEndTo(end.key, end.offset)
-        .addMark('inline-discussion');
+        .addMark({
+          type: 'inline-discussion',
+          data: {
+            discussionId: value,
+          },
+        });
     });
     track('New discussion created', { discussionId: value, documentId });
 

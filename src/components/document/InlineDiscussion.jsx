@@ -35,9 +35,10 @@ const Preview = styled.div(({ isOpen, theme: { colors, documentViewport } }) => 
   zIndex: isOpen ? 1 : -1,
 }));
 
-const InlineDiscussion = ({ attributes, children, handleClick }) => {
+const InlineDiscussion = ({ attributes, children, handleClick, handleShowDiscussion }) => {
   const [isHighlightHover, setIsHighlightHover] = useState(false);
   const [isPreviewHover, setIsPreviewHover] = useState(false);
+  const { data } = attributes;
 
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
   const isHighlightHoverRef = useRef(isHighlightHover);
@@ -84,7 +85,7 @@ const InlineDiscussion = ({ attributes, children, handleClick }) => {
         onFocus={handlePreviewHoverOn}
         onMouseOut={handlePreviewHoverOff}
         onMouseOver={handlePreviewHoverOn}
-        onClick={handleClick}
+        onClick={() => handleShowDiscussion(data.discussionId)} // TODO
       >
         Hello testing testing
       </Preview>
@@ -96,6 +97,7 @@ InlineDiscussion.propTypes = {
   attributes: PropTypes.object.isRequired,
   children: PropTypes.object.isRequired,
   handleClick: PropTypes.func.isRequired,
+  handleShowDiscussion: PropTypes.func.isRequired,
 };
 
 export default InlineDiscussion;

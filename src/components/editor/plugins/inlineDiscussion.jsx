@@ -41,14 +41,18 @@ StartDiscussionButton.propTypes = {
 export function InlineDiscussionPlugin() {
   /* **** Render methods **** */
   function renderInlineDiscussion(props, editor) {
-    const { attributes, children } = props; /* eslint react/prop-types: 0 */
+    const { attributes, children, handleShowDiscussion } = props; /* eslint react/prop-types: 0 */
 
     function removeHighlight() {
       return editor.withoutSaving(() => editor.removeMark(INLINE_DISCUSSION_ANNOTATION));
     }
 
     return (
-      <InlineDiscussion attributes={attributes} handleClick={removeHighlight}>
+      <InlineDiscussion
+        attributes={attributes}
+        handleClick={removeHighlight}
+        handleShowDiscussion={handleShowDiscussion}
+      >
         {children}
       </InlineDiscussion>
     );
