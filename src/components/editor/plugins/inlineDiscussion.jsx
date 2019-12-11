@@ -1,19 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { faCommentPlus } from '@fortawesome/pro-solid-svg-icons';
-import styled from '@emotion/styled';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
+import InlineDiscussion from 'components/document/InlineDiscussion';
 import { RenderMark } from './helpers';
 
 const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
 
 /* **** Toolbar button **** */
 
-export function StartDiscussionButton({ editor, ...props }) {
+export function StartDiscussionButton({ documentId, editor, handleShowDiscussion, ...props }) {
   function handleClick() {
-    return editor.withoutSaving(() => editor.addMark(INLINE_DISCUSSION_ANNOTATION));
+    // Next step: Pass the selection range to the modal
+    const { selection } = editor.value;
+
+    // Hack, will fix later
+    setTimeout(() => handleShowDiscussion(selection, editor), 0);
+
+    editor.moveToEnd().blur();
   }
 
   return (
@@ -24,27 +30,32 @@ export function StartDiscussionButton({ editor, ...props }) {
 }
 
 StartDiscussionButton.propTypes = {
+  documentId: PropTypes.string.isRequired,
   editor: PropTypes.object.isRequired,
+  handleShowDiscussion: PropTypes.func.isRequired,
 };
 
 /* **** Slate plugin **** */
 
-const Highlight = styled.span(({ theme: { colors } }) => ({
-  background: colors.highlightYellow,
-  cursor: 'pointer',
-  padding: '2px 5px',
-}));
 
-export function InlineDiscussion() {
+export function InlineDiscussionPlugin() {
   /* **** Render methods **** */
   function renderInlineDiscussion(props, editor) {
-    const { attributes, children } = props; /* eslint react/prop-types: 0 */
+    const { attributes, children, handleShowDiscussion } = props; /* eslint react/prop-types: 0 */
 
     function removeHighlight() {
       return editor.withoutSaving(() => editor.removeMark(INLINE_DISCUSSION_ANNOTATION));
     }
 
-    return <Highlight {...attributes} onClick={removeHighlight}>{children}</Highlight>;
+    return (
+      <InlineDiscussion
+        attributes={attributes}
+        handleClick={removeHighlight}
+        handleShowDiscussion={handleShowDiscussion}
+      >
+        {children}
+      </InlineDiscussion>
+    );
   }
 
   return [RenderMark(INLINE_DISCUSSION_ANNOTATION, renderInlineDiscussion)];

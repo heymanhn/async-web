@@ -22,6 +22,7 @@ import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
 import CompositionMenu from './plugins/compositionMenu';
 import EditorActions from './plugins/editorActions';
+import InlineEditorActions from './plugins/inlineEditorActions';
 
 // HN: Not supporting drag and drop guides for now
 // import DragAndDrop from './plugins/dragAndDrop';
@@ -31,7 +32,7 @@ import ImageLoadingIndicator from './plugins/blocks/imageLoadingIndicator';
 import CustomBodyPlaceholder from './plugins/customBodyPlaceholder';
 import AutoSave from './plugins/autoSave';
 import AutoScroll from './plugins/autoScroll';
-import { InlineDiscussion } from './plugins/inlineDiscussion';
+import { InlineDiscussionPlugin } from './plugins/inlineDiscussion';
 
 /* **** Commands **** */
 
@@ -125,47 +126,6 @@ export const queries = {
 };
 
 /* **** Plugins **** */
-const coreEditorPlugins = [
-  // Marks
-  BoldPlugin(),
-  ItalicPlugin(),
-  Underlined(),
-  CodeSnippet(),
-
-  // Blocks
-  TextBlockPlugin(),
-  HeadingsPlugin(),
-  ListsPlugin(),
-  BlockQuotePlugin(),
-  CodeBlockPlugin(),
-  SectionBreak(),
-  Image(),
-
-  // Inlines
-  Link(),
-
-  // Others
-  SoftBreak({ shift: true }),
-  AutoReplace({
-    trigger: 'space',
-    before: /(--)$/,
-    change: change => change.insertText('— '),
-  }),
-  SelectionToolbar(),
-  CompositionMenu(),
-  ImageLoadingIndicator(),
-];
-
-const discussionPlugins = [
-  ...coreEditorPlugins,
-
-  // HN: Not supporting drag and drop guides for now
-  // DragAndDrop(),
-  // DragAndDropIndicator(),
-
-  Drafts(),
-  EditorActions(),
-];
 
 const createDiscussionTitlePlaceholder = text => PlaceholderPlugin({
   placeholder: text,
@@ -196,6 +156,67 @@ const createDocumentPlaceholder = text => CustomBodyPlaceholder({
   when: 'isEmptyAndUnfocusedDocument',
   Component: DocumentPlaceholder,
 });
+const coreEditorPlugins = [
+  // Marks
+  BoldPlugin(),
+  ItalicPlugin(),
+  Underlined(),
+  CodeSnippet(),
+
+  // Blocks
+  TextBlockPlugin(),
+  HeadingsPlugin(),
+  ListsPlugin(),
+  BlockQuotePlugin(),
+  CodeBlockPlugin(),
+  SectionBreak(),
+  Image(),
+
+  // Inlines
+  Link(),
+
+  // Others
+  SoftBreak({ shift: true }),
+  AutoReplace({
+    trigger: 'space',
+    before: /(--)$/,
+    change: change => change.insertText('— '),
+  }),
+  SelectionToolbar(),
+  ImageLoadingIndicator(),
+];
+
+const discussionPlugins = [
+  ...coreEditorPlugins,
+
+  // HN: Not supporting drag and drop guides for now
+  // DragAndDrop(),
+  // DragAndDropIndicator(),
+
+  CompositionMenu(),
+  Drafts(),
+  EditorActions(),
+];
+
+// Roval v2 plugins stack
+
+const documentPlugins = [
+  ...coreEditorPlugins,
+
+  AutoSave(),
+  AutoScroll(),
+  CompositionMenu(),
+  InlineDiscussionPlugin(),
+  createDocumentPlaceholder('Say what you have to say'),
+];
+
+const inlineDiscussionPlugins = [
+  ...coreEditorPlugins,
+
+  CompositionMenu({ isModal: true }),
+  Drafts(),
+  InlineEditorActions(),
+];
 
 export const plugins = {
   meetingTitle: [],
@@ -206,10 +227,6 @@ export const plugins = {
 
   // Roval v2
   documentTitle: [createDocumentTitlePlaceholder('Untitled Document')],
-  document: [
-    ...coreEditorPlugins,
-    AutoSave(),
-    AutoScroll(),
-    InlineDiscussion(),
-    createDocumentPlaceholder('Say what you have to say')],
+  document: documentPlugins,
+  discussionReply: inlineDiscussionPlugins,
 };

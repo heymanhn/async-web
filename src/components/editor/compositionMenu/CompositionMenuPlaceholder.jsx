@@ -26,7 +26,7 @@ const SlashKey = styled.span(({ theme: { colors } }) => ({
   padding: '2px 6px',
 }));
 
-const CompositionMenuPlaceholder = ({ isVisible }) => {
+const CompositionMenuPlaceholder = ({ isModal, isVisible }) => {
   const [coords, setCoords] = useState(null);
 
   function updatePlaceholderPosition() {
@@ -34,9 +34,12 @@ const CompositionMenuPlaceholder = ({ isVisible }) => {
     const range = native.getRangeAt(0);
     const rect = range.getBoundingClientRect();
 
+    const windowYOffset = isModal ? 0 : window.pageYOffset;
+    const windowXOffset = isModal ? 0 : window.pageXOffset;
+
     const newCoords = {
-      top: `${rect.top + window.pageYOffset - 3}px`, // Vertically aligning the placeholder
-      left: `${rect.left + window.pageXOffset + 2}px`, // Some breathing room after the cursor
+      top: `${rect.top + windowYOffset - 3}px`, // Vertically aligning the placeholder
+      left: `${rect.left + windowXOffset + 2}px`, // Some breathing room after the cursor
     };
 
     if (coords && newCoords.top === coords.top && newCoords.left === coords.left) return;
@@ -61,7 +64,12 @@ const CompositionMenuPlaceholder = ({ isVisible }) => {
 };
 
 CompositionMenuPlaceholder.propTypes = {
+  isModal: PropTypes.bool,
   isVisible: PropTypes.bool.isRequired,
+};
+
+CompositionMenuPlaceholder.defaultProps = {
+  isModal: false,
 };
 
 export default CompositionMenuPlaceholder;

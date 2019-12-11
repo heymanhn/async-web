@@ -125,7 +125,9 @@ class RovalEditor extends Component {
 
     if (!isPlainText && response && response.isNewDiscussion) return;
     if (mode === 'compose' && !isPlainText && contentType !== 'document') this.clearEditorValue();
-    if (mode !== 'display') this.handleCancel({ saved: true });
+    if (mode !== 'display' && contentType !== 'discussionReply') {
+      this.handleCancel({ saved: true });
+    }
   }
 
   // Need to wrap setState in a setTimeout call due to:
@@ -182,6 +184,7 @@ class RovalEditor extends Component {
         <StyledEditor
           autoFocus={!disableAutoFocus && isEditOrComposeMode}
           commands={commands}
+          contentType={contentType}
           handleCancel={this.handleCancel}
           handleSubmit={this.handleSubmit}
           isMouseDown={isMouseDown}
@@ -213,6 +216,7 @@ RovalEditor.propTypes = {
     // New to Roval v2
     'documentTitle',
     'document',
+    'discussionReply',
   ]).isRequired,
   disableAutoFocus: PropTypes.bool,
   forceDisableSubmit: PropTypes.bool,

@@ -10,6 +10,7 @@ import { track } from 'utils/analytics';
 
 import NotFound from 'components/navigation/NotFound';
 import RovalEditor from 'components/editor/RovalEditor';
+import DiscussionModal from 'components/discussion/DiscussionModal';
 import HeaderBar from './HeaderBar';
 import LastUpdatedIndicator from './LastUpdatedIndicator';
 
@@ -43,6 +44,26 @@ const DocumentEditor = styled(RovalEditor)({
 });
 
 const Document = ({ documentId }) => {
+  // const [state, setState] = useState({
+  //   contents: currentContents,
+  //   isTyping: false,
+  //   timerStarted: false,
+  //   timer: null,
+  // });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [documentEditor, setDocumentEditor] = useState(null);
+  const [selection, setSelection] = useState(null);
+  function handleShowDiscussion(newSelection, editor) {
+    setSelection(newSelection);
+    setDocumentEditor(editor);
+    setIsModalOpen(true);
+  }
+  function handleCloseDiscussion() {
+    setIsModalOpen(false);
+    setSelection(null);
+    setDocumentEditor(null);
+  }
+
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
   const [updateDocument] = useMutation(updateDocumentMutation);
   const { loading, error, data } = useQuery(documentQuery, {
@@ -123,6 +144,8 @@ const Document = ({ documentId }) => {
         <DocumentEditor
           contentType="document"
           disableAutoFocus={!contents}
+          documentId={documentId}
+          handleShowDiscussion={handleShowDiscussion}
           initialValue={contents}
           isAuthor={isAuthor}
           mode={isAuthor ? 'compose' : 'display'}
@@ -130,6 +153,13 @@ const Document = ({ documentId }) => {
         />
         {updatedTimestamp && <LastUpdatedIndicator timestamp={updatedTimestamp} />}
       </Container>
+      <DiscussionModal
+        documentId={documentId}
+        documentEditor={documentEditor}
+        handleClose={handleCloseDiscussion}
+        isOpen={isModalOpen}
+        selection={selection}
+      />
     </>
   );
 };
