@@ -38,8 +38,12 @@ export function ImageOption({ editor, ...props }) {
   };
   const [state, setState] = useState(initialState);
   const { selectedFile, uploadStarted } = state;
+  const { resourceId } = editor.props;
 
   const [uploadFile] = useMutation(uploadFileMutation, {
+    variables: {
+      resourceId,
+    },
     onCompleted: (data) => {
       if (data && data.uploadFile) {
         const { url } = data.uploadFile;
@@ -194,9 +198,10 @@ export function Image() {
 
     const client = window.Roval.apolloClient; // Using a global variable until I find a better way
     editor.insertImageLoadingIndicator();
+    const { resourceId } = editor.props;
     const { data } = await client.mutate({
       mutation: uploadFileMutation,
-      variables: { input: { file: image } },
+      variables: { resourceId, input: { file: image } },
     });
 
     if (data && data.uploadFile) {
