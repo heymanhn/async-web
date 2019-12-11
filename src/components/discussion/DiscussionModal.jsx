@@ -71,11 +71,9 @@ const DiscussionModal = ({
     setDiscussionId(value);
     documentEditor.withoutSaving(() => {
       documentEditor
-        .focus()
         .moveStartTo(start.key, start.offset)
         .moveEndTo(end.key, end.offset)
-        .addMark('inline-discussion')
-        .blur();
+        .addMark('inline-discussion');
     });
     track('New discussion created', { discussionId: value, documentId });
 
