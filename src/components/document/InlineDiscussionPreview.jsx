@@ -19,7 +19,7 @@ const Container = styled.div(({ isOpen, theme: { colors, documentViewport } }) =
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
-  cursor: 'default',
+  cursor: 'pointer',
   height: '60px',
   margin: '-2px -30px 0',
   opacity: isOpen ? 1 : 0,
@@ -32,6 +32,7 @@ const Container = styled.div(({ isOpen, theme: { colors, documentViewport } }) =
 const LastReplyDetails = styled.div({
   display: 'flex',
   flexDirection: 'row',
+  flexGrow: 1,
 });
 
 const AvatarWithMargin = styled(Avatar)({
@@ -40,9 +41,11 @@ const AvatarWithMargin = styled(Avatar)({
 });
 
 const PreviewSnippet = styled.div(({ theme: { colors } }) => ({
+  flexGrow: 1,
   color: colors.grey2,
   fontSize: '14px',
   letterSpacing: '-0.1px',
+  lineHeight: '32px',
 }));
 
 const ReplyCountIndicator = styled.div(({ theme: { colors } }) => ({
@@ -52,7 +55,7 @@ const ReplyCountIndicator = styled.div(({ theme: { colors } }) => ({
   paddingLeft: '25px',
 }));
 
-const InlineDiscussionPreview = ({ discussionId, isOpen, ...props }) => {
+const InlineDiscussionPreview = ({ discussionId, handleShowDiscussion, isOpen }) => {
   const { loading, error, data: discussionData } = useQuery(discussionQuery, {
     variables: { id: discussionId, queryParams: {} },
   });
@@ -66,7 +69,7 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, ...props }) => {
   const { text } = body;
 
   return (
-    <Container isOpen={isOpen} {...props}>
+    <Container isOpen={isOpen} onClick={() => handleShowDiscussion(discussionId)}>
       <LastReplyDetails>
         <AvatarWithMargin avatarUrl={profilePictureUrl} size={32} />
         <PreviewSnippet>
@@ -82,6 +85,7 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, ...props }) => {
 
 InlineDiscussionPreview.propTypes = {
   discussionId: PropTypes.string.isRequired,
+  handleShowDiscussion: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
 

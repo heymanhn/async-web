@@ -72,12 +72,12 @@ const InlineDiscussion = ({
       {discussionId && isPreviewHover ? (
         <InlineDiscussionPreview
           discussionId={discussionId}
+          handleShowDiscussion={handleShowDiscussion}
           isOpen={isPreviewHover}
           onBlur={handlePreviewHoverOff}
           onFocus={handlePreviewHoverOn}
           onMouseOut={handlePreviewHoverOff}
           onMouseOver={handlePreviewHoverOn}
-          onClick={() => handleShowDiscussion(discussionId)}
         />
       ) : undefined }
 
