@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import InlineDiscussionPreview from './InlineDiscussionPreview';
+
 const HIDE_PREVIEW_WAIT_INTERVAL = 200;
 const SHOW_PREVIEW_WAIT_INTERVAL = 800;
 
@@ -15,30 +17,15 @@ const Highlight = styled.span(({ isHover, theme: { colors } }) => ({
   padding: '2px 0px',
 }));
 
-const Preview = styled.div(({ isOpen, theme: { colors, documentViewport } }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  position: 'absolute',
-
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
-  cursor: 'default',
-  height: '60px',
-  margin: '-2px -30px 0',
-  opacity: isOpen ? 1 : 0,
-  padding: '0 25px',
-  transition: 'opacity 0.2s',
-  width: documentViewport,
-  zIndex: isOpen ? 1 : -1,
-}));
-
-const InlineDiscussion = ({ attributes, children, handleClick, handleShowDiscussion }) => {
+const InlineDiscussion = ({
+  attributes,
+  children,
+  discussionId,
+  handleClick,
+  handleShowDiscussion,
+}) => {
   const [isHighlightHover, setIsHighlightHover] = useState(false);
   const [isPreviewHover, setIsPreviewHover] = useState(false);
-  const { data } = attributes;
 
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
   const isHighlightHoverRef = useRef(isHighlightHover);
@@ -74,21 +61,26 @@ const InlineDiscussion = ({ attributes, children, handleClick, handleShowDiscuss
       onFocus={handleHighlightHoverOn}
       onMouseOut={handleHighlightHoverOff}
       onMouseOver={handleHighlightHoverOn}
-      onClick={handleClick}
     >
-      <Highlight isHover={isHighlightHover || isPreviewHover} {...attributes}>
+      <Highlight
+        isHover={isHighlightHover || isPreviewHover}
+        onClick={handleClick}
+        {...attributes}
+      >
         {children}
       </Highlight>
-      <Preview
-        isOpen={isPreviewHover}
-        onBlur={handlePreviewHoverOff}
-        onFocus={handlePreviewHoverOn}
-        onMouseOut={handlePreviewHoverOff}
-        onMouseOver={handlePreviewHoverOn}
-        onClick={() => handleShowDiscussion(data.discussionId)} // TODO
-      >
-        Hello testing testing
-      </Preview>
+      {discussionId && isPreviewHover ? (
+        <InlineDiscussionPreview
+          discussionId={discussionId}
+          isOpen={isPreviewHover}
+          onBlur={handlePreviewHoverOff}
+          onFocus={handlePreviewHoverOn}
+          onMouseOut={handlePreviewHoverOff}
+          onMouseOver={handlePreviewHoverOn}
+          onClick={() => handleShowDiscussion(discussionId)}
+        />
+      ) : undefined }
+
     </Container>
   );
 };

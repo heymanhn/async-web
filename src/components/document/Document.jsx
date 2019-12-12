@@ -53,9 +53,11 @@ const Document = ({ documentId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [documentEditor, setDocumentEditor] = useState(null);
   const [selection, setSelection] = useState(null);
-  function handleShowDiscussion(newSelection, editor) {
+  const [discussionId, setDiscussionId] = useState(null);
+  function handleShowDiscussion(newSelection, editor, newdiscussionId) {
     setSelection(newSelection);
     setDocumentEditor(editor);
+    setDiscussionId(newdiscussionId);
     setIsModalOpen(true);
   }
   function handleCloseDiscussion() {

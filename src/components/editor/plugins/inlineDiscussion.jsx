@@ -41,7 +41,7 @@ export function InlineDiscussionPlugin() {
   /* **** Render methods **** */
   function renderInlineDiscussion(props, editor, mark) {
     const { attributes, children, handleShowDiscussion } = props; /* eslint react/prop-types: 0 */
-    const { discussionId } = mark.data;
+    const discussionId = mark.data.get('discussionId');
 
     function removeHighlight() {
       return editor.withoutSaving(() => editor.removeMark(INLINE_DISCUSSION_ANNOTATION));
