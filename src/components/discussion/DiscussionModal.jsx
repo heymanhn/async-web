@@ -120,16 +120,18 @@ const DiscussionModal = ({
 
 DiscussionModal.propTypes = {
   discussionId: PropTypes.string,
-  documentEditor: PropTypes.object.isRequired,
+  documentEditor: PropTypes.object,
   documentId: PropTypes.string,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  selection: PropTypes.object.isRequired,
+  selection: PropTypes.object,
 };
 
 DiscussionModal.defaultProps = {
   discussionId: null,
+  documentEditor: {},
   documentId: null,
+  selection: {},
 };
 
 export default DiscussionModal;
