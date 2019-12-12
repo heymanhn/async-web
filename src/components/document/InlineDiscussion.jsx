@@ -96,6 +96,7 @@ const InlineDiscussion = ({ attributes, children, handleClick, handleShowDiscuss
 InlineDiscussion.propTypes = {
   attributes: PropTypes.object.isRequired,
   children: PropTypes.object.isRequired,
+  discussionId: PropTypes.string.isRequired,
   handleClick: PropTypes.func.isRequired,
   handleShowDiscussion: PropTypes.func.isRequired,
 };

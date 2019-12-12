@@ -37,11 +37,11 @@ StartDiscussionButton.propTypes = {
 
 /* **** Slate plugin **** */
 
-
 export function InlineDiscussionPlugin() {
   /* **** Render methods **** */
-  function renderInlineDiscussion(props, editor) {
+  function renderInlineDiscussion(props, editor, mark) {
     const { attributes, children, handleShowDiscussion } = props; /* eslint react/prop-types: 0 */
+    const { discussionId } = mark.data;
 
     function removeHighlight() {
       return editor.withoutSaving(() => editor.removeMark(INLINE_DISCUSSION_ANNOTATION));
@@ -50,6 +50,7 @@ export function InlineDiscussionPlugin() {
     return (
       <InlineDiscussion
         attributes={attributes}
+        discussionId={discussionId}
         handleClick={removeHighlight}
         handleShowDiscussion={handleShowDiscussion}
       >
