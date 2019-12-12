@@ -17,7 +17,7 @@ export function StartDiscussionButton({ documentId, editor, handleShowDiscussion
     const { selection } = editor.value;
 
     // Hack, will fix later
-    setTimeout(() => handleShowDiscussion(selection, editor), 0);
+    setTimeout(() => handleShowDiscussion(null, selection, editor), 0);
 
     editor.moveToEnd().blur();
   }
@@ -40,7 +40,8 @@ StartDiscussionButton.propTypes = {
 export function InlineDiscussionPlugin() {
   /* **** Render methods **** */
   function renderInlineDiscussion(props, editor, mark) {
-    const { attributes, children, handleShowDiscussion } = props; /* eslint react/prop-types: 0 */
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
+    const { handleShowDiscussion } = editor.props;
     const discussionId = mark.data.get('discussionId');
 
     function removeHighlight() {
