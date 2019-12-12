@@ -44,24 +44,23 @@ const DocumentEditor = styled(RovalEditor)({
 });
 
 const Document = ({ documentId }) => {
-  // const [state, setState] = useState({
-  //   contents: currentContents,
-  //   isTyping: false,
-  //   timerStarted: false,
-  //   timer: null,
-  // });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [documentEditor, setDocumentEditor] = useState(null);
   const [selection, setSelection] = useState(null);
-  function handleShowDiscussion(newSelection, editor) {
-    setSelection(newSelection);
-    setDocumentEditor(editor);
+  const [discussionId, setDiscussionId] = useState(null);
+
+  function handleShowDiscussion(newDiscussionId, newSelection, editor) {
+    setDiscussionId(newDiscussionId);
+    if (newSelection) setSelection(newSelection);
+    if (editor) setDocumentEditor(editor);
+
     setIsModalOpen(true);
   }
   function handleCloseDiscussion() {
     setIsModalOpen(false);
     setSelection(null);
     setDocumentEditor(null);
+    setDiscussionId(null);
   }
 
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
@@ -155,6 +154,7 @@ const Document = ({ documentId }) => {
         {updatedTimestamp && <LastUpdatedIndicator timestamp={updatedTimestamp} />}
       </Container>
       <DiscussionModal
+        discussionId={discussionId}
         documentId={documentId}
         documentEditor={documentEditor}
         handleClose={handleCloseDiscussion}

@@ -19,7 +19,7 @@ export const RenderMark = (markToRender, componentFn) => ({
   renderMark(props, editor, next) {
     const { mark } = props;
 
-    return mark.type === markToRender ? componentFn(props, editor) : next();
+    return mark.type === markToRender ? componentFn(props, editor, mark) : next();
   },
 });
 
