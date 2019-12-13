@@ -65,7 +65,7 @@ const DiscussionModal = ({
     return safeTags.includes('new_replies') || safeTags.includes('new_discussion');
   }
 
-  function afterCreate(value) {
+  function afterCreate(value, authorId, isDraft) {
     const { start, end } = selection;
 
     setDiscussionId(value);
@@ -77,6 +77,8 @@ const DiscussionModal = ({
           type: 'inline-discussion',
           data: {
             discussionId: value,
+            isDraft,
+            authorId,
           },
         });
     });

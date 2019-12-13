@@ -63,10 +63,14 @@ const InlineDiscussionPreview = ({ discussionId, handleShowDiscussion, isOpen })
   if (loading) return null;
   if (error || !discussionData.discussion) return <div>{error}</div>;
 
-  const { lastReply, replyCount } = discussionData.discussion;
-  const { author, body } = lastReply;
+  const { draft, lastReply, replyCount } = discussionData.discussion;
+  const { author } = lastReply || discussionData.discussion;
+  const { body } = draft || lastReply;
   const { profilePictureUrl } = author;
   const { text } = body;
+
+  // HN: Make a better UI for a draft indicator in the preview in the future
+  const displayText = draft ? `(Draft) ${text}` : text;
 
   return (
     <Container isOpen={isOpen} onClick={() => handleShowDiscussion(discussionId)}>
@@ -74,7 +78,7 @@ const InlineDiscussionPreview = ({ discussionId, handleShowDiscussion, isOpen })
         <AvatarWithMargin avatarUrl={profilePictureUrl} size={32} />
         <PreviewSnippet>
           <Truncate lines={1}>
-            {text}
+            {displayText}
           </Truncate>
         </PreviewSnippet>
       </LastReplyDetails>

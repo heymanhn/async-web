@@ -109,7 +109,7 @@ const DiscussionReply = ({
     });
 
     if (data.createReplyDraft) {
-      afterCreate(draftDiscussionId);
+      afterCreate(draftDiscussionId, userId, true);
       return Promise.resolve();
     }
 
@@ -191,7 +191,7 @@ const DiscussionReply = ({
       const { id } = data.createReply;
       setIsSubmitting(false);
       track('New reply posted', { replyId: id, discussionId });
-      afterCreate(replyDiscussionId);
+      afterCreate(replyDiscussionId, userId);
 
       return Promise.resolve({});
     }
