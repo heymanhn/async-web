@@ -37,7 +37,7 @@ const LastReplyDetails = styled.div({
 
 const AvatarWithMargin = styled(Avatar)({
   flexShrink: 0,
-  marginRight: '10px',
+  marginRight: '12px',
 });
 
 const PreviewSnippet = styled.div(({ theme: { colors } }) => ({

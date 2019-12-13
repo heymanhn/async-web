@@ -24,7 +24,10 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   justifyContent: 'center',
   margin: '0 auto',
   maxWidth: discussionViewport,
-  padding: '0 30px',
+}));
+
+const StyledDiscussionReply = styled(DiscussionReply)(({ theme: { colors } }) => ({
+  borderBottom: `1px solid ${colors.borderGrey}`,
 }));
 
 const InlineDiscussionThread = ({ discussionId, documentId, isUnread }) => {
@@ -98,7 +101,7 @@ const InlineDiscussionThread = ({ discussionId, documentId, isUnread }) => {
       {replies.map(m => (
         <React.Fragment key={m.id}>
           {firstNewReplyId() === m.id && m.id !== replies[0].id && <NewRepliesIndicator />}
-          <DiscussionReply
+          <StyledDiscussionReply
             discussionId={discussionId}
             initialReply={m}
           />

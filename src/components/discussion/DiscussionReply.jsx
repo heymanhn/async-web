@@ -25,9 +25,8 @@ import HoverMenu from './HoverMenu';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
-  borderRadius: '5px',
   cursor: 'default',
-  padding: '15px 30px 25px',
+  padding: '15px 30px 10px',
 }));
 
 const HeaderSection = styled.div({

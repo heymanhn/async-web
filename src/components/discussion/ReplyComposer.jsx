@@ -15,14 +15,13 @@ const Container = styled.div(({ hover, theme: { colors } }) => ({
   flexDirection: 'row',
   alignItems: 'center',
 
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  boxShadow: `0px 0px 3px ${colors.grey7}`,
+  background: colors.bgGrey,
+  borderBottomLeftRadius: '5px',
+  borderBottomRightRadius: '5px',
   color: colors.grey4,
   cursor: 'pointer',
   opacity: hover ? 1 : 0.6,
-  padding: '20px 30px',
+  padding: '20px 25px',
   transition: 'opacity 0.2s',
 }));
 
