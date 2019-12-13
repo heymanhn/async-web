@@ -42,7 +42,6 @@ export function InlineDiscussionPlugin() {
   function renderInlineDiscussion(props, editor, mark) {
     const { attributes, children } = props; /* eslint react/prop-types: 0 */
     const { handleShowDiscussion } = editor.props;
-    const discussionId = mark.data.get('discussionId');
 
     function removeHighlight() {
       return editor.withoutSaving(() => editor.removeMark(INLINE_DISCUSSION_ANNOTATION));
@@ -51,9 +50,9 @@ export function InlineDiscussionPlugin() {
     return (
       <InlineDiscussion
         attributes={attributes}
-        discussionId={discussionId}
         handleClick={removeHighlight}
         handleShowDiscussion={handleShowDiscussion}
+        markData={mark.data}
       >
         {children}
       </InlineDiscussion>

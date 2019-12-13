@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import { getLocalUser } from 'utils/auth';
+
 import InlineDiscussionPreview from './InlineDiscussionPreview';
 
 const HIDE_PREVIEW_WAIT_INTERVAL = 200;
@@ -20,12 +22,18 @@ const Highlight = styled.span(({ isHover, theme: { colors } }) => ({
 const InlineDiscussion = ({
   attributes,
   children,
-  discussionId,
   handleClick,
   handleShowDiscussion,
+  markData,
 }) => {
   const [isHighlightHover, setIsHighlightHover] = useState(false);
   const [isPreviewHover, setIsPreviewHover] = useState(false);
+
+  const discussionId = markData.get('discussionId');
+  const isDraft = markData.get('isDraft');
+  const authorId = markData.get('authorId');
+  const { userId } = getLocalUser();
+  const isAuthor = userId === authorId;
 
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
   const isHighlightHoverRef = useRef(isHighlightHover);
@@ -55,6 +63,8 @@ const InlineDiscussion = ({
     setIsHighlightHover(false);
   }
 
+  if (isDraft && !isAuthor) return children;
+
   return (
     <Container
       onBlur={handleHighlightHoverOff}
@@ -72,12 +82,12 @@ const InlineDiscussion = ({
       {discussionId && isPreviewHover ? (
         <InlineDiscussionPreview
           discussionId={discussionId}
+          handleShowDiscussion={handleShowDiscussion}
           isOpen={isPreviewHover}
           onBlur={handlePreviewHoverOff}
           onFocus={handlePreviewHoverOn}
           onMouseOut={handlePreviewHoverOff}
           onMouseOver={handlePreviewHoverOn}
-          onClick={() => handleShowDiscussion(discussionId)}
         />
       ) : undefined }
 
@@ -88,9 +98,9 @@ const InlineDiscussion = ({
 InlineDiscussion.propTypes = {
   attributes: PropTypes.object.isRequired,
   children: PropTypes.object.isRequired,
-  discussionId: PropTypes.string.isRequired,
   handleClick: PropTypes.func.isRequired,
   handleShowDiscussion: PropTypes.func.isRequired,
+  markData: PropTypes.object.isRequired,
 };
 
 export default InlineDiscussion;

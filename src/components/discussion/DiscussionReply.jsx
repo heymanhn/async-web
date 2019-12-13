@@ -109,7 +109,7 @@ const DiscussionReply = ({
     });
 
     if (data.createReplyDraft) {
-      afterCreate(draftDiscussionId);
+      afterCreate(draftDiscussionId, userId, true);
       return Promise.resolve();
     }
 
@@ -191,7 +191,7 @@ const DiscussionReply = ({
       const { id } = data.createReply;
       setIsSubmitting(false);
       track('New reply posted', { replyId: id, discussionId });
-      afterCreate(replyDiscussionId);
+      afterCreate(replyDiscussionId, userId);
 
       return Promise.resolve({});
     }
@@ -306,12 +306,14 @@ const DiscussionReply = ({
         initialHeight={160}
         initialValue={loadInitialContent()}
         isAuthor={isAuthor}
+        isDraftSaved={!!draft}
         isSubmitting={isSubmitting}
         mode={mode}
         onCancel={handleCancel}
         onDiscardDraft={handleDeleteDraft}
         onSaveDraft={handleSaveDraft}
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
+        resourceId={documentId}
       />
     </Container>
   );
