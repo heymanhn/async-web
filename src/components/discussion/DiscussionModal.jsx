@@ -28,7 +28,6 @@ const DiscussionModal = ({
   selection,
   ...props
 }) => {
-  // TODO: Repurpose most of the logic in <Discussion /> here
   const [discussionId, setDiscussionId] = useState(initialDiscussionId);
   const [documentId, setDocumentId] = useState(initialDocumentId);
   const [getDiscussion, { loading, data }] = useLazyQuery(discussionQuery, {
@@ -46,6 +45,7 @@ const DiscussionModal = ({
 
   // HN: Should refactor this convoluted logic, meant to either fetch the details of a
   // discussion if it exists, or show the discussion composer.
+  if (!discussionId && initialDiscussionId) setDiscussionId(initialDiscussionId);
   if (discussionId && !data) {
     getDiscussion();
     return null;
