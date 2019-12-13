@@ -306,6 +306,7 @@ const DiscussionReply = ({
         initialHeight={160}
         initialValue={loadInitialContent()}
         isAuthor={isAuthor}
+        isDraftSaved={!!draft}
         isSubmitting={isSubmitting}
         mode={mode}
         onCancel={handleCancel}
