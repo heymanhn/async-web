@@ -313,6 +313,7 @@ const DiscussionReply = ({
         onDiscardDraft={handleDeleteDraft}
         onSaveDraft={handleSaveDraft}
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
+        resourceId={documentId}
       />
     </Container>
   );
