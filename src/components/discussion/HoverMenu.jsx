@@ -45,10 +45,10 @@ const MenuIcon = styled.div({
 });
 
 const HoverMenu = ({
-  conversationId,
+  discussionId,
   isAuthor,
   isOpen,
-  messageId,
+  replyId,
   onDelete,
   onEdit,
   ...props
@@ -67,10 +67,10 @@ const HoverMenu = ({
     <Container isOpen={shouldDisplay} {...props}>
       <ButtonContainer>
         <AddReactionButton
-          conversationId={conversationId}
-          messageId={messageId}
+          discussionId={discussionId}
           onPickerStateChange={setPickerState}
           placement="below"
+          replyId={replyId}
         />
       </ButtonContainer>
       <VerticalDivider />
@@ -92,12 +92,12 @@ const HoverMenu = ({
 };
 
 HoverMenu.propTypes = {
-  conversationId: PropTypes.string.isRequired,
+  discussionId: PropTypes.string.isRequired,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
   isAuthor: PropTypes.bool.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  messageId: PropTypes.string.isRequired,
+  replyId: PropTypes.string.isRequired,
 };
 
 export default HoverMenu;

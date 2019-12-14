@@ -42,10 +42,10 @@ const ReactionsList = styled.div({
 });
 
 const ReactionPicker = ({
-  conversationId,
+  discussionId,
   handleClose,
   isOpen,
-  messageId,
+  replyId,
   placement,
   ...props
 }) => {
@@ -55,7 +55,7 @@ const ReactionPicker = ({
     reactions,
     reactionsReference,
     removeReaction,
-  } = useReactions({ conversationId, messageId });
+  } = useReactions({ discussionId, replyId });
 
   function handleAddReaction(code) {
     handleClose();
@@ -122,11 +122,11 @@ const ReactionPicker = ({
 };
 
 ReactionPicker.propTypes = {
-  conversationId: PropTypes.string.isRequired,
+  discussionId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
-  messageId: PropTypes.string.isRequired,
   placement: PropTypes.oneOf(['above', 'below']),
+  replyId: PropTypes.string.isRequired,
 };
 
 ReactionPicker.defaultProps = {

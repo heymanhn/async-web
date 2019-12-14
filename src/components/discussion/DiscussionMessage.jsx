@@ -9,7 +9,6 @@ import deleteDraftFromConversationMtn from 'graphql/mutations/local/deleteDraftF
 import addNewMessageToConversationMtn from 'graphql/mutations/local/addNewMessageToConversation';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
-import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
 import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
 import deleteConversationMutation from 'graphql/mutations/deleteConversation';
@@ -21,7 +20,6 @@ import { track } from 'utils/analytics';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
-import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -40,11 +38,6 @@ const HeaderSection = styled.div({
   justifyContent: 'space-between',
   alignItems: 'center',
   position: 'relative',
-});
-
-const StyledHoverMenu = styled(HoverMenu)({
-  position: 'absolute',
-  right: '0px',
 });
 
 const MessageEditor = styled(RovalEditor)({
@@ -69,7 +62,6 @@ const DiscussionMessage = ({
   const client = useApolloClient();
   const [mode, setMode] = useState(initialMode);
   function setToDisplayMode() { setMode('display'); }
-  function setToEditMode() { setMode('edit'); }
   const { hover, ...hoverProps } = useHover(mode !== 'display');
 
   const [message, setMessage] = useState(initialMessage);
@@ -226,46 +218,6 @@ const DiscussionMessage = ({
     return Promise.reject(new Error('Failed to save discussion message'));
   }
 
-  async function handleDelete() {
-    const userChoice = window.confirm('Are you sure you want to delete this message?');
-    if (!userChoice) return;
-
-    client.mutate({
-      mutation: deleteMessageMutation,
-      variables: {
-        conversationId,
-        messageId,
-      },
-      update: (cache) => {
-        const {
-          conversation,
-          messages: { pageToken, items, __typename, messageCount },
-        } = cache.readQuery({
-          query: conversationQuery,
-          variables: { id: conversationId, queryParams: {} },
-        });
-
-        const index = items.findIndex(i => i.message.id === messageId);
-        cache.writeQuery({
-          query: conversationQuery,
-          variables: { id: conversationId, queryParams: {} },
-          data: {
-            conversation,
-            messages: {
-              messageCount: messageCount - 1,
-              pageToken,
-              items: [
-                ...items.slice(0, index),
-                ...items.slice(index + 1),
-              ],
-              __typename,
-            },
-          },
-        });
-      },
-    });
-  }
-
   function handleCancel() {
     if (mode === 'compose') {
       onCancel();
@@ -289,16 +241,6 @@ const DiscussionMessage = ({
           isEdited={createdAt !== updatedAt}
           mode={mode}
         />
-        {messageId && mode === 'display' && (
-          <StyledHoverMenu
-            conversationId={conversationId}
-            isAuthor={isAuthor}
-            isOpen={hover}
-            messageId={messageId}
-            onDelete={handleDelete}
-            onEdit={setToEditMode}
-          />
-        )}
       </HeaderSection>
       <MessageEditor
         disableAutoFocus={mode === 'compose' && !conversationId}
