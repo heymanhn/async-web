@@ -23,10 +23,10 @@ import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
 import HoverMenu from './HoverMenu';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
   cursor: 'default',
-  padding: '15px 30px 10px',
+  padding: mode === 'edit' ? '15px 30px 25px !important' : '15px 30px 25px',
 }));
 
 const HeaderSection = styled.div({
@@ -281,7 +281,7 @@ const DiscussionReply = ({
   }
 
   return (
-    <Container {...hoverProps} {...props}>
+    <Container mode={mode} {...hoverProps} {...props}>
       <HeaderSection>
         <AuthorDetails
           author={userToDisplay}

@@ -16,8 +16,6 @@ const Container = styled.div(({ hover, theme: { colors } }) => ({
   alignItems: 'center',
 
   background: colors.bgGrey,
-  borderBottomLeftRadius: '5px',
-  borderBottomRightRadius: '5px',
   color: colors.grey4,
   cursor: 'pointer',
   opacity: hover ? 1 : 0.6,
@@ -32,6 +30,11 @@ const AvatarWithMargin = styled(Avatar)({
 
 const AddReplyLabel = styled.div({
   fontSize: '16px',
+});
+
+const StyledDiscussionReply = styled(DiscussionReply)({
+  borderBottomLeftRadius: '5px',
+  borderBottomRightRadius: '5px',
 });
 
 const ReplyComposer = ({ discussionId, draft, documentId }) => {
@@ -57,7 +60,7 @@ const ReplyComposer = ({ discussionId, draft, documentId }) => {
   );
 
   return isComposing ? (
-    <DiscussionReply
+    <StyledDiscussionReply
       currentUser={currentUser}
       discussionId={discussionId}
       draft={draft}

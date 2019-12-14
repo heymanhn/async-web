@@ -27,7 +27,10 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 }));
 
 const StyledDiscussionReply = styled(DiscussionReply)(({ theme: { colors } }) => ({
+  borderTopLeftRadius: '5px',
+  borderTopRightRadius: '5px',
   borderBottom: `1px solid ${colors.borderGrey}`,
+  paddingBottom: '10px',
 }));
 
 const InlineDiscussionThread = ({ discussionId, documentId, isUnread }) => {
