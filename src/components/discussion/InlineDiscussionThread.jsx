@@ -33,7 +33,7 @@ const StyledDiscussionReply = styled(DiscussionReply)(({ theme: { colors } }) =>
   paddingBottom: '10px',
 }));
 
-const InlineDiscussionThread = ({ discussionId, documentId, isUnread }) => {
+const InlineDiscussionThread = ({ discussionId, documentId, handleClose, isUnread }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
@@ -115,6 +115,7 @@ const InlineDiscussionThread = ({ discussionId, documentId, isUnread }) => {
           discussionId={discussionId}
           draft={draft}
           documentId={documentId}
+          handleClose={handleClose}
           replyCount={replyCount}
         />
       )}
@@ -125,6 +126,7 @@ const InlineDiscussionThread = ({ discussionId, documentId, isUnread }) => {
 InlineDiscussionThread.propTypes = {
   discussionId: PropTypes.string.isRequired,
   documentId: PropTypes.string.isRequired,
+  handleClose: PropTypes.func.isRequired,
   isUnread: PropTypes.bool.isRequired,
 };
 

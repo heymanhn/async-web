@@ -119,24 +119,27 @@ const DiscussionReply = ({
     const { data } = await client.mutate({
       mutation: deleteReplyDraftMutation,
       variables: { discussionId },
+      refetchQueries: [{
+        query: discussionQuery,
+        variables: { id: discussionId, queryParams: {} },
+      }],
+      awaitRefetchQueries: true,
     });
 
     if (data.deleteReplyDraft) {
-      const { replies: { replyCount } } = client.readQuery({
+      const { discussion: { replyCount } } = client.readQuery({
         query: discussionQuery,
         variables: { id: discussionId, queryParams: {} },
       });
 
       if (!replyCount) {
+        // TODO (HN): Delete highlight from text
+
         await client.mutate({
           mutation: deleteDiscussionMutation,
           variables: { discussionId, documentId },
-          refetchQueries: [{
-            query: documentQuery,
-            variables: { id: documentId, queryParams: {} },
-          }],
-          awaitRefetchQueries: true,
         });
+        onCancel({ closeModal: true });
       } else {
         client.mutate({
           mutation: deleteDraftFromDiscussionMtn,

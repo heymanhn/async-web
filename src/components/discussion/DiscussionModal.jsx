@@ -107,8 +107,9 @@ const DiscussionModal = ({
       {discussionId && !loading && documentId && (
         <InlineDiscussionThread
           discussionId={discussionId}
-          isUnread={isUnread()}
           documentId={documentId}
+          isUnread={isUnread()}
+          handleClose={handleCloseModal}
         />
       )}
       {documentId && !discussion && (

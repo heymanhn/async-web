@@ -37,7 +37,7 @@ const StyledDiscussionReply = styled(DiscussionReply)({
   borderBottomRightRadius: '5px',
 });
 
-const ReplyComposer = ({ discussionId, draft, documentId }) => {
+const ReplyComposer = ({ discussionId, draft, documentId, handleClose }) => {
   const [isComposing, setIsComposing] = useState(!!draft);
   function startComposing() { setIsComposing(true); }
   function stopComposing() { setIsComposing(false); }
@@ -63,6 +63,11 @@ const ReplyComposer = ({ discussionId, draft, documentId }) => {
     if (!isDraft) stopComposing();
   }
 
+  function handleCancel({ closeModal } = {}) {
+    stopComposing();
+    if (closeModal) handleClose();
+  }
+
   return isComposing ? (
     <StyledDiscussionReply
       // Instead of special-casing RovalEditor again, use this callback pattern.
@@ -73,7 +78,7 @@ const ReplyComposer = ({ discussionId, draft, documentId }) => {
       draft={draft}
       initialMode="compose"
       documentId={documentId}
-      onCancel={stopComposing}
+      onCancel={handleCancel}
     />
   ) : addReplyBox;
 };
@@ -82,6 +87,7 @@ ReplyComposer.propTypes = {
   discussionId: PropTypes.string.isRequired,
   draft: PropTypes.object,
   documentId: PropTypes.string.isRequired,
+  handleClose: PropTypes.func.isRequired,
 };
 
 ReplyComposer.defaultProps = {
