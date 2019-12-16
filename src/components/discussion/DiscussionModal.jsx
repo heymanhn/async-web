@@ -85,6 +85,8 @@ const DiscussionModal = ({
     track('New discussion created', { discussionId: value, documentId });
 
     // Update the URL in the address bar to reflect the new discussion
+    // TODO (HN): Fix this implementation this later.
+    //
     // const { origin } = window.location;
     // const url = `${origin}/discussions/${value}`;
     // return window.history.replaceState({}, `discussion: ${value}`, url);

@@ -172,8 +172,8 @@ const DiscussionReply = ({
         },
       },
       refetchQueries: [{
-        query: documentQuery,
-        variables: { id: documentId, queryParams: {} },
+        query: discussionQuery,
+        variables: { id: discussionId, queryParams: {} },
       }],
       update: (_cache, { data: { createReply } }) => {
         client.mutate({

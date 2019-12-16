@@ -59,8 +59,15 @@ const ReplyComposer = ({ discussionId, draft, documentId }) => {
     </Container>
   );
 
+  function afterCreate(value, authorId, isDraft) {
+    if (!isDraft) stopComposing();
+  }
+
   return isComposing ? (
     <StyledDiscussionReply
+      // Instead of special-casing RovalEditor again, use this callback pattern.
+      afterCreate={afterCreate}
+
       currentUser={currentUser}
       discussionId={discussionId}
       draft={draft}
