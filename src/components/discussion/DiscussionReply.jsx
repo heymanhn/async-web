@@ -13,7 +13,6 @@ import deleteReplyMutation from 'graphql/mutations/deleteReply';
 import createReplyDraftMutation from 'graphql/mutations/createReplyDraft';
 import deleteReplyDraftMutation from 'graphql/mutations/deleteReplyDraft';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
-import documentQuery from 'graphql/queries/document';
 import discussionQuery from 'graphql/queries/discussion';
 import { getLocalUser } from 'utils/auth';
 import { track } from 'utils/analytics';
