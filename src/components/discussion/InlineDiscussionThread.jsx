@@ -3,13 +3,13 @@
  */
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient, useQuery } from 'react-apollo';
+import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
-import useMountEffect from 'utils/hooks/useMountEffect';
-import useViewedReaction from 'utils/hooks/useViewedReaction';
+// import useMountEffect from 'utils/hooks/useMountEffect';
+// import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
 
 import DiscussionReply from './DiscussionReply';
@@ -33,23 +33,24 @@ const StyledDiscussionReply = styled(DiscussionReply)(({ theme: { colors } }) =>
   paddingBottom: '10px',
 }));
 
-const InlineDiscussionThread = ({ discussionId, documentId, handleClose, isUnread }) => {
-  const client = useApolloClient();
+const InlineDiscussionThread = ({ discussionId, documentId, handleClose }) => {
+  // const client = useApolloClient();
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
 
-  const { markAsRead } = useViewedReaction();
-  useMountEffect(() => {
-    client.writeData({ data: { pendingReplies: [] } });
+  // TODO: Re-enabling this when viewed reactions are supported in discussions
+  // const { markAsRead } = useViewedReaction();
+  // useMountEffect(() => {
+  //   client.writeData({ data: { pendingReplies: [] } });
 
-    markAsRead({
-      isUnread,
-      objectType: 'discussion',
-      objectId: discussionId,
-      parentId: documentId,
-    });
-  });
+  //   markAsRead({
+  //     isUnread,
+  //     objectType: 'discussion',
+  //     objectId: discussionId,
+  //     parentId: documentId,
+  //   });
+  // });
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
     variables: { id: discussionId, queryParams: {} },
@@ -127,7 +128,7 @@ InlineDiscussionThread.propTypes = {
   discussionId: PropTypes.string.isRequired,
   documentId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
-  isUnread: PropTypes.bool.isRequired,
+  // isUnread: PropTypes.bool.isRequired,
 };
 
 export default InlineDiscussionThread;

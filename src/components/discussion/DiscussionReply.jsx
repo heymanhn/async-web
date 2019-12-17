@@ -21,6 +21,7 @@ import useHover from 'utils/hooks/useHover';
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
 import HoverMenu from './HoverMenu';
+import ReplyReactions from './ReplyReactions';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
@@ -296,7 +297,7 @@ const DiscussionReply = ({
             discussionId={discussionId}
             isAuthor={isAuthor}
             isOpen={hover}
-            messageId={replyId}
+            replyId={replyId}
             onDelete={handleDelete}
             onEdit={setToEditMode}
           />
@@ -316,6 +317,9 @@ const DiscussionReply = ({
         onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
         resourceId={documentId}
       />
+      {mode === 'display' && (
+        <ReplyReactions discussionId={discussionId} replyId={replyId} />
+      )}
     </Container>
   );
 };
