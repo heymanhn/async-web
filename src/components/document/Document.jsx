@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
-import { getLocalUser } from 'utils/auth';
+// import { getLocalUser } from 'utils/auth';
 import { track } from 'utils/analytics';
 
 import NotFound from 'components/navigation/NotFound';
@@ -72,15 +72,15 @@ const Document = ({ documentId }) => {
   if (loading) return null;
   if (error || !data.document) return <NotFound />;
 
-  const { body, owner, title, updatedAt } = data.document;
+  const { body, title, updatedAt } = data.document;
   const { payload: contents } = body || {};
   if (!updatedTimestamp && updatedAt) {
     setUpdatedTimestamp(updatedAt * 1000);
   }
 
   // TODO: This will change later, when we introduce the concept of multiple co-authors
-  const { userId } = getLocalUser();
-  const isAuthor = userId === owner.id;
+  // const { userId } = getLocalUser();
+  // const isAuthor = userId === owner.id;
 
   async function handleUpdateTitle({ text }) {
     const { data: updateDocumentTitleData } = await updateDocument({
