@@ -136,7 +136,7 @@ const Document = ({ documentId }) => {
           disableAutoFocus={!!title}
           initialValue={title}
           isPlainText
-          mode={isAuthor ? 'compose' : 'display'}
+          mode="compose" // Allowing anyone to compose a document for now
           onSubmit={handleUpdateTitle}
           saveOnBlur
         />
@@ -146,8 +146,8 @@ const Document = ({ documentId }) => {
           documentId={documentId}
           handleShowDiscussion={handleShowDiscussion}
           initialValue={contents}
-          isAuthor={isAuthor}
-          mode={isAuthor ? 'compose' : 'display'}
+          isAuthor // Allowing anyone to compose a document for now
+          mode="compose" // Allowing anyone to compose a document for now
           onSubmit={handleUpdateBody}
           resourceId={documentId}
         />
