@@ -44,26 +44,36 @@ const DocumentEditor = styled(RovalEditor)({
 });
 
 const Document = ({ documentId }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [documentEditor, setDocumentEditor] = useState(null);
-  const [selection, setSelection] = useState(null);
-  const [discussionId, setDiscussionId] = useState(null);
+  const [state, setState] = useState({
+    isModalOpen: false,
+    documentEditor: null,
+    selection: null,
+    discussionId: null,
+    updatedTimestamp: null,
+  });
 
   function handleShowDiscussion(newDiscussionId, newSelection, editor) {
-    setDiscussionId(newDiscussionId);
-    if (newSelection) setSelection(newSelection);
-    if (editor) setDocumentEditor(editor);
+    const newState = { discussionId: newDiscussionId, isModalOpen: true };
 
-    setIsModalOpen(true);
+    if (newSelection) newState.selection = newSelection;
+    if (editor) newState.documentEditor = editor;
+
+    setState(oldState => ({ ...oldState, ...newState }));
   }
   function handleCloseDiscussion() {
-    setIsModalOpen(false);
-    setSelection(null);
-    setDocumentEditor(null);
-    setDiscussionId(null);
+    setState(oldState => ({
+      ...oldState,
+      discussionId: null,
+      documentEditor: null,
+      isModalOpen: false,
+      selection: null,
+    }));
   }
 
-  const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
+  function setUpdatedTimestamp(timestamp) {
+    setState(oldState => ({ ...oldState, updatedTimestamp: timestamp }));
+  }
+
   const [updateDocument] = useMutation(updateDocumentMutation);
   const { loading, error, data } = useQuery(documentQuery, {
     variables: { id: documentId, queryParams: {} },
@@ -74,9 +84,7 @@ const Document = ({ documentId }) => {
 
   const { body, title, updatedAt } = data.document;
   const { payload: contents } = body || {};
-  if (!updatedTimestamp && updatedAt) {
-    setUpdatedTimestamp(updatedAt * 1000);
-  }
+  if (!state.updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
 
   // TODO: This will change later, when we introduce the concept of multiple co-authors
   // const { userId } = getLocalUser();
@@ -127,6 +135,34 @@ const Document = ({ documentId }) => {
     return Promise.reject(new Error('Failed to save discussion message'));
   }
 
+  function createAnnotation(value, authorId, isDraft) {
+    const { documentEditor, selection } = state;
+    const { start, end } = selection;
+
+    documentEditor.withoutSaving(() => {
+      documentEditor
+        .moveStartTo(start.key, start.offset)
+        .moveEndTo(end.key, end.offset)
+        .addMark({
+          type: 'inline-discussion',
+          data: {
+            discussionId: value,
+            isDraft,
+            authorId,
+          },
+        });
+    });
+    track('New discussion created', { discussionId: value, documentId });
+
+    // Update the URL in the address bar to reflect the new discussion
+    // TODO (HN): Fix this implementation this later.
+    //
+    // const { origin } = window.location;
+    // const url = `${origin}/discussions/${value}`;
+    // return window.history.replaceState({}, `discussion: ${value}`, url);
+  }
+
+  const { discussionId, isModalOpen, updatedTimestamp } = state;
   return (
     <>
       <HeaderBar documentId={documentId} />
@@ -154,12 +190,11 @@ const Document = ({ documentId }) => {
         {updatedTimestamp && <LastUpdatedIndicator timestamp={updatedTimestamp} />}
       </Container>
       <DiscussionModal
+        createAnnotation={createAnnotation}
         discussionId={discussionId}
         documentId={documentId}
-        documentEditor={documentEditor}
         handleClose={handleCloseDiscussion}
         isOpen={isModalOpen}
-        selection={selection}
       />
     </>
   );
