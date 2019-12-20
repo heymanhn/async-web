@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 // Undo once that's fixed
 import { useLazyQuery } from '@apollo/react-hooks';
 
+import documentQuery from 'graphql/queries/document';
 import organizationQuery from 'graphql/queries/organization';
 import { getLocalAppState } from 'utils/auth';
 
@@ -46,14 +47,18 @@ const DocumentTitle = styled.div(({ theme: { colors } }) => ({
   top: '2px',
 }));
 
-const HeaderBar = ({ documentTitle, ...props }) => {
+const HeaderBar = ({ documentId, ...props }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   function openDropdown() { setIsDropdownOpen(true); }
   function closeDropdown() { setIsDropdownOpen(false); }
 
   const { organizationId } = getLocalAppState();
-  const [getOrganization, { loading, data }] = useLazyQuery(organizationQuery, {
+  const [getOrganization, { data }] = useLazyQuery(organizationQuery, {
     variables: { id: organizationId },
+  });
+
+  const [getDocument, { error, data: documentData }] = useLazyQuery(documentQuery, {
+    variables: { id: documentId, queryParams: {} },
   });
 
   if (!organizationId) return null;
@@ -61,9 +66,14 @@ const HeaderBar = ({ documentTitle, ...props }) => {
     getOrganization();
     return null;
   }
+  if (documentId && !documentData) {
+    getDocument();
+    return null;
+  }
+  if (error || !documentData.document || !data.organization) return null;
 
-  if (loading || !data.organization) return null;
   const { logo } = data.organization;
+  const { title } = documentData.document;
 
   return (
     <Container {...props}>
@@ -79,7 +89,7 @@ const HeaderBar = ({ documentTitle, ...props }) => {
           isOpen={isDropdownOpen}
           organizationId={organizationId}
         />
-        <DocumentTitle>{documentTitle || 'Untitled Document'}</DocumentTitle>
+        <DocumentTitle>{title || 'Untitled Document'}</DocumentTitle>
       </MenuSection>
       <NewDocumentButton />
     </Container>
@@ -87,11 +97,7 @@ const HeaderBar = ({ documentTitle, ...props }) => {
 };
 
 HeaderBar.propTypes = {
-  documentTitle: PropTypes.string,
-};
-
-HeaderBar.defaultProps = {
-  documentTitle: 'Untitled Document',
+  documentId: PropTypes.string.isRequired,
 };
 
 export default HeaderBar;

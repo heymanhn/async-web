@@ -129,7 +129,7 @@ const Document = ({ documentId }) => {
 
   return (
     <>
-      <HeaderBar documentTitle={title} />
+      <HeaderBar documentId={documentId} />
       <Container>
         <TitleEditor
           contentType="documentTitle"
