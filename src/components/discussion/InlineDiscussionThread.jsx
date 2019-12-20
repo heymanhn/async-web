@@ -107,6 +107,7 @@ const InlineDiscussionThread = ({ discussionId, documentId, handleClose }) => {
           {firstNewReplyId() === m.id && m.id !== replies[0].id && <NewRepliesIndicator />}
           <StyledDiscussionReply
             discussionId={discussionId}
+            documentId={documentId}
             initialReply={m}
           />
         </React.Fragment>

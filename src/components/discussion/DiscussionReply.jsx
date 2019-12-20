@@ -326,22 +326,25 @@ const DiscussionReply = ({
 
 DiscussionReply.propTypes = {
   afterCreate: PropTypes.func,
-  currentUser: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
   discussionId: PropTypes.string,
   documentId: PropTypes.string.isRequired,
   draft: PropTypes.object,
   initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
   initialReply: PropTypes.object,
-  onCancel: PropTypes.func.isRequired,
-  onCreateDiscussion: PropTypes.func.isRequired,
+  onCancel: PropTypes.func,
+  onCreateDiscussion: PropTypes.func,
 };
 
 DiscussionReply.defaultProps = {
   afterCreate: () => {},
+  currentUser: null,
   discussionId: null,
   draft: null,
   initialMode: 'display',
   initialReply: {},
+  onCancel: () => {},
+  onCreateDiscussion: () => {},
 };
 
 export default DiscussionReply;
