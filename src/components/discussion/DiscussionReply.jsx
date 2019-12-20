@@ -222,6 +222,7 @@ const DiscussionReply = ({
     if (data.updateReply) {
       setReply(data.updateReply);
       setIsSubmitting(false);
+      setToDisplayMode();
       track('Reply edited', { replyId, discussionId });
       return Promise.resolve({});
     }
