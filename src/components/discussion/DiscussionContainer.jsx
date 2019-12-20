@@ -18,6 +18,7 @@ const DiscussionContainer = ({
   discussionId: initialDiscussionId,
   documentId: initialDocumentId,
   handleCancel,
+  ...props
 }) => {
   const [discussionId, setDiscussionId] = useState(initialDiscussionId);
   const [documentId, setDocumentId] = useState(initialDocumentId);
@@ -77,7 +78,7 @@ const DiscussionContainer = ({
   }
 
   return (
-    <>
+    <div {...props}>
       {discussionId && !loading && documentId && (
         <InlineDiscussionThread
           discussionId={discussionId}
@@ -93,7 +94,7 @@ const DiscussionContainer = ({
           handleClose={handleClose}
         />
       )}
-    </>
+    </div>
   );
 };
 
