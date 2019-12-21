@@ -60,6 +60,7 @@ export const theme = {
 
     mainText: '#313f48',
     contentText: '#232d34',
+    altContentText: '#3a4b56',
 
     bgBlue: '#eff9fd',
     darkBlue: '#2d4d62',
