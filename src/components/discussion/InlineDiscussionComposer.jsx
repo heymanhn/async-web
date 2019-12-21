@@ -6,12 +6,13 @@ import PropTypes from 'prop-types';
 import { useApolloClient, useQuery } from 'react-apollo';
 
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
+import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import currentUserQuery from 'graphql/queries/currentUser';
 import { getLocalUser } from 'utils/auth';
 
 import DiscussionReply from './DiscussionReply';
 
-const InlineDiscussionComposer = ({ afterCreate, documentId, handleClose }) => {
+const InlineDiscussionComposer = ({ afterCreate, documentId, handleClose, ...props }) => {
   const client = useApolloClient();
   const { userId } = getLocalUser();
   const { loading, data: currentUserData } = useQuery(currentUserQuery, {
@@ -27,6 +28,11 @@ const InlineDiscussionComposer = ({ afterCreate, documentId, handleClose }) => {
     const { data: createDiscussionData } = await client.mutate({
       mutation: createDiscussionMutation,
       variables: { documentId, input },
+      refetchQueries: [{
+        query: documentDiscussionsQuery,
+        variables: { id: documentId, queryParams: {} },
+      }],
+      awaitRefetchQueries: true,
     });
 
     if (createDiscussionData.createDiscussion) {
@@ -45,6 +51,7 @@ const InlineDiscussionComposer = ({ afterCreate, documentId, handleClose }) => {
       documentId={documentId}
       onCancel={handleClose}
       onCreateDiscussion={handleCreateDiscussion}
+      {...props}
     />
   );
 };
