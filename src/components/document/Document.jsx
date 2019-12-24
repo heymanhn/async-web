@@ -25,7 +25,7 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
 }));
 
 const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
-  color: colors.contentText,
+  color: colors.mainText,
   fontSize: '42px',
   fontWeight: 600,
   letterSpacing: '-0.022em',
