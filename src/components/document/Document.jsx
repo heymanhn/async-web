@@ -77,6 +77,10 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
     setState(oldState => ({ ...oldState, updatedTimestamp: timestamp }));
   }
 
+  function setViewMode(newMode) {
+    setState(oldState => ({ ...oldState, viewMode: newMode }));
+  }
+
   const [updateDocument] = useMutation(updateDocumentMutation);
   const { loading, error, data } = useQuery(documentQuery, {
     variables: { id: documentId, queryParams: {} },
@@ -168,7 +172,7 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
   const { discussionId, isModalOpen, updatedTimestamp, viewMode } = state;
   return (
     <>
-      <HeaderBar documentId={documentId} viewMode={viewMode} />
+      <HeaderBar documentId={documentId} setViewMode={setViewMode} viewMode={viewMode} />
       {viewMode === 'discussions' && <DiscussionsList documentId={documentId} />}
       {viewMode === 'content' && (
         <>
