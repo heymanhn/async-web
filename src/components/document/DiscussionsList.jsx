@@ -10,7 +10,6 @@ import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import NotFound from 'components/navigation/NotFound';
 import DiscussionContainer from 'components/discussion/DiscussionContainer';
 import InlineDiscussionComposer from 'components/discussion/InlineDiscussionComposer';
-import HeaderBar from './HeaderBar';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   margin: '60px auto',
@@ -90,32 +89,29 @@ const DiscussionsList = ({ documentId }) => {
   }
 
   return (
-    <>
-      <HeaderBar documentId={documentId} />
-      <Container>
-        <TitleSection>
-          <Title>Discussions</Title>
-          <StartDiscussionButton onClick={handleShowComposer}>
-            <StartDiscussionIcon icon={faCommentPlus} />
-            <Label>Start a discussion</Label>
-          </StartDiscussionButton>
-        </TitleSection>
-        {showComposer && (
-          <StyledComposer
-            afterCreate={afterCreate}
-            documentId={documentId}
-            handleClose={handleHideComposer}
-          />
-        )}
-        {discussions.map(d => (
-          <StyledDiscussionContainer
-            discussionId={d.id}
-            documentId={documentId}
-            key={d.id}
-          />
-        ))}
-      </Container>
-    </>
+    <Container>
+      <TitleSection>
+        <Title>Discussions</Title>
+        <StartDiscussionButton onClick={handleShowComposer}>
+          <StartDiscussionIcon icon={faCommentPlus} />
+          <Label>Start a discussion</Label>
+        </StartDiscussionButton>
+      </TitleSection>
+      {showComposer && (
+        <StyledComposer
+          afterCreate={afterCreate}
+          documentId={documentId}
+          handleClose={handleHideComposer}
+        />
+      )}
+      {discussions.map(d => (
+        <StyledDiscussionContainer
+          discussionId={d.id}
+          documentId={documentId}
+          key={d.id}
+        />
+      ))}
+    </Container>
   );
 };
 

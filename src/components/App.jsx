@@ -33,7 +33,6 @@ import Discussion from 'components/discussion/Discussion';
 
 // Roval v2
 import Document from 'components/document/Document';
-import DiscussionsList from 'components/document/DiscussionsList';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -116,7 +115,7 @@ const App = () => {
         <PrivateRoute path="/discussions/:conversationId" component={Discussion} />
 
         <PrivateRoute path="/d/:documentId" component={Document} />
-        <PrivateRoute path="/d/:documentId/discussions" component={DiscussionsList} />
+        <PrivateRoute path="/d/:documentId/discussions" component={Document} viewMode="discussions" />
 
         <NotFound path="/notfound" default />
       </Router>

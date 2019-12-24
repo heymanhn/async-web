@@ -57,7 +57,7 @@ const Modal = ({ backdropColor, children, handleClose, isOpen, ...props }) => {
 
 Modal.propTypes = {
   backdropColor: PropTypes.string,
-  children: PropTypes.array.isRequired,
+  children: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
