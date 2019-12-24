@@ -23,7 +23,6 @@ const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.headerBarGrey,
   borderBottom: `1px solid ${colors.borderGrey}`,
   height: '54px',
-  padding: '0 30px',
   position: 'sticky',
   top: '0px',
   width: '100%',
@@ -33,6 +32,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
 const MenuSection = styled.div({
   display: 'flex',
   flexDirection: 'row',
+  marginLeft: '30px',
 });
 
 const OrganizationAvatar = styled(Avatar)({

@@ -9,34 +9,23 @@ import { track } from 'utils/analytics';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
 
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
   cursor: 'pointer',
-  color: colors.grey2,
-  height: '28px',
-  padding: '0 15px',
-}));
+  padding: '0 30px',
+});
 
 const StyledPlus = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '12px',
-  marginRight: '8px',
+  color: colors.grey2,
+  fontSize: '20px',
+
+  ':hover': {
+    color: colors.grey1,
+  },
 }));
-
-const ButtonTitle = styled.div({
-  fontSize: '12px',
-  fontWeight: 500,
-});
-
-const StyledLoadingIndicator = styled(LoadingIndicator)({
-  marginRight: '8px',
-});
 
 const NewDocumentButton = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -62,9 +51,9 @@ const NewDocumentButton = () => {
 
   return (
     <Container onClick={handleCreateDocument}>
-      {isLoading && <StyledLoadingIndicator color="grey4" size={12} />}
-      {!isLoading && <StyledPlus icon={faPlus} />}
-      <ButtonTitle>New Document</ButtonTitle>
+      {isLoading ? <LoadingIndicator color="grey4" size={18} /> : (
+        <StyledPlus icon={faPlus} />
+      )}
     </Container>
   );
 };
