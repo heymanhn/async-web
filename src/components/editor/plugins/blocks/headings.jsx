@@ -89,29 +89,32 @@ export function SmallTitleOption({ editor, ...props }) {
 
 /* **** Slate plugin **** */
 
-const LargeFont = styled.h1({
+const LargeFont = styled.h1(({ theme: { colors } }) => ({
+  color: colors.mainText,
   fontSize: '28px',
   fontWeight: 600,
   lineHeight: '36px',
   letterSpacing: '-0.02em',
   margin: '30px 0px -10px',
-});
+}));
 
-const MediumFont = styled.h2({
+const MediumFont = styled.h2(({ theme: { colors } }) => ({
+  color: colors.mainText,
   fontSize: '22px',
   fontWeight: 600,
   lineHeight: '28px',
   letterSpacing: '-0.018em',
   margin: '18px 0px -10px',
-});
+}));
 
-const SmallFont = styled.h3({
+const SmallFont = styled.h3(({ theme: { colors } }) => ({
+  color: colors.mainText,
   fontSize: '16px',
   fontWeight: 600,
   lineHeight: '22px',
   letterSpacing: '-0.011em',
   margin: '12px 0px -10px',
-});
+}));
 
 export function HeadingsPlugin() {
   /* **** Render methods **** */

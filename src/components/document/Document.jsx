@@ -11,8 +11,10 @@ import { track } from 'utils/analytics';
 import NotFound from 'components/navigation/NotFound';
 import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionModal from 'components/discussion/DiscussionModal';
+import DiscussionsList from './DiscussionsList';
 import HeaderBar from './HeaderBar';
 import LastUpdatedIndicator from './LastUpdatedIndicator';
+
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   display: 'flex',
@@ -25,7 +27,7 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
 }));
 
 const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
-  color: colors.contentText,
+  color: colors.mainText,
   fontSize: '42px',
   fontWeight: 600,
   letterSpacing: '-0.022em',
@@ -43,13 +45,14 @@ const DocumentEditor = styled(RovalEditor)({
   marginBottom: '80px',
 });
 
-const Document = ({ documentId }) => {
+const Document = ({ documentId, viewMode: initialViewMode }) => {
   const [state, setState] = useState({
     isModalOpen: false,
     documentEditor: null,
     selection: null,
     discussionId: null,
     updatedTimestamp: null,
+    viewMode: initialViewMode,
   });
 
   function handleShowDiscussion(newDiscussionId, newSelection, editor) {
@@ -72,6 +75,10 @@ const Document = ({ documentId }) => {
 
   function setUpdatedTimestamp(timestamp) {
     setState(oldState => ({ ...oldState, updatedTimestamp: timestamp }));
+  }
+
+  function setViewMode(newMode) {
+    setState(oldState => ({ ...oldState, viewMode: newMode }));
   }
 
   const [updateDocument] = useMutation(updateDocumentMutation);
@@ -162,46 +169,56 @@ const Document = ({ documentId }) => {
     // return window.history.replaceState({}, `discussion: ${value}`, url);
   }
 
-  const { discussionId, isModalOpen, updatedTimestamp } = state;
+  const { discussionId, isModalOpen, updatedTimestamp, viewMode } = state;
   return (
     <>
-      <HeaderBar documentId={documentId} />
-      <Container>
-        <TitleEditor
-          contentType="documentTitle"
-          disableAutoFocus={!!title}
-          initialValue={title}
-          isPlainText
-          mode="compose" // Allowing anyone to compose a document for now
-          onSubmit={handleUpdateTitle}
-          saveOnBlur
-        />
-        <DocumentEditor
-          contentType="document"
-          disableAutoFocus={!contents}
-          documentId={documentId}
-          handleShowDiscussion={handleShowDiscussion}
-          initialValue={contents}
-          isAuthor // Allowing anyone to compose a document for now
-          mode="compose" // Allowing anyone to compose a document for now
-          onSubmit={handleUpdateBody}
-          resourceId={documentId}
-        />
-        {updatedTimestamp && <LastUpdatedIndicator timestamp={updatedTimestamp} />}
-      </Container>
-      <DiscussionModal
-        createAnnotation={createAnnotation}
-        discussionId={discussionId}
-        documentId={documentId}
-        handleClose={handleCloseDiscussion}
-        isOpen={isModalOpen}
-      />
+      <HeaderBar documentId={documentId} setViewMode={setViewMode} viewMode={viewMode} />
+      {viewMode === 'discussions' && <DiscussionsList documentId={documentId} />}
+      {viewMode === 'content' && (
+        <>
+          <Container>
+            <TitleEditor
+              contentType="documentTitle"
+              disableAutoFocus={!!title}
+              initialValue={title}
+              isPlainText
+              mode="compose" // Allowing anyone to compose a document for now
+              onSubmit={handleUpdateTitle}
+              saveOnBlur
+            />
+            <DocumentEditor
+              contentType="document"
+              disableAutoFocus={!contents}
+              documentId={documentId}
+              handleShowDiscussion={handleShowDiscussion}
+              initialValue={contents}
+              isAuthor // Allowing anyone to compose a document for now
+              mode="compose" // Allowing anyone to compose a document for now
+              onSubmit={handleUpdateBody}
+              resourceId={documentId}
+            />
+            {updatedTimestamp && <LastUpdatedIndicator timestamp={updatedTimestamp} />}
+          </Container>
+          <DiscussionModal
+            createAnnotation={createAnnotation}
+            discussionId={discussionId}
+            documentId={documentId}
+            handleClose={handleCloseDiscussion}
+            isOpen={isModalOpen}
+          />
+        </>
+      )}
     </>
   );
 };
 
 Document.propTypes = {
   documentId: PropTypes.string.isRequired,
+  viewMode: PropTypes.oneOf(['content', 'discussions']),
+};
+
+Document.defaultProps = {
+  viewMode: 'content',
 };
 
 export default Document;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,11 +6,12 @@ import { faCommentPlus } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
+import { snakedQueryParams } from 'utils/queryParams';
+import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 
 import NotFound from 'components/navigation/NotFound';
 import DiscussionContainer from 'components/discussion/DiscussionContainer';
 import InlineDiscussionComposer from 'components/discussion/InlineDiscussionComposer';
-import HeaderBar from './HeaderBar';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   margin: '60px auto',
@@ -71,51 +72,82 @@ const StyledDiscussionContainer = styled(DiscussionContainer)(({ theme: { colors
 }));
 
 const DiscussionsList = ({ documentId }) => {
+  const listRef = useRef(null);
   const [showComposer, setShowComposer] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
+
   function handleShowComposer() { setShowComposer(true); }
   function handleHideComposer() { setShowComposer(false); }
 
-  const { loading, error, data } = useQuery(documentDiscussionsQuery, {
+  const { loading, error, data, fetchMore } = useQuery(documentDiscussionsQuery, {
     variables: { id: documentId, queryParams: {} },
   });
 
   if (loading) return null;
   if (error || !data.documentDiscussions) return <NotFound />;
 
-  const { items } = data.documentDiscussions;
+  const { items, pageToken } = data.documentDiscussions;
   const discussions = (items || []).map(i => i.discussion);
 
   function afterCreate() {
     handleHideComposer();
   }
 
+  function fetchMoreDiscussions() {
+    const newQueryParams = {};
+    if (pageToken) newQueryParams.pageToken = pageToken;
+
+    fetchMore({
+      query: documentDiscussionsQuery,
+      variables: { id: documentId, queryParams: snakedQueryParams(newQueryParams) },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        const { items: previousItems } = previousResult.documentDiscussions;
+        const { items: newItems, pageToken: newToken } = fetchMoreResult.documentDiscussions;
+        setShouldFetch(false);
+        setIsFetching(false);
+
+        return {
+          documentDiscussions: {
+            pageToken: newToken,
+            totalHits: fetchMoreResult.documentDiscussions.totalHits,
+            items: [...previousItems, ...newItems],
+            __typename: fetchMoreResult.documentDiscussions.__typename,
+          },
+        };
+      },
+    });
+  }
+
+  if (shouldFetch && pageToken && !isFetching) {
+    setIsFetching(true);
+    fetchMoreDiscussions();
+  }
+
   return (
-    <>
-      <HeaderBar documentId={documentId} />
-      <Container>
-        <TitleSection>
-          <Title>Discussions</Title>
-          <StartDiscussionButton onClick={handleShowComposer}>
-            <StartDiscussionIcon icon={faCommentPlus} />
-            <Label>Start a discussion</Label>
-          </StartDiscussionButton>
-        </TitleSection>
-        {showComposer && (
-          <StyledComposer
-            afterCreate={afterCreate}
-            documentId={documentId}
-            handleClose={handleHideComposer}
-          />
-        )}
-        {discussions.map(d => (
-          <StyledDiscussionContainer
-            discussionId={d.id}
-            documentId={documentId}
-            key={d.id}
-          />
-        ))}
-      </Container>
-    </>
+    <Container ref={listRef}>
+      <TitleSection>
+        <Title>Discussions</Title>
+        <StartDiscussionButton onClick={handleShowComposer}>
+          <StartDiscussionIcon icon={faCommentPlus} />
+          <Label>Start a discussion</Label>
+        </StartDiscussionButton>
+      </TitleSection>
+      {showComposer && (
+        <StyledComposer
+          afterCreate={afterCreate}
+          documentId={documentId}
+          handleClose={handleHideComposer}
+        />
+      )}
+      {discussions.map(d => (
+        <StyledDiscussionContainer
+          discussionId={d.id}
+          documentId={documentId}
+          key={d.id}
+        />
+      ))}
+    </Container>
   );
 };
 
