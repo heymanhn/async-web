@@ -169,7 +169,7 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
     // return window.history.replaceState({}, `discussion: ${value}`, url);
   }
 
-  const { discussionId, isModalOpen, updatedTimestamp, viewMode } = state;
+  const { discussionId, documentEditor, isModalOpen, updatedTimestamp, viewMode } = state;
   return (
     <>
       <HeaderBar documentId={documentId} setViewMode={setViewMode} viewMode={viewMode} />
@@ -202,6 +202,7 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
           <DiscussionModal
             createAnnotation={createAnnotation}
             discussionId={discussionId}
+            documentEditor={documentEditor}
             documentId={documentId}
             handleClose={handleCloseDiscussion}
             isOpen={isModalOpen}

@@ -217,6 +217,7 @@ RovalEditor.propTypes = {
     'documentTitle',
     'document',
     'discussionReply',
+    'discussionContext',
   ]).isRequired,
   disableAutoFocus: PropTypes.bool,
   forceDisableSubmit: PropTypes.bool,

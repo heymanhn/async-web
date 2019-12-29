@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import styled from '@emotion/styled';
 
 // hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
 // Undo once that's fixed
@@ -9,22 +10,36 @@ import discussionQuery from 'graphql/queries/discussion';
 import useMountEffect from 'utils/hooks/useMountEffect';
 import { track } from 'utils/analytics';
 
+import RovalEditor from 'components/editor/RovalEditor';
 import NotFound from 'components/navigation/NotFound';
 import InlineDiscussionThread from './InlineDiscussionThread';
 import InlineDiscussionComposer from './InlineDiscussionComposer';
+
+const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
+  background: colors.grey7,
+  fontSize: '16px',
+  lineHeight: '26px',
+  fontWeight: 400,
+}));
 
 const DiscussionContainer = ({
   createAnnotation,
   discussionId: initialDiscussionId,
   documentId: initialDocumentId,
+  documentEditor,
   handleCancel,
   ...props
 }) => {
   const [discussionId, setDiscussionId] = useState(initialDiscussionId);
   const [documentId, setDocumentId] = useState(initialDocumentId);
+  const [context, setContext] = useState(null);
   const [getDiscussion, { loading, data }] = useLazyQuery(discussionQuery, {
     variables: { id: discussionId, queryParams: {} },
   });
+
+  function extractContext() {
+    setContext(documentEditor.value);
+  }
 
   useMountEffect(() => {
     const title = discussionId ? 'Discussion' : 'New discussion';
@@ -33,6 +48,8 @@ const DiscussionContainer = ({
     if (documentId) properties.documentId = documentId;
 
     track(`${title} viewed`, properties);
+
+    if (documentEditor) extractContext();
   });
 
   // HN: Should refactor this convoluted logic, meant to either fetch the details of a
@@ -79,6 +96,15 @@ const DiscussionContainer = ({
 
   return (
     <div {...props}>
+      {context && (
+        <ContextEditor
+          contentType="discussionContext"
+          readOnly
+          documentId={documentId}
+          initialValue={context}
+          mode="display"
+        />
+      )}
       {discussionId && !loading && documentId && (
         <InlineDiscussionThread
           discussionId={discussionId}
@@ -101,6 +127,7 @@ const DiscussionContainer = ({
 DiscussionContainer.propTypes = {
   createAnnotation: PropTypes.func,
   discussionId: PropTypes.string,
+  documentEditor: PropTypes.object,
   documentId: PropTypes.string,
   handleCancel: PropTypes.func,
 };
@@ -108,6 +135,7 @@ DiscussionContainer.propTypes = {
 DiscussionContainer.defaultProps = {
   createAnnotation: () => {},
   discussionId: null,
+  documentEditor: {},
   documentId: null,
   handleCancel: () => {},
 };

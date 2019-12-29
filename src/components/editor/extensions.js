@@ -229,4 +229,5 @@ export const plugins = {
   documentTitle: [createDocumentTitlePlaceholder('Untitled Document')],
   document: documentPlugins,
   discussionReply: inlineDiscussionPlugins,
+  discussionContext: coreEditorPlugins,
 };
