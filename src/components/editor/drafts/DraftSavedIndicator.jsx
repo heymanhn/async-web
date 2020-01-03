@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import Plain from 'slate-plain-serializer';
 import styled from '@emotion/styled';
@@ -18,7 +18,7 @@ const Label = styled.div(({ theme: { colors } }) => ({
   marginTop: '-27px', // hardcoding the position for now
 }));
 
-const DraftSavedIndicator = ({ editor, isDraftSaved, onSaveDraft }) => {
+const DraftSavedIndicator = ({ editor, isDraftSaved, isSubmitting, onSaveDraft }) => {
   const currentContents = JSON.stringify(editor.value.toJSON());
   const [state, setState] = useState({
     contents: currentContents,
@@ -27,6 +27,10 @@ const DraftSavedIndicator = ({ editor, isDraftSaved, onSaveDraft }) => {
     timerStarted: false,
     timer: null,
   });
+
+  // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
+  const isSubmittingRef = useRef(isSubmitting);
+  isSubmittingRef.current = isSubmitting;
 
   function setDismissTimer() {
     const timer = setTimeout(
@@ -42,7 +46,7 @@ const DraftSavedIndicator = ({ editor, isDraftSaved, onSaveDraft }) => {
     const text = Plain.serialize(value);
     const payload = JSON.stringify(value.toJSON());
 
-    if (payload !== contents) {
+    if (payload !== contents || isSubmittingRef.current) {
       return setState(oldState => ({ ...oldState, isTyping: false, timer: null }));
     }
 
@@ -59,6 +63,8 @@ const DraftSavedIndicator = ({ editor, isDraftSaved, onSaveDraft }) => {
   }
 
   function handleTrackTyping(contents) {
+    if (isSubmittingRef.current) return;
+
     const { value } = editor;
     const newContents = JSON.stringify(value.toJSON());
 
@@ -91,6 +97,7 @@ const DraftSavedIndicator = ({ editor, isDraftSaved, onSaveDraft }) => {
 DraftSavedIndicator.propTypes = {
   editor: PropTypes.object.isRequired,
   isDraftSaved: PropTypes.bool.isRequired,
+  isSubmitting: PropTypes.bool.isRequired,
   onSaveDraft: PropTypes.func.isRequired,
 };
 

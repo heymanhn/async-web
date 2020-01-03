@@ -176,7 +176,7 @@ const DiscussionReply = ({
       },
       refetchQueries: [{
         query: discussionQuery,
-        variables: { id: discussionId, queryParams: {} },
+        variables: { id: replyDiscussionId, queryParams: {} },
       }],
       update: (_cache, { data: { createReply } }) => {
         client.mutate({
@@ -192,7 +192,7 @@ const DiscussionReply = ({
     if (data.createReply) {
       const { id } = data.createReply;
       setIsSubmitting(false);
-      track('New reply posted', { replyId: id, discussionId });
+      track('New reply posted', { replyId: id, replyDiscussionId });
       afterCreate(replyDiscussionId, userId);
 
       return Promise.resolve({});
