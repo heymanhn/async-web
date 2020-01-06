@@ -10,6 +10,7 @@ import discussionQuery from 'graphql/queries/discussion';
 import useMountEffect from 'utils/hooks/useMountEffect';
 import { track } from 'utils/analytics';
 
+import { CONTEXT_HIGHLIGHT } from 'components/editor/plugins/inlineDiscussion';
 import RovalEditor from 'components/editor/RovalEditor';
 import NotFound from 'components/navigation/NotFound';
 import InlineDiscussionThread from './InlineDiscussionThread';
@@ -17,9 +18,12 @@ import InlineDiscussionComposer from './InlineDiscussionComposer';
 
 const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   background: colors.grey7,
+  borderTopLeftRadius: '5px',
+  borderTopRightRadius: '5px',
   fontSize: '16px',
   lineHeight: '26px',
   fontWeight: 400,
+  padding: '10px 30px 5px',
 }));
 
 const DiscussionContainer = ({
@@ -28,6 +32,7 @@ const DiscussionContainer = ({
   documentId: initialDocumentId,
   documentEditor,
   handleCancel,
+  selection,
   ...props
 }) => {
   const [discussionId, setDiscussionId] = useState(initialDiscussionId);
@@ -37,10 +42,6 @@ const DiscussionContainer = ({
     variables: { id: discussionId, queryParams: {} },
   });
 
-  function extractContext() {
-    setContext(documentEditor.value);
-  }
-
   useMountEffect(() => {
     const title = discussionId ? 'Discussion' : 'New discussion';
     const properties = {};
@@ -48,8 +49,6 @@ const DiscussionContainer = ({
     if (documentId) properties.documentId = documentId;
 
     track(`${title} viewed`, properties);
-
-    if (documentEditor) extractContext();
   });
 
   // HN: Should refactor this convoluted logic, meant to either fetch the details of a
@@ -66,7 +65,42 @@ const DiscussionContainer = ({
   if (data && data.discussion) {
     ({ discussion } = data); // Weird way to do this, I know
     if (!documentId) setDocumentId(discussion.documentId);
+
+    const { topic } = discussion;
+    if (topic) setContext(topic.payload);
   }
+
+  // HN: I know this is a long-winded way to prepare the inline discussion context. But we're
+  // limited by what the Slate API gives us. There must be a better way.
+  // FUTURE: Use the immutable APIs to dynamically create the context block
+  function prepareInitialContext() {
+    const { start, end } = selection;
+
+    documentEditor
+      .moveStartTo(start.key, start.offset)
+      .moveEndTo(end.key, end.offset)
+      .wrapInline(CONTEXT_HIGHLIGHT)
+      .moveToStartOfDocument()
+      .moveEndToStartOfParentBlock(start)
+      .delete()
+      .moveToEndOfDocument()
+      .moveStartToEndOfParentBlock(end)
+      .delete();
+
+    const { value } = documentEditor;
+    const initialContext = JSON.stringify(value.toJSON());
+    setContext(initialContext);
+
+    documentEditor
+      .moveToRangeOfDocument()
+      .unwrapInline(CONTEXT_HIGHLIGHT);
+
+    documentEditor
+      .undo()
+      .moveTo(end.key, end.offset);
+  }
+
+  if (!discussionId && !context) prepareInitialContext();
 
   function isUnread() {
     const { tags } = data.discussion;
@@ -130,6 +164,7 @@ DiscussionContainer.propTypes = {
   documentEditor: PropTypes.object,
   documentId: PropTypes.string,
   handleCancel: PropTypes.func,
+  selection: PropTypes.object,
 };
 
 DiscussionContainer.defaultProps = {
@@ -138,6 +173,7 @@ DiscussionContainer.defaultProps = {
   documentEditor: {},
   documentId: null,
   handleCancel: () => {},
+  selection: {},
 };
 
 

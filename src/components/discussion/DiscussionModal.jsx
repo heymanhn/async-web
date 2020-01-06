@@ -30,6 +30,7 @@ const DiscussionModal = ({
       documentEditor={documentEditor}
       documentId={isOpen ? documentId : null}
       handleCancel={handleClose}
+      selection={selection}
     />
   </StyledModal>
 );

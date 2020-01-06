@@ -32,7 +32,10 @@ import ImageLoadingIndicator from './plugins/blocks/imageLoadingIndicator';
 import CustomBodyPlaceholder from './plugins/customBodyPlaceholder';
 import AutoSave from './plugins/autoSave';
 import AutoScroll from './plugins/autoScroll';
-import { InlineDiscussionPlugin } from './plugins/inlineDiscussion';
+import {
+  ContextHighlightPlugin,
+  InlineDiscussionPlugin,
+} from './plugins/inlineDiscussion';
 
 /* **** Commands **** */
 
@@ -77,6 +80,28 @@ export const commands = {
     if (!parent || parent.type === type) return;
 
     editor.unwrapBlock(parent.type);
+  },
+
+  moveEndToStartOfParentBlock: (editor, start) => {
+    const { value } = editor;
+    const { document } = value;
+
+    const parentBlock = document.getParent(start.key);
+    const parentBlockKey = parentBlock ? parentBlock.getFirstText().key : start.key;
+
+    return editor.moveEndTo(parentBlockKey, 0);
+  },
+
+  moveStartToEndOfParentBlock: (editor, end) => {
+    const { value } = editor;
+    const { document } = value;
+
+    const parentBlock = document.getParent(end.key);
+    const parentBlockKey = parentBlock ? parentBlock.getLastText().key : end.key;
+
+    return editor
+      .moveStartTo(parentBlockKey, 0)
+      .moveStartToEndOfBlock();
   },
 };
 
@@ -203,7 +228,7 @@ const discussionPlugins = [
 const documentPlugins = [
   ...coreEditorPlugins,
 
-  AutoSave(),
+  // AutoSave(),
   AutoScroll(),
   CompositionMenu(),
   InlineDiscussionPlugin(),
@@ -218,6 +243,11 @@ const inlineDiscussionPlugins = [
   InlineEditorActions(),
 ];
 
+const contextPlugins = [
+  ...coreEditorPlugins,
+  ContextHighlightPlugin(),
+];
+
 export const plugins = {
   meetingTitle: [],
   meetingPurpose: [],
@@ -229,5 +259,5 @@ export const plugins = {
   documentTitle: [createDocumentTitlePlaceholder('Untitled Document')],
   document: documentPlugins,
   discussionReply: inlineDiscussionPlugins,
-  discussionContext: coreEditorPlugins,
+  discussionContext: contextPlugins,
 };

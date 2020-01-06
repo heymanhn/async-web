@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { faCommentPlus } from '@fortawesome/pro-solid-svg-icons';
+import styled from '@emotion/styled';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import InlineDiscussion from 'components/document/InlineDiscussion';
-import { RenderMark } from './helpers';
+import { RenderInline, RenderMark } from './helpers';
 
-const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
+export const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
+export const CONTEXT_HIGHLIGHT = 'context-highlight';
 
 /* **** Toolbar button **** */
 
@@ -60,4 +62,23 @@ export function InlineDiscussionPlugin() {
   }
 
   return [RenderMark(INLINE_DISCUSSION_ANNOTATION, renderInlineDiscussion)];
+}
+
+const ContextHighlight = styled.span(({ theme: { colors } }) => ({
+  background: colors.highlightYellow,
+  padding: '2px 0px',
+}));
+
+export function ContextHighlightPlugin() {
+  function renderContextHighlight(props) {
+    const { attributes, children } = props; /* eslint react/prop-types: 0 */
+
+    return (
+      <ContextHighlight attributes={attributes}>
+        {children}
+      </ContextHighlight>
+    );
+  }
+
+  return [RenderInline(CONTEXT_HIGHLIGHT, renderContextHighlight)];
 }
