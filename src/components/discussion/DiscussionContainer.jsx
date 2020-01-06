@@ -67,7 +67,7 @@ const DiscussionContainer = ({
     if (!documentId) setDocumentId(discussion.documentId);
 
     const { topic } = discussion;
-    if (topic) setContext(topic.payload);
+    if (topic && !context) setContext(topic.payload);
   }
 
   // HN: I know this is a long-winded way to prepare the inline discussion context. But we're
@@ -92,11 +92,12 @@ const DiscussionContainer = ({
     setContext(initialContext);
 
     documentEditor
-      .moveToRangeOfDocument()
-      .unwrapInline(CONTEXT_HIGHLIGHT);
+      .undo()
+      .undo();
 
     documentEditor
-      .undo()
+      .moveToRangeOfDocument()
+      .unwrapInline(CONTEXT_HIGHLIGHT)
       .moveTo(end.key, end.offset);
   }
 
@@ -150,6 +151,7 @@ const DiscussionContainer = ({
       {documentId && !discussion && (
         <InlineDiscussionComposer
           afterCreate={afterCreate}
+          context={context}
           documentId={documentId}
           handleClose={handleClose}
         />
