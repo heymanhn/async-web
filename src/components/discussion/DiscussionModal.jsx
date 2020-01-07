@@ -27,8 +27,10 @@ const DiscussionModal = ({
     <DiscussionContainer
       createAnnotation={createAnnotation}
       discussionId={isOpen ? discussionId : null}
+      documentEditor={documentEditor}
       documentId={isOpen ? documentId : null}
       handleCancel={handleClose}
+      selection={selection}
     />
   </StyledModal>
 );

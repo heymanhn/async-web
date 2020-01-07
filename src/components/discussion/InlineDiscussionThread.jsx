@@ -22,6 +22,9 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
+
+  borderBottomLeftRadius: '5px',
+  borderBottomRightRadius: '5px',
   margin: '0 auto',
   maxWidth: discussionViewport,
 }));

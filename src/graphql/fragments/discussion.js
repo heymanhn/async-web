@@ -20,6 +20,9 @@ export default gql`
         ...BodyObject
       }
     }
+    topic @type(name: "Body") {
+      ...BodyObject
+    }
   }
   ${body}
 `;

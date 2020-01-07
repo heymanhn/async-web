@@ -148,7 +148,7 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
 
     documentEditor.withoutSaving(() => {
       documentEditor
-        .moveStartTo(start.key, start.offset)
+        .moveTo(start.key, start.offset)
         .moveEndTo(end.key, end.offset)
         .addMark({
           type: 'inline-discussion',
@@ -169,7 +169,14 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
     // return window.history.replaceState({}, `discussion: ${value}`, url);
   }
 
-  const { discussionId, isModalOpen, updatedTimestamp, viewMode } = state;
+  const {
+    discussionId,
+    documentEditor,
+    isModalOpen,
+    selection,
+    updatedTimestamp,
+    viewMode,
+  } = state;
   return (
     <>
       <HeaderBar documentId={documentId} setViewMode={setViewMode} viewMode={viewMode} />
@@ -202,9 +209,11 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
           <DiscussionModal
             createAnnotation={createAnnotation}
             discussionId={discussionId}
+            documentEditor={documentEditor}
             documentId={documentId}
             handleClose={handleCloseDiscussion}
             isOpen={isModalOpen}
+            selection={selection}
           />
         </>
       )}
