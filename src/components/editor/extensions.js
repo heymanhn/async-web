@@ -228,7 +228,7 @@ const discussionPlugins = [
 const documentPlugins = [
   ...coreEditorPlugins,
 
-  // AutoSave(),
+  AutoSave(),
   AutoScroll(),
   CompositionMenu(),
   InlineDiscussionPlugin(),
