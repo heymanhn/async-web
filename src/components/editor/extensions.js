@@ -120,7 +120,7 @@ export const queries = {
     const { selection } = value;
     return selection.isCollapsed && selection.anchor.offset === 0;
   },
-  isEmptyBlock: editor => !editor.value.startBlock.text,
+  isEmptyBlock: editor => editor.value.startBlock && !editor.value.startBlock.text,
   isEmptyDocument: (editor) => {
     const { value } = editor;
     const { document: doc } = value;
@@ -142,7 +142,7 @@ export const queries = {
   },
   isEmptyParagraph: (editor) => {
     const { startBlock } = editor.value;
-    return startBlock.type === DEFAULT_NODE && !startBlock.text;
+    return startBlock && startBlock.type === DEFAULT_NODE && !startBlock.text;
   },
   isWrappedBy: (editor, type) => editor.value.blocks.some(block => (
     !!editor.value.document.getClosest(block.key, parent => parent.type === type)

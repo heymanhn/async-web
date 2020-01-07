@@ -74,6 +74,7 @@ const CompositionMenu = React.forwardRef(({
   // Displays the menu either above or below the current block, based on the block's
   // relative position on the page
   function calculateMenuPosition() {
+    if (!startBlock) return {};
     const path = document.getPath(startBlock.key);
     const element = editor.findDOMNode(path);
     if (!element) return {};

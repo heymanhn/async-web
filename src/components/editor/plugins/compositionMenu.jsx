@@ -13,7 +13,7 @@ function CompositionMenu({ isModal } = {}) {
 
   function isSlashCommand(editor) {
     const { startBlock } = editor.value;
-    return startBlock.type === DEFAULT_NODE && startBlock.text === '/';
+    return startBlock && startBlock.type === DEFAULT_NODE && startBlock.text === '/';
   }
 
   /* **** Render the menu **** */
