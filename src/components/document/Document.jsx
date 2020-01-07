@@ -148,7 +148,7 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
 
     documentEditor.withoutSaving(() => {
       documentEditor
-        .moveStartTo(start.key, start.offset)
+        .moveTo(start.key, start.offset)
         .moveEndTo(end.key, end.offset)
         .addMark({
           type: 'inline-discussion',
