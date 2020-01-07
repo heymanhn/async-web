@@ -76,30 +76,32 @@ const DiscussionContainer = ({
   function prepareInitialContext() {
     const { start, end } = selection;
 
+    // Step 1: Delete everything before the highlight, factoring in some buffer space
+    // for the rest of the current block
     documentEditor
-      // Step 1: Create the highlight within the current content
-      .moveStartTo(start.key, start.offset)
-      .moveEndTo(end.key, end.offset)
-      .wrapInline(CONTEXT_HIGHLIGHT)
-
-      // Step 2: Delete everything before the highlight, factoring in some buffer space
-      // for the rest of the current block
       .moveToStartOfDocument()
       .moveEndToStartOfParentBlock(start)
-      .delete()
+      .delete();
 
-      // Step 3: Delete everything after the highlight, similar to step 2
+    // Step 2: Delete everything after the highlight, similar to step 2
+    documentEditor
       .moveToEndOfDocument()
       .moveStartToEndOfParentBlock(end)
       .delete();
+
+    // Step 3: Create the highlight within the current content
+    documentEditor
+      .moveStartTo(start.key, start.offset)
+      .moveEndTo(end.key, end.offset)
+      .wrapInline(CONTEXT_HIGHLIGHT);
 
     const { value } = documentEditor;
     const initialContext = JSON.stringify(value.toJSON());
     setContext(initialContext);
 
-    // 1. Undo the end of document delete
-    // 2. Undo the beginning of document delete
-    // 3. Undo the highlight
+    // 1. Undo the highlight
+    // 2. Undo the end of document delete
+    // 3. Undo the beginning of document delete
     documentEditor.undo().undo().undo();
   }
 
