@@ -14,7 +14,6 @@ const Container = styled.span({ });
 const Highlight = styled.span(({ isHover, theme: { colors } }) => ({
   background: isHover ? colors.highlightYellow : 'none',
   borderBottom: isHover ? 'none' : `2px solid ${colors.highlightYellow}`,
-  cursor: 'pointer',
   opacity: isHover ? 0.9 : 1,
   padding: '2px 0px',
 }));
