@@ -19,7 +19,6 @@ const Highlight = styled.span(({ isHover, theme: { colors } }) => ({
 const InlineDiscussion = ({
   attributes,
   children,
-  handleClick,
   handleShowDiscussion,
   markData,
 }) => {
@@ -64,7 +63,6 @@ const InlineDiscussion = ({
     >
       <Highlight
         isHover={isHighlightHover || isPreviewHover}
-        onClick={handleClick}
         {...attributes}
       >
         {children}
@@ -88,7 +86,6 @@ const InlineDiscussion = ({
 InlineDiscussion.propTypes = {
   attributes: PropTypes.object.isRequired,
   children: PropTypes.object.isRequired,
-  handleClick: PropTypes.func.isRequired,
   handleShowDiscussion: PropTypes.func.isRequired,
   markData: PropTypes.object.isRequired,
 };

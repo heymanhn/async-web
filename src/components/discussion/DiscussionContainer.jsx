@@ -113,11 +113,11 @@ const DiscussionContainer = ({
     return safeTags.includes('new_replies') || safeTags.includes('new_discussion');
   }
 
-  function afterCreate(value, authorId, isDraft) {
+  function afterCreate(value) {
     setDiscussionId(value);
 
     track('New discussion created', { discussionId: value, documentId });
-    createAnnotation(value, authorId, isDraft);
+    createAnnotation(value);
 
     // Update the URL in the address bar to reflect the new discussion
     // TODO (HN): Fix this implementation this later.
