@@ -142,7 +142,7 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
     return Promise.reject(new Error('Failed to save discussion message'));
   }
 
-  function createAnnotation(value, authorId, isDraft) {
+  function createAnnotation(value, authorId) {
     const { documentEditor, selection } = state;
     const { start, end } = selection;
 
@@ -154,7 +154,6 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
           type: 'inline-discussion',
           data: {
             discussionId: value,
-            isDraft,
             authorId,
           },
         });
