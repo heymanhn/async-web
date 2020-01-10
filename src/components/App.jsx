@@ -15,7 +15,6 @@ import { getAuthHeader, isLocalTokenPresent, isUserOnboarding } from 'utils/auth
 import fileSerializer from 'utils/graphql/fileSerializer';
 import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
-import usePusher from 'utils/hooks/usePusher';
 
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
@@ -90,28 +89,24 @@ client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaul
 // TEMP: set client as a global variable for non-React usages
 window.Roval = { apolloClient: client };
 
-const App = () => {
-  usePusher();
+const App = () => (
+  <Layout>
+    <Router>
+      <Home path="/" />
+      <SignUp path="/invites/:inviteCode" />
+      <CreateOrganization path="/organizations" />
+      <InviteTeam path="/organizations/:organizationId/invites" />
+      <Login path="/login" />
+      <DemoLogin path="/demo/login" />
+      <Logout path="/logout" />
 
-  return (
-    <Layout>
-      <Router>
-        <Home path="/" />
-        <SignUp path="/invites/:inviteCode" />
-        <CreateOrganization path="/organizations" />
-        <InviteTeam path="/organizations/:organizationId/invites" />
-        <Login path="/login" />
-        <DemoLogin path="/demo/login" />
-        <Logout path="/logout" />
+      <PrivateRoute path="/d/:documentId" component={Document} />
+      <PrivateRoute path="/d/:documentId/discussions" component={Document} viewMode="discussions" />
 
-        <PrivateRoute path="/d/:documentId" component={Document} />
-        <PrivateRoute path="/d/:documentId/discussions" component={Document} viewMode="discussions" />
-
-        <NotFound path="/notfound" default />
-      </Router>
-    </Layout>
-  );
-};
+      <NotFound path="/notfound" default />
+    </Router>
+  </Layout>
+);
 
 const ApolloApp = () => (
   <ApolloProvider client={client}>
