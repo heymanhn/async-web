@@ -207,13 +207,6 @@ class RovalEditor extends Component {
 
 RovalEditor.propTypes = {
   contentType: PropTypes.oneOf([
-    'discussion', // Equivalent to the first message of the discussion
-    'discussionTitle',
-    'meetingName',
-    'meetingPurpose',
-    'message',
-
-    // New to Roval v2
     'documentTitle',
     'document',
     'discussionReply',
