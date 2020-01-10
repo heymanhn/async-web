@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import AddReactionButton from './AddReactionButton';
-import MessageDropdown from './MessageDropdown';
+import ReplyDropdown from './ReplyDropdown';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: 'flex',
@@ -79,7 +79,7 @@ const HoverMenu = ({
           <MenuIcon>
             •••
           </MenuIcon>
-          <MessageDropdown
+          <ReplyDropdown
             handleClose={closeDropdown}
             isOpen={isDropdownOpen}
             onDelete={onDelete}

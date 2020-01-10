@@ -4,14 +4,14 @@ import styled from '@emotion/styled';
 
 import Button from 'components/shared/Button';
 
-const Container = styled.div(({ showHint }) => ({
+const Container = styled.div({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: showHint ? 'space-between' : 'flex-start',
+  justifyContent: 'flex-end',
 
   marginTop: '25px',
-}));
+});
 
 const ButtonsContainer = styled.div({
   display: 'flex',
@@ -20,13 +20,10 @@ const ButtonsContainer = styled.div({
 });
 
 const StyledButton = styled(Button)({
-  marginRight: '10px',
+  height: '32px',
+  marginLeft: '10px',
+  padding: '4px 25px',
 });
-
-const HintText = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey6,
-  fontSize: '14px',
-}));
 
 const EditorActionsRow = ({
   isDraftSaved,
@@ -48,7 +45,7 @@ const EditorActionsRow = ({
   }
 
   return (
-    <Container showHint={!isSubmitDisabled}>
+    <Container>
       <ButtonsContainer>
         <StyledButton
           isDisabled={isSubmitDisabled}
@@ -71,11 +68,6 @@ const EditorActionsRow = ({
           />
         )}
       </ButtonsContainer>
-      {!isSubmitDisabled && (
-        <HintText>
-          {`Press ⌘ + Enter to ${mode === 'compose' ? 'post' : 'save'}`}
-        </HintText>
-      )}
     </Container>
   );
 };

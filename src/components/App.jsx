@@ -15,9 +15,7 @@ import { getAuthHeader, isLocalTokenPresent, isUserOnboarding } from 'utils/auth
 import fileSerializer from 'utils/graphql/fileSerializer';
 import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
-import usePusher from 'utils/hooks/usePusher';
 
-// Roval v1
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
 import Login from 'components/auth/Login';
@@ -28,10 +26,6 @@ import SignUp from 'components/auth/SignUp';
 import CreateOrganization from 'components/auth/CreateOrganization';
 import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
-import MeetingSpace from 'components/meeting/MeetingSpace';
-import Discussion from 'components/discussion/Discussion';
-
-// Roval v2
 import Document from 'components/document/Document';
 
 const restLink = new RestLink({
@@ -95,33 +89,24 @@ client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaul
 // TEMP: set client as a global variable for non-React usages
 window.Roval = { apolloClient: client };
 
-const App = () => {
-  usePusher();
+const App = () => (
+  <Layout>
+    <Router>
+      <Home path="/" />
+      <SignUp path="/invites/:inviteCode" />
+      <CreateOrganization path="/organizations" />
+      <InviteTeam path="/organizations/:organizationId/invites" />
+      <Login path="/login" />
+      <DemoLogin path="/demo/login" />
+      <Logout path="/logout" />
 
-  return (
-    <Layout>
-      <Router>
-        <Home path="/" />
-        <SignUp path="/invites/:inviteCode" />
-        <CreateOrganization path="/organizations" />
-        <InviteTeam path="/organizations/:organizationId/invites" />
-        <Login path="/login" />
-        <DemoLogin path="/demo/login" />
-        <Logout path="/logout" />
+      <PrivateRoute path="/d/:documentId" component={Document} />
+      <PrivateRoute path="/d/:documentId/discussions" component={Document} viewMode="discussions" />
 
-        <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />
-
-        <PrivateRoute path="/spaces/:meetingId/discussions/new" component={Discussion} />
-        <PrivateRoute path="/discussions/:conversationId" component={Discussion} />
-
-        <PrivateRoute path="/d/:documentId" component={Document} />
-        <PrivateRoute path="/d/:documentId/discussions" component={Document} viewMode="discussions" />
-
-        <NotFound path="/notfound" default />
-      </Router>
-    </Layout>
-  );
-};
+      <NotFound path="/notfound" default />
+    </Router>
+  </Layout>
+);
 
 const ApolloApp = () => (
   <ApolloProvider client={client}>

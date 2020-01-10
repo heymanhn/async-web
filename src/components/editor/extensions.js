@@ -22,7 +22,6 @@ import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
 import SelectionToolbar from './plugins/selectionToolbar';
 import CompositionMenu from './plugins/compositionMenu';
 import EditorActions from './plugins/editorActions';
-import InlineEditorActions from './plugins/inlineEditorActions';
 
 // HN: Not supporting drag and drop guides for now
 // import DragAndDrop from './plugins/dragAndDrop';
@@ -152,16 +151,6 @@ export const queries = {
 
 /* **** Plugins **** */
 
-const createDiscussionTitlePlaceholder = text => PlaceholderPlugin({
-  placeholder: text,
-  when: 'isEmptyDocument',
-  style: {
-    color: theme.colors.titlePlaceholder,
-    lineHeight: '43px',
-    opacity: 1,
-  },
-});
-
 const createDocumentTitlePlaceholder = text => PlaceholderPlugin({
   placeholder: text,
   when: 'isEmptyDocument',
@@ -181,6 +170,7 @@ const createDocumentPlaceholder = text => CustomBodyPlaceholder({
   when: 'isEmptyAndUnfocusedDocument',
   Component: DocumentPlaceholder,
 });
+
 const coreEditorPlugins = [
   // Marks
   BoldPlugin(),
@@ -211,20 +201,6 @@ const coreEditorPlugins = [
   ImageLoadingIndicator(),
 ];
 
-const discussionPlugins = [
-  ...coreEditorPlugins,
-
-  // HN: Not supporting drag and drop guides for now
-  // DragAndDrop(),
-  // DragAndDropIndicator(),
-
-  CompositionMenu(),
-  Drafts(),
-  EditorActions(),
-];
-
-// Roval v2 plugins stack
-
 const documentPlugins = [
   ...coreEditorPlugins,
 
@@ -240,7 +216,7 @@ const inlineDiscussionPlugins = [
 
   CompositionMenu({ isModal: true }),
   Drafts(),
-  InlineEditorActions(),
+  EditorActions(),
 ];
 
 const contextPlugins = [
@@ -249,13 +225,6 @@ const contextPlugins = [
 ];
 
 export const plugins = {
-  meetingTitle: [],
-  meetingPurpose: [],
-  discussionTitle: [createDiscussionTitlePlaceholder('Untitled Discussion')],
-  discussion: discussionPlugins,
-  message: discussionPlugins,
-
-  // Roval v2
   documentTitle: [createDocumentTitlePlaceholder('Untitled Document')],
   document: documentPlugins,
   discussionReply: inlineDiscussionPlugins,

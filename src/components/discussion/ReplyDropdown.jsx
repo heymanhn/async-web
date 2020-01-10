@@ -56,7 +56,7 @@ const OptionName = styled.div(({ theme: { colors } }) => ({
   top: '1px',
 }));
 
-const MessageDropdown = ({ handleClose, isOpen, onDelete, onEdit, ...props }) => {
+const ReplyDropdown = ({ handleClose, isOpen, onDelete, onEdit, ...props }) => {
   const selector = useRef();
   function handleClickOutside() {
     if (!isOpen) return;
@@ -89,11 +89,11 @@ const MessageDropdown = ({ handleClose, isOpen, onDelete, onEdit, ...props }) =>
   );
 };
 
-MessageDropdown.propTypes = {
+ReplyDropdown.propTypes = {
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
 };
 
-export default MessageDropdown;
+export default ReplyDropdown;
