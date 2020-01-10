@@ -13,8 +13,8 @@ import { track } from 'utils/analytics';
 import { CONTEXT_HIGHLIGHT } from 'components/editor/plugins/inlineDiscussion';
 import RovalEditor from 'components/editor/RovalEditor';
 import NotFound from 'components/navigation/NotFound';
-import InlineDiscussionThread from './InlineDiscussionThread';
-import InlineDiscussionComposer from './InlineDiscussionComposer';
+import DiscussionThread from './DiscussionThread';
+import DiscussionComposer from './DiscussionComposer';
 
 const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   background: colors.grey7,
@@ -145,7 +145,7 @@ const DiscussionContainer = ({
         />
       )}
       {discussionId && !loading && documentId && (
-        <InlineDiscussionThread
+        <DiscussionThread
           discussionId={discussionId}
           documentId={documentId}
           isUnread={isUnread()}
@@ -153,7 +153,7 @@ const DiscussionContainer = ({
         />
       )}
       {documentId && !discussion && (
-        <InlineDiscussionComposer
+        <DiscussionComposer
           afterCreate={afterCreate}
           context={context}
           documentId={documentId}

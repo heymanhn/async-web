@@ -17,7 +17,6 @@ import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
 import usePusher from 'utils/hooks/usePusher';
 
-// Roval v1
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
 import Login from 'components/auth/Login';
@@ -28,10 +27,6 @@ import SignUp from 'components/auth/SignUp';
 import CreateOrganization from 'components/auth/CreateOrganization';
 import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
-import MeetingSpace from 'components/meeting/MeetingSpace';
-import Discussion from 'components/discussion/Discussion';
-
-// Roval v2
 import Document from 'components/document/Document';
 
 const restLink = new RestLink({
@@ -108,11 +103,6 @@ const App = () => {
         <Login path="/login" />
         <DemoLogin path="/demo/login" />
         <Logout path="/logout" />
-
-        <PrivateRoute path="/spaces/:meetingId" component={MeetingSpace} />
-
-        <PrivateRoute path="/spaces/:meetingId/discussions/new" component={Discussion} />
-        <PrivateRoute path="/discussions/:conversationId" component={Discussion} />
 
         <PrivateRoute path="/d/:documentId" component={Document} />
         <PrivateRoute path="/d/:documentId/discussions" component={Document} viewMode="discussions" />
