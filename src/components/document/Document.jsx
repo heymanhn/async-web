@@ -15,7 +15,6 @@ import DiscussionsList from './DiscussionsList';
 import HeaderBar from './HeaderBar';
 import LastUpdatedIndicator from './LastUpdatedIndicator';
 
-
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -55,14 +54,15 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
     viewMode: initialViewMode,
   });
 
-  function handleShowDiscussion(newDiscussionId, newSelection, editor) {
-    const newState = { discussionId: newDiscussionId, isModalOpen: true };
+  function handleShowDiscussion(discussionId, selection, editor) {
+    const newState = { discussionId, isModalOpen: true };
 
-    if (newSelection) newState.selection = newSelection;
+    if (selection) newState.selection = selection;
     if (editor) newState.documentEditor = editor;
 
     setState(oldState => ({ ...oldState, ...newState }));
   }
+
   function handleCloseDiscussion() {
     setState(oldState => ({
       ...oldState,
