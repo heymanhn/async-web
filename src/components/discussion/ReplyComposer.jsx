@@ -103,7 +103,7 @@ const ReplyComposer = ({
 
   function handleCancel({ closeModal } = {}) {
     stopComposing();
-    if (closeModal || source === 'discussionsList') handleClose();
+    if (!discussionId || closeModal || source === 'discussionsList') handleClose();
   }
 
   const addReplyBox = (
