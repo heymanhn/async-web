@@ -1,6 +1,3 @@
-/*
- * Derivative of <DiscussionThread />, used for the Roval v2 UX
- */
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
@@ -13,7 +10,6 @@ import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
 
 import DiscussionReply from './DiscussionReply';
-import ReplyComposer from './ReplyComposer';
 
 // HN: Change the new reply UI to a different background color
 import NewRepliesIndicator from './NewRepliesIndicator';
@@ -36,7 +32,7 @@ const StyledDiscussionReply = styled(DiscussionReply)(({ theme: { colors } }) =>
   paddingBottom: '10px',
 }));
 
-const DiscussionThread = ({ discussionId, documentId, handleClose }) => {
+const DiscussionThread = ({ discussionId, documentId }) => {
   // const client = useApolloClient();
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
@@ -62,8 +58,7 @@ const DiscussionThread = ({ discussionId, documentId, handleClose }) => {
   if (loading) return null;
   if (error || !data.replies) return <div>{error}</div>;
 
-  const { draft } = data.discussion;
-  const { items, replyCount, pageToken } = data.replies;
+  const { items, pageToken } = data.replies;
   const replies = (items || []).map(i => i.reply);
 
   function fetchMoreReplies() {
@@ -115,15 +110,6 @@ const DiscussionThread = ({ discussionId, documentId, handleClose }) => {
           />
         </React.Fragment>
       ))}
-      {!pageToken && (
-        <ReplyComposer
-          discussionId={discussionId}
-          draft={draft}
-          documentId={documentId}
-          handleClose={handleClose}
-          replyCount={replyCount}
-        />
-      )}
     </Container>
   );
 };
@@ -131,7 +117,6 @@ const DiscussionThread = ({ discussionId, documentId, handleClose }) => {
 DiscussionThread.propTypes = {
   discussionId: PropTypes.string.isRequired,
   documentId: PropTypes.string.isRequired,
-  handleClose: PropTypes.func.isRequired,
   // isUnread: PropTypes.bool.isRequired,
 };
 

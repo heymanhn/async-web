@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
-import InlineDiscussion from 'components/document/InlineDiscussion';
+import InlineDiscussion from 'components/discussion/InlineDiscussion';
 import { RenderInline, RenderMark } from './helpers';
 
 export const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
