@@ -44,8 +44,11 @@ const DiscussionContainer = ({
   });
 
   function draftHasChanged(newDraft) {
-    const { text } = draft || {};
-    const { text: newText } = newDraft || {};
+    const { body } = draft || {};
+    const { text } = body || {};
+
+    const { body: newBody } = newDraft || {};
+    const { text: newText } = newBody || {};
 
     return text !== newText;
   }
@@ -167,6 +170,7 @@ const DiscussionContainer = ({
         draft={draft}
         documentId={documentId}
         handleClose={handleClose}
+        source="discussionContainer"
       />
     </div>
   );

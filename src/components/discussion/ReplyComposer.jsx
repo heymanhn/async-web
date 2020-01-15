@@ -48,6 +48,8 @@ const ReplyComposer = ({
   draft,
   documentId,
   handleClose,
+  source,
+  ...props
 }) => {
   const [isComposing, setIsComposing] = useState(!!draft || !discussionId);
   function startComposing() { setIsComposing(true); }
@@ -81,7 +83,7 @@ const ReplyComposer = ({
       variables: { documentId, input },
       refetchQueries: [{
         query: documentDiscussionsQuery,
-        variables: { id: documentId, queryParams: {} },
+        variables: { id: documentId, queryParams: { order: 'desc' } },
       }],
       awaitRefetchQueries: true,
     });
@@ -101,7 +103,7 @@ const ReplyComposer = ({
 
   function handleCancel({ closeModal } = {}) {
     stopComposing();
-    if (closeModal) handleClose();
+    if (closeModal || source === 'discussionsList') handleClose();
   }
 
   const addReplyBox = (
@@ -123,6 +125,7 @@ const ReplyComposer = ({
       documentId={documentId}
       onCancel={handleCancel}
       onCreateDiscussion={handleCreateDiscussion}
+      {...props}
     />
   ) : addReplyBox;
 };
@@ -134,6 +137,7 @@ ReplyComposer.propTypes = {
   draft: PropTypes.object,
   documentId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
+  source: PropTypes.oneOf(['discussionContainer', 'discussionsList']).isRequired,
 };
 
 ReplyComposer.defaultProps = {
