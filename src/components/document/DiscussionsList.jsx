@@ -11,7 +11,7 @@ import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 
 import NotFound from 'components/navigation/NotFound';
 import DiscussionContainer from 'components/discussion/DiscussionContainer';
-import DiscussionComposer from 'components/discussion/DiscussionComposer';
+import ReplyComposer from 'components/discussion/ReplyComposer';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   margin: '60px auto',
@@ -55,7 +55,7 @@ const Label = styled.div(({ theme: { colors } }) => ({
 }));
 
 // HN: There should be a way to DRY up these style declarations
-const StyledComposer = styled(DiscussionComposer)(({ theme: { colors } }) => ({
+const StyledComposer = styled(ReplyComposer)(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',

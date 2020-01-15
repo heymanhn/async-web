@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
+import { useMutation, useQuery } from 'react-apollo';
+import { Value } from 'slate';
+import Plain from 'slate-plain-serializer';
 import styled from '@emotion/styled';
 
+import createDiscussionMutation from 'graphql/mutations/createDiscussion';
+import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import currentUserQuery from 'graphql/queries/currentUser';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
@@ -10,7 +14,7 @@ import useHover from 'utils/hooks/useHover';
 import Avatar from 'components/shared/Avatar';
 import DiscussionReply from './DiscussionReply';
 
-const Container = styled.div(({ hover, theme: { colors } }) => ({
+const AddReplyContainer = styled.div(({ hover, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -23,13 +27,13 @@ const Container = styled.div(({ hover, theme: { colors } }) => ({
   transition: 'opacity 0.2s',
 }));
 
+const AddReplyLabel = styled.div({
+  fontSize: '16px',
+});
+
 const AvatarWithMargin = styled(Avatar)({
   flexShrink: 0,
   marginRight: '12px',
-});
-
-const AddReplyLabel = styled.div({
-  fontSize: '16px',
 });
 
 const StyledDiscussionReply = styled(DiscussionReply)({
@@ -37,14 +41,22 @@ const StyledDiscussionReply = styled(DiscussionReply)({
   borderBottomRightRadius: '5px',
 });
 
-const ReplyComposer = ({ discussionId, draft, documentId, handleClose }) => {
-  const [isComposing, setIsComposing] = useState(!!draft);
+const ReplyComposer = ({
+  afterDiscussionCreate,
+  context,
+  discussionId,
+  draft,
+  documentId,
+  handleClose,
+}) => {
+  const [isComposing, setIsComposing] = useState(!!draft || !discussionId);
   function startComposing() { setIsComposing(true); }
   function stopComposing() { setIsComposing(false); }
 
   const { ...hoverProps } = useHover(isComposing);
 
   const { userId } = getLocalUser();
+  const [createDiscussion] = useMutation(createDiscussionMutation);
   const { loading, data } = useQuery(currentUserQuery, {
     variables: { id: userId },
   });
@@ -52,14 +64,38 @@ const ReplyComposer = ({ discussionId, draft, documentId, handleClose }) => {
   if (loading || !data.user) return null;
   const currentUser = data.user;
 
-  const addReplyBox = (
-    <Container onClick={startComposing} {...hoverProps}>
-      <AvatarWithMargin avatarUrl={currentUser.profilePictureUrl} size={32} />
-      <AddReplyLabel>Add a reply...</AddReplyLabel>
-    </Container>
-  );
+  async function handleCreateDiscussion() {
+    const input = {};
+    if (context) {
+      const initialJSON = JSON.parse(context);
+      const value = Value.fromJSON(initialJSON);
 
-  function afterCreate(value, authorId, isDraft) {
+      input.topic = {
+        formatter: 'slatejs',
+        text: Plain.serialize(value),
+        payload: context,
+      };
+    }
+
+    const { data: createDiscussionData } = await createDiscussion({
+      variables: { documentId, input },
+      refetchQueries: [{
+        query: documentDiscussionsQuery,
+        variables: { id: documentId, queryParams: {} },
+      }],
+      awaitRefetchQueries: true,
+    });
+
+    if (createDiscussionData.createDiscussion) {
+      const { id: newDiscussionId } = createDiscussionData.createDiscussion;
+      return Promise.resolve({ discussionId: newDiscussionId, isNewDiscussion: true });
+    }
+
+    return Promise.reject(new Error('Failed to create discussion'));
+  }
+
+  function afterCreate(value, isDraft) {
+    if (!discussionId) afterDiscussionCreate(value);
     if (!isDraft) stopComposing();
   }
 
@@ -67,6 +103,13 @@ const ReplyComposer = ({ discussionId, draft, documentId, handleClose }) => {
     stopComposing();
     if (closeModal) handleClose();
   }
+
+  const addReplyBox = (
+    <AddReplyContainer onClick={startComposing} {...hoverProps}>
+      <AvatarWithMargin avatarUrl={currentUser.profilePictureUrl} size={32} />
+      <AddReplyLabel>Add a reply...</AddReplyLabel>
+    </AddReplyContainer>
+  );
 
   return isComposing ? (
     <StyledDiscussionReply
@@ -79,18 +122,23 @@ const ReplyComposer = ({ discussionId, draft, documentId, handleClose }) => {
       initialMode="compose"
       documentId={documentId}
       onCancel={handleCancel}
+      onCreateDiscussion={handleCreateDiscussion}
     />
   ) : addReplyBox;
 };
 
 ReplyComposer.propTypes = {
-  discussionId: PropTypes.string.isRequired,
+  afterDiscussionCreate: PropTypes.func.isRequired,
+  context: PropTypes.string,
+  discussionId: PropTypes.string,
   draft: PropTypes.object,
   documentId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
 };
 
 ReplyComposer.defaultProps = {
+  context: null,
+  discussionId: null,
   draft: null,
 };
 

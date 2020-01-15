@@ -14,7 +14,7 @@ import { CONTEXT_HIGHLIGHT } from 'components/editor/plugins/inlineDiscussion';
 import RovalEditor from 'components/editor/RovalEditor';
 import NotFound from 'components/navigation/NotFound';
 import DiscussionThread from './DiscussionThread';
-import DiscussionComposer from './DiscussionComposer';
+import ReplyComposer from './ReplyComposer';
 
 const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   background: colors.grey7,
@@ -38,9 +38,17 @@ const DiscussionContainer = ({
   const [discussionId, setDiscussionId] = useState(initialDiscussionId);
   const [documentId, setDocumentId] = useState(initialDocumentId);
   const [context, setContext] = useState(null);
+  const [draft, setDraft] = useState(null);
   const [getDiscussion, { loading, data }] = useLazyQuery(discussionQuery, {
     variables: { id: discussionId, queryParams: {} },
   });
+
+  function draftHasChanged(newDraft) {
+    const { text } = draft || {};
+    const { text: newText } = newDraft || {};
+
+    return text !== newText;
+  }
 
   useMountEffect(() => {
     const title = discussionId ? 'Discussion' : 'New discussion';
@@ -66,14 +74,15 @@ const DiscussionContainer = ({
     ({ discussion } = data); // Weird way to do this, I know
     if (!documentId) setDocumentId(discussion.documentId);
 
-    const { topic } = discussion;
+    const { draft: newDraft, topic } = discussion;
     if (topic && !context) setContext(topic.payload);
+    if (draftHasChanged(newDraft)) setDraft(newDraft);
   }
 
-  // HN: I know this is a long-winded way to prepare the inline discussion context. But we're
+  // HN: I know this is a long-winded way to extract the inline discussion context. But we're
   // limited by what the Slate API gives us. There must be a better way.
   // FUTURE: Use the immutable APIs to dynamically create the context block
-  function prepareInitialContext() {
+  function extractContext() {
     const { start, end } = selection;
 
     // Step 1: Delete everything before the highlight, factoring in some buffer space
@@ -105,7 +114,7 @@ const DiscussionContainer = ({
     documentEditor.undo().undo().undo();
   }
 
-  if (!discussionId && !context) prepareInitialContext();
+  if (!discussionId && !context) extractContext();
 
   function isUnread() {
     const { tags } = data.discussion;
@@ -113,7 +122,7 @@ const DiscussionContainer = ({
     return safeTags.includes('new_replies') || safeTags.includes('new_discussion');
   }
 
-  function afterCreate(value) {
+  function afterDiscussionCreate(value) {
     setDiscussionId(value);
 
     track('New discussion created', { discussionId: value, documentId });
@@ -149,17 +158,16 @@ const DiscussionContainer = ({
           discussionId={discussionId}
           documentId={documentId}
           isUnread={isUnread()}
-          handleClose={handleClose}
         />
       )}
-      {documentId && !discussion && (
-        <DiscussionComposer
-          afterCreate={afterCreate}
-          context={context}
-          documentId={documentId}
-          handleClose={handleClose}
-        />
-      )}
+      <ReplyComposer
+        afterDiscussionCreate={afterDiscussionCreate}
+        context={context}
+        discussionId={discussionId}
+        draft={draft}
+        documentId={documentId}
+        handleClose={handleClose}
+      />
     </div>
   );
 };
