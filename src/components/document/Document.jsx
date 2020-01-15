@@ -44,18 +44,18 @@ const DocumentEditor = styled(RovalEditor)({
   marginBottom: '80px',
 });
 
-const Document = ({ documentId, viewMode: initialViewMode }) => {
+const Document = ({ documentId, discussionId, viewMode: initialViewMode }) => {
   const [state, setState] = useState({
-    isModalOpen: false,
+    isModalOpen: !!discussionId,
     documentEditor: null,
     selection: null,
-    discussionId: null,
+    discussionId,
     updatedTimestamp: null,
     viewMode: initialViewMode,
   });
 
-  function handleShowDiscussion(discussionId, selection, editor) {
-    const newState = { discussionId, isModalOpen: true };
+  function handleShowDiscussion(dId, selection, editor) {
+    const newState = { discussionId: dId, isModalOpen: true };
 
     if (selection) newState.selection = selection;
     if (editor) newState.documentEditor = editor;
@@ -169,7 +169,7 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
   }
 
   const {
-    discussionId,
+    discussionId: dId,
     documentEditor,
     isModalOpen,
     selection,
@@ -207,7 +207,7 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
           </Container>
           <DiscussionModal
             createAnnotation={createAnnotation}
-            discussionId={discussionId}
+            discussionId={dId}
             documentEditor={documentEditor}
             documentId={documentId}
             handleClose={handleCloseDiscussion}
@@ -222,11 +222,13 @@ const Document = ({ documentId, viewMode: initialViewMode }) => {
 
 Document.propTypes = {
   documentId: PropTypes.string.isRequired,
+  discussionId: PropTypes.string,
   viewMode: PropTypes.oneOf(['content', 'discussions']),
 };
 
 Document.defaultProps = {
   viewMode: 'content',
+  discussionId: null,
 };
 
 export default Document;
