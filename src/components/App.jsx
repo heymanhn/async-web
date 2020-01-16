@@ -27,6 +27,7 @@ import CreateOrganization from 'components/auth/CreateOrganization';
 import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
 import Document from 'components/document/Document';
+import DiscussionLinkHandler from 'components/discussion/DiscussionLinkHandler';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -101,7 +102,9 @@ const App = () => (
       <Logout path="/logout" />
 
       <PrivateRoute path="/d/:documentId" component={Document} />
+      <PrivateRoute path="/d/:documentId/discussions/:discussionId" component={Document} />
       <PrivateRoute path="/d/:documentId/discussions" component={Document} viewMode="discussions" />
+      <PrivateRoute path="/discussions/:discussionId" component={DiscussionLinkHandler} />
 
       <NotFound path="/notfound" default />
     </Router>
