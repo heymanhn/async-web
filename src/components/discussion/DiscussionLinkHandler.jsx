@@ -15,7 +15,7 @@ const DiscussionLinkHandler = ({
   });
 
   if (loading) return null;
-  if (error || !data.discussion) return NotFound;
+  if (error || !data.discussion) return <NotFound />;
 
   const { documentId } = data.discussion;
 
