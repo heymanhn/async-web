@@ -10,9 +10,9 @@ import { useLazyQuery } from '@apollo/react-hooks';
 
 import documentQuery from 'graphql/queries/document';
 import organizationQuery from 'graphql/queries/organization';
-import notificationsQuery from 'graphql/queries/notifications';
+import notificationsQuery from 'graphql/queries/documentNotifications';
 
-import { getLocalAppState, getLocalUser } from 'utils/auth';
+import { getLocalAppState } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import DropdownMenu from 'components/navigation/DropdownMenu';
@@ -139,9 +139,8 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
     variables: { id: documentId, queryParams: {} },
   });
 
-  const { userId } = getLocalUser();
   const [getNotifications, { data: notificationsData }] = useLazyQuery(notificationsQuery, {
-    variables: { id: userId },
+    variables: { id: documentId },
   });
 
   if (!organizationId) return null;
@@ -161,12 +160,12 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
   if (error
     || !documentData.document
     || !data.organization
-    || !notificationsData.userNotifications
+    || !notificationsData.documentNotifications
   ) return null;
 
   const { logo } = data.organization;
   const { title } = documentData.document;
-  const { notifications } = notificationsData.userNotifications;
+  const { notifications } = notificationsData.documentNotifications;
 
   return (
     <Container {...props}>
@@ -192,7 +191,8 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
           <StyledDocumentIcon icon={faFileAlt} />
         </ContentModeButton>
         <DiscussionNotificationContainer>
-          {notifications.length > 0 && <BadgeCountContainer>{notifications.length}</BadgeCountContainer>}
+          {notifications && notifications.length > 0
+          && <BadgeCountContainer>{notifications.length}</BadgeCountContainer>}
           <DiscussionsModeButton
             isSelected={viewMode === 'discussions'}
             onClick={() => setViewMode('discussions')}
