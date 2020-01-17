@@ -15,6 +15,7 @@ export default gql`
     createdAt
     updatedAt
     tags
+    status
     draft @type(name: "ReplyDraft") {
       body @type(name: "Body") {
         ...BodyObject

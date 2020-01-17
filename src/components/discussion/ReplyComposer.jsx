@@ -11,30 +11,8 @@ import currentUserQuery from 'graphql/queries/currentUser';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
 
-import Avatar from 'components/shared/Avatar';
 import DiscussionReply from './DiscussionReply';
-
-const AddReplyContainer = styled.div(({ hover, theme: { colors } }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-
-  background: colors.bgGrey,
-  color: colors.grey4,
-  cursor: 'pointer',
-  opacity: hover ? 1 : 0.6,
-  padding: '20px 25px',
-  transition: 'opacity 0.2s',
-}));
-
-const AddReplyLabel = styled.div({
-  fontSize: '16px',
-});
-
-const AvatarWithMargin = styled(Avatar)({
-  flexShrink: 0,
-  marginRight: '12px',
-});
+import AddReplyBox from './AddReplyBox';
 
 const StyledDiscussionReply = styled(DiscussionReply)({
   borderBottomLeftRadius: '5px',
@@ -106,13 +84,6 @@ const ReplyComposer = ({
     if (!discussionId || closeModal || source === 'discussionsList') handleClose();
   }
 
-  const addReplyBox = (
-    <AddReplyContainer onClick={startComposing} {...hoverProps}>
-      <AvatarWithMargin avatarUrl={currentUser.profilePictureUrl} size={32} />
-      <AddReplyLabel>Add a reply...</AddReplyLabel>
-    </AddReplyContainer>
-  );
-
   return isComposing ? (
     <StyledDiscussionReply
       // Instead of special-casing RovalEditor again, use this callback pattern.
@@ -127,7 +98,15 @@ const ReplyComposer = ({
       onCreateDiscussion={handleCreateDiscussion}
       {...props}
     />
-  ) : addReplyBox;
+  ) : (
+    <AddReplyBox
+      discussionId={discussionId}
+      documentId={documentId}
+      currentUser={currentUser}
+      replyClickHandler={startComposing}
+      {...hoverProps}
+    />
+  );
 };
 
 ReplyComposer.propTypes = {

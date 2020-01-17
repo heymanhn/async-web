@@ -83,6 +83,8 @@ export const theme = {
     headerBarGrey: '#fcfdfe',
     lightestGrey: '#fafdff',
 
+    successGreen: '#4CA423',
+
     titlePlaceholder: '#dbdddf',
     textPlaceholder: '#c9cfd4',
 
