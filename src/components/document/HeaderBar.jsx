@@ -10,7 +10,9 @@ import { useLazyQuery } from '@apollo/react-hooks';
 
 import documentQuery from 'graphql/queries/document';
 import organizationQuery from 'graphql/queries/organization';
-import { getLocalAppState } from 'utils/auth';
+import notificationsQuery from 'graphql/queries/notifications';
+
+import { getLocalAppState, getLocalUser } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import DropdownMenu from 'components/navigation/DropdownMenu';
@@ -103,6 +105,26 @@ const StyledDiscussionsIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) =>
   },
 }));
 
+const DiscussionNotificationContainer = styled.div({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100%',
+});
+
+const BadgeCountContainer = styled.span(({ theme: { colors } }) => ({
+  color: colors.white,
+  background: colors.blue,
+  borderRadius: '10px',
+  fontSize: '12px',
+  height: '19px',
+  padding: '0 8px',
+  position: 'absolute',
+  marginTop: '-10px',
+  marginLeft: '10px',
+  fontWeight: 500,
+}));
+
 const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   function openDropdown() { setIsDropdownOpen(true); }
@@ -117,6 +139,11 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
     variables: { id: documentId, queryParams: {} },
   });
 
+  const { userId } = getLocalUser();
+  const [getNotifications, { data: notificationsData }] = useLazyQuery(notificationsQuery, {
+    variables: { id: userId },
+  });
+
   if (!organizationId) return null;
   if (organizationId && !data) {
     getOrganization();
@@ -126,10 +153,20 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
     getDocument();
     return null;
   }
-  if (error || !documentData.document || !data.organization) return null;
+  if (!notificationsData) {
+    getNotifications();
+    return null;
+  }
+
+  if (error
+    || !documentData.document
+    || !data.organization
+    || !notificationsData.userNotifications
+  ) return null;
 
   const { logo } = data.organization;
   const { title } = documentData.document;
+  const { notifications } = notificationsData.userNotifications;
 
   return (
     <Container {...props}>
@@ -154,12 +191,15 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
         >
           <StyledDocumentIcon icon={faFileAlt} />
         </ContentModeButton>
-        <DiscussionsModeButton
-          isSelected={viewMode === 'discussions'}
-          onClick={() => setViewMode('discussions')}
-        >
-          <StyledDiscussionsIcon icon={faCommentsAlt} />
-        </DiscussionsModeButton>
+        <DiscussionNotificationContainer>
+          {notifications.length > 0 && <BadgeCountContainer>{notifications.length}</BadgeCountContainer>}
+          <DiscussionsModeButton
+            isSelected={viewMode === 'discussions'}
+            onClick={() => setViewMode('discussions')}
+          >
+            <StyledDiscussionsIcon icon={faCommentsAlt} />
+          </DiscussionsModeButton>
+        </DiscussionNotificationContainer>
         <NewDocumentButton />
       </NavigationSection>
     </Container>

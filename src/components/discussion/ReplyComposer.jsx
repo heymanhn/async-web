@@ -103,7 +103,7 @@ const ReplyComposer = ({
       discussionId={discussionId}
       documentId={documentId}
       currentUser={currentUser}
-      replyClickHandler={startComposing}
+      handleClickReply={startComposing}
       {...hoverProps}
     />
   );

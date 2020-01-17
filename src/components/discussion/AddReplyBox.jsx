@@ -50,13 +50,13 @@ const ResolveDiscussionButton = styled.div(({ theme: { colors } }) => ({
   padding: '4px 15px',
 }));
 
-const ResolveDiscussionIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
+const ResolvedDiscussionIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.successGreen,
   fontSize: '18px',
   marginRight: '12px',
 }));
 
-const ResolvedDiscussionAuthorIcon = styled(ResolveDiscussionIcon)(({ theme: { colors } }) => ({
+const ResolvedDiscussionAuthorIcon = styled(ResolvedDiscussionIcon)(({ theme: { colors } }) => ({
   position: 'absolute',
   marginTop: '10px',
   marginLeft: '10px',
@@ -79,7 +79,7 @@ const AddReplyBox = ({
   discussionId,
   documentId,
   currentUser,
-  replyClickHandler,
+  handleClickReply,
   ...props
 }) => {
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
@@ -122,7 +122,7 @@ const AddReplyBox = ({
         <React.Fragment>
           <AddReplyItem>
             <AvatarWithMargin avatarUrl={currentUser.profilePictureUrl} size={32} />
-            <AddReplyLabel onClick={replyClickHandler}>Add a reply...</AddReplyLabel>
+            <AddReplyLabel onClick={handleClickReply}>Add a reply...</AddReplyLabel>
           </AddReplyItem>
           <AddReplyItem>
             <ResolveDiscussionButton onClick={() => updateDiscussionStatus('resolved')}>
@@ -139,7 +139,7 @@ AddReplyBox.propTypes = {
   discussionId: PropTypes.string.isRequired,
   documentId: PropTypes.string.isRequired,
   currentUser: PropTypes.object.isRequired,
-  replyClickHandler: PropTypes.func.isRequired,
+  handleClickReply: PropTypes.func.isRequired,
 };
 
 export default AddReplyBox;
