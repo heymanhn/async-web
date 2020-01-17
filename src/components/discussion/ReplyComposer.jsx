@@ -29,7 +29,7 @@ const ReplyComposer = ({
   source,
   ...props
 }) => {
-  const [isComposing, setIsComposing] = useState(!!draft || !discussionId);
+  const [isComposing, setIsComposing] = useState(!discussionId);
   function startComposing() { setIsComposing(true); }
   function stopComposing() { setIsComposing(false); }
 
@@ -83,6 +83,8 @@ const ReplyComposer = ({
     stopComposing();
     if (!discussionId || closeModal || source === 'discussionsList') handleClose();
   }
+
+  if (!!draft && !isComposing) startComposing();
 
   return isComposing ? (
     <StyledDiscussionReply

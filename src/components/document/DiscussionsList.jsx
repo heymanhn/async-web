@@ -135,7 +135,7 @@ const DiscussionsList = ({ documentId }) => {
       </TitleSection>
       {showComposer && (
         <StyledReplyComposer
-          afterCreate={afterCreate}
+          afterDiscussionCreate={afterCreate}
           documentId={documentId}
           handleClose={handleHideComposer}
           source="discussionsList"
