@@ -28,56 +28,37 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
   padding: '0 30px',
 }));
 
-// const TitleEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
-//   color: colors.mainText,
-//   fontSize: '42px',
-//   fontWeight: 600,
-//   letterSpacing: '-0.022em',
-//   lineHeight: '54px',
-//   marginTop: '60px',
-//   marginBottom: '15px',
-//   width: '100%',
-//   outline: 'none',
-// }));
+const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '42px',
+  fontWeight: 600,
+  letterSpacing: '-0.022em',
+  lineHeight: '54px',
+  marginTop: '60px',
+  marginBottom: '15px',
+  width: '100%',
+  outline: 'none',
+}));
 
-// const DocumentEditor = styled(RovalEditor)({
-//   fontSize: '16px',
-//   lineHeight: '26px',
-//   fontWeight: 400,
-//   marginBottom: '80px',
-// });
+const DocumentEditable = styled(Editable)({
+  fontSize: '16px',
+  lineHeight: '26px',
+  fontWeight: 400,
+  marginBottom: '80px',
+});
 
 const Document = ({ documentId, discussionId, viewMode: initialViewMode }) => {
-  const docEditor = useMemo(() => withReact(createEditor()), []);
-  const [value, setValue] = useState(DEFAULT_VALUE);
+  const titleEditor = useMemo(() => withReact(createEditor()), []);
+  const [documentTitle, setDocumentTitle] = useState(DEFAULT_VALUE);
+
+  const documentEditor = useMemo(() => withReact(createEditor()), []);
+  const [documentValue, setDocumentValue] = useState(DEFAULT_VALUE);
 
   const [state, setState] = useState({
-    isModalOpen: !!discussionId,
-    documentEditor: null,
-    selection: null,
     discussionId,
     updatedTimestamp: null,
     viewMode: initialViewMode,
   });
-
-  // function handleShowDiscussion(dId, selection, editor) {
-  //   const newState = { discussionId: dId, isModalOpen: true };
-
-  //   if (selection) newState.selection = selection;
-  //   if (editor) newState.documentEditor = editor;
-
-  //   setState(oldState => ({ ...oldState, ...newState }));
-  // }
-
-  // function handleCloseDiscussion() {
-  //   setState(oldState => ({
-  //     ...oldState,
-  //     discussionId: null,
-  //     documentEditor: null,
-  //     isModalOpen: false,
-  //     selection: null,
-  //   }));
-  // }
 
   function setUpdatedTimestamp(timestamp) {
     setState(oldState => ({ ...oldState, updatedTimestamp: timestamp }));
@@ -87,7 +68,7 @@ const Document = ({ documentId, discussionId, viewMode: initialViewMode }) => {
     setState(oldState => ({ ...oldState, viewMode: newMode }));
   }
 
-  // const [updateDocument] = useMutation(updateDocumentMutation);
+  const [updateDocument] = useMutation(updateDocumentMutation);
   const { loading, error, data } = useQuery(documentQuery, {
     variables: { id: documentId, queryParams: {} },
   });
@@ -95,8 +76,7 @@ const Document = ({ documentId, discussionId, viewMode: initialViewMode }) => {
   if (loading) return null;
   if (error || !data.document) return <NotFound />;
 
-  // const { body, title, updatedAt } = data.document;
-  const { updatedAt } = data.document;
+  const { body, title, updatedAt } = data.document;
   // const { payload: contents } = body || {};
   if (!state.updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
 
@@ -191,28 +171,33 @@ const Document = ({ documentId, discussionId, viewMode: initialViewMode }) => {
       {viewMode === 'content' && (
         <>
           <Container>
-            {/* <TitleEditor
+            <Slate
+              editor={titleEditor}
+              value={documentTitle}
+              onChange={v => setDocumentTitle(v)}
+            >
+              <TitleEditable />
+            </Slate>
+            {/*
               contentType="documentTitle"
               disableAutoFocus={!!title}
               initialValue={title}
               isPlainText
-              mode="compose" // Allowing anyone to compose a document for now
               onSubmit={handleUpdateTitle}
               saveOnBlur
             /> */}
-            {/* <DocumentEditor
-              contentType="document"
-              disableAutoFocus={!contents}
-              documentId={documentId}
-              handleShowDiscussion={handleShowDiscussion}
-              initialValue={contents}
-              isAuthor // Allowing anyone to compose a document for now
-              mode="compose" // Allowing anyone to compose a document for now
-              onSubmit={handleUpdateBody}
-              resourceId={documentId}
-            /> */}
-            <Slate editor={docEditor} value={value} onChange={v => setValue(v)}>
-              <Editable />
+            <Slate
+              editor={documentEditor}
+              value={documentValue}
+              onChange={v => setDocumentValue(v)}
+            >
+              <DocumentEditable />
+              {/* disableAutoFocus={!contents}
+                documentId={documentId}
+                handleShowDiscussion={handleShowDiscussion}
+                initialValue={contents}
+                onSubmit={handleUpdateBody}
+                resourceId={documentId} */}
             </Slate>
 
             {updatedTimestamp && <LastUpdatedIndicator timestamp={updatedTimestamp} />}
