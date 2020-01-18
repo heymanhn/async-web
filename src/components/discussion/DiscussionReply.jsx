@@ -5,7 +5,6 @@ import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import addDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
-import deleteDraftFromDiscussionMtn from 'graphql/mutations/local/deleteDraftFromDiscussion';
 import addNewReplyToDiscussionMtn from 'graphql/mutations/local/addNewReplyToDiscussion';
 import createReplyMutation from 'graphql/mutations/createReply';
 import updateReplyMutation from 'graphql/mutations/updateReply';
@@ -14,6 +13,7 @@ import createReplyDraftMutation from 'graphql/mutations/createReplyDraft';
 import deleteReplyDraftMutation from 'graphql/mutations/deleteReplyDraft';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
+import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import { getLocalUser } from 'utils/auth';
 import { track } from 'utils/analytics';
 import useHover from 'utils/hooks/useHover';
@@ -138,13 +138,13 @@ const DiscussionReply = ({
         await client.mutate({
           mutation: deleteDiscussionMutation,
           variables: { discussionId, documentId },
+          refetchQueries: [{
+            query: documentDiscussionsQuery,
+            variables: { id: documentId, queryParams: { order: 'desc' } },
+          }],
+          awaitRefetchQueries: true,
         });
         onCancel({ closeModal: true });
-      } else {
-        client.mutate({
-          mutation: deleteDraftFromDiscussionMtn,
-          variables: { discussionId },
-        });
       }
 
       return Promise.resolve();

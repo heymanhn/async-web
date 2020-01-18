@@ -69,7 +69,7 @@ const DiscussionContainer = ({
     getDiscussion();
     return null;
   }
-  if ((!loading && (!data || !data.discussionId)) && !documentId) return <NotFound />;
+  if ((!loading && (!data || !data.discussion)) && !documentId) return <NotFound />;
 
   // HN: Double check if all this logic is still needed in Roval v2
   let discussion = null;
