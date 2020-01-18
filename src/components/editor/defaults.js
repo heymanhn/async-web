@@ -1,22 +1,10 @@
 export const DEFAULT_NODE = 'paragraph';
 export const DEFAULT_PLAIN_NODE = 'line';
 
-export const DEFAULT_VALUE = {
-  document: {
-    nodes: [
-      {
-        object: 'block',
-        type: DEFAULT_NODE,
-        nodes: [
-          {
-            object: 'text',
-            text: '',
-          },
-        ],
-      },
-    ],
-  },
-};
+export const DEFAULT_VALUE = [{
+  type: DEFAULT_NODE,
+  children: [{ text: '' }],
+}];
 
 export const TOOLBAR_SOURCE = 'toolbar';
 export const COMPOSITION_MENU_SOURCE = 'compositionMenu';
