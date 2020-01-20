@@ -15,7 +15,15 @@ export default gql`
     createdAt
     updatedAt
     tags
-    status
+    status @type(name: "DiscussionStatus") {
+      author @type(name: "Author") {
+        id
+        fullName
+        profilePictureUrl
+      }
+      state
+      updatedAt
+    }
     draft @type(name: "ReplyDraft") {
       body @type(name: "Body") {
         ...BodyObject

@@ -88,10 +88,20 @@ const AddReplyBox = ({
   });
 
   if (loading) return null;
-  const { status, author } = data.discussion;
+  const { status } = data.discussion;
 
   async function updateDiscussionStatus(value) {
-    const input = { status: value };
+    const input = {
+      status: {
+        author: {
+          id: currentUser.id,
+          fullName: currentUser.fullName,
+          profilePictureUrl: currentUser.profilePictureUrl,
+        },
+        state: value,
+      },
+    };
+
     updateDiscussion({
       variables: { documentId, discussionId, input },
       refetchQueries: [{
@@ -102,15 +112,15 @@ const AddReplyBox = ({
   }
 
   return (
-    <AddReplyContainer {...props} status={status}>
-      {status === 'resolved' ? (
+    <AddReplyContainer {...props} status={status && status.state}>
+      {status && status.state === 'resolved' ? (
         <React.Fragment>
           <AddReplyItem>
             <ResolveAuthorContainter>
-              <AvatarWithMargin avatarUrl={author.profilePictureUrl} size={32} />
+              <AvatarWithMargin avatarUrl={status.author.profilePictureUrl} size={32} />
               <ResolvedDiscussionAuthorIcon icon={faCommentCheck} />
             </ResolveAuthorContainter>
-            <AddReplyLabel>{`${author.fullName} marked this discussion as resolved`}</AddReplyLabel>
+            <AddReplyLabel>{`${status.author.fullName} marked this discussion as resolved`}</AddReplyLabel>
           </AddReplyItem>
           <AddReplyItem>
             <ResolveDiscussionButton onClick={() => updateDiscussionStatus('open')}>
