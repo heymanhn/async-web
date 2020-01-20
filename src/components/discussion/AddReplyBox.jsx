@@ -95,8 +95,6 @@ const AddReplyBox = ({
       status: {
         author: {
           id: currentUser.id,
-          fullName: currentUser.fullName,
-          profilePictureUrl: currentUser.profilePictureUrl,
         },
         state: value,
       },
@@ -104,10 +102,6 @@ const AddReplyBox = ({
 
     updateDiscussion({
       variables: { documentId, discussionId, input },
-      refetchQueries: [{
-        query: discussionQuery,
-        variables: { id: discussionId, queryParams: {} },
-      }],
     });
   }
 
