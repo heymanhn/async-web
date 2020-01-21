@@ -55,6 +55,23 @@ const ReplyCountIndicator = styled.div(({ theme: { colors } }) => ({
   paddingLeft: '25px',
 }));
 
+const NewReplyContainer = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+});
+
+const NewReplyIndicator = styled.span(({ theme: { colors } }) => ({
+  height: '6px',
+  width: '6px',
+  backgroundColor: colors.blue,
+  borderRadius: '50%',
+}));
+
+const NewReplyLabel = styled(ReplyCountIndicator)(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  paddingLeft: '5px',
+}));
+
 const InlineDiscussionPreview = ({ discussionId, handleShowDiscussion, isOpen }) => {
   const { loading, error, data: discussionData } = useQuery(discussionQuery, {
     variables: { id: discussionId, queryParams: {} },
@@ -63,11 +80,12 @@ const InlineDiscussionPreview = ({ discussionId, handleShowDiscussion, isOpen })
   if (loading) return null;
   if (error || !discussionData.discussion) return <div>{error}</div>;
 
-  const { draft, lastReply, replyCount } = discussionData.discussion;
+  const { draft, lastReply, replyCount, tags } = discussionData.discussion;
   const { author } = lastReply || discussionData.discussion;
   const { body } = draft || lastReply;
   const { profilePictureUrl } = author;
   const { text } = body;
+  const newReplies = tags && tags.includes('new_replies');
 
   // HN: Make a better UI for a draft indicator in the preview in the future
   const displayText = draft ? `(Draft) ${text}` : text;
@@ -82,7 +100,14 @@ const InlineDiscussionPreview = ({ discussionId, handleShowDiscussion, isOpen })
           </Truncate>
         </PreviewSnippet>
       </LastReplyDetails>
-      <ReplyCountIndicator>{Pluralize('reply', replyCount, true)}</ReplyCountIndicator>
+      {newReplies ? (
+        <NewReplyContainer>
+          <NewReplyIndicator />
+          <NewReplyLabel>New Replies</NewReplyLabel>
+        </NewReplyContainer>
+      ) : (
+        <ReplyCountIndicator>{Pluralize('reply', replyCount, true)}</ReplyCountIndicator>
+      )}
     </Container>
   );
 };
