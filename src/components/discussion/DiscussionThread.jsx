@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
+import { useQuery, useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
-// import useMountEffect from 'utils/hooks/useMountEffect';
-// import useViewedReaction from 'utils/hooks/useViewedReaction';
+import useMountEffect from 'utils/hooks/useMountEffect';
+import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
 
 import DiscussionReply from './DiscussionReply';
@@ -32,24 +32,27 @@ const StyledDiscussionReply = styled(DiscussionReply)(({ theme: { colors } }) =>
   paddingBottom: '10px',
 }));
 
-const DiscussionThread = ({ discussionId, documentId }) => {
-  // const client = useApolloClient();
+const StyledUnreadDiscussionReply = styled(StyledDiscussionReply)(({ theme: { colors } }) => ({
+  backgroundColor: colors.unreadBlue,
+}));
+
+const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
+  const client = useApolloClient();
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
 
-  // TODO: Re-enabling this when viewed reactions are supported in discussions
-  // const { markAsRead } = useViewedReaction();
-  // useMountEffect(() => {
-  //   client.writeData({ data: { pendingReplies: [] } });
+  const { markAsRead } = useViewedReaction();
+  useMountEffect(() => {
+    client.writeData({ data: { pendingReplies: [] } });
 
-  //   markAsRead({
-  //     isUnread,
-  //     objectType: 'discussion',
-  //     objectId: discussionId,
-  //     parentId: documentId,
-  //   });
-  // });
+    return markAsRead({
+      isUnread,
+      objectType: 'discussion',
+      objectId: discussionId,
+      parentId: documentId,
+    });
+  });
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
     variables: { id: discussionId, queryParams: {} },
@@ -98,16 +101,28 @@ const DiscussionThread = ({ discussionId, documentId }) => {
     return targetReply ? targetReply.id : null;
   }
 
+  function newReply(r) {
+    return r.tags && r.tags.includes('new_reply');
+  }
+
   return (
     <Container ref={discussionRef}>
       {replies.map(m => (
         <React.Fragment key={m.id}>
           {firstNewReplyId() === m.id && m.id !== replies[0].id && <NewRepliesIndicator />}
-          <StyledDiscussionReply
-            discussionId={discussionId}
-            documentId={documentId}
-            initialReply={m}
-          />
+          {newReply(m) ? (
+            <StyledUnreadDiscussionReply
+              discussionId={discussionId}
+              documentId={documentId}
+              initialReply={m}
+            />
+          ) : (
+            <StyledDiscussionReply
+              discussionId={discussionId}
+              documentId={documentId}
+              initialReply={m}
+            />
+          )}
         </React.Fragment>
       ))}
     </Container>
@@ -117,7 +132,7 @@ const DiscussionThread = ({ discussionId, documentId }) => {
 DiscussionThread.propTypes = {
   discussionId: PropTypes.string.isRequired,
   documentId: PropTypes.string.isRequired,
-  // isUnread: PropTypes.bool.isRequired,
+  isUnread: PropTypes.bool.isRequired,
 };
 
 export default DiscussionThread;

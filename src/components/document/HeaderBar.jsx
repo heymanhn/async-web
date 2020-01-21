@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 // hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
 // Undo once that's fixed
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 
 import documentQuery from 'graphql/queries/document';
 import organizationQuery from 'graphql/queries/organization';
@@ -131,39 +131,25 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
   function closeDropdown() { setIsDropdownOpen(false); }
 
   const { organizationId } = getLocalAppState();
-  const [getOrganization, { data }] = useLazyQuery(organizationQuery, {
+
+  const { loading: loadingOrg, data: organizationData } = useQuery(organizationQuery, {
     variables: { id: organizationId },
   });
 
-  const [getDocument, { error, data: documentData }] = useLazyQuery(documentQuery, {
+  const { loading: loadingDoc, data: documentData } = useQuery(documentQuery, {
     variables: { id: documentId, queryParams: {} },
   });
 
-  const [getNotifications, { data: notificationsData }] = useLazyQuery(notificationsQuery, {
+  const { loading, data: notificationsData } = useQuery(notificationsQuery, {
     variables: { id: documentId },
   });
 
   if (!organizationId) return null;
-  if (organizationId && !data) {
-    getOrganization();
-    return null;
-  }
-  if (documentId && !documentData) {
-    getDocument();
-    return null;
-  }
-  if (!notificationsData) {
-    getNotifications();
-    return null;
-  }
+  if (loadingOrg || !organizationData.organization) return null;
+  if (loadingDoc || !documentData.document) return null;
+  if (loading || !notificationsData.documentNotifications) return null;
 
-  if (error
-    || !documentData.document
-    || !data.organization
-    || !notificationsData.documentNotifications
-  ) return null;
-
-  const { logo } = data.organization;
+  const { logo } = organizationData.organization;
   const { title } = documentData.document;
   const { notifications } = notificationsData.documentNotifications;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ theme: { discussionViewport } }) => ({
+const Container = styled.div(({ theme: { colors, discussionViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -9,18 +9,13 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 
   margin: '0 -30px 30px',
   padding: '0 30px',
+  height: '37px',
+  backgroundColor: colors.unreadBlue,
   width: discussionViewport,
 }));
 
-const Divider = styled.hr(({ theme: { colors } }) => ({
-  borderTop: `2px solid ${colors.blue}`,
-  margin: '10px 0',
-  width: '100%',
-}));
-
 const NewRepliesLabel = styled.div(({ theme: { colors } }) => ({
-  background: colors.bgGrey,
-  color: colors.blue,
+  color: colors.grey1,
   fontSize: '16px',
   fontWeight: 500,
   marginTop: '-2px',
@@ -30,8 +25,7 @@ const NewRepliesLabel = styled.div(({ theme: { colors } }) => ({
 
 const NewRepliesIndicator = () => (
   <Container>
-    <Divider />
-    <NewRepliesLabel>new replies</NewRepliesLabel>
+    <NewRepliesLabel>show new replies</NewRepliesLabel>
   </Container>
 );
 

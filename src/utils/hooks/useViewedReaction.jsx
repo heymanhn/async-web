@@ -1,14 +1,15 @@
 import { useApolloClient } from 'react-apollo';
 
-import meetingQuery from 'graphql/queries/meeting';
 import createReactionMutation from 'graphql/mutations/createReaction';
-import markConversationAsReadMutation from 'graphql/mutations/local/markConversationAsRead';
+import markDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';
+import documentNotificationsQuery from 'graphql/queries/documentNotifications';
+import discussionQuery from 'graphql/queries/discussion';
 
 const useViewedReaction = () => {
   const client = useApolloClient();
 
   function markAsRead({ isUnread, objectType, objectId, parentId } = {}) {
-    const meetingId = parentId || objectId;
+    const documentId = parentId || objectId;
 
     client.mutate({
       mutation: createReactionMutation,
@@ -19,22 +20,27 @@ const useViewedReaction = () => {
           code: 'viewed',
         },
       },
-      refetchQueries: [{
-        query: meetingQuery,
-        variables: { id: meetingId, queryParams: {} },
-      }],
+      refetchQueries: [
+        {
+          query: documentNotificationsQuery,
+          variables: { id: documentId, queryParams: {} },
+        },
+        {
+          query: discussionQuery,
+          variables: { id: objectId, queryParams: {} },
+        },
+      ],
       // We're updating the cache directly instead of using refetchQueries since the conversations
       // list might be paginated, and we don't want to lose the user's intended scroll position
       // in the meeting space page
       update: () => {
         if (!isUnread) return;
 
-        if (objectType === 'conversation') {
+        if (objectType === 'discussion') {
           client.mutate({
-            mutation: markConversationAsReadMutation,
+            mutation: markDiscussionAsReadMutation,
             variables: {
-              conversationId: objectId,
-              meetingId,
+              discussionId: objectId,
             },
           });
         }
