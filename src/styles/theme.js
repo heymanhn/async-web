@@ -70,6 +70,7 @@ export const theme = {
     selectedValueBlue: '#beeafe',
     lightestBlue: '#f3f9ff',
     sidebarBlue: '#4b93c2',
+    unreadBlue: '#F4FCFF',
 
     highlightYellow: '#fff495',
 
