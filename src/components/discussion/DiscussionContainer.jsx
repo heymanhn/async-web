@@ -157,7 +157,7 @@ const DiscussionContainer = ({
           mode="display"
         />
       )}
-      {discussionId && !loading && documentId && (
+      {discussionId && documentId && (
         <DiscussionThread
           discussionId={discussionId}
           documentId={documentId}
