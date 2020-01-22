@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
+
+import DocumentAccessModal from './DocumentAccessModal';
 
 const ShareButton = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -18,10 +20,18 @@ const ShareButton = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DocumentAccessContainer = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <ShareButton>
-      Share
-    </ShareButton>
+    <>
+      <ShareButton onClick={() => setIsModalOpen(true)}>
+        Share
+      </ShareButton>
+      <DocumentAccessModal
+        handleClose={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+      />
+    </>
   );
 };
 

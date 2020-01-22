@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const Backdrop = styled.div(({ color, theme: { colors } }) => ({
-  background: `${colors[color]}`,
+const Backdrop = styled.div(({ customStyle, theme: { colors } }) => ({
+  background: colors.white,
   opacity: 0.75,
   position: 'fixed',
   top: 0,
@@ -12,6 +12,7 @@ const Backdrop = styled.div(({ color, theme: { colors } }) => ({
   width: '100vw',
   height: '100vh',
   zIndex: 1000,
+  ...customStyle,
 }));
 
 const Container = styled.div({
@@ -37,7 +38,7 @@ const Dialog = styled.div(({ theme: { colors, documentViewport } }) => ({
   width: documentViewport,
 }));
 
-const Modal = ({ backdropColor, children, handleClose, isOpen, ...props }) => {
+const Modal = ({ backdropStyle, children, handleClose, isOpen, ...props }) => {
   const root = window.document.getElementById('root');
 
   document.body.style.overflow = isOpen ? 'hidden' : 'auto';
@@ -49,21 +50,21 @@ const Modal = ({ backdropColor, children, handleClose, isOpen, ...props }) => {
           {children}
         </Dialog>
       </Container>
-      <Backdrop color={backdropColor} />
+      <Backdrop customStyle={backdropStyle} />
     </>,
     root,
   ) : null;
 };
 
 Modal.propTypes = {
-  backdropColor: PropTypes.string,
+  backdropStyle: PropTypes.object,
   children: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
 
 Modal.defaultProps = {
-  backdropColor: 'white',
+  backdropStyle: {},
 };
 
 export default Modal;
