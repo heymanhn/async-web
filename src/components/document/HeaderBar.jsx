@@ -16,6 +16,7 @@ import { getLocalAppState } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
 import DropdownMenu from 'components/navigation/DropdownMenu';
+import DocumentAccessContainer from './DocumentAccessContainer';
 import NewDocumentButton from './NewDocumentButton';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -48,6 +49,7 @@ const DocumentTitle = styled.div(({ theme: { colors } }) => ({
   color: colors.grey1,
   fontSize: '14px',
   position: 'relative',
+  marginRight: '20px',
   top: '2px',
 }));
 
@@ -168,6 +170,7 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
           organizationId={organizationId}
         />
         <DocumentTitle>{title || 'Untitled Document'}</DocumentTitle>
+        <DocumentAccessContainer />
       </MenuSection>
       <NavigationSection>
         <ContentModeButton
