@@ -50,7 +50,7 @@ function addNewReplyToDiscussion(_root, { isUnread, reply }, { client }) {
       __typename: 'Reply',
       ...reply,
       author: {
-        __typename: 'Author',
+        __typename: 'User',
         ...newAuthor,
       },
       body: {
