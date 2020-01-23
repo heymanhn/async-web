@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import Modal from 'components/shared/Modal';
+import OrganizationMemberSearch from './OrganizationMemberSearch';
 import ParticipantsList from './ParticipantsList';
 
 const StyledModal = styled(Modal)({
@@ -43,6 +44,7 @@ const DocumentAccessModal = ({
   >
     <Header>Share this Document</Header>
     <Contents>
+      <OrganizationMemberSearch documentId={documentId} />
       <ParticipantsList documentId={documentId} />
     </Contents>
   </StyledModal>
