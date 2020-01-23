@@ -4,11 +4,15 @@ import styled from '@emotion/styled';
 
 import Avatar from 'components/shared/Avatar';
 
-const Container = styled.div({
+const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   margin: '7px 0',
   padding: '0 15px',
-});
+
+  ':hover': {
+    background: colors.grey7,
+  },
+}));
 
 const StyledAvatar = styled(Avatar)(({ isParticipant }) => ({
   flexShrink: 0,
