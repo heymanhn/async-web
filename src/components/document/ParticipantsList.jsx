@@ -9,9 +9,10 @@ import ParticipantRow from './ParticipantRow';
 const ParticipantsList = ({ documentId }) => {
   const { loading, data } = useQuery(documentParticipantsQuery, {
     variables: { id: documentId },
+    fetchPolicy: 'cache-and-network',
   });
 
-  if (loading) return null;
+  if (loading && (!data || !data.documentParticipants)) return null;
 
   const { documentParticipants } = data;
   const { participants } = documentParticipants;

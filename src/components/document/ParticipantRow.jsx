@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import documentParticipantsQuery from 'graphql/queries/documentParticipants';
+import localRemoveParticipantMutation from 'graphql/mutations/local/removeDocumentParticipant';
 import removeParticipantMutation from 'graphql/mutations/removeParticipant';
 
 import Avatar from 'components/shared/Avatar';
@@ -13,7 +13,7 @@ const Container = styled.div({
   justifyContent: 'space-between',
   alignItems: 'center',
 
-  marginBottom: '12px',
+  marginBottom: '15px',
   ':last-of-type': {
     marginBottom: 0,
   },
@@ -43,19 +43,27 @@ const RemoveButton = styled.div(({ theme: { colors } }) => ({
 
 const ParticipantRow = ({ accessType, documentId, user }) => {
   const { fullName, id, profilePictureUrl } = user;
+
+  const [localRemoveParticipant] = useMutation(localRemoveParticipantMutation, {
+    variables: {
+      id: documentId,
+      participantId: id,
+    },
+  });
   const [removeParticipant] = useMutation(removeParticipantMutation, {
     variables: {
       id: documentId,
       userId: id,
     },
-    refetchQueries: [{
-      query: documentParticipantsQuery,
-      variables: { id: documentId },
-    }],
   });
 
+  function handleRemoveParticipant() {
+    removeParticipant();
+    localRemoveParticipant();
+  }
+
   const removeParticipantButton = (
-    <RemoveButton onClick={removeParticipant}>
+    <RemoveButton onClick={handleRemoveParticipant}>
       remove
     </RemoveButton>
   );
