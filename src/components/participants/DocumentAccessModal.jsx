@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -36,19 +36,35 @@ const DocumentAccessModal = ({
   documentId,
   handleClose,
   isOpen,
-}) => (
-  <StyledModal
-    backdropStyle={customBackdropStyle}
-    handleClose={handleClose}
-    isOpen={isOpen}
-  >
-    <Header>Share this Document</Header>
-    <Contents>
-      <OrganizationMemberSearch documentId={documentId} />
-      <ParticipantsList documentId={documentId} />
-    </Contents>
-  </StyledModal>
-);
+}) => {
+  // Putting the state here so that clicking anywhere on the modal
+  // dismisses the dropdown
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+  function handleShowDropdown() { setIsDropdownVisible(true); }
+  function handleHideDropdown() {
+    setIsDropdownVisible(false);
+  }
+
+  return (
+    <StyledModal
+      backdropStyle={customBackdropStyle}
+      handleClose={handleClose}
+      isOpen={isOpen}
+    >
+      <Header onClick={handleHideDropdown}>Share this Document</Header>
+      <Contents onClick={handleHideDropdown}>
+        <OrganizationMemberSearch
+          documentId={documentId}
+          isDropdownVisible={isDropdownVisible}
+          handleShowDropdown={handleShowDropdown}
+          handleHideDropdown={handleHideDropdown}
+        />
+        <ParticipantsList documentId={documentId} />
+      </Contents>
+    </StyledModal>
+  );
+};
 
 DocumentAccessModal.propTypes = {
   documentId: PropTypes.string.isRequired,

@@ -36,7 +36,12 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
   },
 }));
 
-const OrganizationMemberSearch = ({ documentId }) => {
+const OrganizationMemberSearch = ({
+  documentId,
+  isDropdownVisible,
+  handleShowDropdown,
+  handleHideDropdown,
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -65,6 +70,7 @@ const OrganizationMemberSearch = ({ documentId }) => {
     const currentQuery = event.target.value;
     setSearchQuery(currentQuery);
     setSelectedIndex(0);
+    handleShowDropdown();
   }
 
   // Neat trick to support modular arithmetic for negative numbers
@@ -94,8 +100,9 @@ const OrganizationMemberSearch = ({ documentId }) => {
     setSelectedIndex(0);
   }
 
+  const results = memberSearch();
+
   function handleKeyPress(event) {
-    const results = memberSearch();
     if (!results.length) return null;
 
     if (isHotkey('ArrowDown', event)) {
@@ -111,6 +118,8 @@ const OrganizationMemberSearch = ({ documentId }) => {
       return handleAddParticipant(results[selectedIndex]);
     }
 
+    if (isHotkey('Escape', event)) return handleHideDropdown();
+
     return null;
   }
 
@@ -118,24 +127,30 @@ const OrganizationMemberSearch = ({ documentId }) => {
     <Container>
       <SearchInput
         onChange={handleChange}
+        onClick={e => e.stopPropagation()}
         onKeyDown={handleKeyPress}
         placeholder="Enter an email address or name"
         spellCheck="false"
         type="text"
         value={searchQuery}
       />
-      <MemberResults
-        documentId={documentId}
-        handleAddParticipant={handleAddParticipant}
-        results={memberSearch()}
-        selectedIndex={selectedIndex}
-      />
+      {isDropdownVisible ? (
+        <MemberResults
+          documentId={documentId}
+          handleAddParticipant={handleAddParticipant}
+          results={results}
+          selectedIndex={selectedIndex}
+        />
+      ) : undefined}
     </Container>
   );
 };
 
 OrganizationMemberSearch.propTypes = {
   documentId: PropTypes.string.isRequired,
+  isDropdownVisible: PropTypes.bool.isRequired,
+  handleShowDropdown: PropTypes.func.isRequired,
+  handleHideDropdown: PropTypes.func.isRequired,
 };
 
 export default OrganizationMemberSearch;
