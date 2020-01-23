@@ -11,7 +11,7 @@ const StyledModal = styled(Modal)({
 
   border: 'none',
   boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.08)',
-  marginTop: '200px',
+  margin: `${window.innerHeight * 0.2}px auto`,
   width: '450px',
 });
 
