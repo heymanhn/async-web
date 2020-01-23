@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 
 import organizationMembersQuery from 'graphql/queries/organizationMembers';
 import addParticipantMutation from 'graphql/mutations/addParticipant';
+import localAddParticipantMutation from 'graphql/mutations/local/addDocumentParticipant';
 import { getLocalAppState } from 'utils/auth';
 
 import MemberResults from './MemberResults';
@@ -43,6 +44,7 @@ const OrganizationMemberSearch = ({ documentId }) => {
   const { organizationId: id } = getLocalAppState();
   const { loading, data } = useQuery(organizationMembersQuery, { variables: { id } });
   const [addParticipant] = useMutation(addParticipantMutation);
+  const [localAddParticipant] = useMutation(localAddParticipantMutation);
 
   if (loading || !data.organizationMembers) return null;
 
@@ -65,18 +67,24 @@ const OrganizationMemberSearch = ({ documentId }) => {
     });
   }
 
-  function handleAddParticipant(userId) {
-    // TODO: Do the local cache updates after adding participant
+  function handleAddParticipant(user) {
+    const DEFAULT_ACCESS_TYPE = 'collaborator';
 
-    return addParticipant({
+    addParticipant({
       variables: {
         id: documentId,
         input: {
-          userId,
-          accessType: 'collaborator',
+          userId: user.id,
+          accessType: DEFAULT_ACCESS_TYPE,
         },
       },
     });
+
+    localAddParticipant({
+      variables: { id: documentId, user, accessType: DEFAULT_ACCESS_TYPE },
+    });
+
+    setSearchQuery('');
   }
 
   return (

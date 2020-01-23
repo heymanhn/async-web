@@ -119,6 +119,38 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
   return null;
 }
 
+function addDocumentParticipant(_root, { id, user, accessType }, { client }) {
+  const data = client.readQuery({
+    query: documentParticipantsQuery,
+    variables: { id },
+  });
+  if (!data) return null;
+
+  const { documentParticipants } = data;
+  const { participants, __typename } = documentParticipants;
+
+  const newParticipant = {
+    ...participants[0],
+    user,
+    accessType,
+  };
+
+  client.writeQuery({
+    query: documentParticipantsQuery,
+    variables: { id },
+    data: {
+      documentParticipants: {
+        participants: [
+          ...participants,
+          newParticipant,
+        ],
+        __typename,
+      },
+    },
+  });
+
+  return null;
+}
 
 function removeDocumentParticipant(_root, { id, participantId }, { client }) {
   const data = client.readQuery({
@@ -196,6 +228,7 @@ const localResolvers = {
     deleteDraftFromDiscussion,
     addNewReplyToDiscussion,
     addPendingRepliesToDiscussion,
+    addDocumentParticipant,
     removeDocumentParticipant,
     updateDocumentBadgeCount,
   },
