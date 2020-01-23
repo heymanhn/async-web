@@ -1,14 +1,14 @@
 import gql from 'graphql-tag';
 
-import author from './author';
 import body from './body';
+import user from './user';
 
 export default gql`
   fragment DocumentObject on Document {
     id
     title
-    owner @type(name: "Author") {
-      ...AuthorObject
+    owner @type(name: "User") {
+      ...UserObject
     }
     body @type(name: "Body") {
       ...BodyObject
@@ -16,6 +16,6 @@ export default gql`
     createdAt
     updatedAt
   }
-  ${author}
   ${body}
+  ${user}
 `;

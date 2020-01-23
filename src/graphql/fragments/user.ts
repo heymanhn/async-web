@@ -1,9 +1,10 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  fragment AuthorObject on Author {
+  fragment UserObject on User {
     id
     fullName
+    email
     profilePictureUrl
   }
 `;

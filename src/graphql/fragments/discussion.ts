@@ -1,25 +1,22 @@
 import gql from 'graphql-tag';
 
 import body from 'graphql/fragments/body';
+import user from 'graphql/fragments/user';
 
 export default gql`
   fragment DiscussionObject on Discussion {
     id
     title
     documentId
-    author @type(name: "Author") {
-      id
-      fullName
-      profilePictureUrl
+    author @type(name: "User") {
+      ...UserObject
     }
     createdAt
     updatedAt
     tags
     status @type(name: "DiscussionStatus") {
-      author @type(name: "Author") {
-        id
-        fullName
-        profilePictureUrl
+      author @type(name: "User") {
+        ...UserObject
       }
       state
       updatedAt
@@ -34,4 +31,5 @@ export default gql`
     }
   }
   ${body}
+  ${user}
 `;

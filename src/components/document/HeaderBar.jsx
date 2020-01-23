@@ -15,7 +15,9 @@ import notificationsQuery from 'graphql/queries/documentNotifications';
 import { getLocalAppState } from 'utils/auth';
 
 import Avatar from 'components/shared/Avatar';
+import VerticalDivider from 'components/shared/VerticalDivider';
 import DropdownMenu from 'components/navigation/DropdownMenu';
+import DocumentAccessContainer from './DocumentAccessContainer';
 import NewDocumentButton from './NewDocumentButton';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -36,6 +38,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
 const MenuSection = styled.div({
   display: 'flex',
   flexDirection: 'row',
+  alignItems: 'center',
   marginLeft: '30px',
 });
 
@@ -48,7 +51,6 @@ const DocumentTitle = styled.div(({ theme: { colors } }) => ({
   color: colors.grey1,
   fontSize: '14px',
   position: 'relative',
-  top: '2px',
 }));
 
 const NavigationSection = styled.div({
@@ -168,6 +170,8 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
           organizationId={organizationId}
         />
         <DocumentTitle>{title || 'Untitled Document'}</DocumentTitle>
+        <VerticalDivider />
+        <DocumentAccessContainer documentId={documentId} />
       </MenuSection>
       <NavigationSection>
         <ContentModeButton

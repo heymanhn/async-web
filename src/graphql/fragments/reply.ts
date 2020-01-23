@@ -1,13 +1,13 @@
 import gql from 'graphql-tag';
 
-import author from './author';
 import body from './body';
+import user from './user';
 
 export default gql`
   fragment ReplyObject on Reply {
     id
-    author @type(name: "Author") {
-      ...AuthorObject
+    author @type(name: "User") {
+      ...UserObject
     }
     body @type(name: "Body") {
       ...BodyObject
@@ -16,6 +16,6 @@ export default gql`
     updatedAt
     discussionId
   }
-  ${author}
   ${body}
+  ${user}
 `;

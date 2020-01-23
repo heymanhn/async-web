@@ -1,5 +1,6 @@
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
+import documentParticipantsQuery from 'graphql/queries/documentParticipants';
 
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
   const data = client.readQuery({
@@ -50,7 +51,7 @@ function addNewReplyToDiscussion(_root, { isUnread, reply }, { client }) {
       __typename: 'Reply',
       ...reply,
       author: {
-        __typename: 'Author',
+        __typename: 'User',
         ...newAuthor,
       },
       body: {
@@ -116,12 +117,44 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
   return null;
 }
 
+
+function removeDocumentParticipant(_root, { id, participantId }, { client }) {
+  const data = client.readQuery({
+    query: documentParticipantsQuery,
+    variables: { id },
+  });
+  if (!data) return null;
+
+  const { documentParticipants } = data;
+  const { participants, __typename } = documentParticipants;
+
+  const index = participants.findIndex(p => p.user.id === participantId);
+  if (index < 0) return null;
+
+  client.writeQuery({
+    query: documentParticipantsQuery,
+    variables: { id },
+    data: {
+      documentParticipants: {
+        participants: [
+          ...participants.slice(0, index),
+          ...participants.slice(index + 1),
+        ],
+        __typename,
+      },
+    },
+  });
+
+  return null;
+}
+
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
     deleteDraftFromDiscussion,
     addNewReplyToDiscussion,
     addPendingRepliesToDiscussion,
+    removeDocumentParticipant,
   },
 };
 
