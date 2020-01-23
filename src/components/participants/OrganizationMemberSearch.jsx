@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
+import { useMutation, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import organizationMembersQuery from 'graphql/queries/organizationMembers';
+import addParticipantMutation from 'graphql/mutations/addParticipant';
 import { getLocalAppState } from 'utils/auth';
 
 import MemberResults from './MemberResults';
@@ -41,6 +42,8 @@ const OrganizationMemberSearch = ({ documentId }) => {
 
   const { organizationId: id } = getLocalAppState();
   const { loading, data } = useQuery(organizationMembersQuery, { variables: { id } });
+  const [addParticipant] = useMutation(addParticipantMutation);
+
   if (loading || !data.organizationMembers) return null;
 
   let { members } = data.organizationMembers || [];
@@ -62,6 +65,20 @@ const OrganizationMemberSearch = ({ documentId }) => {
     });
   }
 
+  function handleAddParticipant(userId) {
+    // TODO: Do the local cache updates after adding participant
+
+    return addParticipant({
+      variables: {
+        id: documentId,
+        input: {
+          userId,
+          accessType: 'collaborator',
+        },
+      },
+    });
+  }
+
   return (
     <Container>
       <SearchInput
@@ -73,6 +90,7 @@ const OrganizationMemberSearch = ({ documentId }) => {
       />
       <MemberResults
         documentId={documentId}
+        handleAddParticipant={handleAddParticipant}
         results={memberSearch()}
       />
     </Container>

@@ -29,11 +29,11 @@ const Email = styled.div(({ theme: { colors } }) => ({
   marginTop: '5px',
 }));
 
-const MemberRow = ({ member }) => {
+const MemberRow = ({ member, ...props }) => {
   const { email, fullName, profilePictureUrl } = member;
 
   return (
-    <Container>
+    <Container {...props}>
       <StyledAvatar
         alt={fullName}
         avatarUrl={profilePictureUrl}

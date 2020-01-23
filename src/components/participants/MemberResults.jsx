@@ -19,7 +19,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.1)',
 }));
 
-const MemberResults = ({ documentId, results }) => {
+const MemberResults = ({ documentId, handleAddParticipant, results }) => {
   const { loading, data } = useQuery(documentParticipantsQuery, {
     variables: { id: documentId },
   });
@@ -32,7 +32,13 @@ const MemberResults = ({ documentId, results }) => {
 
   return (
     <Container>
-      {results.map(r => <MemberRow key={r.id} member={r} /* isParticipant={participants.findIndex(...) >=0} */ />)}
+      {results.map(r => (
+        <MemberRow
+          key={r.id}
+          member={r} /* isParticipant={participants.findIndex(...) >=0} */
+          onClick={() => handleAddParticipant(r.id)}
+        />
+      ))}
     </Container>
 
   );
@@ -40,6 +46,7 @@ const MemberResults = ({ documentId, results }) => {
 
 MemberResults.propTypes = {
   documentId: PropTypes.string.isRequired,
+  handleAddParticipant: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
 };
 
