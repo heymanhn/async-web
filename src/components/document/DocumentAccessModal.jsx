@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import Modal from 'components/shared/Modal';
+import ParticipantsList from './ParticipantsList';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
@@ -10,7 +11,7 @@ const StyledModal = styled(Modal)({
   border: 'none',
   boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.08)',
   marginTop: '200px',
-  width: '400px',
+  width: '450px',
 });
 
 const customBackdropStyle = {
@@ -20,12 +21,18 @@ const customBackdropStyle = {
 
 const Header = styled.div(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
-  fontSize: '14px',
+  fontSize: '16px',
   fontWeight: 500,
-  padding: '12px 25px',
+  letterSpacing: '-0.011em',
+  padding: '15px 25px',
 }));
 
+const Contents = styled.div({
+  padding: '20px 25px 25px',
+});
+
 const DocumentAccessModal = ({
+  documentId,
   handleClose,
   isOpen,
 }) => (
@@ -35,11 +42,14 @@ const DocumentAccessModal = ({
     isOpen={isOpen}
   >
     <Header>Share this Document</Header>
-    <div>Hello</div>
+    <Contents>
+      <ParticipantsList documentId={documentId} />
+    </Contents>
   </StyledModal>
 );
 
 DocumentAccessModal.propTypes = {
+  documentId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };

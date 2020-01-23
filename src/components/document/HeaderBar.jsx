@@ -171,7 +171,7 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
         />
         <DocumentTitle>{title || 'Untitled Document'}</DocumentTitle>
         <VerticalDivider />
-        <DocumentAccessContainer />
+        <DocumentAccessContainer documentId={documentId} />
       </MenuSection>
       <NavigationSection>
         <ContentModeButton

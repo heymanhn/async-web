@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import DocumentAccessModal from './DocumentAccessModal';
@@ -19,7 +20,7 @@ const ShareButton = styled.div(({ theme: { colors } }) => ({
   padding: '0 15px',
 }));
 
-const DocumentAccessContainer = () => {
+const DocumentAccessContainer = ({ documentId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -28,11 +29,14 @@ const DocumentAccessContainer = () => {
         Share
       </ShareButton>
       <DocumentAccessModal
+        documentId={documentId}
         handleClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
       />
     </>
   );
 };
+
+DocumentAccessContainer.propTypes = { documentId: PropTypes.string.isRequired };
 
 export default DocumentAccessContainer;
