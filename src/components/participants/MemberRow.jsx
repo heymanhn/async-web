@@ -4,10 +4,12 @@ import styled from '@emotion/styled';
 
 import Avatar from 'components/shared/Avatar';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ isParticipant, theme: { colors } }) => ({
   display: 'flex',
+  cursor: isParticipant ? 'default' : 'pointer',
   margin: '7px 0',
   padding: '0 15px',
+  userSelect: 'none',
 
   ':hover': {
     background: colors.grey7,
@@ -36,11 +38,19 @@ const Email = styled.div(({ isParticipant, theme: { colors } }) => ({
   color: isParticipant ? colors.grey4 : colors.grey2,
 }));
 
-const MemberRow = ({ isParticipant, member, ...props }) => {
+const MemberRow = ({ handleAddParticipant, isParticipant, member, ...props }) => {
   const { email, fullName, profilePictureUrl } = member;
 
+  function handleClick() {
+    return isParticipant ? null : handleAddParticipant(member);
+  }
+
   return (
-    <Container {...props}>
+    <Container
+      isParticipant={isParticipant}
+      onClick={handleClick}
+      {...props}
+    >
       <StyledAvatar
         alt={fullName}
         avatarUrl={profilePictureUrl}
@@ -59,6 +69,7 @@ const MemberRow = ({ isParticipant, member, ...props }) => {
 };
 
 MemberRow.propTypes = {
+  handleAddParticipant: PropTypes.func.isRequired,
   isParticipant: PropTypes.bool.isRequired,
   member: PropTypes.object.isRequired,
 };

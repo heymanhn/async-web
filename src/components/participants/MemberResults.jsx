@@ -36,9 +36,9 @@ const MemberResults = ({ documentId, handleAddParticipant, results }) => {
       {results.map(r => (
         <MemberRow
           key={r.id}
+          handleAddParticipant={handleAddParticipant}
           isParticipant={!!participants.find(({ id }) => id === r.id)}
           member={r}
-          onClick={() => handleAddParticipant(r)}
         />
       ))}
     </Container>
