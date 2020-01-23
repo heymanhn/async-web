@@ -10,26 +10,29 @@ const Container = styled.div({
   padding: '0 15px',
 });
 
-const StyledAvatar = styled(Avatar)({
+const StyledAvatar = styled(Avatar)(({ isParticipant }) => ({
   flexShrink: 0,
   marginRight: '12px',
-});
+  opacity: isParticipant ? 0.5 : 1,
+}));
 
 const Details = styled.div({
   fontSize: '14px',
   letterSpacing: '-0.006em',
 });
 
-const Name = styled.div({
+const Name = styled.div(({ isParticipant, theme: { colors } }) => (isParticipant ? {
+  color: colors.grey4,
+} : {
   fontWeight: 600,
-});
-
-const Email = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  marginTop: '5px',
 }));
 
-const MemberRow = ({ member, ...props }) => {
+const Email = styled.div(({ isParticipant, theme: { colors } }) => ({
+  marginTop: '5px',
+  color: isParticipant ? colors.grey4 : colors.grey2,
+}));
+
+const MemberRow = ({ isParticipant, member, ...props }) => {
   const { email, fullName, profilePictureUrl } = member;
 
   return (
@@ -37,17 +40,23 @@ const MemberRow = ({ member, ...props }) => {
       <StyledAvatar
         alt={fullName}
         avatarUrl={profilePictureUrl}
+        isParticipant={isParticipant}
         size={30}
         title={fullName}
       />
       <Details>
-        <Name>{fullName}</Name>
-        <Email>{email}</Email>
+        <Name isParticipant={isParticipant}>
+          {`${fullName}${isParticipant ? ' (joined)' : ''}`}
+        </Name>
+        <Email isParticipant={isParticipant}>{email}</Email>
       </Details>
     </Container>
   );
 };
 
-MemberRow.propTypes = { member: PropTypes.object.isRequired };
+MemberRow.propTypes = {
+  isParticipant: PropTypes.bool.isRequired,
+  member: PropTypes.object.isRequired,
+};
 
 export default MemberRow;

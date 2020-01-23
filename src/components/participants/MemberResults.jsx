@@ -28,14 +28,16 @@ const MemberResults = ({ documentId, handleAddParticipant, results }) => {
   if (loading && (!data || !data.documentParticipants)) return null;
 
   const { documentParticipants } = data;
-  const { participants } = documentParticipants;
+  let { participants } = documentParticipants;
+  participants = (participants || []).map(p => p.user);
 
   return (
     <Container>
       {results.map(r => (
         <MemberRow
           key={r.id}
-          member={r} /* isParticipant={participants.findIndex(...) >=0} */
+          isParticipant={!!participants.find(({ id }) => id === r.id)}
+          member={r}
           onClick={() => handleAddParticipant(r.id)}
         />
       ))}
