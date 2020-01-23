@@ -1,6 +1,8 @@
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
 import documentParticipantsQuery from 'graphql/queries/documentParticipants';
+import documentNotificationsQuery from 'graphql/queries/documentNotifications';
+
 
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
   const data = client.readQuery({
@@ -148,6 +150,48 @@ function removeDocumentParticipant(_root, { id, participantId }, { client }) {
   return null;
 }
 
+function updateDocumentBadgeCount(_root, { documentId, notification }, { client }) {
+  const data = client.readQuery({
+    query: documentNotificationsQuery,
+    variables: { id: documentId },
+  });
+
+  if (!data) return null;
+
+  const { documentNotifications } = data;
+  const { notifications, __typename } = documentNotifications;
+  const index = notifications.findIndex(n => n.objectId === notification.objectId);
+  const newNotification = {
+    __typename: notifications[0].__typename,
+    objectId: notification.objectId,
+    payload: notification.payload,
+    author: {
+      __typename: notifications[0].author.__typename,
+      ...notification.author,
+    },
+    userId: notification.userId,
+  };
+
+  const notificationsData = index < 0 ? [newNotification].concat(notifications) : [
+    newNotification,
+    ...notifications.slice(0, index),
+    ...notifications.slice(index + 1),
+  ];
+
+  client.writeQuery({
+    query: documentNotificationsQuery,
+    variables: { id: documentId },
+    data: {
+      documentNotifications: {
+        notifications: notificationsData,
+        __typename,
+      },
+    },
+  });
+
+  return null;
+}
+
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
@@ -155,6 +199,7 @@ const localResolvers = {
     addNewReplyToDiscussion,
     addPendingRepliesToDiscussion,
     removeDocumentParticipant,
+    updateDocumentBadgeCount,
   },
 };
 
