@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-apollo';
-import { Redirect, navigate } from '@reach/router';
+import { Redirect } from '@reach/router';
 
 import localStateQuery from 'graphql/queries/localState';
 import organizationQuery from 'graphql/queries/organization';
@@ -27,7 +27,7 @@ const Home = () => {
 
   const { defaultDocumentId } = data.organization;
 
-  return navigate(`/d/${defaultDocumentId}`);
+  return <Redirect to={`/d/${defaultDocumentId}`} noThrow />;
 };
 
 export default Home;
