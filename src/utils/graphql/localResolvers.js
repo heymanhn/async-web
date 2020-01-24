@@ -163,16 +163,14 @@ function updateDocumentBadgeCount(_root, { documentId, notification }, { client 
   const index = notifications.findIndex(n => n.objectId === notification.objectId);
   const newNotification = {
     __typename: notifications[0].__typename,
-    objectId: notification.objectId,
-    payload: notification.payload,
+    ...notification,
     author: {
       __typename: notifications[0].author.__typename,
       ...notification.author,
     },
-    userId: notification.userId,
   };
 
-  const notificationsData = index < 0 ? [newNotification].concat(notifications) : [
+  const notificationsData = index < 0 ? [newNotification, ...notifications] : [
     newNotification,
     ...notifications.slice(0, index),
     ...notifications.slice(index + 1),
