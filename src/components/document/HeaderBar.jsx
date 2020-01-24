@@ -14,10 +14,10 @@ import documentNotificationsQuery from 'graphql/queries/documentNotifications';
 
 import { getLocalAppState } from 'utils/auth';
 
+import DocumentAccessContainer from 'components/participants/DocumentAccessContainer';
 import Avatar from 'components/shared/Avatar';
 import VerticalDivider from 'components/shared/VerticalDivider';
 import DropdownMenu from 'components/navigation/DropdownMenu';
-import DocumentAccessContainer from './DocumentAccessContainer';
 import NewDocumentButton from './NewDocumentButton';
 
 const Container = styled.div(({ theme: { colors } }) => ({
