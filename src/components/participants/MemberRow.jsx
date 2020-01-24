@@ -41,9 +41,11 @@ const Email = styled.div(({ isParticipant, theme: { colors } }) => ({
 
 const MemberRow = ({
   handleAddParticipant,
+  index,
   isParticipant,
   isSelected,
   member,
+  updateSelectedIndex,
   ...props
 }) => {
   const memberRef = useRef(null);
@@ -67,6 +69,8 @@ const MemberRow = ({
       isParticipant={isParticipant}
       isSelected={isSelected}
       onClick={handleClick}
+      onMouseOver={() => updateSelectedIndex(index)}
+      onFocus={() => updateSelectedIndex(index)}
       ref={memberRef}
       {...props}
     >
@@ -89,9 +93,11 @@ const MemberRow = ({
 
 MemberRow.propTypes = {
   handleAddParticipant: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
   isParticipant: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool.isRequired,
   member: PropTypes.object.isRequired,
+  updateSelectedIndex: PropTypes.func.isRequired,
 };
 
 export default MemberRow;

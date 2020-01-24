@@ -6,6 +6,7 @@ import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import organizationMembersQuery from 'graphql/queries/organizationMembers';
+import documentParticipantsQuery from 'graphql/queries/documentParticipants';
 import addParticipantMutation from 'graphql/mutations/addParticipant';
 import localAddParticipantMutation from 'graphql/mutations/local/addDocumentParticipant';
 import { getLocalAppState } from 'utils/auth';
@@ -52,14 +53,24 @@ const OrganizationMemberSearch = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { organizationId: id } = getLocalAppState();
-  const { loading, data } = useQuery(organizationMembersQuery, { variables: { id } });
+  const { loading: l1, data: data1 } = useQuery(organizationMembersQuery, {
+    variables: { id },
+  });
+  const { loading: l2, data: data2 } = useQuery(documentParticipantsQuery, {
+    variables: { id: documentId },
+  });
+
   const [addParticipant] = useMutation(addParticipantMutation);
   const [localAddParticipant] = useMutation(localAddParticipantMutation);
 
-  if (loading || !data.organizationMembers) return null;
+  if (l1 || l2 || !data1.organizationMembers || !data2.documentParticipants) return null;
 
-  let { members } = data.organizationMembers || [];
+  let { members } = data1.organizationMembers || [];
   members = members.map(m => m.user);
+
+  const { documentParticipants } = data2;
+  let { participants } = documentParticipants;
+  participants = (participants || []).map(p => p.user);
 
   function memberSearch() {
     if (!searchQuery) return [];
@@ -86,8 +97,9 @@ const OrganizationMemberSearch = ({
   }
 
   function handleAddParticipant(user) {
-    const DEFAULT_ACCESS_TYPE = 'collaborator';
+    if (participants.find(({ id: pid }) => pid === user.id)) return;
 
+    const DEFAULT_ACCESS_TYPE = 'collaborator';
     addParticipant({
       variables: {
         id: documentId,
@@ -129,6 +141,10 @@ const OrganizationMemberSearch = ({
     return null;
   }
 
+  function updateSelectedIndex(index) {
+    if (index !== selectedIndex) setSelectedIndex(index);
+  }
+
   return (
     <Container>
       <SearchInput
@@ -144,8 +160,10 @@ const OrganizationMemberSearch = ({
         <MemberResults
           documentId={documentId}
           handleAddParticipant={handleAddParticipant}
+          participants={participants}
           results={results}
           selectedIndex={selectedIndex}
+          updateSelectedIndex={updateSelectedIndex}
         />
       ) : undefined}
     </Container>

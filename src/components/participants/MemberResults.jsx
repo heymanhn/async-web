@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
-
-import documentParticipantsQuery from 'graphql/queries/documentParticipants';
 
 import MemberRow from './MemberRow';
 
@@ -21,39 +18,36 @@ const Container = styled.div(({ theme: { colors } }) => ({
   width: '100%',
 }));
 
-const MemberResults = ({ documentId, handleAddParticipant, results, selectedIndex }) => {
-  const { loading, data } = useQuery(documentParticipantsQuery, {
-    variables: { id: documentId },
-  });
-
-  if (!results.length) return null;
-  if (loading && (!data || !data.documentParticipants)) return null;
-
-  const { documentParticipants } = data;
-  let { participants } = documentParticipants;
-  participants = (participants || []).map(p => p.user);
-
-  return (
-    <Container>
+const MemberResults = ({
+  handleAddParticipant,
+  participants,
+  results,
+  selectedIndex,
+  updateSelectedIndex,
+}) => (
+  results.length ? (
+    <Container onClick={e => e.stopPropagation()}>
       {results.map((result, i) => (
         <MemberRow
           key={result.id}
           handleAddParticipant={handleAddParticipant}
+          index={i}
           isParticipant={!!participants.find(({ id }) => id === result.id)}
           isSelected={selectedIndex === i}
           member={result}
+          updateSelectedIndex={updateSelectedIndex}
         />
       ))}
     </Container>
-
-  );
-};
+  ) : null
+);
 
 MemberResults.propTypes = {
-  documentId: PropTypes.string.isRequired,
   handleAddParticipant: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
+  participants: PropTypes.array.isRequired,
   selectedIndex: PropTypes.number.isRequired,
+  updateSelectedIndex: PropTypes.func.isRequired,
 };
 
 export default MemberResults;
