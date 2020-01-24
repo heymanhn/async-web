@@ -38,7 +38,7 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
   },
 
   ':focus': {
-    border: `1px solid ${colors.grey3}`,
+    border: `1px solid ${colors.grey4}`,
   },
 }));
 

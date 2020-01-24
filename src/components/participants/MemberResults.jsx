@@ -9,14 +9,16 @@ import MemberRow from './MemberRow';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   position: 'absolute',
-  overflow: 'auto',
   top: '41px',
-  height: 'auto',
-  maxHeight: '240px', // Equivalent to 4 results
-  width: '100%',
+
   backgroundColor: colors.white,
   border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
   boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.1)',
+  height: 'auto',
+  maxHeight: '240px', // Equivalent to 4 results
+  overflow: 'auto',
+  width: '100%',
 }));
 
 const MemberResults = ({ documentId, handleAddParticipant, results, selectedIndex }) => {

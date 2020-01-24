@@ -6,10 +6,11 @@ import Avatar from 'components/shared/Avatar';
 
 const Container = styled.div(({ isParticipant, isSelected, theme: { colors } }) => ({
   display: 'flex',
+  alignItems: 'center',
   background: isSelected ? colors.grey7 : 'none',
   cursor: isParticipant ? 'default' : 'pointer',
   margin: '7px 0',
-  padding: '0 15px',
+  padding: '3px 15px',
   userSelect: 'none',
 
   ':hover': {
@@ -35,7 +36,6 @@ const Name = styled.div(({ isParticipant, theme: { colors } }) => (isParticipant
 }));
 
 const Email = styled.div(({ isParticipant, theme: { colors } }) => ({
-  marginTop: '5px',
   color: isParticipant ? colors.grey4 : colors.grey2,
 }));
 
@@ -74,7 +74,7 @@ const MemberRow = ({
         alt={fullName}
         avatarUrl={profilePictureUrl}
         isParticipant={isParticipant}
-        size={30}
+        size={32}
         title={fullName}
       />
       <Details>

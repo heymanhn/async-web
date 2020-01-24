@@ -30,15 +30,25 @@ const StyledAvatar = styled(Avatar)({
 });
 
 const Label = styled.div({
+  fontSize: '13px',
+  letterSpacing: '-0.0025em',
+});
+
+const Name = styled.div({
   fontSize: '14px',
+  fontWeight: 500,
   letterSpacing: '-0.006em',
 });
 
 const RemoveButton = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   cursor: 'pointer',
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
+  fontSize: '13px',
+  letterSpacing: '-0.0025em',
+
+  ':hover': {
+    color: colors.blue,
+  },
 }));
 
 const ParticipantRow = ({ accessType, documentId, user }) => {
@@ -77,7 +87,7 @@ const ParticipantRow = ({ accessType, documentId, user }) => {
           size={30}
           title={fullName}
         />
-        <Label>{fullName}</Label>
+        <Name>{fullName}</Name>
       </Details>
       {accessType === 'owner' ? <Label>{accessType}</Label> : removeParticipantButton}
     </Container>
