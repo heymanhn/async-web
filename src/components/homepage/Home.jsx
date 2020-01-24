@@ -6,7 +6,6 @@ import localStateQuery from 'graphql/queries/localState';
 import organizationQuery from 'graphql/queries/organization';
 import { getLocalAppState } from 'utils/auth';
 
-import Document from 'components/document/Document';
 import LoggedOutHome from './LoggedOutHome';
 
 const Home = () => {
@@ -28,7 +27,7 @@ const Home = () => {
 
   const { defaultDocumentId } = data.organization;
 
-  return <Document documentId={defaultDocumentId} />;
+  return <Redirect to={`/d/${defaultDocumentId}`} noThrow />;
 };
 
 export default Home;

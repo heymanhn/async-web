@@ -10,7 +10,7 @@ import { useQuery } from '@apollo/react-hooks';
 
 import documentQuery from 'graphql/queries/document';
 import organizationQuery from 'graphql/queries/organization';
-import notificationsQuery from 'graphql/queries/documentNotifications';
+import documentNotificationsQuery from 'graphql/queries/documentNotifications';
 
 import { getLocalAppState } from 'utils/auth';
 
@@ -142,7 +142,7 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
     variables: { id: documentId, queryParams: {} },
   });
 
-  const { loading, data: notificationsData } = useQuery(notificationsQuery, {
+  const { loading, data: notificationsData } = useQuery(documentNotificationsQuery, {
     variables: { id: documentId },
   });
 
