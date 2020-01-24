@@ -1,12 +1,11 @@
 import React from 'react';
 import { useQuery } from 'react-apollo';
-import { Redirect } from '@reach/router';
+import { Redirect, navigate } from '@reach/router';
 
 import localStateQuery from 'graphql/queries/localState';
 import organizationQuery from 'graphql/queries/organization';
 import { getLocalAppState } from 'utils/auth';
 
-import Document from 'components/document/Document';
 import LoggedOutHome from './LoggedOutHome';
 
 const Home = () => {
@@ -28,7 +27,7 @@ const Home = () => {
 
   const { defaultDocumentId } = data.organization;
 
-  return <Document documentId={defaultDocumentId} />;
+  return navigate(`/d/${defaultDocumentId}`);
 };
 
 export default Home;
