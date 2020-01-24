@@ -178,15 +178,7 @@ const DiscussionReply = ({
         query: discussionQuery,
         variables: { id: replyDiscussionId, queryParams: {} },
       }],
-      update: (_cache, { data: { createReply } }) => {
-        client.mutate({
-          mutation: addNewReplyToDiscussionMtn,
-          variables: {
-            isUnread: false,
-            reply: createReply,
-          },
-        });
-      },
+      awaitRefetchQueries: true,
     });
 
     if (data.createReply) {
