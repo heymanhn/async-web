@@ -14,25 +14,31 @@ import MemberResults from './MemberResults';
 
 const Container = styled.div({
   position: 'relative',
+  marginBottom: '20px',
 });
 
 const SearchInput = styled.input(({ theme: { colors } }) => ({
-  color: colors.grey1,
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
-  width: '100%',
-
   // Remove all default styles for an input element
   WebkitAppearance: 'none',
 
-  border: `1px solid ${colors.borderGrey}`,
   background: colors.bgGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  color: colors.mainText,
+  fontSize: '14px',
+  fontWeight: 400,
   outline: 'none',
-  padding: '2px 15px',
+  padding: '7px 15px',
+  letterSpacing: '-0.006em',
+  width: '100%',
 
   '::placeholder': {
     color: colors.grey4,
     opacity: 1, // Firefox
+  },
+
+  ':focus': {
+    border: `1px solid ${colors.grey3}`,
   },
 }));
 
