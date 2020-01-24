@@ -5,7 +5,7 @@ import reply from './reply';
 export default gql`
   fragment ReplyContext on Discussion {
     replyCount
-    lastReply @type(name: "Reply") {
+    lastReplies @type(name: ["Reply"]) {
       ...ReplyObject
     }
   }
