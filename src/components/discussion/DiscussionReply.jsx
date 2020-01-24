@@ -5,7 +5,6 @@ import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import addDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
-import addNewReplyToDiscussionMtn from 'graphql/mutations/local/addNewReplyToDiscussion';
 import createReplyMutation from 'graphql/mutations/createReply';
 import updateReplyMutation from 'graphql/mutations/updateReply';
 import deleteReplyMutation from 'graphql/mutations/deleteReply';
