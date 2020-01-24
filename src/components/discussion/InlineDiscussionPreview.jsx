@@ -80,7 +80,8 @@ const InlineDiscussionPreview = ({ discussionId, handleShowDiscussion, isOpen })
   if (loading) return null;
   if (error || !discussionData.discussion) return <div>{error}</div>;
 
-  const { draft, lastReply, replyCount, tags } = discussionData.discussion;
+  const { draft, lastReplies, replyCount, tags } = discussionData.discussion;
+  const lastReply = lastReplies.slice(-1)[0];
   const { author } = lastReply || discussionData.discussion;
   const { body } = draft || lastReply;
   const { profilePictureUrl } = author;
