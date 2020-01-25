@@ -21,6 +21,7 @@ const AvatarWithCount = styled.div(({ size, square, theme: { colors } }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+
   background: colors.grey4,
   borderRadius: square ? '5px' : '50%',
   fontSize: '10px',

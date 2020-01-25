@@ -25,6 +25,7 @@ const Header = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+
   background: colors.bgGrey,
   borderBottom: `1px solid ${colors.borderGrey}`,
   fontSize: '16px',
@@ -69,6 +70,7 @@ const ViewDiscussionButton = styled.div(({ theme: { colors } }) => ({
 const MoreRepliesIndicator = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
+
   height: '46px',
   background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
@@ -128,10 +130,6 @@ const DiscussionListItem = ({
   function titleize(input) {
     return input.charAt(0).toUpperCase() + input.slice(1);
   }
-
-  // const { author } = lastReply || data.discussion;
-  // const { body } = draft || lastReply;
-  // const { profilePictureUrl } = author;
 
   return (
     <Container>
