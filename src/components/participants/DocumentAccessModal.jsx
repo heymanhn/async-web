@@ -45,7 +45,11 @@ const DocumentAccessModal = ({ documentId, handleClose, isOpen }) => {
   }
 
   return (
-    <StyledModal backdropStyle={customBackdropStyle} handleClose={handleClose} isOpen={isOpen}>
+    <StyledModal
+      backdropStyle={customBackdropStyle}
+      handleClose={handleClose}
+      isOpen={isOpen}
+    >
       <Header onClick={handleHideDropdown}>Share this Document</Header>
       <Contents onClick={handleHideDropdown}>
         <OrganizationMemberSearch
