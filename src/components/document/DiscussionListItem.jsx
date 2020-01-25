@@ -46,11 +46,13 @@ const DiscussionLabel = styled.div(({ isUnread }) => ({
   fontWeight: isUnread ? 600 : 400,
 }));
 
-const DiscussionLabelIcon = styled(FontAwesomeIcon)(({ isunread, theme: { colors } }) => ({
-  color: isunread === 'true' ? colors.blue : colors.grey4,
-  fontSize: '20px',
-  marginRight: '10px',
-}));
+const DiscussionLabelIcon = styled(FontAwesomeIcon)(
+  ({ isunread, theme: { colors } }) => ({
+    color: isunread === 'true' ? colors.blue : colors.grey4,
+    fontSize: '20px',
+    marginRight: '10px',
+  })
+);
 
 const ViewDiscussionButton = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -95,17 +97,16 @@ const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   padding: '10px 30px 5px',
 }));
 
-const StyledDiscussionReply = styled(DiscussionReply)(({ theme: { colors } }) => ({
-  borderTopLeftRadius: '5px',
-  borderTopRightRadius: '5px',
-  borderBottom: `1px solid ${colors.borderGrey}`,
-  paddingBottom: '10px',
-}));
+const StyledDiscussionReply = styled(DiscussionReply)(
+  ({ theme: { colors } }) => ({
+    borderTopLeftRadius: '5px',
+    borderTopRightRadius: '5px',
+    borderBottom: `1px solid ${colors.borderGrey}`,
+    paddingBottom: '10px',
+  })
+);
 
-const DiscussionListItem = ({
-  discussionId,
-  setDiscussionId,
-}) => {
+const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
   const { loading, error, data } = useQuery(discussionQuery, {
     variables: { id: discussionId },
   });
@@ -117,9 +118,9 @@ const DiscussionListItem = ({
   const { items } = data.replies;
   const { reply: firstReply } = items[0];
   const lastReply = lastReplies && lastReplies.slice(-1)[0];
-  const discussionLabel = tags.includes('no_updates') ? (
-    Pluralize('reply', replyCount - 1, true)
-  ) : tags[0].replace('_', ' ');
+  const discussionLabel = tags.includes('no_updates')
+    ? Pluralize('reply', replyCount - 1, true)
+    : tags[0].replace('_', ' ');
   const avatarUrls = lastReplies.map(r => r.author.profilePictureUrl);
   const moreReplyCount = replyCount - (context ? 1 : 2);
 
@@ -139,7 +140,9 @@ const DiscussionListItem = ({
             icon={tags.includes('new_replies') ? faComment : faCommentsAlt}
             isunread={isUnread().toString()}
           />
-          <DiscussionLabel isUnread={isUnread()}>{titleize(discussionLabel)}</DiscussionLabel>
+          <DiscussionLabel isUnread={isUnread()}>
+            {titleize(discussionLabel)}
+          </DiscussionLabel>
         </DiscussionLabelContainer>
         <ViewDiscussionButton onClick={() => setDiscussionId(discussionId)}>
           {tags.includes('new_replies') ? 'View replies' : 'View discussion'}
