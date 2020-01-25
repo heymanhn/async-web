@@ -14,7 +14,7 @@
         "@fortawesome/pro-solid-svg-icons": "^5.10.2",
         "@fortawesome/react-fontawesome": "^0.1.4",
         "@reach/router": "^1.2.1",
-        "airtable": "^0.5.10",
+        "airtable": "^0.8.1",
         "apollo-cache-inmemory": "^1.6.2",
         "apollo-client": "^2.6.4",
         "apollo-link": "^1.2.12",
@@ -28,6 +28,7 @@
         "graphql-tag": "^2.10.1",
         "immutable": "^3.8.2",
         "import": "0.0.6",
+        "inter-ui": "3.11.0",
         "is-hotkey": "^0.1.4",
         "jquery": "^3.4.1",
         "moment": "^2.24.0",
@@ -43,7 +44,7 @@
         "react-moment": "^0.9.2",
         "react-onclickoutside": "^6.8.0",
         "react-pusher": "^0.2.0",
-        "react-scripts": "3.0.1",
+        "react-scripts": "^3.3.0",
         "react-truncate": "^2.4.0",
         "reactstrap": "^8.0.0",
         "slate": "^0.47.8",
@@ -56,7 +57,6 @@
         "snake-case": "^2.1.0",
         "typeface-roboto": "0.0.54",
         "typeface-source-code-pro": "0.0.71",
-        "inter-ui": "3.11.0",
         "typescript": "^3.5.2"
     },
     "scripts": {
@@ -89,8 +89,11 @@
         "@types/styled-components": "^4.4.2",
         "eslint": "^5.16.0",
         "eslint-config-airbnb": "^17.1.0",
+        "eslint-config-prettier": "^6.9.0",
         "eslint-plugin-import": "^2.17.3",
         "eslint-plugin-jsx-a11y": "^6.2.1",
-        "eslint-plugin-react": "^7.13.0"
+        "eslint-plugin-prettier": "^3.1.2",
+        "eslint-plugin-react": "^7.13.0",
+        "prettier": "^1.19.1"
     }
 }
