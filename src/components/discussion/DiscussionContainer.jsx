@@ -18,6 +18,7 @@ import ReplyComposer from './ReplyComposer';
 
 const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   background: colors.grey7,
+  opacity: 0.6,
   borderTopLeftRadius: '5px',
   borderTopRightRadius: '5px',
   fontSize: '16px',
