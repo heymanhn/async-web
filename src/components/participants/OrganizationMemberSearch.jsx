@@ -63,7 +63,9 @@ const OrganizationMemberSearch = ({
   const [addParticipant] = useMutation(addParticipantMutation);
   const [localAddParticipant] = useMutation(localAddParticipantMutation);
 
-  if (l1 || l2 || !data1.organizationMembers || !data2.documentParticipants) return null;
+  if (l1 || l2 || !data1.organizationMembers || !data2.documentParticipants) {
+    return null;
+  }
 
   let { members } = data1.organizationMembers || [];
   members = members.map(m => m.user);
@@ -78,8 +80,10 @@ const OrganizationMemberSearch = ({
     return members.filter(({ email, fullName }) => {
       const sanitizedQuery = searchQuery.toLowerCase();
 
-      return email.toLowerCase().includes(sanitizedQuery)
-        || fullName.toLowerCase().includes(sanitizedQuery);
+      return (
+        email.toLowerCase().includes(sanitizedQuery) ||
+        fullName.toLowerCase().includes(sanitizedQuery)
+      );
     });
   }
 
@@ -93,7 +97,7 @@ const OrganizationMemberSearch = ({
   // Neat trick to support modular arithmetic for negative numbers
   // https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
   function mod(x, n) {
-    return (x % n + n) % n;
+    return ((x % n) + n) % n;
   }
 
   function handleAddParticipant(user) {
@@ -165,7 +169,9 @@ const OrganizationMemberSearch = ({
           selectedIndex={selectedIndex}
           updateSelectedIndex={updateSelectedIndex}
         />
-      ) : undefined}
+      ) : (
+        undefined
+      )}
     </Container>
   );
 };
