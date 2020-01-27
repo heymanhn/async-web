@@ -43,11 +43,13 @@ const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
   padding: '4px 15px',
 }));
 
-const StartDiscussionIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey1,
-  fontSize: '18px',
-  marginRight: '12px',
-}));
+const StartDiscussionIcon = styled(FontAwesomeIcon)(
+  ({ theme: { colors } }) => ({
+    color: colors.grey1,
+    fontSize: '18px',
+    marginRight: '12px',
+  })
+);
 
 const Label = styled.div(({ theme: { colors } }) => ({
   color: colors.mainText,
@@ -72,12 +74,19 @@ const DiscussionsList = ({ documentId }) => {
   const [discussionId, setDiscussionId] = useState(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
 
-  function handleShowComposer() { setShowComposer(true); }
-  function handleHideComposer() { setShowComposer(false); }
+  function handleShowComposer() {
+    setShowComposer(true);
+  }
+  function handleHideComposer() {
+    setShowComposer(false);
+  }
 
-  const { loading, error, data, fetchMore } = useQuery(documentDiscussionsQuery, {
-    variables: { id: documentId, queryParams: { order: 'desc' } },
-  });
+  const { loading, error, data, fetchMore } = useQuery(
+    documentDiscussionsQuery,
+    {
+      variables: { id: documentId, queryParams: { order: 'desc' } },
+    }
+  );
 
   if (loading) return null;
   if (error || !data.documentDiscussions) return <NotFound />;
@@ -99,10 +108,16 @@ const DiscussionsList = ({ documentId }) => {
 
     fetchMore({
       query: documentDiscussionsQuery,
-      variables: { id: documentId, queryParams: snakedQueryParams(newQueryParams) },
+      variables: {
+        id: documentId,
+        queryParams: snakedQueryParams(newQueryParams),
+      },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         const { items: previousItems } = previousResult.documentDiscussions;
-        const { items: newItems, pageToken: newToken } = fetchMoreResult.documentDiscussions;
+        const {
+          items: newItems,
+          pageToken: newToken,
+        } = fetchMoreResult.documentDiscussions;
         setShouldFetch(false);
         setIsFetching(false);
 
