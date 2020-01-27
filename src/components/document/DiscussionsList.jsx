@@ -37,7 +37,7 @@ const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
   background: colors.blue,
   borderRadius: '5px',
   cursor: 'pointer',
-  padding: '4px 15px',
+  padding: '5px 20px',
 }));
 
 const Label = styled.div(({ theme: { colors } }) => ({
