@@ -1,8 +1,6 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCommentPlus } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
@@ -36,23 +34,14 @@ const Title = styled.div(({ theme: { colors } }) => ({
 const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
-  background: colors.bgGrey,
-  border: `1px solid ${colors.borderGrey}`,
+  background: colors.blue,
   borderRadius: '5px',
   cursor: 'pointer',
   padding: '4px 15px',
 }));
 
-const StartDiscussionIcon = styled(FontAwesomeIcon)(
-  ({ theme: { colors } }) => ({
-    color: colors.grey1,
-    fontSize: '18px',
-    marginRight: '12px',
-  })
-);
-
 const Label = styled.div(({ theme: { colors } }) => ({
-  color: colors.mainText,
+  color: colors.white,
   fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '-0.006em',
@@ -143,7 +132,6 @@ const DiscussionsList = ({ documentId }) => {
       <TitleSection>
         <Title>Discussions</Title>
         <StartDiscussionButton onClick={handleShowComposer}>
-          <StartDiscussionIcon icon={faCommentPlus} />
           <Label>Start a discussion</Label>
         </StartDiscussionButton>
       </TitleSection>
