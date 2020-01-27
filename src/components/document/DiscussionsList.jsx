@@ -83,6 +83,10 @@ const DiscussionsList = ({ documentId }) => {
   const { items, pageToken } = data.documentDiscussions;
   const discussions = (items || []).map(i => i.discussion);
 
+  if (discussions.length === 0 && !showComposer) {
+    setShowComposer(true);
+  }
+
   function afterCreate() {
     handleHideComposer();
   }
