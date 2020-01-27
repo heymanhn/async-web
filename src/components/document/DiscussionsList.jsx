@@ -10,8 +10,10 @@ import { snakedQueryParams } from 'utils/queryParams';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 
 import NotFound from 'components/navigation/NotFound';
-import DiscussionContainer from 'components/discussion/DiscussionContainer';
 import ReplyComposer from 'components/discussion/ReplyComposer';
+import DiscussionModal from 'components/discussion/DiscussionModal';
+
+import DiscussionListItem from './DiscussionListItem';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   margin: '60px auto',
@@ -41,11 +43,13 @@ const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
   padding: '4px 15px',
 }));
 
-const StartDiscussionIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey1,
-  fontSize: '18px',
-  marginRight: '12px',
-}));
+const StartDiscussionIcon = styled(FontAwesomeIcon)(
+  ({ theme: { colors } }) => ({
+    color: colors.grey1,
+    fontSize: '18px',
+    marginRight: '12px',
+  })
+);
 
 const Label = styled.div(({ theme: { colors } }) => ({
   color: colors.mainText,
@@ -63,26 +67,26 @@ const StyledReplyComposer = styled(ReplyComposer)(({ theme: { colors } }) => ({
   margin: '40px 0',
 }));
 
-const StyledDiscussionContainer = styled(DiscussionContainer)(({ theme: { colors } }) => ({
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
-  margin: '40px 0',
-}));
-
 const DiscussionsList = ({ documentId }) => {
   const listRef = useRef(null);
   const [showComposer, setShowComposer] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [discussionId, setDiscussionId] = useState(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
 
-  function handleShowComposer() { setShowComposer(true); }
-  function handleHideComposer() { setShowComposer(false); }
+  function handleShowComposer() {
+    setShowComposer(true);
+  }
+  function handleHideComposer() {
+    setShowComposer(false);
+  }
 
-  const { loading, error, data, fetchMore } = useQuery(documentDiscussionsQuery, {
-    variables: { id: documentId, queryParams: { order: 'desc' } },
-  });
+  const { loading, error, data, fetchMore } = useQuery(
+    documentDiscussionsQuery,
+    {
+      variables: { id: documentId, queryParams: { order: 'desc' } },
+    }
+  );
 
   if (loading) return null;
   if (error || !data.documentDiscussions) return <NotFound />;
@@ -94,16 +98,26 @@ const DiscussionsList = ({ documentId }) => {
     handleHideComposer();
   }
 
+  function handleCloseDiscussion() {
+    setDiscussionId(null);
+  }
+
   function fetchMoreDiscussions() {
     const newQueryParams = { order: 'desc' };
     if (pageToken) newQueryParams.pageToken = pageToken;
 
     fetchMore({
       query: documentDiscussionsQuery,
-      variables: { id: documentId, queryParams: snakedQueryParams(newQueryParams) },
+      variables: {
+        id: documentId,
+        queryParams: snakedQueryParams(newQueryParams),
+      },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         const { items: previousItems } = previousResult.documentDiscussions;
-        const { items: newItems, pageToken: newToken } = fetchMoreResult.documentDiscussions;
+        const {
+          items: newItems,
+          pageToken: newToken,
+        } = fetchMoreResult.documentDiscussions;
         setShouldFetch(false);
         setIsFetching(false);
 
@@ -142,12 +156,17 @@ const DiscussionsList = ({ documentId }) => {
         />
       )}
       {discussions.map(d => (
-        <StyledDiscussionContainer
+        <DiscussionListItem
           discussionId={d.id}
-          documentId={documentId}
           key={d.id}
+          setDiscussionId={setDiscussionId}
         />
       ))}
+      <DiscussionModal
+        discussionId={discussionId}
+        handleClose={handleCloseDiscussion}
+        isOpen={!!discussionId}
+      />
     </Container>
   );
 };
