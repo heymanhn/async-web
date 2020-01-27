@@ -9,7 +9,7 @@ import { faComment } from '@fortawesome/free-solid-svg-icons';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
-const Header = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -23,12 +23,12 @@ const Header = styled.div(({ theme: { colors } }) => ({
   height: '56px',
 }));
 
-const HeaderLabelContainer = styled.div({
+const LabelContainer = styled.div({
   display: 'flex',
   alignItems: 'center',
 });
 
-const HeaderLabel = styled.div(({ isUnread }) => ({
+const Label = styled.div(({ isUnread }) => ({
   fontSize: '14px',
   letterSpacing: '-0.006em',
   fontWeight: isUnread ? 600 : 400,
@@ -98,8 +98,8 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
   }
 
   return (
-    <Header>
-      <HeaderLabelContainer>
+    <Container>
+      <LabelContainer>
         {isResolved() ? (
           <ResolvedDiscussionIcon icon={headerIcon()} />
         ) : (
@@ -108,14 +108,12 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
             isunread={isUnread().toString()}
           />
         )}
-        <HeaderLabel isUnread={isUnread()}>
-          {titleize(headerLabel())}
-        </HeaderLabel>
-      </HeaderLabelContainer>
+        <Label isUnread={isUnread()}>{titleize(headerLabel())}</Label>
+      </LabelContainer>
       <ViewDiscussionButton onClick={() => setDiscussionId(id)}>
         {tags.includes('new_replies') ? 'View replies' : 'View discussion'}
       </ViewDiscussionButton>
-    </Header>
+    </Container>
   );
 };
 
