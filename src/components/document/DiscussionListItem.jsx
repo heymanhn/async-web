@@ -117,7 +117,7 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
   const { payload } = context || {};
   const { items } = data.replies;
   const { reply: firstReply } = items[0];
-  const lastReply = lastReplies && lastReplies.slice(-1)[0];
+  const lastReply = lastReplies && lastReplies[lastReplies.length - 1];
   const discussionLabel = tags.includes('no_updates')
     ? Pluralize('reply', replyCount - 1, true)
     : tags[0].replace('_', ' ');
