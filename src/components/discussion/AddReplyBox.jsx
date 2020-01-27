@@ -96,10 +96,10 @@ const AddReplyBox = ({
   if (loading) return null;
   const { status } = data.discussion;
 
-  async function updateDiscussionStatus(value) {
+  async function updateDiscussionStatus(currentState) {
     const input = {
       status: {
-        state: value,
+        state: currentState,
       },
     };
 
