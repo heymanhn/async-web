@@ -65,9 +65,11 @@ const ResolvedDiscussionIcon = styled(DiscussionIcon)(
 
 const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
   const { id, tags, status, replyCount } = discussion;
+  const { state, author } = status || {};
+
   function isUnread() {
     return (
-      (status && status.state === 're-opened') ||
+      state === 're-opened' ||
       tags.includes('new_replies') ||
       tags.includes('new_discussion')
     );
@@ -78,7 +80,6 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
   }
 
   function headerLabel() {
-    const { state, author } = status || {};
     if (state === 're-opened' || state === 'resolved')
       return `${author.fullName} ${state} this discussion`;
 
@@ -88,7 +89,7 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
   }
 
   function isResolved() {
-    return status && status.state === 'resolved';
+    return state === 'resolved';
   }
 
   function headerIcon() {

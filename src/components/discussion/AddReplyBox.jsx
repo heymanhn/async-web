@@ -93,8 +93,7 @@ const AddReplyBox = ({
     variables: { id: discussionId, queryParams: {} },
   });
 
-  if (loading) return null;
-  if (!data.discussion) return null;
+  if (loading || !data.discussion) return null;
   const { status } = data.discussion;
 
   async function updateDiscussionStatus(currentState) {
