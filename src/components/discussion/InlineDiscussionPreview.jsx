@@ -94,7 +94,8 @@ const InlineDiscussionPreview = ({
   const { body } = draft || lastMessage;
   const { profilePictureUrl } = author;
   const { text } = body;
-  const newReplies = tags && tags.includes('new_messages');
+  const newUpdates =
+    tags.includes('new_messages') || tags.includes('new_discussion');
 
   // HN: Make a better UI for a draft indicator in the preview in the future
   const displayText = draft ? `(Draft) ${text}` : text;
@@ -110,10 +111,10 @@ const InlineDiscussionPreview = ({
           <Truncate lines={1}>{displayText}</Truncate>
         </PreviewSnippet>
       </LastMessageDetails>
-      {newReplies ? (
+      {newUpdates ? (
         <NewReplyContainer>
           <NewReplyIndicator />
-          <NewReplyLabel>New Replies</NewReplyLabel>
+          <NewReplyLabel>{tags[0].replace('_', ' ')}</NewReplyLabel>
         </NewReplyContainer>
       ) : (
         <MessageCountIndicator>
