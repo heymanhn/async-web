@@ -86,10 +86,10 @@ const InlineDiscussionPreview = ({
   });
 
   if (loading) return null;
-  if (error || !discussionData.discussion) return <div>{error}</div>;
+  if (error || !discussionData.discussion) return null;
 
   const { draft, lastMessages, messageCount, tags } = discussionData.discussion;
-  const lastMessage = lastMessages.slice(-1)[0];
+  const lastMessage = lastMessages[lastMessages.length - 1];
   const { author } = lastMessage || discussionData.discussion;
   const { body } = draft || lastMessage;
   const { profilePictureUrl } = author;

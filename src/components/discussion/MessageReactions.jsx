@@ -78,20 +78,20 @@ const StyledAddReactionButton = styled(AddReactionButton)({
   marginLeft: '10px',
 });
 
-const MessageReactions = ({ conversationId, messageId, ...props }) => {
+const MessageReactions = ({ discussionId, messageId, ...props }) => {
   const {
     addReaction,
     removeReaction,
     reactions,
     reactionsReference,
-  } = useReactions({ conversationId, messageId });
+  } = useReactions({ discussionId, messageId });
 
   if (!reactions || !reactions.length) return null;
 
   const reactionsToDisplay = () => {
     const histogram = [];
 
-    reactionsReference.forEach((reax) => {
+    reactionsReference.forEach(reax => {
       const { code, icon } = reax;
       const matchingReactions = reactions.filter(r => r.code === reax.code);
       if (matchingReactions.length) {
@@ -100,8 +100,11 @@ const MessageReactions = ({ conversationId, messageId, ...props }) => {
           icon,
           reactionCount: matchingReactions.length,
         };
-        const currentUserReaction = matchingReactions.find(r => matchCurrentUserId(r.author.id));
-        if (currentUserReaction) reaxToDisplay.currentUserReactionId = currentUserReaction.id;
+        const currentUserReaction = matchingReactions.find(r =>
+          matchCurrentUserId(r.author.id)
+        );
+        if (currentUserReaction)
+          reaxToDisplay.currentUserReactionId = currentUserReaction.id;
         histogram.push(reaxToDisplay);
       }
     });
@@ -111,7 +114,7 @@ const MessageReactions = ({ conversationId, messageId, ...props }) => {
 
   const addReactionButton = (
     <StyledAddReactionButton
-      conversationId={conversationId}
+      discussionId={discussionId}
       messageId={messageId}
       placement="above"
     />
@@ -140,7 +143,7 @@ const MessageReactions = ({ conversationId, messageId, ...props }) => {
 };
 
 MessageReactions.propTypes = {
-  conversationId: PropTypes.string.isRequired,
+  discussionId: PropTypes.string.isRequired,
   messageId: PropTypes.string.isRequired,
 };
 

@@ -7,7 +7,7 @@ export default gql`
   mutation CreateDiscussion($documentId: String!, $input: Object!) {
     createDiscussion(documentId: $documentId, input: $input) @rest(type: "Discussion", path: "/documents/{args.documentId}/discussions", method: "POST") {
       ...DiscussionObject
-      replies @type(name: "Message") {
+      messages @type(name: "Message") {
         ...MessageObject
       }
     }

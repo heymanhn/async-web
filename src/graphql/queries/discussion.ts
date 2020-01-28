@@ -10,7 +10,7 @@ export default gql`
       ...DiscussionObject
       ...MessageContext
     }
-    replies(id: $id, queryParams: $queryParams) @rest(type: "RepliesResponse", path: "/discussions/{args.id}/replies?{args.queryParams}", method: "GET") {
+    messages(id: $id, queryParams: $queryParams) @rest(type: "MessagesResponse", path: "/discussions/{args.id}/messages?{args.queryParams}", method: "GET") {
       ...MessageItems
     }
   }

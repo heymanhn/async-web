@@ -61,11 +61,11 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
     variables: { id: discussionId },
   });
   if (loading) return null;
-  if (error || !data.discussion || !data.replies) return null;
+  if (error || !data.discussion || !data.messages) return null;
 
   const { topic: context, lastMessages, messageCount } = data.discussion;
   const { payload } = context || {};
-  const { items } = data.replies;
+  const { items } = data.messages;
   const { message: firstMessage } = items[0];
   const lastMessage = lastMessages && lastMessages[lastMessages.length - 1];
   const avatarUrls = lastMessages.map(r => r.author.profilePictureUrl);
