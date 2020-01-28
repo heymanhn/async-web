@@ -5,7 +5,7 @@ import message from './message';
 export default gql`
   fragment MessageContext on Discussion {
     messageCount
-    lastMessages @type(name: "[Message]") {
+    lastMessage @type(name: "Message") {
       ...MessageObject
     }
   }

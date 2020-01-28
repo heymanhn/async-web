@@ -83,13 +83,13 @@ const InlineDiscussionPreview = ({
 }) => {
   const { loading, error, data: discussionData } = useQuery(discussionQuery, {
     variables: { id: discussionId, queryParams: {} },
+    fetchPolicy: 'cache-and-network',
   });
 
   if (loading) return null;
   if (error || !discussionData.discussion) return null;
 
-  const { draft, lastMessages, messageCount, tags } = discussionData.discussion;
-  const lastMessage = lastMessages[lastMessages.length - 1];
+  const { draft, lastMessage, messageCount, tags } = discussionData.discussion;
   const { author } = lastMessage || discussionData.discussion;
   const { body } = draft || lastMessage;
   const { profilePictureUrl } = author;

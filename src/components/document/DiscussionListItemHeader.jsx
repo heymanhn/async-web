@@ -84,7 +84,7 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
       return `${author.fullName} ${state} this discussion`;
 
     return tags.includes('no_updates')
-      ? Pluralize('reply', messageCount - 1, true)
+      ? Pluralize('reply', messageCount, true)
       : tags[0].replace('_', ' ');
   }
 
