@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
-import { createEditor } from 'slate';
+import { createEditor, Node } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
+import useAutoSave from 'utils/hooks/useAutoSave';
 
 import { DEFAULT_VALUE } from 'components/editor/utils';
 
@@ -31,15 +32,19 @@ const ContentEditor = ({ afterUpdate, documentId, initialContent }) => {
   );
   const [updateDocument] = useMutation(updateDocumentMutation);
 
+  // Pulls the content from the editor reference. The state variable will not
+  // be up to date at the point that handleUpdate() is invoked, since it's
+  // called via a setTimeout() call.
   async function handleUpdate() {
+    const { children } = contentEditor;
     const { data: updateDocumentBodyData } = await updateDocument({
       variables: {
         documentId,
         input: {
           body: {
             formatter: 'slatejs',
-            text: content.map(c => Node.string(c)).join('\n'),
-            payload: JSON.stringify(content),
+            text: children.map(c => Node.string(c)).join('\n'),
+            payload: JSON.stringify(children),
           },
         },
       },
@@ -47,6 +52,8 @@ const ContentEditor = ({ afterUpdate, documentId, initialContent }) => {
 
     if (updateDocumentBodyData.updateDocument) afterUpdate();
   }
+
+  useAutoSave(content, handleUpdate);
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
