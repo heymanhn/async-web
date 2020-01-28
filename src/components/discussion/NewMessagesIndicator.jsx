@@ -14,7 +14,7 @@ const Container = styled.div(({ theme: { colors, discussionViewport } }) => ({
   width: discussionViewport,
 }));
 
-const NewRepliesLabel = styled.div(({ theme: { colors } }) => ({
+const NewMessagesLabel = styled.div(({ theme: { colors } }) => ({
   color: colors.grey1,
   fontSize: '16px',
   fontWeight: 500,
@@ -23,10 +23,10 @@ const NewRepliesLabel = styled.div(({ theme: { colors } }) => ({
   position: 'absolute',
 }));
 
-const NewRepliesIndicator = () => (
+const NewMessagesIndicator = () => (
   <Container>
-    <NewRepliesLabel>show new replies</NewRepliesLabel>
+    <NewMessagesLabel>show new replies</NewMessagesLabel>
   </Container>
 );
 
-export default NewRepliesIndicator;
+export default NewMessagesIndicator;

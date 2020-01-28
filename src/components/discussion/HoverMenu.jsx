@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import AddReactionButton from './AddReactionButton';
-import ReplyDropdown from './ReplyDropdown';
+import MessageDropdown from './MessageDropdown';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: 'flex',
@@ -48,7 +48,7 @@ const HoverMenu = ({
   discussionId,
   isAuthor,
   isOpen,
-  replyId,
+  messageId,
   onDelete,
   onEdit,
   ...props
@@ -70,16 +70,14 @@ const HoverMenu = ({
           discussionId={discussionId}
           onPickerStateChange={setPickerState}
           placement="below"
-          replyId={replyId}
+          messageId={messageId}
         />
       </ButtonContainer>
       <VerticalDivider />
       {isAuthor && (
         <ButtonContainer onClick={showDropdown}>
-          <MenuIcon>
-            •••
-          </MenuIcon>
-          <ReplyDropdown
+          <MenuIcon>•••</MenuIcon>
+          <MessageDropdown
             handleClose={closeDropdown}
             isOpen={isDropdownOpen}
             onDelete={onDelete}
@@ -97,7 +95,7 @@ HoverMenu.propTypes = {
   onEdit: PropTypes.func.isRequired,
   isAuthor: PropTypes.bool.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  replyId: PropTypes.string.isRequired,
+  messageId: PropTypes.string.isRequired,
 };
 
 export default HoverMenu;

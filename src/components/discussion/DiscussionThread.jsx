@@ -8,10 +8,10 @@ import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
 
-import DiscussionReply from './DiscussionReply';
+import DiscussionMessage from './DiscussionMessage';
 
-// HN: Change the new reply UI to a different background color
-import NewRepliesIndicator from './NewRepliesIndicator';
+// HN: Change the new message UI to a different background color
+import NewMessagesIndicator from './NewMessagesIndicator';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
@@ -24,7 +24,7 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   maxWidth: discussionViewport,
 }));
 
-const StyledDiscussionReply = styled(DiscussionReply)(
+const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
     borderTopLeftRadius: '5px',
     borderTopRightRadius: '5px',
@@ -33,7 +33,7 @@ const StyledDiscussionReply = styled(DiscussionReply)(
   })
 );
 
-const StyledUnreadDiscussionReply = styled(StyledDiscussionReply)(
+const StyledUnreadDiscussionMessage = styled(StyledDiscussionMessage)(
   ({ theme: { colors } }) => ({
     backgroundColor: colors.unreadBlue,
   })
@@ -61,12 +61,12 @@ const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
   });
 
   if (loading) return null;
-  if (error || !data.replies) return <div>{error}</div>;
+  if (error || !data.messages) return <div>{error}</div>;
 
-  const { items, pageToken } = data.replies;
-  const replies = (items || []).map(i => i.reply);
+  const { items, pageToken } = data.messages;
+  const messages = (items || []).map(i => i.message);
 
-  function fetchMoreReplies() {
+  function fetchMoreMessages() {
     const newQueryParams = {};
     if (pageToken) newQueryParams.pageToken = pageToken;
 
@@ -77,21 +77,21 @@ const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
         queryParams: snakedQueryParams(newQueryParams),
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        const { items: previousItems } = previousResult.replies;
+        const { items: previousItems } = previousResult.messages;
         const {
           items: newItems,
           pageToken: newToken,
-        } = fetchMoreResult.replies;
+        } = fetchMoreResult.messages;
         setShouldFetch(false);
         setIsFetching(false);
 
         return {
           discussion: fetchMoreResult.discussion,
-          replies: {
+          messages: {
             pageToken: newToken,
-            replyCount: fetchMoreResult.replies.replyCount,
+            messageCount: fetchMoreResult.messages.messageCount,
             items: [...previousItems, ...newItems],
-            __typename: fetchMoreResult.replies.__typename,
+            __typename: fetchMoreResult.messages.__typename,
           },
         };
       },
@@ -100,39 +100,39 @@ const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
 
   if (shouldFetch && pageToken && !isFetching) {
     setIsFetching(true);
-    fetchMoreReplies();
+    fetchMoreMessages();
   }
 
-  function firstNewReplyId() {
-    const targetReply = replies.find(
-      m => m.tags && m.tags.includes('new_replies')
+  function firstNewMessageId() {
+    const targetMessage = messages.find(
+      m => m.tags && m.tags.includes('new_messages')
     );
 
-    return targetReply ? targetReply.id : null;
+    return targetMessage ? targetMessage.id : null;
   }
 
-  function newReply(r) {
-    return r.tags && r.tags.includes('new_reply');
+  function newMessage(r) {
+    return r.tags && r.tags.includes('new_message');
   }
 
   return (
     <Container ref={discussionRef}>
-      {replies.map(m => (
+      {messages.map(m => (
         <React.Fragment key={m.id}>
-          {firstNewReplyId() === m.id && m.id !== replies[0].id && (
-            <NewRepliesIndicator />
+          {firstNewMessageId() === m.id && m.id !== messages[0].id && (
+            <NewMessagesIndicator />
           )}
-          {newReply(m) ? (
-            <StyledUnreadDiscussionReply
+          {newMessage(m) ? (
+            <StyledUnreadDiscussionMessage
               discussionId={discussionId}
               documentId={documentId}
-              initialReply={m}
+              initialMessage={m}
             />
           ) : (
-            <StyledDiscussionReply
+            <StyledDiscussionMessage
               discussionId={discussionId}
               documentId={documentId}
-              initialReply={m}
+              initialMessage={m}
             />
           )}
         </React.Fragment>

@@ -7,9 +7,7 @@ import discussionQuery from 'graphql/queries/discussion';
 import NotFound from 'components/navigation/NotFound';
 import Document from 'components/document/Document';
 
-const DiscussionLinkHandler = ({
-  discussionId,
-}) => {
+const DiscussionLinkHandler = ({ discussionId }) => {
   const { loading, error, data } = useQuery(discussionQuery, {
     variables: { id: discussionId, queryParams: {} },
   });

@@ -11,15 +11,15 @@ import currentUserQuery from 'graphql/queries/currentUser';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
 
-import DiscussionReply from './DiscussionReply';
+import DiscussionMessage from './DiscussionMessage';
 import AddReplyBox from './AddReplyBox';
 
-const StyledDiscussionReply = styled(DiscussionReply)({
+const StyledDiscussionMessage = styled(DiscussionMessage)({
   borderBottomLeftRadius: '5px',
   borderBottomRightRadius: '5px',
 });
 
-const ReplyComposer = ({
+const MessageComposer = ({
   afterDiscussionCreate,
   context,
   discussionId,
@@ -30,8 +30,12 @@ const ReplyComposer = ({
   ...props
 }) => {
   const [isComposing, setIsComposing] = useState(!discussionId);
-  function startComposing() { setIsComposing(true); }
-  function stopComposing() { setIsComposing(false); }
+  function startComposing() {
+    setIsComposing(true);
+  }
+  function stopComposing() {
+    setIsComposing(false);
+  }
 
   const { ...hoverProps } = useHover(isComposing);
 
@@ -59,16 +63,21 @@ const ReplyComposer = ({
 
     const { data: createDiscussionData } = await createDiscussion({
       variables: { documentId, input },
-      refetchQueries: [{
-        query: documentDiscussionsQuery,
-        variables: { id: documentId, queryParams: { order: 'desc' } },
-      }],
+      refetchQueries: [
+        {
+          query: documentDiscussionsQuery,
+          variables: { id: documentId, queryParams: { order: 'desc' } },
+        },
+      ],
       awaitRefetchQueries: true,
     });
 
     if (createDiscussionData.createDiscussion) {
       const { id: newDiscussionId } = createDiscussionData.createDiscussion;
-      return Promise.resolve({ discussionId: newDiscussionId, isNewDiscussion: true });
+      return Promise.resolve({
+        discussionId: newDiscussionId,
+        isNewDiscussion: true,
+      });
     }
 
     return Promise.reject(new Error('Failed to create discussion'));
@@ -81,16 +90,16 @@ const ReplyComposer = ({
 
   function handleCancel({ closeModal } = {}) {
     stopComposing();
-    if (!discussionId || closeModal || source === 'discussionsList') handleClose();
+    if (!discussionId || closeModal || source === 'discussionsList')
+      handleClose();
   }
 
   if (!!draft && !isComposing) startComposing();
 
   return isComposing ? (
-    <StyledDiscussionReply
+    <StyledDiscussionMessage
       // Instead of special-casing RovalEditor again, use this callback pattern.
       afterCreate={afterCreate}
-
       currentUser={currentUser}
       discussionId={discussionId}
       draft={draft}
@@ -111,20 +120,21 @@ const ReplyComposer = ({
   );
 };
 
-ReplyComposer.propTypes = {
+MessageComposer.propTypes = {
   afterDiscussionCreate: PropTypes.func.isRequired,
   context: PropTypes.string,
   discussionId: PropTypes.string,
   draft: PropTypes.object,
   documentId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
-  source: PropTypes.oneOf(['discussionContainer', 'discussionsList']).isRequired,
+  source: PropTypes.oneOf(['discussionContainer', 'discussionsList'])
+    .isRequired,
 };
 
-ReplyComposer.defaultProps = {
+MessageComposer.defaultProps = {
   context: null,
   discussionId: null,
   draft: null,
 };
 
-export default ReplyComposer;
+export default MessageComposer;
