@@ -147,7 +147,7 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
   );
 
   const { loading: loadingDoc, data: documentData } = useQuery(documentQuery, {
-    variables: { id: documentId, queryParams: {} },
+    variables: { documentId, queryParams: {} },
   });
 
   const { loading, data: notificationsData } = useQuery(notificationsQuery, {
