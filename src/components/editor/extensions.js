@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { theme } from 'styles/theme';
 import { track } from 'utils/analytics';
 
-import { DEFAULT_NODE, DEFAULT_PLAIN_NODE } from './defaults';
+import { DEFAULT_NODE, DEFAULT_PLAIN_NODE } from './utils';
 import { BoldPlugin } from './plugins/marks/bold';
 import { ItalicPlugin } from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';

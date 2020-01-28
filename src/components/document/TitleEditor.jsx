@@ -9,7 +9,7 @@ import documentQuery from 'graphql/queries/document';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import { track } from 'utils/analytics';
 
-import { DEFAULT_VALUE } from 'components/editor/defaults';
+import { DEFAULT_VALUE, deserializedTitle } from 'components/editor/utils';
 
 const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
   color: colors.mainText,
@@ -23,13 +23,6 @@ const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
   outline: 'none',
 }));
 
-// HN: Potentially move these methods to util files later
-function deserializeTitle(plainTextTitle) {
-  return {
-    children: [{ text: plainTextTitle }],
-  };
-}
-
 /*
  * TODO:
  * - any pasted text is converted to one line of plain text before it's saved
@@ -40,7 +33,7 @@ function deserializeTitle(plainTextTitle) {
 const TitleEditor = ({ afterUpdate, documentId, initialTitle, ...props }) => {
   const titleEditor = useMemo(() => withReact(createEditor()), []);
   const [title, setTitle] = useState(
-    initialTitle ? deserializeTitle(initialTitle) : DEFAULT_VALUE
+    initialTitle ? deserializedTitle(initialTitle) : DEFAULT_VALUE
   );
   const [updateDocument] = useMutation(updateDocumentMutation);
 

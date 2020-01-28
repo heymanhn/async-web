@@ -25,6 +25,12 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
   padding: '0 30px',
 }));
 
+/*
+ * TODO:
+ * - the autoFocus thing should not need to be set too liberally.
+ * - It only needs to be set upon initial load of a page with nothing in it
+ */
+
 const Document = ({ documentId, discussionId, viewMode: initialViewMode }) => {
   const [state, setState] = useState({
     discussionId,
@@ -114,7 +120,6 @@ const Document = ({ documentId, discussionId, viewMode: initialViewMode }) => {
             />
             <ContentEditor
               afterUpdate={setUpdatedTimestampToNow}
-              autoFocus={title || content}
               documentId={documentId}
               initialContent={content}
             />

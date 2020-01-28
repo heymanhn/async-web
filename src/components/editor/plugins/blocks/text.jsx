@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { faText } from '@fortawesome/pro-solid-svg-icons';
 
-import { DEFAULT_NODE } from 'components/editor/defaults';
+import { DEFAULT_NODE } from 'components/editor/utils';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 import { RenderBlock } from '../helpers';

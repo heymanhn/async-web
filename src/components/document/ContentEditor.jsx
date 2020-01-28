@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 
-import { DEFAULT_VALUE } from 'components/editor/defaults';
+import { DEFAULT_VALUE } from 'components/editor/utils';
 
 const ContentEditable = styled(Editable)({
   fontSize: '16px',
