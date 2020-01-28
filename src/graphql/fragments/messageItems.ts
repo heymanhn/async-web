@@ -10,7 +10,7 @@ export default gql`
         tags
       }
     }
-    replyCount
+    messageCount
     pageToken
   }
   ${message}

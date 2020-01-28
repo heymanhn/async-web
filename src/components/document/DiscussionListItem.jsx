@@ -85,7 +85,7 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
           mode="display"
         />
       ) : (
-        <StyledDiscussionReply
+        <StyledDiscussionMessage
           discussionId={discussionId}
           initialMessage={firstMessage}
         />

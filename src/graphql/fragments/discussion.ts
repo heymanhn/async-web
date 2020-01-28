@@ -21,7 +21,7 @@ export default gql`
       state
       updatedAt
     }
-    draft @type(name: "ReplyDraft") {
+    draft @type(name: "MessageDraft") {
       body @type(name: "Body") {
         ...BodyObject
       }

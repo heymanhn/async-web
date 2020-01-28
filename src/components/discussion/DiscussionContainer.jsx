@@ -14,7 +14,7 @@ import { CONTEXT_HIGHLIGHT } from 'components/editor/plugins/inlineDiscussion';
 import RovalEditor from 'components/editor/RovalEditor';
 import NotFound from 'components/navigation/NotFound';
 import DiscussionThread from './DiscussionThread';
-import ReplyComposer from './ReplyComposer';
+import MessageComposer from './MessageComposer';
 
 const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   background: colors.grey7,
@@ -65,13 +65,15 @@ const DiscussionContainer = ({
 
   // HN: Should refactor this convoluted logic, meant to either fetch the details of a
   // discussion if it exists, or show the discussion composer.
-  if (!discussionId && initialDiscussionId) setDiscussionId(initialDiscussionId);
+  if (!discussionId && initialDiscussionId)
+    setDiscussionId(initialDiscussionId);
   if (discussionId && !data) {
     getDiscussion();
     return null;
   }
   if (loading) return null;
-  if ((!loading && (!data || !data.discussion)) && !documentId) return <NotFound />;
+  if (!loading && (!data || !data.discussion) && !documentId)
+    return <NotFound />;
 
   // HN: Double check if all this logic is still needed in Roval v2
   let discussion = null;
@@ -116,7 +118,10 @@ const DiscussionContainer = ({
     // 1. Undo the highlight
     // 2. Undo the end of document delete
     // 3. Undo the beginning of document delete
-    documentEditor.undo().undo().undo();
+    documentEditor
+      .undo()
+      .undo()
+      .undo();
   }
 
   if (!discussionId && !context) extractContext();
@@ -124,7 +129,9 @@ const DiscussionContainer = ({
   function isUnread() {
     const { tags } = data.discussion;
     const safeTags = tags || [];
-    return safeTags.includes('new_replies') || safeTags.includes('new_discussion');
+    return (
+      safeTags.includes('new_messages') || safeTags.includes('new_discussion')
+    );
   }
 
   function afterDiscussionCreate(value) {
@@ -165,7 +172,7 @@ const DiscussionContainer = ({
           isUnread={isUnread()}
         />
       )}
-      <ReplyComposer
+      <MessageComposer
         afterDiscussionCreate={afterDiscussionCreate}
         context={context}
         discussionId={discussionId}
@@ -195,6 +202,5 @@ DiscussionContainer.defaultProps = {
   handleCancel: () => {},
   selection: {},
 };
-
 
 export default DiscussionContainer;
