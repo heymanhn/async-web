@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCommentsAlt, faFileAlt } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faCommentsAlt,
+  faFileAlt,
+  faPlus,
+} from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
 
 // hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
@@ -40,6 +44,7 @@ const MenuSection = styled.div({
   flexDirection: 'row',
   alignItems: 'center',
   marginLeft: '30px',
+  height: '100%',
 });
 
 const OrganizationAvatar = styled(Avatar)({
@@ -66,55 +71,30 @@ const ContentModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
   alignItems: 'center',
 
   background: colors.white,
-  borderLeft: `1px solid ${colors.borderGrey}`,
-  borderRight: `1px solid ${colors.borderGrey}`,
   borderBottom: isSelected ? `3px solid ${colors.blue}` : 'none',
   borderTop: isSelected ? `3px solid ${colors.white}` : 'none',
   cursor: 'pointer',
   height: '100%',
-  width: '70px',
+  width: '30px',
+  marginRight: '15px',
 }));
 
-const DiscussionsModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+const DiscussionModeButton = styled.div(
+  ({ isSelected, theme: { colors } }) => ({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
 
-  background: colors.white,
-  borderRight: `1px solid ${colors.borderGrey}`,
-  borderBottom: isSelected ? `3px solid ${colors.blue}` : 'none',
-  borderTop: isSelected ? `3px solid ${colors.white}` : 'none',
-  cursor: 'pointer',
-  height: '100%',
-  width: '70px',
-}));
+    background: colors.white,
+    borderBottom: isSelected ? `3px solid ${colors.blue}` : 'none',
+    borderTop: isSelected ? `3px solid ${colors.white}` : 'none',
+    cursor: 'pointer',
+    height: '100%',
+    width: '30px',
+  })
+);
 
-const StyledDocumentIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  fontSize: '20px',
-
-  ':hover': {
-    color: colors.grey1,
-  },
-}));
-
-const StyledDiscussionsIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  fontSize: '18px',
-
-  ':hover': {
-    color: colors.grey1,
-  },
-}));
-
-const DiscussionNotificationContainer = styled.div({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: '100%',
-});
-
-const BadgeCountContainer = styled.span(({ theme: { colors } }) => ({
+const BadgeCountIcon = styled.span(({ theme: { colors } }) => ({
   color: colors.white,
   background: colors.blue,
   borderRadius: '10px',
@@ -127,24 +107,67 @@ const BadgeCountContainer = styled.span(({ theme: { colors } }) => ({
   fontWeight: 500,
 }));
 
+const DiscussionsIconContainer = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+
+  ':hover': {
+    color: colors.grey1,
+  },
+}));
+
+const StyledDocumentIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
+  color: colors.grey2,
+  fontSize: '18px',
+
+  ':hover': {
+    color: colors.grey1,
+  },
+}));
+
+const StyledDiscussionsIcon = styled(FontAwesomeIcon)(
+  ({ theme: { colors } }) => ({
+    color: colors.grey2,
+    fontSize: '18px',
+  })
+);
+
+const StyledPlusIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
+  color: colors.grey2,
+  fontSize: '12px',
+  marginLeft: '-3px',
+  marginTop: '-20px',
+}));
+
 const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  function openDropdown() { setIsDropdownOpen(true); }
-  function closeDropdown() { setIsDropdownOpen(false); }
+  function openDropdown() {
+    setIsDropdownOpen(true);
+  }
+  function closeDropdown() {
+    setIsDropdownOpen(false);
+  }
 
   const { organizationId } = getLocalAppState();
 
-  const { loading: loadingOrg, data: organizationData } = useQuery(organizationQuery, {
-    variables: { id: organizationId },
-  });
+  const { loading: loadingOrg, data: organizationData } = useQuery(
+    organizationQuery,
+    {
+      variables: { id: organizationId },
+    }
+  );
 
   const { loading: loadingDoc, data: documentData } = useQuery(documentQuery, {
     variables: { id: documentId, queryParams: {} },
   });
 
-  const { loading, data: notificationsData } = useQuery(documentNotificationsQuery, {
-    variables: { id: documentId },
-  });
+  const { loading, data: notificationsData } = useQuery(
+    documentNotificationsQuery,
+    {
+      variables: { id: documentId },
+    }
+  );
 
   if (!organizationId) return null;
   if (loadingOrg || !organizationData.organization) return null;
@@ -171,25 +194,29 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
         />
         <DocumentTitle>{title || 'Untitled Document'}</DocumentTitle>
         <VerticalDivider />
-        <DocumentAccessContainer documentId={documentId} />
-      </MenuSection>
-      <NavigationSection>
         <ContentModeButton
           isSelected={viewMode === 'content'}
           onClick={() => setViewMode('content')}
         >
           <StyledDocumentIcon icon={faFileAlt} />
         </ContentModeButton>
-        <DiscussionNotificationContainer>
-          {notifications && notifications.length > 0
-          && <BadgeCountContainer>{notifications.length}</BadgeCountContainer>}
-          <DiscussionsModeButton
-            isSelected={viewMode === 'discussions'}
-            onClick={() => setViewMode('discussions')}
-          >
+        <DiscussionModeButton
+          isSelected={viewMode === 'discussions'}
+          onClick={() => setViewMode('discussions')}
+        >
+          <DiscussionsIconContainer>
             <StyledDiscussionsIcon icon={faCommentsAlt} />
-          </DiscussionsModeButton>
-        </DiscussionNotificationContainer>
+            {notifications && notifications.length > 0 ? (
+              <BadgeCountIcon>{notifications.length}</BadgeCountIcon>
+            ) : (
+              <StyledPlusIcon icon={faPlus} />
+            )}
+          </DiscussionsIconContainer>
+        </DiscussionModeButton>
+        <VerticalDivider />
+        <DocumentAccessContainer documentId={documentId} />
+      </MenuSection>
+      <NavigationSection>
         <NewDocumentButton />
       </NavigationSection>
     </Container>

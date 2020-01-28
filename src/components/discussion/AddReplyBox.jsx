@@ -10,19 +10,21 @@ import discussionQuery from 'graphql/queries/discussion';
 
 import Avatar from 'components/shared/Avatar';
 
-const AddReplyContainer = styled.div(({ hover, status, theme: { colors } }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
+const AddReplyContainer = styled.div(
+  ({ hover, status, theme: { colors } }) => ({
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
 
-  background: colors.bgGrey,
-  color: colors.grey4,
-  cursor: 'pointer',
-  opacity: hover || status === 'resolved' ? 1 : 0.6,
-  padding: '20px 25px',
-  transition: 'opacity 0.2s',
-}));
+    background: colors.bgGrey,
+    color: colors.grey4,
+    cursor: 'pointer',
+    opacity: hover || status === 'resolved' ? 1 : 0.6,
+    padding: '20px 25px',
+    transition: 'opacity 0.2s',
+  })
+);
 
 const AddReplyItem = styled.div({
   display: 'flex',
@@ -50,18 +52,22 @@ const ResolveDiscussionButton = styled.div(({ theme: { colors } }) => ({
   padding: '4px 15px',
 }));
 
-const ResolvedDiscussionIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.successGreen,
-  fontSize: '18px',
-  marginRight: '12px',
-}));
+const ResolvedDiscussionIcon = styled(FontAwesomeIcon)(
+  ({ theme: { colors } }) => ({
+    color: colors.successGreen,
+    fontSize: '18px',
+    marginRight: '12px',
+  })
+);
 
-const ResolvedDiscussionAuthorIcon = styled(ResolvedDiscussionIcon)(({ theme: { colors } }) => ({
-  position: 'absolute',
-  marginTop: '10px',
-  marginLeft: '10px',
-  background: colors.white,
-}));
+const ResolvedDiscussionAuthorIcon = styled(ResolvedDiscussionIcon)(
+  ({ theme: { colors } }) => ({
+    position: 'absolute',
+    marginTop: '10px',
+    marginLeft: '10px',
+    background: colors.white,
+  })
+);
 
 const AvatarWithMargin = styled(Avatar)({
   flexShrink: 0,
@@ -87,16 +93,13 @@ const AddReplyBox = ({
     variables: { id: discussionId, queryParams: {} },
   });
 
-  if (loading) return null;
+  if (loading || !data.discussion) return null;
   const { status } = data.discussion;
 
-  async function updateDiscussionStatus(value) {
+  async function updateDiscussionStatus(currentState) {
     const input = {
       status: {
-        author: {
-          id: currentUser.id,
-        },
-        state: value,
+        state: currentState,
       },
     };
 
@@ -111,25 +114,37 @@ const AddReplyBox = ({
         <React.Fragment>
           <AddReplyItem>
             <ResolveAuthorContainter>
-              <AvatarWithMargin avatarUrl={status.author.profilePictureUrl} size={32} />
+              <AvatarWithMargin
+                avatarUrl={status.author.profilePictureUrl}
+                size={32}
+              />
               <ResolvedDiscussionAuthorIcon icon={faCommentCheck} />
             </ResolveAuthorContainter>
             <AddReplyLabel>{`${status.author.fullName} marked this discussion as resolved`}</AddReplyLabel>
           </AddReplyItem>
           <AddReplyItem>
-            <ResolveDiscussionButton onClick={() => updateDiscussionStatus('open')}>
-              <Label>Reopen discussion</Label>
+            <ResolveDiscussionButton
+              onClick={() => updateDiscussionStatus(status.state)}
+            >
+              <Label>Re-open discussion</Label>
             </ResolveDiscussionButton>
           </AddReplyItem>
         </React.Fragment>
       ) : (
         <React.Fragment>
           <AddReplyItem>
-            <AvatarWithMargin avatarUrl={currentUser.profilePictureUrl} size={32} />
-            <AddReplyLabel onClick={handleClickReply}>Add a reply...</AddReplyLabel>
+            <AvatarWithMargin
+              avatarUrl={currentUser.profilePictureUrl}
+              size={32}
+            />
+            <AddReplyLabel onClick={handleClickReply}>
+              Add a reply...
+            </AddReplyLabel>
           </AddReplyItem>
           <AddReplyItem>
-            <ResolveDiscussionButton onClick={() => updateDiscussionStatus('resolved')}>
+            <ResolveDiscussionButton
+              onClick={() => updateDiscussionStatus('open')}
+            >
               <Label>Resolve discussion</Label>
             </ResolveDiscussionButton>
           </AddReplyItem>
