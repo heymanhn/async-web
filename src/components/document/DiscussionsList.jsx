@@ -82,8 +82,9 @@ const DiscussionsList = ({ documentId }) => {
 
   const { items, pageToken } = data.documentDiscussions;
   const discussions = (items || []).map(i => i.discussion);
+  const discussionCount = discussions.length;
 
-  if (discussions.length === 0 && !showComposer) {
+  if (discussionCount === 0 && !showComposer) {
     setShowComposer(true);
   }
 
@@ -134,7 +135,7 @@ const DiscussionsList = ({ documentId }) => {
   return (
     <Container ref={listRef}>
       <TitleSection>
-        <Title>Discussions</Title>
+        <Title>{discussionCount ? 'Discussions' : 'Start a discussion'}</Title>
         <StartDiscussionButton onClick={handleShowComposer}>
           <Label>Start a discussion</Label>
         </StartDiscussionButton>

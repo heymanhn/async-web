@@ -94,6 +94,7 @@ const AddReplyBox = ({
   });
 
   if (loading) return null;
+  if (!data.discussion) return null;
   const { status } = data.discussion;
 
   async function updateDiscussionStatus(currentState) {
