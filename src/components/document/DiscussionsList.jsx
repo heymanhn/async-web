@@ -8,7 +8,7 @@ import { snakedQueryParams } from 'utils/queryParams';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 
 import NotFound from 'components/navigation/NotFound';
-import ReplyComposer from 'components/discussion/ReplyComposer';
+import MessageComposer from 'components/discussion/MessageComposer';
 import DiscussionModal from 'components/discussion/DiscussionModal';
 
 import DiscussionListItem from './DiscussionListItem';
@@ -48,13 +48,15 @@ const Label = styled.div(({ theme: { colors } }) => ({
 }));
 
 // HN: There should be a way to DRY up these style declarations
-const StyledReplyComposer = styled(ReplyComposer)(({ theme: { colors } }) => ({
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
-  margin: '40px 0',
-}));
+const StyledMessageComposer = styled(MessageComposer)(
+  ({ theme: { colors } }) => ({
+    background: colors.white,
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
+    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
+    margin: '40px 0',
+  })
+);
 
 const DiscussionsList = ({ documentId }) => {
   const listRef = useRef(null);
@@ -141,7 +143,7 @@ const DiscussionsList = ({ documentId }) => {
         </StartDiscussionButton>
       </TitleSection>
       {showComposer && (
-        <StyledReplyComposer
+        <StyledMessageComposer
           afterDiscussionCreate={afterCreate}
           documentId={documentId}
           handleClose={handleHideComposer}

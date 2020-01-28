@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import discussionQuery from 'graphql/queries/discussion';
 
 import RovalEditor from 'components/editor/RovalEditor';
-import DiscussionReply from 'components/discussion/DiscussionReply';
+import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import AvatarList from 'components/shared/AvatarList';
 import DiscussionListItemHeader from './DiscussionListItemHeader';
 
@@ -47,7 +47,7 @@ const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
   padding: '10px 30px 5px',
 }));
 
-const StyledDiscussionReply = styled(DiscussionReply)(
+const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
     borderTopLeftRadius: '5px',
     borderTopRightRadius: '5px',
@@ -63,13 +63,13 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
   if (loading) return null;
   if (error || !data.discussion || !data.replies) return null;
 
-  const { topic: context, lastReplies, replyCount } = data.discussion;
+  const { topic: context, lastMessages, messageCount } = data.discussion;
   const { payload } = context || {};
   const { items } = data.replies;
-  const { reply: firstReply } = items[0];
-  const lastReply = lastReplies && lastReplies[lastReplies.length - 1];
-  const avatarUrls = lastReplies.map(r => r.author.profilePictureUrl);
-  const moreReplyCount = replyCount - (context ? 1 : 2);
+  const { message: firstMessage } = items[0];
+  const lastMessage = lastMessages && lastMessages[lastMessages.length - 1];
+  const avatarUrls = lastMessages.map(r => r.author.profilePictureUrl);
+  const moreReplyCount = messageCount - (context ? 1 : 2);
 
   return (
     <Container>
@@ -87,7 +87,7 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
       ) : (
         <StyledDiscussionReply
           discussionId={discussionId}
-          initialReply={firstReply}
+          initialMessage={firstMessage}
         />
       )}
       {moreReplyCount > 0 && (
@@ -96,10 +96,10 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
           <div>{Pluralize('more reply', moreReplyCount, true)}</div>
         </MoreRepliesIndicator>
       )}
-      {lastReply && lastReply.id !== firstReply.id && (
-        <StyledDiscussionReply
+      {lastMessage && lastMessage.id !== firstMessage.id && (
+        <StyledDiscussionMessage
           discussionId={discussionId}
-          initialReply={lastReply}
+          initialMessage={lastMessage}
         />
       )}
     </Container>
