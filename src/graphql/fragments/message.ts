@@ -4,7 +4,7 @@ import body from './body';
 import user from './user';
 
 export default gql`
-  fragment ReplyObject on Reply {
+  fragment MessageObject on Message {
     id
     author @type(name: "User") {
       ...UserObject
