@@ -64,13 +64,13 @@ const ResolvedDiscussionIcon = styled(DiscussionIcon)(
 );
 
 const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
-  const { id, tags, status, replyCount } = discussion;
+  const { id, tags, status, messageCount } = discussion;
   const { state, author } = status || {};
 
   function isUnread() {
     return (
       state === 're-opened' ||
-      tags.includes('new_replies') ||
+      tags.includes('new_messages') ||
       tags.includes('new_discussion')
     );
   }
@@ -84,7 +84,7 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
       return `${author.fullName} ${state} this discussion`;
 
     return tags.includes('no_updates')
-      ? Pluralize('reply', replyCount - 1, true)
+      ? Pluralize('reply', messageCount, true)
       : tags[0].replace('_', ' ');
   }
 
@@ -95,7 +95,7 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
   function headerIcon() {
     if (isResolved()) return faCommentCheck;
 
-    return tags.includes('new_replies') ? faComment : faCommentsAlt;
+    return tags.includes('new_messages') ? faComment : faCommentsAlt;
   }
 
   return (
@@ -112,7 +112,7 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
         <Label isUnread={isUnread()}>{titleize(headerLabel())}</Label>
       </LabelContainer>
       <ViewDiscussionButton onClick={() => setDiscussionId(id)}>
-        {tags.includes('new_replies') ? 'View replies' : 'View discussion'}
+        {tags.includes('new_messages') ? 'View replies' : 'View discussion'}
       </ViewDiscussionButton>
     </Container>
   );

@@ -3,7 +3,6 @@ import discussionQuery from 'graphql/queries/discussion';
 import documentParticipantsQuery from 'graphql/queries/documentParticipants';
 import documentNotificationsQuery from 'graphql/queries/documentNotifications';
 
-
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
   const data = client.readQuery({
     query: discussionQuery,
@@ -11,7 +10,7 @@ function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
   });
   if (!data) return null;
 
-  const { discussion, replies } = data;
+  const { discussion, messages } = data;
 
   client.writeQuery({
     query: discussionQuery,
@@ -21,7 +20,7 @@ function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
         ...discussion,
         draft,
       },
-      replies,
+      messages,
     },
   });
 
@@ -33,8 +32,8 @@ function deleteDraftFromDiscussion(_root, { discussionId }, { client }) {
   return addDraftToDiscussion(_root, { discussionId, draft: null }, { client });
 }
 
-function addNewReplyToDiscussion(_root, { isUnread, reply }, { client }) {
-  const { body: newBody, author: newAuthor, discussionId } = reply;
+function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
+  const { body: newBody, author: newAuthor, discussionId } = message;
 
   const data = client.readQuery({
     query: discussionQuery,
@@ -44,14 +43,14 @@ function addNewReplyToDiscussion(_root, { isUnread, reply }, { client }) {
 
   const {
     discussion,
-    replies: { pageToken, items, __typename, replyCount },
+    messages: { pageToken, items, __typename, messageCount },
   } = data;
 
-  const newReplyItem = {
-    __typename: 'ReplyItem',
-    reply: {
-      __typename: 'Reply',
-      ...reply,
+  const newMessageItem = {
+    __typename: 'MessageItem',
+    message: {
+      __typename: 'Message',
+      ...message,
       author: {
         __typename: 'User',
         ...newAuthor,
@@ -60,7 +59,7 @@ function addNewReplyToDiscussion(_root, { isUnread, reply }, { client }) {
         __typename: 'Body',
         ...newBody,
       },
-      tags: isUnread ? ['new_reply'] : null,
+      tags: isUnread ? ['new_message'] : null,
     },
   };
 
@@ -69,10 +68,10 @@ function addNewReplyToDiscussion(_root, { isUnread, reply }, { client }) {
     variables: { id: discussionId, queryParams: {} },
     data: {
       discussion,
-      replies: {
-        replyCount: replyCount + 1,
+      messages: {
+        messageCount: messageCount + 1,
         pageToken,
-        items: [...(items || []), newReplyItem],
+        items: [...(items || []), newMessageItem],
         __typename,
       },
     },
@@ -92,12 +91,12 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
 
   const {
     discussion,
-    replies: { pageToken, items, __typename, replyCount },
+    messages: { pageToken, items, __typename, messageCount },
   } = data;
 
-  const pendingReplyItems = pendingReplies.map(r => ({
+  const pendingMessageItems = pendingReplies.map(m => ({
     __typename: items[0].__typename,
-    reply: r,
+    message: m,
   }));
 
   client.writeQuery({
@@ -105,10 +104,10 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
     variables: { id: discussionId, queryParams: {} },
     data: {
       discussion,
-      replies: {
-        replyCount: replyCount + pendingReplyItems.length,
+      messages: {
+        messageCount: messageCount + pendingMessageItems.length,
         pageToken,
-        items: [...items, ...pendingReplyItems],
+        items: [...items, ...pendingMessageItems],
         __typename,
       },
     },
@@ -140,10 +139,7 @@ function addDocumentParticipant(_root, { id, user, accessType }, { client }) {
     variables: { id },
     data: {
       documentParticipants: {
-        participants: [
-          ...participants,
-          newParticipant,
-        ],
+        participants: [...participants, newParticipant],
         __typename,
       },
     },
@@ -182,7 +178,11 @@ function removeDocumentParticipant(_root, { id, participantId }, { client }) {
   return null;
 }
 
-function updateDocumentBadgeCount(_root, { documentId, notification }, { client }) {
+function updateDocumentBadgeCount(
+  _root,
+  { documentId, notification },
+  { client }
+) {
   const data = client.readQuery({
     query: documentNotificationsQuery,
     variables: { id: documentId },
@@ -192,7 +192,9 @@ function updateDocumentBadgeCount(_root, { documentId, notification }, { client 
 
   const { documentNotifications } = data;
   const { notifications, __typename } = documentNotifications;
-  const index = notifications.findIndex(n => n.objectId === notification.objectId);
+  const index = notifications.findIndex(
+    n => n.objectId === notification.objectId
+  );
   const newNotification = {
     __typename: notifications[0].__typename,
     ...notification,
@@ -202,11 +204,14 @@ function updateDocumentBadgeCount(_root, { documentId, notification }, { client 
     },
   };
 
-  const notificationsData = index < 0 ? [newNotification, ...notifications] : [
-    newNotification,
-    ...notifications.slice(0, index),
-    ...notifications.slice(index + 1),
-  ];
+  const notificationsData =
+    index < 0
+      ? [newNotification, ...notifications]
+      : [
+          newNotification,
+          ...notifications.slice(0, index),
+          ...notifications.slice(index + 1),
+        ];
 
   client.writeQuery({
     query: documentNotificationsQuery,
@@ -226,7 +231,7 @@ const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
     deleteDraftFromDiscussion,
-    addNewReplyToDiscussion,
+    addNewMessageToDiscussion,
     addPendingRepliesToDiscussion,
     addDocumentParticipant,
     removeDocumentParticipant,

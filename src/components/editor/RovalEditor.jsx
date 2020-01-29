@@ -8,17 +8,14 @@ import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import { DEFAULT_VALUE } from './defaults';
-import {
-  commands,
-  plugins,
-  queries,
-} from './extensions';
+import { commands, plugins, queries } from './extensions';
 
 const Container = styled.div(({ initialHeight, mode }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  minHeight: (mode === 'compose' && initialHeight) ? `${initialHeight}px` : 'initial',
+  minHeight:
+    mode === 'compose' && initialHeight ? `${initialHeight}px` : 'initial',
 }));
 
 // Default styles for Roval editor UIs
@@ -69,7 +66,7 @@ class RovalEditor extends Component {
     const { isDraftSaved, mode, onCancel } = this.props;
 
     if (isDraftSaved) this.loadDefaultValue();
-    if ((mode === 'edit') && !saved) this.loadInitialValue();
+    if (mode === 'edit' && !saved) this.loadInitialValue();
     onCancel();
   }
 
@@ -124,8 +121,9 @@ class RovalEditor extends Component {
     const response = await onSubmit({ text, payload });
 
     if (!isPlainText && response && response.isNewDiscussion) return;
-    if (mode === 'compose' && !isPlainText && contentType !== 'document') this.clearEditorValue();
-    if (mode !== 'display' && contentType !== 'discussionReply') {
+    if (mode === 'compose' && !isPlainText && contentType !== 'document')
+      this.clearEditorValue();
+    if (mode !== 'display' && contentType !== 'discussionMessage') {
       this.handleCancel({ saved: true });
     }
   }
@@ -159,7 +157,9 @@ class RovalEditor extends Component {
     if (isPlainText && initialValue) {
       value = Plain.deserialize(initialValue);
     } else {
-      const initialJSON = initialValue ? JSON.parse(initialValue) : DEFAULT_VALUE;
+      const initialJSON = initialValue
+        ? JSON.parse(initialValue)
+        : DEFAULT_VALUE;
       value = Value.fromJSON(initialJSON);
     }
 
@@ -209,7 +209,7 @@ RovalEditor.propTypes = {
   contentType: PropTypes.oneOf([
     'documentTitle',
     'document',
-    'discussionReply',
+    'discussionMessage',
     'discussionContext',
   ]).isRequired,
   disableAutoFocus: PropTypes.bool,

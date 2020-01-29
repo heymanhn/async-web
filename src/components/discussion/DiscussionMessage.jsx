@@ -5,11 +5,11 @@ import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import addDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
-import createReplyMutation from 'graphql/mutations/createReply';
-import updateReplyMutation from 'graphql/mutations/updateReply';
-import deleteReplyMutation from 'graphql/mutations/deleteReply';
-import createReplyDraftMutation from 'graphql/mutations/createReplyDraft';
-import deleteReplyDraftMutation from 'graphql/mutations/deleteReplyDraft';
+import createMessageMutation from 'graphql/mutations/createMessage';
+import updateMessageMutation from 'graphql/mutations/updateMessage';
+import deleteMessageMutation from 'graphql/mutations/deleteMessage';
+import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
+import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
@@ -20,7 +20,7 @@ import useHover from 'utils/hooks/useHover';
 import AuthorDetails from 'components/shared/AuthorDetails';
 import RovalEditor from 'components/editor/RovalEditor';
 import HoverMenu from './HoverMenu';
-import ReplyReactions from './ReplyReactions';
+import MessageReactions from './MessageReactions';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
@@ -42,34 +42,38 @@ const StyledHoverMenu = styled(HoverMenu)({
 });
 
 // HN: These styles should be moved elsewhere
-const ReplyEditor = styled(RovalEditor)({
+const MessageEditor = styled(RovalEditor)({
   fontSize: '16px',
   lineHeight: '26px',
   fontWeight: 400,
   marginTop: '15px',
 });
 
-const DiscussionReply = ({
+const DiscussionMessage = ({
   afterCreate,
   currentUser,
   discussionId,
   documentId,
   draft,
   initialMode,
-  initialReply,
+  initialMessage,
   onCancel,
   onCreateDiscussion,
   ...props
 }) => {
   const client = useApolloClient();
   const [mode, setMode] = useState(initialMode);
-  function setToDisplayMode() { setMode('display'); }
-  function setToEditMode() { setMode('edit'); }
+  function setToDisplayMode() {
+    setMode('display');
+  }
+  function setToEditMode() {
+    setMode('edit');
+  }
   const { hover, ...hoverProps } = useHover(mode !== 'display');
 
-  const [reply, setReply] = useState(initialReply);
-  const { createdAt, id: replyId, updatedAt, body } = reply || {};
-  const author = reply.author || currentUser;
+  const [message, setMessage] = useState(initialMessage);
+  const { createdAt, id: messageId, updatedAt, body } = message || {};
+  const author = message.author || currentUser || (draft && draft.author);
   const userToDisplay = author;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,7 +88,7 @@ const DiscussionReply = ({
     }
 
     const { data } = await client.mutate({
-      mutation: createReplyDraftMutation,
+      mutation: createMessageDraftMutation,
       variables: {
         discussionId: draftDiscussionId,
         input: {
@@ -95,52 +99,58 @@ const DiscussionReply = ({
           },
         },
       },
-      update: (_cache, { data: { createReplyDraft } }) => {
+      update: (_cache, { data: { createMessageDraft } }) => {
         client.mutate({
           mutation: addDraftToDiscussionMtn,
           variables: {
             discussionId: draftDiscussionId,
-            draft: createReplyDraft,
+            draft: createMessageDraft,
           },
         });
       },
     });
 
-    if (data.createReplyDraft) {
+    if (data.createMessageDraft) {
       afterCreate(draftDiscussionId, true);
       return Promise.resolve();
     }
 
-    return Promise.reject(new Error('Failed to save reply draft'));
+    return Promise.reject(new Error('Failed to save message draft'));
   }
 
   async function handleDeleteDraft() {
     const { data } = await client.mutate({
-      mutation: deleteReplyDraftMutation,
+      mutation: deleteMessageDraftMutation,
       variables: { discussionId },
-      refetchQueries: [{
-        query: discussionQuery,
-        variables: { id: discussionId, queryParams: {} },
-      }],
+      refetchQueries: [
+        {
+          query: discussionQuery,
+          variables: { id: discussionId, queryParams: {} },
+        },
+      ],
       awaitRefetchQueries: true,
     });
 
-    if (data.deleteReplyDraft) {
-      const { discussion: { replyCount } } = client.readQuery({
+    if (data.deleteMessageDraft) {
+      const {
+        discussion: { messageCount },
+      } = client.readQuery({
         query: discussionQuery,
         variables: { id: discussionId, queryParams: {} },
       });
 
-      if (!replyCount) {
+      if (!messageCount) {
         // TODO (HN): Delete highlight from text
 
         await client.mutate({
           mutation: deleteDiscussionMutation,
           variables: { discussionId, documentId },
-          refetchQueries: [{
-            query: documentDiscussionsQuery,
-            variables: { id: documentId, queryParams: { order: 'desc' } },
-          }],
+          refetchQueries: [
+            {
+              query: documentDiscussionsQuery,
+              variables: { id: documentId, queryParams: { order: 'desc' } },
+            },
+          ],
           awaitRefetchQueries: true,
         });
         onCancel({ closeModal: true });
@@ -149,22 +159,22 @@ const DiscussionReply = ({
       return Promise.resolve();
     }
 
-    return Promise.reject(new Error('Failed to delete reply draft'));
+    return Promise.reject(new Error('Failed to delete message draft'));
   }
 
   async function handleCreate({ payload, text }) {
     setIsSubmitting(true);
 
-    let replyDiscussionId = discussionId;
-    if (!replyDiscussionId) {
+    let messageDiscussionId = discussionId;
+    if (!messageDiscussionId) {
       const { discussionId: did } = await onCreateDiscussion();
-      replyDiscussionId = did;
+      messageDiscussionId = did;
     }
 
     const { data } = await client.mutate({
-      mutation: createReplyMutation,
+      mutation: createMessageMutation,
       variables: {
-        discussionId: replyDiscussionId,
+        discussionId: messageDiscussionId,
         input: {
           body: {
             formatter: 'slatejs',
@@ -173,33 +183,35 @@ const DiscussionReply = ({
           },
         },
       },
-      refetchQueries: [{
-        query: discussionQuery,
-        variables: { id: replyDiscussionId, queryParams: {} },
-      }],
+      refetchQueries: [
+        {
+          query: discussionQuery,
+          variables: { id: messageDiscussionId, queryParams: {} },
+        },
+      ],
       awaitRefetchQueries: true,
     });
 
-    if (data.createReply) {
-      const { id } = data.createReply;
+    if (data.createMessage) {
+      const { id } = data.createMessage;
       setIsSubmitting(false);
-      track('New reply posted', { replyId: id, replyDiscussionId });
-      afterCreate(replyDiscussionId, false);
+      track('New message posted', { messageId: id, messageDiscussionId });
+      afterCreate(messageDiscussionId, false);
 
       return Promise.resolve({});
     }
 
-    return Promise.reject(new Error('Failed to create discussion reply'));
+    return Promise.reject(new Error('Failed to create discussion message'));
   }
 
   async function handleUpdate({ payload, text }) {
     setIsSubmitting(true);
 
     const { data } = await client.mutate({
-      mutation: updateReplyMutation,
+      mutation: updateMessageMutation,
       variables: {
         discussionId,
-        replyId,
+        messageId,
         input: {
           body: {
             formatter: 'slatejs',
@@ -210,49 +222,48 @@ const DiscussionReply = ({
       },
     });
 
-    if (data.updateReply) {
-      setReply(data.updateReply);
+    if (data.updateMessage) {
+      setMessage(data.updateMessage);
       setIsSubmitting(false);
       setToDisplayMode();
-      track('Reply edited', { replyId, discussionId });
+      track('Message edited', { messageId, discussionId });
       return Promise.resolve({});
     }
 
-    return Promise.reject(new Error('Failed to save discussion reply'));
+    return Promise.reject(new Error('Failed to save discussion message'));
   }
 
   async function handleDelete() {
-    const userChoice = window.confirm('Are you sure you want to delete this reply?');
+    const userChoice = window.confirm(
+      'Are you sure you want to delete this message?'
+    );
     if (!userChoice) return;
 
     client.mutate({
-      mutation: deleteReplyMutation,
+      mutation: deleteMessageMutation,
       variables: {
         discussionId,
-        replyId,
+        messageId,
       },
-      update: (cache) => {
+      update: cache => {
         const {
           discussion,
-          replies: { pageToken, items, __typename, replyCount },
+          messages: { pageToken, items, __typename, messageCount },
         } = cache.readQuery({
           query: discussionQuery,
           variables: { id: discussionId, queryParams: {} },
         });
 
-        const index = items.findIndex(i => i.reply.id === replyId);
+        const index = items.findIndex(i => i.message.id === messageId);
         cache.writeQuery({
           query: discussionQuery,
           variables: { id: discussionId, queryParams: {} },
           data: {
             discussion,
-            replies: {
-              replyCount: replyCount - 1,
+            messages: {
+              messageCount: messageCount - 1,
               pageToken,
-              items: [
-                ...items.slice(0, index),
-                ...items.slice(index + 1),
-              ],
+              items: [...items.slice(0, index), ...items.slice(index + 1)],
               __typename,
             },
           },
@@ -284,19 +295,19 @@ const DiscussionReply = ({
           isEdited={createdAt !== updatedAt}
           mode={mode}
         />
-        {replyId && mode === 'display' && (
+        {messageId && mode === 'display' && (
           <StyledHoverMenu
             discussionId={discussionId}
             isAuthor={isAuthor}
             isOpen={hover}
-            replyId={replyId}
+            messageId={messageId}
             onDelete={handleDelete}
             onEdit={setToEditMode}
           />
         )}
       </HeaderSection>
-      <ReplyEditor
-        contentType="discussionReply"
+      <MessageEditor
+        contentType="discussionMessage"
         initialHeight={160}
         initialValue={loadInitialContent()}
         isAuthor={isAuthor}
@@ -310,34 +321,34 @@ const DiscussionReply = ({
         resourceId={documentId}
       />
       {mode === 'display' && (
-        <ReplyReactions discussionId={discussionId} replyId={replyId} />
+        <MessageReactions discussionId={discussionId} messageId={messageId} />
       )}
     </Container>
   );
 };
 
-DiscussionReply.propTypes = {
+DiscussionMessage.propTypes = {
   afterCreate: PropTypes.func,
   currentUser: PropTypes.object,
   discussionId: PropTypes.string,
   documentId: PropTypes.string,
   draft: PropTypes.object,
   initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
-  initialReply: PropTypes.object,
+  initialMessage: PropTypes.object,
   onCancel: PropTypes.func,
   onCreateDiscussion: PropTypes.func,
 };
 
-DiscussionReply.defaultProps = {
+DiscussionMessage.defaultProps = {
   afterCreate: () => {},
   currentUser: null,
   discussionId: null,
   documentId: null,
   draft: null,
   initialMode: 'display',
-  initialReply: {},
+  initialMessage: {},
   onCancel: () => {},
   onCreateDiscussion: () => {},
 };
 
-export default DiscussionReply;
+export default DiscussionMessage;

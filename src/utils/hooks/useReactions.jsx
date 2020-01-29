@@ -1,10 +1,10 @@
-/* Provides APIs to access, add and remove reactions on a reply
+/* Provides APIs to access, add and remove reactions on a message
  *
  * The hook provides the following functionality:
  * - func addReaction(code: String)
  * - func removeReaction(id: String)
- * - array of all the reactions to expect from a reply
- * - array of the reactions that users created for the given reply
+ * - array of all the reactions to expect from a message
+ * - array of the reactions that users created for the given message
  *
  */
 
@@ -12,7 +12,7 @@ import { useMutation, useQuery } from 'react-apollo';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import deleteReactionMutation from 'graphql/mutations/deleteReaction';
-import replyQuery from 'graphql/queries/reply';
+import messageQuery from 'graphql/queries/message';
 import { track } from 'utils/analytics';
 
 const reactionsReference = [
@@ -48,7 +48,7 @@ const reactionsReference = [
   },
 ];
 
-const useReactions = ({ discussionId, replyId }) => {
+const useReactions = ({ discussionId, messageId }) => {
   const [execAddReaction] = useMutation(createReactionMutation);
   const [execRemoveReaction] = useMutation(deleteReactionMutation);
 
@@ -56,39 +56,43 @@ const useReactions = ({ discussionId, replyId }) => {
     await execAddReaction({
       variables: {
         input: {
-          objectType: 'reply',
-          objectId: replyId,
+          objectType: 'message',
+          objectId: messageId,
           code,
         },
       },
-      refetchQueries: [{
-        query: replyQuery,
-        variables: { discussionId, replyId },
-      }],
+      refetchQueries: [
+        {
+          query: messageQuery,
+          variables: { discussionId, messageId },
+        },
+      ],
     });
 
-    track('Reaction added', { reaction: code, replyId });
+    track('Reaction added', { reaction: code, messageId });
   }
 
   async function removeReaction(id, code) {
     await execRemoveReaction({
       variables: { id },
-      refetchQueries: [{
-        query: replyQuery,
-        variables: { discussionId, replyId },
-      }],
+      refetchQueries: [
+        {
+          query: messageQuery,
+          variables: { discussionId, messageId },
+        },
+      ],
     });
 
-    track('Reaction removed', { reaction: code, replyId });
+    track('Reaction removed', { reaction: code, messageId });
   }
 
-  const { data } = useQuery(replyQuery, {
-    variables: { discussionId, replyId },
+  const { data } = useQuery(messageQuery, {
+    variables: { discussionId, messageId },
   });
 
   let reactions = [];
-  if (data.reply) {
-    const { reactions: reax } = data.reply;
+  if (data.message) {
+    const { reactions: reax } = data.message;
     if (reax) reactions = reax;
   }
 

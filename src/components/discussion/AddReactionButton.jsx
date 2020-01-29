@@ -36,7 +36,7 @@ const PlusSign = styled.div({
 
 const AddReactionButton = ({
   discussionId,
-  replyId,
+  messageId,
   onPickerStateChange,
   placement,
   ...props
@@ -79,7 +79,7 @@ const AddReactionButton = ({
         handleClose={handleClosePicker}
         isOpen={isPickerOpen}
         placement={placement}
-        replyId={replyId}
+        messageId={messageId}
       />
     </Container>
   );
@@ -87,7 +87,7 @@ const AddReactionButton = ({
 
 AddReactionButton.propTypes = {
   discussionId: PropTypes.string.isRequired,
-  replyId: PropTypes.string.isRequired,
+  messageId: PropTypes.string.isRequired,
   onPickerStateChange: PropTypes.func,
   placement: PropTypes.oneOf(['above', 'below']).isRequired,
 };

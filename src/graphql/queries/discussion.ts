@@ -1,20 +1,20 @@
 import gql from 'graphql-tag';
 
 import discussion from 'graphql/fragments/discussion';
-import replyContext from 'graphql/fragments/replyContext';
-import replyItems from 'graphql/fragments/replyItems';
+import messageContext from 'graphql/fragments/messageContext';
+import messageItems from 'graphql/fragments/messageItems';
 
 export default gql`
   query Discussion($id: String!, $queryParams: Object!) {
     discussion(id: $id) @rest(type: "Discussion", path: "/discussions/{args.id}", method: "GET") {
       ...DiscussionObject
-      ...ReplyContext
+      ...MessageContext
     }
-    replies(id: $id, queryParams: $queryParams) @rest(type: "RepliesResponse", path: "/discussions/{args.id}/replies?{args.queryParams}", method: "GET") {
-      ...ReplyItems
+    messages(id: $id, queryParams: $queryParams) @rest(type: "MessagesResponse", path: "/discussions/{args.id}/messages?{args.queryParams}", method: "GET") {
+      ...MessageItems
     }
   }
   ${discussion}
-  ${replyContext}
-  ${replyItems}
+  ${messageContext}
+  ${messageItems}
 `;

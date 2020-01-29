@@ -39,7 +39,7 @@ import {
 /* **** Commands **** */
 
 export const commands = {
-  clearBlock: (editor) => {
+  clearBlock: editor => {
     if (editor.isEmptyBlock()) return null;
     return editor
       .moveAnchorToStartOfBlock()
@@ -50,9 +50,7 @@ export const commands = {
   setWrappedBlock: (editor, type, source) => {
     // This means the user is looking to un-set the wrapped block
     if (editor.isWrappedBy(type)) {
-      return editor
-        .setBlocks(DEFAULT_NODE)
-        .unwrapBlock(type);
+      return editor.setBlocks(DEFAULT_NODE).unwrapBlock(type);
     }
 
     track('Block inserted to content', { type, source });
@@ -67,11 +65,10 @@ export const commands = {
     const isActive = editor.hasBlock(type);
 
     // We're not interested in text blocks...
-    if (!isActive && type !== DEFAULT_NODE) track('Block inserted to content', { type, source });
+    if (!isActive && type !== DEFAULT_NODE)
+      track('Block inserted to content', { type, source });
 
-    return editor
-      .unwrapAnyBlock()
-      .setBlocks(isActive ? DEFAULT_NODE : type);
+    return editor.unwrapAnyBlock().setBlocks(isActive ? DEFAULT_NODE : type);
   },
 
   unwrapAnyBlock: (editor, type) => {
@@ -86,7 +83,9 @@ export const commands = {
     const { document } = value;
 
     const parentBlock = document.getParent(start.key);
-    const parentBlockKey = parentBlock ? parentBlock.getFirstText().key : start.key;
+    const parentBlockKey = parentBlock
+      ? parentBlock.getFirstText().key
+      : start.key;
 
     return editor.moveEndTo(parentBlockKey, 0);
   },
@@ -96,31 +95,34 @@ export const commands = {
     const { document } = value;
 
     const parentBlock = document.getParent(end.key);
-    const parentBlockKey = parentBlock ? parentBlock.getLastText().key : end.key;
+    const parentBlockKey = parentBlock
+      ? parentBlock.getLastText().key
+      : end.key;
 
-    return editor
-      .moveStartTo(parentBlockKey, 0)
-      .moveStartToEndOfBlock();
+    return editor.moveStartTo(parentBlockKey, 0).moveStartToEndOfBlock();
   },
 };
 
 /* **** Queries  **** */
 
 export const queries = {
-  getParentBlock: (editor) => {
+  getParentBlock: editor => {
     const { document, startBlock } = editor.value;
     if (!startBlock) return null;
     return document.getClosestBlock(startBlock.key);
   },
-  hasBlock: (editor, type) => editor.value.blocks.some(node => node.type === type),
-  hasActiveMark: (editor, type) => editor.value.activeMarks.some(mark => mark.type === type),
-  isAtBeginning: (editor) => {
+  hasBlock: (editor, type) =>
+    editor.value.blocks.some(node => node.type === type),
+  hasActiveMark: (editor, type) =>
+    editor.value.activeMarks.some(mark => mark.type === type),
+  isAtBeginning: editor => {
     const { value } = editor;
     const { selection } = value;
     return selection.isCollapsed && selection.anchor.offset === 0;
   },
-  isEmptyBlock: editor => editor.value.startBlock && !editor.value.startBlock.text,
-  isEmptyDocument: (editor) => {
+  isEmptyBlock: editor =>
+    editor.value.startBlock && !editor.value.startBlock.text,
+  isEmptyDocument: editor => {
     const { value } = editor;
     const { document: doc } = value;
     const blocks = doc.getBlocks();
@@ -133,43 +135,50 @@ export const queries = {
 
     return false;
   },
-  isEmptyAndUnfocusedDocument: (editor) => {
+  isEmptyAndUnfocusedDocument: editor => {
     const { value } = editor;
     const { selection } = value;
 
     return editor.isEmptyDocument() && !selection.isFocused;
   },
-  isEmptyParagraph: (editor) => {
+  isEmptyParagraph: editor => {
     const { startBlock } = editor.value;
     return startBlock && startBlock.type === DEFAULT_NODE && !startBlock.text;
   },
-  isWrappedBy: (editor, type) => editor.value.blocks.some(block => (
-    !!editor.value.document.getClosest(block.key, parent => parent.type === type)
-  )),
+  isWrappedBy: (editor, type) =>
+    editor.value.blocks.some(
+      block =>
+        !!editor.value.document.getClosest(
+          block.key,
+          parent => parent.type === type
+        )
+    ),
   isWrappedByAnyBlock: editor => !!editor.getParentBlock(),
 };
 
 /* **** Plugins **** */
 
-const createDocumentTitlePlaceholder = text => PlaceholderPlugin({
-  placeholder: text,
-  when: 'isEmptyDocument',
-  style: {
-    color: theme.colors.titlePlaceholder,
-    lineHeight: '48px',
-    opacity: 1,
-  },
-});
+const createDocumentTitlePlaceholder = text =>
+  PlaceholderPlugin({
+    placeholder: text,
+    when: 'isEmptyDocument',
+    style: {
+      color: theme.colors.titlePlaceholder,
+      lineHeight: '48px',
+      opacity: 1,
+    },
+  });
 
 const DocumentPlaceholder = styled.div({
   lineHeight: '26px',
 });
 
-const createDocumentPlaceholder = text => CustomBodyPlaceholder({
-  placeholder: text,
-  when: 'isEmptyAndUnfocusedDocument',
-  Component: DocumentPlaceholder,
-});
+const createDocumentPlaceholder = text =>
+  CustomBodyPlaceholder({
+    placeholder: text,
+    when: 'isEmptyAndUnfocusedDocument',
+    Component: DocumentPlaceholder,
+  });
 
 const coreEditorPlugins = [
   // Marks
@@ -219,14 +228,11 @@ const inlineDiscussionPlugins = [
   EditorActions(),
 ];
 
-const contextPlugins = [
-  ...coreEditorPlugins,
-  ContextHighlightPlugin(),
-];
+const contextPlugins = [...coreEditorPlugins, ContextHighlightPlugin()];
 
 export const plugins = {
   documentTitle: [createDocumentTitlePlaceholder('Untitled Document')],
   document: documentPlugins,
-  discussionReply: inlineDiscussionPlugins,
+  discussionMessage: inlineDiscussionPlugins,
   discussionContext: contextPlugins,
 };

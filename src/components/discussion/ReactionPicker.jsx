@@ -45,7 +45,7 @@ const ReactionPicker = ({
   discussionId,
   handleClose,
   isOpen,
-  replyId,
+  messageId,
   placement,
   ...props
 }) => {
@@ -55,7 +55,7 @@ const ReactionPicker = ({
     reactions,
     reactionsReference,
     removeReaction,
-  } = useReactions({ discussionId, replyId });
+  } = useReactions({ discussionId, messageId });
 
   function handleAddReaction(code) {
     handleClose();
@@ -73,11 +73,17 @@ const ReactionPicker = ({
   }
 
   function hasReactedWith(code) {
-    return reactions.findIndex(r => matchCurrentUserId(r.author.id) && r.code === code) >= 0;
+    return (
+      reactions.findIndex(
+        r => matchCurrentUserId(r.author.id) && r.code === code
+      ) >= 0
+    );
   }
 
   function userReactionForCode(code) {
-    const reaction = reactions.find(r => r.code === code && matchCurrentUserId(r.author.id));
+    const reaction = reactions.find(
+      r => r.code === code && matchCurrentUserId(r.author.id)
+    );
     return reaction ? reaction.id : null;
   }
 
@@ -126,7 +132,7 @@ ReactionPicker.propTypes = {
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
   placement: PropTypes.oneOf(['above', 'below']),
-  replyId: PropTypes.string.isRequired,
+  messageId: PropTypes.string.isRequired,
 };
 
 ReactionPicker.defaultProps = {
