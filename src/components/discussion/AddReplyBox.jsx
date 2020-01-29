@@ -96,7 +96,7 @@ const AddReplyBox = ({
   if (loading || !data.discussion) return null;
   const { status } = data.discussion;
 
-  async function updateDiscussionStatus(currentState) {
+  async function updateDiscussionStatus({ currentState }) {
     const input = {
       status: {
         state: currentState,
@@ -124,7 +124,9 @@ const AddReplyBox = ({
           </AddReplyItem>
           <AddReplyItem>
             <ResolveDiscussionButton
-              onClick={() => updateDiscussionStatus(status.state)}
+              onClick={() =>
+                updateDiscussionStatus({ currentState: status.state })
+              }
             >
               <Label>Re-open discussion</Label>
             </ResolveDiscussionButton>
@@ -143,7 +145,7 @@ const AddReplyBox = ({
           </AddReplyItem>
           <AddReplyItem>
             <ResolveDiscussionButton
-              onClick={() => updateDiscussionStatus({ currentStatus: 'open' })}
+              onClick={() => updateDiscussionStatus({ currentState: 'open' })}
             >
               <Label>Resolve discussion</Label>
             </ResolveDiscussionButton>
