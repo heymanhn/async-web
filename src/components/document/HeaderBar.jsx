@@ -70,7 +70,6 @@ const ContentModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
   justifyContent: 'center',
   alignItems: 'center',
 
-  background: colors.white,
   borderBottom: isSelected ? `3px solid ${colors.blue}` : 'none',
   borderTop: isSelected ? `3px solid ${colors.white}` : 'none',
   cursor: 'pointer',
@@ -85,7 +84,6 @@ const DiscussionModeButton = styled.div(
     justifyContent: 'center',
     alignItems: 'center',
 
-    background: colors.white,
     borderBottom: isSelected ? `3px solid ${colors.blue}` : 'none',
     borderTop: isSelected ? `3px solid ${colors.white}` : 'none',
     cursor: 'pointer',
