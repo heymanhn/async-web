@@ -63,7 +63,7 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
   if (loading) return null;
   if (error || !data.discussion || !data.messages) return null;
 
-  const { topic: context, lastMessage, messageCount } = data.discussion;
+  const { topic: context, lastMessage, messageCount, draft } = data.discussion;
   const { payload } = context || {};
   const { items } = data.messages;
   const messages = (items || []).map(i => i.message);
@@ -88,6 +88,7 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
         <StyledDiscussionMessage
           discussionId={discussionId}
           initialMessage={firstMessage}
+          draft={draft}
         />
       )}
       {moreReplyCount > 0 && (

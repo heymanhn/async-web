@@ -143,7 +143,7 @@ const AddReplyBox = ({
           </AddReplyItem>
           <AddReplyItem>
             <ResolveDiscussionButton
-              onClick={() => updateDiscussionStatus('open')}
+              onClick={() => updateDiscussionStatus({ currentStatus: 'open' })}
             >
               <Label>Resolve discussion</Label>
             </ResolveDiscussionButton>

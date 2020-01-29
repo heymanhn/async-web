@@ -19,11 +19,7 @@ const DiscussionModal = ({
   selection,
   ...props
 }) => (
-  <StyledModal
-    handleClose={handleClose}
-    isOpen={isOpen}
-    {...props}
-  >
+  <StyledModal handleClose={handleClose} isOpen={isOpen} {...props}>
     <DiscussionContainer
       createAnnotation={createAnnotation}
       discussionId={isOpen ? discussionId : null}
@@ -36,7 +32,7 @@ const DiscussionModal = ({
 );
 
 DiscussionModal.propTypes = {
-  createAnnotation: PropTypes.func.isRequired,
+  createAnnotation: PropTypes.func,
   discussionId: PropTypes.string,
   documentEditor: PropTypes.object,
   documentId: PropTypes.string,
@@ -46,6 +42,7 @@ DiscussionModal.propTypes = {
 };
 
 DiscussionModal.defaultProps = {
+  createAnnotation: () => {},
   discussionId: null,
   documentEditor: {},
   documentId: null,

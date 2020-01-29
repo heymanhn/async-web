@@ -73,7 +73,7 @@ const DiscussionMessage = ({
 
   const [message, setMessage] = useState(initialMessage);
   const { createdAt, id: messageId, updatedAt, body } = message || {};
-  const author = message.author || currentUser;
+  const author = message.author || currentUser || (draft && draft.author);
   const userToDisplay = author;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
