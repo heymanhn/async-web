@@ -224,6 +224,37 @@ function updateBadgeCount(_root, { userId, notification }, { client }) {
   return null;
 }
 
+function deleteMessageFromDiscussion(
+  _root,
+  { discussionId, messageId },
+  { client }
+) {
+  const {
+    discussion,
+    messages: { pageToken, items, __typename, messageCount },
+  } = client.readQuery({
+    query: discussionQuery,
+    variables: { id: discussionId, queryParams: {} },
+  });
+
+  const index = items.findIndex(i => i.message.id === messageId);
+  client.writeQuery({
+    query: discussionQuery,
+    variables: { id: discussionId, queryParams: {} },
+    data: {
+      discussion,
+      messages: {
+        messageCount: messageCount - 1,
+        pageToken,
+        items: [...items.slice(0, index), ...items.slice(index + 1)],
+        __typename,
+      },
+    },
+  });
+
+  return null;
+}
+
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
@@ -233,6 +264,7 @@ const localResolvers = {
     addDocumentParticipant,
     removeDocumentParticipant,
     updateBadgeCount,
+    deleteMessageFromDiscussion,
   },
 };
 

@@ -159,6 +159,7 @@ const DiscussionsList = ({ documentId }) => {
       ))}
       <DiscussionModal
         discussionId={discussionId}
+        documentId={documentId}
         handleClose={handleCloseDiscussion}
         isOpen={!!discussionId}
       />

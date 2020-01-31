@@ -1,24 +1,20 @@
-/* eslint no-alert: 0 */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useApolloClient } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import addDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
-import createMessageMutation from 'graphql/mutations/createMessage';
-import updateMessageMutation from 'graphql/mutations/updateMessage';
-import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
 import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import { getLocalUser } from 'utils/auth';
-import { track } from 'utils/analytics';
 import useHover from 'utils/hooks/useHover';
+import { MessageContext } from 'utils/contexts';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
-import RovalEditor from 'components/editor/RovalEditor';
+import MessageEditor from './MessageEditor';
 import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 
@@ -41,19 +37,9 @@ const StyledHoverMenu = styled(HoverMenu)({
   right: '0px',
 });
 
-// HN: These styles should be moved elsewhere
-const MessageEditor = styled(RovalEditor)({
-  fontSize: '16px',
-  lineHeight: '26px',
-  fontWeight: 400,
-  marginTop: '15px',
-});
-
 const DiscussionMessage = ({
   afterCreate,
   currentUser,
-  discussionId,
-  documentId,
   draft,
   initialMode,
   initialMessage,
@@ -76,7 +62,6 @@ const DiscussionMessage = ({
   const author = message.author || currentUser || (draft && draft.author);
   const userToDisplay = author;
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
   const isAuthor = userId === author.id;
 
@@ -162,116 +147,6 @@ const DiscussionMessage = ({
     return Promise.reject(new Error('Failed to delete message draft'));
   }
 
-  async function handleCreate({ payload, text }) {
-    setIsSubmitting(true);
-
-    let messageDiscussionId = discussionId;
-    if (!messageDiscussionId) {
-      const { discussionId: did } = await onCreateDiscussion();
-      messageDiscussionId = did;
-    }
-
-    const { data } = await client.mutate({
-      mutation: createMessageMutation,
-      variables: {
-        discussionId: messageDiscussionId,
-        input: {
-          body: {
-            formatter: 'slatejs',
-            text,
-            payload,
-          },
-        },
-      },
-      refetchQueries: [
-        {
-          query: discussionQuery,
-          variables: { id: messageDiscussionId, queryParams: {} },
-        },
-      ],
-      awaitRefetchQueries: true,
-    });
-
-    if (data.createMessage) {
-      const { id } = data.createMessage;
-      setIsSubmitting(false);
-      track('New message posted', { messageId: id, messageDiscussionId });
-      afterCreate(messageDiscussionId, false);
-
-      return Promise.resolve({});
-    }
-
-    return Promise.reject(new Error('Failed to create discussion message'));
-  }
-
-  async function handleUpdate({ payload, text }) {
-    setIsSubmitting(true);
-
-    const { data } = await client.mutate({
-      mutation: updateMessageMutation,
-      variables: {
-        discussionId,
-        messageId,
-        input: {
-          body: {
-            formatter: 'slatejs',
-            text,
-            payload,
-          },
-        },
-      },
-    });
-
-    if (data.updateMessage) {
-      setMessage(data.updateMessage);
-      setIsSubmitting(false);
-      setToDisplayMode();
-      track('Message edited', { messageId, discussionId });
-      return Promise.resolve({});
-    }
-
-    return Promise.reject(new Error('Failed to save discussion message'));
-  }
-
-  async function handleDelete() {
-    const userChoice = window.confirm(
-      'Are you sure you want to delete this message?'
-    );
-    if (!userChoice) return;
-
-    client.mutate({
-      mutation: deleteMessageMutation,
-      variables: {
-        discussionId,
-        messageId,
-      },
-      update: cache => {
-        const {
-          discussion,
-          messages: { pageToken, items, __typename, messageCount },
-        } = cache.readQuery({
-          query: discussionQuery,
-          variables: { id: discussionId, queryParams: {} },
-        });
-
-        const index = items.findIndex(i => i.message.id === messageId);
-        cache.writeQuery({
-          query: discussionQuery,
-          variables: { id: discussionId, queryParams: {} },
-          data: {
-            discussion,
-            messages: {
-              messageCount: messageCount - 1,
-              pageToken,
-              items: [...items.slice(0, index), ...items.slice(index + 1)],
-              __typename,
-            },
-          },
-        });
-      },
-    });
-  }
-
   function handleCancel() {
     if (mode === 'compose') {
       onCancel();
@@ -286,43 +161,39 @@ const DiscussionMessage = ({
     return mode !== 'compose' ? body.payload : null;
   }
 
+  const contextValue = {
+    messageId,
+    mode,
+    setMode,
+  };
+
   return (
     <Container mode={mode} {...hoverProps} {...props}>
-      <HeaderSection>
-        <AuthorDetails
-          author={userToDisplay}
-          createdAt={createdAt}
-          isEdited={createdAt !== updatedAt}
-          mode={mode}
-        />
-        {messageId && mode === 'display' && (
-          <StyledHoverMenu
-            discussionId={discussionId}
-            isAuthor={isAuthor}
-            isOpen={hover}
-            messageId={messageId}
-            onDelete={handleDelete}
-            onEdit={setToEditMode}
+      <MessageContext.Provider value={contextValue}>
+        <HeaderSection>
+          <AuthorDetails
+            author={userToDisplay}
+            createdAt={createdAt}
+            isEdited={createdAt !== updatedAt}
           />
-        )}
-      </HeaderSection>
-      <MessageEditor
-        contentType="discussionMessage"
-        initialHeight={160}
-        initialValue={loadInitialContent()}
-        isAuthor={isAuthor}
-        isDraftSaved={!!draft}
-        isSubmitting={isSubmitting}
-        mode={mode}
-        onCancel={handleCancel}
-        onDiscardDraft={handleDeleteDraft}
-        onSaveDraft={handleSaveDraft}
-        onSubmit={mode === 'compose' ? handleCreate : handleUpdate}
-        resourceId={documentId}
-      />
-      {mode === 'display' && (
-        <MessageReactions discussionId={discussionId} messageId={messageId} />
-      )}
+          {messageId && mode === 'display' && (
+            <StyledHoverMenu
+              isAuthor={isAuthor}
+              isOpen={hover}
+              onDelete={handleDelete}
+              onEdit={setToEditMode}
+            />
+          )}
+        </HeaderSection>
+        <MessageEditor
+          handleCancel={handleCancel}
+          afterCreate={afterCreate}
+          initialMessage={loadInitialContent()}
+          // TODO: afterUpdate
+          // isDraft={!!draft}
+        />
+        {mode === 'display' && <MessageReactions />}
+      </MessageContext.Provider>
     </Container>
   );
 };
@@ -330,8 +201,6 @@ const DiscussionMessage = ({
 DiscussionMessage.propTypes = {
   afterCreate: PropTypes.func,
   currentUser: PropTypes.object,
-  discussionId: PropTypes.string,
-  documentId: PropTypes.string,
   draft: PropTypes.object,
   initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
   initialMessage: PropTypes.object,
@@ -342,8 +211,6 @@ DiscussionMessage.propTypes = {
 DiscussionMessage.defaultProps = {
   afterCreate: () => {},
   currentUser: null,
-  discussionId: null,
-  documentId: null,
   draft: null,
   initialMode: 'display',
   initialMessage: {},

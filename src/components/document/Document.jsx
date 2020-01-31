@@ -26,7 +26,7 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
 }));
 
 /*
- * TODO:
+ * SLATE UPGRADE TODO:
  * - the autoFocus thing should not need to be set too liberally.
  * - It only needs to be set upon initial load of a page with nothing in it
  */

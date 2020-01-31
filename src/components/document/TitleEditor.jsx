@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
-import { createEditor, Node } from 'slate';
+import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
@@ -9,7 +9,11 @@ import documentQuery from 'graphql/queries/document';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import { track } from 'utils/analytics';
 
-import { DEFAULT_VALUE, deserializedTitle } from 'components/editor/utils';
+import {
+  DEFAULT_VALUE,
+  deserializedTitle,
+  toPlainText,
+} from 'components/editor/utils';
 
 const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
   color: colors.mainText,
@@ -24,7 +28,7 @@ const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
 }));
 
 /*
- * TODO:
+ * SLATE UPGRADE TODO:
  * - any pasted text is converted to one line of plain text before it's saved
  *   to the title
  * - Pressing Enter changes focus to the beginning of the content
@@ -42,7 +46,7 @@ const TitleEditor = ({ afterUpdate, documentId, initialTitle, ...props }) => {
       variables: {
         documentId,
         input: {
-          title: title.map(t => Node.string(t)).join('\n'),
+          title: toPlainText(title),
         },
       },
       refetchQueries: [

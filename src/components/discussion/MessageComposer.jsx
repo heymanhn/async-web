@@ -48,41 +48,6 @@ const MessageComposer = ({
   if (loading || !data.user) return null;
   const currentUser = data.user;
 
-  async function handleCreateDiscussion() {
-    const input = {};
-    if (context) {
-      const initialJSON = JSON.parse(context);
-      const value = Value.fromJSON(initialJSON);
-
-      input.topic = {
-        formatter: 'slatejs',
-        text: Plain.serialize(value),
-        payload: context,
-      };
-    }
-
-    const { data: createDiscussionData } = await createDiscussion({
-      variables: { documentId, input },
-      refetchQueries: [
-        {
-          query: documentDiscussionsQuery,
-          variables: { id: documentId, queryParams: { order: 'desc' } },
-        },
-      ],
-      awaitRefetchQueries: true,
-    });
-
-    if (createDiscussionData.createDiscussion) {
-      const { id: newDiscussionId } = createDiscussionData.createDiscussion;
-      return Promise.resolve({
-        discussionId: newDiscussionId,
-        isNewDiscussion: true,
-      });
-    }
-
-    return Promise.reject(new Error('Failed to create discussion'));
-  }
-
   function afterCreate(value, isDraft) {
     if (!discussionId) afterDiscussionCreate(value);
     if (!isDraft) stopComposing();

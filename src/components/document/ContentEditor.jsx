@@ -1,14 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
-import { createEditor, Node } from 'slate';
+import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import useAutoSave from 'utils/hooks/useAutoSave';
 
-import { DEFAULT_VALUE } from 'components/editor/utils';
+import { DEFAULT_VALUE, toPlainText } from 'components/editor/utils';
 
 const ContentEditable = styled(Editable)({
   fontSize: '16px',
@@ -18,14 +18,18 @@ const ContentEditable = styled(Editable)({
 });
 
 /*
- * TODO:
- * - port autoSave plugin into this new environment
+ * SLATE UPGRADE TODO:
  * - Figure out how to show the inline discussion modal given a discussion ID
  * - Figure out how to pass resourceId to the image plugin
  * - Figure out how plugins are instantiated here
  */
 
-const ContentEditor = ({ afterUpdate, documentId, initialContent }) => {
+const ContentEditor = ({
+  afterUpdate,
+  documentId,
+  initialContent,
+  ...props
+}) => {
   const contentEditor = useMemo(() => withReact(createEditor()), []);
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_VALUE
@@ -43,7 +47,7 @@ const ContentEditor = ({ afterUpdate, documentId, initialContent }) => {
         input: {
           body: {
             formatter: 'slatejs',
-            text: children.map(c => Node.string(c)).join('\n'),
+            text: toPlainText(children),
             payload: JSON.stringify(children),
           },
         },
@@ -57,7 +61,7 @@ const ContentEditor = ({ afterUpdate, documentId, initialContent }) => {
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
-      <ContentEditable />
+      <ContentEditable {...props} />
     </Slate>
   );
 };

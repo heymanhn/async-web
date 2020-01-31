@@ -16,26 +16,6 @@ import NotFound from 'components/navigation/NotFound';
 import DiscussionThread from './DiscussionThread';
 import MessageComposer from './MessageComposer';
 
-const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
-  background: colors.grey7,
-  opacity: 0.6,
-  borderTopLeftRadius: '5px',
-  borderTopRightRadius: '5px',
-  fontSize: '16px',
-  lineHeight: '26px',
-  fontWeight: 400,
-  padding: '10px 30px 5px',
-}));
-
-const DiscussionContainer = ({
-  createAnnotation,
-  discussionId: initialDiscussionId,
-  documentId: initialDocumentId,
-  documentEditor,
-  handleCancel,
-  selection,
-  ...props
-}) => {
   const [discussionId, setDiscussionId] = useState(initialDiscussionId);
   const [documentId, setDocumentId] = useState(initialDocumentId);
   const [context, setContext] = useState(null);
@@ -86,43 +66,7 @@ const DiscussionContainer = ({
     if (draftHasChanged(newDraft)) setDraft(newDraft);
   }
 
-  // HN: I know this is a long-winded way to extract the inline discussion context. But we're
-  // limited by what the Slate API gives us. There must be a better way.
-  // FUTURE: Use the immutable APIs to dynamically create the context block
-  function extractContext() {
-    const { start, end } = selection;
 
-    // Step 1: Delete everything before the highlight, factoring in some buffer space
-    // for the rest of the current block
-    documentEditor
-      .moveToStartOfDocument()
-      .moveEndToStartOfParentBlock(start)
-      .delete();
-
-    // Step 2: Delete everything after the highlight, similar to step 2
-    documentEditor
-      .moveToEndOfDocument()
-      .moveStartToEndOfParentBlock(end)
-      .delete();
-
-    // Step 3: Create the highlight within the current content
-    documentEditor
-      .moveStartTo(start.key, start.offset)
-      .moveEndTo(end.key, end.offset)
-      .wrapInline(CONTEXT_HIGHLIGHT);
-
-    const { value } = documentEditor;
-    const initialContext = JSON.stringify(value.toJSON());
-    setContext(initialContext);
-
-    // 1. Undo the highlight
-    // 2. Undo the end of document delete
-    // 3. Undo the beginning of document delete
-    documentEditor
-      .undo()
-      .undo()
-      .undo();
-  }
 
   if (!discussionId && !context) extractContext();
 
@@ -153,36 +97,6 @@ const DiscussionContainer = ({
 
     handleCancel();
   }
-
-  return (
-    <div {...props}>
-      {context && (
-        <ContextEditor
-          contentType="discussionContext"
-          readOnly
-          documentId={documentId}
-          initialValue={context}
-          mode="display"
-        />
-      )}
-      {discussionId && documentId && (
-        <DiscussionThread
-          discussionId={discussionId}
-          documentId={documentId}
-          isUnread={isUnread()}
-        />
-      )}
-      <MessageComposer
-        afterDiscussionCreate={afterDiscussionCreate}
-        context={context}
-        discussionId={discussionId}
-        draft={draft}
-        documentId={documentId}
-        handleClose={handleClose}
-        source="discussionContainer"
-      />
-    </div>
-  );
 };
 
 DiscussionContainer.propTypes = {
@@ -202,5 +116,3 @@ DiscussionContainer.defaultProps = {
   handleCancel: () => {},
   selection: {},
 };
-
-export default DiscussionContainer;
