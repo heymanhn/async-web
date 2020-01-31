@@ -6,6 +6,7 @@ import {
   faFileAlt,
   faPlus,
 } from '@fortawesome/pro-solid-svg-icons';
+
 import styled from '@emotion/styled';
 
 // hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
@@ -14,14 +15,15 @@ import { useQuery } from '@apollo/react-hooks';
 
 import documentQuery from 'graphql/queries/document';
 import organizationQuery from 'graphql/queries/organization';
-import documentNotificationsQuery from 'graphql/queries/documentNotifications';
+import notificationsQuery from 'graphql/queries/notifications';
 
-import { getLocalAppState } from 'utils/auth';
+import { getLocalAppState, getLocalUser } from 'utils/auth';
 
 import DocumentAccessContainer from 'components/participants/DocumentAccessContainer';
 import Avatar from 'components/shared/Avatar';
 import VerticalDivider from 'components/shared/VerticalDivider';
 import DropdownMenu from 'components/navigation/DropdownMenu';
+import NotificationsBell from 'components/notifications/NotificationsBell';
 import NewDocumentButton from './NewDocumentButton';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -92,19 +94,6 @@ const DiscussionModeButton = styled.div(
   })
 );
 
-const BadgeCountIcon = styled.span(({ theme: { colors } }) => ({
-  color: colors.white,
-  background: colors.blue,
-  borderRadius: '10px',
-  fontSize: '12px',
-  height: '19px',
-  padding: '0 8px',
-  position: 'absolute',
-  marginTop: '-10px',
-  marginLeft: '10px',
-  fontWeight: 500,
-}));
-
 const DiscussionsIconContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   justifyContent: 'center',
@@ -148,6 +137,7 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
   }
 
   const { organizationId } = getLocalAppState();
+  const { userId } = getLocalUser();
 
   const { loading: loadingOrg, data: organizationData } = useQuery(
     organizationQuery,
@@ -160,21 +150,18 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
     variables: { id: documentId, queryParams: {} },
   });
 
-  const { loading, data: notificationsData } = useQuery(
-    documentNotificationsQuery,
-    {
-      variables: { id: documentId },
-    }
-  );
+  const { loading, data: notificationsData } = useQuery(notificationsQuery, {
+    variables: { id: userId },
+  });
 
   if (!organizationId) return null;
   if (loadingOrg || !organizationData.organization) return null;
   if (loadingDoc || !documentData.document) return null;
-  if (loading || !notificationsData.documentNotifications) return null;
+  if (loading || !notificationsData.userNotifications) return null;
 
   const { logo } = organizationData.organization;
   const { title } = documentData.document;
-  const { notifications } = notificationsData.documentNotifications;
+  const { notifications } = notificationsData.userNotifications;
 
   return (
     <Container {...props}>
@@ -204,17 +191,14 @@ const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
         >
           <DiscussionsIconContainer>
             <StyledDiscussionsIcon icon={faCommentsAlt} />
-            {notifications && notifications.length > 0 ? (
-              <BadgeCountIcon>{notifications.length}</BadgeCountIcon>
-            ) : (
-              <StyledPlusIcon icon={faPlus} />
-            )}
+            <StyledPlusIcon icon={faPlus} />
           </DiscussionsIconContainer>
         </DiscussionModeButton>
         <VerticalDivider />
         <DocumentAccessContainer documentId={documentId} />
       </MenuSection>
       <NavigationSection>
+        <NotificationsBell notifications={notifications} />
         <NewDocumentButton />
       </NavigationSection>
     </Container>
