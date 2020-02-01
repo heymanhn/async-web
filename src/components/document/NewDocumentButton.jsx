@@ -15,7 +15,7 @@ const Container = styled.div({
   alignItems: 'center',
 
   cursor: 'pointer',
-  padding: '0 30px',
+  padding: '0 20px',
 });
 
 const StyledPlus = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
@@ -51,7 +51,9 @@ const NewDocumentButton = () => {
 
   return (
     <Container onClick={handleCreateDocument}>
-      {isLoading ? <LoadingIndicator color="grey4" size={18} /> : (
+      {isLoading ? (
+        <LoadingIndicator color="grey4" size={18} />
+      ) : (
         <StyledPlus icon={faPlus} />
       )}
     </Container>

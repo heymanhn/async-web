@@ -4,7 +4,7 @@ import Pusher from 'pusher-js';
 import camelcaseKeys from 'camelcase-keys';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
-import updateDocumentBadgeCountMutation from 'graphql/mutations/local/updateDocumentBadgeCount';
+import updateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
 import { getLocalUser } from 'utils/auth';
 
 const DOCUMENT_BADGE_COUNT = 'document_badge_count';
@@ -34,11 +34,11 @@ const usePusher = () => {
 
     function handleDocumentBadgeCount(pusherData) {
       const camelData = camelcaseKeys(pusherData, { deep: true });
-      const { documentId, notification } = camelData;
+      const { notification } = camelData;
 
       client.mutate({
-        mutation: updateDocumentBadgeCountMutation,
-        variables: { documentId, notification },
+        mutation: updateBadgeCountMutation,
+        variables: { userId, notification },
       });
     }
 

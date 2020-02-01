@@ -48,7 +48,7 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
 }));
 
 const NotificationRow = ({ handleCloseDropdown, notification }) => {
-  const { author, createdAt, isUnread, title } = notification;
+  const { author, updatedAt, isUnread, title } = notification;
   const [context, subject] = title.split(': ');
 
   function constructURL() {
@@ -74,14 +74,19 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
 
   return (
     <Container isUnread={isUnread} onClick={closeDropdownAndNavigate}>
-      <StyledAvatar src={author.profilePictureUrl} size={30} />
+      <StyledAvatar
+        avatarUrl={author.profilePictureUrl}
+        title={author.fullName}
+        alt={author.fullName}
+        size={30}
+      />
       <Details>
         <NotificationText>
           {`${context} `}
           <span>{subject}</span>
         </NotificationText>
         <Timestamp fromNow parse="X">
-          {createdAt}
+          {updatedAt}
         </Timestamp>
       </Details>
     </Container>

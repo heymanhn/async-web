@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import useClickOutside from 'utils/hooks/useClickOutside';
 import NotificationRow from './NotificationRow';
 
 const Container = styled.div(({ iconWidth, isOpen, theme: { colors } }) => ({
@@ -53,8 +54,17 @@ const NotificationsDropdown = ({
   notifications,
   handleCloseDropdown,
 }) => {
+  const selector = useRef();
+
+  function handleClickOutside() {
+    if (!isOpen) return;
+    handleCloseDropdown();
+  }
+
+  useClickOutside({ handleClickOutside, isOpen, ref: selector });
+
   return (
-    <Container iconWidth={iconWidth} isOpen={isOpen}>
+    <Container iconWidth={iconWidth} isOpen={isOpen} ref={selector}>
       <TitleSection>
         <Title>NOTIFICATIONS</Title>
         <UnreadCountBadge>{notifications.length}</UnreadCountBadge>
@@ -62,7 +72,7 @@ const NotificationsDropdown = ({
       {notifications &&
         notifications.map(n => (
           <NotificationRow
-            key={n.createdAt}
+            key={n.updatedAt}
             notification={n}
             handleCloseDropdown={handleCloseDropdown}
           />
@@ -80,7 +90,7 @@ NotificationsDropdown.propTypes = {
 
 NotificationsDropdown.defaultProps = {
   iconWidth: null,
-  notifications: null, // This lets us know it's still loading
+  notifications: null,
 };
 
 export default NotificationsDropdown;

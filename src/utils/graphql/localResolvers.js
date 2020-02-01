@@ -1,7 +1,7 @@
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
 import documentParticipantsQuery from 'graphql/queries/documentParticipants';
-import documentNotificationsQuery from 'graphql/queries/documentNotifications';
+import notificationsQuery from 'graphql/queries/notifications';
 
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
   const data = client.readQuery({
@@ -178,20 +178,16 @@ function removeDocumentParticipant(_root, { id, participantId }, { client }) {
   return null;
 }
 
-function updateDocumentBadgeCount(
-  _root,
-  { documentId, notification },
-  { client }
-) {
+function updateBadgeCount(_root, { userId, notification }, { client }) {
   const data = client.readQuery({
-    query: documentNotificationsQuery,
-    variables: { id: documentId },
+    query: notificationsQuery,
+    variables: { id: userId },
   });
 
   if (!data) return null;
 
-  const { documentNotifications } = data;
-  const { notifications, __typename } = documentNotifications;
+  const { userNotifications } = data;
+  const { notifications, __typename } = userNotifications;
   const index = notifications.findIndex(
     n => n.objectId === notification.objectId
   );
@@ -214,8 +210,8 @@ function updateDocumentBadgeCount(
         ];
 
   client.writeQuery({
-    query: documentNotificationsQuery,
-    variables: { id: documentId },
+    query: notificationsQuery,
+    variables: { id: userId },
     data: {
       documentNotifications: {
         notifications: notificationsData,
@@ -235,7 +231,7 @@ const localResolvers = {
     addPendingRepliesToDiscussion,
     addDocumentParticipant,
     removeDocumentParticipant,
-    updateDocumentBadgeCount,
+    updateBadgeCount,
   },
 };
 

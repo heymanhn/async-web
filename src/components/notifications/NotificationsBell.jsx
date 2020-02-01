@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/pro-solid-svg-icons';
@@ -8,7 +8,7 @@ import NotificationsDropdown from './NotificationsDropdown';
 
 const Container = styled.div({
   display: 'flex',
-  flexDirection: 'row',
+  justifyContent: 'center',
   alignItems: 'center',
 
   cursor: 'pointer',
@@ -34,7 +34,14 @@ const UnreadBadge = styled.div(({ theme: { colors } }) => ({
 
 const NotificationsBell = ({ notifications }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const iconRef = useRef(null);
+
   const newNotifications = notifications && notifications.length;
+
+  function findIconWidth() {
+    const icon = iconRef.current;
+    return icon ? icon.offsetWidth : null;
+  }
 
   function handleShowDropdown() {
     setIsDropdownVisible(true);
@@ -45,17 +52,18 @@ const NotificationsBell = ({ notifications }) => {
   }
 
   return (
-    <>
-      <Container onClick={handleShowDropdown}>
+    <div>
+      <Container onClick={handleShowDropdown} ref={iconRef}>
         <StyledIcon icon={faBell} />
         {newNotifications ? <UnreadBadge /> : undefined}
       </Container>
       <NotificationsDropdown
         isOpen={isDropdownVisible}
         notifications={notifications}
+        iconWidth={findIconWidth()}
         handleCloseDropdown={handleCloseDropdown}
       />
-    </>
+    </div>
   );
 };
 
