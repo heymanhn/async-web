@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import { snakedQueryParams } from 'utils/queryParams';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
+import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import MessageComposer from 'components/discussion/MessageComposer';
@@ -58,11 +59,15 @@ const StyledMessageComposer = styled(MessageComposer)(
   })
 );
 
-const DiscussionsList = ({ documentId }) => {
+const DiscussionsList = () => {
   const listRef = useRef(null);
+  const { documentId, modalDiscussionId, setModalDiscussionId } = useContext(
+    DocumentContext
+  );
+
   const [showComposer, setShowComposer] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [discussionId, setDiscussionId] = useState(null);
+
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
 
   function handleShowComposer() {

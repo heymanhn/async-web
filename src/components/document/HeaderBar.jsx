@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -16,8 +16,8 @@ import { useQuery } from '@apollo/react-hooks';
 import documentQuery from 'graphql/queries/document';
 import organizationQuery from 'graphql/queries/organization';
 import notificationsQuery from 'graphql/queries/notifications';
-
 import { getLocalAppState, getLocalUser } from 'utils/auth';
+import { DocumentContext } from 'utils/contexts';
 
 import DocumentAccessContainer from 'components/participants/DocumentAccessContainer';
 import Avatar from 'components/shared/Avatar';
@@ -127,7 +127,8 @@ const StyledPlusIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   marginTop: '-20px',
 }));
 
-const HeaderBar = ({ documentId, setViewMode, viewMode, ...props }) => {
+const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
+  const { documentId } = useContext(DocumentContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   function openDropdown() {
     setIsDropdownOpen(true);

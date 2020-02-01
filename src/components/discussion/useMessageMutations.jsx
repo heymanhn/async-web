@@ -3,6 +3,8 @@ import { useContext, useState } from 'react';
 import { useMutation } from 'react-apollo';
 
 import discussionQuery from 'graphql/queries/discussion';
+import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
+import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
@@ -17,6 +19,7 @@ import { toPlainText } from 'components/editor/utils';
  * - Pass message details into this hook so that the API calls can use it
  * - Handle deleting the entire discussion if the user deletes the first
  *   message of the discussion
+ * - When context is implemented, save it during discussion create
  */
 
 const useMessageMutations = ({
@@ -24,9 +27,12 @@ const useMessageMutations = ({
   afterCreate = () => {},
 } = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { documentId, discussionId, context } = useContext(DiscussionContext);
+  const { documentId, discussionId, discussionContext } = useContext(
+    DiscussionContext
+  );
   const { messageId, setMode } = useContext(MessageContext);
 
+  const [createDiscussion] = useMutation(createDiscussionMutation);
   const [createMessage] = useMutation(createMessageMutation);
   const [updateMessage] = useMutation(updateMessageMutation);
 
@@ -39,16 +45,17 @@ const useMessageMutations = ({
 
   async function handleCreateDiscussion() {
     const input = {};
-    if (context) {
-      const initialJSON = JSON.parse(context);
-      const value = Value.fromJSON(initialJSON);
+    // TODO: fix this when we implement extracting context
+    // if (context) {
+    //   const initialJSON = JSON.parse(context);
+    //   const value = Value.fromJSON(initialJSON);
 
-      input.topic = {
-        formatter: 'slatejs',
-        text: toPlainText(),
-        payload: context,
-      };
-    }
+    //   input.topic = {
+    //     formatter: 'slatejs',
+    //     text: toPlainText(),
+    //     payload: context,
+    //   };
+    // }
 
     const { data: createDiscussionData } = await createDiscussion({
       variables: { documentId, input },
@@ -63,13 +70,14 @@ const useMessageMutations = ({
 
     if (createDiscussionData.createDiscussion) {
       const { id: newDiscussionId } = createDiscussionData.createDiscussion;
-      return Promise.resolve({
+      track('New discussion created', {
+        documentId,
         discussionId: newDiscussionId,
-        isNewDiscussion: true,
       });
-    }
 
-    return Promise.reject(new Error('Failed to create discussion'));
+      // TODO: need a way to set the modal discussion ID after creation,
+      // but only if the modal is open
+    }
   }
 
   async function handleCreate() {

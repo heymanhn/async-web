@@ -1,16 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { useMutation, useQuery } from 'react-apollo';
+import React, { useContext, useState } from 'react';
+import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
-// import { getLocalUser } from 'utils/auth';
 import documentQuery from 'graphql/queries/document';
+import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
-// import RovalEditor from 'components/editor/RovalEditor';
-// import DiscussionModal from 'components/discussion/DiscussionModal';
-// import DiscussionsList from './DiscussionsList';
-import HeaderBar from './HeaderBar';
 import LastUpdatedIndicator from './LastUpdatedIndicator';
 import TitleEditor from './TitleEditor';
 import ContentEditor from './ContentEditor';
@@ -27,24 +22,11 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
 
 /*
  * SLATE UPGRADE TODO:
- * - the autoFocus thing should not need to be set too liberally.
- * - It only needs to be set upon initial load of a page with nothing in it
  */
 
-const Document = ({ documentId, discussionId, viewMode: initialViewMode }) => {
-  const [state, setState] = useState({
-    discussionId,
-    updatedTimestamp: null,
-    viewMode: initialViewMode,
-  });
-
-  function setUpdatedTimestamp(timestamp) {
-    setState(oldState => ({ ...oldState, updatedTimestamp: timestamp }));
-  }
-
-  function setViewMode(newMode) {
-    setState(oldState => ({ ...oldState, viewMode: newMode }));
-  }
+const Document = () => {
+  const { documentId } = useContext(DocumentContext);
+  const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
 
   const { loading, error, data } = useQuery(documentQuery, {
     variables: { documentId, queryParams: {} },
@@ -56,101 +38,32 @@ const Document = ({ documentId, discussionId, viewMode: initialViewMode }) => {
   const { body, title, updatedAt } = data.document;
   const { payload: content } = body || {};
 
-  if (!state.updatedTimestamp && updatedAt)
-    setUpdatedTimestamp(updatedAt * 1000);
+  // Initialize the state here
+  if (!updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
+  const setUpdatedTimestampToNow = () => setUpdatedTimestamp(Date.now());
 
-  // TODO: This will change later, when we introduce the concept of multiple co-authors
-  // const { userId } = getLocalUser();
-  // const isAuthor = userId === owner.id;
+  // SLATE UPGRADE TODO: do I need these state variables?
+  // documentEditor,
+  // selection,
 
-  function setUpdatedTimestampToNow() {
-    setUpdatedTimestamp(Date.now());
-  }
-
-  // function createAnnotation(value, authorId) {
-  //   const { documentEditor, selection } = state;
-  //   const { start, end } = selection;
-
-  //   documentEditor.withoutSaving(() => {
-  //     documentEditor
-  //       .moveTo(start.key, start.offset)
-  //       .moveEndTo(end.key, end.offset)
-  //       .addMark({
-  //         type: 'inline-discussion',
-  //         data: {
-  //           discussionId: value,
-  //           authorId,
-  //         },
-  //       });
-  //   });
-  //   track('New discussion created', { discussionId: value, documentId });
-
-  //   // Update the URL in the address bar to reflect the new discussion
-  //   // TODO (HN): Fix this implementation this later.
-  //   //
-  //   // const { origin } = window.location;
-  //   // const url = `${origin}/discussions/${value}`;
-  //   // return window.history.replaceState({}, `discussion: ${value}`, url);
-  // }
-
-  const {
-    // discussionId: dId,
-    // documentEditor,
-    // isModalOpen,
-    // selection,
-    updatedTimestamp,
-    viewMode,
-  } = state;
   return (
-    <>
-      <HeaderBar
+    <Container>
+      <TitleEditor
+        afterUpdate={setUpdatedTimestampToNow}
+        autoFocus={!title && !content}
         documentId={documentId}
-        setViewMode={setViewMode}
-        viewMode={viewMode}
+        initialTitle={title}
       />
-      {/* {viewMode === 'discussions' && <DiscussionsList documentId={documentId} />} */}
-      {viewMode === 'content' && (
-        <>
-          <Container>
-            <TitleEditor
-              afterUpdate={setUpdatedTimestampToNow}
-              autoFocus={!title && !content}
-              documentId={documentId}
-              initialTitle={title}
-            />
-            <ContentEditor
-              afterUpdate={setUpdatedTimestampToNow}
-              documentId={documentId}
-              initialContent={content}
-            />
-            {updatedTimestamp && (
-              <LastUpdatedIndicator timestamp={updatedTimestamp} />
-            )}
-          </Container>
-          {/* <DiscussionModal
-            createAnnotation={createAnnotation}
-            discussionId={dId}
-            documentEditor={documentEditor}
-            documentId={documentId}
-            handleClose={handleCloseDiscussion}
-            isOpen={isModalOpen}
-            selection={selection}
-          /> */}
-        </>
+      <ContentEditor
+        afterUpdate={setUpdatedTimestampToNow}
+        documentId={documentId}
+        initialContent={content}
+      />
+      {updatedTimestamp && (
+        <LastUpdatedIndicator timestamp={updatedTimestamp} />
       )}
-    </>
+    </Container>
   );
-};
-
-Document.propTypes = {
-  documentId: PropTypes.string.isRequired,
-  discussionId: PropTypes.string,
-  viewMode: PropTypes.oneOf(['content', 'discussions']),
-};
-
-Document.defaultProps = {
-  viewMode: 'content',
-  discussionId: null,
 };
 
 export default Document;
