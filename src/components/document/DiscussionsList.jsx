@@ -8,7 +8,6 @@ import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
-import DiscussionModal from 'components/discussion/DiscussionModal';
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import DiscussionListItem from './DiscussionListItem';
 

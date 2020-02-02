@@ -11,7 +11,11 @@ import { ApolloLink, concat } from 'apollo-link';
 import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
-import { getAuthHeader, isLocalTokenPresent, isUserOnboarding } from 'utils/auth';
+import {
+  getAuthHeader,
+  isLocalTokenPresent,
+  isUserOnboarding,
+} from 'utils/auth';
 import fileSerializer from 'utils/graphql/fileSerializer';
 import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
@@ -27,14 +31,14 @@ import SignUp from 'components/auth/SignUp';
 import CreateOrganization from 'components/auth/CreateOrganization';
 import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
-import Document from 'components/document/Document';
+import DocumentContainer from 'components/document/DocumentContainer';
 import DiscussionLinkHandler from 'components/discussion/DiscussionLinkHandler';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
   credentials: 'same-origin',
-  fieldNameNormalizer: (key => camelCase(key)),
-  fieldNameDenormalizer: (key => snake_case(key)),
+  fieldNameNormalizer: key => camelCase(key),
+  fieldNameDenormalizer: key => snake_case(key),
   headers: {
     'Content-Type': 'application/json',
   },
@@ -86,7 +90,9 @@ const generateDefaultData = () => ({
   selectedMeetingId: null,
 });
 cache.writeData({ data: generateDefaultData() });
-client.onResetStore(() => Promise.resolve(cache.writeData({ data: generateDefaultData() })));
+client.onResetStore(() =>
+  Promise.resolve(cache.writeData({ data: generateDefaultData() }))
+);
 
 // TEMP: set client as a global variable for non-React usages
 window.Roval = { apolloClient: client };
@@ -105,10 +111,20 @@ const App = () => {
         <DemoLogin path="/demo/login" />
         <Logout path="/logout" />
 
-        <PrivateRoute path="/d/:documentId" component={Document} />
-        <PrivateRoute path="/d/:documentId/discussions/:discussionId" component={Document} />
-        <PrivateRoute path="/d/:documentId/discussions" component={Document} viewMode="discussions" />
-        <PrivateRoute path="/discussions/:discussionId" component={DiscussionLinkHandler} />
+        <PrivateRoute path="/d/:documentId" component={DocumentContainer} />
+        <PrivateRoute
+          path="/d/:documentId/discussions/:discussionId"
+          component={DocumentContainer}
+        />
+        <PrivateRoute
+          path="/d/:documentId/discussions"
+          component={DocumentContainer}
+          viewMode="discussions"
+        />
+        <PrivateRoute
+          path="/discussions/:discussionId"
+          component={DiscussionLinkHandler}
+        />
 
         <NotFound path="/notfound" default />
       </Router>

@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 
-import RovalEditor from 'components/editor/RovalEditor';
+// import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import AvatarList from 'components/shared/AvatarList';
 import DiscussionListItemHeader from './DiscussionListItemHeader';
@@ -36,16 +36,16 @@ const StyledAvatarList = styled(AvatarList)({
   marginRight: '10px',
 });
 
-const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
-  background: colors.grey7,
-  opacity: 0.6,
-  borderTopLeftRadius: '5px',
-  borderTopRightRadius: '5px',
-  fontSize: '16px',
-  lineHeight: '26px',
-  fontWeight: 400,
-  padding: '10px 30px 5px',
-}));
+// const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
+//   background: colors.grey7,
+//   opacity: 0.6,
+//   borderTopLeftRadius: '5px',
+//   borderTopRightRadius: '5px',
+//   fontSize: '16px',
+//   lineHeight: '26px',
+//   fontWeight: 400,
+//   padding: '10px 30px 5px',
+// }));
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
@@ -64,7 +64,7 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
   if (error || !data.discussion || !data.messages) return null;
 
   const { topic: context, lastMessage, messageCount, draft } = data.discussion;
-  const { payload } = context || {};
+  // const { payload } = context || {};
   const { items } = data.messages;
   const messages = (items || []).map(i => i.message);
   const firstMessage = messages[0];
@@ -77,20 +77,21 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
         discussion={data.discussion}
         setDiscussionId={setDiscussionId}
       />
-      {payload ? (
+      {/* SLATE UPGRADE TODO: Get context working in All Discussions page too */}
+      {/* {payload ? (
         <ContextEditor
           contentType="discussionContext"
           readOnly
           initialValue={payload}
           mode="display"
         />
-      ) : (
-        <StyledDiscussionMessage
-          discussionId={discussionId}
-          initialMessage={firstMessage}
-          draft={draft}
-        />
-      )}
+      ) : ( */}
+      <StyledDiscussionMessage
+        discussionId={discussionId}
+        initialMessage={firstMessage}
+        draft={draft}
+      />
+      {/* )} */}
       {moreReplyCount > 0 && (
         <MoreRepliesIndicator>
           <StyledAvatarList avatarUrls={avatarUrls} opacity={0.5} />

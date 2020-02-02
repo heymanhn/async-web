@@ -25,7 +25,9 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
  */
 
 const Document = () => {
-  const { documentId } = useContext(DocumentContext);
+  const data2 = useContext(DocumentContext);
+  console.log('hi');
+  const { documentId } = data2;
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
 
   const { loading, error, data } = useQuery(documentQuery, {

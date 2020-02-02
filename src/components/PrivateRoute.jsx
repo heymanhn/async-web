@@ -15,11 +15,14 @@ const PrivateRoute = ({ component: Component, location, ...props }) => {
   const { isLoggedIn, isOnboarding } = data;
 
   if (isOnboarding) {
-    const path = organizationId ? `/organizations/${organizationId}/invites` : '/organizations';
+    const path = organizationId
+      ? `/organizations/${organizationId}/invites`
+      : '/organizations';
     return <Redirect to={path} noThrow />;
   }
 
-  if (!isLoggedIn && location.pathname !== '/') return <Redirect to="/" noThrow />;
+  if (!isLoggedIn && location.pathname !== '/')
+    return <Redirect to="/" noThrow />;
 
   return <Component location={location} {...props} />;
 };
