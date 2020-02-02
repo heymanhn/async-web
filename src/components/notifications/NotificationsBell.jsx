@@ -47,8 +47,11 @@ const NotificationsBell = ({ notifications }) => {
     setIsDropdownVisible(true);
   }
 
-  function handleCloseDropdown() {
-    setIsDropdownVisible(false);
+  // The notification rows need to wait until the dropdown is closed before
+  // it performs a navigate, that's what the callback method is for
+  function handleCloseDropdown(callback = () => {}) {
+    setIsDropdownVisible(false, callback);
+    callback();
   }
 
   return (
@@ -70,7 +73,11 @@ const NotificationsBell = ({ notifications }) => {
 };
 
 NotificationsBell.propTypes = {
-  notifications: PropTypes.array.isRequired,
+  notifications: PropTypes.array,
+};
+
+NotificationsBell.defaultProps = {
+  notifications: [],
 };
 
 export default NotificationsBell;

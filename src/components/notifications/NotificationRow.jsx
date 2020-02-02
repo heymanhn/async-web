@@ -71,11 +71,10 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
 
   function notificationURL() {
     const { documentId, discussionId } = payloadCamelJSON;
-    let path = '';
-    if (documentId) path += `/d/${documentId}`;
-    if (discussionId) path += `/discussions/${discussionId}`;
 
-    return path;
+    return type === 'new_message'
+      ? `/discussions/${discussionId}`
+      : `/d/${documentId}`;
   }
 
   function closeDropdownAndNavigate(event) {

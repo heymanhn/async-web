@@ -188,25 +188,26 @@ function updateBadgeCount(_root, { userId, notification }, { client }) {
 
   const { userNotifications } = data;
   const { notifications, __typename } = userNotifications;
-  const index = notifications.findIndex(
+  const safeNotifications = notifications || [notification];
+  const index = safeNotifications.findIndex(
     n => n.objectId === notification.objectId
   );
   const newNotification = {
-    __typename: notifications[0].__typename,
+    __typename: safeNotifications[0].__typename,
     ...notification,
     author: {
-      __typename: notifications[0].author.__typename,
+      __typename: safeNotifications[0].author.__typename,
       ...notification.author,
     },
   };
 
   const notificationsData =
     index < 0
-      ? [newNotification, ...notifications]
+      ? [newNotification, ...safeNotifications]
       : [
           newNotification,
-          ...notifications.slice(0, index),
-          ...notifications.slice(index + 1),
+          ...safeNotifications.slice(0, index),
+          ...safeNotifications.slice(index + 1),
         ];
 
   client.writeQuery({
