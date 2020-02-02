@@ -57,18 +57,14 @@ const ResolveDiscussionButton = styled.div(({ theme: { colors } }) => ({
 
 const ResolvedDiscussionIcon = styled(FontAwesomeIcon)(
   ({ theme: { colors } }) => ({
-    color: colors.successGreen,
-    fontSize: '18px',
-    marginRight: '12px',
-  })
-);
-
-const ResolvedDiscussionAuthorIcon = styled(ResolvedDiscussionIcon)(
-  ({ theme: { colors } }) => ({
     position: 'absolute',
     marginTop: '10px',
     marginLeft: '10px',
+
     background: colors.white,
+    color: colors.successGreen,
+    fontSize: '18px',
+    marginRight: '12px',
   })
 );
 
@@ -125,7 +121,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
                 avatarUrl={status.author.profilePictureUrl}
                 size={32}
               />
-              <ResolvedDiscussionAuthorIcon icon={faCommentCheck} />
+              <ResolvedDiscussionIcon icon={faCommentCheck} />
             </ResolveAuthorContainter>
             <AddReplyLabel>{`${status.author.fullName} marked this discussion as resolved`}</AddReplyLabel>
           </AddReplyItem>
