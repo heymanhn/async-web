@@ -17,15 +17,28 @@ const DocumentContainer = ({
   discussionId: initialDiscussionId,
   viewMode: initialViewMode,
 }) => {
+  const [viewMode, setViewMode] = useState(initialViewMode);
   const [modalDiscussionId, setModalDiscussionId] = useState(
     initialDiscussionId
   );
-  const [viewMode, setViewMode] = useState(initialViewMode);
+  const [isModalOpen, setIsModalOpen] = useState(!!modalDiscussionId);
+
+  // SLATE UPGRADE TODO: Invoke this method in the selection toolbar icon
+  function handleShowModal(discussionId) {
+    setModalDiscussionId(discussionId);
+    setIsModalOpen(true);
+  }
+
+  function handleCloseModal() {
+    setModalDiscussionId(null);
+    setIsModalOpen(false);
+  }
 
   const value = {
     documentId,
     modalDiscussionId,
-    setModalDiscussionId,
+    handleShowModal,
+    handleCloseModal,
   };
 
   return (
@@ -34,8 +47,11 @@ const DocumentContainer = ({
       {viewMode === 'content' && <Document />}
       {viewMode === 'discussions' && <DiscussionsList />}
 
+      {/* SLATE UPGRADE TODO: Figure out how to invoke modal when creating
+          discussion */}
       <DiscussionModal
-        isOpen={!!modalDiscussionId}
+        isOpen={isModalOpen}
+        handleClose={handleCloseModal}
         // createAnnotation={createAnnotation}
         // documentEditor={documentEditor}
         // selection={selection}

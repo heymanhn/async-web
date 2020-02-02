@@ -1,5 +1,4 @@
 import React, { useContext, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
@@ -10,7 +9,7 @@ import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import DiscussionModal from 'components/discussion/DiscussionModal';
-
+import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import DiscussionListItem from './DiscussionListItem';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
@@ -48,7 +47,7 @@ const Label = styled.div(({ theme: { colors } }) => ({
 }));
 
 // HN: There should be a way to DRY up these style declarations
-const StyledMessageComposer = styled(MessageComposer)(
+const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
     background: colors.white,
     border: `1px solid ${colors.borderGrey}`,
@@ -60,16 +59,14 @@ const StyledMessageComposer = styled(MessageComposer)(
 
 const DiscussionsList = () => {
   const listRef = useRef(null);
-  const { documentId, modalDiscussionId, setModalDiscussionId } = useContext(
-    DocumentContext
-  );
+  const { documentId } = useContext(DocumentContext);
 
   const [isComposing, setIsComposing] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
 
-  const handleStartComposing = () => setIsComposing(true);
-  const handleStopComposing = () => setIsComposing(false);
+  const startComposing = () => setIsComposing(true);
+  const stopComposing = () => setIsComposing(false);
 
   const { loading, error, data, fetchMore } = useQuery(
     documentDiscussionsQuery,
@@ -86,10 +83,6 @@ const DiscussionsList = () => {
   const discussionCount = discussions.length;
 
   if (!discussionCount && !isComposing) setIsComposing(true);
-
-  function handleCloseDiscussion() {
-    setModalDiscussionId(null);
-  }
 
   function fetchMoreDiscussions() {
     const newQueryParams = { order: 'desc' };
@@ -131,40 +124,26 @@ const DiscussionsList = () => {
     <Container ref={listRef}>
       <TitleSection>
         <Title>{discussionCount ? 'Discussions' : 'Start a discussion'}</Title>
-        <StartDiscussionButton onClick={handleStartComposing}>
+        <StartDiscussionButton onClick={startComposing}>
           <Label>Start a discussion</Label>
         </StartDiscussionButton>
       </TitleSection>
       {isComposing && (
-        // SLATE UPGRADE TODO: using <DiscussionMessage /> should suffice.
-        // With initialMode set to "compose"
-        // Since I don't care about the Add Reply box
-        <StyledMessageComposer
-          afterDiscussionCreate={handleStopComposing}
-          documentId={documentId}
-          handleClose={handleStopComposing}
-          source="discussionsList"
+        <StyledDiscussionMessage
+          initialMode="compose"
+          afterCreate={stopComposing}
+          handleCancel={stopComposing}
+          // The old implementation hides the composer immediately after discussion create.
+          // But I don't want that.
+          // afterDiscussionCreate={}
         />
       )}
+      {/* SLATE UPGRADE TODO: Don't show separate list item for draft discussions? */}
       {discussions.map(d => (
-        <DiscussionListItem
-          discussionId={d.id}
-          key={d.id}
-          setDiscussionId={setDiscussionId}
-        />
+        <DiscussionListItem key={d.id} discussionId={d.id} />
       ))}
-      <DiscussionModal
-        discussionId={discussionId}
-        documentId={documentId}
-        handleClose={handleCloseDiscussion}
-        isOpen={!!discussionId}
-      />
     </Container>
   );
-};
-
-DiscussionsList.propTypes = {
-  documentId: PropTypes.string.isRequired,
 };
 
 export default DiscussionsList;

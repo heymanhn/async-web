@@ -31,7 +31,7 @@ const StyledHoverMenu = styled(HoverMenu)({
 });
 
 const DiscussionMessage = ({
-  initialMode,
+  mode: initialMode,
   message,
   draft,
   afterDiscussionCreate,
@@ -86,7 +86,7 @@ const DiscussionMessage = ({
 };
 
 DiscussionMessage.propTypes = {
-  initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
+  mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
   draft: PropTypes.object,
   afterDiscussionCreate: PropTypes.func,
@@ -95,7 +95,7 @@ DiscussionMessage.propTypes = {
 };
 
 DiscussionMessage.defaultProps = {
-  initialMode: 'display',
+  mode: 'display',
   message: {},
   draft: null,
   afterDiscussionCreate: () => {},

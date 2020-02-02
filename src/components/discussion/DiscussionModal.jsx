@@ -31,36 +31,36 @@ const StyledDiscussionMessage = styled(DiscussionMessage)({
  */
 
 const DiscussionModal = ({
-  createAnnotation,
-  discussionId: initialDiscussionId,
-  documentEditor,
+  // createAnnotation,
+  // documentEditor,
   isOpen,
-  selection,
+  handleClose,
+  // selection,
   ...props
 }) => {
-  const { documentId } = useContext(DocumentContext);
-  const [discussionId, setDiscussionId] = useState(initialDiscussionId);
-  const [isComposing, setIsComposing] = useState(!discussionId);
+  const { documentId, modalDiscussionId, handleShowDiscussion } = useContext(
+    DocumentContext
+  );
+  const [isComposing, setIsComposing] = useState(!modalDiscussionId);
   // const [context, setContext] = useState(null);
   // const [draft, setDraft] = useState(null);
 
+  const startComposing = () => setIsComposing(true);
+  const stopComposing = () => setIsComposing(false);
+
   useMountEffect(() => {
-    const title = discussionId ? 'Discussion' : 'New discussion';
+    const title = modalDiscussionId ? 'Discussion' : 'New discussion';
     const properties = {};
-    if (discussionId) properties.discussionId = discussionId;
+    if (modalDiscussionId) properties.discussionId = modalDiscussionId;
     if (documentId) properties.documentId = documentId;
 
     track(`${title} viewed`, properties);
   });
 
   const { loading, data } = useQuery(discussionQuery, {
-    variables: { id: discussionId, queryParams: {} },
-    skip: !discussionId,
+    variables: { id: modalDiscussionId, queryParams: {} },
+    skip: !modalDiscussionId,
   });
-
-  // Need to show the correct discussion that the user selected
-  if (!discussionId && initialDiscussionId)
-    setDiscussionId(initialDiscussionId);
 
   if (loading) return null;
 
@@ -77,17 +77,19 @@ const DiscussionModal = ({
   // if (!!draft && !isComposing) startComposing();
   // if (!discussionId && !context) extractContext();
 
-  function afterDiscussionCreate(value) {
-    setDiscussionId(value);
+  // createAnnotation(value);
 
-    createAnnotation(value);
+  // Update the URL in the address bar to reflect the new discussion
+  // TODO (HN): Fix this implementation this later.
+  //
+  // const { origin } = window.location;
+  // const url = `${origin}/discussions/${value}`;
+  // return window.history.replaceState({}, `discussion: ${value}`, url);
+  // }
 
-    // Update the URL in the address bar to reflect the new discussion
-    // TODO (HN): Fix this implementation this later.
-    //
-    // const { origin } = window.location;
-    // const url = `${origin}/discussions/${value}`;
-    // return window.history.replaceState({}, `discussion: ${value}`, url);
+  function handleCancelCompose() {
+    stopComposing();
+    // SLATE UPGRADE TODO: close the modal when canceling on compose
   }
 
   function isUnread() {
@@ -99,7 +101,7 @@ const DiscussionModal = ({
   }
 
   const value = {
-    discussionId,
+    discussionId: modalDiscussionId,
     // context,
     // draft,
   };
@@ -115,22 +117,22 @@ const DiscussionModal = ({
             mode="display"
           />
         )} */}
-        {discussionId && <DiscussionThread isUnread={isUnread()} />}
+        {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}
         {/*
         context={context}
         draft={draft}
         source="discussionContainer" */}
         {isComposing ? (
           <StyledDiscussionMessage
-            afterDiscussionCreate={}
-            afterCreate={}
-            initialMode="compose"
-            // onCancel={handleCancel}
+            mode="compose"
+            afterCreate={stopComposing}
+            afterDiscussionCreate={id => handleShowDiscussion(id)}
+            handleCancel={handleCancelCompose}
             {...props}
           />
         ) : (
           <ModalAddReplyBox
-            handleClickReply={() => setIsComposing(true)}
+            handleClickReply={startComposing}
             isComposing={isComposing}
           />
         )}
@@ -140,30 +142,22 @@ const DiscussionModal = ({
 };
 
 DiscussionModal.propTypes = {
-  createAnnotation: PropTypes.func,
-  discussionId: PropTypes.string,
-  documentEditor: PropTypes.object, // HN: do we still need this?
+  // createAnnotation: PropTypes.func,
+  // documentEditor: PropTypes.object, // HN: do we still need this?
   isOpen: PropTypes.bool.isRequired,
-  selection: PropTypes.object,
+  handleClose: PropTypes.func.isRequired,
+  // selection: PropTypes.object,
 };
 
-DiscussionModal.defaultProps = {
-  createAnnotation: () => {},
-  discussionId: null,
-  documentEditor: {},
-  selection: {},
-};
+// DiscussionModal.defaultProps = {
+//   createAnnotation: () => {},
+//   documentEditor: {},
+//   selection: {},
+// };
 
 export default DiscussionModal;
 
 /* HN: Is this still needed?
-
-function handleClose() {
-  setDiscussionId(null);
-
-  handleCancel();
-}
-
 function draftHasChanged(newDraft) {
     const { body } = draft || {};
     const { text } = body || {};
