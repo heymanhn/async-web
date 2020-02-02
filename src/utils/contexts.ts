@@ -4,7 +4,7 @@ import { createContext } from 'react';
 export const DocumentContext = createContext({
   documentId: null,
   modalDiscussionId: null,
-  setModalDiscussionId: null,
+  setModalDiscussionId: () => {},
 });
 
 export const DiscussionContext = createContext({
@@ -16,5 +16,7 @@ export const DiscussionContext = createContext({
 export const MessageContext = createContext({
   messageId: null,
   mode: null,
-  setMode: null,
+  setMode: () => {},
+  afterDiscussionCreate: () => {},
+  afterCreate: () => {},
 });

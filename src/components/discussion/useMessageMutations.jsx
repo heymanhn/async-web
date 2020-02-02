@@ -5,13 +5,13 @@ import { useMutation } from 'react-apollo';
 import discussionQuery from 'graphql/queries/discussion';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
-import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
+// import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
-import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
-import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
-import addDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
+// import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
+// import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
+// import addDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
 import localDeleteMessageMutation from 'graphql/mutations/local/deleteMessageFromDiscussion';
 import { track } from 'utils/analytics';
 import { DiscussionContext, MessageContext } from 'utils/contexts';
@@ -26,20 +26,17 @@ import { toPlainText } from 'components/editor/utils';
  * - When context is implemented, save it during discussion create
  */
 
-const useMessageMutations = ({
-  message = null,
-  afterCreate = () => {},
-} = {}) => {
+const useMessageMutations = ({ message = null } = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { documentId, discussionId, discussionContext } = useContext(
-    DiscussionContext
+  const { documentId, discussionId } = useContext(DiscussionContext);
+  const { messageId, setMode, afterCreate, afterDiscussionCreate } = useContext(
+    MessageContext
   );
-  const { messageId, setMode } = useContext(MessageContext);
 
   const [createDiscussion] = useMutation(createDiscussionMutation);
-  const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
-    variables: { documentId, discussionId },
-  });
+  // const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
+  //   variables: { documentId, discussionId },
+  // });
 
   const [createMessage] = useMutation(createMessageMutation);
   const [updateMessage] = useMutation(updateMessageMutation);
@@ -51,17 +48,17 @@ const useMessageMutations = ({
     variables: { discussionId, messageId },
   });
 
-  const [createMessageDraft] = useMutation(createMessageDraftMutation);
-  const [deleteMessageDraft] = useMutation(deleteMessageDraftMutation, {
-    variables: { discussionId },
-    refetchQueries: [
-      {
-        query: discussionQuery,
-        variables: { id: discussionId, queryParams: {} },
-      },
-    ],
-    awaitRefetchQueries: true,
-  });
+  // const [createMessageDraft] = useMutation(createMessageDraftMutation);
+  // const [deleteMessageDraft] = useMutation(deleteMessageDraftMutation, {
+  //   variables: { discussionId },
+  //   refetchQueries: [
+  //     {
+  //       query: discussionQuery,
+  //       variables: { id: discussionId, queryParams: {} },
+  //     },
+  //   ],
+  //   awaitRefetchQueries: true,
+  // });
 
   async function handleCreateDiscussion() {
     const input = {};
@@ -95,8 +92,7 @@ const useMessageMutations = ({
         discussionId: newDiscussionId,
       });
 
-      // TODO: need a way to set the modal discussion ID after creation,
-      // but only if the modal is open
+      afterDiscussionCreate(newDiscussionId);
     }
   }
 
@@ -136,8 +132,7 @@ const useMessageMutations = ({
         messageId: id,
         discussionId: messageDiscussionId,
       });
-      // TODO: check if this is still needed.
-      // afterCreate(messageDiscussionId, false);
+      afterCreate(messageDiscussionId);
     }
   }
 
@@ -175,84 +170,84 @@ const useMessageMutations = ({
     localDeleteMessage();
   }
 
-  async function handleSaveDraft({ payload, text }) {
-    let draftDiscussionId = discussionId;
-    if (!draftDiscussionId) {
-      const { discussionId: did } = await onCreateDiscussion();
-      draftDiscussionId = did;
-    }
+  // async function handleSaveDraft({ payload, text }) {
+  //   let draftDiscussionId = discussionId;
+  //   if (!draftDiscussionId) {
+  //     const { discussionId: did } = await onCreateDiscussion();
+  //     draftDiscussionId = did;
+  //   }
 
-    const { data } = await client.mutate({
-      mutation: createMessageDraftMutation,
-      variables: {
-        discussionId: draftDiscussionId,
-        input: {
-          body: {
-            formatter: 'slatejs',
-            text,
-            payload,
-          },
-        },
-      },
-      update: (_cache, { data: { createMessageDraft } }) => {
-        client.mutate({
-          mutation: addDraftToDiscussionMtn,
-          variables: {
-            discussionId: draftDiscussionId,
-            draft: createMessageDraft,
-          },
-        });
-      },
-    });
+  //   const { data } = await client.mutate({
+  //     mutation: createMessageDraftMutation,
+  //     variables: {
+  //       discussionId: draftDiscussionId,
+  //       input: {
+  //         body: {
+  //           formatter: 'slatejs',
+  //           text,
+  //           payload,
+  //         },
+  //       },
+  //     },
+  //     update: (_cache, { data: { createMessageDraft } }) => {
+  //       client.mutate({
+  //         mutation: addDraftToDiscussionMtn,
+  //         variables: {
+  //           discussionId: draftDiscussionId,
+  //           draft: createMessageDraft,
+  //         },
+  //       });
+  //     },
+  //   });
 
-    if (data.createMessageDraft) {
-      afterCreate(draftDiscussionId, true);
-      return Promise.resolve();
-    }
+  //   if (data.createMessageDraft) {
+  //     afterCreate(draftDiscussionId, true);
+  //     return Promise.resolve();
+  //   }
 
-    return Promise.reject(new Error('Failed to save message draft'));
-  }
+  //   return Promise.reject(new Error('Failed to save message draft'));
+  // }
 
-  async function handleDeleteDraft() {
-    const { data } = await deleteMessageDraft();
+  // async function handleDeleteDraft() {
+  //   const { data } = await deleteMessageDraft();
 
-    if (data.deleteMessageDraft) {
-      const {
-        discussion: { messageCount },
-      } = client.readQuery({
-        query: discussionQuery,
-        variables: { id: discussionId, queryParams: {} },
-      });
+  //   if (data.deleteMessageDraft) {
+  //     const {
+  //       discussion: { messageCount },
+  //     } = client.readQuery({
+  //       query: discussionQuery,
+  //       variables: { id: discussionId, queryParams: {} },
+  //     });
 
-      if (!messageCount) {
-        // TODO (HN): Delete highlight from text
+  //     if (!messageCount) {
+  //       // TODO (HN): Delete highlight from text
 
-        await client.mutate({
-          mutation: deleteDiscussionMutation,
+  //       await client.mutate({
+  //         mutation: deleteDiscussionMutation,
 
-          refetchQueries: [
-            {
-              query: documentDiscussionsQuery,
-              variables: { id: documentId, queryParams: { order: 'desc' } },
-            },
-          ],
-          awaitRefetchQueries: true,
-        });
-        onCancel({ closeModal: true });
-      }
+  //         refetchQueries: [
+  //           {
+  //             query: documentDiscussionsQuery,
+  //             variables: { id: documentId, queryParams: { order: 'desc' } },
+  //           },
+  //         ],
+  //         awaitRefetchQueries: true,
+  //       });
+  //       onCancel({ closeModal: true });
+  //     }
 
-      return Promise.resolve();
-    }
+  //     return Promise.resolve();
+  //   }
 
-    return Promise.reject(new Error('Failed to delete message draft'));
-  }
+  //   return Promise.reject(new Error('Failed to delete message draft'));
+  // }
 
   return {
     handleCreate,
     handleUpdate,
     handleDelete,
-    handleSaveDraft,
-    handleDeleteDraft,
+    // handleSaveDraft,
+    // handleDeleteDraft,
 
     isSubmitting,
   };

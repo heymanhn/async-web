@@ -31,12 +31,12 @@ const StyledHoverMenu = styled(HoverMenu)({
 });
 
 const DiscussionMessage = ({
-  afterCreate,
-  draft,
   initialMode,
   message,
-  onCancel,
-  onCreateDiscussion,
+  draft,
+  afterDiscussionCreate,
+  afterCreate,
+  handleCancel,
   ...props
 }) => {
   const [mode, setMode] = useState(initialMode);
@@ -47,29 +47,24 @@ const DiscussionMessage = ({
   const author = message.author || currentUser || (draft && draft.author);
   const isAuthor = currentUser.id === author.id;
 
-  function handleCancel() {
-    if (mode === 'compose') {
-      onCancel();
-    } else {
-      setToDisplayMode();
-    }
-  }
-
   function loadInitialContent() {
     if (draft) return draft.body.payload;
 
     return mode !== 'compose' ? body.payload : null;
   }
 
-  const contextValue = {
+  const value = {
     messageId,
     mode,
     setMode,
+    afterDiscussionCreate,
+    afterCreate,
+    handleCancel,
   };
 
   return (
     <Container mode={mode} {...hoverProps} {...props}>
-      <MessageContext.Provider value={contextValue}>
+      <MessageContext.Provider value={value}>
         <HeaderSection>
           <AuthorDetails
             author={author}
@@ -77,19 +72,11 @@ const DiscussionMessage = ({
             isEdited={createdAt !== updatedAt}
           />
           {messageId && mode === 'display' && (
-            <StyledHoverMenu
-              isAuthor={isAuthor}
-              isOpen={hover}
-              onDelete={handleDelete}
-              onEdit={setToEditMode}
-            />
+            <StyledHoverMenu isAuthor={isAuthor} isOpen={hover} />
           )}
         </HeaderSection>
         <MessageEditor
-          handleCancel={handleCancel}
-          afterCreate={afterCreate}
           initialMessage={loadInitialContent()}
-          // TODO: afterUpdate
           // isDraft={!!draft}
         />
         {mode === 'display' && <MessageReactions />}
@@ -99,21 +86,21 @@ const DiscussionMessage = ({
 };
 
 DiscussionMessage.propTypes = {
-  afterCreate: PropTypes.func,
-  draft: PropTypes.object,
   initialMode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
-  onCancel: PropTypes.func,
-  onCreateDiscussion: PropTypes.func,
+  draft: PropTypes.object,
+  afterDiscussionCreate: PropTypes.func,
+  afterCreate: PropTypes.func,
+  handleCancel: PropTypes.func,
 };
 
 DiscussionMessage.defaultProps = {
-  afterCreate: () => {},
-  draft: null,
   initialMode: 'display',
   message: {},
-  onCancel: () => {},
-  onCreateDiscussion: () => {},
+  draft: null,
+  afterDiscussionCreate: () => {},
+  afterCreate: () => {},
+  handleCancel: () => {},
 };
 
 export default DiscussionMessage;

@@ -1,10 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
+import { MessageContext } from 'utils/contexts';
+
+import useMessageMutations from './useMessageMutations';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
@@ -56,29 +59,27 @@ const OptionName = styled.div(({ theme: { colors } }) => ({
   top: '1px',
 }));
 
-const MessageDropdown = ({
-  handleClose,
-  isOpen,
-  onDelete,
-  onEdit,
-  ...props
-}) => {
+const MessageDropdown = ({ handleClose, isOpen, ...props }) => {
   const selector = useRef();
+  const { setMode } = useContext(MessageContext);
+  const { handleDelete } = useMessageMutations();
+
   function handleClickOutside() {
     if (!isOpen) return;
     handleClose();
   }
   useClickOutside({ handleClickOutside, isOpen, ref: selector });
 
-  function handleDelete(event) {
+  function handleDeleteWrapper(event) {
     event.stopPropagation();
     handleClose();
-    onDelete();
+    handleDelete();
   }
+
   function handleEdit(event) {
     event.stopPropagation();
     handleClose();
-    onEdit();
+    setMode('edit');
   }
 
   return (
@@ -89,7 +90,7 @@ const MessageDropdown = ({
         </IconContainer>
         <OptionName>Edit</OptionName>
       </DropdownOption>
-      <DropdownOption onClick={handleDelete}>
+      <DropdownOption onClick={handleDeleteWrapper}>
         <IconContainer>
           <StyledIcon icon={faTrash} />
         </IconContainer>
@@ -102,8 +103,6 @@ const MessageDropdown = ({
 MessageDropdown.propTypes = {
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  onDelete: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired,
 };
 
 export default MessageDropdown;

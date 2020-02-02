@@ -32,13 +32,7 @@ const MessageEditable = styled(Editable)({
  * - See if we can get rid of the afterCreate() callback with our new structure
  */
 
-const MessageEditor = ({
-  handleCancel,
-  afterCreate,
-  afterUpdate,
-  initialMessage,
-  ...props
-}) => {
+const MessageEditor = ({ initialMessage, ...props }) => {
   const { mode } = useContext(MessageContext);
   const messageEditor = useMemo(() => withReact(createEditor()), []);
   const [message, setMessage] = useState(
@@ -47,8 +41,6 @@ const MessageEditor = ({
 
   const { handleCreate, handleUpdate, isSubmitting } = useMessageMutations({
     message,
-    afterCreate,
-    afterUpdate,
   });
 
   const isEmptyMessage = message === JSON.stringify(DEFAULT_VALUE);
@@ -64,7 +56,6 @@ const MessageEditor = ({
         {mode !== 'display' && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
-            handleCancel={handleCancel}
             isDraft={false} // TODO
             isSubmitDisabled={isEmptyMessage}
             isSubmitting={isSubmitting}
@@ -76,32 +67,11 @@ const MessageEditor = ({
 };
 
 MessageEditor.propTypes = {
-  handleCancel: PropTypes.func.isRequired,
-  afterCreate: PropTypes.func,
-  afterUpdate: PropTypes.func,
   initialMessage: PropTypes.string,
 };
 
 MessageEditor.defaultProps = {
-  afterCreate: () => {},
-  afterUpdate: () => {},
   initialMessage: '',
 };
 
 export default MessageEditor;
-
-/*
- mode is needed.
-
- display:
- - content is read-only
- - no actions buttons show
-
- compose:
- - content is editable
- - Actions buttons show "post" and "cancel"
-
- edit:
- - content is editable
- - Actions buttons show "save" and "cancel"
-*/

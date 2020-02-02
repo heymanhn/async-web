@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -24,50 +24,35 @@ const ReactionCount = styled.div(({ isActive, theme: { colors } }) => ({
   fontWeight: 500,
 }));
 
-class ReactionCountDisplay extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleClick(event) {
+const ReactionCountDisplay = ({
+  code,
+  currentUserReactionId,
+  icon,
+  onAddReaction,
+  onRemoveReaction,
+  reactionCount,
+  ...props
+}) => {
+  function handleClick(event) {
     event.stopPropagation();
-    const {
-      code,
-      currentUserReactionId,
-      onAddReaction,
-      onRemoveReaction,
-    } = this.props;
     return currentUserReactionId
       ? onRemoveReaction(currentUserReactionId, code)
       : onAddReaction(code);
   }
 
-  render() {
-    const {
-      currentUserReactionId,
-      icon,
-      onAddReaction,
-      onRemoveReaction,
-      reactionCount,
-      ...props
-    } = this.props;
-
-    return (
-      <Container
-        isActive={!!currentUserReactionId}
-        onClick={this.handleClick}
-        {...props}
-      >
-        <Icon>{icon}</Icon>
-        <ReactionCount isActive={!!currentUserReactionId}>
-          {reactionCount}
-        </ReactionCount>
-      </Container>
-    );
-  }
-}
+  return (
+    <Container
+      isActive={!!currentUserReactionId}
+      onClick={handleClick}
+      {...props}
+    >
+      <Icon>{icon}</Icon>
+      <ReactionCount isActive={!!currentUserReactionId}>
+        {reactionCount}
+      </ReactionCount>
+    </Container>
+  );
+};
 
 ReactionCountDisplay.propTypes = {
   code: PropTypes.string.isRequired,

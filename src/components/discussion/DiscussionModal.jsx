@@ -116,22 +116,22 @@ const DiscussionModal = ({
           />
         )} */}
         {discussionId && <DiscussionThread isUnread={isUnread()} />}
-        {/* afterDiscussionCreate={afterDiscussionCreate}
+        {/*
         context={context}
         draft={draft}
         source="discussionContainer" */}
         {isComposing ? (
           <StyledDiscussionMessage
-            afterCreate={afterCreate}
+            afterDiscussionCreate={}
+            afterCreate={}
             initialMode="compose"
             // onCancel={handleCancel}
-            // onCreateDiscussion={handleCreateDiscussion}
             {...props}
           />
         ) : (
           <ModalAddReplyBox
-            handleClickReply={startComposing}
-            noHover={isComposing}
+            handleClickReply={() => setIsComposing(true)}
+            isComposing={isComposing}
           />
         )}
       </DiscussionContext.Provider>

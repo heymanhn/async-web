@@ -9,7 +9,6 @@ import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
-import MessageComposer from 'components/discussion/MessageComposer';
 import DiscussionModal from 'components/discussion/DiscussionModal';
 
 import DiscussionListItem from './DiscussionListItem';
@@ -65,12 +64,12 @@ const DiscussionsList = () => {
     DocumentContext
   );
 
-  const [showComposer, setShowComposer] = useState(false);
+  const [isComposing, setIsComposing] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
 
-  const handleShowComposer = () => setShowComposer(true);
-  const handleHideComposer = () => setShowComposer(false);
+  const handleStartComposing = () => setIsComposing(true);
+  const handleStopComposing = () => setIsComposing(false);
 
   const { loading, error, data, fetchMore } = useQuery(
     documentDiscussionsQuery,
@@ -86,11 +85,7 @@ const DiscussionsList = () => {
   const discussions = (items || []).map(i => i.discussion);
   const discussionCount = discussions.length;
 
-  if (!discussionCount && !showComposer) setShowComposer(true);
-
-  function afterCreate() {
-    handleHideComposer();
-  }
+  if (!discussionCount && !isComposing) setIsComposing(true);
 
   function handleCloseDiscussion() {
     setModalDiscussionId(null);
@@ -136,18 +131,18 @@ const DiscussionsList = () => {
     <Container ref={listRef}>
       <TitleSection>
         <Title>{discussionCount ? 'Discussions' : 'Start a discussion'}</Title>
-        <StartDiscussionButton onClick={handleShowComposer}>
+        <StartDiscussionButton onClick={handleStartComposing}>
           <Label>Start a discussion</Label>
         </StartDiscussionButton>
       </TitleSection>
-      {showComposer && (
+      {isComposing && (
         // SLATE UPGRADE TODO: using <DiscussionMessage /> should suffice.
         // With initialMode set to "compose"
         // Since I don't care about the Add Reply box
         <StyledMessageComposer
-          afterDiscussionCreate={afterCreate}
+          afterDiscussionCreate={handleStopComposing}
           documentId={documentId}
-          handleClose={handleHideComposer}
+          handleClose={handleStopComposing}
           source="discussionsList"
         />
       )}

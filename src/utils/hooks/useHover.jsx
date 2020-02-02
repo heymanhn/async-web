@@ -1,3 +1,4 @@
+// TODO: change the noHover usage away from a double negative. Super confusing
 import { useState } from 'react';
 
 const useHover = noHover => {

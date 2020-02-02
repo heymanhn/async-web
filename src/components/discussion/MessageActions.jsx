@@ -29,12 +29,11 @@ const StyledButton = styled(Button)({
 
 const MessageActions = ({
   handleSubmit,
-  handleCancel,
   isDraft,
   isSubmitDisabled,
   isSubmitting,
 }) => {
-  const { mode } = useContext(MessageContext);
+  const { mode, handleCancel } = useContext(MessageContext);
 
   function handleSubmitWrapper(event) {
     event.stopPropagation();
@@ -62,7 +61,6 @@ const MessageActions = ({
 };
 
 MessageActions.propTypes = {
-  handleCancel: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   isDraft: PropTypes.bool.isRequired,
   isSubmitDisabled: PropTypes.bool.isRequired,
