@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import styled from '@emotion/styled';
+
+import { MessageContext } from 'utils/contexts';
 
 import Avatar from './Avatar';
 
@@ -46,7 +48,8 @@ const EditedLabel = styled.span(({ size, theme: { colors } }) => ({
   fontSize: size === 'large' ? '14px' : '12px',
 }));
 
-const AuthorDetails = ({ author, createdAt, isEdited, mode, size }) => {
+const AuthorDetails = ({ author, createdAt, isEdited, size }) => {
+  const { mode } = useContext(MessageContext);
   const separator = <Separator size={size}>&#8226;</Separator>;
   const editedLabel = <EditedLabel size={size}>Edited</EditedLabel>;
 
@@ -60,7 +63,11 @@ const AuthorDetails = ({ author, createdAt, isEdited, mode, size }) => {
         <Author size={size}>{author.fullName}</Author>
         {mode === 'display' && (
           <React.Fragment>
-            {createdAt && <Timestamp fromNow parse="X" size={size}>{createdAt}</Timestamp>}
+            {createdAt && (
+              <Timestamp fromNow parse="X" size={size}>
+                {createdAt}
+              </Timestamp>
+            )}
             {isEdited && separator}
             {isEdited && editedLabel}
           </React.Fragment>
@@ -74,7 +81,6 @@ AuthorDetails.propTypes = {
   author: PropTypes.object.isRequired,
   createdAt: PropTypes.number,
   isEdited: PropTypes.bool,
-  mode: PropTypes.oneOf(['compose', 'display', 'edit']).isRequired,
   size: PropTypes.oneOf(['large', 'small']),
 };
 

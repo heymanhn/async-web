@@ -14,7 +14,11 @@ import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 // import addDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
 import localDeleteMessageMutation from 'graphql/mutations/local/deleteMessageFromDiscussion';
 import { track } from 'utils/analytics';
-import { DiscussionContext, MessageContext } from 'utils/contexts';
+import {
+  DocumentContext,
+  DiscussionContext,
+  MessageContext,
+} from 'utils/contexts';
 
 import { toPlainText } from 'components/editor/utils';
 
@@ -28,7 +32,8 @@ import { toPlainText } from 'components/editor/utils';
 
 const useMessageMutations = ({ message = null } = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { documentId, discussionId } = useContext(DiscussionContext);
+  const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
   const { messageId, setMode, afterCreate, afterDiscussionCreate } = useContext(
     MessageContext
   );
@@ -93,7 +98,11 @@ const useMessageMutations = ({ message = null } = {}) => {
       });
 
       afterDiscussionCreate(newDiscussionId);
+
+      return Promise.resolve({ discussionId: newDiscussionId });
     }
+
+    return Promise.reject(new Error('Failed to create discussion'));
   }
 
   async function handleCreate() {

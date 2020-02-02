@@ -5,6 +5,7 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
+import { DiscussionContext } from 'utils/contexts';
 
 // import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
@@ -56,7 +57,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
   })
 );
 
-const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
+const DiscussionListItem = ({ discussionId }) => {
   const { loading, error, data } = useQuery(discussionQuery, {
     variables: { id: discussionId },
   });
@@ -71,46 +72,43 @@ const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
   const avatarUrls = messages.map(m => m.author.profilePictureUrl);
   const moreReplyCount = messageCount - (context ? 1 : 2);
 
+  const value = {
+    discussionId,
+    // context,
+    draft, // SLATE UPGRADE TODO
+  };
+
   return (
-    <Container>
-      <DiscussionListItemHeader
-        discussion={data.discussion}
-        setDiscussionId={setDiscussionId}
-      />
-      {/* SLATE UPGRADE TODO: Get context working in All Discussions page too */}
-      {/* {payload ? (
-        <ContextEditor
-          contentType="discussionContext"
-          readOnly
-          initialValue={payload}
-          mode="display"
-        />
-      ) : ( */}
-      <StyledDiscussionMessage
-        discussionId={discussionId}
-        initialMessage={firstMessage}
-        draft={draft}
-      />
-      {/* )} */}
-      {moreReplyCount > 0 && (
-        <MoreRepliesIndicator>
-          <StyledAvatarList avatarUrls={avatarUrls} opacity={0.5} />
-          <div>{Pluralize('more reply', moreReplyCount, true)}</div>
-        </MoreRepliesIndicator>
-      )}
-      {lastMessage && lastMessage.id !== firstMessage.id && (
-        <StyledDiscussionMessage
-          discussionId={discussionId}
-          initialMessage={lastMessage}
-        />
-      )}
-    </Container>
+    <DiscussionContext.Provider value={value}>
+      <Container>
+        <DiscussionListItemHeader discussion={data.discussion} />
+        {/* SLATE UPGRADE TODO: Get context working in All Discussions page too */}
+        {/* {payload ? (
+          <ContextEditor
+            contentType="discussionContext"
+            readOnly
+            initialValue={payload}
+            mode="display"
+          />
+        ) : ( */}
+        <StyledDiscussionMessage message={firstMessage} />
+        {/* )} */}
+        {moreReplyCount > 0 && (
+          <MoreRepliesIndicator>
+            <StyledAvatarList avatarUrls={avatarUrls} opacity={0.5} />
+            <div>{Pluralize('more reply', moreReplyCount, true)}</div>
+          </MoreRepliesIndicator>
+        )}
+        {lastMessage && lastMessage.id !== firstMessage.id && (
+          <StyledDiscussionMessage message={lastMessage} />
+        )}
+      </Container>
+    </DiscussionContext.Provider>
   );
 };
 
 DiscussionListItem.propTypes = {
   discussionId: PropTypes.string.isRequired,
-  setDiscussionId: PropTypes.func.isRequired,
 };
 
 export default DiscussionListItem;

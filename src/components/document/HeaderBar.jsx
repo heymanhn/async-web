@@ -207,7 +207,6 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
 };
 
 HeaderBar.propTypes = {
-  documentId: PropTypes.string.isRequired,
   setViewMode: PropTypes.func.isRequired,
   viewMode: PropTypes.oneOf(['content', 'discussions']).isRequired,
 };

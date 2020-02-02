@@ -129,7 +129,7 @@ const DiscussionsList = () => {
       </TitleSection>
       {isComposing && (
         <StyledDiscussionMessage
-          initialMode="compose"
+          mode="compose"
           afterCreate={stopComposing}
           handleCancel={stopComposing}
           // The old implementation hides the composer immediately after discussion create.

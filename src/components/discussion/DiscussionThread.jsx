@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
@@ -7,6 +7,7 @@ import discussionQuery from 'graphql/queries/discussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
+import { DocumentContext } from 'utils/contexts';
 
 import DiscussionMessage from './DiscussionMessage';
 import NewMessagesIndicator from './NewMessagesIndicator';
@@ -32,8 +33,9 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
   })
 );
 
-const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
+const DiscussionThread = ({ isUnread }) => {
   const discussionRef = useRef(null);
+  const { documentId, modalDiscussionId } = useContext(DocumentContext);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
 
@@ -43,14 +45,14 @@ const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
       markAsRead({
         isUnread,
         objectType: 'discussion',
-        objectId: discussionId,
+        objectId: modalDiscussionId,
         parentId: documentId,
       });
     };
   });
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
-    variables: { id: discussionId, queryParams: {} },
+    variables: { id: modalDiscussionId, queryParams: {} },
   });
 
   if (loading) return null;
@@ -66,7 +68,7 @@ const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
     fetchMore({
       query: discussionQuery,
       variables: {
-        id: discussionId,
+        id: modalDiscussionId,
         queryParams: snakedQueryParams(newQueryParams),
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
@@ -115,12 +117,7 @@ const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
           {firstNewMessageId() === m.id && m.id !== messages[0].id && (
             <NewMessagesIndicator />
           )}
-          <StyledDiscussionMessage
-            discussionId={discussionId}
-            documentId={documentId}
-            message={m}
-            isUnread={isNewMessage(m)}
-          />
+          <StyledDiscussionMessage message={m} isUnread={isNewMessage(m)} />
         </React.Fragment>
       ))}
     </Container>
@@ -128,8 +125,6 @@ const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
 };
 
 DiscussionThread.propTypes = {
-  discussionId: PropTypes.string.isRequired,
-  documentId: PropTypes.string.isRequired,
   isUnread: PropTypes.bool.isRequired,
 };
 

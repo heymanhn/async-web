@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import useCurrentUser from 'utils/hooks/useCurrentUser';
 import useHover from 'utils/hooks/useHover';
-import { MessageContext } from 'utils/contexts';
+import { MessageContext, DiscussionContext } from 'utils/contexts';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 import MessageEditor from './MessageEditor';
@@ -33,12 +33,12 @@ const StyledHoverMenu = styled(HoverMenu)({
 const DiscussionMessage = ({
   mode: initialMode,
   message,
-  draft,
   afterDiscussionCreate,
   afterCreate,
   handleCancel,
   ...props
 }) => {
+  const { draft } = useContext(DiscussionContext);
   const [mode, setMode] = useState(initialMode);
   const { hover, ...hoverProps } = useHover(mode !== 'display');
   const currentUser = useCurrentUser();
@@ -53,13 +53,19 @@ const DiscussionMessage = ({
     return mode !== 'compose' ? body.payload : null;
   }
 
+  function handleCancelWrapper() {
+    if (mode === 'edit') setMode('display');
+
+    handleCancel();
+  }
+
   const value = {
     messageId,
     mode,
     setMode,
     afterDiscussionCreate,
     afterCreate,
-    handleCancel,
+    handleCancel: handleCancelWrapper,
   };
 
   return (
@@ -88,7 +94,6 @@ const DiscussionMessage = ({
 DiscussionMessage.propTypes = {
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
-  draft: PropTypes.object,
   afterDiscussionCreate: PropTypes.func,
   afterCreate: PropTypes.func,
   handleCancel: PropTypes.func,
@@ -97,7 +102,6 @@ DiscussionMessage.propTypes = {
 DiscussionMessage.defaultProps = {
   mode: 'display',
   message: {},
-  draft: null,
   afterDiscussionCreate: () => {},
   afterCreate: () => {},
   handleCancel: () => {},
