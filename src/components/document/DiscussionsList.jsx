@@ -67,15 +67,10 @@ const DiscussionsList = () => {
 
   const [showComposer, setShowComposer] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
 
-  function handleShowComposer() {
-    setShowComposer(true);
-  }
-  function handleHideComposer() {
-    setShowComposer(false);
-  }
+  const handleShowComposer = () => setShowComposer(true);
+  const handleHideComposer = () => setShowComposer(false);
 
   const { loading, error, data, fetchMore } = useQuery(
     documentDiscussionsQuery,
@@ -91,16 +86,14 @@ const DiscussionsList = () => {
   const discussions = (items || []).map(i => i.discussion);
   const discussionCount = discussions.length;
 
-  if (discussionCount === 0 && !showComposer) {
-    setShowComposer(true);
-  }
+  if (!discussionCount && !showComposer) setShowComposer(true);
 
   function afterCreate() {
     handleHideComposer();
   }
 
   function handleCloseDiscussion() {
-    setDiscussionId(null);
+    setModalDiscussionId(null);
   }
 
   function fetchMoreDiscussions() {
@@ -148,6 +141,9 @@ const DiscussionsList = () => {
         </StartDiscussionButton>
       </TitleSection>
       {showComposer && (
+        // SLATE UPGRADE TODO: using <DiscussionMessage /> should suffice.
+        // With initialMode set to "compose"
+        // Since I don't care about the Add Reply box
         <StyledMessageComposer
           afterDiscussionCreate={afterCreate}
           documentId={documentId}

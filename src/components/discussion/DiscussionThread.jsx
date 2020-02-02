@@ -9,8 +9,6 @@ import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
 
 import DiscussionMessage from './DiscussionMessage';
-
-// HN: Change the new message UI to a different background color
 import NewMessagesIndicator from './NewMessagesIndicator';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
@@ -25,17 +23,12 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 }));
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
-  ({ theme: { colors } }) => ({
+  ({ isUnread, theme: { colors } }) => ({
+    backgroundColor: isUnread ? colors.unreadBlue : 'default',
     borderTopLeftRadius: '5px',
     borderTopRightRadius: '5px',
     borderBottom: `1px solid ${colors.borderGrey}`,
     paddingBottom: '10px',
-  })
-);
-
-const StyledUnreadDiscussionMessage = styled(StyledDiscussionMessage)(
-  ({ theme: { colors } }) => ({
-    backgroundColor: colors.unreadBlue,
   })
 );
 
@@ -111,8 +104,8 @@ const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
     return targetMessage ? targetMessage.id : null;
   }
 
-  function newMessage(r) {
-    return r.tags && r.tags.includes('new_message');
+  function isNewMessage(m) {
+    return m.tags && m.tags.includes('new_message');
   }
 
   return (
@@ -122,19 +115,12 @@ const DiscussionThread = ({ discussionId, documentId, isUnread }) => {
           {firstNewMessageId() === m.id && m.id !== messages[0].id && (
             <NewMessagesIndicator />
           )}
-          {newMessage(m) ? (
-            <StyledUnreadDiscussionMessage
-              discussionId={discussionId}
-              documentId={documentId}
-              initialMessage={m}
-            />
-          ) : (
-            <StyledDiscussionMessage
-              discussionId={discussionId}
-              documentId={documentId}
-              initialMessage={m}
-            />
-          )}
+          <StyledDiscussionMessage
+            discussionId={discussionId}
+            documentId={documentId}
+            message={m}
+            isUnread={isNewMessage(m)}
+          />
         </React.Fragment>
       ))}
     </Container>

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { DocumentContext } from 'utils/contexts';
-// import { getLocalUser } from 'utils/auth';
 
 import DiscussionModal from 'components/discussion/DiscussionModal';
 import HeaderBar from './HeaderBar';

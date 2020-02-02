@@ -1,39 +1,46 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import { track } from 'utils/analytics';
-import { DiscussionContext } from 'utils/contexts';
+import { DiscussionContext, DocumentContext } from 'utils/contexts';
 import useMountEffect from 'utils/hooks/useMountEffect';
 
 // import { CONTEXT_HIGHLIGHT } from 'components/editor/plugins/inlineDiscussion';
 import Modal from 'components/shared/Modal';
 import DiscussionThread from './DiscussionThread';
-import MessageComposer from './MessageComposer';
+import DiscussionMessage from './DiscussionMessage';
+import ModalAddReplyBox from './ModalAddReplyBox';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'center',
 });
 
+const StyledDiscussionMessage = styled(DiscussionMessage)({
+  borderBottomLeftRadius: '5px',
+  borderBottomRightRadius: '5px',
+});
+
 /*
  * SLATE UPGRADE TODO:
  * - Create the discussion context properly with the new Slate API
+ * - Pass discussion context into DocumentContext for child components
  * - Create annotation in the document after discussion created
  */
 
 const DiscussionModal = ({
   createAnnotation,
   discussionId: initialDiscussionId,
-  documentId,
   documentEditor,
-  handleClose,
   isOpen,
   selection,
   ...props
 }) => {
+  const { documentId } = useContext(DocumentContext);
   const [discussionId, setDiscussionId] = useState(initialDiscussionId);
+  const [isComposing, setIsComposing] = useState(!discussionId);
   // const [context, setContext] = useState(null);
   // const [draft, setDraft] = useState(null);
 
@@ -67,6 +74,7 @@ const DiscussionModal = ({
   //   if (draftHasChanged(newDraft)) setDraft(newDraft);
   // }
 
+  // if (!!draft && !isComposing) startComposing();
   // if (!discussionId && !context) extractContext();
 
   function afterDiscussionCreate(value) {
@@ -90,16 +98,15 @@ const DiscussionModal = ({
     );
   }
 
-  const contextValue = {
-    documentId,
+  const value = {
     discussionId,
-    setDiscussionId,
     // context,
+    // draft,
   };
 
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen} {...props}>
-      <DiscussionContext.Provider value={contextValue}>
+      <DiscussionContext.Provider value={value}>
         {/* {context && (
           <ContextEditor
             contentType="discussionContext"
@@ -109,13 +116,24 @@ const DiscussionModal = ({
           />
         )} */}
         {discussionId && <DiscussionThread isUnread={isUnread()} />}
-        <MessageComposer
-          afterDiscussionCreate={afterDiscussionCreate}
-          // context={context}
-          // draft={draft}
-          handleClose={handleClose}
-          source="discussionContainer"
-        />
+        {/* afterDiscussionCreate={afterDiscussionCreate}
+        context={context}
+        draft={draft}
+        source="discussionContainer" */}
+        {isComposing ? (
+          <StyledDiscussionMessage
+            afterCreate={afterCreate}
+            initialMode="compose"
+            // onCancel={handleCancel}
+            // onCreateDiscussion={handleCreateDiscussion}
+            {...props}
+          />
+        ) : (
+          <ModalAddReplyBox
+            handleClickReply={startComposing}
+            noHover={isComposing}
+          />
+        )}
       </DiscussionContext.Provider>
     </StyledModal>
   );
@@ -125,8 +143,6 @@ DiscussionModal.propTypes = {
   createAnnotation: PropTypes.func,
   discussionId: PropTypes.string,
   documentEditor: PropTypes.object, // HN: do we still need this?
-  documentId: PropTypes.string.isRequired,
-  handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   selection: PropTypes.object,
 };

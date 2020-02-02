@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const useHover = (noHover) => {
+const useHover = noHover => {
   const [hover, setHover] = useState(false);
 
   function disableHover(event) {
