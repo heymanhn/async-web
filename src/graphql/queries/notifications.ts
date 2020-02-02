@@ -10,7 +10,8 @@ export default gql`
           profilePictureUrl
         }
         updatedAt
-        title
+        readAt
+        type
         payload
       }
     }

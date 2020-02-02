@@ -213,7 +213,7 @@ function updateBadgeCount(_root, { userId, notification }, { client }) {
     query: notificationsQuery,
     variables: { id: userId },
     data: {
-      documentNotifications: {
+      userNotifications: {
         notifications: notificationsData,
         __typename,
       },

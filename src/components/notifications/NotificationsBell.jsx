@@ -57,12 +57,14 @@ const NotificationsBell = ({ notifications }) => {
         <StyledIcon icon={faBell} />
         {newNotifications ? <UnreadBadge /> : undefined}
       </Container>
-      <NotificationsDropdown
-        isOpen={isDropdownVisible}
-        notifications={notifications}
-        iconWidth={findIconWidth()}
-        handleCloseDropdown={handleCloseDropdown}
-      />
+      {notifications && (
+        <NotificationsDropdown
+          isOpen={isDropdownVisible}
+          notifications={notifications}
+          iconWidth={findIconWidth()}
+          handleCloseDropdown={handleCloseDropdown}
+        />
+      )}
     </div>
   );
 };

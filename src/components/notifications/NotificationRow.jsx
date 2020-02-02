@@ -42,23 +42,34 @@ const NotificationText = styled.div({
   },
 });
 
+const SnippetText = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey2,
+  fontSize: '12px',
+  fontWeight: 400,
+  marginTop: '10px',
+}));
+
 const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '12px',
 }));
 
 const NotificationRow = ({ handleCloseDropdown, notification }) => {
-  const { author, updatedAt, isUnread, title } = notification;
-  const [context, subject] = title.split(': ');
+  const { author, updatedAt, readAt, payload, type } = notification;
+  const payloadJSON = JSON.parse(payload);
+  const payloadCamelJSON = {};
+  Object.keys(payloadJSON).forEach(key => {
+    payloadCamelJSON[camelCase(key)] = payloadJSON[key];
+  });
+  const { title, snippet } = payloadCamelJSON;
 
-  function constructURL() {
-    const { payload } = notification;
+  function context() {
+    return type === 'new_message'
+      ? `${author.fullName} replied to`
+      : `${author.fullName} invited you to collaborate on`;
+  }
 
-    const payloadJSON = JSON.parse(payload);
-    const payloadCamelJSON = {};
-    Object.keys(payloadJSON).forEach(key => {
-      payloadCamelJSON[camelCase(key)] = payloadJSON[key];
-    });
+  function notificationURL() {
     const { documentId, discussionId } = payloadCamelJSON;
     let path = '';
     if (documentId) path += `/d/${documentId}`;
@@ -69,11 +80,11 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
 
   function closeDropdownAndNavigate(event) {
     event.stopPropagation();
-    handleCloseDropdown(() => navigate(constructURL()));
+    handleCloseDropdown(() => navigate(notificationURL()));
   }
 
   return (
-    <Container isUnread={isUnread} onClick={closeDropdownAndNavigate}>
+    <Container isUnread={readAt < 0} onClick={closeDropdownAndNavigate}>
       <StyledAvatar
         avatarUrl={author.profilePictureUrl}
         title={author.fullName}
@@ -82,9 +93,10 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
       />
       <Details>
         <NotificationText>
-          {`${context} `}
-          <span>{subject}</span>
+          {`${context()} `}
+          <span>{title}</span>
         </NotificationText>
+        {snippet && <SnippetText>{snippet}</SnippetText>}
         <Timestamp fromNow parse="X">
           {updatedAt}
         </Timestamp>

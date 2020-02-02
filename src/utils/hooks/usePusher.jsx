@@ -7,7 +7,8 @@ import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import updateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
 import { getLocalUser } from 'utils/auth';
 
-const DOCUMENT_BADGE_COUNT = 'document_badge_count';
+const NEW_MESSAGE_EVENT = 'new_message';
+const DOCUMENT_ACCESS_EVENT = 'document_access';
 
 const {
   REACT_APP_ASYNC_API_URL,
@@ -32,7 +33,7 @@ const usePusher = () => {
     const channelName = `private-channel-${userId}`;
     const channel = pusher.subscribe(channelName);
 
-    function handleDocumentBadgeCount(pusherData) {
+    function handleBadgeCount(pusherData) {
       const camelData = camelcaseKeys(pusherData, { deep: true });
       const { notification } = camelData;
 
@@ -42,10 +43,12 @@ const usePusher = () => {
       });
     }
 
-    channel.bind(DOCUMENT_BADGE_COUNT, handleDocumentBadgeCount);
+    channel.bind(NEW_MESSAGE_EVENT, handleBadgeCount);
+    channel.bind(DOCUMENT_ACCESS_EVENT, handleBadgeCount);
 
     return () => {
-      channel.unbind(DOCUMENT_BADGE_COUNT, handleDocumentBadgeCount);
+      channel.unbind(NEW_MESSAGE_EVENT, handleBadgeCount);
+      channel.bind(DOCUMENT_ACCESS_EVENT, handleBadgeCount);
     };
   }, [isLoggedInData, client]);
 };
