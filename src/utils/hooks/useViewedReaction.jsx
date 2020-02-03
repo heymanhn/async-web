@@ -28,7 +28,7 @@ const useViewedReaction = () => {
         },
         {
           query: discussionQuery,
-          variables: { id: objectId, queryParams: {} },
+          variables: { discussionId: objectId, queryParams: {} },
         },
       ],
       // We're updating the cache directly instead of using refetchQueries since the conversations

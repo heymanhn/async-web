@@ -58,7 +58,7 @@ const DiscussionModal = ({
   });
 
   const { loading, data } = useQuery(discussionQuery, {
-    variables: { id: modalDiscussionId, queryParams: {} },
+    variables: { discussionId: modalDiscussionId, queryParams: {} },
     skip: !modalDiscussionId,
   });
 

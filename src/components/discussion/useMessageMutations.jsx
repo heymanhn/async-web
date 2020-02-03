@@ -59,7 +59,7 @@ const useMessageMutations = ({ message = null } = {}) => {
   //   refetchQueries: [
   //     {
   //       query: discussionQuery,
-  //       variables: { id: discussionId, queryParams: {} },
+  //       variables: { discussionId, queryParams: {} },
   //     },
   //   ],
   //   awaitRefetchQueries: true,
@@ -121,7 +121,7 @@ const useMessageMutations = ({ message = null } = {}) => {
           body: {
             formatter: 'slatejs',
             text: toPlainText(message),
-            payload: message,
+            payload: JSON.stringify(message),
           },
         },
       },
@@ -156,7 +156,7 @@ const useMessageMutations = ({ message = null } = {}) => {
           body: {
             formatter: 'slatejs',
             text: toPlainText(message),
-            payload: message,
+            payload: JSON.stringify(message),
           },
         },
       },

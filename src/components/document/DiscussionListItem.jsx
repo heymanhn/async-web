@@ -58,11 +58,11 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 );
 
 const DiscussionListItem = ({ discussionId }) => {
-  const { loading, error, data } = useQuery(discussionQuery, {
-    variables: { id: discussionId },
+  const { loading, data } = useQuery(discussionQuery, {
+    variables: { discussionId },
   });
   if (loading) return null;
-  if (error || !data.discussion || !data.messages) return null;
+  if (!data.discussion || !data.messages) return null;
 
   const { topic: context, lastMessage, messageCount, draft } = data.discussion;
   // const { payload } = context || {};

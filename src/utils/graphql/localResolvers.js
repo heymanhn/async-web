@@ -6,7 +6,7 @@ import notificationsQuery from 'graphql/queries/notifications';
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
   const data = client.readQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
   if (!data) return null;
 
@@ -14,7 +14,7 @@ function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
 
   client.writeQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
     data: {
       discussion: {
         ...discussion,
@@ -37,7 +37,7 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
 
   const data = client.readQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
   if (!data) return null;
 
@@ -65,7 +65,7 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
 
   client.writeQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
     data: {
       discussion,
       messages: {
@@ -85,7 +85,7 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
 
   const data = client.readQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
   if (!data) return null;
 
@@ -101,7 +101,7 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
 
   client.writeQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
     data: {
       discussion,
       messages: {
@@ -234,13 +234,13 @@ function deleteMessageFromDiscussion(
     messages: { pageToken, items, __typename, messageCount },
   } = client.readQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
 
   const index = items.findIndex(i => i.message.id === messageId);
   client.writeQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
     data: {
       discussion,
       messages: {

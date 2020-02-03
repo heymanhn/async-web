@@ -9,7 +9,7 @@ import DocumentContainer from 'components/document/DocumentContainer';
 
 const DiscussionLinkHandler = ({ discussionId }) => {
   const { loading, error, data } = useQuery(discussionQuery, {
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
 
   if (loading) return null;

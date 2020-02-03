@@ -7,7 +7,7 @@ import discussionQuery from 'graphql/queries/discussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
-import { DocumentContext } from 'utils/contexts';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import DiscussionMessage from './DiscussionMessage';
 import NewMessagesIndicator from './NewMessagesIndicator';
@@ -35,7 +35,8 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 
 const DiscussionThread = ({ isUnread }) => {
   const discussionRef = useRef(null);
-  const { documentId, modalDiscussionId } = useContext(DocumentContext);
+  const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
 
@@ -45,14 +46,14 @@ const DiscussionThread = ({ isUnread }) => {
       markAsRead({
         isUnread,
         objectType: 'discussion',
-        objectId: modalDiscussionId,
+        objectId: discussionId,
         parentId: documentId,
       });
     };
   });
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
-    variables: { id: modalDiscussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
 
   if (loading) return null;
@@ -68,7 +69,7 @@ const DiscussionThread = ({ isUnread }) => {
     fetchMore({
       query: discussionQuery,
       variables: {
-        id: modalDiscussionId,
+        discussionId,
         queryParams: snakedQueryParams(newQueryParams),
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {

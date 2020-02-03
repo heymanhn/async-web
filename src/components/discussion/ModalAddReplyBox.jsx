@@ -11,7 +11,7 @@ import useCurrentUser from 'utils/hooks/useCurrentUser';
 import useHover from 'utils/hooks/useHover';
 
 import Avatar from 'components/shared/Avatar';
-import { DocumentContext } from 'utils/contexts';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 const AddReplyContainer = styled.div(
   ({ hover, status, theme: { colors } }) => ({
@@ -81,15 +81,14 @@ const Label = styled.div(({ theme: { colors } }) => ({
 }));
 
 const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
-  const { documentId, modalDiscussionId: discussionId } = useContext(
-    DocumentContext
-  );
+  const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
   const { hover, ...hoverProps } = useHover(isComposing);
   const currentUser = useCurrentUser();
 
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
   const { loading, data } = useQuery(discussionQuery, {
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
 
   if (loading || !data.discussion) return null;
