@@ -5,12 +5,11 @@ import { getLocalUser } from 'utils/auth';
 
 const useCurrentUser = () => {
   const { userId } = getLocalUser();
-  const { loading, data } = useQuery(currentUserQuery, {
+  const { data } = useQuery(currentUserQuery, {
     variables: { id: userId },
   });
 
-  if (loading || !data.user) return {};
-  return data.user;
+  return data ? data.user : {};
 };
 
 export default useCurrentUser;

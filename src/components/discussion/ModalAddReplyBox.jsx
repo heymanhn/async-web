@@ -159,7 +159,6 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
 };
 
 ModalAddReplyBox.propTypes = {
-  currentUser: PropTypes.object.isRequired,
   handleClickReply: PropTypes.func.isRequired,
   isComposing: PropTypes.bool.isRequired,
 };
