@@ -81,13 +81,6 @@ const useMessageMutations = ({ message = null } = {}) => {
 
     const { data: createDiscussionData } = await createDiscussion({
       variables: { documentId, input },
-      refetchQueries: [
-        {
-          query: documentDiscussionsQuery,
-          variables: { id: documentId, queryParams: { order: 'desc' } },
-        },
-      ],
-      awaitRefetchQueries: true,
     });
 
     if (createDiscussionData.createDiscussion) {
@@ -114,6 +107,19 @@ const useMessageMutations = ({ message = null } = {}) => {
       messageDiscussionId = newDiscussionId;
     }
 
+    const refetchQueries = [
+      {
+        query: discussionQuery,
+        variables: { discussionId: messageDiscussionId, queryParams: {} },
+      },
+    ];
+    if (!discussionId) {
+      refetchQueries.push({
+        query: documentDiscussionsQuery,
+        variables: { id: documentId, queryParams: { order: 'desc' } },
+      });
+    }
+
     const { data } = await createMessage({
       variables: {
         discussionId: messageDiscussionId,
@@ -125,12 +131,7 @@ const useMessageMutations = ({ message = null } = {}) => {
           },
         },
       },
-      refetchQueries: [
-        {
-          query: discussionQuery,
-          variables: { discussionId: messageDiscussionId, queryParams: {} },
-        },
-      ],
+      refetchQueries,
       awaitRefetchQueries: true,
     });
 
