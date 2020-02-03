@@ -2,14 +2,15 @@ import { useApolloClient } from 'react-apollo';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import markDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';
-import documentNotificationsQuery from 'graphql/queries/documentNotifications';
+import notificationsQuery from 'graphql/queries/notifications';
 import discussionQuery from 'graphql/queries/discussion';
+import { getLocalUser } from 'utils/auth';
 
 const useViewedReaction = () => {
   const client = useApolloClient();
 
-  function markAsRead({ isUnread, objectType, objectId, parentId } = {}) {
-    const documentId = parentId || objectId;
+  function markAsRead({ isUnread, objectType, objectId } = {}) {
+    const { userId } = getLocalUser();
 
     client.mutate({
       mutation: createReactionMutation,
@@ -22,8 +23,8 @@ const useViewedReaction = () => {
       },
       refetchQueries: [
         {
-          query: documentNotificationsQuery,
-          variables: { id: documentId, queryParams: {} },
+          query: notificationsQuery,
+          variables: { id: userId, queryParams: {} },
         },
         {
           query: discussionQuery,

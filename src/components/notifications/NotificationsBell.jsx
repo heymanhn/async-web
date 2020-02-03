@@ -36,7 +36,7 @@ const NotificationsBell = ({ notifications }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const iconRef = useRef(null);
 
-  const newNotifications = notifications && notifications.length;
+  const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
 
   function findIconWidth() {
     const icon = iconRef.current;
@@ -50,7 +50,7 @@ const NotificationsBell = ({ notifications }) => {
   // The notification rows need to wait until the dropdown is closed before
   // it performs a navigate, that's what the callback method is for
   function handleCloseDropdown(callback = () => {}) {
-    setIsDropdownVisible(false, callback);
+    setIsDropdownVisible(false);
     callback();
   }
 
@@ -58,7 +58,7 @@ const NotificationsBell = ({ notifications }) => {
     <div>
       <Container onClick={handleShowDropdown} ref={iconRef}>
         <StyledIcon icon={faBell} />
-        {newNotifications ? <UnreadBadge /> : undefined}
+        {unreadNotifications.length ? <UnreadBadge /> : undefined}
       </Container>
       {notifications && (
         <NotificationsDropdown
