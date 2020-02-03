@@ -68,6 +68,8 @@ const DiscussionListItem = ({ discussionId }) => {
   // const { payload } = context || {};
   const { items } = data.messages;
   const messages = (items || []).map(i => i.message);
+  if (!messages.length) return null;
+
   const firstMessage = messages[0];
   const avatarUrls = messages.map(m => m.author.profilePictureUrl);
   const moreReplyCount = messageCount - (context ? 1 : 2);
