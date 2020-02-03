@@ -49,13 +49,15 @@ const DocumentContainer = ({
 
       {/* SLATE UPGRADE TODO: Figure out how to invoke modal when creating
           discussion */}
-      <DiscussionModal
-        isOpen={isModalOpen}
-        handleClose={handleCloseModal}
-        // createAnnotation={createAnnotation}
-        // documentEditor={documentEditor}
-        // selection={selection}
-      />
+      {isModalOpen && (
+        <DiscussionModal
+          isOpen={isModalOpen}
+          handleClose={handleCloseModal}
+          // createAnnotation={createAnnotation}
+          // documentEditor={documentEditor}
+          // selection={selection}
+        />
+      )}
     </DocumentContext.Provider>
   );
 };
