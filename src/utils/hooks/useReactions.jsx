@@ -95,7 +95,7 @@ const useReactions = () => {
   });
 
   let reactions = [];
-  if (data.message) {
+  if (data && data.message) {
     const { reactions: reax } = data.message;
     if (reax) reactions = reax;
   }
