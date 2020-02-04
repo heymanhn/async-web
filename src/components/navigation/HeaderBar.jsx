@@ -15,7 +15,7 @@ import VerticalDivider from 'components/shared/VerticalDivider';
 import DropdownMenu from 'components/navigation/DropdownMenu';
 import NotificationsBell from 'components/notifications/NotificationsBell';
 import NewDocumentButton from 'components/document/NewDocumentButton';
-import DocumentViewMode from 'components/document/DocumentContainer';
+import DocumentViewMode from 'components/document/DocumentViewMode';
 import NavTitle from './NavTitle';
 
 const Container = styled.div(({ theme: { colors } }) => ({

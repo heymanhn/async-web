@@ -33,7 +33,6 @@ import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
 import DocumentContainer from 'components/document/DocumentContainer';
 import DiscussionLinkHandler from 'components/discussion/DiscussionLinkHandler';
-import DiscussionContainer from './discussion/DiscussionContainer';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -124,7 +123,7 @@ const App = () => {
         />
         <PrivateRoute
           path="/discussions/:discussionId"
-          component={DiscussionContainer}
+          component={DiscussionLinkHandler}
         />
 
         <NotFound path="/notfound" default />
