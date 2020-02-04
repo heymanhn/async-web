@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
 
 import DiscussionModal from 'components/discussion/DiscussionModal';
-import HeaderBar from './HeaderBar';
+import HeaderBar from 'components/navigation/HeaderBar';
 import Document from './Document';
 import DiscussionsList from './DiscussionsList';
 
