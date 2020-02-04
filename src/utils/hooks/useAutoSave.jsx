@@ -1,13 +1,9 @@
-/*
- * Re-purposed from <DraftSavedIndicator />. We could DRY this up in the future
- * if needed.
- */
 import { useEffect, useRef, useState } from 'react';
 
 const DEBOUNCE_INTERVAL = 1000;
 const IDLE_INTERVAL = 2000;
 
-const useAutoSave = (content, handleSave) => {
+const useAutoSave = (content, handleSave, isDisabled) => {
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
   const contentString = JSON.stringify(content);
   const contentStringRef = useRef(contentString);
@@ -56,7 +52,7 @@ const useAutoSave = (content, handleSave) => {
   const { savedContent, isTyping, timer } = state;
   useEffect(() => () => clearTimeout(timer), [timer]);
 
-  if (contentString !== savedContent && !isTyping) {
+  if (!isDisabled && contentString !== savedContent && !isTyping) {
     setState(oldState => ({ ...oldState, isTyping: true }));
 
     // First invocation needs to pass the previously saved content

@@ -5,6 +5,7 @@ import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { MessageContext } from 'utils/contexts';
+import useDrafts from 'utils/hooks/useDrafts';
 
 import { DEFAULT_VALUE } from 'components/editor/utils';
 import useMessageMutations from './useMessageMutations';
@@ -28,8 +29,6 @@ const MessageEditable = styled(Editable)({
 /*
  * SLATE UPGRADE TODO:
  * - Get the keyboard shortcuts working for saving the message (cmd + enter)
- * - Create a hook for draft saving
- * - See if we can get rid of the afterCreate() callback with our new structure
  */
 
 const MessageEditor = ({ initialMessage, ...props }) => {
@@ -43,6 +42,7 @@ const MessageEditor = ({ initialMessage, ...props }) => {
     message,
   });
 
+  useDrafts(message);
   const isEmptyMessage = message === JSON.stringify(DEFAULT_VALUE);
 
   return (

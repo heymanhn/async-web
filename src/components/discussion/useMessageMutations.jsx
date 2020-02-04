@@ -9,9 +9,9 @@ import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
-// import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
+import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
 // import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
-// import addDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
+import localAddDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
 import localDeleteMessageMutation from 'graphql/mutations/local/deleteMessageFromDiscussion';
 import { track } from 'utils/analytics';
 import {
@@ -53,7 +53,8 @@ const useMessageMutations = ({ message = null } = {}) => {
     variables: { discussionId, messageId },
   });
 
-  // const [createMessageDraft] = useMutation(createMessageDraftMutation);
+  const [createMessageDraft] = useMutation(createMessageDraftMutation);
+  const [localAddDraftToDiscussion] = useMutation(localAddDraftToDiscussionMtn);
   // const [deleteMessageDraft] = useMutation(deleteMessageDraftMutation, {
   //   variables: { discussionId },
   //   refetchQueries: [
@@ -180,43 +181,39 @@ const useMessageMutations = ({ message = null } = {}) => {
     localDeleteMessage();
   }
 
-  // async function handleSaveDraft({ payload, text }) {
-  //   let draftDiscussionId = discussionId;
-  //   if (!draftDiscussionId) {
-  //     const { discussionId: did } = await onCreateDiscussion();
-  //     draftDiscussionId = did;
-  //   }
+  async function handleSaveDraft() {
+    let draftDiscussionId = discussionId;
+    if (!draftDiscussionId) {
+      const { discussionId: did } = await handleCreateDiscussion();
+      draftDiscussionId = did;
+    }
 
-  //   const { data } = await client.mutate({
-  //     mutation: createMessageDraftMutation,
-  //     variables: {
-  //       discussionId: draftDiscussionId,
-  //       input: {
-  //         body: {
-  //           formatter: 'slatejs',
-  //           text,
-  //           payload,
-  //         },
-  //       },
-  //     },
-  //     update: (_cache, { data: { createMessageDraft } }) => {
-  //       client.mutate({
-  //         mutation: addDraftToDiscussionMtn,
-  //         variables: {
-  //           discussionId: draftDiscussionId,
-  //           draft: createMessageDraft,
-  //         },
-  //       });
-  //     },
-  //   });
+    const { data } = await createMessageDraft({
+      variables: {
+        discussionId: draftDiscussionId,
+        input: {
+          body: {
+            formatter: 'slatejs',
+            text: toPlainText(message),
+            payload: JSON.stringify(message),
+          },
+        },
+      },
+    });
 
-  //   if (data.createMessageDraft) {
-  //     afterCreate(draftDiscussionId, true);
-  //     return Promise.resolve();
-  //   }
+    if (data.createMessageDraft) {
+      localAddDraftToDiscussion({
+        variables: {
+          discussionId: draftDiscussionId,
+          draft: data.createMessageDraft,
+        },
+      });
 
-  //   return Promise.reject(new Error('Failed to save message draft'));
-  // }
+      return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('Failed to save message draft'));
+  }
 
   // async function handleDeleteDraft() {
   //   const { data } = await deleteMessageDraft();
@@ -256,7 +253,7 @@ const useMessageMutations = ({ message = null } = {}) => {
     handleCreate,
     handleUpdate,
     handleDelete,
-    // handleSaveDraft,
+    handleSaveDraft,
     // handleDeleteDraft,
 
     isSubmitting,

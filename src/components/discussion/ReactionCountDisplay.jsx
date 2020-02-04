@@ -21,6 +21,7 @@ const Icon = styled.div({
 const ReactionCount = styled.div(({ isActive, theme: { colors } }) => ({
   color: isActive ? colors.blue : colors.grey3,
   fontSize: '14px',
+  letterSpacing: '-0.006em',
   fontWeight: 500,
 }));
 

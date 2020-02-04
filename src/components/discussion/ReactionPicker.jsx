@@ -27,6 +27,7 @@ const Container = styled.div(({ isOpen, offset, theme: { colors } }) => ({
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '14px',
+  letterSpacing: '-0.006em',
   fontWeight: 500,
 }));
 

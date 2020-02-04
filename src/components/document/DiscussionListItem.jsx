@@ -28,7 +28,7 @@ const MoreRepliesIndicator = styled.div(({ theme: { colors } }) => ({
   background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
   fontSize: '14px',
-  letterSpacing: '-0.006',
+  letterSpacing: '-0.006em',
   color: colors.grey3,
   padding: '0 30px',
 }));

@@ -54,6 +54,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 const OptionName = styled.div(({ theme: { colors } }) => ({
   color: colors.mainText,
   fontSize: '14px',
+  letterSpacing: '-0.006em',
   marginLeft: '12px',
   position: 'relative',
   top: '1px',

@@ -10,6 +10,7 @@ import AuthorDetails from 'components/shared/AuthorDetails';
 import MessageEditor from './MessageEditor';
 import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
+import DraftSavedIndicator from './DraftSavedIndicator';
 
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
@@ -22,7 +23,6 @@ const HeaderSection = styled.div({
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  position: 'relative',
 });
 
 const StyledHoverMenu = styled(HoverMenu)({
@@ -39,6 +39,7 @@ const DiscussionMessage = ({
   ...props
 }) => {
   const { draft } = useContext(DiscussionContext);
+
   const [mode, setMode] = useState(initialMode);
   const { hover, ...hoverProps } = useHover(mode !== 'display');
   const currentUser = useCurrentUser();
@@ -77,14 +78,14 @@ const DiscussionMessage = ({
             createdAt={createdAt}
             isEdited={createdAt !== updatedAt}
           />
-          {messageId && mode === 'display' && (
-            <StyledHoverMenu isAuthor={isAuthor} isOpen={hover} />
-          )}
+          <div>
+            {messageId && mode === 'display' && (
+              <StyledHoverMenu isAuthor={isAuthor} isOpen={hover} />
+            )}
+            {mode === 'compose' && <DraftSavedIndicator />}
+          </div>
         </HeaderSection>
-        <MessageEditor
-          initialMessage={loadInitialContent()}
-          // isDraft={!!draft}
-        />
+        <MessageEditor initialMessage={loadInitialContent()} />
         {mode === 'display' && <MessageReactions />}
       </MessageContext.Provider>
     </Container>
