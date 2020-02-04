@@ -38,7 +38,7 @@ const DiscussionModal = ({
   // selection,
   ...props
 }) => {
-  const { documentId, modalDiscussionId, handleShowDiscussion } = useContext(
+  const { documentId, modalDiscussionId, handleShowModal } = useContext(
     DocumentContext
   );
   const [isComposing, setIsComposing] = useState(!modalDiscussionId);
@@ -101,7 +101,7 @@ const DiscussionModal = ({
     context,
     draft,
 
-    afterCreate: id => handleShowDiscussion(id),
+    afterCreate: id => handleShowModal(id),
   };
 
   return (
