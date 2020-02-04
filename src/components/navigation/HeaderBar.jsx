@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/react-hooks';
 import organizationQuery from 'graphql/queries/organization';
 import notificationsQuery from 'graphql/queries/notifications';
 import { getLocalAppState, getLocalUser } from 'utils/auth';
-import { DocumentContext } from 'utils/contexts';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import DocumentAccessContainer from 'components/participants/DocumentAccessContainer';
 import Avatar from 'components/shared/Avatar';
@@ -54,6 +54,7 @@ const NavigationSection = styled.div({
 
 const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
   const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   function openDropdown() {
     setIsDropdownOpen(true);
@@ -97,7 +98,11 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
           isOpen={isDropdownOpen}
           organizationId={organizationId}
         />
+<<<<<<< HEAD:src/components/navigation/HeaderBar.jsx
         <NavTitle />
+=======
+        <NavTitle documentId={documentId} discussionId={discussionId} />
+>>>>>>> saving some progress:src/components/navigation/HeaderBar.jsx
         {documentId && (
           <DocumentViewMode viewMode={viewMode} setViewMode={setViewMode} />
         )}
