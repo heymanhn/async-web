@@ -25,9 +25,6 @@ export default gql`
       body @type(name: "Body") {
         ...BodyObject
       }
-      author @type(name: "User") {
-        ...UserObject
-      }
     }
     topic @type(name: "Body") {
       ...BodyObject

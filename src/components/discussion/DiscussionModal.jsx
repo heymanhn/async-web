@@ -86,7 +86,7 @@ const DiscussionModal = ({
 
   function handleCancelCompose() {
     stopComposing();
-    handleClose();
+    if (!modalDiscussionId) handleClose();
   }
 
   function isUnread() {

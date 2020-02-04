@@ -83,7 +83,7 @@ const useDraftMutations = (editor = null) => {
         discussion: { messageCount },
       } = client.readQuery({
         query: discussionQuery,
-        variables: { id: discussionId, queryParams: {} },
+        variables: { discussionId, queryParams: {} },
       });
 
       if (!messageCount) {
