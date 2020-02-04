@@ -2,9 +2,10 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import { MessageContext } from 'utils/contexts';
+import { DiscussionContext, MessageContext } from 'utils/contexts';
 
 import Button from 'components/shared/Button';
+import useDraftMutations from './useDraftMutations';
 
 const Container = styled.div({
   display: 'flex',
@@ -27,17 +28,21 @@ const StyledButton = styled(Button)({
   padding: '4px 25px',
 });
 
-const MessageActions = ({
-  handleSubmit,
-  isDraft,
-  isSubmitDisabled,
-  isSubmitting,
-}) => {
+const MessageActions = ({ handleSubmit, isSubmitDisabled, isSubmitting }) => {
+  const { draft } = useContext(DiscussionContext);
   const { mode, handleCancel } = useContext(MessageContext);
+  const { handleDeleteDraft } = useDraftMutations();
 
   function handleSubmitWrapper(event) {
     event.stopPropagation();
     return isSubmitDisabled ? null : handleSubmit();
+  }
+
+  async function handleCancelWrapper(event) {
+    event.stopPropagation();
+
+    if (mode === 'compose' && draft) await handleDeleteDraft();
+    handleCancel();
   }
 
   return (
@@ -51,8 +56,8 @@ const MessageActions = ({
           type="light"
         />
         <StyledButton
-          onClick={handleCancel}
-          title={isDraft ? 'Discard Draft' : 'Cancel'}
+          onClick={handleCancelWrapper}
+          title={mode === 'compose' && draft ? 'Discard Draft' : 'Cancel'}
           type="grey"
         />
       </ButtonsContainer>
@@ -62,7 +67,6 @@ const MessageActions = ({
 
 MessageActions.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  isDraft: PropTypes.bool.isRequired,
   isSubmitDisabled: PropTypes.bool.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
 };

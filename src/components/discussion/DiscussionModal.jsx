@@ -86,7 +86,7 @@ const DiscussionModal = ({
 
   function handleCancelCompose() {
     stopComposing();
-    // SLATE UPGRADE TODO: close the modal when canceling on compose
+    handleClose();
   }
 
   function isUnread() {

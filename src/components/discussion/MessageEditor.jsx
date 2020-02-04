@@ -56,7 +56,6 @@ const MessageEditor = ({ initialMessage, ...props }) => {
         {mode !== 'display' && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
-            isDraft={false} // TODO
             isSubmitDisabled={isEmptyMessage}
             isSubmitting={isSubmitting}
           />
