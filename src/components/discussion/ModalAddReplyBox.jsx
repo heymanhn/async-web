@@ -20,7 +20,7 @@ const AddReplyContainer = styled.div(
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    background: colors.bgGrey,
+    background: colors.white,
     color: colors.grey4,
     cursor: 'pointer',
     opacity: hover || status === 'resolved' ? 1 : 0.6,

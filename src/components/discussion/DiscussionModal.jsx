@@ -14,14 +14,11 @@ import DiscussionThread from './DiscussionThread';
 import DiscussionMessage from './DiscussionMessage';
 import ModalAddReplyBox from './ModalAddReplyBox';
 
-const StyledModal = styled(Modal)({
+const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
   alignSelf: 'center',
-});
-
-const StyledDiscussionMessage = styled(DiscussionMessage)({
-  borderBottomLeftRadius: '5px',
-  borderBottomRightRadius: '5px',
-});
+  padding: '0 25px',
+  background: colors.bgGrey,
+}));
 
 /*
  * SLATE UPGRADE TODO:
@@ -117,7 +114,7 @@ const DiscussionModal = ({
         )} */}
         {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}
         {isComposing ? (
-          <StyledDiscussionMessage
+          <DiscussionMessage
             mode="compose"
             afterCreate={stopComposing}
             handleCancel={handleCancelCompose}
