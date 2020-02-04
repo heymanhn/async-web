@@ -17,8 +17,6 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   flexDirection: 'column',
   justifyContent: 'center',
 
-  borderBottomLeftRadius: '5px',
-  borderBottomRightRadius: '5px',
   margin: '0 auto',
   maxWidth: discussionViewport,
 }));
@@ -26,10 +24,6 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ isUnread, theme: { colors } }) => ({
     backgroundColor: isUnread ? colors.unreadBlue : 'default',
-    borderTopLeftRadius: '5px',
-    borderTopRightRadius: '5px',
-    borderBottom: `1px solid ${colors.borderGrey}`,
-    paddingBottom: '10px',
   })
 );
 
