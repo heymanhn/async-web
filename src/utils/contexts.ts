@@ -12,12 +12,14 @@ export const DiscussionContext = createContext({
   discussionId: null,
   context: null,
   draft: null,
+
+  afterCreate: () => {},
 });
 
 export const MessageContext = createContext({
   messageId: null,
   mode: null,
   setMode: () => {},
-  afterDiscussionCreate: () => {},
+
   afterCreate: () => {},
 });

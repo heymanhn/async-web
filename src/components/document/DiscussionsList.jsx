@@ -132,9 +132,6 @@ const DiscussionsList = () => {
           mode="compose"
           afterCreate={stopComposing}
           handleCancel={stopComposing}
-          // The old implementation hides the composer immediately after discussion create.
-          // But I don't want that.
-          // afterDiscussionCreate={}
         />
       )}
       {/* SLATE UPGRADE TODO: Don't show separate list item for draft discussions? */}

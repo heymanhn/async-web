@@ -33,7 +33,6 @@ const StyledHoverMenu = styled(HoverMenu)({
 const DiscussionMessage = ({
   mode: initialMode,
   message,
-  afterDiscussionCreate,
   afterCreate,
   handleCancel,
   ...props
@@ -49,9 +48,9 @@ const DiscussionMessage = ({
   const isAuthor = currentUser.id === author.id;
 
   function loadInitialContent() {
-    if (draft) return draft.body.payload;
+    if (mode !== 'compose') return body.payload;
 
-    return mode !== 'compose' ? body.payload : null;
+    return draft ? draft.body.payload : null;
   }
 
   function handleCancelWrapper() {
@@ -64,7 +63,6 @@ const DiscussionMessage = ({
     messageId,
     mode,
     setMode,
-    afterDiscussionCreate,
     afterCreate,
     handleCancel: handleCancelWrapper,
   };
@@ -95,7 +93,6 @@ const DiscussionMessage = ({
 DiscussionMessage.propTypes = {
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
-  afterDiscussionCreate: PropTypes.func,
   afterCreate: PropTypes.func,
   handleCancel: PropTypes.func,
 };
@@ -103,7 +100,6 @@ DiscussionMessage.propTypes = {
 DiscussionMessage.defaultProps = {
   mode: 'display',
   message: {},
-  afterDiscussionCreate: () => {},
   afterCreate: () => {},
   handleCancel: () => {},
 };

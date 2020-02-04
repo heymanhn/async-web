@@ -64,15 +64,12 @@ const DiscussionModal = ({
 
   if (loading) return null;
 
-  // HN: Double check if all this logic is still needed in Roval v2
-  // let discussion = null;
-  // if (data && data.discussion) {
-  //   ({ discussion } = data);
-  //
-  //   const { draft: newDraft, topic } = discussion;
-  //   if (topic && !context) setContext(topic.payload);
-  //   if (draftHasChanged(newDraft)) setDraft(newDraft);
-  // }
+  let draft;
+  let context; // SLATE UPGRADE TODO: later this may need to be state instead
+  if (data && data.discussion) {
+    const { discussion } = data;
+    ({ draft, topic: context } = discussion);
+  }
 
   // if (!!draft && !isComposing) startComposing();
   // if (!discussionId && !context) extractContext();
@@ -102,8 +99,10 @@ const DiscussionModal = ({
 
   const value = {
     discussionId: modalDiscussionId,
-    // context,
-    // draft,
+    context,
+    draft,
+
+    afterCreate: id => handleShowDiscussion(id),
   };
 
   return (
@@ -118,15 +117,10 @@ const DiscussionModal = ({
           />
         )} */}
         {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}
-        {/*
-        context={context}
-        draft={draft}
-        source="discussionContainer" */}
         {isComposing ? (
           <StyledDiscussionMessage
             mode="compose"
             afterCreate={stopComposing}
-            afterDiscussionCreate={id => handleShowDiscussion(id)}
             handleCancel={handleCancelCompose}
             {...props}
           />
@@ -148,12 +142,6 @@ DiscussionModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   // selection: PropTypes.object,
 };
-
-// DiscussionModal.defaultProps = {
-//   createAnnotation: () => {},
-//   documentEditor: {},
-//   selection: {},
-// };
 
 export default DiscussionModal;
 
