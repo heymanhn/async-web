@@ -43,7 +43,6 @@ const DiscussionModal = ({
   );
   const [isComposing, setIsComposing] = useState(!modalDiscussionId);
   // const [context, setContext] = useState(null);
-  // const [draft, setDraft] = useState(null);
 
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
@@ -144,18 +143,6 @@ DiscussionModal.propTypes = {
 };
 
 export default DiscussionModal;
-
-/* HN: Is this still needed?
-function draftHasChanged(newDraft) {
-    const { body } = draft || {};
-    const { text } = body || {};
-
-    const { body: newBody } = newDraft || {};
-    const { text: newText } = newBody || {};
-
-    return text !== newText;
-  }
-*/
 
 /*
 // HN: I know this is a long-winded way to extract the inline discussion context. But we're

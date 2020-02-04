@@ -47,8 +47,6 @@ const DocumentContainer = ({
       {viewMode === 'content' && <Document />}
       {viewMode === 'discussions' && <DiscussionsList />}
 
-      {/* SLATE UPGRADE TODO: Figure out how to invoke modal when creating
-          discussion */}
       {isModalOpen && (
         <DiscussionModal
           isOpen={isModalOpen}
@@ -75,9 +73,7 @@ DocumentContainer.defaultProps = {
 
 export default DocumentContainer;
 
-/*
-TODO: implement this
-
+/* SLATE UPGRADE TODO: implement this
 // TODO: This will change later, when we introduce the concept of multiple co-authors
 const { userId } = getLocalUser();
 const isAuthor = userId === owner.id;
@@ -98,17 +94,5 @@ function createAnnotation(value, authorId) {
         },
       });
   });
-  track('New discussion created', { discussionId: value, documentId });
-
-  // Update the URL in the address bar to reflect the new discussion
-  // TODO (HN): Fix this implementation this later.
-  //
-  // const { origin } = window.location;
-  // const url = `${origin}/discussions/${value}`;
-  // return window.history.replaceState({}, `discussion: ${value}`, url);
 }
-
-// Is this state needed?
-documentEditor,
-selection,
 */

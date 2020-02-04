@@ -134,7 +134,6 @@ const DiscussionsList = () => {
           handleCancel={stopComposing}
         />
       )}
-      {/* SLATE UPGRADE TODO: Don't show separate list item for draft discussions? */}
       {discussions.map(d => (
         <DiscussionListItem key={d.id} discussionId={d.id} />
       ))}
