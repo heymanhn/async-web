@@ -11,7 +11,7 @@ import {
   DEFAULT_NODE,
   COMPOSITION_MENU_SOURCE,
   MARKDOWN_SOURCE,
-} from 'components/editor/defaults';
+} from 'components/editor/utils';
 import {
   AddSchema,
   RenderBlock,
@@ -76,7 +76,8 @@ export function SectionBreak() {
   const markdownShortcut = AutoReplace({
     trigger: '-',
     before: /^(--)$/,
-    change: change => change.setBlock(SECTION_BREAK, MARKDOWN_SOURCE).insertBlock(DEFAULT_NODE),
+    change: change =>
+      change.setBlock(SECTION_BREAK, MARKDOWN_SOURCE).insertBlock(DEFAULT_NODE),
   });
 
   /* **** Hotkeys **** */
@@ -97,7 +98,11 @@ export function SectionBreak() {
     const { value } = editor;
     const { previousBlock } = value;
 
-    if (editor.isEmptyParagraph() && previousBlock && previousBlock.type === SECTION_BREAK) {
+    if (
+      editor.isEmptyParagraph() &&
+      previousBlock &&
+      previousBlock.type === SECTION_BREAK
+    ) {
       return editor.removeNodeByKey(previousBlock.key);
     }
 

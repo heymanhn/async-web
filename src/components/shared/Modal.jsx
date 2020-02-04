@@ -43,7 +43,8 @@ const Modal = ({ backdropStyle, children, handleClose, isOpen, ...props }) => {
 
   document.body.style.overflow = isOpen ? 'hidden' : 'auto';
 
-  return isOpen ? ReactDOM.createPortal(
+  if (!isOpen) return null;
+  return ReactDOM.createPortal(
     <>
       <Container onClick={handleClose}>
         <Dialog onClick={e => e.stopPropagation()} {...props}>
@@ -52,8 +53,8 @@ const Modal = ({ backdropStyle, children, handleClose, isOpen, ...props }) => {
       </Container>
       <Backdrop customStyle={backdropStyle} />
     </>,
-    root,
-  ) : null;
+    root
+  );
 };
 
 Modal.propTypes = {

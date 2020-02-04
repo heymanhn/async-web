@@ -82,7 +82,7 @@ const InlineDiscussionPreview = ({
   isOpen,
 }) => {
   const { loading, error, data: discussionData } = useQuery(discussionQuery, {
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
     fetchPolicy: 'cache-and-network',
   });
 

@@ -5,8 +5,9 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
+import { DiscussionContext } from 'utils/contexts';
 
-import RovalEditor from 'components/editor/RovalEditor';
+// import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import AvatarList from 'components/shared/AvatarList';
 import DiscussionListItemHeader from './DiscussionListItemHeader';
@@ -27,7 +28,7 @@ const MoreRepliesIndicator = styled.div(({ theme: { colors } }) => ({
   background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
   fontSize: '14px',
-  letterSpacing: '-0.006',
+  letterSpacing: '-0.006em',
   color: colors.grey3,
   padding: '0 30px',
 }));
@@ -36,16 +37,16 @@ const StyledAvatarList = styled(AvatarList)({
   marginRight: '10px',
 });
 
-const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
-  background: colors.grey7,
-  opacity: 0.6,
-  borderTopLeftRadius: '5px',
-  borderTopRightRadius: '5px',
-  fontSize: '16px',
-  lineHeight: '26px',
-  fontWeight: 400,
-  padding: '10px 30px 5px',
-}));
+// const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
+//   background: colors.grey7,
+//   opacity: 0.6,
+//   borderTopLeftRadius: '5px',
+//   borderTopRightRadius: '5px',
+//   fontSize: '16px',
+//   lineHeight: '26px',
+//   fontWeight: 400,
+//   padding: '10px 30px 5px',
+// }));
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
@@ -56,60 +57,60 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
   })
 );
 
-const DiscussionListItem = ({ discussionId, setDiscussionId }) => {
-  const { loading, error, data } = useQuery(discussionQuery, {
-    variables: { id: discussionId },
+const DiscussionListItem = ({ discussionId }) => {
+  const { loading, data } = useQuery(discussionQuery, {
+    variables: { discussionId },
   });
   if (loading) return null;
-  if (error || !data.discussion || !data.messages) return null;
+  if (!data.discussion || !data.messages) return null;
 
   const { topic: context, lastMessage, messageCount, draft } = data.discussion;
-  const { payload } = context || {};
+  // const { payload } = context || {};
   const { items } = data.messages;
   const messages = (items || []).map(i => i.message);
+  if (!messages.length) return null;
+
   const firstMessage = messages[0];
   const avatarUrls = messages.map(m => m.author.profilePictureUrl);
   const moreReplyCount = messageCount - (context ? 1 : 2);
 
+  const value = {
+    discussionId,
+    // context,
+    draft, // SLATE UPGRADE TODO
+  };
+
   return (
-    <Container>
-      <DiscussionListItemHeader
-        discussion={data.discussion}
-        setDiscussionId={setDiscussionId}
-      />
-      {payload ? (
-        <ContextEditor
-          contentType="discussionContext"
-          readOnly
-          initialValue={payload}
-          mode="display"
-        />
-      ) : (
-        <StyledDiscussionMessage
-          discussionId={discussionId}
-          initialMessage={firstMessage}
-          draft={draft}
-        />
-      )}
-      {moreReplyCount > 0 && (
-        <MoreRepliesIndicator>
-          <StyledAvatarList avatarUrls={avatarUrls} opacity={0.5} />
-          <div>{Pluralize('more reply', moreReplyCount, true)}</div>
-        </MoreRepliesIndicator>
-      )}
-      {lastMessage && lastMessage.id !== firstMessage.id && (
-        <StyledDiscussionMessage
-          discussionId={discussionId}
-          initialMessage={lastMessage}
-        />
-      )}
-    </Container>
+    <DiscussionContext.Provider value={value}>
+      <Container>
+        <DiscussionListItemHeader discussion={data.discussion} />
+        {/* SLATE UPGRADE TODO: Get context working in All Discussions page too */}
+        {/* {payload ? (
+          <ContextEditor
+            contentType="discussionContext"
+            readOnly
+            initialValue={payload}
+            mode="display"
+          />
+        ) : ( */}
+        <StyledDiscussionMessage message={firstMessage} />
+        {/* )} */}
+        {moreReplyCount > 0 && (
+          <MoreRepliesIndicator>
+            <StyledAvatarList avatarUrls={avatarUrls} opacity={0.5} />
+            <div>{Pluralize('more reply', moreReplyCount, true)}</div>
+          </MoreRepliesIndicator>
+        )}
+        {lastMessage && lastMessage.id !== firstMessage.id && (
+          <StyledDiscussionMessage message={lastMessage} />
+        )}
+      </Container>
+    </DiscussionContext.Provider>
   );
 };
 
 DiscussionListItem.propTypes = {
   discussionId: PropTypes.string.isRequired,
-  setDiscussionId: PropTypes.func.isRequired,
 };
 
 export default DiscussionListItem;

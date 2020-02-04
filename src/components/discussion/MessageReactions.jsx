@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
 
 import useReactions from 'utils/hooks/useReactions';
@@ -78,13 +77,13 @@ const StyledAddReactionButton = styled(AddReactionButton)({
   marginLeft: '10px',
 });
 
-const MessageReactions = ({ discussionId, messageId, ...props }) => {
+const MessageReactions = ({ ...props }) => {
   const {
     addReaction,
     removeReaction,
     reactions,
     reactionsReference,
-  } = useReactions({ discussionId, messageId });
+  } = useReactions();
 
   if (!reactions || !reactions.length) return null;
 
@@ -112,14 +111,6 @@ const MessageReactions = ({ discussionId, messageId, ...props }) => {
     return histogram;
   };
 
-  const addReactionButton = (
-    <StyledAddReactionButton
-      discussionId={discussionId}
-      messageId={messageId}
-      placement="above"
-    />
-  );
-
   return (
     <Container {...props}>
       <InnerContainer>
@@ -137,14 +128,11 @@ const MessageReactions = ({ discussionId, messageId, ...props }) => {
           </ButtonWrapper>
         ))}
       </InnerContainer>
-      {reactionsToDisplay().length > 0 ? addReactionButton : undefined}
+      {!!reactionsToDisplay().length && (
+        <StyledAddReactionButton placement="above" />
+      )}
     </Container>
   );
-};
-
-MessageReactions.propTypes = {
-  discussionId: PropTypes.string.isRequired,
-  messageId: PropTypes.string.isRequired,
 };
 
 export default MessageReactions;

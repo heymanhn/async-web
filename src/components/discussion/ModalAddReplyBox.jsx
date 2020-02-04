@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
@@ -7,8 +7,11 @@ import { faCommentCheck } from '@fortawesome/pro-solid-svg-icons';
 
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
+import useCurrentUser from 'utils/hooks/useCurrentUser';
+import useHover from 'utils/hooks/useHover';
 
 import Avatar from 'components/shared/Avatar';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 const AddReplyContainer = styled.div(
   ({ hover, status, theme: { colors } }) => ({
@@ -54,18 +57,14 @@ const ResolveDiscussionButton = styled.div(({ theme: { colors } }) => ({
 
 const ResolvedDiscussionIcon = styled(FontAwesomeIcon)(
   ({ theme: { colors } }) => ({
-    color: colors.successGreen,
-    fontSize: '18px',
-    marginRight: '12px',
-  })
-);
-
-const ResolvedDiscussionAuthorIcon = styled(ResolvedDiscussionIcon)(
-  ({ theme: { colors } }) => ({
     position: 'absolute',
     marginTop: '10px',
     marginLeft: '10px',
+
     background: colors.white,
+    color: colors.successGreen,
+    fontSize: '18px',
+    marginRight: '12px',
   })
 );
 
@@ -81,16 +80,15 @@ const Label = styled.div(({ theme: { colors } }) => ({
   letterSpacing: '-0.006em',
 }));
 
-const AddReplyBox = ({
-  discussionId,
-  documentId,
-  currentUser,
-  handleClickReply,
-  ...props
-}) => {
+const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
+  const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
+  const { hover, ...hoverProps } = useHover(isComposing);
+  const currentUser = useCurrentUser();
+
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
   const { loading, data } = useQuery(discussionQuery, {
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
 
   if (loading || !data.discussion) return null;
@@ -109,7 +107,11 @@ const AddReplyBox = ({
   }
 
   return (
-    <AddReplyContainer {...props} status={status && status.state}>
+    <AddReplyContainer
+      status={status && status.state}
+      {...props}
+      {...hoverProps}
+    >
       {status && status.state === 'resolved' ? (
         <React.Fragment>
           <AddReplyItem>
@@ -118,7 +120,7 @@ const AddReplyBox = ({
                 avatarUrl={status.author.profilePictureUrl}
                 size={32}
               />
-              <ResolvedDiscussionAuthorIcon icon={faCommentCheck} />
+              <ResolvedDiscussionIcon icon={faCommentCheck} />
             </ResolveAuthorContainter>
             <AddReplyLabel>{`${status.author.fullName} marked this discussion as resolved`}</AddReplyLabel>
           </AddReplyItem>
@@ -156,11 +158,9 @@ const AddReplyBox = ({
   );
 };
 
-AddReplyBox.propTypes = {
-  discussionId: PropTypes.string.isRequired,
-  documentId: PropTypes.string.isRequired,
-  currentUser: PropTypes.object.isRequired,
+ModalAddReplyBox.propTypes = {
   handleClickReply: PropTypes.func.isRequired,
+  isComposing: PropTypes.bool.isRequired,
 };
 
-export default AddReplyBox;
+export default ModalAddReplyBox;

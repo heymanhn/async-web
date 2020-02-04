@@ -14,7 +14,7 @@ import {
   HOTKEY_SOURCE,
   MARKDOWN_SOURCE,
   TOOLBAR_SOURCE,
-} from 'components/editor/defaults';
+} from 'components/editor/utils';
 import {
   AddSchema,
   AddCommands,
@@ -35,11 +35,13 @@ export function BlockQuoteButton({ editor, ...props }) {
   }
 
   function isActive() {
-    const { value: { document, blocks } } = editor;
+    const {
+      value: { document, blocks },
+    } = editor;
 
     if (blocks.size > 0) {
       const parent = document.getParent(blocks.first().key);
-      return (parent && parent.type === BLOCK_QUOTE);
+      return parent && parent.type === BLOCK_QUOTE;
     }
 
     return false;
@@ -94,7 +96,7 @@ const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
 export function BlockQuotePlugin() {
   /* **** Schema **** */
 
-  const blockQuoteSchema = { blocks: { } };
+  const blockQuoteSchema = { blocks: {} };
   blockQuoteSchema.blocks[BLOCK_QUOTE] = {
     nodes: [
       {
@@ -123,10 +125,11 @@ export function BlockQuotePlugin() {
     AutoReplace({
       trigger: 'space',
       before: /^(>)$/,
-      change: (editor) => {
+      change: editor => {
         // Essentially undoing the autoReplace detection
         if (editor.isWrappedByAnyBlock()) return editor.insertText('> ');
-        if (!editor.isEmptyBlock()) return editor.setBlockQuote(MARKDOWN_SOURCE);
+        if (!editor.isEmptyBlock())
+          return editor.setBlockQuote(MARKDOWN_SOURCE);
 
         return editor
           .insertBlock(DEFAULT_NODE)

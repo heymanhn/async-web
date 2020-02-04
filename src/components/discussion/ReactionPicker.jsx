@@ -27,6 +27,7 @@ const Container = styled.div(({ isOpen, offset, theme: { colors } }) => ({
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '14px',
+  letterSpacing: '-0.006em',
   fontWeight: 500,
 }));
 
@@ -41,21 +42,14 @@ const ReactionsList = styled.div({
   flexDirection: 'row',
 });
 
-const ReactionPicker = ({
-  discussionId,
-  handleClose,
-  isOpen,
-  messageId,
-  placement,
-  ...props
-}) => {
+const ReactionPicker = ({ handleClose, isOpen, placement, ...props }) => {
   const [reactionOnHover, setReactionOnHover] = useState(null);
   const {
     addReaction,
     reactions,
     reactionsReference,
     removeReaction,
-  } = useReactions({ discussionId, messageId });
+  } = useReactions();
 
   function handleAddReaction(code) {
     handleClose();
@@ -128,11 +122,9 @@ const ReactionPicker = ({
 };
 
 ReactionPicker.propTypes = {
-  discussionId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
   placement: PropTypes.oneOf(['above', 'below']),
-  messageId: PropTypes.string.isRequired,
 };
 
 ReactionPicker.defaultProps = {

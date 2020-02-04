@@ -9,16 +9,12 @@ import {
   HOTKEY_SOURCE,
   MARKDOWN_SOURCE,
   TOOLBAR_SOURCE,
-} from 'components/editor/defaults';
+} from 'components/editor/utils';
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import HeadingIcon from './HeadingIcon';
 import HeadingOptionIcon from './HeadingOptionIcon';
-import {
-  Hotkey,
-  RenderBlock,
-  CustomEnterAction,
-} from '../helpers';
+import { Hotkey, RenderBlock, CustomEnterAction } from '../helpers';
 
 const LARGE_FONT = 'heading-one';
 const MEDIUM_FONT = 'heading-two';
@@ -64,13 +60,19 @@ function HeadingOption({ editor, headingType, ...props }) {
     return editor.clearBlock().setBlock(headingType, COMPOSITION_MENU_SOURCE);
   }
 
-  const icon = <HeadingOptionIcon number={headingType === LARGE_FONT ? 1 : 2} />;
+  const icon = (
+    <HeadingOptionIcon number={headingType === LARGE_FONT ? 1 : 2} />
+  );
 
   return (
     <MenuOption
       handleInvoke={handleHeadingOption}
       icon={icon}
-      title={headingType === LARGE_FONT ? LARGE_TITLE_OPTION_TITLE : SMALL_TITLE_OPTION_TITLE}
+      title={
+        headingType === LARGE_FONT
+          ? LARGE_TITLE_OPTION_TITLE
+          : SMALL_TITLE_OPTION_TITLE
+      }
       {...props}
     />
   );
@@ -161,9 +163,11 @@ export function HeadingsPlugin() {
   ];
 
   function exitHeadingBlockOnEnter(editor, next) {
-    if (editor.hasBlock(LARGE_FONT)
-      || editor.hasBlock(MEDIUM_FONT)
-      || editor.hasBlock(SMALL_FONT)) {
+    if (
+      editor.hasBlock(LARGE_FONT) ||
+      editor.hasBlock(MEDIUM_FONT) ||
+      editor.hasBlock(SMALL_FONT)
+    ) {
       if (editor.isAtBeginning()) return editor.insertBlock(DEFAULT_NODE);
 
       next();
@@ -181,9 +185,5 @@ export function HeadingsPlugin() {
     CustomEnterAction(exitHeadingBlockOnEnter),
   ];
 
-  return [
-    renderMethods,
-    markdownShortcuts,
-    hotkeys,
-  ];
+  return [renderMethods, markdownShortcuts, hotkeys];
 }

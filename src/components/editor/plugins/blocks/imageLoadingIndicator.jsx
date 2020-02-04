@@ -3,13 +3,8 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
-import { DEFAULT_NODE } from 'components/editor/defaults';
-import {
-  AddCommands,
-  AddQueries,
-  AddSchema,
-  RenderBlock,
-} from '../helpers';
+import { DEFAULT_NODE } from 'components/editor/utils';
+import { AddCommands, AddQueries, AddSchema, RenderBlock } from '../helpers';
 
 const IMAGE_LOADING_INDICATOR = 'image-loading-indicator';
 
@@ -42,21 +37,16 @@ export default function ImageLoadingIndicator() {
 
   function insertImageLoadingIndicator(editor) {
     if (editor.isEmptyParagraph()) {
-      return editor
-        .setBlocks(IMAGE_LOADING_INDICATOR);
+      return editor.setBlocks(IMAGE_LOADING_INDICATOR);
     }
 
-    return editor
-      .moveToEndOfBlock()
-      .insertBlock(IMAGE_LOADING_INDICATOR);
+    return editor.moveToEndOfBlock().insertBlock(IMAGE_LOADING_INDICATOR);
   }
 
   function removeImageLoadingIndicator(editor) {
     const indicator = editor.findImageLoadingIndicator();
     if (indicator) {
-      editor
-        .insertBlock(DEFAULT_NODE)
-        .removeNodeByKey(indicator.key);
+      editor.insertBlock(DEFAULT_NODE).removeNodeByKey(indicator.key);
     }
 
     return editor;
@@ -65,7 +55,9 @@ export default function ImageLoadingIndicator() {
   /* **** Queries **** */
 
   function findImageLoadingIndicator(editor) {
-    return editor.value.document.findDescendant(n => n.type === IMAGE_LOADING_INDICATOR);
+    return editor.value.document.findDescendant(
+      n => n.type === IMAGE_LOADING_INDICATOR
+    );
   }
 
   /* **** Render methods **** */

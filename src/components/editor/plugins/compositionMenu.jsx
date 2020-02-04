@@ -2,7 +2,7 @@
 import React from 'react';
 
 import CompositionMenuButton from '../compositionMenu/CompositionMenuButton';
-import { DEFAULT_NODE } from '../defaults';
+import { DEFAULT_NODE } from '../utils';
 import { AddQueries, Hotkey, RenderEditor } from './helpers';
 
 function CompositionMenu({ isModal } = {}) {
@@ -13,7 +13,9 @@ function CompositionMenu({ isModal } = {}) {
 
   function isSlashCommand(editor) {
     const { startBlock } = editor.value;
-    return startBlock && startBlock.type === DEFAULT_NODE && startBlock.text === '/';
+    return (
+      startBlock && startBlock.type === DEFAULT_NODE && startBlock.text === '/'
+    );
   }
 
   /* **** Render the menu **** */
@@ -25,7 +27,11 @@ function CompositionMenu({ isModal } = {}) {
     return (
       <>
         {children}
-        <CompositionMenuButton editor={editor} isModal={!!isModal} ref={menuRef} />
+        <CompositionMenuButton
+          editor={editor}
+          isModal={!!isModal}
+          ref={menuRef}
+        />
       </>
     );
   }
@@ -52,11 +58,7 @@ function CompositionMenu({ isModal } = {}) {
     Hotkey('Esc', (...args) => propagateKeyDown('Esc', ...args)),
   ];
 
-  return [
-    AddQueries({ isSlashCommand }),
-    RenderEditor(displayMenu),
-    hotkeys,
-  ];
+  return [AddQueries({ isSlashCommand }), RenderEditor(displayMenu), hotkeys];
 }
 
 export default CompositionMenu;

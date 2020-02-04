@@ -8,12 +8,14 @@
  *
  */
 
+import { useContext } from 'react';
 import { useMutation, useQuery } from 'react-apollo';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import deleteReactionMutation from 'graphql/mutations/deleteReaction';
 import messageQuery from 'graphql/queries/message';
 import { track } from 'utils/analytics';
+import { DiscussionContext, MessageContext } from 'utils/contexts';
 
 const reactionsReference = [
   {
@@ -48,7 +50,9 @@ const reactionsReference = [
   },
 ];
 
-const useReactions = ({ discussionId, messageId }) => {
+const useReactions = () => {
+  const { discussionId } = useContext(DiscussionContext);
+  const { messageId } = useContext(MessageContext);
   const [execAddReaction] = useMutation(createReactionMutation);
   const [execRemoveReaction] = useMutation(deleteReactionMutation);
 
@@ -91,7 +95,7 @@ const useReactions = ({ discussionId, messageId }) => {
   });
 
   let reactions = [];
-  if (data.message) {
+  if (data && data.message) {
     const { reactions: reax } = data.message;
     if (reax) reactions = reax;
   }

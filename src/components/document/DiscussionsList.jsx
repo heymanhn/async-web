@@ -1,16 +1,14 @@
-import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useRef, useState } from 'react';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import { snakedQueryParams } from 'utils/queryParams';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
+import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
-import MessageComposer from 'components/discussion/MessageComposer';
-import DiscussionModal from 'components/discussion/DiscussionModal';
-
+import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import DiscussionListItem from './DiscussionListItem';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
@@ -48,7 +46,7 @@ const Label = styled.div(({ theme: { colors } }) => ({
 }));
 
 // HN: There should be a way to DRY up these style declarations
-const StyledMessageComposer = styled(MessageComposer)(
+const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
     background: colors.white,
     border: `1px solid ${colors.borderGrey}`,
@@ -58,19 +56,16 @@ const StyledMessageComposer = styled(MessageComposer)(
   })
 );
 
-const DiscussionsList = ({ documentId }) => {
+const DiscussionsList = () => {
   const listRef = useRef(null);
-  const [showComposer, setShowComposer] = useState(false);
+  const { documentId } = useContext(DocumentContext);
+
+  const [isComposing, setIsComposing] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [discussionId, setDiscussionId] = useState(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
 
-  function handleShowComposer() {
-    setShowComposer(true);
-  }
-  function handleHideComposer() {
-    setShowComposer(false);
-  }
+  const startComposing = () => setIsComposing(true);
+  const stopComposing = () => setIsComposing(false);
 
   const { loading, error, data, fetchMore } = useQuery(
     documentDiscussionsQuery,
@@ -86,17 +81,7 @@ const DiscussionsList = ({ documentId }) => {
   const discussions = (items || []).map(i => i.discussion);
   const discussionCount = discussions.length;
 
-  if (discussionCount === 0 && !showComposer) {
-    setShowComposer(true);
-  }
-
-  function afterCreate() {
-    handleHideComposer();
-  }
-
-  function handleCloseDiscussion() {
-    setDiscussionId(null);
-  }
+  if (!discussionCount && !isComposing) setIsComposing(true);
 
   function fetchMoreDiscussions() {
     const newQueryParams = { order: 'desc' };
@@ -138,36 +123,23 @@ const DiscussionsList = ({ documentId }) => {
     <Container ref={listRef}>
       <TitleSection>
         <Title>{discussionCount ? 'Discussions' : 'Start a discussion'}</Title>
-        <StartDiscussionButton onClick={handleShowComposer}>
+        <StartDiscussionButton onClick={startComposing}>
           <Label>Start a discussion</Label>
         </StartDiscussionButton>
       </TitleSection>
-      {showComposer && (
-        <StyledMessageComposer
-          afterDiscussionCreate={afterCreate}
-          documentId={documentId}
-          handleClose={handleHideComposer}
-          source="discussionsList"
+      {isComposing && (
+        <StyledDiscussionMessage
+          mode="compose"
+          afterCreate={stopComposing}
+          handleCancel={stopComposing}
         />
       )}
+      {/* SLATE UPGRADE TODO: Don't show separate list item for draft discussions? */}
       {discussions.map(d => (
-        <DiscussionListItem
-          discussionId={d.id}
-          key={d.id}
-          setDiscussionId={setDiscussionId}
-        />
+        <DiscussionListItem key={d.id} discussionId={d.id} />
       ))}
-      <DiscussionModal
-        discussionId={discussionId}
-        handleClose={handleCloseDiscussion}
-        isOpen={!!discussionId}
-      />
     </Container>
   );
-};
-
-DiscussionsList.propTypes = {
-  documentId: PropTypes.string.isRequired,
 };
 
 export default DiscussionsList;

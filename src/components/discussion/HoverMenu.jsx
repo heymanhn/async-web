@@ -44,33 +44,19 @@ const MenuIcon = styled.div({
   marginTop: '-1px',
 });
 
-const HoverMenu = ({
-  discussionId,
-  isAuthor,
-  isOpen,
-  messageId,
-  onDelete,
-  onEdit,
-  ...props
-}) => {
+const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
   const [isPickerOpen, setPickerState] = useState(false);
   const [isDropdownOpen, setDropdownState] = useState(false);
-  function showDropdown() {
-    setDropdownState(true);
-  }
-  function closeDropdown() {
-    setDropdownState(false);
-  }
+  const showDropdown = () => setDropdownState(true);
+  const closeDropdown = () => setDropdownState(false);
   const shouldDisplay = isOpen || isPickerOpen || isDropdownOpen;
 
   return (
     <Container isOpen={shouldDisplay} {...props}>
       <ButtonContainer>
         <AddReactionButton
-          discussionId={discussionId}
           onPickerStateChange={setPickerState}
           placement="below"
-          messageId={messageId}
         />
       </ButtonContainer>
       <VerticalDivider />
@@ -80,8 +66,6 @@ const HoverMenu = ({
           <MessageDropdown
             handleClose={closeDropdown}
             isOpen={isDropdownOpen}
-            onDelete={onDelete}
-            onEdit={onEdit}
           />
         </ButtonContainer>
       )}
@@ -90,12 +74,8 @@ const HoverMenu = ({
 };
 
 HoverMenu.propTypes = {
-  discussionId: PropTypes.string.isRequired,
-  onDelete: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired,
   isAuthor: PropTypes.bool.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  messageId: PropTypes.string.isRequired,
 };
 
 export default HoverMenu;

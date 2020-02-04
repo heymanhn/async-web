@@ -16,7 +16,7 @@ import {
   HOTKEY_SOURCE,
   MARKDOWN_SOURCE,
   TOOLBAR_SOURCE,
-} from 'components/editor/defaults';
+} from 'components/editor/utils';
 import {
   AddCommands,
   AddQueries,
@@ -56,11 +56,15 @@ export function BulletedListButton({ editor, ...props }) {
 
   // For lists, need to traverse upwards to find whether the list type matches
   function isActive() {
-    const { value: { document, blocks } } = editor;
+    const {
+      value: { document, blocks },
+    } = editor;
 
     if (blocks.size > 0) {
       const parent = document.getParent(blocks.first().key);
-      return (editor.hasBlock(LIST_ITEM) && parent && parent.type === BULLETED_LIST);
+      return (
+        editor.hasBlock(LIST_ITEM) && parent && parent.type === BULLETED_LIST
+      );
     }
 
     return false;
@@ -98,7 +102,8 @@ function ListOption({ editor, listType, ...props }) {
 
 ListOption.propTypes = {
   editor: PropTypes.object.isRequired,
-  listType: PropTypes.oneOf([BULLETED_LIST, NUMBERED_LIST, CHECKLIST]).isRequired,
+  listType: PropTypes.oneOf([BULLETED_LIST, NUMBERED_LIST, CHECKLIST])
+    .isRequired,
 };
 
 export function BulletedListOption({ editor, ...props }) {
@@ -150,9 +155,7 @@ export function ListsPlugin() {
 
     // This means the user is looking to un-set the list block
     if (editor.isWrappedBy(type)) {
-      return editor
-        .setBlocks(DEFAULT_NODE)
-        .unwrapBlock(type);
+      return editor.setBlocks(DEFAULT_NODE).unwrapBlock(type);
     }
 
     track('Block inserted to content', { type, source });
@@ -186,7 +189,9 @@ export function ListsPlugin() {
   }
 
   function isWrappedByList(editor) {
-    return editor.isWrappedBy(BULLETED_LIST) || editor.isWrappedBy(NUMBERED_LIST);
+    return (
+      editor.isWrappedBy(BULLETED_LIST) || editor.isWrappedBy(NUMBERED_LIST)
+    );
   }
 
   /* **** Render methods **** */
@@ -254,9 +259,7 @@ export function ListsPlugin() {
   // Pressing Enter while on a blank list item removes the blank list item and exits the list
   function exitListAfterEmptyListItem(editor, next) {
     if (editor.hasListItems() && editor.isEmptyBlock()) {
-      return editor
-        .setBlocks(DEFAULT_NODE)
-        .unwrapListBlocks();
+      return editor.setBlocks(DEFAULT_NODE).unwrapListBlocks();
     }
 
     return next();
@@ -266,9 +269,7 @@ export function ListsPlugin() {
   // resets the selection to a paragraph block
   function resetListItemToParagraph(editor, next) {
     if (editor.hasListItems() && editor.isAtBeginning()) {
-      return editor
-        .unwrapListBlocks()
-        .setBlocks(DEFAULT_NODE);
+      return editor.unwrapListBlocks().setBlocks(DEFAULT_NODE);
     }
 
     return next();
@@ -309,9 +310,15 @@ export function ListsPlugin() {
   // }
 
   const hotkeys = [
-    Hotkey('mod+shift+7', editor => editor.setListBlock(NUMBERED_LIST, HOTKEY_SOURCE)),
-    Hotkey('mod+shift+8', editor => editor.setListBlock(BULLETED_LIST, HOTKEY_SOURCE)),
-    Hotkey('mod+shift+0', editor => editor.setListBlock(CHECKLIST, HOTKEY_SOURCE)),
+    Hotkey('mod+shift+7', editor =>
+      editor.setListBlock(NUMBERED_LIST, HOTKEY_SOURCE)
+    ),
+    Hotkey('mod+shift+8', editor =>
+      editor.setListBlock(BULLETED_LIST, HOTKEY_SOURCE)
+    ),
+    Hotkey('mod+shift+0', editor =>
+      editor.setListBlock(CHECKLIST, HOTKEY_SOURCE)
+    ),
     CustomEnterAction(exitListAfterEmptyListItem),
     CustomBackspaceAction(resetListItemToParagraph),
     // CustomBackspaceAction(mergeAdjacentLists),

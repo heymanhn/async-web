@@ -73,9 +73,7 @@ const ParticipantRow = ({ accessType, documentId, user }) => {
   }
 
   const removeParticipantButton = (
-    <RemoveButton onClick={handleRemoveParticipant}>
-      remove
-    </RemoveButton>
+    <RemoveButton onClick={handleRemoveParticipant}>remove</RemoveButton>
   );
 
   return (
@@ -89,7 +87,11 @@ const ParticipantRow = ({ accessType, documentId, user }) => {
         />
         <Name>{fullName}</Name>
       </Details>
-      {accessType === 'owner' ? <Label>{accessType}</Label> : removeParticipantButton}
+      {accessType === 'owner' ? (
+        <Label>{accessType}</Label>
+      ) : (
+        removeParticipantButton
+      )}
     </Container>
   );
 };

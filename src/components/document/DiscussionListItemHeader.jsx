@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -8,6 +8,8 @@ import {
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
+
+import { DocumentContext } from 'utils/contexts';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -63,7 +65,8 @@ const ResolvedDiscussionIcon = styled(DiscussionIcon)(
   })
 );
 
-const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
+const DiscussionListItemHeader = ({ discussion }) => {
+  const { handleShowModal } = useContext(DocumentContext);
   const { id, tags, status, messageCount } = discussion;
   const { state, author } = status || {};
 
@@ -111,7 +114,7 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
         )}
         <Label isUnread={isUnread()}>{titleize(headerLabel())}</Label>
       </LabelContainer>
-      <ViewDiscussionButton onClick={() => setDiscussionId(id)}>
+      <ViewDiscussionButton onClick={() => handleShowModal(id)}>
         {tags.includes('new_messages') ? 'View replies' : 'View discussion'}
       </ViewDiscussionButton>
     </Container>
@@ -120,7 +123,6 @@ const DiscussionListItemHeader = ({ discussion, setDiscussionId }) => {
 
 DiscussionListItemHeader.propTypes = {
   discussion: PropTypes.object.isRequired,
-  setDiscussionId: PropTypes.func.isRequired,
 };
 
 export default DiscussionListItemHeader;

@@ -7,16 +7,8 @@ import Plain from 'slate-plain-serializer';
 import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
-import { DEFAULT_VALUE } from './defaults';
+import { DEFAULT_VALUE } from './utils';
 import { commands, plugins, queries } from './extensions';
-
-const Container = styled.div(({ initialHeight, mode }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  minHeight:
-    mode === 'compose' && initialHeight ? `${initialHeight}px` : 'initial',
-}));
 
 // Default styles for Roval editor UIs
 const StyledEditor = styled(Editor)(({ theme: { colors } }) => ({

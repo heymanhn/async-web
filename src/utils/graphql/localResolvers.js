@@ -6,7 +6,7 @@ import notificationsQuery from 'graphql/queries/notifications';
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
   const data = client.readQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
   if (!data) return null;
 
@@ -14,7 +14,7 @@ function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
 
   client.writeQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
     data: {
       discussion: {
         ...discussion,
@@ -37,7 +37,7 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
 
   const data = client.readQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
   if (!data) return null;
 
@@ -65,7 +65,7 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
 
   client.writeQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
     data: {
       discussion,
       messages: {
@@ -85,7 +85,7 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
 
   const data = client.readQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
   });
   if (!data) return null;
 
@@ -101,7 +101,7 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
 
   client.writeQuery({
     query: discussionQuery,
-    variables: { id: discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: {} },
     data: {
       discussion,
       messages: {
@@ -224,6 +224,37 @@ function updateBadgeCount(_root, { userId, notification }, { client }) {
   return null;
 }
 
+function deleteMessageFromDiscussion(
+  _root,
+  { discussionId, messageId },
+  { client }
+) {
+  const {
+    discussion,
+    messages: { pageToken, items, __typename, messageCount },
+  } = client.readQuery({
+    query: discussionQuery,
+    variables: { discussionId, queryParams: {} },
+  });
+
+  const index = items.findIndex(i => i.message.id === messageId);
+  client.writeQuery({
+    query: discussionQuery,
+    variables: { discussionId, queryParams: {} },
+    data: {
+      discussion,
+      messages: {
+        messageCount: messageCount - 1,
+        pageToken,
+        items: [...items.slice(0, index), ...items.slice(index + 1)],
+        __typename,
+      },
+    },
+  });
+
+  return null;
+}
+
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
@@ -233,6 +264,7 @@ const localResolvers = {
     addDocumentParticipant,
     removeDocumentParticipant,
     updateBadgeCount,
+    deleteMessageFromDiscussion,
   },
 };
 

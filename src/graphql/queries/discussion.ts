@@ -5,12 +5,22 @@ import messageContext from 'graphql/fragments/messageContext';
 import messageItems from 'graphql/fragments/messageItems';
 
 export default gql`
-  query Discussion($id: String!, $queryParams: Object!) {
-    discussion(id: $id) @rest(type: "Discussion", path: "/discussions/{args.id}", method: "GET") {
+  query Discussion($discussionId: String!, $queryParams: Object!) {
+    discussion(discussionId: $discussionId)
+      @rest(
+        type: "Discussion"
+        path: "/discussions/{args.discussionId}"
+        method: "GET"
+      ) {
       ...DiscussionObject
       ...MessageContext
     }
-    messages(id: $id, queryParams: $queryParams) @rest(type: "MessagesResponse", path: "/discussions/{args.id}/messages?{args.queryParams}", method: "GET") {
+    messages(discussionId: $discussionId, queryParams: $queryParams)
+      @rest(
+        type: "MessagesResponse"
+        path: "/discussions/{args.discussionId}/messages?{args.queryParams}"
+        method: "GET"
+      ) {
       ...MessageItems
     }
   }

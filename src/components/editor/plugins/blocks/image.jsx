@@ -14,7 +14,7 @@ import {
   DEFAULT_NODE,
   COMPOSITION_MENU_SOURCE,
   CUT_PASTE_SOURCE,
-} from 'components/editor/defaults';
+} from 'components/editor/utils';
 import {
   AddCommands,
   AddSchema,
@@ -44,7 +44,7 @@ export function ImageOption({ editor, ...props }) {
     variables: {
       resourceId,
     },
-    onCompleted: (data) => {
+    onCompleted: data => {
       if (data && data.uploadFile) {
         const { url } = data.uploadFile;
         editor
@@ -56,7 +56,7 @@ export function ImageOption({ editor, ...props }) {
     },
   });
 
-  const onDrop = useCallback((acceptedFiles) => {
+  const onDrop = useCallback(acceptedFiles => {
     if (acceptedFiles.length > 0) {
       setState(oldState => ({ ...oldState, selectedFile: acceptedFiles[0] }));
     }
@@ -100,17 +100,19 @@ export function ImageOption({ editor, ...props }) {
 
 /* **** Slate plugin **** */
 
-const StyledImage = styled.img(({ isFocused, readOnly, theme: { colors } }) => ({
-  display: 'block',
-  margin: '1em auto',
-  maxWidth: '100%',
-  maxHeight: '20em',
-  boxShadow: `${isFocused ? `0 0 0 3px ${colors.blue}` : 'none'}`,
+const StyledImage = styled.img(
+  ({ isFocused, readOnly, theme: { colors } }) => ({
+    display: 'block',
+    margin: '1em auto',
+    maxWidth: '100%',
+    maxHeight: '20em',
+    boxShadow: `${isFocused ? `0 0 0 3px ${colors.blue}` : 'none'}`,
 
-  ':hover': {
-    boxShadow: readOnly ? 'none' : `0 0 0 3px ${colors.blue}`,
-  },
-}));
+    ':hover': {
+      boxShadow: readOnly ? 'none' : `0 0 0 3px ${colors.blue}`,
+    },
+  })
+);
 
 export function Image() {
   /* **** Schema **** */
@@ -135,12 +137,10 @@ export function Image() {
       });
     }
 
-    return editor
-      .moveToEndOfBlock()
-      .insertBlock({
-        type: IMAGE,
-        data: { src: imageSource },
-      });
+    return editor.moveToEndOfBlock().insertBlock({
+      type: IMAGE,
+      data: { src: imageSource },
+    });
   }
 
   /* **** Render methods **** */
@@ -176,9 +176,7 @@ export function Image() {
       const { startBlock } = editor.value;
       const { key } = startBlock;
 
-      return editor
-        .insertBlock(DEFAULT_NODE)
-        .removeNodeByKey(key);
+      return editor.insertBlock(DEFAULT_NODE).removeNodeByKey(key);
     }
 
     return next();
