@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 
 import styled from '@emotion/styled';
 
-// hwillson forgot to export useLazyQuery to the react-apollo 3.0 release
-// Undo once that's fixed
 import { useQuery } from '@apollo/react-hooks';
 
 import documentQuery from 'graphql/queries/document';
