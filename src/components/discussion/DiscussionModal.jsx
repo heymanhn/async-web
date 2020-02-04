@@ -71,7 +71,7 @@ const DiscussionModal = ({
     ({ draft, topic: context } = discussion);
   }
 
-  // if (!!draft && !isComposing) startComposing();
+  if (draft && !isComposing) startComposing();
   // if (!discussionId && !context) extractContext();
 
   // createAnnotation(value);
