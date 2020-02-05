@@ -2,6 +2,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
+import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
 import { MessageContext } from 'utils/contexts';
@@ -33,7 +34,10 @@ const MessageEditable = styled(Editable)({
 
 const MessageComposer = ({ initialMessage, ...props }) => {
   const { mode } = useContext(MessageContext);
-  const messageEditor = useMemo(() => withReact(createEditor()), []);
+  const messageEditor = useMemo(
+    () => withHistory(withReact(createEditor())),
+    []
+  );
   const [message, setMessage] = useState(
     initialMessage ? JSON.parse(initialMessage) : DEFAULT_VALUE
   );

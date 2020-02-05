@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
+import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
 import useAutoSave from 'utils/hooks/useAutoSave';
@@ -25,7 +26,10 @@ const DocumentEditable = styled(Editable)({
  */
 
 const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
-  const contentEditor = useMemo(() => withReact(createEditor()), []);
+  const contentEditor = useMemo(
+    () => withHistory(withReact(createEditor())),
+    []
+  );
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_VALUE
   );
