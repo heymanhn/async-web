@@ -2,10 +2,12 @@ import React, { useContext } from 'react';
 import { useQuery } from 'react-apollo';
 
 import documentMembersQuery from 'graphql/queries/documentMembers';
+import { DocumentContext } from 'utils/contexts';
 
 import ParticipantRow from './ParticipantRow';
 
-const ParticipantsList = ({ documentId }) => {
+const ParticipantsList = () => {
+  const { documentId } = useContext(DocumentContext);
   const { loading, data } = useQuery(documentMembersQuery, {
     variables: { id: documentId },
     fetchPolicy: 'cache-and-network',
@@ -16,7 +18,6 @@ const ParticipantsList = ({ documentId }) => {
   const { documentMembers } = data;
   const { members } = documentMembers;
 
-<<<<<<< HEAD
   return (members || []).map(p => (
     <ParticipantRow
       key={p.user.id}
@@ -24,10 +25,6 @@ const ParticipantsList = ({ documentId }) => {
       documentId={documentId}
       user={p.user}
     />
-=======
-  return (participants || []).map(p => (
-    <ParticipantRow key={p.user.id} accessType={p.accessType} user={p.user} />
->>>>>>> refactored props to useContext for share/invite modal
   ));
 };
 
