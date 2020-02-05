@@ -7,7 +7,7 @@ import useHover from 'utils/hooks/useHover';
 import { MessageContext, DiscussionContext } from 'utils/contexts';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
-import MessageEditor from './MessageEditor';
+import MessageComposer from './MessageComposer';
 import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 import DraftSavedIndicator from './DraftSavedIndicator';
@@ -83,7 +83,7 @@ const DiscussionMessage = ({
             {mode === 'compose' && <DraftSavedIndicator />}
           </div>
         </HeaderSection>
-        <MessageEditor initialMessage={loadInitialContent()} />
+        <MessageComposer initialMessage={loadInitialContent()} />
         {mode === 'display' && <MessageReactions />}
       </MessageContext.Provider>
     </Container>

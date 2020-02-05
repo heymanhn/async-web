@@ -7,8 +7,8 @@ import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import LastUpdatedIndicator from './LastUpdatedIndicator';
-import TitleEditor from './TitleEditor';
-import ContentEditor from './ContentEditor';
+import TitleComposer from './TitleComposer';
+import DocumentComposer from './DocumentComposer';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   display: 'flex',
@@ -48,15 +48,13 @@ const Document = () => {
 
   return (
     <Container>
-      <TitleEditor
+      <TitleComposer
         afterUpdate={setUpdatedTimestampToNow}
         autoFocus={!title && !content}
-        documentId={documentId}
         initialTitle={title}
       />
-      <ContentEditor
+      <DocumentComposer
         afterUpdate={setUpdatedTimestampToNow}
-        documentId={documentId}
         initialContent={content}
       />
       {updatedTimestamp && (

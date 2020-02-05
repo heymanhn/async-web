@@ -16,7 +16,7 @@ const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
   padding: '10px 30px 5px',
 }));
 
-const ContextEditor = ({ context, ...props }) => {
+const ContextComposer = ({ context, ...props }) => {
   const contextEditor = useMemo(() => withReact(createEditor()), []);
 
   return (
@@ -26,8 +26,8 @@ const ContextEditor = ({ context, ...props }) => {
   );
 };
 
-ContextEditor.propTypes = {
+ContextComposer.propTypes = {
   context: PropTypes.string.isRequired,
 };
 
-export default ContextEditor;
+export default ContextComposer;

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import { createEditor } from 'slate';
@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 import documentQuery from 'graphql/queries/document';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import { track } from 'utils/analytics';
+import { DocumentContext } from 'utils/contexts';
 
 import {
   DEFAULT_VALUE,
@@ -34,7 +35,8 @@ const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
  * - Pressing Enter changes focus to the beginning of the content
  */
 
-const TitleEditor = ({ afterUpdate, documentId, initialTitle, ...props }) => {
+const TitleComposer = ({ afterUpdate, initialTitle, ...props }) => {
+  const { documentId } = useContext(DocumentContext);
   const titleEditor = useMemo(() => withReact(createEditor()), []);
   const [title, setTitle] = useState(
     initialTitle ? deserializedTitle(initialTitle) : DEFAULT_VALUE
@@ -70,14 +72,13 @@ const TitleEditor = ({ afterUpdate, documentId, initialTitle, ...props }) => {
   );
 };
 
-TitleEditor.propTypes = {
+TitleComposer.propTypes = {
   afterUpdate: PropTypes.func.isRequired,
-  documentId: PropTypes.string.isRequired,
   initialTitle: PropTypes.string,
 };
 
-TitleEditor.defaultProps = {
+TitleComposer.defaultProps = {
   initialTitle: '',
 };
 
-export default TitleEditor;
+export default TitleComposer;

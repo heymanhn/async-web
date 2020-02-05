@@ -108,7 +108,7 @@ const DiscussionModal = ({
     <StyledModal handleClose={handleClose} isOpen={isOpen} {...props}>
       <DiscussionContext.Provider value={value}>
         {/* {context && (
-          <ContextEditor
+          <ContextComposer
             contentType="discussionContext"
             readOnly
             initialValue={context}

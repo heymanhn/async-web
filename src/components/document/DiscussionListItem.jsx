@@ -7,8 +7,8 @@ import styled from '@emotion/styled';
 import discussionQuery from 'graphql/queries/discussion';
 import { DiscussionContext } from 'utils/contexts';
 
-// import RovalEditor from 'components/editor/RovalEditor';
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
+// import ContextComposer from 'components/discussion/ContextComposer';
 import AvatarList from 'components/shared/AvatarList';
 import DiscussionListItemHeader from './DiscussionListItemHeader';
 
@@ -36,17 +36,6 @@ const MoreRepliesIndicator = styled.div(({ theme: { colors } }) => ({
 const StyledAvatarList = styled(AvatarList)({
   marginRight: '10px',
 });
-
-// const ContextEditor = styled(RovalEditor)(({ theme: { colors } }) => ({
-//   background: colors.grey7,
-//   opacity: 0.6,
-//   borderTopLeftRadius: '5px',
-//   borderTopRightRadius: '5px',
-//   fontSize: '16px',
-//   lineHeight: '26px',
-//   fontWeight: 400,
-//   padding: '10px 30px 5px',
-// }));
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
@@ -86,7 +75,7 @@ const DiscussionListItem = ({ discussionId }) => {
         <DiscussionListItemHeader discussion={data.discussion} />
         {/* SLATE UPGRADE TODO: Get context working in All Discussions page too */}
         {/* {payload ? (
-          <ContextEditor
+          <ContextComposer
             contentType="discussionContext"
             readOnly
             initialValue={payload}

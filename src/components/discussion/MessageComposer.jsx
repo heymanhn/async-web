@@ -31,7 +31,7 @@ const MessageEditable = styled(Editable)({
  * - Get the keyboard shortcuts working for saving the message (cmd + enter)
  */
 
-const MessageEditor = ({ initialMessage, ...props }) => {
+const MessageComposer = ({ initialMessage, ...props }) => {
   const { mode } = useContext(MessageContext);
   const messageEditor = useMemo(() => withReact(createEditor()), []);
   const [message, setMessage] = useState(
@@ -65,12 +65,12 @@ const MessageEditor = ({ initialMessage, ...props }) => {
   );
 };
 
-MessageEditor.propTypes = {
+MessageComposer.propTypes = {
   initialMessage: PropTypes.string,
 };
 
-MessageEditor.defaultProps = {
+MessageComposer.defaultProps = {
   initialMessage: '',
 };
 
-export default MessageEditor;
+export default MessageComposer;

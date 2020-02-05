@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import { createEditor } from 'slate';
@@ -7,10 +7,11 @@ import styled from '@emotion/styled';
 
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import useAutoSave from 'utils/hooks/useAutoSave';
+import { DocumentContext } from 'utils/contexts';
 
 import { DEFAULT_VALUE, toPlainText } from 'components/editor/utils';
 
-const ContentEditable = styled(Editable)({
+const DocumentEditable = styled(Editable)({
   fontSize: '16px',
   lineHeight: '26px',
   letterSpacing: '-0.011em',
@@ -24,12 +25,8 @@ const ContentEditable = styled(Editable)({
  * - Figure out how plugins are instantiated here
  */
 
-const ContentEditor = ({
-  afterUpdate,
-  documentId,
-  initialContent,
-  ...props
-}) => {
+const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
+  const { documentId } = useContext(DocumentContext);
   const contentEditor = useMemo(() => withReact(createEditor()), []);
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_VALUE
@@ -61,19 +58,18 @@ const ContentEditor = ({
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
-      <ContentEditable {...props} />
+      <DocumentEditable {...props} />
     </Slate>
   );
 };
 
-ContentEditor.propTypes = {
+DocumentComposer.propTypes = {
   afterUpdate: PropTypes.func.isRequired,
-  documentId: PropTypes.string.isRequired,
   initialContent: PropTypes.string,
 };
 
-ContentEditor.defaultProps = {
+DocumentComposer.defaultProps = {
   initialContent: '',
 };
 
-export default ContentEditor;
+export default DocumentComposer;
