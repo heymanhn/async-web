@@ -25,12 +25,12 @@ const LoadingIndicator = ({ color, size, ...props }) => (
 
 LoadingIndicator.propTypes = {
   color: PropTypes.string,
-  size: PropTypes.number,
+  size: PropTypes.string,
 };
 
 LoadingIndicator.defaultProps = {
   color: 'blue',
-  size: 20,
+  size: '20',
 };
 
 export default LoadingIndicator;

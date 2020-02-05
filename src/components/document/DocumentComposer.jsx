@@ -1,15 +1,13 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation } from 'react-apollo';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
-import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import useAutoSave from 'utils/hooks/useAutoSave';
-import { DocumentContext } from 'utils/contexts';
 
-import { DEFAULT_VALUE, toPlainText } from 'components/editor/utils';
+import { DEFAULT_VALUE } from 'components/editor/utils';
+import useDocumentMutations from './useDocumentMutations';
 
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
@@ -26,35 +24,18 @@ const DocumentEditable = styled(Editable)({
  */
 
 const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
-  const { documentId } = useContext(DocumentContext);
   const contentEditor = useMemo(() => withReact(createEditor()), []);
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_VALUE
   );
-  const [updateDocument] = useMutation(updateDocumentMutation);
+  const { handleUpdate } = useDocumentMutations(contentEditor);
 
-  // Pulls the content from the editor reference. The state variable will not
-  // be up to date at the point that handleUpdate() is invoked, since it's
-  // called via a setTimeout() call.
-  async function handleUpdate() {
-    const { children } = contentEditor;
-    const { data: updateDocumentBodyData } = await updateDocument({
-      variables: {
-        documentId,
-        input: {
-          body: {
-            formatter: 'slatejs',
-            text: toPlainText(children),
-            payload: JSON.stringify(children),
-          },
-        },
-      },
-    });
-
-    if (updateDocumentBodyData.updateDocument) afterUpdate();
+  async function handleUpdateWrapper() {
+    await handleUpdate();
+    afterUpdate();
   }
 
-  useAutoSave(content, handleUpdate);
+  useAutoSave(content, handleUpdateWrapper);
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
