@@ -2,22 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 
-import documentParticipantsQuery from 'graphql/queries/documentParticipants';
+import documentMembersQuery from 'graphql/queries/documentMembers';
 
 import ParticipantRow from './ParticipantRow';
 
 const ParticipantsList = ({ documentId }) => {
-  const { loading, data } = useQuery(documentParticipantsQuery, {
+  const { loading, data } = useQuery(documentMembersQuery, {
     variables: { id: documentId },
     fetchPolicy: 'cache-and-network',
   });
 
-  if (loading && (!data || !data.documentParticipants)) return null;
+  if (loading && (!data || !data.documentMembers)) return null;
 
-  const { documentParticipants } = data;
-  const { participants } = documentParticipants;
+  const { documentMembers } = data;
+  const { members } = documentMembers;
 
-  return (participants || []).map(p => (
+  return (members || []).map(p => (
     <ParticipantRow
       key={p.user.id}
       accessType={p.accessType}

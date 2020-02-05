@@ -6,9 +6,9 @@ import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import organizationMembersQuery from 'graphql/queries/organizationMembers';
-import documentParticipantsQuery from 'graphql/queries/documentParticipants';
-import addParticipantMutation from 'graphql/mutations/addParticipant';
-import localAddParticipantMutation from 'graphql/mutations/local/addDocumentParticipant';
+import documentMembersQuery from 'graphql/queries/documentMembers';
+import addDocumentMemberMutation from 'graphql/mutations/addDocumentMember';
+import localAddDocumentMemberMutation from 'graphql/mutations/local/addDocumentMember';
 import { getLocalAppState } from 'utils/auth';
 
 import MemberResults from './MemberResults';
@@ -56,23 +56,22 @@ const OrganizationMemberSearch = ({
   const { loading: l1, data: data1 } = useQuery(organizationMembersQuery, {
     variables: { id },
   });
-  const { loading: l2, data: data2 } = useQuery(documentParticipantsQuery, {
+  const { loading: l2, data: data2 } = useQuery(documentMembersQuery, {
     variables: { id: documentId },
   });
 
-  const [addParticipant] = useMutation(addParticipantMutation);
-  const [localAddParticipant] = useMutation(localAddParticipantMutation);
+  const [addMember] = useMutation(addDocumentMemberMutation);
+  const [localAddMember] = useMutation(localAddDocumentMemberMutation);
 
-  if (l1 || l2 || !data1.organizationMembers || !data2.documentParticipants) {
+  if (l1 || l2 || !data1.organizationMembers || !data2.documentMembers) {
     return null;
   }
 
   let { members } = data1.organizationMembers || [];
   members = members.map(m => m.user);
 
-  const { documentParticipants } = data2;
-  let { participants } = documentParticipants;
-  participants = (participants || []).map(p => p.user);
+  const { documentMembers } = data2;
+  const participants = (documentMembers.members || []).map(p => p.user);
 
   function memberSearch() {
     if (!searchQuery) return [];
@@ -100,11 +99,11 @@ const OrganizationMemberSearch = ({
     return ((x % n) + n) % n;
   }
 
-  function handleAddParticipant(user) {
+  function handleAddMember(user) {
     if (participants.find(({ id: pid }) => pid === user.id)) return;
 
     const DEFAULT_ACCESS_TYPE = 'collaborator';
-    addParticipant({
+    addMember({
       variables: {
         id: documentId,
         input: {
@@ -114,7 +113,7 @@ const OrganizationMemberSearch = ({
       },
     });
 
-    localAddParticipant({
+    localAddMember({
       variables: { id: documentId, user, accessType: DEFAULT_ACCESS_TYPE },
     });
 
@@ -137,7 +136,7 @@ const OrganizationMemberSearch = ({
     if (isHotkey('Enter', event)) {
       event.preventDefault();
 
-      return handleAddParticipant(results[selectedIndex]);
+      return handleAddMember(results[selectedIndex]);
     }
 
     if (isHotkey('Escape', event)) return handleHideDropdown();
@@ -163,8 +162,8 @@ const OrganizationMemberSearch = ({
       {isDropdownVisible ? (
         <MemberResults
           documentId={documentId}
-          handleAddParticipant={handleAddParticipant}
-          participants={participants}
+          handleAddMember={handleAddMember}
+          members={participants}
           results={results}
           selectedIndex={selectedIndex}
           updateSelectedIndex={updateSelectedIndex}

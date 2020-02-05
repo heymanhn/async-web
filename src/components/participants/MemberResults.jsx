@@ -19,33 +19,32 @@ const Container = styled.div(({ theme: { colors } }) => ({
 }));
 
 const MemberResults = ({
-  handleAddParticipant,
-  participants,
+  handleAddMember,
+  members,
   results,
   selectedIndex,
   updateSelectedIndex,
-}) => (
+}) =>
   results.length ? (
     <Container onClick={e => e.stopPropagation()}>
       {results.map((result, i) => (
         <MemberRow
           key={result.id}
-          handleAddParticipant={handleAddParticipant}
+          handleAddMember={handleAddMember}
           index={i}
-          isParticipant={!!participants.find(({ id }) => id === result.id)}
+          isMember={!!members.find(({ id }) => id === result.id)}
           isSelected={selectedIndex === i}
           member={result}
           updateSelectedIndex={updateSelectedIndex}
         />
       ))}
     </Container>
-  ) : null
-);
+  ) : null;
 
 MemberResults.propTypes = {
-  handleAddParticipant: PropTypes.func.isRequired,
+  handleAddMember: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
-  participants: PropTypes.array.isRequired,
+  members: PropTypes.array.isRequired,
   selectedIndex: PropTypes.number.isRequired,
   updateSelectedIndex: PropTypes.func.isRequired,
 };

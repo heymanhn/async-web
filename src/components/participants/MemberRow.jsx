@@ -4,11 +4,11 @@ import styled from '@emotion/styled';
 
 import Avatar from 'components/shared/Avatar';
 
-const Container = styled.div(({ isParticipant, isSelected, theme: { colors } }) => ({
+const Container = styled.div(({ isMember, isSelected, theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
   background: isSelected ? colors.grey7 : 'none',
-  cursor: isParticipant ? 'default' : 'pointer',
+  cursor: isMember ? 'default' : 'pointer',
   margin: '7px 0',
   padding: '3px 15px',
   userSelect: 'none',
@@ -18,10 +18,10 @@ const Container = styled.div(({ isParticipant, isSelected, theme: { colors } }) 
   },
 }));
 
-const StyledAvatar = styled(Avatar)(({ isParticipant }) => ({
+const StyledAvatar = styled(Avatar)(({ isMember }) => ({
   flexShrink: 0,
   marginRight: '12px',
-  opacity: isParticipant ? 0.5 : 1,
+  opacity: isMember ? 0.5 : 1,
 }));
 
 const Details = styled.div({
@@ -29,20 +29,24 @@ const Details = styled.div({
   letterSpacing: '-0.006em',
 });
 
-const Name = styled.div(({ isParticipant, theme: { colors } }) => (isParticipant ? {
-  color: colors.grey4,
-} : {
-  fontWeight: 600,
-}));
+const Name = styled.div(({ isMember, theme: { colors } }) =>
+  isMember
+    ? {
+        color: colors.grey4,
+      }
+    : {
+        fontWeight: 600,
+      }
+);
 
-const Email = styled.div(({ isParticipant, theme: { colors } }) => ({
-  color: isParticipant ? colors.grey4 : colors.grey2,
+const Email = styled.div(({ isMember, theme: { colors } }) => ({
+  color: isMember ? colors.grey4 : colors.grey2,
 }));
 
 const MemberRow = ({
-  handleAddParticipant,
+  handleAddMember,
   index,
-  isParticipant,
+  isMember,
   isSelected,
   member,
   updateSelectedIndex,
@@ -54,19 +58,22 @@ const MemberRow = ({
     if (isSelected) {
       // the options argument is not supported in IE:
       // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
-      memberRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      memberRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
     }
   }, [isSelected]);
 
   function handleClick() {
-    return isParticipant ? null : handleAddParticipant(member);
+    return isMember ? null : handleAddMember(member);
   }
 
   const { email, fullName, profilePictureUrl } = member;
 
   return (
     <Container
-      isParticipant={isParticipant}
+      isMember={isMember}
       isSelected={isSelected}
       onClick={handleClick}
       onMouseOver={() => updateSelectedIndex(index)}
@@ -77,24 +84,24 @@ const MemberRow = ({
       <StyledAvatar
         alt={fullName}
         avatarUrl={profilePictureUrl}
-        isParticipant={isParticipant}
+        isMember={isMember}
         size={32}
         title={fullName}
       />
       <Details>
-        <Name isParticipant={isParticipant}>
-          {`${fullName}${isParticipant ? ' (joined)' : ''}`}
+        <Name isMember={isMember}>
+          {`${fullName}${isMember ? ' (joined)' : ''}`}
         </Name>
-        <Email isParticipant={isParticipant}>{email}</Email>
+        <Email isMember={isMember}>{email}</Email>
       </Details>
     </Container>
   );
 };
 
 MemberRow.propTypes = {
-  handleAddParticipant: PropTypes.func.isRequired,
+  handleAddMember: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  isParticipant: PropTypes.bool.isRequired,
+  isMember: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool.isRequired,
   member: PropTypes.object.isRequired,
   updateSelectedIndex: PropTypes.func.isRequired,

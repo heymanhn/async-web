@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import localRemoveParticipantMutation from 'graphql/mutations/local/removeDocumentParticipant';
-import removeParticipantMutation from 'graphql/mutations/removeParticipant';
+import localRemoveMemberMutation from 'graphql/mutations/local/removeDocumentMember';
+import removeMemberMutation from 'graphql/mutations/removeDocumentMember';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -54,26 +54,26 @@ const RemoveButton = styled.div(({ theme: { colors } }) => ({
 const ParticipantRow = ({ accessType, documentId, user }) => {
   const { fullName, id, profilePictureUrl } = user;
 
-  const [localRemoveParticipant] = useMutation(localRemoveParticipantMutation, {
+  const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
     variables: {
       id: documentId,
-      participantId: id,
+      userId: id,
     },
   });
-  const [removeParticipant] = useMutation(removeParticipantMutation, {
+  const [removeMember] = useMutation(removeMemberMutation, {
     variables: {
       id: documentId,
       userId: id,
     },
   });
 
-  function handleRemoveParticipant() {
-    removeParticipant();
-    localRemoveParticipant();
+  function handleRemoveMember() {
+    removeMember();
+    localRemoveMember();
   }
 
   const removeParticipantButton = (
-    <RemoveButton onClick={handleRemoveParticipant}>remove</RemoveButton>
+    <RemoveButton onClick={handleRemoveMember}>remove</RemoveButton>
   );
 
   return (
