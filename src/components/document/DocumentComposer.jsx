@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import useAutoSave from 'utils/hooks/useAutoSave';
 
 import { DEFAULT_VALUE } from 'components/editor/utils';
+import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import useDocumentMutations from './useDocumentMutations';
 
 const DocumentEditable = styled(Editable)({
@@ -29,6 +30,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
     initialContent ? JSON.parse(initialContent) : DEFAULT_VALUE
   );
   const { handleUpdate } = useDocumentMutations(contentEditor);
+  const coreEditorProps = useCoreEditorProps(contentEditor);
 
   async function handleUpdateWrapper() {
     await handleUpdate();
@@ -39,7 +41,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
-      <DocumentEditable {...props} />
+      <DocumentEditable {...props} {...coreEditorProps} />
     </Slate>
   );
 };

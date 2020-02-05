@@ -4,10 +4,7 @@ import PropTypes from 'prop-types';
 
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
-import {
-  Hotkey,
-  RenderMark,
-} from '../helpers';
+import { Hotkey, RenderMark } from '../helpers';
 
 const BOLD = 'bold';
 
@@ -45,3 +42,5 @@ export function BoldPlugin() {
     Hotkey('mod+b', editor => editor.toggleMark(BOLD)),
   ];
 }
+
+export const BoldHotkey = {};
