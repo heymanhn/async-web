@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 
 import localRemoveMemberMutation from 'graphql/mutations/local/removeDocumentMember';
 import removeMemberMutation from 'graphql/mutations/removeDocumentMember';
+import { DocumentContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
