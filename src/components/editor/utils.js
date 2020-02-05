@@ -10,6 +10,11 @@ export const DEFAULT_VALUE = [
   },
 ];
 
+// Formatting constants
+export const BOLD = 'bold';
+export const ITALIC = 'italic';
+export const UNDERLINE = 'underline';
+
 export const TOOLBAR_SOURCE = 'toolbar';
 export const COMPOSITION_MENU_SOURCE = 'compositionMenu';
 export const HOTKEY_SOURCE = 'hotkey';

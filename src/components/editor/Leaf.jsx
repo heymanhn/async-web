@@ -1,25 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { BOLD, ITALIC, UNDERLINE } from './utils';
+
 const Leaf = ({ attributes, children, leaf }) => {
-  let node = null;
-  if (leaf.bold) {
-    node = <strong>{children}</strong>;
+  let node = children;
+  if (leaf[BOLD]) {
+    node = <strong>{node}</strong>;
   }
 
-  if (leaf.code) {
-    node = <code>{children}</code>;
+  if (leaf[ITALIC]) {
+    node = <em>{node}</em>;
   }
 
-  if (leaf.italic) {
-    node = <em>{children}</em>;
+  if (leaf[UNDERLINE]) {
+    node = <u>{node}</u>;
   }
 
-  if (leaf.underline) {
-    node = <u>{children}</u>;
-  }
-
-  return <span {...attributes}>{node || children}</span>;
+  return <span {...attributes}>{node}</span>;
 };
 
 Leaf.propTypes = {

@@ -1,13 +1,14 @@
 import React, { useCallback } from 'react';
 import { isHotkey } from 'is-hotkey';
 
+import { BOLD, ITALIC, UNDERLINE } from './utils';
 import Editor from './Editor';
 import Leaf from './Leaf';
 
 const MARK_HOTKEYS = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+u': 'underline',
+  'mod+b': BOLD,
+  'mod+i': ITALIC,
+  'mod+u': UNDERLINE,
 };
 
 const useCoreEditorProps = editor => {

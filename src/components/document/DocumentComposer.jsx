@@ -9,6 +9,7 @@ import useAutoSave from 'utils/hooks/useAutoSave';
 
 import { DEFAULT_VALUE } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
+import Toolbar from 'components/editor/toolbar/Toolbar';
 import useDocumentMutations from './useDocumentMutations';
 
 const DocumentEditable = styled(Editable)({
@@ -33,6 +34,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_VALUE
   );
+  const [isMouseDown, setIsMouseDown] = useState(false);
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
 
@@ -45,7 +47,13 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
-      <DocumentEditable {...props} {...coreEditorProps} />
+      <DocumentEditable
+        onMouseDown={() => setIsMouseDown(true)}
+        onMouseUp={() => setIsMouseDown(false)}
+        {...props}
+        {...coreEditorProps}
+      />
+      <Toolbar isMouseDown={isMouseDown} source="document" />
     </Slate>
   );
 };
