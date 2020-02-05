@@ -1,5 +1,5 @@
 /* eslint no-mixed-operators: 0 */
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import { isHotkey } from 'is-hotkey';
@@ -10,6 +10,7 @@ import documentMembersQuery from 'graphql/queries/documentMembers';
 import addDocumentMemberMutation from 'graphql/mutations/addDocumentMember';
 import localAddDocumentMemberMutation from 'graphql/mutations/local/addDocumentMember';
 import { getLocalAppState } from 'utils/auth';
+import { DocumentContext } from 'utils/contexts';
 
 import MemberResults from './MemberResults';
 
@@ -44,7 +45,6 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
 }));
 
 const OrganizationMemberSearch = ({
-  documentId,
   isDropdownVisible,
   handleShowDropdown,
   handleHideDropdown,
@@ -53,6 +53,7 @@ const OrganizationMemberSearch = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { organizationId: id } = getLocalAppState();
+  const { documentId } = useContext(DocumentContext);
   const { loading: l1, data: data1 } = useQuery(organizationMembersQuery, {
     variables: { id },
   });
@@ -176,7 +177,6 @@ const OrganizationMemberSearch = ({
 };
 
 OrganizationMemberSearch.propTypes = {
-  documentId: PropTypes.string.isRequired,
   isDropdownVisible: PropTypes.bool.isRequired,
   handleShowDropdown: PropTypes.func.isRequired,
   handleHideDropdown: PropTypes.func.isRequired,

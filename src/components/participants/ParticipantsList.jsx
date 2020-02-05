@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
 import { useQuery } from 'react-apollo';
 
 import documentMembersQuery from 'graphql/queries/documentMembers';
@@ -17,6 +16,7 @@ const ParticipantsList = ({ documentId }) => {
   const { documentMembers } = data;
   const { members } = documentMembers;
 
+<<<<<<< HEAD
   return (members || []).map(p => (
     <ParticipantRow
       key={p.user.id}
@@ -24,9 +24,11 @@ const ParticipantsList = ({ documentId }) => {
       documentId={documentId}
       user={p.user}
     />
+=======
+  return (participants || []).map(p => (
+    <ParticipantRow key={p.user.id} accessType={p.accessType} user={p.user} />
+>>>>>>> refactored props to useContext for share/invite modal
   ));
 };
-
-ParticipantsList.propTypes = { documentId: PropTypes.string.isRequired };
 
 export default ParticipantsList;
