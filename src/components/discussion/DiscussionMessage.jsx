@@ -19,11 +19,7 @@ import DraftSavedIndicator from './DraftSavedIndicator';
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
   cursor: 'default',
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  boxShadow: `0px 0px 3px ${colors.grey7}`,
   padding: mode === 'edit' ? '15px 30px 25px !important' : '15px 30px 25px',
-  marginBottom: '30px',
 }));
 
 const HeaderSection = styled.div({
