@@ -32,7 +32,7 @@ const Contents = styled.div({
   padding: '20px 25px 25px',
 });
 
-const DocumentAccessModal = ({ documentId, handleClose, isOpen }) => {
+const DocumentAccessModal = ({ handleClose, isOpen }) => {
   // Putting the state here so that clicking anywhere on the modal
   // dismisses the dropdown
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -53,19 +53,17 @@ const DocumentAccessModal = ({ documentId, handleClose, isOpen }) => {
       <Header onClick={handleHideDropdown}>Share this Document</Header>
       <Contents onClick={handleHideDropdown}>
         <OrganizationMemberSearch
-          documentId={documentId}
           isDropdownVisible={isDropdownVisible}
           handleShowDropdown={handleShowDropdown}
           handleHideDropdown={handleHideDropdown}
         />
-        <ParticipantsList documentId={documentId} />
+        <ParticipantsList />
       </Contents>
     </StyledModal>
   );
 };
 
 DocumentAccessModal.propTypes = {
-  documentId: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };

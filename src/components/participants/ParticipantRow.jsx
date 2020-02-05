@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import styled from '@emotion/styled';
@@ -51,7 +51,8 @@ const RemoveButton = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const ParticipantRow = ({ accessType, documentId, user }) => {
+const ParticipantRow = ({ accessType, user }) => {
+  const { documentId } = useContext(DocumentContext);
   const { fullName, id, profilePictureUrl } = user;
 
   const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
@@ -98,7 +99,6 @@ const ParticipantRow = ({ accessType, documentId, user }) => {
 
 ParticipantRow.propTypes = {
   accessType: PropTypes.string.isRequired,
-  documentId: PropTypes.string.isRequired,
   user: PropTypes.object.isRequired,
 };
 
