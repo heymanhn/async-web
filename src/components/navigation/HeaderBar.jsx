@@ -54,7 +54,6 @@ const NavigationSection = styled.div({
 
 const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
   const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   function openDropdown() {
     setIsDropdownOpen(true);
