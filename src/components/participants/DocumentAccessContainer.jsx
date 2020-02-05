@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useContext } from 'react';
 import styled from '@emotion/styled';
 
+import { DocumentContext } from 'utils/contexts';
 import DocumentAccessModal from './DocumentAccessModal';
 
 const ShareButton = styled.div(({ theme: { colors } }) => ({
@@ -20,14 +20,13 @@ const ShareButton = styled.div(({ theme: { colors } }) => ({
   padding: '0 15px',
 }));
 
-const DocumentAccessContainer = ({ documentId }) => {
+const DocumentAccessContainer = () => {
+  const { documentId } = useContext(DocumentContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-      <ShareButton onClick={() => setIsModalOpen(true)}>
-        Share
-      </ShareButton>
+      <ShareButton onClick={() => setIsModalOpen(true)}>Share</ShareButton>
       <DocumentAccessModal
         documentId={documentId}
         handleClose={() => setIsModalOpen(false)}
@@ -36,7 +35,5 @@ const DocumentAccessContainer = ({ documentId }) => {
     </>
   );
 };
-
-DocumentAccessContainer.propTypes = { documentId: PropTypes.string.isRequired };
 
 export default DocumentAccessContainer;

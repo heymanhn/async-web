@@ -1,10 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
+import React, { useContext } from 'react';
 import styled from '@emotion/styled';
-
 import { useQuery } from '@apollo/react-hooks';
 
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 import documentQuery from 'graphql/queries/document';
 import discussionQuery from 'graphql/queries/discussion';
 
@@ -16,7 +14,10 @@ const Title = styled.div(({ theme: { colors } }) => ({
   position: 'relative',
 }));
 
-const NavTitle = ({ documentId, discussionId }) => {
+const NavTitle = () => {
+  const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
+
   const { loading, data } = useQuery(documentQuery, {
     variables: { documentId, queryParams: {} },
     skip: !documentId,
@@ -44,16 +45,6 @@ const NavTitle = ({ documentId, discussionId }) => {
   }
 
   return <Title>{title || 'Untitled'}</Title>;
-};
-
-NavTitle.propTypes = {
-  documentId: PropTypes.string,
-  discussionId: PropTypes.string,
-};
-
-NavTitle.defaultProps = {
-  documentId: null,
-  discussionId: null,
 };
 
 export default NavTitle;
