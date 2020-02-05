@@ -24,6 +24,10 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ isUnread, theme: { colors } }) => ({
     backgroundColor: isUnread ? colors.unreadBlue : 'default',
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
+    boxShadow: `0px 0px 3px ${colors.grey7}`,
+    marginBottom: '30px',
   })
 );
 
