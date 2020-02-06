@@ -4,8 +4,8 @@ import discussion from 'graphql/fragments/discussion';
 import message from 'graphql/fragments/message';
 
 export default gql`
-  mutation CreateDiscussion($documentId: String!, $input: Object!) {
-    createDiscussion(documentId: $documentId, input: $input) @rest(type: "Discussion", path: "/documents/{args.documentId}/discussions", method: "POST") {
+  mutation CreateDocumentDiscussion($documentId: String!, $input: Object!) {
+    createDocumentDiscussion(documentId: $documentId, input: $input) @rest(type: "Discussion", path: "/documents/{args.documentId}/discussions", method: "POST") {
       ...DiscussionObject
       messages @type(name: "Message") {
         ...MessageObject
