@@ -7,10 +7,13 @@ import styled from '@emotion/styled';
 
 import organizationMembersQuery from 'graphql/queries/organizationMembers';
 import documentMembersQuery from 'graphql/queries/documentMembers';
+import discussionMembersQuery from 'graphql/queries/discussionMembers';
 import addDocumentMemberMutation from 'graphql/mutations/addDocumentMember';
 import localAddDocumentMemberMutation from 'graphql/mutations/local/addDocumentMember';
+import addDiscussionMemberMutation from 'graphql/mutations/addDiscussionMember';
+import localAddDiscussionMemberMutation from 'graphql/mutations/local/addDiscussionMember';
 import { getLocalAppState } from 'utils/auth';
-import { DocumentContext } from 'utils/contexts';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import MemberResults from './MemberResults';
 
@@ -51,28 +54,48 @@ const OrganizationMemberSearch = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const DEFAULT_ACCESS_TYPE = 'collaborator';
 
   const { organizationId: id } = getLocalAppState();
   const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
+
   const { loading: l1, data: data1 } = useQuery(organizationMembersQuery, {
     variables: { id },
   });
   const { loading: l2, data: data2 } = useQuery(documentMembersQuery, {
     variables: { id: documentId },
+    skip: !documentId,
+  });
+  const { loading: l3, data: data3 } = useQuery(discussionMembersQuery, {
+    variables: { id: discussionId },
+    skip: !discussionId,
   });
 
-  const [addMember] = useMutation(addDocumentMemberMutation);
-  const [localAddMember] = useMutation(localAddDocumentMemberMutation);
+  const [addDocumentMember] = useMutation(addDocumentMemberMutation);
+  const [localAddDocumentMember] = useMutation(localAddDocumentMemberMutation);
+  const [addDiscussionMember] = useMutation(addDiscussionMemberMutation);
+  const [localAddDiscussionMember] = useMutation(
+    localAddDiscussionMemberMutation
+  );
 
-  if (l1 || l2 || !data1.organizationMembers || !data2.documentMembers) {
+  if (l1 || l2 || l3 || !data1.organizationMembers) {
     return null;
   }
 
   let { members } = data1.organizationMembers || [];
   members = members.map(m => m.user);
 
-  const { documentMembers } = data2;
-  const participants = (documentMembers.members || []).map(p => p.user);
+  let resourceMembers;
+  if (documentId) {
+    const { documentMembers } = data2;
+    ({ resourceMembers } = documentMembers || {});
+  } else if (discussionId) {
+    const { discussionMembers } = data3;
+    ({ resourceMembers } = discussionMembers || {});
+  }
+
+  const participants = (resourceMembers || []).map(p => p.user);
 
   function memberSearch() {
     if (!searchQuery) return [];
@@ -100,11 +123,10 @@ const OrganizationMemberSearch = ({
     return ((x % n) + n) % n;
   }
 
-  function handleAddMember(user) {
+  function handleAddDocumentMember(user) {
     if (participants.find(({ id: pid }) => pid === user.id)) return;
 
-    const DEFAULT_ACCESS_TYPE = 'collaborator';
-    addMember({
+    addDocumentMember({
       variables: {
         id: documentId,
         input: {
@@ -114,9 +136,35 @@ const OrganizationMemberSearch = ({
       },
     });
 
-    localAddMember({
+    localAddDocumentMember({
       variables: { id: documentId, user, accessType: DEFAULT_ACCESS_TYPE },
     });
+  }
+
+  function handleAddDiscussionMember(user) {
+    if (participants.find(({ id: pid }) => pid === user.id)) return;
+
+    addDiscussionMember({
+      variables: {
+        id: discussionId,
+        input: {
+          userId: user.id,
+          accessType: DEFAULT_ACCESS_TYPE,
+        },
+      },
+    });
+
+    localAddDiscussionMember({
+      variables: { id: discussionId, user, accessType: DEFAULT_ACCESS_TYPE },
+    });
+  }
+
+  function handleAddMember(user) {
+    if (documentId) {
+      handleAddDocumentMember(user);
+    } else if (discussionId) {
+      handleAddDiscussionMember(user);
+    }
 
     setSearchQuery('');
     setSelectedIndex(0);

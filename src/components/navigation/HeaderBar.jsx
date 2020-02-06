@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/react-hooks';
 import organizationQuery from 'graphql/queries/organization';
 import notificationsQuery from 'graphql/queries/notifications';
 import { getLocalAppState, getLocalUser } from 'utils/auth';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { DocumentContext } from 'utils/contexts';
 
 import DocumentAccessContainer from 'components/participants/DocumentAccessContainer';
 import Avatar from 'components/shared/Avatar';
@@ -16,6 +16,7 @@ import DropdownMenu from 'components/navigation/DropdownMenu';
 import NotificationsBell from 'components/notifications/NotificationsBell';
 import NewDocumentButton from 'components/document/NewDocumentButton';
 import DocumentViewMode from 'components/document/DocumentViewMode';
+import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
 import NavTitle from './NavTitle';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -107,14 +108,20 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
       <NavigationSection>
         <NotificationsBell notifications={notifications} />
         <NewDocumentButton />
+        <NewDiscussionButton />
       </NavigationSection>
     </Container>
   );
 };
 
 HeaderBar.propTypes = {
-  setViewMode: PropTypes.func.isRequired,
-  viewMode: PropTypes.oneOf(['content', 'discussions']).isRequired,
+  setViewMode: PropTypes.func,
+  viewMode: PropTypes.oneOf(['', 'content', 'discussions']),
+};
+
+HeaderBar.defaultProps = {
+  setViewMode: () => {},
+  viewMode: '',
 };
 
 export default HeaderBar;

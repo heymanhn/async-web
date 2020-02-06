@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import localRemoveMemberMutation from 'graphql/mutations/local/removeDocumentMember';
-import removeMemberMutation from 'graphql/mutations/removeDocumentMember';
-import { DocumentContext } from 'utils/contexts';
+import localRemoveDocumentMemberMutation from 'graphql/mutations/local/removeDocumentMember';
+import removeDocumentMemberMutation from 'graphql/mutations/removeDocumentMember';
+import localRemoveDiscussionMemberMutation from 'graphql/mutations/local/removeDiscussionMember';
+import removeDiscussionMemberMutation from 'graphql/mutations/removeDiscussionMember';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -54,24 +56,55 @@ const RemoveButton = styled.div(({ theme: { colors } }) => ({
 
 const ParticipantRow = ({ accessType, user }) => {
   const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
+
   const { fullName, id, profilePictureUrl } = user;
 
-  const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
+  const [localDocumentRemoveMember] = useMutation(
+    localRemoveDocumentMemberMutation,
+    {
+      variables: {
+        id: documentId,
+        userId: id,
+      },
+    }
+  );
+  const [removeDocumentMember] = useMutation(removeDocumentMemberMutation, {
     variables: {
       id: documentId,
       userId: id,
     },
   });
-  const [removeMember] = useMutation(removeMemberMutation, {
+  const [localDiscussionRemoveMember] = useMutation(
+    localRemoveDiscussionMemberMutation,
+    {
+      variables: {
+        id: discussionId,
+        userId: id,
+      },
+    }
+  );
+  const [removeDiscussionMember] = useMutation(removeDiscussionMemberMutation, {
     variables: {
-      id: documentId,
+      id: discussionId,
       userId: id,
     },
   });
 
+  function handleRemoveDocumentMember() {
+    removeDocumentMember();
+    localDocumentRemoveMember();
+  }
+
+  function handleRemoveDiscussionMember() {
+    removeDiscussionMember();
+    localDiscussionRemoveMember();
+  }
+
   function handleRemoveMember() {
-    removeMember();
-    localRemoveMember();
+    return documentId
+      ? handleRemoveDocumentMember()
+      : handleRemoveDiscussionMember();
   }
 
   const removeParticipantButton = (
