@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Transforms } from 'slate';
 import { ReactEditor, useSlate } from 'slate-react';
@@ -6,8 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faCheckSquare } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
-
-import { MessageContext } from 'utils/contexts';
 
 const Container = styled.li({
   display: 'flex',
@@ -17,11 +15,11 @@ const Container = styled.li({
   width: '100%',
 });
 
-const IconContainer = styled.div(({ isAuthor }) => ({
+const IconContainer = styled.div(({ isReadOnly }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  cursor: isAuthor ? 'pointer' : 'not-allowed',
+  cursor: isReadOnly ? 'not-allowed' : 'pointer',
   margin: '0 !important',
   position: 'relative',
   top: '1px',
@@ -42,15 +40,14 @@ const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
 }));
 
 const ChecklistItem = ({ attributes, children, element }) => {
-  const { mode } = useContext(MessageContext);
   const editor = useSlate();
   const { isChecked } = element;
   const icon = isChecked ? faCheckSquare : faSquare;
-  const isAuthor = mode !== 'display';
+  const isReadOnly = ReactEditor.isReadOnly(editor);
 
   async function handleClick(event) {
     event.preventDefault();
-    if (!isAuthor) return;
+    if (isReadOnly) return;
 
     Transforms.setNodes(
       editor,
@@ -66,7 +63,7 @@ const ChecklistItem = ({ attributes, children, element }) => {
   return (
     <Container {...attributes}>
       <IconContainer
-        isAuthor={isAuthor}
+        isReadOnly={isReadOnly}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
       >
