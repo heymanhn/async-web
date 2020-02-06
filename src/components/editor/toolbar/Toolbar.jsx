@@ -10,11 +10,12 @@ import styled from '@emotion/styled';
 import {
   BoldButton,
   ItalicButton,
+  LargeFontButton,
+  MediumFontButton,
   CodeBlockButton,
   BlockQuoteButton,
 } from './buttons';
 
-// import { LargeFontButton, MediumFontButton } from '../plugins/blocks/headings';
 // import { BulletedListButton } from '../plugins/blocks/lists';
 // import { StartDiscussionButton } from '../plugins/inlineDiscussion';
 
@@ -83,15 +84,16 @@ const Toolbar = ({ isMouseDown }) => {
       <BoldButton />
       <ItalicButton />
       <VerticalDivider />
+
+      <LargeFontButton editor={editor} />
+      <MediumFontButton editor={editor} />
+      {/* <BulletedListButton editor={editor} /> */}
+      <VerticalDivider />
+
       <BlockQuoteButton />
       <CodeBlockButton />
 
-      {/* <LargeFontButton editor={editor} />
-      <MediumFontButton editor={editor} />
-      <BulletedListButton editor={editor} />
-      <VerticalDivider />
-
-      SLATE UPGRADE TODO: Implement inline discussions
+      {/* SLATE UPGRADE TODO: Implement inline discussions
       {source === 'document' && (
         <>
           <VerticalDivider />

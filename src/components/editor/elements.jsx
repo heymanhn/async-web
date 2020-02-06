@@ -12,9 +12,51 @@ const TextBlock = styled.div(({ theme: { colors } }) => ({
   marginBottom: '20px',
 }));
 
-export const TextElement = ({ attributes, children }) => {
-  return <TextBlock {...attributes}>{children}</TextBlock>;
-};
+export const TextElement = ({ attributes, children }) => (
+  <TextBlock {...attributes}>{children}</TextBlock>
+);
+
+/*
+ * Headings: Large, medium, small
+ */
+const LargeFont = styled.h1(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '28px',
+  fontWeight: 600,
+  lineHeight: '36px',
+  letterSpacing: '-0.02em',
+  margin: '30px 0px -10px',
+}));
+
+const MediumFont = styled.h2(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '22px',
+  fontWeight: 600,
+  lineHeight: '28px',
+  letterSpacing: '-0.018em',
+  margin: '18px 0px -10px',
+}));
+
+const SmallFont = styled.h3(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '16px',
+  fontWeight: 600,
+  lineHeight: '22px',
+  letterSpacing: '-0.011em',
+  margin: '12px 0px -10px',
+}));
+
+export const LargeFontElement = ({ attributes, children }) => (
+  <LargeFont {...attributes}>{children}</LargeFont>
+);
+
+export const MediumFontElement = ({ attributes, children }) => (
+  <MediumFont {...attributes}>{children}</MediumFont>
+);
+
+export const SmallFontElement = ({ attributes, children }) => (
+  <SmallFont {...attributes}>{children}</SmallFont>
+);
 
 /*
  * Code block
@@ -41,9 +83,9 @@ const CodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
   },
 }));
 
-export const CodeBlockElement = ({ attributes, children }) => {
-  return <CodeBlock {...attributes}>{children}</CodeBlock>;
-};
+export const CodeBlockElement = ({ attributes, children }) => (
+  <CodeBlock {...attributes}>{children}</CodeBlock>
+);
 
 /*
  * Block quote
@@ -58,6 +100,6 @@ const BlockQuote = styled.blockquote(({ theme: { colors } }) => ({
   },
 }));
 
-export const BlockQuoteElement = ({ attributes, children }) => {
-  return <BlockQuote {...attributes}>{children}</BlockQuote>;
-};
+export const BlockQuoteElement = ({ attributes, children }) => (
+  <BlockQuote {...attributes}>{children}</BlockQuote>
+);

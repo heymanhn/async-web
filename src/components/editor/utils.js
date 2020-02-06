@@ -27,6 +27,10 @@ export const CODE_BLOCK = 'code-block';
 export const BLOCK_QUOTE = 'block-quote';
 export const WRAPPED_TYPES = [...LIST_TYPES, CODE_BLOCK, BLOCK_QUOTE];
 
+export const LARGE_FONT = 'heading-one';
+export const MEDIUM_FONT = 'heading-two';
+export const SMALL_FONT = 'heading-three';
+
 /*
  * Source constants for analytics tracking
  */

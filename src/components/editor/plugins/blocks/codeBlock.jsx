@@ -29,35 +29,6 @@ export const CODE_BLOCK_OPTION_TITLE = 'Code block';
 
 /* **** Toolbar button **** */
 
-export function CodeBlockButton({ editor, ...props }) {
-  function handleClick() {
-    return editor.setCodeBlock(TOOLBAR_SOURCE);
-  }
-
-  function isActive() {
-    const {
-      value: { document, blocks },
-    } = editor;
-
-    if (blocks.size > 0) {
-      const parent = document.getParent(blocks.first().key);
-      return parent && parent.type === CODE_BLOCK;
-    }
-
-    return false;
-  }
-
-  return (
-    <ToolbarButton handleClick={handleClick} {...props}>
-      <ButtonIcon icon={faCode} isActive={isActive()} />
-    </ToolbarButton>
-  );
-}
-
-CodeBlockButton.propTypes = {
-  editor: PropTypes.object.isRequired,
-};
-
 const StyledCodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
   background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,

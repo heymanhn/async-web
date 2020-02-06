@@ -1,8 +1,24 @@
 import React, { useCallback } from 'react';
 import { isHotkey } from 'is-hotkey';
 
-import { BOLD, ITALIC, UNDERLINE, CODE_BLOCK, BLOCK_QUOTE } from './utils';
-import { TextElement, CodeBlockElement, BlockQuoteElement } from './elements';
+import {
+  BOLD,
+  ITALIC,
+  UNDERLINE,
+  LARGE_FONT,
+  MEDIUM_FONT,
+  SMALL_FONT,
+  CODE_BLOCK,
+  BLOCK_QUOTE,
+} from './utils';
+import {
+  TextElement,
+  LargeFontElement,
+  MediumFontElement,
+  SmallFontElement,
+  CodeBlockElement,
+  BlockQuoteElement,
+} from './elements';
 import Editor from './Editor';
 import Leaf from './Leaf';
 
@@ -17,6 +33,12 @@ const useCoreEditorProps = editor => {
 
   const renderElement = useCallback(props => {
     switch (props.element.type) {
+      case LARGE_FONT:
+        return <LargeFontElement {...props} />;
+      case MEDIUM_FONT:
+        return <MediumFontElement {...props} />;
+      case SMALL_FONT:
+        return <SmallFontElement {...props} />;
       case CODE_BLOCK:
         return <CodeBlockElement {...props} />;
       case BLOCK_QUOTE:

@@ -34,7 +34,7 @@ const ToolbarButton = ({ children, handleClick, ...props }) => {
 };
 
 ToolbarButton.propTypes = {
-  children: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
   handleClick: PropTypes.func.isRequired,
 };
 

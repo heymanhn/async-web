@@ -7,7 +7,9 @@
  */
 import { Editor as SlateEditor, Transforms } from 'slate';
 
-import { LIST_TYPES, WRAPPED_TYPES } from './utils';
+import { track } from 'utils/analytics';
+
+import { DEFAULT_NODE, LIST_TYPES, WRAPPED_TYPES } from './utils';
 
 function isBlockActive(editor, type) {
   const [match] = SlateEditor.nodes(editor, {
@@ -22,7 +24,7 @@ function isMarkActive(editor, type) {
   return marks ? marks[type] === true : false;
 }
 
-function toggleBlock(editor, type) {
+function toggleBlock(editor, type, source) {
   const isActive = isBlockActive(editor, type);
   const isList = LIST_TYPES.includes(type);
   const isWrapped = WRAPPED_TYPES.includes(type);
@@ -41,6 +43,11 @@ function toggleBlock(editor, type) {
   if (!isActive && isWrapped) {
     const block = { type, children: [] };
     Transforms.wrapNodes(editor, block);
+  }
+
+  // We're not interested in tracking text blocks...
+  if (!isActive && type !== DEFAULT_NODE) {
+    track('Block inserted to content', { type, source });
   }
 }
 

@@ -27,37 +27,6 @@ import {
 const BLOCK_QUOTE = 'block-quote';
 export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
 
-/* **** Toolbar button **** */
-
-export function BlockQuoteButton({ editor, ...props }) {
-  function handleClick() {
-    return editor.setBlockQuote(TOOLBAR_SOURCE);
-  }
-
-  function isActive() {
-    const {
-      value: { document, blocks },
-    } = editor;
-
-    if (blocks.size > 0) {
-      const parent = document.getParent(blocks.first().key);
-      return parent && parent.type === BLOCK_QUOTE;
-    }
-
-    return false;
-  }
-
-  return (
-    <ToolbarButton handleClick={handleClick} {...props}>
-      <ButtonIcon icon={faQuoteRight} isActive={isActive()} />
-    </ToolbarButton>
-  );
-}
-
-BlockQuoteButton.propTypes = {
-  editor: PropTypes.object.isRequired,
-};
-
 /* **** Composition menu option **** */
 
 export function BlockQuoteOption({ editor, ...props }) {
