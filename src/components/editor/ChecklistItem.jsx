@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import { Transforms } from 'slate';
+import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquare } from '@fortawesome/free-regular-svg-icons';
 import { faCheckSquare } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
+
+import { MessageContext } from 'utils/contexts';
 
 const Container = styled.li({
   display: 'flex',
@@ -23,10 +27,12 @@ const IconContainer = styled.div(({ isAuthor }) => ({
   top: '1px',
 }));
 
-const StyledIcon = styled(FontAwesomeIcon)(({ ischecked, theme: { colors } }) => ({
-  color: ischecked === 'true' ? colors.grey3 : colors.grey4,
-  fontSize: '14px',
-}));
+const StyledIcon = styled(FontAwesomeIcon)(
+  ({ ischecked, theme: { colors } }) => ({
+    color: ischecked === 'true' ? colors.grey3 : colors.grey4,
+    fontSize: '14px',
+  })
+);
 
 const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
   color: isChecked ? colors.grey4 : colors.contentText,
@@ -35,21 +41,22 @@ const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
   flexWrap: 'wrap',
 }));
 
-const ChecklistItem = ({ attributes, children, editor, node }) => {
-  const isChecked = node.data.get('isChecked');
+const ChecklistItem = ({ attributes, children, element }) => {
+  const { mode } = useContext(MessageContext);
+  const editor = useSlate();
+  const { isChecked } = element;
   const icon = isChecked ? faCheckSquare : faSquare;
-  const { props } = editor;
-  const { isAuthor } = props; /* eslint react/prop-types: 0 */
+  const isAuthor = mode !== 'display';
 
   async function handleClick(event) {
     event.preventDefault();
     if (!isAuthor) return;
 
-    const { readOnly } = editor;
-    const change = editor.setNodeByKey(node.key, { data: { isChecked: !isChecked } });
-
-    // Needed so that the handleSubmit logic doesn't block the editor from updating correctly
-    if (readOnly) setTimeout(change.props.handleSubmit, 0);
+    Transforms.setNodes(
+      editor,
+      { isChecked: !isChecked },
+      { at: ReactEditor.findPath(editor, element) }
+    );
   }
 
   function handleMouseDown(event) {
@@ -65,18 +72,15 @@ const ChecklistItem = ({ attributes, children, editor, node }) => {
       >
         <StyledIcon ischecked={isChecked.toString()} icon={icon} />
       </IconContainer>
-      <Contents isChecked={isChecked}>
-        {children}
-      </Contents>
+      <Contents isChecked={isChecked}>{children}</Contents>
     </Container>
   );
 };
 
 ChecklistItem.propTypes = {
   attributes: PropTypes.object.isRequired,
-  children: PropTypes.array.isRequired,
-  editor: PropTypes.object.isRequired,
-  node: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
+  element: PropTypes.object.isRequired,
 };
 
 export default ChecklistItem;

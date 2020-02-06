@@ -9,7 +9,14 @@ import { Editor as SlateEditor, Transforms } from 'slate';
 
 import { track } from 'utils/analytics';
 
-import { DEFAULT_NODE, LIST_TYPES, WRAPPED_TYPES } from './utils';
+import {
+  DEFAULT_NODE,
+  LIST_TYPES,
+  WRAPPED_TYPES,
+  CHECKLIST,
+  LIST_ITEM,
+  CHECKLIST_ITEM,
+} from './utils';
 
 function isBlockActive(editor, type) {
   const [match] = SlateEditor.nodes(editor, {
@@ -34,10 +41,21 @@ function toggleBlock(editor, type, source) {
     split: true,
   });
 
-  if (!isWrapped || isList) {
-    Transforms.setNodes(editor, {
-      type: isActive ? 'paragraph' : isList ? 'list-item' : type,
-    });
+  // Normal toggling is sufficient for this case
+  if (!isWrapped) {
+    Transforms.setNodes(editor, { type: isActive ? DEFAULT_NODE : type });
+  }
+
+  // Special treatment for lists: set leaf nodes to list item or checklist item
+  if (isList) {
+    const isChecklist = type === CHECKLIST;
+    const listItemType = isChecklist ? CHECKLIST_ITEM : LIST_ITEM;
+    const payload = {
+      type: isActive ? DEFAULT_NODE : listItemType,
+    };
+    if (isChecklist) payload.isChecked = false;
+
+    Transforms.setNodes(editor, payload);
   }
 
   if (!isActive && isWrapped) {

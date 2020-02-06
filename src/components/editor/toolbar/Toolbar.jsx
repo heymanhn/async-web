@@ -12,6 +12,7 @@ import {
   ItalicButton,
   LargeFontButton,
   MediumFontButton,
+  BulletedListButton,
   CodeBlockButton,
   BlockQuoteButton,
 } from './buttons';
@@ -85,9 +86,9 @@ const Toolbar = () => {
       <ItalicButton />
       <VerticalDivider />
 
-      <LargeFontButton editor={editor} />
-      <MediumFontButton editor={editor} />
-      {/* <BulletedListButton editor={editor} /> */}
+      <LargeFontButton />
+      <MediumFontButton />
+      <BulletedListButton />
       <VerticalDivider />
 
       <BlockQuoteButton />

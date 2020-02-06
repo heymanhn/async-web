@@ -8,6 +8,11 @@ import {
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
+  BULLETED_LIST,
+  NUMBERED_LIST,
+  LIST_ITEM,
+  CHECKLIST_ITEM,
+  CHECKLIST,
   CODE_BLOCK,
   BLOCK_QUOTE,
 } from './utils';
@@ -16,9 +21,14 @@ import {
   LargeFontElement,
   MediumFontElement,
   SmallFontElement,
+  BulletedListElement,
+  NumberedListElement,
+  ChecklistElement,
+  ListItemElement,
   CodeBlockElement,
   BlockQuoteElement,
 } from './elements';
+import ChecklistItemElement from './ChecklistItem';
 import Editor from './Editor';
 import Leaf from './Leaf';
 
@@ -39,6 +49,16 @@ const useCoreEditorProps = editor => {
         return <MediumFontElement {...props} />;
       case SMALL_FONT:
         return <SmallFontElement {...props} />;
+      case BULLETED_LIST:
+        return <BulletedListElement {...props} />;
+      case NUMBERED_LIST:
+        return <NumberedListElement {...props} />;
+      case LIST_ITEM:
+        return <ListItemElement {...props} />;
+      case CHECKLIST:
+        return <ChecklistElement {...props} />;
+      case CHECKLIST_ITEM:
+        return <ChecklistItemElement {...props} />;
       case CODE_BLOCK:
         return <CodeBlockElement {...props} />;
       case BLOCK_QUOTE:

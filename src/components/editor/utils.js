@@ -18,6 +18,7 @@ export const ITALIC = 'italic';
 export const UNDERLINE = 'underline';
 
 export const LIST_ITEM = 'list-item';
+export const CHECKLIST_ITEM = 'checklist-item';
 export const NUMBERED_LIST = 'numbered-list';
 export const BULLETED_LIST = 'bulleted-list';
 export const CHECKLIST = 'checklist';

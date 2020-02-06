@@ -4,6 +4,7 @@ import { useSlate } from 'slate-react';
 import {
   faBold,
   faItalic,
+  faListUl,
   faCode,
   faQuoteRight,
 } from '@fortawesome/free-solid-svg-icons';
@@ -17,6 +18,7 @@ import {
   LARGE_FONT,
   MEDIUM_FONT,
   TOOLBAR_SOURCE,
+  BULLETED_LIST,
 } from '../utils';
 import ToolbarButton from './ToolbarButton';
 import ButtonIcon from './ButtonIcon';
@@ -49,7 +51,7 @@ export const BoldButton = () => <MarkButton type={BOLD} icon={faBold} />;
 export const ItalicButton = () => <MarkButton type={ITALIC} icon={faItalic} />;
 
 /*
- * Buttons for blocks: lists, block quotes, etc.
+ * Base button for blocks
  */
 function BlockButton({ type, icon, CustomIconElement, ...props }) {
   const editor = useSlate();
@@ -108,3 +110,11 @@ HeadingButton.propTypes = {
 
 export const LargeFontButton = () => <HeadingButton type={LARGE_FONT} />;
 export const MediumFontButton = () => <HeadingButton type={MEDIUM_FONT} />;
+
+/*
+ * Button for bulleted list
+ */
+
+export const BulletedListButton = () => (
+  <BlockButton type={BULLETED_LIST} icon={faListUl} />
+);

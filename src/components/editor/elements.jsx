@@ -59,6 +59,55 @@ export const SmallFontElement = ({ attributes, children }) => (
 );
 
 /*
+ * List types
+ */
+
+const BulletedList = styled.ul({
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
+  marginTop: '12px',
+  marginBottom: '20px',
+});
+
+const NumberedList = styled.ol({
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
+  marginTop: '12px',
+  marginBottom: '20px',
+});
+
+const ListItem = styled.li({
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
+  marginBottom: '5px',
+  width: '100%',
+});
+
+const Checklist = styled.ul({
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
+  marginTop: '12px',
+  marginBottom: '20px',
+  paddingLeft: '16px',
+});
+
+export const BulletedListElement = ({ attributes, children }) => (
+  <BulletedList {...attributes}>{children}</BulletedList>
+);
+
+export const NumberedListElement = ({ attributes, children }) => (
+  <NumberedList {...attributes}>{children}</NumberedList>
+);
+
+export const ChecklistElement = ({ attributes, children }) => (
+  <Checklist {...attributes}>{children}</Checklist>
+);
+
+export const ListItemElement = ({ attributes, children }) => (
+  <ListItem {...attributes}>{children}</ListItem>
+);
+
+/*
  * Code block
  */
 const CodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
