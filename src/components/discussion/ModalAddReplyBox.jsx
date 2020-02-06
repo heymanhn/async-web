@@ -81,7 +81,6 @@ const Label = styled.div(({ theme: { colors } }) => ({
 }));
 
 const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
-  const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
   const { hover, ...hoverProps } = useHover(isComposing);
   const currentUser = useCurrentUser();
@@ -102,7 +101,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
     };
 
     updateDiscussion({
-      variables: { documentId, discussionId, input },
+      variables: { discussionId, input },
     });
   }
 

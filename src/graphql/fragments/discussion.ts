@@ -6,7 +6,6 @@ import user from 'graphql/fragments/user';
 export default gql`
   fragment DiscussionObject on Discussion {
     id
-    title
     documentId
     author @type(name: "User") {
       ...UserObject

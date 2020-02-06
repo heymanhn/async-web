@@ -13,24 +13,33 @@ import DiscussionMessage from './DiscussionMessage';
 import DiscussionThread from './DiscussionThread';
 import ModalAddReplyBox from './ModalAddReplyBox';
 
-const Container = styled.div(({ theme: { discussionViewport } }) => ({
+const Container = styled.div(({ theme: { discussionViewport, colors } }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
 
   // Vertically center the page when content doesn't fit full height
   minHeight: 'calc(100vh - 60px)', // 60px for the navigation bar
-
+  background: colors.bgGrey,
   margin: '0 auto',
   maxWidth: discussionViewport,
 }));
+
+const StyledDiscussionMessage = styled(DiscussionMessage)(
+  ({ theme: { colors } }) => ({
+    background: colors.white,
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
+    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
+  })
+);
 
 const Discussion = () => {
   const { discussionId } = useContext(DiscussionContext);
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
-  const [isComposing, setIsComposing] = useState(!discussionId);
+  const [isComposing, setIsComposing] = useState(true);
 
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
@@ -43,7 +52,6 @@ const Discussion = () => {
 
   const { topic, draft } = data.discussion;
   const { items, pageToken } = data.messages;
-  const messages = (items || []).map(i => i.message);
 
   if (draft && !isComposing) startComposing();
 
@@ -100,13 +108,10 @@ const Discussion = () => {
   return (
     <DiscussionContext.Provider value={value}>
       <Container ref={discussionRef}>
-        <TopicComposer
-          initialTopic={topic}
-          autoFocus={!topic && !data.messages}
-        />
-        {messages.length > 0 && <DiscussionThread isUnread={isUnread()} />}
+        <TopicComposer initialTopic={topic} autoFocus={!topic || !items} />
+        {items && <DiscussionThread isUnread={isUnread()} />}
         {isComposing ? (
-          <DiscussionMessage
+          <StyledDiscussionMessage
             mode="compose"
             afterCreate={stopComposing}
             handleCancel={stopComposing}
