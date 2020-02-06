@@ -34,7 +34,6 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_VALUE
   );
-  const [isMouseDown, setIsMouseDown] = useState(false);
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
 
@@ -47,13 +46,8 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
-      <DocumentEditable
-        onMouseDown={() => setIsMouseDown(true)}
-        onMouseUp={() => setIsMouseDown(false)}
-        {...props}
-        {...coreEditorProps}
-      />
-      <Toolbar isMouseDown={isMouseDown} source="document" />
+      <DocumentEditable {...props} {...coreEditorProps} />
+      <Toolbar source="document" />
     </Slate>
   );
 };

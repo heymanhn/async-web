@@ -53,13 +53,13 @@ const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   margin: '0 5px',
 }));
 
-const Toolbar = ({ isMouseDown }) => {
+const Toolbar = () => {
   // const { documentId, handleShowModal } = useContext(DocumentContext);
   const ref = useRef(null);
   const editor = useSlate();
   const { selection } = editor;
 
-  const isOpen = selection && Range.isExpanded(selection) && !isMouseDown;
+  const isOpen = selection && Range.isExpanded(selection);
   const root = window.document.getElementById('root');
 
   // Figure out where the toolbar should be displayed based on the user's text selection
@@ -110,7 +110,6 @@ const Toolbar = ({ isMouseDown }) => {
 };
 
 Toolbar.propTypes = {
-  isMouseDown: PropTypes.bool.isRequired,
   source: PropTypes.oneOf(['document', 'discussionMessage']).isRequired,
 };
 
