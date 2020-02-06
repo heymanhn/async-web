@@ -32,7 +32,6 @@ import CreateOrganization from 'components/auth/CreateOrganization';
 import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
 import DocumentContainer from 'components/document/DocumentContainer';
-import DiscussionLinkHandler from 'components/discussion/DiscussionLinkHandler';
 import DiscussionContainer from './discussion/DiscussionContainer';
 
 const restLink = new RestLink({
