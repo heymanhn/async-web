@@ -1,6 +1,7 @@
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
 import documentMembersQuery from 'graphql/queries/documentMembers';
+import discussionMembersQuery from 'graphql/queries/discussionMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
@@ -175,6 +176,63 @@ function removeDocumentMember(_root, { id, userId }, { client }) {
   return null;
 }
 
+function addDiscussionMember(_root, { id, user, accessType }, { client }) {
+  const data = client.readQuery({
+    query: discussionMembersQuery,
+    variables: { id },
+  });
+  if (!data) return null;
+
+  const { discussionMembers } = data;
+  const { members, __typename } = discussionMembers;
+
+  const newMember = {
+    ...members[0],
+    user,
+    accessType,
+  };
+
+  client.writeQuery({
+    query: discussionMembersQuery,
+    variables: { id },
+    data: {
+      discussionMembers: {
+        members: [...members, newMember],
+        __typename,
+      },
+    },
+  });
+
+  return null;
+}
+
+function removeDiscussionMember(_root, { id, userId }, { client }) {
+  const data = client.readQuery({
+    query: discussionMembersQuery,
+    variables: { id },
+  });
+  if (!data) return null;
+
+  const { discussionMembers } = data;
+  const { members, __typename } = discussionMembers;
+
+  const index = members.findIndex(p => p.user.id === userId);
+  if (index < 0) return null;
+
+  client.writeQuery({
+    query: discussionMembersQuery,
+    variables: { id },
+    data: {
+      discussionMembers: {
+        members: [...members.slice(0, index), ...members.slice(index + 1)],
+        __typename,
+      },
+    },
+  });
+
+  return null;
+}
+
 function updateBadgeCount(_root, { userId, notification }, { client }) {
   const data = client.readQuery({
     query: notificationsQuery,
@@ -260,6 +318,8 @@ const localResolvers = {
     addPendingRepliesToDiscussion,
     addDocumentMember,
     removeDocumentMember,
+    addDiscussionMember,
+    removeDiscussionMember,
     updateBadgeCount,
     deleteMessageFromDiscussion,
   },

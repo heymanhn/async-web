@@ -1,52 +1,26 @@
-// import React, { useState } from 'react';
-// import PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-// import { DiscussionContext } from 'utils/contexts';
-// import useMountEffect from 'utils/hooks/useMountEffect';
+import { DiscussionContext } from 'utils/contexts';
 
-// import HeaderBar from 'components/navigation/HeaderBar';
-// import Discussion from './Discussion';
+import HeaderBar from 'components/navigation/HeaderBar';
+import Discussion from './Discussion';
 
-// const DiscussionContainer = ({ discussionId }) => {
-//   const [isComposing, setIsComposing] = useState(!discussionId);
+const DiscussionContainer = ({ discussionId }) => {
+  const value = {
+    discussionId,
+  };
 
-//   const startComposing = () => setIsComposing(true);
-//   const stopComposing = () => setIsComposing(false);
+  return (
+    <DiscussionContext.Provider value={value}>
+      <HeaderBar />
+      <Discussion />
+    </DiscussionContext.Provider>
+  );
+};
 
-//   const value = {
-//     discussionId,
-//     context,
-//     draft,
-//   };
+DiscussionContainer.propTypes = {
+  discussionId: PropTypes.string.isRequired,
+};
 
-//   return (
-//     <DiscussionContext.Provider value={value}>
-//       {discussionId && <DiscussionThread isUnread={isUnread()} />}
-//       {isComposing ? (
-//         <StyledDiscussionMessage
-//           mode="compose"
-//           afterCreate={stopComposing}
-//           handleCancel={handleCancelCompose}
-//           {...props}
-//         />
-//       ) : (
-//         <ModalAddReplyBox
-//           handleClickReply={startComposing}
-//           isComposing={isComposing}
-//         />
-//       )}
-//     </DiscussionContext.Provider>
-//   );
-// };
-
-// DiscussionContainer.propTypes = {
-//   parent: PropTypes.string,
-//   discussionId: PropTypes.string,
-// };
-
-// DiscussionContainer.defaultProps = {
-//   parent: '',
-//   discussionId: null,
-// };
-
-// export default DiscussionContainer;
+export default DiscussionContainer;
