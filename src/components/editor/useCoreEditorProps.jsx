@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { isHotkey } from 'is-hotkey';
 
-import { BOLD, ITALIC, UNDERLINE } from './utils';
+import { BOLD, ITALIC, UNDERLINE, CODE_BLOCK, BLOCK_QUOTE } from './utils';
+import { TextElement, CodeBlockElement, BlockQuoteElement } from './elements';
 import Editor from './Editor';
 import Leaf from './Leaf';
 
@@ -13,7 +14,17 @@ const MARK_HOTKEYS = {
 
 const useCoreEditorProps = editor => {
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
-  // const renderElement = useCallback(()) {}
+
+  const renderElement = useCallback(props => {
+    switch (props.element.type) {
+      case CODE_BLOCK:
+        return <CodeBlockElement {...props} />;
+      case BLOCK_QUOTE:
+        return <BlockQuoteElement {...props} />;
+      default:
+        return <TextElement {...props} />;
+    }
+  }, []);
 
   function onKeyDown(event) {
     Object.keys(MARK_HOTKEYS).forEach(hotkey => {
@@ -27,7 +38,7 @@ const useCoreEditorProps = editor => {
 
   return {
     onKeyDown,
-    // renderElement,
+    renderElement,
     renderLeaf,
   };
 };

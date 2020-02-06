@@ -7,48 +7,50 @@
  */
 import { Editor as SlateEditor, Transforms } from 'slate';
 
-// SLATE UPGRADE TODO: Any chance to DRY this up?
-const LIST_TYPES = ['numbered-list', 'bulleted-list', 'checklist'];
+import { LIST_TYPES, WRAPPED_TYPES } from './utils';
 
-function isBlockActive(editor, format) {
+function isBlockActive(editor, type) {
   const [match] = SlateEditor.nodes(editor, {
-    match: n => n.type === format,
+    match: n => n.type === type,
   });
 
   return !!match;
 }
 
-function isMarkActive(editor, format) {
+function isMarkActive(editor, type) {
   const marks = SlateEditor.marks(editor);
-  return marks ? marks[format] === true : false;
+  return marks ? marks[type] === true : false;
 }
 
-function toggleBlock(editor, format) {
-  const isActive = isBlockActive(editor, format);
-  const isList = LIST_TYPES.includes(format);
+function toggleBlock(editor, type) {
+  const isActive = isBlockActive(editor, type);
+  const isList = LIST_TYPES.includes(type);
+  const isWrapped = WRAPPED_TYPES.includes(type);
 
   Transforms.unwrapNodes(editor, {
-    match: n => LIST_TYPES.includes(n.type),
+    match: n => WRAPPED_TYPES.includes(n.type),
     split: true,
   });
 
-  Transforms.setNodes(editor, {
-    type: isActive ? 'paragraph' : isList ? 'list-item' : format,
-  });
+  if (!isWrapped || isList) {
+    Transforms.setNodes(editor, {
+      type: isActive ? 'paragraph' : isList ? 'list-item' : type,
+    });
+  }
 
-  if (!isActive && isList) {
-    const block = { type: format, children: [] };
+  if (!isActive && isWrapped) {
+    const block = { type, children: [] };
     Transforms.wrapNodes(editor, block);
   }
 }
 
-function toggleMark(editor, format) {
-  const isActive = isMarkActive(editor, format);
+function toggleMark(editor, type) {
+  const isActive = isMarkActive(editor, type);
 
   if (isActive) {
-    SlateEditor.removeMark(editor, format);
+    SlateEditor.removeMark(editor, type);
   } else {
-    SlateEditor.addMark(editor, format, true);
+    SlateEditor.addMark(editor, type, true);
   }
 }
 

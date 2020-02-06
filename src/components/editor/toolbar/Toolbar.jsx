@@ -7,12 +7,15 @@ import styled from '@emotion/styled';
 
 // import { DocumentContext } from 'utils/contexts';
 
-import { BoldButton, ItalicButton } from './buttons';
+import {
+  BoldButton,
+  ItalicButton,
+  CodeBlockButton,
+  BlockQuoteButton,
+} from './buttons';
 
 // import { LargeFontButton, MediumFontButton } from '../plugins/blocks/headings';
 // import { BulletedListButton } from '../plugins/blocks/lists';
-// import { BlockQuoteButton } from '../plugins/blocks/blockQuote';
-// import { CodeBlockButton } from '../plugins/blocks/codeBlock';
 // import { StartDiscussionButton } from '../plugins/inlineDiscussion';
 
 const Container = styled.div(
@@ -80,16 +83,16 @@ const Toolbar = ({ isMouseDown }) => {
       <BoldButton />
       <ItalicButton />
       <VerticalDivider />
+      <BlockQuoteButton />
+      <CodeBlockButton />
 
       {/* <LargeFontButton editor={editor} />
       <MediumFontButton editor={editor} />
       <BulletedListButton editor={editor} />
       <VerticalDivider />
 
-      <BlockQuoteButton editor={editor} />
-      <CodeBlockButton editor={editor} /> */}
-      {/* SLATE UPGRADE TODO: Implement inline discussions */}
-      {/* {source === 'document' && (
+      SLATE UPGRADE TODO: Implement inline discussions
+      {source === 'document' && (
         <>
           <VerticalDivider />
           <StartDiscussionButton
