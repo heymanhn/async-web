@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useMutation } from 'react-apollo';
 
-import createDocumentDiscussionMutation from 'graphql/mutations/createDocumentDiscussion';
+import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 // import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
 import { track } from 'utils/analytics';
@@ -11,9 +11,7 @@ import { track } from 'utils/analytics';
  * - When context is implemented, save it during discussion create
  */
 const useDiscussionMutations = () => {
-  const [createDocumentDiscussion] = useMutation(
-    createDocumentDiscussionMutation
-  );
+  const [createDiscussion] = useMutation(createDiscussionMutation);
   // const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
   //   variables: { documentId, discussionId },
   // });
@@ -22,7 +20,7 @@ const useDiscussionMutations = () => {
   const { afterCreate } = useContext(DiscussionContext);
 
   async function handleCreate() {
-    const input = {};
+    const input = documentId ? { documentId } : {};
     // TODO: fix this when we implement extracting context
     // if (context) {
     //   const initialJSON = JSON.parse(context);
@@ -35,14 +33,12 @@ const useDiscussionMutations = () => {
     //   };
     // }
 
-    const { data: createDiscussionData } = await createDocumentDiscussion({
-      variables: { documentId, input },
+    const { data: createDiscussionData } = await createDiscussion({
+      variables: { input },
     });
 
-    if (createDiscussionData.createDocumentDiscussion) {
-      const {
-        id: newDiscussionId,
-      } = createDiscussionData.createDocumentDiscussion;
+    if (createDiscussionData.createDiscussion) {
+      const { id: newDiscussionId } = createDiscussionData.createDiscussion;
       track('New discussion created', {
         documentId,
         discussionId: newDiscussionId,
