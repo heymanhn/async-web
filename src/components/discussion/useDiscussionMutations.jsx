@@ -44,7 +44,7 @@ const useDiscussionMutations = () => {
         discussionId: newDiscussionId,
       });
 
-      afterCreate(newDiscussionId);
+      if (afterCreate) afterCreate(newDiscussionId);
 
       return Promise.resolve({ discussionId: newDiscussionId });
     }

@@ -27,7 +27,7 @@ const StyledPlus = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 const NewDiscussionButton = () => {
   const { handleCreate, isSubmitting } = useDiscussionMutations();
 
-  async function handleCreateDocument() {
+  async function handleCreateDiscussion() {
     const { discussionId } = await handleCreate();
 
     if (discussionId) {
@@ -36,7 +36,7 @@ const NewDiscussionButton = () => {
   }
 
   return (
-    <Container onClick={handleCreateDocument}>
+    <Container onClick={handleCreateDiscussion}>
       {isSubmitting ? (
         <LoadingIndicator color="grey4" size="18" />
       ) : (
