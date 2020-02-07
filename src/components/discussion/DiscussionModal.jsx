@@ -16,7 +16,7 @@ import ModalAddReplyBox from './ModalAddReplyBox';
 
 const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
   alignSelf: 'center',
-  padding: '0 25px',
+  padding: '25px 25px',
   background: colors.bgGrey,
 }));
 
