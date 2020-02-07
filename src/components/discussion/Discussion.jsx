@@ -51,9 +51,10 @@ const Discussion = () => {
   if (error || !data.discussion) return <NotFound />;
 
   const { topic, draft } = data.discussion;
+  const { payload } = topic || {};
   const { items, pageToken } = data.messages;
 
-  if (draft && !isComposing) startComposing();
+  if ((draft || !items) && !isComposing) startComposing();
 
   function isUnread() {
     const { tags } = data.discussion;
@@ -108,7 +109,7 @@ const Discussion = () => {
   return (
     <DiscussionContext.Provider value={value}>
       <Container ref={discussionRef}>
-        <TopicComposer initialTopic={topic} autoFocus={!topic || !items} />
+        <TopicComposer initialTopic={payload} autoFocus={!payload || !items} />
         {items && <DiscussionThread isUnread={isUnread()} />}
         {isComposing ? (
           <StyledDiscussionMessage
