@@ -33,6 +33,9 @@ export const LARGE_FONT = 'heading-one';
 export const MEDIUM_FONT = 'heading-two';
 export const SMALL_FONT = 'heading-three';
 
+export const SECTION_BREAK = 'section-break';
+export const VOID_TYPES = [SECTION_BREAK];
+
 /*
  * Source constants for analytics tracking
  */
@@ -44,6 +47,7 @@ export const CUT_PASTE_SOURCE = 'cutAndPaste';
 
 /*
  * Helper functions
+ * SLATE UPGRADE TODO: move these into the custom Editor object for consistency?
  */
 export const deserializedTitle = title => [
   {

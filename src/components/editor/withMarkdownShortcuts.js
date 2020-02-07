@@ -13,6 +13,7 @@ import {
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
+  SECTION_BREAK,
 } from './utils';
 import Editor from './Editor';
 
@@ -73,6 +74,11 @@ const MARKDOWN_SHORTCUTS = [
     trigger: 'space',
     before: /^(###)$/,
     change: editor => setNode(editor, SMALL_FONT),
+  },
+  {
+    trigger: '-',
+    before: /^(--)$/,
+    change: editor => Editor.insertVoid(editor, SECTION_BREAK),
   },
 ];
 

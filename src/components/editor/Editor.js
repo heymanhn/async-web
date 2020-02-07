@@ -10,6 +10,7 @@ import { Editor as SlateEditor, Transforms } from 'slate';
 import { track } from 'utils/analytics';
 
 import {
+  DEFAULT_VALUE,
   DEFAULT_NODE,
   LIST_TYPES,
   WRAPPED_TYPES,
@@ -87,6 +88,11 @@ const toggleMark = (editor, type, source) => {
   }
 };
 
+const insertVoid = (editor, type, data = {}) => {
+  Transforms.setNodes(editor, { type, ...data, children: [] });
+  Transforms.insertNodes(editor, DEFAULT_VALUE);
+};
+
 const Editor = {
   ...SlateEditor,
   isBlockActive,
@@ -94,6 +100,7 @@ const Editor = {
   isWrappedBlock,
   toggleBlock,
   toggleMark,
+  insertVoid,
 };
 
 export default Editor;

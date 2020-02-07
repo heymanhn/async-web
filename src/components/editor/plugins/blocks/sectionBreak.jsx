@@ -1,17 +1,12 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
 import { faHorizontalRule } from '@fortawesome/pro-solid-svg-icons';
-import styled from '@emotion/styled';
 
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 
 import { DEFAULT_NODE, COMPOSITION_MENU_SOURCE } from 'components/editor/utils';
-import {
-  RenderBlock,
-  CustomEnterAction,
-  CustomBackspaceAction,
-} from '../helpers';
+import { CustomEnterAction, CustomBackspaceAction } from '../helpers';
 
 const SECTION_BREAK = 'section-break';
 export const SECTION_BREAK_OPTION_TITLE = 'Section break';
@@ -40,21 +35,7 @@ export function SectionBreakOption({ editor, ...props }) {
 
 /* **** Slate plugin **** */
 
-const StyledSectionBreak = styled.hr(({ theme: { colors } }) => ({
-  borderRadius: '20px',
-  borderTop: `2px solid ${colors.borderGrey}`,
-  margin: '2em auto',
-  width: '120px',
-}));
-
 export function SectionBreak() {
-  /* **** Render methods **** */
-
-  function renderSectionBreak(props) {
-    const { attributes } = props;
-    return <StyledSectionBreak {...attributes} />;
-  }
-
   /* **** Hotkeys **** */
 
   function exitSectionBreakOnEnter(editor, next) {
@@ -89,5 +70,5 @@ export function SectionBreak() {
     CustomBackspaceAction(removeSectionBreak),
   ];
 
-  return [RenderBlock(SECTION_BREAK, renderSectionBreak), hotkeys];
+  return [hotkeys];
 }

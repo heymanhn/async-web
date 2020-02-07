@@ -152,3 +152,18 @@ const BlockQuote = styled.blockquote(({ theme: { colors } }) => ({
 export const BlockQuoteElement = ({ attributes, children }) => (
   <BlockQuote {...attributes}>{children}</BlockQuote>
 );
+
+/*
+ * Section break
+ */
+
+const SectionBreak = styled.hr(({ theme: { colors } }) => ({
+  borderRadius: '20px',
+  borderTop: `2px solid ${colors.borderGrey}`,
+  margin: '2em auto',
+  width: '120px',
+}));
+
+export const SectionBreakElement = ({ attributes }) => (
+  <SectionBreak {...attributes} />
+);
