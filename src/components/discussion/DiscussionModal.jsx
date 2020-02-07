@@ -5,7 +5,11 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import { track } from 'utils/analytics';
-import { DiscussionContext, DocumentContext } from 'utils/contexts';
+import {
+  DiscussionContext,
+  DocumentContext,
+  DEFAULT_DISCUSSION_CONTEXT,
+} from 'utils/contexts';
 import useMountEffect from 'utils/hooks/useMountEffect';
 
 // import { CONTEXT_HIGHLIGHT } from 'components/editor/plugins/inlineDiscussion';
@@ -97,6 +101,7 @@ const DiscussionModal = ({
   }
 
   const value = {
+    ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId: modalDiscussionId,
     context,
     draft,

@@ -5,7 +5,11 @@ import styled from '@emotion/styled';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import { snakedQueryParams } from 'utils/queryParams';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import {
+  DocumentContext,
+  DiscussionContext,
+  DEFAULT_DISCUSSION_CONTEXT,
+} from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
@@ -62,10 +66,14 @@ const DiscussionsList = () => {
 
   const [isComposing, setIsComposing] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [discussionId, setDiscussionId] = useState(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(listRef);
 
   const startComposing = () => setIsComposing(true);
-  const stopComposing = () => setIsComposing(false);
+  const stopComposing = () => {
+    setDiscussionId(null);
+    setIsComposing(false);
+  };
 
   const { loading, error, data, fetchMore } = useQuery(
     documentDiscussionsQuery,
@@ -119,15 +127,9 @@ const DiscussionsList = () => {
     fetchMoreDiscussions();
   }
 
-  let value = {};
-  function setDiscussionId(id) {
-    if (!value.discussionId) {
-      value.discussionId = id;
-    }
-  }
-
-  value = {
-    discussionId: null,
+  const value = {
+    ...DEFAULT_DISCUSSION_CONTEXT,
+    discussionId,
     afterCreateDraft: id => setDiscussionId(id),
   };
 

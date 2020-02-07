@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { DocumentContext } from 'utils/contexts';
+import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
 
 import DiscussionModal from 'components/discussion/DiscussionModal';
 import HeaderBar from './HeaderBar';
@@ -35,6 +35,7 @@ const DocumentContainer = ({
   }
 
   const value = {
+    ...DEFAULT_DOCUMENT_CONTEXT,
     documentId,
     modalDiscussionId,
     handleShowModal,
