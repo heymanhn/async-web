@@ -32,7 +32,7 @@ function MarkButton({ type, icon, ...props }) {
   const isActive = Editor.isMarkActive(editor, type);
 
   function handleClick() {
-    Editor.toggleMark(editor, type);
+    Editor.toggleMark(editor, type, TOOLBAR_SOURCE);
   }
 
   return (

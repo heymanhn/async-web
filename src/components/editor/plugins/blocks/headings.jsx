@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  DEFAULT_NODE,
-  COMPOSITION_MENU_SOURCE,
-  HOTKEY_SOURCE,
-} from 'components/editor/utils';
+import { DEFAULT_NODE, COMPOSITION_MENU_SOURCE } from 'components/editor/utils';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import HeadingOptionIcon from './HeadingOptionIcon';
-import { Hotkey, CustomEnterAction } from '../helpers';
+import { CustomEnterAction } from '../helpers';
 
 const LARGE_FONT = 'heading-one';
 const MEDIUM_FONT = 'heading-two';
@@ -70,12 +66,7 @@ export function HeadingsPlugin() {
   }
 
   /* **** Hotkeys **** */
-  const hotkeys = [
-    Hotkey('mod+opt+1', editor => editor.setBlock(LARGE_FONT, HOTKEY_SOURCE)),
-    Hotkey('mod+opt+2', editor => editor.setBlock(MEDIUM_FONT, HOTKEY_SOURCE)),
-    Hotkey('mod+opt+3', editor => editor.setBlock(SMALL_FONT, HOTKEY_SOURCE)),
-    CustomEnterAction(exitHeadingBlockOnEnter),
-  ];
+  const hotkeys = [CustomEnterAction(exitHeadingBlockOnEnter)];
 
   return [hotkeys];
 }

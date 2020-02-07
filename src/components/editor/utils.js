@@ -16,6 +16,7 @@ export const DEFAULT_VALUE = [
 export const BOLD = 'bold';
 export const ITALIC = 'italic';
 export const UNDERLINE = 'underline';
+export const CODE_SNIPPET = 'code-snippet';
 
 export const LIST_ITEM = 'list-item';
 export const CHECKLIST_ITEM = 'checklist-item';

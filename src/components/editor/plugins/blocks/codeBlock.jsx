@@ -4,12 +4,8 @@ import { faCode } from '@fortawesome/free-solid-svg-icons';
 
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-import {
-  DEFAULT_NODE,
-  COMPOSITION_MENU_SOURCE,
-  HOTKEY_SOURCE,
-} from 'components/editor/utils';
-import { Hotkey, CustomEnterAction, CustomBackspaceAction } from '../helpers';
+import { DEFAULT_NODE, COMPOSITION_MENU_SOURCE } from 'components/editor/utils';
+import { CustomEnterAction, CustomBackspaceAction } from '../helpers';
 
 const CODE_BLOCK = 'code-block';
 export const CODE_BLOCK_OPTION_TITLE = 'Code block';
@@ -63,7 +59,6 @@ export function CodeBlockPlugin() {
   }
 
   const hotkeys = [
-    Hotkey('mod+shift+k', editor => editor.setCodeBlock(HOTKEY_SOURCE)),
     CustomEnterAction(exitBlockOnDoubleEnter),
     CustomBackspaceAction(exitOnBackspace),
   ];

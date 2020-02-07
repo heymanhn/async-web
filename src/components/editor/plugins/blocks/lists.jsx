@@ -4,14 +4,9 @@ import { faListOl, faListUl, faTasks } from '@fortawesome/free-solid-svg-icons';
 
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-import {
-  DEFAULT_NODE,
-  COMPOSITION_MENU_SOURCE,
-  HOTKEY_SOURCE,
-} from 'components/editor/utils';
+import { DEFAULT_NODE, COMPOSITION_MENU_SOURCE } from 'components/editor/utils';
 import {
   AddQueries,
-  Hotkey,
   CustomEnterAction,
   CustomBackspaceAction,
 } from '../helpers';
@@ -142,15 +137,6 @@ export function ListsPlugin() {
   // }
 
   const hotkeys = [
-    Hotkey('mod+shift+7', editor =>
-      editor.setListBlock(NUMBERED_LIST, HOTKEY_SOURCE)
-    ),
-    Hotkey('mod+shift+8', editor =>
-      editor.setListBlock(BULLETED_LIST, HOTKEY_SOURCE)
-    ),
-    Hotkey('mod+shift+0', editor =>
-      editor.setListBlock(CHECKLIST, HOTKEY_SOURCE)
-    ),
     CustomEnterAction(exitListAfterEmptyListItem),
     CustomBackspaceAction(resetListItemToParagraph),
     // CustomBackspaceAction(mergeAdjacentLists),

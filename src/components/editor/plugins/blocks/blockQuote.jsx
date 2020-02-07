@@ -4,12 +4,8 @@ import { faQuoteRight } from '@fortawesome/free-solid-svg-icons';
 
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-import {
-  DEFAULT_NODE,
-  COMPOSITION_MENU_SOURCE,
-  HOTKEY_SOURCE,
-} from 'components/editor/utils';
-import { Hotkey, CustomEnterAction, CustomBackspaceAction } from '../helpers';
+import { DEFAULT_NODE, COMPOSITION_MENU_SOURCE } from 'components/editor/utils';
+import { CustomEnterAction, CustomBackspaceAction } from '../helpers';
 
 const BLOCK_QUOTE = 'block-quote';
 export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
@@ -61,7 +57,6 @@ export function BlockQuotePlugin() {
   }
 
   const hotkeys = [
-    Hotkey('mod+shift+9', editor => editor.setBlockQuote(HOTKEY_SOURCE)),
     CustomEnterAction(exitBlockOnDoubleEnter),
     CustomBackspaceAction(exitOnBackspace),
   ];

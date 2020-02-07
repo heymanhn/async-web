@@ -76,13 +76,14 @@ const toggleBlock = (editor, type, source) => {
   }
 };
 
-const toggleMark = (editor, type) => {
+const toggleMark = (editor, type, source) => {
   const isActive = isMarkActive(editor, type);
 
   if (isActive) {
     SlateEditor.removeMark(editor, type);
   } else {
     SlateEditor.addMark(editor, type, true);
+    track('Mark added to content', { type, source });
   }
 };
 

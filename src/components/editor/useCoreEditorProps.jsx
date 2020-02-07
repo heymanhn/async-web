@@ -1,10 +1,6 @@
 import React, { useCallback } from 'react';
-import { isHotkey } from 'is-hotkey';
 
 import {
-  BOLD,
-  ITALIC,
-  UNDERLINE,
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
@@ -28,15 +24,9 @@ import {
   CodeBlockElement,
   BlockQuoteElement,
 } from './elements';
+import { triggerMarkHotkeys, triggerBlockHotkeys } from './hotkeys';
 import ChecklistItemElement from './ChecklistItem';
-import Editor from './Editor';
 import Leaf from './Leaf';
-
-const MARK_HOTKEYS = {
-  'mod+b': BOLD,
-  'mod+i': ITALIC,
-  'mod+u': UNDERLINE,
-};
 
 const useCoreEditorProps = editor => {
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
@@ -69,13 +59,8 @@ const useCoreEditorProps = editor => {
   }, []);
 
   function onKeyDown(event) {
-    Object.keys(MARK_HOTKEYS).forEach(hotkey => {
-      if (isHotkey(hotkey, event)) {
-        event.preventDefault();
-        const mark = MARK_HOTKEYS[hotkey];
-        Editor.toggleMark(editor, mark);
-      }
-    });
+    triggerMarkHotkeys(editor, event);
+    triggerBlockHotkeys(editor, event);
   }
 
   return {

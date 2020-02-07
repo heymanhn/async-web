@@ -1,19 +1,13 @@
 /* eslint react/prop-types: 0 */
 import React from 'react';
-import AutoReplace from 'slate-auto-replace';
 import { faHorizontalRule } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 
+import { DEFAULT_NODE, COMPOSITION_MENU_SOURCE } from 'components/editor/utils';
 import {
-  DEFAULT_NODE,
-  COMPOSITION_MENU_SOURCE,
-  MARKDOWN_SOURCE,
-} from 'components/editor/utils';
-import {
-  AddSchema,
   RenderBlock,
   CustomEnterAction,
   CustomBackspaceAction,
@@ -54,31 +48,12 @@ const StyledSectionBreak = styled.hr(({ theme: { colors } }) => ({
 }));
 
 export function SectionBreak() {
-  /* **** Schema **** */
-
-  const sectionBreakSchema = {
-    blocks: {
-      'section-break': {
-        isVoid: true,
-      },
-    },
-  };
-
   /* **** Render methods **** */
 
   function renderSectionBreak(props) {
     const { attributes } = props;
     return <StyledSectionBreak {...attributes} />;
   }
-
-  /* **** Markdown **** */
-
-  const markdownShortcut = AutoReplace({
-    trigger: '-',
-    before: /^(--)$/,
-    change: change =>
-      change.setBlock(SECTION_BREAK, MARKDOWN_SOURCE).insertBlock(DEFAULT_NODE),
-  });
 
   /* **** Hotkeys **** */
 
@@ -114,10 +89,5 @@ export function SectionBreak() {
     CustomBackspaceAction(removeSectionBreak),
   ];
 
-  return [
-    AddSchema(sectionBreakSchema),
-    RenderBlock(SECTION_BREAK, renderSectionBreak),
-    markdownShortcut,
-    hotkeys,
-  ];
+  return [RenderBlock(SECTION_BREAK, renderSectionBreak), hotkeys];
 }
