@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { faQuoteRight } from '@fortawesome/free-solid-svg-icons';
-import styled from '@emotion/styled';
 
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
@@ -10,14 +9,7 @@ import {
   COMPOSITION_MENU_SOURCE,
   HOTKEY_SOURCE,
 } from 'components/editor/utils';
-import {
-  AddSchema,
-  AddCommands,
-  Hotkey,
-  RenderBlock,
-  CustomEnterAction,
-  CustomBackspaceAction,
-} from '../helpers';
+import { Hotkey, CustomEnterAction, CustomBackspaceAction } from '../helpers';
 
 const BLOCK_QUOTE = 'block-quote';
 export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
@@ -45,44 +37,7 @@ BlockQuoteOption.propTypes = {
   editor: PropTypes.object.isRequired,
 };
 
-/* **** Slate plugin **** */
-
-const StyledBlockQuote = styled.blockquote(({ theme: { colors } }) => ({
-  borderLeft: `3px solid ${colors.borderGrey}`,
-  padding: '0px 16px',
-  fontStyle: 'italic',
-
-  div: {
-    color: colors.grey2,
-  },
-}));
-
 export function BlockQuotePlugin() {
-  /* **** Schema **** */
-
-  const blockQuoteSchema = { blocks: {} };
-  blockQuoteSchema.blocks[BLOCK_QUOTE] = {
-    nodes: [
-      {
-        match: { type: DEFAULT_NODE },
-      },
-    ],
-  };
-
-  /* **** Commands **** */
-
-  function setBlockQuote(editor, source) {
-    return editor.setWrappedBlock(BLOCK_QUOTE, source);
-  }
-
-  /* **** Render methods **** */
-
-  function renderBlockQuote(props) {
-    const { attributes, children } = props; /* eslint react/prop-types: 0 */
-
-    return <StyledBlockQuote {...attributes}>{children}</StyledBlockQuote>;
-  }
-
   /* **** Hotkeys **** */
 
   function exitBlockOnDoubleEnter(editor, next) {
@@ -111,10 +66,5 @@ export function BlockQuotePlugin() {
     CustomBackspaceAction(exitOnBackspace),
   ];
 
-  return [
-    AddSchema(blockQuoteSchema),
-    AddCommands({ setBlockQuote }),
-    RenderBlock(BLOCK_QUOTE, renderBlockQuote),
-    hotkeys,
-  ];
+  return [hotkeys];
 }
