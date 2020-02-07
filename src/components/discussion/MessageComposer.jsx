@@ -42,7 +42,7 @@ const MessageComposer = ({ initialMessage, ...props }) => {
     message,
   });
 
-  useDrafts(message, messageEditor);
+  useDrafts(message, messageEditor, isSubmitting);
   const isEmptyMessage = message === JSON.stringify(DEFAULT_VALUE);
 
   return (

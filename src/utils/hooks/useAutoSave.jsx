@@ -7,7 +7,10 @@ const useAutoSave = (content, handleSave, isDisabled) => {
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
   const contentString = JSON.stringify(content);
   const contentStringRef = useRef(contentString);
+  const isDisabledRef = useRef(isDisabled);
+
   contentStringRef.current = contentString;
+  isDisabledRef.current = isDisabled;
 
   const [state, setState] = useState({
     savedContent: contentString,
@@ -22,7 +25,7 @@ const useAutoSave = (content, handleSave, isDisabled) => {
     // This can be counterintuitive. When this function is invoked we
     // know the content has changed, but we only proceed with the save if the
     // user hasn't changed the content for a given idle interval.
-    const readyToSave = newContent === oldContent;
+    const readyToSave = !isDisabledRef.current && newContent === oldContent;
     if (readyToSave) handleSave();
 
     return setState(oldState => ({
