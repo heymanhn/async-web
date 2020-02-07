@@ -27,7 +27,9 @@ const TopicEditable = styled(Editable)(({ theme: { colors } }) => ({
 const TopicComposer = ({ initialTopic, ...props }) => {
   const { discussionId } = useContext(DiscussionContext);
   const topicEditor = useMemo(() => withReact(createEditor()), []);
-  const [topic, setTopic] = useState(JSON.parse(initialTopic) || DEFAULT_VALUE);
+  const [topic, setTopic] = useState(
+    initialTopic ? JSON.parse(initialTopic) : DEFAULT_VALUE
+  );
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
 
   async function handleUpdate() {
