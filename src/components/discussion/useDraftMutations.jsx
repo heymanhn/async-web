@@ -21,7 +21,7 @@ import useDiscussionMutations from './useDiscussionMutations';
 const useDraftMutations = (editor = null) => {
   const client = useApolloClient();
   const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
+  const { discussionId, afterCreateDraft } = useContext(DiscussionContext);
   const { handleCreate } = useDiscussionMutations();
 
   const [createMessageDraft] = useMutation(createMessageDraftMutation);
@@ -66,6 +66,8 @@ const useDraftMutations = (editor = null) => {
           draft: data.createMessageDraft,
         },
       });
+
+      afterCreateDraft(draftDiscussionId);
 
       return Promise.resolve();
     }

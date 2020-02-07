@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import { snakedQueryParams } from 'utils/queryParams';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
-import { DocumentContext } from 'utils/contexts';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
@@ -119,6 +119,18 @@ const DiscussionsList = () => {
     fetchMoreDiscussions();
   }
 
+  let value = {};
+  function setDiscussionId(id) {
+    if (!value.discussionId) {
+      value.discussionId = id;
+    }
+  }
+
+  value = {
+    discussionId: null,
+    afterCreateDraft: id => setDiscussionId(id),
+  };
+
   return (
     <Container ref={listRef}>
       <TitleSection>
@@ -127,13 +139,15 @@ const DiscussionsList = () => {
           <Label>Start a discussion</Label>
         </StartDiscussionButton>
       </TitleSection>
-      {isComposing && (
-        <StyledDiscussionMessage
-          mode="compose"
-          afterCreate={stopComposing}
-          handleCancel={stopComposing}
-        />
-      )}
+      <DiscussionContext.Provider value={value}>
+        {isComposing && (
+          <StyledDiscussionMessage
+            mode="compose"
+            afterCreate={stopComposing}
+            handleCancel={stopComposing}
+          />
+        )}
+      </DiscussionContext.Provider>
       {discussions.map(d => (
         <DiscussionListItem key={d.id} discussionId={d.id} />
       ))}

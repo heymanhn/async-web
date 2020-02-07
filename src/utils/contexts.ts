@@ -14,6 +14,7 @@ export const DiscussionContext = createContext({
   draft: null,
 
   afterCreate: () => {},
+  afterCreateDraft: () => {},
 });
 
 export const MessageContext = createContext({
