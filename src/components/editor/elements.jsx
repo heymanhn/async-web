@@ -1,0 +1,169 @@
+/* eslint react/prop-types: 0 */
+import React from 'react';
+import styled from '@emotion/styled';
+
+/*
+ * Default element, which is a paragraph block with better styling
+ */
+const TextBlock = styled.div(({ theme: { colors } }) => ({
+  color: colors.contentText,
+  fontSize: '16px',
+  marginTop: '12px',
+  marginBottom: '20px',
+}));
+
+export const TextElement = ({ attributes, children }) => (
+  <TextBlock {...attributes}>{children}</TextBlock>
+);
+
+/*
+ * Headings: Large, medium, small
+ */
+const LargeFont = styled.h1(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '28px',
+  fontWeight: 600,
+  lineHeight: '36px',
+  letterSpacing: '-0.02em',
+  margin: '30px 0px -10px',
+}));
+
+const MediumFont = styled.h2(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '22px',
+  fontWeight: 600,
+  lineHeight: '28px',
+  letterSpacing: '-0.018em',
+  margin: '18px 0px -10px',
+}));
+
+const SmallFont = styled.h3(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '16px',
+  fontWeight: 600,
+  lineHeight: '22px',
+  letterSpacing: '-0.011em',
+  margin: '12px 0px -10px',
+}));
+
+export const LargeFontElement = ({ attributes, children }) => (
+  <LargeFont {...attributes}>{children}</LargeFont>
+);
+
+export const MediumFontElement = ({ attributes, children }) => (
+  <MediumFont {...attributes}>{children}</MediumFont>
+);
+
+export const SmallFontElement = ({ attributes, children }) => (
+  <SmallFont {...attributes}>{children}</SmallFont>
+);
+
+/*
+ * List types
+ */
+
+const BulletedList = styled.ul({
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
+  marginTop: '12px',
+  marginBottom: '20px',
+});
+
+const NumberedList = styled.ol({
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
+  marginTop: '12px',
+  marginBottom: '20px',
+});
+
+const ListItem = styled.li({
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
+  marginBottom: '5px',
+  width: '100%',
+});
+
+const Checklist = styled.ul({
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
+  marginTop: '12px',
+  marginBottom: '20px',
+  paddingLeft: '16px',
+});
+
+export const BulletedListElement = ({ attributes, children }) => (
+  <BulletedList {...attributes}>{children}</BulletedList>
+);
+
+export const NumberedListElement = ({ attributes, children }) => (
+  <NumberedList {...attributes}>{children}</NumberedList>
+);
+
+export const ChecklistElement = ({ attributes, children }) => (
+  <Checklist {...attributes}>{children}</Checklist>
+);
+
+export const ListItemElement = ({ attributes, children }) => (
+  <ListItem {...attributes}>{children}</ListItem>
+);
+
+/*
+ * Code block
+ */
+const CodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
+  background: colors.bgGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  fontFamily: `${codeFontStack}`,
+  marginTop: '20px',
+  marginBottom: '20px',
+  padding: '7px 12px',
+  whiteSpace: 'pre-wrap',
+
+  div: {
+    fontSize: '14px',
+    marginTop: '0 !important',
+    marginBottom: '0 !important',
+  },
+
+  span: {
+    fontFamily: `${codeFontStack}`,
+    letterSpacing: '-0.2px',
+  },
+}));
+
+export const CodeBlockElement = ({ attributes, children }) => (
+  <CodeBlock {...attributes}>{children}</CodeBlock>
+);
+
+/*
+ * Block quote
+ */
+const BlockQuote = styled.blockquote(({ theme: { colors } }) => ({
+  borderLeft: `3px solid ${colors.borderGrey}`,
+  padding: '0px 16px',
+  fontStyle: 'italic',
+
+  div: {
+    color: colors.grey2,
+  },
+}));
+
+export const BlockQuoteElement = ({ attributes, children }) => (
+  <BlockQuote {...attributes}>{children}</BlockQuote>
+);
+
+/*
+ * Section break
+ */
+
+const SectionBreak = styled.hr(({ theme: { colors } }) => ({
+  borderRadius: '20px',
+  borderTop: `2px solid ${colors.borderGrey}`,
+  margin: '2em auto',
+  width: '120px',
+}));
+
+export const SectionBreakElement = ({ attributes }) => (
+  <SectionBreak {...attributes} />
+);

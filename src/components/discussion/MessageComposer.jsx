@@ -2,12 +2,16 @@ import React, { useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
+import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
 import { MessageContext } from 'utils/contexts';
 import useDrafts from 'utils/hooks/useDrafts';
 
 import { DEFAULT_VALUE } from 'components/editor/utils';
+import useCoreEditorProps from 'components/editor/useCoreEditorProps';
+import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
+import withVoidElements from 'components/editor/withVoidElements';
 import useMessageMutations from './useMessageMutations';
 import MessageActions from './MessageActions';
 
@@ -33,7 +37,13 @@ const MessageEditable = styled(Editable)({
 
 const MessageComposer = ({ initialMessage, ...props }) => {
   const { mode } = useContext(MessageContext);
-  const messageEditor = useMemo(() => withReact(createEditor()), []);
+  const messageEditor = useMemo(
+    () =>
+      withMarkdownShortcuts(
+        withVoidElements(withHistory(withReact(createEditor())))
+      ),
+    []
+  );
   const [message, setMessage] = useState(
     initialMessage ? JSON.parse(initialMessage) : DEFAULT_VALUE
   );
@@ -42,6 +52,7 @@ const MessageComposer = ({ initialMessage, ...props }) => {
     message,
   });
 
+  const coreEditorProps = useCoreEditorProps(messageEditor);
   useDrafts(message, messageEditor, isSubmitting);
   const isEmptyMessage = message === JSON.stringify(DEFAULT_VALUE);
 
@@ -52,7 +63,7 @@ const MessageComposer = ({ initialMessage, ...props }) => {
         value={message}
         onChange={v => setMessage(v)}
       >
-        <MessageEditable />
+        <MessageEditable {...coreEditorProps} />
         {mode !== 'display' && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}

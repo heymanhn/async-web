@@ -2,11 +2,16 @@ import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
+import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
 import useAutoSave from 'utils/hooks/useAutoSave';
 
 import { DEFAULT_VALUE } from 'components/editor/utils';
+import useCoreEditorProps from 'components/editor/useCoreEditorProps';
+import Toolbar from 'components/editor/toolbar/Toolbar';
+import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
+import withVoidElements from 'components/editor/withVoidElements';
 import useDocumentMutations from './useDocumentMutations';
 
 const DocumentEditable = styled(Editable)({
@@ -24,11 +29,18 @@ const DocumentEditable = styled(Editable)({
  */
 
 const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
-  const contentEditor = useMemo(() => withReact(createEditor()), []);
+  const contentEditor = useMemo(
+    () =>
+      withMarkdownShortcuts(
+        withVoidElements(withHistory(withReact(createEditor())))
+      ),
+    []
+  );
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_VALUE
   );
   const { handleUpdate } = useDocumentMutations(contentEditor);
+  const coreEditorProps = useCoreEditorProps(contentEditor);
 
   async function handleUpdateWrapper() {
     await handleUpdate();
@@ -39,7 +51,8 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
-      <DocumentEditable {...props} />
+      <DocumentEditable {...props} {...coreEditorProps} />
+      <Toolbar source="document" />
     </Slate>
   );
 };
