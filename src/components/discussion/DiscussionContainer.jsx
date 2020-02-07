@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import { DiscussionContext } from 'utils/contexts';
+import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 
 import HeaderBar from 'components/navigation/HeaderBar';
 import Discussion from './Discussion';
@@ -19,6 +19,7 @@ const Content = styled.div(({ theme: { colors } }) => ({
 
 const DiscussionContainer = ({ discussionId }) => {
   const value = {
+    ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
   };
 

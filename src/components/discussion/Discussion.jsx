@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import discussionQuery from 'graphql/queries/discussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import { snakedQueryParams } from 'utils/queryParams';
-import { DiscussionContext } from 'utils/contexts';
+import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import TopicComposer from './TopicComposer';
@@ -98,6 +98,7 @@ const Discussion = () => {
   }
 
   const value = {
+    ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     draft,
   };
