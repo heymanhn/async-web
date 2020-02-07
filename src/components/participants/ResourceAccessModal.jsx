@@ -33,7 +33,7 @@ const Contents = styled.div({
   padding: '20px 25px 25px',
 });
 
-const DocumentAccessModal = ({ handleClose, isOpen }) => {
+const ResourceAccessModal = ({ handleClose, isOpen }) => {
   // Putting the state here so that clicking anywhere on the modal
   // dismisses the dropdown
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -67,9 +67,9 @@ const DocumentAccessModal = ({ handleClose, isOpen }) => {
   );
 };
 
-DocumentAccessModal.propTypes = {
+ResourceAccessModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
 
-export default DocumentAccessModal;
+export default ResourceAccessModal;
