@@ -17,7 +17,8 @@ import NotificationsBell from 'components/notifications/NotificationsBell';
 import NewDocumentButton from 'components/document/NewDocumentButton';
 import DocumentViewMode from 'components/document/DocumentViewMode';
 import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
-import NavTitle from './NavTitle';
+import DocumentTitle from 'components/document/DocumentTitle';
+import DiscussionTitle from 'components/discussion/DiscussionTitle';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -98,11 +99,7 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
           isOpen={isDropdownOpen}
           organizationId={organizationId}
         />
-<<<<<<< HEAD:src/components/navigation/HeaderBar.jsx
-        <NavTitle />
-=======
-        <NavTitle documentId={documentId} discussionId={discussionId} />
->>>>>>> saving some progress:src/components/navigation/HeaderBar.jsx
+        {documentId ? <DocumentTitle /> : <DiscussionTitle />}
         {documentId && (
           <DocumentViewMode viewMode={viewMode} setViewMode={setViewMode} />
         )}
