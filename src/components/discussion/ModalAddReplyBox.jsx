@@ -11,7 +11,7 @@ import useCurrentUser from 'utils/hooks/useCurrentUser';
 import useHover from 'utils/hooks/useHover';
 
 import Avatar from 'components/shared/Avatar';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { DiscussionContext } from 'utils/contexts';
 
 const AddReplyContainer = styled.div(
   ({ hover, status, theme: { colors } }) => ({
