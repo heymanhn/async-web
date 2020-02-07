@@ -3,18 +3,24 @@
  */
 import { Range, Transforms } from 'slate';
 
-import { LIST_TYPES, CHECKLIST } from './utils';
+import {
+  MARKDOWN_SOURCE,
+  WRAPPED_TYPES,
+  BULLETED_LIST,
+  CHECKLIST,
+  BLOCK_QUOTE,
+} from './utils';
 import Editor from './Editor';
 
 const setNode = (editor, type) => {
-  if (!LIST_TYPES.includes(type)) {
+  if (!WRAPPED_TYPES.includes(type)) {
     Transforms.setNodes(
       editor,
       { type },
       { match: n => Editor.isBlock(editor, n) }
     );
   } else if (!Editor.isBlockActive(editor, type)) {
-    Editor.toggleBlock(editor, type);
+    Editor.toggleBlock(editor, type, MARKDOWN_SOURCE);
   }
 };
 
@@ -24,9 +30,26 @@ const MARKDOWN_SHORTCUTS = [
     before: /^(\[\])$/,
     change: editor => setNode(editor, CHECKLIST),
   },
-  // '-': ListType.LIST_ITEM,
-  // '+': ListType.LIST_ITEM,
-  // '>': BLOCKQUOTE,
+  {
+    trigger: 'space',
+    before: /^(-)$/,
+    change: editor => setNode(editor, BULLETED_LIST),
+  },
+  {
+    trigger: 'space',
+    before: /^(\*)$/,
+    change: editor => setNode(editor, BULLETED_LIST),
+  },
+  {
+    trigger: 'space',
+    before: /^(\+)$/,
+    change: editor => setNode(editor, BULLETED_LIST),
+  },
+  {
+    trigger: 'space',
+    before: /^(>)$/,
+    change: editor => setNode(editor, BLOCK_QUOTE),
+  },
   // '#': HeadingType.H1,
   // '##': HeadingType.H2,
   // '###': HeadingType.H3,

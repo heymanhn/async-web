@@ -59,8 +59,7 @@ function toggleBlock(editor, type, source) {
   }
 
   if (!isActive && isWrapped) {
-    const block = { type, children: [] };
-    Transforms.wrapNodes(editor, block);
+    Transforms.wrapNodes(editor, { type, children: [] });
   }
 
   // We're not interested in tracking text blocks...

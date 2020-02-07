@@ -1,19 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AutoReplace from 'slate-auto-replace';
 import { faQuoteRight } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
-import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
-import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 import {
   DEFAULT_NODE,
   COMPOSITION_MENU_SOURCE,
   HOTKEY_SOURCE,
-  MARKDOWN_SOURCE,
-  TOOLBAR_SOURCE,
 } from 'components/editor/utils';
 import {
   AddSchema,
@@ -88,26 +83,6 @@ export function BlockQuotePlugin() {
     return <StyledBlockQuote {...attributes}>{children}</StyledBlockQuote>;
   }
 
-  /* **** Markdown **** */
-
-  const markdownShortcuts = [
-    AutoReplace({
-      trigger: 'space',
-      before: /^(>)$/,
-      change: editor => {
-        // Essentially undoing the autoReplace detection
-        if (editor.isWrappedByAnyBlock()) return editor.insertText('> ');
-        if (!editor.isEmptyBlock())
-          return editor.setBlockQuote(MARKDOWN_SOURCE);
-
-        return editor
-          .insertBlock(DEFAULT_NODE)
-          .moveBackward(1)
-          .setBlockQuote(MARKDOWN_SOURCE);
-      },
-    }),
-  ];
-
   /* **** Hotkeys **** */
 
   function exitBlockOnDoubleEnter(editor, next) {
@@ -140,7 +115,6 @@ export function BlockQuotePlugin() {
     AddSchema(blockQuoteSchema),
     AddCommands({ setBlockQuote }),
     RenderBlock(BLOCK_QUOTE, renderBlockQuote),
-    markdownShortcuts,
     hotkeys,
   ];
 }
