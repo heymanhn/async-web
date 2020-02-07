@@ -4,7 +4,11 @@ import styled from '@emotion/styled';
 
 import useCurrentUser from 'utils/hooks/useCurrentUser';
 import useHover from 'utils/hooks/useHover';
-import { MessageContext, DiscussionContext } from 'utils/contexts';
+import {
+  MessageContext,
+  DiscussionContext,
+  DEFAULT_MESSAGE_CONTEXT,
+} from 'utils/contexts';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 import MessageComposer from './MessageComposer';
@@ -60,6 +64,7 @@ const DiscussionMessage = ({
   }
 
   const value = {
+    ...DEFAULT_MESSAGE_CONTEXT,
     messageId,
     mode,
     setMode,
