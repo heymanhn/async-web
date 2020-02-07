@@ -109,6 +109,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
   return (
     <AddReplyContainer
       status={status && status.state}
+      hover={hover}
       {...props}
       {...hoverProps}
     >
