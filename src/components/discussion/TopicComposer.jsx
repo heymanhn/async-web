@@ -5,7 +5,7 @@ import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
-import discussionQuery from 'graphql/queries/document';
+import discussionQuery from 'graphql/queries/discussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import { track } from 'utils/analytics';
 import { DiscussionContext } from 'utils/contexts';
