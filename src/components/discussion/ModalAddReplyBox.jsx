@@ -21,6 +21,9 @@ const AddReplyContainer = styled.div(
     alignItems: 'center',
 
     background: colors.white,
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
+    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
     color: colors.grey4,
     cursor: 'pointer',
     opacity: hover || status === 'resolved' ? 1 : 0.6,

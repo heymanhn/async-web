@@ -13,16 +13,12 @@ import DiscussionMessage from './DiscussionMessage';
 import DiscussionThread from './DiscussionThread';
 import ModalAddReplyBox from './ModalAddReplyBox';
 
-const Container = styled.div(({ theme: { discussionViewport, colors } }) => ({
+const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
 
-  // Vertically center the page when content doesn't fit full height
-  minHeight: 'calc(100vh - 60px)', // 60px for the navigation bar
-  background: colors.bgGrey,
-  margin: '0 auto',
-  maxWidth: discussionViewport,
+  minWidth: discussionViewport,
 }));
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
@@ -39,7 +35,7 @@ const Discussion = () => {
   const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
-  const [isComposing, setIsComposing] = useState(true);
+  const [isComposing, setIsComposing] = useState(false);
 
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
