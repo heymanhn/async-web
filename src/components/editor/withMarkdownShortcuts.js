@@ -9,6 +9,10 @@ import {
   BULLETED_LIST,
   CHECKLIST,
   BLOCK_QUOTE,
+  CODE_BLOCK,
+  LARGE_FONT,
+  MEDIUM_FONT,
+  SMALL_FONT,
 } from './utils';
 import Editor from './Editor';
 
@@ -50,12 +54,26 @@ const MARKDOWN_SHORTCUTS = [
     before: /^(>)$/,
     change: editor => setNode(editor, BLOCK_QUOTE),
   },
-  // '#': HeadingType.H1,
-  // '##': HeadingType.H2,
-  // '###': HeadingType.H3,
-  // '####': HeadingType.H4,
-  // '#####': HeadingType.H5,
-  // '######': HeadingType.H6,
+  {
+    trigger: '`',
+    before: /^(``)$/,
+    change: editor => setNode(editor, CODE_BLOCK),
+  },
+  {
+    trigger: 'space',
+    before: /^(#)$/,
+    change: editor => setNode(editor, LARGE_FONT),
+  },
+  {
+    trigger: 'space',
+    before: /^(##)$/,
+    change: editor => setNode(editor, MEDIUM_FONT),
+  },
+  {
+    trigger: 'space',
+    before: /^(###)$/,
+    change: editor => setNode(editor, SMALL_FONT),
+  },
 ];
 
 const triggerString = trigger => (trigger === 'space' ? ' ' : trigger);
@@ -91,8 +109,10 @@ const withMarkdownShortcuts = oldEditor => {
       const range = { anchor, focus: start };
       const beforeText = Editor.string(editor, range);
 
+      // Our rule: markdown shortcuts don't work when text is inside a block
+      // that's wrapped by another block already
       const shortcutObj = shortcutForPattern(beforeText, text);
-      if (shortcutObj) {
+      if (shortcutObj && !Editor.isWrappedBlock(editor)) {
         Transforms.select(editor, range);
         Transforms.delete(editor);
         shortcutObj.change(editor);

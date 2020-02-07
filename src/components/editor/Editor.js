@@ -18,20 +18,28 @@ import {
   CHECKLIST_ITEM,
 } from './utils';
 
-function isBlockActive(editor, type) {
+const isBlockActive = (editor, type) => {
   const [match] = SlateEditor.nodes(editor, {
     match: n => n.type === type,
   });
 
   return !!match;
-}
+};
 
-function isMarkActive(editor, type) {
+const isMarkActive = (editor, type) => {
   const marks = SlateEditor.marks(editor);
   return marks ? marks[type] === true : false;
-}
+};
 
-function toggleBlock(editor, type, source) {
+const isWrappedBlock = editor => {
+  const [match] = SlateEditor.nodes(editor, {
+    match: n => WRAPPED_TYPES.includes(n.type),
+  });
+
+  return !!match;
+};
+
+const toggleBlock = (editor, type, source) => {
   const isActive = isBlockActive(editor, type);
   const isList = LIST_TYPES.includes(type);
   const isWrapped = WRAPPED_TYPES.includes(type);
@@ -66,9 +74,9 @@ function toggleBlock(editor, type, source) {
   if (!isActive && type !== DEFAULT_NODE) {
     track('Block inserted to content', { type, source });
   }
-}
+};
 
-function toggleMark(editor, type) {
+const toggleMark = (editor, type) => {
   const isActive = isMarkActive(editor, type);
 
   if (isActive) {
@@ -76,12 +84,13 @@ function toggleMark(editor, type) {
   } else {
     SlateEditor.addMark(editor, type, true);
   }
-}
+};
 
 const Editor = {
   ...SlateEditor,
   isBlockActive,
   isMarkActive,
+  isWrappedBlock,
   toggleBlock,
   toggleMark,
 };
