@@ -9,7 +9,7 @@ import notificationsQuery from 'graphql/queries/notifications';
 import { getLocalAppState, getLocalUser } from 'utils/auth';
 import { DocumentContext } from 'utils/contexts';
 
-import DocumentAccessContainer from 'components/participants/DocumentAccessContainer';
+import ResourceAccessContainer from 'components/participants/ResourceAccessContainer';
 import Avatar from 'components/shared/Avatar';
 import VerticalDivider from 'components/shared/VerticalDivider';
 import DropdownMenu from 'components/navigation/DropdownMenu';
@@ -104,7 +104,7 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
           <DocumentViewMode viewMode={viewMode} setViewMode={setViewMode} />
         )}
         <VerticalDivider />
-        <DocumentAccessContainer />
+        <ResourceAccessContainer />
       </MenuSection>
       <NavigationSection>
         <NotificationsBell notifications={notifications} />
