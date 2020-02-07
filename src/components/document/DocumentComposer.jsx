@@ -10,6 +10,7 @@ import useAutoSave from 'utils/hooks/useAutoSave';
 import { DEFAULT_VALUE } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import Toolbar from 'components/editor/toolbar/Toolbar';
+import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import useDocumentMutations from './useDocumentMutations';
 
 const DocumentEditable = styled(Editable)({
@@ -28,7 +29,7 @@ const DocumentEditable = styled(Editable)({
 
 const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const contentEditor = useMemo(
-    () => withHistory(withReact(createEditor())),
+    () => withMarkdownShortcuts(withHistory(withReact(createEditor()))),
     []
   );
   const [content, setContent] = useState(
