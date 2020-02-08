@@ -5,13 +5,9 @@ import { useMutation, useQuery } from 'react-apollo';
 import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
-import organizationMembersQuery from 'graphql/queries/organizationMembers';
-import documentMembersQuery from 'graphql/queries/documentMembers';
-import discussionMembersQuery from 'graphql/queries/discussionMembers';
-import addDocumentMemberMutation from 'graphql/mutations/addDocumentMember';
-import localAddDocumentMemberMutation from 'graphql/mutations/local/addDocumentMember';
-import addDiscussionMemberMutation from 'graphql/mutations/addDiscussionMember';
-import localAddDiscussionMemberMutation from 'graphql/mutations/local/addDiscussionMember';
+import objectMembersQuery from 'graphql/queries/objectMembers';
+import addMemberMutation from 'graphql/mutations/addMember';
+import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import { getLocalAppState } from 'utils/auth';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
@@ -59,42 +55,28 @@ const OrganizationMemberSearch = ({
   const { organizationId: id } = getLocalAppState();
   const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
+  const objectType = documentId ? 'documents' : 'discussions';
+  const objectId = documentId || discussionId;
 
-  const { loading: l1, data: data1 } = useQuery(organizationMembersQuery, {
-    variables: { id },
-  });
-  const { loading: l2, data: data2 } = useQuery(documentMembersQuery, {
-    variables: { id: documentId },
-    skip: !documentId,
-  });
-  const { loading: l3, data: data3 } = useQuery(discussionMembersQuery, {
-    variables: { id: discussionId },
-    skip: !discussionId,
+  const { loading: l1, data: orgMembership } = useQuery(objectMembersQuery, {
+    variables: { objectType: 'organizations', id },
   });
 
-  const [addDocumentMember] = useMutation(addDocumentMemberMutation);
-  const [localAddDocumentMember] = useMutation(localAddDocumentMemberMutation);
-  const [addDiscussionMember] = useMutation(addDiscussionMemberMutation);
-  const [localAddDiscussionMember] = useMutation(
-    localAddDiscussionMemberMutation
-  );
+  const { loading: l2, data: objectMembership } = useQuery(objectMembersQuery, {
+    variables: { objectType, id: objectId },
+  });
 
-  if (l1 || l2 || l3 || !data1.organizationMembers) {
+  const [addMember] = useMutation(addMemberMutation);
+  const [localAddMember] = useMutation(localAddMemberMutation);
+
+  if (l1 || l2 || !orgMembership.objectMembers) {
     return null;
   }
 
-  let { members } = data1.organizationMembers || [];
+  let { members } = orgMembership.objectMembers || [];
   members = members.map(m => m.user);
 
-  let resourceMembers;
-  if (documentId) {
-    const { documentMembers } = data2;
-    ({ resourceMembers } = documentMembers || {});
-  } else if (discussionId) {
-    const { discussionMembers } = data3;
-    ({ resourceMembers } = discussionMembers || {});
-  }
-
+  const { resourceMembers } = objectMembership.objectMembers;
   const participants = (resourceMembers || []).map(p => p.user);
 
   function memberSearch() {
@@ -123,48 +105,28 @@ const OrganizationMemberSearch = ({
     return ((x % n) + n) % n;
   }
 
-  function handleAddDocumentMember(user) {
-    if (participants.find(({ id: pid }) => pid === user.id)) return;
-
-    addDocumentMember({
-      variables: {
-        id: documentId,
-        input: {
-          userId: user.id,
-          accessType: DEFAULT_ACCESS_TYPE,
-        },
-      },
-    });
-
-    localAddDocumentMember({
-      variables: { id: documentId, user, accessType: DEFAULT_ACCESS_TYPE },
-    });
-  }
-
-  function handleAddDiscussionMember(user) {
-    if (participants.find(({ id: pid }) => pid === user.id)) return;
-
-    addDiscussionMember({
-      variables: {
-        id: discussionId,
-        input: {
-          userId: user.id,
-          accessType: DEFAULT_ACCESS_TYPE,
-        },
-      },
-    });
-
-    localAddDiscussionMember({
-      variables: { id: discussionId, user, accessType: DEFAULT_ACCESS_TYPE },
-    });
-  }
-
   function handleAddMember(user) {
-    if (documentId) {
-      handleAddDocumentMember(user);
-    } else if (discussionId) {
-      handleAddDiscussionMember(user);
-    }
+    if (participants.find(({ id: pid }) => pid === user.id)) return;
+
+    addMember({
+      variables: {
+        objectType,
+        id: objectId,
+        input: {
+          userId: user.id,
+          accessType: DEFAULT_ACCESS_TYPE,
+        },
+      },
+    });
+
+    localAddMember({
+      variables: {
+        objectType,
+        id: objectId,
+        user,
+        accessType: DEFAULT_ACCESS_TYPE,
+      },
+    });
 
     setSearchQuery('');
     setSelectedIndex(0);

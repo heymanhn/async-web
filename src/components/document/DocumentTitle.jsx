@@ -23,7 +23,7 @@ const DocumentTitle = () => {
   const { document } = data;
   const { title } = document;
 
-  return <Title>{title || 'Untitled'}</Title>;
+  return <Title>{title || 'Untitled Document'}</Title>;
 };
 
 export default DocumentTitle;

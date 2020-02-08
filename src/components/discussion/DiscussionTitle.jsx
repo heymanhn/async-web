@@ -23,7 +23,7 @@ const DiscussionTitle = () => {
   const { topic } = discussion;
   const { text: title } = topic || {};
 
-  return <Title>{title || 'Untitled'}</Title>;
+  return <Title>{title || 'Untitled Discussion'}</Title>;
 };
 
 export default DiscussionTitle;
