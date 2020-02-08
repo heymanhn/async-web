@@ -32,7 +32,6 @@ import CreateOrganization from 'components/auth/CreateOrganization';
 import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
 import DocumentContainer from 'components/document/DocumentContainer';
-import DocumentDiscussionHandler from 'components/document/DocumentDiscussionHandler';
 import DiscussionContainer from './discussion/DiscussionContainer';
 
 const restLink = new RestLink({
@@ -115,7 +114,7 @@ const App = () => {
         <PrivateRoute path="/d/:documentId" component={DocumentContainer} />
         <PrivateRoute
           path="/d/:documentId/discussions/:discussionId"
-          component={DocumentDiscussionHandler}
+          component={DocumentContainer}
         />
         <PrivateRoute
           path="/d/:documentId/discussions"
