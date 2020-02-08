@@ -1,6 +1,6 @@
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
-import documentMembersQuery from 'graphql/queries/documentMembers';
+import objectMembersQuery from 'graphql/queries/objectMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
@@ -118,15 +118,15 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
   return null;
 }
 
-function addDocumentMember(_root, { id, user, accessType }, { client }) {
+function addMember(_root, { objectType, id, user, accessType }, { client }) {
   const data = client.readQuery({
-    query: documentMembersQuery,
-    variables: { id },
+    query: objectMembersQuery,
+    variables: { objectType, id },
   });
   if (!data) return null;
 
-  const { documentMembers } = data;
-  const { members, __typename } = documentMembers;
+  const { objectMembers } = data;
+  const { members, __typename } = objectMembers;
 
   const newMember = {
     ...members[0],
@@ -135,10 +135,10 @@ function addDocumentMember(_root, { id, user, accessType }, { client }) {
   };
 
   client.writeQuery({
-    query: documentMembersQuery,
-    variables: { id },
+    query: objectMembersQuery,
+    variables: { objectType, id },
     data: {
-      documentMembers: {
+      objectMembers: {
         members: [...members, newMember],
         __typename,
       },
@@ -148,24 +148,24 @@ function addDocumentMember(_root, { id, user, accessType }, { client }) {
   return null;
 }
 
-function removeDocumentMember(_root, { id, userId }, { client }) {
+function removeMember(_root, { objectType, id, userId }, { client }) {
   const data = client.readQuery({
-    query: documentMembersQuery,
-    variables: { id },
+    query: objectMembersQuery,
+    variables: { objectType, id },
   });
   if (!data) return null;
 
-  const { documentMembers } = data;
-  const { members, __typename } = documentMembers;
+  const { objectMembers } = data;
+  const { members, __typename } = objectMembers;
 
   const index = members.findIndex(p => p.user.id === userId);
   if (index < 0) return null;
 
   client.writeQuery({
-    query: documentMembersQuery,
-    variables: { id },
+    query: objectMembersQuery,
+    variables: { objectType, id },
     data: {
-      documentMembers: {
+      objectMembers: {
         members: [...members.slice(0, index), ...members.slice(index + 1)],
         __typename,
       },
@@ -258,8 +258,8 @@ const localResolvers = {
     deleteDraftFromDiscussion,
     addNewMessageToDiscussion,
     addPendingRepliesToDiscussion,
-    addDocumentMember,
-    removeDocumentMember,
+    addMember,
+    removeMember,
     updateBadgeCount,
     deleteMessageFromDiscussion,
   },

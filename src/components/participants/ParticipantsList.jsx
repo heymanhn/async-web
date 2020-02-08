@@ -1,32 +1,31 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
 import { useQuery } from 'react-apollo';
 
-import documentMembersQuery from 'graphql/queries/documentMembers';
+import objectMembersQuery from 'graphql/queries/objectMembers';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import ParticipantRow from './ParticipantRow';
 
-const ParticipantsList = ({ documentId }) => {
-  const { loading, data } = useQuery(documentMembersQuery, {
-    variables: { id: documentId },
+const ParticipantsList = () => {
+  const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
+
+  const objectType = documentId ? 'documents' : 'discussions';
+  const id = documentId || discussionId;
+
+  const { loading, data } = useQuery(objectMembersQuery, {
+    variables: { id, objectType },
     fetchPolicy: 'cache-and-network',
   });
 
-  if (loading && (!data || !data.documentMembers)) return null;
+  if (loading) return null;
 
-  const { documentMembers } = data;
-  const { members } = documentMembers;
+  const { objectMembers } = data;
+  const { members } = objectMembers;
 
   return (members || []).map(p => (
-    <ParticipantRow
-      key={p.user.id}
-      accessType={p.accessType}
-      documentId={documentId}
-      user={p.user}
-    />
+    <ParticipantRow key={p.user.id} accessType={p.accessType} user={p.user} />
   ));
 };
-
-ParticipantsList.propTypes = { documentId: PropTypes.string.isRequired };
 
 export default ParticipantsList;

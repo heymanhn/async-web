@@ -11,7 +11,7 @@ import useCurrentUser from 'utils/hooks/useCurrentUser';
 import useHover from 'utils/hooks/useHover';
 
 import Avatar from 'components/shared/Avatar';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { DiscussionContext } from 'utils/contexts';
 
 const AddReplyContainer = styled.div(
   ({ hover, status, theme: { colors } }) => ({
@@ -20,7 +20,10 @@ const AddReplyContainer = styled.div(
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    background: colors.bgGrey,
+    background: colors.white,
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
+    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
     color: colors.grey4,
     cursor: 'pointer',
     opacity: hover || status === 'resolved' ? 1 : 0.6,
@@ -81,7 +84,6 @@ const Label = styled.div(({ theme: { colors } }) => ({
 }));
 
 const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
-  const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
   const { hover, ...hoverProps } = useHover(isComposing);
   const currentUser = useCurrentUser();
@@ -102,7 +104,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
     };
 
     updateDiscussion({
-      variables: { documentId, discussionId, input },
+      variables: { discussionId, input },
     });
   }
 

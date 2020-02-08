@@ -20,7 +20,7 @@ const useDiscussionMutations = () => {
   const { afterCreate } = useContext(DiscussionContext);
 
   async function handleCreate() {
-    const input = {};
+    const input = documentId ? { documentId } : {};
     // TODO: fix this when we implement extracting context
     // if (context) {
     //   const initialJSON = JSON.parse(context);
@@ -34,7 +34,7 @@ const useDiscussionMutations = () => {
     // }
 
     const { data: createDiscussionData } = await createDiscussion({
-      variables: { documentId, input },
+      variables: { input },
     });
 
     if (createDiscussionData.createDiscussion) {

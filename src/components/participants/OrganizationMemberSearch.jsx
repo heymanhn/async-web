@@ -1,15 +1,15 @@
 /* eslint no-mixed-operators: 0 */
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
-import organizationMembersQuery from 'graphql/queries/organizationMembers';
-import documentMembersQuery from 'graphql/queries/documentMembers';
-import addDocumentMemberMutation from 'graphql/mutations/addDocumentMember';
-import localAddDocumentMemberMutation from 'graphql/mutations/local/addDocumentMember';
+import objectMembersQuery from 'graphql/queries/objectMembers';
+import addMemberMutation from 'graphql/mutations/addMember';
+import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import { getLocalAppState } from 'utils/auth';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import MemberResults from './MemberResults';
 
@@ -44,34 +44,40 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
 }));
 
 const OrganizationMemberSearch = ({
-  documentId,
   isDropdownVisible,
   handleShowDropdown,
   handleHideDropdown,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const DEFAULT_ACCESS_TYPE = 'collaborator';
 
   const { organizationId: id } = getLocalAppState();
-  const { loading: l1, data: data1 } = useQuery(organizationMembersQuery, {
-    variables: { id },
-  });
-  const { loading: l2, data: data2 } = useQuery(documentMembersQuery, {
-    variables: { id: documentId },
+  const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
+  const objectType = documentId ? 'documents' : 'discussions';
+  const objectId = documentId || discussionId;
+
+  const { loading: l1, data: orgMembership } = useQuery(objectMembersQuery, {
+    variables: { objectType: 'organizations', id },
   });
 
-  const [addMember] = useMutation(addDocumentMemberMutation);
-  const [localAddMember] = useMutation(localAddDocumentMemberMutation);
+  const { loading: l2, data: objectMembership } = useQuery(objectMembersQuery, {
+    variables: { objectType, id: objectId },
+  });
 
-  if (l1 || l2 || !data1.organizationMembers || !data2.documentMembers) {
+  const [addMember] = useMutation(addMemberMutation);
+  const [localAddMember] = useMutation(localAddMemberMutation);
+
+  if (l1 || l2 || !orgMembership.objectMembers) {
     return null;
   }
 
-  let { members } = data1.organizationMembers || [];
+  let { members } = orgMembership.objectMembers || [];
   members = members.map(m => m.user);
 
-  const { documentMembers } = data2;
-  const participants = (documentMembers.members || []).map(p => p.user);
+  const { resourceMembers } = objectMembership.objectMembers;
+  const participants = (resourceMembers || []).map(p => p.user);
 
   function memberSearch() {
     if (!searchQuery) return [];
@@ -102,10 +108,10 @@ const OrganizationMemberSearch = ({
   function handleAddMember(user) {
     if (participants.find(({ id: pid }) => pid === user.id)) return;
 
-    const DEFAULT_ACCESS_TYPE = 'collaborator';
     addMember({
       variables: {
-        id: documentId,
+        objectType,
+        id: objectId,
         input: {
           userId: user.id,
           accessType: DEFAULT_ACCESS_TYPE,
@@ -114,7 +120,12 @@ const OrganizationMemberSearch = ({
     });
 
     localAddMember({
-      variables: { id: documentId, user, accessType: DEFAULT_ACCESS_TYPE },
+      variables: {
+        objectType,
+        id: objectId,
+        user,
+        accessType: DEFAULT_ACCESS_TYPE,
+      },
     });
 
     setSearchQuery('');
@@ -176,7 +187,6 @@ const OrganizationMemberSearch = ({
 };
 
 OrganizationMemberSearch.propTypes = {
-  documentId: PropTypes.string.isRequired,
   isDropdownVisible: PropTypes.bool.isRequired,
   handleShowDropdown: PropTypes.func.isRequired,
   handleHideDropdown: PropTypes.func.isRequired,

@@ -1,63 +1,64 @@
-import React, { useContext, useRef, useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useRef, useState, useContext } from 'react';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
-import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 
+import NotFound from 'components/navigation/NotFound';
+import TopicComposer from './TopicComposer';
 import DiscussionMessage from './DiscussionMessage';
-import NewMessagesIndicator from './NewMessagesIndicator';
+import DiscussionThread from './DiscussionThread';
+import ModalAddReplyBox from './ModalAddReplyBox';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
 
-  maxWidth: discussionViewport,
+  minWidth: discussionViewport,
 }));
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
-  ({ isUnread, theme: { colors } }) => ({
-    backgroundColor: isUnread ? colors.unreadBlue : 'default',
+  ({ theme: { colors } }) => ({
+    background: colors.white,
     border: `1px solid ${colors.borderGrey}`,
     borderRadius: '5px',
-    boxShadow: `0px 0px 3px ${colors.grey7}`,
-    marginBottom: '30px',
+    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
   })
 );
 
-const DiscussionThread = ({ isUnread }) => {
-  const discussionRef = useRef(null);
-  const { documentId } = useContext(DocumentContext);
+const Discussion = () => {
   const { discussionId } = useContext(DiscussionContext);
+  const discussionRef = useRef(null);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
+  const [isComposing, setIsComposing] = useState(false);
 
-  const { markAsRead } = useViewedReaction();
-  useEffect(() => {
-    return () => {
-      markAsRead({
-        isUnread,
-        objectType: 'discussion',
-        objectId: discussionId,
-        parentId: documentId,
-      });
-    };
-  });
+  const startComposing = () => setIsComposing(true);
+  const stopComposing = () => setIsComposing(false);
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
     variables: { discussionId, queryParams: {} },
   });
-
   if (loading) return null;
-  if (error || !data.messages) return <div>{error}</div>;
+  if (error || !data.discussion) return <NotFound />;
 
+  const { topic, draft } = data.discussion;
+  const { payload } = topic || {};
   const { items, pageToken } = data.messages;
-  const messages = (items || []).map(i => i.message);
+
+  if ((draft || !items) && !isComposing) startComposing();
+
+  function isUnread() {
+    const { tags } = data.discussion;
+    const safeTags = tags || [];
+    return (
+      safeTags.includes('new_messages') || safeTags.includes('new_discussion')
+    );
+  }
 
   function fetchMoreMessages() {
     const newQueryParams = {};
@@ -66,7 +67,7 @@ const DiscussionThread = ({ isUnread }) => {
     fetchMore({
       query: discussionQuery,
       variables: {
-        discussionId,
+        id: discussionId,
         queryParams: snakedQueryParams(newQueryParams),
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
@@ -79,7 +80,7 @@ const DiscussionThread = ({ isUnread }) => {
         setIsFetching(false);
 
         return {
-          discussion: fetchMoreResult.discussion,
+          conversation: fetchMoreResult.conversation,
           messages: {
             pageToken: newToken,
             messageCount: fetchMoreResult.messages.messageCount,
@@ -96,34 +97,32 @@ const DiscussionThread = ({ isUnread }) => {
     fetchMoreMessages();
   }
 
-  function firstNewMessageId() {
-    const targetMessage = messages.find(
-      m => m.tags && m.tags.includes('new_messages')
-    );
-
-    return targetMessage ? targetMessage.id : null;
-  }
-
-  function isNewMessage(m) {
-    return m.tags && m.tags.includes('new_message');
-  }
+  const value = {
+    ...DEFAULT_DISCUSSION_CONTEXT,
+    discussionId,
+    draft,
+  };
 
   return (
-    <Container ref={discussionRef}>
-      {messages.map(m => (
-        <React.Fragment key={m.id}>
-          {firstNewMessageId() === m.id && m.id !== messages[0].id && (
-            <NewMessagesIndicator />
-          )}
-          <StyledDiscussionMessage message={m} isUnread={isNewMessage(m)} />
-        </React.Fragment>
-      ))}
-    </Container>
+    <DiscussionContext.Provider value={value}>
+      <Container ref={discussionRef}>
+        <TopicComposer initialTopic={payload} autoFocus={!payload || !items} />
+        {items && <DiscussionThread isUnread={isUnread()} />}
+        {isComposing ? (
+          <StyledDiscussionMessage
+            mode="compose"
+            afterCreate={stopComposing}
+            handleCancel={stopComposing}
+          />
+        ) : (
+          <ModalAddReplyBox
+            handleClickReply={startComposing}
+            isComposing={isComposing}
+          />
+        )}
+      </Container>
+    </DiscussionContext.Provider>
   );
 };
 
-DiscussionThread.propTypes = {
-  isUnread: PropTypes.bool.isRequired,
-};
-
-export default DiscussionThread;
+export default Discussion;

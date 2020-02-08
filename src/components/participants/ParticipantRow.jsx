@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import localRemoveMemberMutation from 'graphql/mutations/local/removeDocumentMember';
-import removeMemberMutation from 'graphql/mutations/removeDocumentMember';
+import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
+import removeMemberMutation from 'graphql/mutations/removeMember';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -51,18 +52,25 @@ const RemoveButton = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const ParticipantRow = ({ accessType, documentId, user }) => {
+const ParticipantRow = ({ accessType, user }) => {
+  const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
+  const objectType = documentId ? 'documents' : 'discussions';
+  const objectId = documentId || discussionId;
+
   const { fullName, id, profilePictureUrl } = user;
 
   const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
     variables: {
-      id: documentId,
+      objectType,
+      id: objectId,
       userId: id,
     },
   });
   const [removeMember] = useMutation(removeMemberMutation, {
     variables: {
-      id: documentId,
+      objectType,
+      id: objectId,
       userId: id,
     },
   });
@@ -98,7 +106,6 @@ const ParticipantRow = ({ accessType, documentId, user }) => {
 
 ParticipantRow.propTypes = {
   accessType: PropTypes.string.isRequired,
-  documentId: PropTypes.string.isRequired,
   user: PropTypes.object.isRequired,
 };
 

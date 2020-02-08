@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import { DocumentContext } from 'utils/contexts';
 import Modal from 'components/shared/Modal';
 import OrganizationMemberSearch from './OrganizationMemberSearch';
 import ParticipantsList from './ParticipantsList';
@@ -32,10 +33,11 @@ const Contents = styled.div({
   padding: '20px 25px 25px',
 });
 
-const DocumentAccessModal = ({ documentId, handleClose, isOpen }) => {
+const ResourceAccessModal = ({ handleClose, isOpen }) => {
   // Putting the state here so that clicking anywhere on the modal
   // dismisses the dropdown
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const { documentId } = useContext(DocumentContext);
 
   function handleShowDropdown() {
     setIsDropdownVisible(true);
@@ -50,24 +52,24 @@ const DocumentAccessModal = ({ documentId, handleClose, isOpen }) => {
       handleClose={handleClose}
       isOpen={isOpen}
     >
-      <Header onClick={handleHideDropdown}>Share this Document</Header>
+      <Header onClick={handleHideDropdown}>
+        Share this {documentId ? 'Document' : 'Discussion'}
+      </Header>
       <Contents onClick={handleHideDropdown}>
         <OrganizationMemberSearch
-          documentId={documentId}
           isDropdownVisible={isDropdownVisible}
           handleShowDropdown={handleShowDropdown}
           handleHideDropdown={handleHideDropdown}
         />
-        <ParticipantsList documentId={documentId} />
+        <ParticipantsList />
       </Contents>
     </StyledModal>
   );
 };
 
-DocumentAccessModal.propTypes = {
-  documentId: PropTypes.string.isRequired,
+ResourceAccessModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
 
-export default DocumentAccessModal;
+export default ResourceAccessModal;
