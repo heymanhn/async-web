@@ -11,6 +11,7 @@ import useDrafts from 'utils/hooks/useDrafts';
 import { DEFAULT_VALUE } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
+import Toolbar from 'components/editor/toolbar/Toolbar';
 import withVoidElements from 'components/editor/withVoidElements';
 import useMessageMutations from './useMessageMutations';
 import MessageActions from './MessageActions';
@@ -65,6 +66,7 @@ const MessageComposer = ({ initialMessage, ...props }) => {
         key={mode === 'display'}
       >
         <MessageEditable readOnly={mode === 'display'} {...coreEditorProps} />
+        <Toolbar source="message" />
         {mode !== 'display' && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
