@@ -63,7 +63,7 @@ const MessageComposer = ({ initialMessage, ...props }) => {
         value={message}
         onChange={v => setMessage(v)}
       >
-        <MessageEditable {...coreEditorProps} />
+        <MessageEditable readOnly={mode === 'display'} {...coreEditorProps} />
         {mode !== 'display' && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
