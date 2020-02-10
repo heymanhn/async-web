@@ -13,6 +13,7 @@ import {
   NUMBERED_LIST,
   CHECKLIST,
   CODE_BLOCK,
+  BLOCK_QUOTE,
 } from './utils';
 import Editor from './Editor';
 
@@ -31,6 +32,7 @@ const BLOCK_HOTKEYS = {
   'mod+shift+8': BULLETED_LIST,
   'mod+shift+9': CHECKLIST,
   'mod+shift+k': CODE_BLOCK,
+  'mod+shift+>': BLOCK_QUOTE,
 };
 
 export const triggerMarkHotkeys = (editor, event) => {
