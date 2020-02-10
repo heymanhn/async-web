@@ -20,7 +20,7 @@ const MARK_HOTKEYS = {
   'mod+b': BOLD,
   'mod+i': ITALIC,
   'mod+u': UNDERLINE,
-  'shift+mod+c': CODE_HIGHLIGHT,
+  'mod+shift+c': CODE_HIGHLIGHT,
 };
 
 const BLOCK_HOTKEYS = {
