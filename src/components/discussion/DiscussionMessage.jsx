@@ -30,7 +30,7 @@ const HeaderSection = styled.div({
 });
 
 const StyledHoverMenu = styled(HoverMenu)({
-  position: 'absolute',
+  position: 'relative',
   right: '0px',
 });
 
