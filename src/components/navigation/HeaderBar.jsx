@@ -1,12 +1,10 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-
 import { useQuery } from '@apollo/react-hooks';
 
 import organizationQuery from 'graphql/queries/organization';
-import notificationsQuery from 'graphql/queries/notifications';
-import { getLocalAppState, getLocalUser } from 'utils/auth';
+import { getLocalAppState } from 'utils/auth';
 import { DocumentContext } from 'utils/contexts';
 
 import ResourceAccessContainer from 'components/participants/ResourceAccessContainer';
@@ -65,25 +63,14 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
   }
 
   const { organizationId } = getLocalAppState();
-  const { userId } = getLocalUser();
 
-  const { loading: loadingOrg, data: organizationData } = useQuery(
-    organizationQuery,
-    {
-      variables: { id: organizationId },
-    }
-  );
-
-  const { loading, data: notificationsData } = useQuery(notificationsQuery, {
-    variables: { id: userId },
+  const { loading, data } = useQuery(organizationQuery, {
+    variables: { id: organizationId },
+    skip: !organizationId,
   });
 
-  if (!organizationId) return null;
-  if (loadingOrg || !organizationData.organization) return null;
-  if (loading || !notificationsData.userNotifications) return null;
-
-  const { logo } = organizationData.organization;
-  const { notifications } = notificationsData.userNotifications;
+  if (loading || !data.organization) return null;
+  const { logo } = data.organization;
 
   return (
     <Container {...props}>
@@ -107,7 +94,7 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
         <ResourceAccessContainer />
       </MenuSection>
       <NavigationSection>
-        <NotificationsBell notifications={notifications} />
+        <NotificationsBell />
         <NewDocumentButton />
         <NewDiscussionButton />
       </NavigationSection>

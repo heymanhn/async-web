@@ -1,8 +1,11 @@
 import React, { useState, useRef } from 'react';
-import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
+import { useQuery } from '@apollo/react-hooks';
+
+import { getLocalUser } from 'utils/auth';
+import notificationsQuery from 'graphql/queries/notifications';
 
 import NotificationsDropdown from './NotificationsDropdown';
 
@@ -32,10 +35,18 @@ const UnreadBadge = styled.div(({ theme: { colors } }) => ({
   height: '12px',
 }));
 
-const NotificationsBell = ({ notifications }) => {
+const NotificationsBell = () => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const iconRef = useRef(null);
+  const { userId } = getLocalUser();
 
+  const { loading, data } = useQuery(notificationsQuery, {
+    variables: { id: userId },
+  });
+
+  if (loading || !data.userNotifications) return null;
+
+  const { notifications } = data.userNotifications;
   const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
 
   function findIconWidth() {
@@ -70,14 +81,6 @@ const NotificationsBell = ({ notifications }) => {
       )}
     </div>
   );
-};
-
-NotificationsBell.propTypes = {
-  notifications: PropTypes.array,
-};
-
-NotificationsBell.defaultProps = {
-  notifications: [],
 };
 
 export default NotificationsBell;
