@@ -62,6 +62,7 @@ const MessageComposer = ({ initialMessage, ...props }) => {
         editor={messageEditor}
         value={message}
         onChange={v => setMessage(v)}
+        key={mode === 'display'}
       >
         <MessageEditable readOnly={mode === 'display'} {...coreEditorProps} />
         {mode !== 'display' && (
