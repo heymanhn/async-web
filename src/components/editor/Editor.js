@@ -19,6 +19,10 @@ import {
   CHECKLIST_ITEM,
 } from './utils';
 
+/*
+ * Queries
+ */
+
 const isBlockActive = (editor, type) => {
   const [match] = SlateEditor.nodes(editor, {
     match: n => n.type === type,
@@ -39,6 +43,30 @@ const isWrappedBlock = editor => {
 
   return !!match;
 };
+
+const isEmptyParagraph = editor => {
+  const { selection } = editor;
+  if (selection && selection.isExpanded) return false;
+
+  const [node] = SlateEditor.node(editor, selection);
+  return node.type === DEFAULT_NODE && SlateEditor.isEmpty(editor, node);
+};
+
+// Empty paragraph node, not wrapped by anything
+const isDefaultBlock = editor =>
+  !isWrappedBlock(editor) && isEmptyParagraph(editor);
+
+const isSlashCommand = editor => {
+  const { selection } = editor;
+  if (selection && selection.isExpanded) return false;
+
+  const contents = SlateEditor.string(editor, selection);
+  return isDefaultBlock(editor) && contents === '/';
+};
+
+/*
+ * Transforms
+ */
 
 const toggleBlock = (editor, type, source) => {
   const isActive = isBlockActive(editor, type);
@@ -95,9 +123,16 @@ const insertVoid = (editor, type, data = {}) => {
 
 const Editor = {
   ...SlateEditor,
+
+  // Queries (no transforms)
   isBlockActive,
   isMarkActive,
   isWrappedBlock,
+  isEmptyParagraph,
+  isDefaultBlock,
+  isSlashCommand,
+
+  // Transforms
   toggleBlock,
   toggleMark,
   insertVoid,

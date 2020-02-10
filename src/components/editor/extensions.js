@@ -7,11 +7,14 @@ import { theme } from 'styles/theme';
 import { track } from 'utils/analytics';
 
 import { DEFAULT_NODE, DEFAULT_PLAIN_NODE } from './utils';
+<<<<<<< HEAD
 import { BoldPlugin } from './plugins/marks/bold';
 import { ItalicPlugin } from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
 import CodeHighlight from './plugins/marks/codeHighlight';
 import { TextBlockPlugin } from './plugins/blocks/text';
+=======
+>>>>>>> WIP: Get composition menu working
 import { HeadingsPlugin } from './plugins/blocks/headings';
 import { SectionBreak } from './plugins/blocks/sectionBreak';
 import { Image } from './plugins/blocks/image';
@@ -19,17 +22,13 @@ import { ListsPlugin } from './plugins/blocks/lists';
 import Link from './plugins/inlines/link';
 import { BlockQuotePlugin } from './plugins/blocks/blockQuote';
 import { CodeBlockPlugin } from './plugins/blocks/codeBlock';
-import SelectionToolbar from './plugins/selectionToolbar';
 import CompositionMenu from './plugins/compositionMenu';
-import EditorActions from './plugins/editorActions';
 
 // HN: Not supporting drag and drop guides for now
 // import DragAndDrop from './plugins/dragAndDrop';
 // import DragAndDropIndicator from './plugins/blocks/dragAndDropIndicator';
-import Drafts from './plugins/drafts';
 import ImageLoadingIndicator from './plugins/blocks/imageLoadingIndicator';
 import CustomBodyPlaceholder from './plugins/customBodyPlaceholder';
-import AutoSave from './plugins/autoSave';
 import AutoScroll from './plugins/autoScroll';
 import {
   ContextHighlightPlugin,
@@ -181,14 +180,7 @@ const createDocumentPlaceholder = text =>
   });
 
 const coreEditorPlugins = [
-  // Marks
-  BoldPlugin(),
-  ItalicPlugin(),
-  Underlined(),
-  CodeHighlight(),
-
   // Blocks
-  TextBlockPlugin(),
   HeadingsPlugin(),
   ListsPlugin(),
   BlockQuotePlugin(),
@@ -206,14 +198,11 @@ const coreEditorPlugins = [
     before: /(--)$/,
     change: change => change.insertText('— '),
   }),
-  SelectionToolbar(),
   ImageLoadingIndicator(),
 ];
 
 const documentPlugins = [
   ...coreEditorPlugins,
-
-  AutoSave(),
   AutoScroll(),
   CompositionMenu(),
   InlineDiscussionPlugin(),
@@ -224,8 +213,6 @@ const inlineDiscussionPlugins = [
   ...coreEditorPlugins,
 
   CompositionMenu({ isModal: true }),
-  Drafts(),
-  EditorActions(),
 ];
 
 const contextPlugins = [...coreEditorPlugins, ContextHighlightPlugin()];

@@ -10,6 +10,7 @@ import useAutoSave from 'utils/hooks/useAutoSave';
 import { DEFAULT_VALUE } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import Toolbar from 'components/editor/toolbar/Toolbar';
+import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withVoidElements from 'components/editor/withVoidElements';
 import useDocumentMutations from './useDocumentMutations';
@@ -53,6 +54,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
       <DocumentEditable {...props} {...coreEditorProps} />
       <Toolbar source="document" />
+      <CompositionMenuButton />
     </Slate>
   );
 };
