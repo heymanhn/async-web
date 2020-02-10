@@ -1,10 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { faListOl, faListUl, faTasks } from '@fortawesome/free-solid-svg-icons';
-
-import MenuOption from 'components/editor/compositionMenu/MenuOption';
-import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
-import { DEFAULT_NODE, COMPOSITION_MENU_SOURCE } from 'components/editor/utils';
+import { DEFAULT_NODE } from 'components/editor/utils';
 import {
   AddQueries,
   CustomEnterAction,
@@ -13,62 +7,12 @@ import {
 
 const BULLETED_LIST = 'bulleted-list';
 const NUMBERED_LIST = 'numbered-list';
-const CHECKLIST = 'checklist';
 const LIST_ITEM = 'list-item';
 const CHECKLIST_ITEM = 'checklist-item';
 
-const ICONS = {};
-ICONS[BULLETED_LIST] = faListUl;
-ICONS[NUMBERED_LIST] = faListOl;
-ICONS[CHECKLIST] = faTasks;
-
-export const BULLETED_LIST_OPTION_TITLE = 'Bulleted list';
-export const NUMBERED_LIST_OPTION_TITLE = 'Numbered list';
-export const CHECKLIST_OPTION_TITLE = 'Checklist';
-
-const LIST_OPTION_TITLES = {};
-LIST_OPTION_TITLES[BULLETED_LIST] = BULLETED_LIST_OPTION_TITLE;
-LIST_OPTION_TITLES[NUMBERED_LIST] = NUMBERED_LIST_OPTION_TITLE;
-LIST_OPTION_TITLES[CHECKLIST] = CHECKLIST_OPTION_TITLE;
-
-/* **** Composition menu options **** */
-
-function ListOption({ editor, listType, ...props }) {
-  function handleListOption() {
-    return editor.clearBlock().setListBlock(listType, COMPOSITION_MENU_SOURCE);
-  }
-
-  const icon = <OptionIcon icon={ICONS[listType]} />;
-
-  return (
-    <MenuOption
-      handleInvoke={handleListOption}
-      icon={icon}
-      title={LIST_OPTION_TITLES[listType]}
-      {...props}
-    />
-  );
-}
-
-ListOption.propTypes = {
-  editor: PropTypes.object.isRequired,
-  listType: PropTypes.oneOf([BULLETED_LIST, NUMBERED_LIST, CHECKLIST])
-    .isRequired,
-};
-
-export function BulletedListOption({ editor, ...props }) {
-  return <ListOption editor={editor} listType={BULLETED_LIST} {...props} />;
-}
-export function NumberedListOption({ editor, ...props }) {
-  return <ListOption editor={editor} listType={NUMBERED_LIST} {...props} />;
-}
-export function ChecklistOption({ editor, ...props }) {
-  return <ListOption editor={editor} listType={CHECKLIST} {...props} />;
-}
-
 /* **** Slate plugin **** */
 
-export function ListsPlugin() {
+export default function ListsPlugin() {
   /* **** Queries **** */
 
   function hasListItems(editor) {

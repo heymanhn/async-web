@@ -9,14 +9,12 @@ const SectionTitle = styled.div(({ theme: { colors } }) => ({
   margin: '15px 0 8px 20px',
 }));
 
-const MenuSection = ({
-  optionsList,
-  sectionTitle,
-  ...props
-}) => (
+const MenuSection = ({ optionsList, sectionTitle, ...props }) => (
   <>
     <SectionTitle>{sectionTitle}</SectionTitle>
-    {optionsList.map(({ title, Component }) => <Component key={title} {...props} />)}
+    {optionsList.map(({ title, Component }) => (
+      <Component key={title} {...props} />
+    ))}
   </>
 );
 

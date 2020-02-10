@@ -9,15 +9,6 @@ function CompositionMenu({ isModal } = {}) {
   // This ref is forwarded down to the <CompositionMenu /> component
   const menuRef = React.createRef();
 
-  /* **** Queries **** */
-
-  function isSlashCommand(editor) {
-    const { startBlock } = editor.value;
-    return (
-      startBlock && startBlock.type === DEFAULT_NODE && startBlock.text === '/'
-    );
-  }
-
   /* **** Render the menu **** */
   function displayMenu(props, editor, next) {
     const { mode } = props;

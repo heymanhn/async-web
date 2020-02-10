@@ -1,12 +1,13 @@
 /* eslint react/no-find-dom-node: 0 */
 /* eslint no-mixed-operators: 0 */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSlate } from 'slate-react';
+import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
 
+import Editor from 'components/editor/Editor';
 import optionsList from './optionsList';
 import MenuSection from './MenuSection';
 
@@ -51,17 +52,13 @@ function mod(x, n) {
 }
 
 const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
+  const menuRef = useRef(null);
   const editor = useSlate();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [optionToInvoke, setOptionToInvoke] = useState(null);
-  const { value } = editor;
-  const { startBlock, document } = value;
 
-  const handleClickOutside = () => {
-    if (!isOpen) return;
-    handleClose();
-  };
+  const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: menuRef });
 
   function filteredOptions() {
@@ -75,9 +72,8 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
   // Displays the menu either above or below the current block, based on the block's
   // relative position on the page
   function calculateMenuPosition() {
-    if (!startBlock) return {};
-    const path = document.getPath(startBlock.key);
-    const element = editor.findDOMNode(path);
+    const [block] = Editor.getParentBlock(editor);
+    const element = ReactEditor.toDOMNode(editor, block);
     if (!element) return {};
 
     const rect = element.getBoundingClientRect();
@@ -119,22 +115,31 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
       const optionsToSelect = filteredOptions();
 
       if (event.key === 'ArrowUp') {
+        event.preventDefault();
         setSelectedIndex(prevIndex =>
           mod(prevIndex - 1, optionsToSelect.length)
         );
       }
+
       if (event.key === 'ArrowDown') {
+        event.preventDefault();
         setSelectedIndex(prevIndex =>
           mod(prevIndex + 1, optionsToSelect.length)
         );
       }
+
       if (event.key === 'Enter') {
+        event.preventDefault();
         if (!optionsToSelect.length) return;
 
         const option = optionsToSelect[selectedIndex];
         setOptionToInvoke(option.title);
       }
-      if (event.key === 'Esc') handleClose();
+
+      if (event.key === 'Esc') {
+        event.preventDefault();
+        handleClose();
+      }
     }
 
     if (!isOpen) return () => {};
@@ -146,7 +151,7 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
   });
 
   function setSanitizedQuery() {
-    let newQuery = startBlock.text;
+    let newQuery = Editor.getCurrentText(editor);
     if (newQuery.startsWith('/')) newQuery = newQuery.substring(1);
     if (newQuery !== query) {
       setQuery(newQuery);

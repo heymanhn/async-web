@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSlate } from 'slate-react';
+import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/pro-light-svg-icons';
 import styled from '@emotion/styled';
@@ -103,7 +103,7 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
   if (!Editor.isDefaultBlock(editor)) return null;
 
   const { coords, isMenuOpen, isMenuDismissed, isKeyboardInvoked } = state;
-  const showButton = selection.isFocused && !isMenuOpen;
+  const showButton = ReactEditor.isFocused(editor) && !isMenuOpen;
 
   if (showButton) setTimeout(updateButtonPosition, 0);
   if (!showButton && coords) {
@@ -117,7 +117,7 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
   }
 
   // In order to dismiss the menu when the user removes a slash command
-  if (Editor.isEmpty(editor) && isKeyboardInvoked) {
+  if (Editor.isEmptyParagraph(editor) && isKeyboardInvoked) {
     setState(oldState => ({
       ...oldState,
       isKeyboardInvoked: false,
@@ -127,7 +127,11 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
   }
 
   // Reset the dismiss flag so that the menu can be keyboard-invoked again
-  if (Editor.isEmpty(editor) && !isKeyboardInvoked && isMenuDismissed) {
+  if (
+    Editor.isEmptyParagraph(editor) &&
+    !isKeyboardInvoked &&
+    isMenuDismissed
+  ) {
     setState(oldState => ({ ...oldState, isMenuDismissed: false }));
   }
 

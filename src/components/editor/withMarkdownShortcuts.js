@@ -107,9 +107,7 @@ const withMarkdownShortcuts = oldEditor => {
 
     if (isTriggered(text) && selection && Range.isCollapsed(selection)) {
       const { anchor } = selection;
-      const block = Editor.above(editor, {
-        match: n => Editor.isBlock(editor, n),
-      });
+      const block = Editor.getParentBlock(editor);
       const path = block ? block[1] : [];
       const start = Editor.start(editor, path);
       const range = { anchor, focus: start };

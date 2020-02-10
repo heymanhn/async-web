@@ -5,7 +5,7 @@
  * Majority of these plugins borrowed from the Slate examples:
  * https://github.com/ianstormtaylor/slate/blob/master/site/examples/richtext.js
  */
-import { Editor as SlateEditor, Transforms } from 'slate';
+import { Editor as SlateEditor, Range, Transforms } from 'slate';
 
 import { track } from 'utils/analytics';
 
@@ -44,12 +44,32 @@ const isWrappedBlock = editor => {
   return !!match;
 };
 
+const getParentBlock = editor => {
+  return SlateEditor.above(editor, {
+    match: n => SlateEditor.isBlock(editor, n),
+  });
+};
+
+const getCurrentNode = editor => {
+  const { selection } = editor;
+  if (!selection || Range.isExpanded(selection))
+    throw new Error('Selection is invalid');
+
+  const node = SlateEditor.node(editor, selection);
+  return node;
+};
+
+const getCurrentText = editor => {
+  const { selection } = editor;
+  return SlateEditor.string(editor, selection);
+};
+
 const isEmptyParagraph = editor => {
   const { selection } = editor;
-  if (selection && selection.isExpanded) return false;
+  if (!selection || Range.isExpanded(selection)) return false;
 
-  const [node] = SlateEditor.node(editor, selection);
-  return node.type === DEFAULT_NODE && SlateEditor.isEmpty(editor, node);
+  const [block] = getParentBlock(editor);
+  return block.type === DEFAULT_NODE && SlateEditor.isEmpty(editor, block);
 };
 
 // Empty paragraph node, not wrapped by anything
@@ -121,6 +141,14 @@ const insertVoid = (editor, type, data = {}) => {
   Transforms.insertNodes(editor, DEFAULT_VALUE);
 };
 
+const clearBlock = editor =>
+  SlateEditor.deleteBackward(editor, { unit: 'block' });
+
+const replaceBlock = (editor, type, source) => {
+  SlateEditor.clearBlock(editor);
+  return SlateEditor.toggleBlock(editor, type, source);
+};
+
 const Editor = {
   ...SlateEditor,
 
@@ -131,11 +159,16 @@ const Editor = {
   isEmptyParagraph,
   isDefaultBlock,
   isSlashCommand,
+  getParentBlock,
+  getCurrentNode,
+  getCurrentText,
 
   // Transforms
   toggleBlock,
   toggleMark,
   insertVoid,
+  clearBlock,
+  replaceBlock,
 };
 
 export default Editor;
