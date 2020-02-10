@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import { BOLD, ITALIC, UNDERLINE, CODE_SNIPPET } from './utils';
+import { BOLD, ITALIC, UNDERLINE, CODE_HIGHLIGHT } from './utils';
 
-const CodeSnippet = styled.code(({ theme: { codeFontStack, colors } }) => ({
+const CodeHighlight = styled.code(({ theme: { codeFontStack, colors } }) => ({
   background: colors.grey7,
   border: `1px solid ${colors.codeBlockBorderGrey}`,
   borderRadius: '3px',
@@ -31,8 +31,8 @@ const Leaf = ({ attributes, children, leaf }) => {
     node = <u>{node}</u>;
   }
 
-  if (leaf[CODE_SNIPPET]) {
-    node = <CodeSnippet>{node}</CodeSnippet>;
+  if (leaf[CODE_HIGHLIGHT]) {
+    node = <CodeHighlight>{node}</CodeHighlight>;
   }
 
   return <span {...attributes}>{node}</span>;

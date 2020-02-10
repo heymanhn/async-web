@@ -4,7 +4,7 @@ import {
   BOLD,
   ITALIC,
   UNDERLINE,
-  CODE_SNIPPET,
+  CODE_HIGHLIGHT,
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
@@ -13,7 +13,6 @@ import {
   NUMBERED_LIST,
   CHECKLIST,
   CODE_BLOCK,
-  BLOCK_QUOTE,
 } from './utils';
 import Editor from './Editor';
 
@@ -21,7 +20,7 @@ const MARK_HOTKEYS = {
   'mod+b': BOLD,
   'mod+i': ITALIC,
   'mod+u': UNDERLINE,
-  'mod+shift+c': CODE_SNIPPET,
+  'mod+shift+c': CODE_HIGHLIGHT,
 };
 
 const BLOCK_HOTKEYS = {
@@ -32,7 +31,6 @@ const BLOCK_HOTKEYS = {
   'mod+shift+8': BULLETED_LIST,
   'mod+shift+9': CHECKLIST,
   'mod+shift+k': CODE_BLOCK,
-  'mod+shift+q': BLOCK_QUOTE,
 };
 
 export const triggerMarkHotkeys = (editor, event) => {

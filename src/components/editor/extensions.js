@@ -10,7 +10,7 @@ import { DEFAULT_NODE, DEFAULT_PLAIN_NODE } from './utils';
 import { BoldPlugin } from './plugins/marks/bold';
 import { ItalicPlugin } from './plugins/marks/italic';
 import Underlined from './plugins/marks/underlined';
-import CodeSnippet from './plugins/marks/codeSnippet';
+import CodeHighlight from './plugins/marks/codeHighlight';
 import { TextBlockPlugin } from './plugins/blocks/text';
 import { HeadingsPlugin } from './plugins/blocks/headings';
 import { SectionBreak } from './plugins/blocks/sectionBreak';
@@ -185,7 +185,7 @@ const coreEditorPlugins = [
   BoldPlugin(),
   ItalicPlugin(),
   Underlined(),
-  CodeSnippet(),
+  CodeHighlight(),
 
   // Blocks
   TextBlockPlugin(),
