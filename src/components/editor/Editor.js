@@ -61,7 +61,8 @@ const getCurrentNode = editor => {
 
 const getCurrentText = editor => {
   const { selection } = editor;
-  return SlateEditor.string(editor, selection);
+  const [, path] = SlateEditor.node(editor, selection);
+  return SlateEditor.string(editor, path);
 };
 
 const isEmptyParagraph = editor => {
@@ -76,13 +77,15 @@ const isEmptyParagraph = editor => {
 const isDefaultBlock = editor =>
   !isWrappedBlock(editor) && isBlockActive(editor, DEFAULT_NODE);
 
+// The cursor must be after the slash
 const isSlashCommand = editor => {
   const { selection } = editor;
   if (!selection || Range.isExpanded(selection)) return false;
 
+  const { anchor } = selection;
   const [, path] = SlateEditor.node(editor, selection);
   const contents = SlateEditor.string(editor, path);
-  return isDefaultBlock(editor) && contents === '/';
+  return isDefaultBlock(editor) && contents === '/' && anchor.offset === 1;
 };
 
 /*
