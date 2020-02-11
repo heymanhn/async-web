@@ -76,6 +76,11 @@ const MARKDOWN_SHORTCUTS = [
     change: editor => setNode(editor, SMALL_FONT),
   },
   {
+    trigger: 'space',
+    before: /(--)$/,
+    change: editor => editor.insertText('— '),
+  },
+  {
     trigger: '-',
     before: /^(--)$/,
     change: editor => Editor.insertVoid(editor, SECTION_BREAK),
@@ -107,9 +112,7 @@ const withMarkdownShortcuts = oldEditor => {
 
     if (isTriggered(text) && selection && Range.isCollapsed(selection)) {
       const { anchor } = selection;
-      const block = Editor.above(editor, {
-        match: n => Editor.isBlock(editor, n),
-      });
+      const block = Editor.getParentBlock(editor);
       const path = block ? block[1] : [];
       const start = Editor.start(editor, path);
       const range = { anchor, focus: start };

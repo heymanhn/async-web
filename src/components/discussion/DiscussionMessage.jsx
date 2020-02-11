@@ -37,6 +37,7 @@ const StyledHoverMenu = styled(HoverMenu)({
 const DiscussionMessage = ({
   mode: initialMode,
   message,
+  source,
   afterCreate,
   handleCancel,
   ...props
@@ -88,7 +89,10 @@ const DiscussionMessage = ({
             {mode === 'compose' && <DraftSavedIndicator />}
           </div>
         </HeaderSection>
-        <MessageComposer initialMessage={loadInitialContent()} />
+        <MessageComposer
+          initialMessage={loadInitialContent()}
+          isModal={source === 'discussionModal'}
+        />
         {mode === 'display' && <MessageReactions />}
       </MessageContext.Provider>
     </Container>
@@ -98,6 +102,7 @@ const DiscussionMessage = ({
 DiscussionMessage.propTypes = {
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
+  source: PropTypes.string,
   afterCreate: PropTypes.func,
   handleCancel: PropTypes.func,
 };
@@ -105,6 +110,7 @@ DiscussionMessage.propTypes = {
 DiscussionMessage.defaultProps = {
   mode: 'display',
   message: {},
+  source: null,
   afterCreate: () => {},
   handleCancel: () => {},
 };

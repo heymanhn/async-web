@@ -121,6 +121,7 @@ const DiscussionModal = ({
         {isComposing ? (
           <DiscussionMessage
             mode="compose"
+            source="discussionModal"
             afterCreate={stopComposing}
             handleCancel={handleCancelCompose}
             {...props}

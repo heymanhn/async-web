@@ -1,77 +1,79 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/pro-light-svg-icons';
 import styled from '@emotion/styled';
 
+import Editor from 'components/editor/Editor';
 import CompositionMenuPlaceholder from './CompositionMenuPlaceholder';
 import CompositionMenu from './CompositionMenu';
 
-const ButtonContainer = styled.div(({ isVisible, theme: { colors } }) => ({
-  display: isVisible ? 'flex' : 'none',
-  justifyContent: 'center',
-  alignItems: 'center',
-  top: '-10000px',
-  left: '-10000px',
+const ButtonContainer = styled.div(
+  ({ isVisible, theme: { colors } }) => ({
+    display: isVisible ? 'flex' : 'none',
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: '-10000px',
+    left: '-10000px',
 
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  cursor: 'pointer',
-  opacity: 0,
-  transition: 'opacity 0.1s',
-  width: '30px',
-  height: '30px',
-  position: 'absolute',
+    background: colors.white,
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
+    cursor: 'pointer',
+    opacity: 0,
+    transition: 'opacity 0.1s',
+    width: '30px',
+    height: '30px',
+    position: 'absolute',
 
-  ':hover': {
-    background: colors.formGrey,
-  },
-}), ({ coords, isVisible }) => {
-  if (!isVisible || !coords) return {};
+    ':hover': {
+      background: colors.formGrey,
+    },
+  }),
+  ({ coords, isVisible }) => {
+    if (!isVisible || !coords) return {};
 
-  const { top, left } = coords;
-  return { opacity: 1, top, left };
-});
+    const { top, left } = coords;
+    return { opacity: 1, top, left };
+  }
+);
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '14px',
 }));
 
-const CompositionMenuButton = React.forwardRef(({ editor, isModal, query, ...props }, menuRef) => {
+const CompositionMenuButton = ({ isModal, ...props }) => {
+  const editor = useSlate();
   const [state, setState] = useState({
     coords: null,
     isMenuOpen: false,
     isMenuDismissed: false, // distinguishing a user action
     isKeyboardInvoked: false,
   });
-  const { value } = editor;
-  const { selection } = value;
 
   // Don't let the button handle the event, so that it won't reset its visibility
-  function handleMouseDown(event) {
-    event.preventDefault();
-  }
+  const handleMouseDown = event => event.preventDefault();
 
   // Only called when menu invoked via the button
-  function handleOpenMenu(event) {
+  const handleOpenMenu = event => {
     event.preventDefault();
-    editor.focus();
+    ReactEditor.focus(editor);
     setState(oldState => ({ ...oldState, isMenuOpen: true }));
-  }
+  };
 
   // The order of these setState calls matters
-  function handleCloseMenu() {
+  const handleCloseMenu = () => {
     setState(oldState => ({
       ...oldState,
       isMenuOpen: false,
       isMenuDismissed: true,
       isKeyboardInvoked: false,
     }));
-  }
+  };
 
-  function updateButtonPosition() {
+  const updateButtonPosition = () => {
     const native = window.getSelection();
     const range = native.getRangeAt(0);
     const rect = range.getBoundingClientRect();
@@ -85,23 +87,29 @@ const CompositionMenuButton = React.forwardRef(({ editor, isModal, query, ...pro
       left: `${rect.left + windowXOffset - 45}px`, // 30px margin + half of 30px width
     };
 
-    if (coords && newCoords.top === state.coords.top && newCoords.left === coords.left) return;
+    if (
+      coords &&
+      newCoords.top === state.coords.top &&
+      newCoords.left === coords.left
+    )
+      return;
 
     setState(oldState => ({ ...oldState, coords: newCoords }));
-  }
+  };
 
-  if (editor.isWrappedByAnyBlock()) return null;
+  if (Editor.isWrappedBlock(editor)) return null;
 
   const { coords, isMenuOpen, isMenuDismissed, isKeyboardInvoked } = state;
-  const showButton = selection.isFocused
-    && !isMenuOpen
-    && editor.isEmptyParagraph();
+  const showButton =
+    ReactEditor.isFocused(editor) &&
+    !isMenuOpen &&
+    Editor.isEmptyParagraph(editor);
 
   if (showButton) setTimeout(updateButtonPosition, 0);
   if (!showButton && coords) {
     setState(oldState => ({ ...oldState, coords: null }));
   }
-  if (editor.isSlashCommand() && !isKeyboardInvoked && !isMenuDismissed) {
+  if (Editor.isSlashCommand(editor) && !isKeyboardInvoked && !isMenuDismissed) {
     setState(oldState => ({ ...oldState, isKeyboardInvoked: true }));
   }
   if (isKeyboardInvoked && !isMenuOpen) {
@@ -109,7 +117,7 @@ const CompositionMenuButton = React.forwardRef(({ editor, isModal, query, ...pro
   }
 
   // In order to dismiss the menu when the user removes a slash command
-  if (editor.isEmptyBlock() && isKeyboardInvoked) {
+  if (Editor.isEmptyParagraph(editor) && isKeyboardInvoked) {
     setState(oldState => ({
       ...oldState,
       isKeyboardInvoked: false,
@@ -119,7 +127,11 @@ const CompositionMenuButton = React.forwardRef(({ editor, isModal, query, ...pro
   }
 
   // Reset the dismiss flag so that the menu can be keyboard-invoked again
-  if (editor.isEmptyBlock() && !isKeyboardInvoked && isMenuDismissed) {
+  if (
+    Editor.isEmptyParagraph(editor) &&
+    !isKeyboardInvoked &&
+    isMenuDismissed
+  ) {
     setState(oldState => ({ ...oldState, isMenuDismissed: false }));
   }
 
@@ -134,9 +146,10 @@ const CompositionMenuButton = React.forwardRef(({ editor, isModal, query, ...pro
       >
         <StyledIcon icon={faPlus} />
       </ButtonContainer>
-      {showButton && <CompositionMenuPlaceholder isModal={isModal} isVisible={showButton} />}
+      {showButton && (
+        <CompositionMenuPlaceholder isModal={isModal} isVisible={showButton} />
+      )}
       <CompositionMenu
-        ref={menuRef}
         editor={editor}
         handleClose={handleCloseMenu}
         isModal={isModal}
@@ -144,19 +157,14 @@ const CompositionMenuButton = React.forwardRef(({ editor, isModal, query, ...pro
       />
     </>
   );
-});
+};
 
 CompositionMenuButton.propTypes = {
-  editor: PropTypes.object.isRequired,
   isModal: PropTypes.bool,
-  query: PropTypes.string,
-  range: PropTypes.object,
 };
 
 CompositionMenuButton.defaultProps = {
   isModal: false,
-  query: '',
-  range: null,
 };
 
 export default CompositionMenuButton;

@@ -1,38 +1,33 @@
-import { TEXT_OPTION_TITLE, TextOption } from '../plugins/blocks/text';
 import {
+  TEXT_OPTION_TITLE,
   LARGE_TITLE_OPTION_TITLE,
-  SMALL_TITLE_OPTION_TITLE,
-  LargeTitleOption,
-  SmallTitleOption,
-} from '../plugins/blocks/headings';
-import {
+  MEDIUM_TITLE_OPTION_TITLE,
   BULLETED_LIST_OPTION_TITLE,
   NUMBERED_LIST_OPTION_TITLE,
   CHECKLIST_OPTION_TITLE,
+  CODE_BLOCK_OPTION_TITLE,
+  BLOCK_QUOTE_OPTION_TITLE,
+  SECTION_BREAK_OPTION_TITLE,
+} from '../utils';
+
+import {
+  TextOption,
+  LargeTitleOption,
+  MediumTitleOption,
   BulletedListOption,
   NumberedListOption,
   ChecklistOption,
-} from '../plugins/blocks/lists';
-import {
-  CODE_BLOCK_OPTION_TITLE,
   CodeBlockOption,
-} from '../plugins/blocks/codeBlock';
-import {
-  BLOCK_QUOTE_OPTION_TITLE,
   BlockQuoteOption,
-} from '../plugins/blocks/blockQuote';
-import {
-  SECTION_BREAK_OPTION_TITLE,
   SectionBreakOption,
-} from '../plugins/blocks/sectionBreak';
-import {
-  IMAGE_OPTION_TITLE,
-  ImageOption,
-} from '../plugins/blocks/image';
+} from './options';
+
+// SLATE UPGRADE TODO: Get images working
+// import { IMAGE_OPTION_TITLE, ImageOption } from '../plugins/blocks/image';
 
 const BASIC_SECTION = 'BASIC';
 const SECTIONS_SECTION = 'SECTIONS';
-const MEDIA_SECTION = 'MEDIA';
+// const MEDIA_SECTION = 'MEDIA';
 
 const optionsList = [
   // Basic section
@@ -48,8 +43,8 @@ const optionsList = [
   },
   {
     section: BASIC_SECTION,
-    title: SMALL_TITLE_OPTION_TITLE,
-    Component: SmallTitleOption,
+    title: MEDIUM_TITLE_OPTION_TITLE,
+    Component: MediumTitleOption,
   },
 
   // Sections section
@@ -84,12 +79,13 @@ const optionsList = [
     Component: SectionBreakOption,
   },
 
+  // SLATE UPGRADE TODO: Get images working
   // Media section
-  {
-    section: MEDIA_SECTION,
-    title: IMAGE_OPTION_TITLE,
-    Component: ImageOption,
-  },
+  // {
+  //   section: MEDIA_SECTION,
+  //   title: IMAGE_OPTION_TITLE,
+  //   Component: ImageOption,
+  // },
 ];
 
 export default optionsList;

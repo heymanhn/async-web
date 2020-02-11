@@ -37,6 +37,19 @@ export const SECTION_BREAK = 'section-break';
 export const VOID_TYPES = [SECTION_BREAK];
 
 /*
+ * Composition menu option titles
+ */
+export const TEXT_OPTION_TITLE = 'Text';
+export const LARGE_TITLE_OPTION_TITLE = 'Large title';
+export const MEDIUM_TITLE_OPTION_TITLE = 'Medium title';
+export const BULLETED_LIST_OPTION_TITLE = 'Bulleted list';
+export const NUMBERED_LIST_OPTION_TITLE = 'Numbered list';
+export const CHECKLIST_OPTION_TITLE = 'Checklist';
+export const CODE_BLOCK_OPTION_TITLE = 'Code block';
+export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
+export const SECTION_BREAK_OPTION_TITLE = 'Section break';
+
+/*
  * Source constants for analytics tracking
  */
 export const TOOLBAR_SOURCE = 'toolbar';

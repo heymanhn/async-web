@@ -5,7 +5,7 @@
  * Majority of these plugins borrowed from the Slate examples:
  * https://github.com/ianstormtaylor/slate/blob/master/site/examples/richtext.js
  */
-import { Editor as SlateEditor, Transforms } from 'slate';
+import { Editor as SlateEditor, Range, Transforms } from 'slate';
 
 import { track } from 'utils/analytics';
 
@@ -18,6 +18,10 @@ import {
   LIST_ITEM,
   CHECKLIST_ITEM,
 } from './utils';
+
+/*
+ * Queries
+ */
 
 const isBlockActive = (editor, type) => {
   const [match] = SlateEditor.nodes(editor, {
@@ -39,6 +43,54 @@ const isWrappedBlock = editor => {
 
   return !!match;
 };
+
+const getParentBlock = editor => {
+  return SlateEditor.above(editor, {
+    match: n => SlateEditor.isBlock(editor, n),
+  });
+};
+
+const getCurrentNode = editor => {
+  const { selection } = editor;
+  if (!selection || Range.isExpanded(selection))
+    throw new Error('Selection is invalid');
+
+  const node = SlateEditor.node(editor, selection);
+  return node;
+};
+
+const getCurrentText = editor => {
+  const { selection } = editor;
+  const [, path] = SlateEditor.node(editor, selection);
+  return SlateEditor.string(editor, path);
+};
+
+const isEmptyParagraph = editor => {
+  const { selection } = editor;
+  if (!selection || Range.isExpanded(selection)) return false;
+
+  const [block] = getParentBlock(editor);
+  return block.type === DEFAULT_NODE && SlateEditor.isEmpty(editor, block);
+};
+
+// Paragraph node, not wrapped by anything
+const isDefaultBlock = editor =>
+  !isWrappedBlock(editor) && isBlockActive(editor, DEFAULT_NODE);
+
+// The cursor must be after the slash
+const isSlashCommand = editor => {
+  const { selection } = editor;
+  if (!selection || Range.isExpanded(selection)) return false;
+
+  const { anchor } = selection;
+  const [, path] = SlateEditor.node(editor, selection);
+  const contents = SlateEditor.string(editor, path);
+  return isDefaultBlock(editor) && contents === '/' && anchor.offset === 1;
+};
+
+/*
+ * Transforms
+ */
 
 const toggleBlock = (editor, type, source) => {
   const isActive = isBlockActive(editor, type);
@@ -93,14 +145,39 @@ const insertVoid = (editor, type, data = {}) => {
   Transforms.insertNodes(editor, DEFAULT_VALUE);
 };
 
+const clearBlock = editor => {
+  const { selection } = editor;
+  const [block] = getParentBlock(editor, selection);
+
+  if (!SlateEditor.isEmpty(editor, block))
+    SlateEditor.deleteBackward(editor, { unit: 'block' });
+};
+
+const replaceBlock = (editor, type, source) => {
+  clearBlock(editor);
+  return toggleBlock(editor, type, source);
+};
+
 const Editor = {
   ...SlateEditor,
+
+  // Queries (no transforms)
   isBlockActive,
   isMarkActive,
   isWrappedBlock,
+  isEmptyParagraph,
+  isDefaultBlock,
+  isSlashCommand,
+  getParentBlock,
+  getCurrentNode,
+  getCurrentText,
+
+  // Transforms
   toggleBlock,
   toggleMark,
   insertVoid,
+  clearBlock,
+  replaceBlock,
 };
 
 export default Editor;

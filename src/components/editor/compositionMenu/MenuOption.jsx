@@ -45,7 +45,10 @@ const MenuOption = ({
     if (selectedOption === title) {
       // the options argument is not supported in IE:
       // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
-      optionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      optionRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
     }
   }, [selectedOption, title]);
 

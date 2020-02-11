@@ -13,6 +13,7 @@ import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import Toolbar from 'components/editor/toolbar/Toolbar';
 import withVoidElements from 'components/editor/withVoidElements';
+import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import useMessageMutations from './useMessageMutations';
 import MessageActions from './MessageActions';
 
@@ -36,7 +37,7 @@ const MessageEditable = styled(Editable)({
  * - Get the keyboard shortcuts working for saving the message (cmd + enter)
  */
 
-const MessageComposer = ({ initialMessage, ...props }) => {
+const MessageComposer = ({ initialMessage, isModal, ...props }) => {
   const { mode } = useContext(MessageContext);
   const messageEditor = useMemo(
     () =>
@@ -66,7 +67,8 @@ const MessageComposer = ({ initialMessage, ...props }) => {
         key={mode === 'display'}
       >
         <MessageEditable readOnly={mode === 'display'} {...coreEditorProps} />
-        <Toolbar source="message" />
+        <Toolbar source="discussionMessage" />
+        <CompositionMenuButton isModal={isModal} />
         {mode !== 'display' && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
@@ -81,10 +83,12 @@ const MessageComposer = ({ initialMessage, ...props }) => {
 
 MessageComposer.propTypes = {
   initialMessage: PropTypes.string,
+  isModal: PropTypes.bool,
 };
 
 MessageComposer.defaultProps = {
   initialMessage: '',
+  isModal: false,
 };
 
 export default MessageComposer;
