@@ -1,5 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+import { compose } from 'recompose';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
@@ -41,9 +42,12 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
   const { mode } = useContext(MessageContext);
   const messageEditor = useMemo(
     () =>
-      withMarkdownShortcuts(
-        withVoidElements(withHistory(withReact(createEditor())))
-      ),
+      compose(
+        withMarkdownShortcuts,
+        withVoidElements,
+        withHistory,
+        withReact
+      )(createEditor()),
     []
   );
   const [message, setMessage] = useState(

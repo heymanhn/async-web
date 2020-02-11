@@ -47,6 +47,7 @@
         "react-scripts": "^3.3.0",
         "react-truncate": "^2.4.0",
         "reactstrap": "^8.0.0",
+        "recompose": "^0.30.0",
         "slate": "^0.57.1",
         "slate-auto-replace": "^0.12.1",
         "slate-history": "^0.57.1",

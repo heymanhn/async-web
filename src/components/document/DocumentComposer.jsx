@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+import { compose } from 'recompose';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
@@ -32,9 +33,12 @@ const DocumentEditable = styled(Editable)({
 const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const contentEditor = useMemo(
     () =>
-      withMarkdownShortcuts(
-        withVoidElements(withHistory(withReact(createEditor())))
-      ),
+      compose(
+        withMarkdownShortcuts,
+        withVoidElements,
+        withHistory,
+        withReact
+      )(createEditor()),
     []
   );
   const [content, setContent] = useState(
