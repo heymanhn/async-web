@@ -34,7 +34,6 @@ const MessageEditable = styled(Editable)({
 
 /*
  * SLATE UPGRADE TODO:
- * - Pass the right "isModal" into the message context to indicate when modal vs normal
  * - Get the keyboard shortcuts working for saving the message (cmd + enter)
  */
 
