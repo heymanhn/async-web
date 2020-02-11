@@ -52,31 +52,28 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
     isMenuDismissed: false, // distinguishing a user action
     isKeyboardInvoked: false,
   });
-  const { selection } = editor;
 
   // Don't let the button handle the event, so that it won't reset its visibility
-  function handleMouseDown(event) {
-    event.preventDefault();
-  }
+  const handleMouseDown = event => event.preventDefault();
 
   // Only called when menu invoked via the button
-  function handleOpenMenu(event) {
+  const handleOpenMenu = event => {
     event.preventDefault();
-    editor.focus();
+    ReactEditor.focus(editor);
     setState(oldState => ({ ...oldState, isMenuOpen: true }));
-  }
+  };
 
   // The order of these setState calls matters
-  function handleCloseMenu() {
+  const handleCloseMenu = () => {
     setState(oldState => ({
       ...oldState,
       isMenuOpen: false,
       isMenuDismissed: true,
       isKeyboardInvoked: false,
     }));
-  }
+  };
 
-  function updateButtonPosition() {
+  const updateButtonPosition = () => {
     const native = window.getSelection();
     const range = native.getRangeAt(0);
     const rect = range.getBoundingClientRect();
@@ -98,12 +95,15 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
       return;
 
     setState(oldState => ({ ...oldState, coords: newCoords }));
-  }
+  };
 
-  if (!Editor.isDefaultBlock(editor)) return null;
+  if (Editor.isWrappedBlock(editor)) return null;
 
   const { coords, isMenuOpen, isMenuDismissed, isKeyboardInvoked } = state;
-  const showButton = ReactEditor.isFocused(editor) && !isMenuOpen;
+  const showButton =
+    ReactEditor.isFocused(editor) &&
+    !isMenuOpen &&
+    Editor.isEmptyParagraph(editor);
 
   if (showButton) setTimeout(updateButtonPosition, 0);
   if (!showButton && coords) {

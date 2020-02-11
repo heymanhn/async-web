@@ -72,15 +72,16 @@ const isEmptyParagraph = editor => {
   return block.type === DEFAULT_NODE && SlateEditor.isEmpty(editor, block);
 };
 
-// Empty paragraph node, not wrapped by anything
+// Paragraph node, not wrapped by anything
 const isDefaultBlock = editor =>
-  !isWrappedBlock(editor) && isEmptyParagraph(editor);
+  !isWrappedBlock(editor) && isBlockActive(editor, DEFAULT_NODE);
 
 const isSlashCommand = editor => {
   const { selection } = editor;
-  if (selection && selection.isExpanded) return false;
+  if (!selection || Range.isExpanded(selection)) return false;
 
-  const contents = SlateEditor.string(editor, selection);
+  const [, path] = SlateEditor.node(editor, selection);
+  const contents = SlateEditor.string(editor, path);
   return isDefaultBlock(editor) && contents === '/';
 };
 
@@ -145,8 +146,8 @@ const clearBlock = editor =>
   SlateEditor.deleteBackward(editor, { unit: 'block' });
 
 const replaceBlock = (editor, type, source) => {
-  SlateEditor.clearBlock(editor);
-  return SlateEditor.toggleBlock(editor, type, source);
+  clearBlock(editor);
+  return toggleBlock(editor, type, source);
 };
 
 const Editor = {

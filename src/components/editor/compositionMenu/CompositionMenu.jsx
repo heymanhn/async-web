@@ -72,6 +72,7 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
   // Displays the menu either above or below the current block, based on the block's
   // relative position on the page
   function calculateMenuPosition() {
+    if (!isOpen) return {};
     const [block] = Editor.getParentBlock(editor);
     const element = ReactEditor.toDOMNode(editor, block);
     if (!element) return {};
