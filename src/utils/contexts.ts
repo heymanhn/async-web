@@ -23,7 +23,6 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   messageId: null,
   mode: null,
   setMode: () => {},
-  isModal: null,
 
   afterCreate: () => {},
 };

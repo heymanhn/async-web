@@ -115,7 +115,11 @@ const DiscussionThread = ({ isUnread }) => {
           {firstNewMessageId() === m.id && m.id !== messages[0].id && (
             <NewMessagesIndicator />
           )}
-          <StyledDiscussionMessage message={m} isUnread={isNewMessage(m)} />
+          <StyledDiscussionMessage
+            message={m}
+            source="discussionModal"
+            isUnread={isNewMessage(m)}
+          />
         </React.Fragment>
       ))}
     </Container>
