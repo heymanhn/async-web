@@ -76,6 +76,11 @@ const MARKDOWN_SHORTCUTS = [
     change: editor => setNode(editor, SMALL_FONT),
   },
   {
+    trigger: 'space',
+    before: /(--)$/,
+    change: editor => editor.insertText('— '),
+  },
+  {
     trigger: '-',
     before: /^(--)$/,
     change: editor => Editor.insertVoid(editor, SECTION_BREAK),
