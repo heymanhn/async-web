@@ -47,9 +47,7 @@ const NoResults = styled.div(({ theme: { colors } }) => ({
 
 // Neat trick to support modular arithmetic for negative numbers
 // https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
-function mod(x, n) {
-  return ((x % n) + n) % n;
-}
+const mod = (x, n) => ((x % n) + n) % n;
 
 const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
   const menuRef = useRef(null);
@@ -61,17 +59,17 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
   const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: menuRef });
 
-  function filteredOptions() {
+  const filteredOptions = () => {
     if (!query) return optionsList;
 
     return optionsList.filter(({ title }) =>
       title.toLowerCase().includes(query.toLowerCase())
     );
-  }
+  };
 
   // Displays the menu either above or below the current block, based on the block's
   // relative position on the page
-  function calculateMenuPosition() {
+  const calculateMenuPosition = () => {
     if (!isOpen) return {};
     const [block] = Editor.getParentBlock(editor);
     const element = ReactEditor.toDOMNode(editor, block);
@@ -109,10 +107,10 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
       top: `${elemYOffset + BLOCK_HEIGHT}px`,
       left: `${elemXOffset}px`,
     };
-  }
+  };
 
   useEffect(() => {
-    function handleKeyDown(event) {
+    const handleKeyDown = event => {
       const optionsToSelect = filteredOptions();
 
       if (event.key === 'ArrowUp') {
@@ -141,7 +139,7 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
         event.preventDefault();
         handleClose();
       }
-    }
+    };
 
     if (!isOpen) return () => {};
     window.addEventListener('keydown', handleKeyDown);
@@ -151,21 +149,22 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
     };
   });
 
-  function setSanitizedQuery() {
+  const setSanitizedQuery = () => {
     let newQuery = Editor.getCurrentText(editor);
     if (newQuery.startsWith('/')) newQuery = newQuery.substring(1);
     if (newQuery !== query) {
       setQuery(newQuery);
       setSelectedIndex(0);
     }
-  }
+  };
+
   if (isOpen) setSanitizedQuery();
   if (!isOpen) {
     if (query) setQuery('');
     if (selectedIndex > 0) setSelectedIndex(0);
   }
 
-  function organizeMenuOptions(optionsToOrganize) {
+  const organizeMenuOptions = optionsToOrganize => {
     // Neat way of finding unique values in an array using ES6 Sets
     const sectionsToDisplay = [
       ...new Set(optionsToOrganize.map(o => o.section)),
@@ -175,7 +174,12 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
       sectionTitle: s,
       optionsList: optionsToOrganize.filter(o => o.section === s),
     }));
-  }
+  };
+
+  const afterOptionInvoked = () => {
+    setOptionToInvoke(null);
+    handleClose();
+  };
 
   const optionsToSelect = filteredOptions();
   const optionsToDisplay = organizeMenuOptions(optionsToSelect);
@@ -193,7 +197,7 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
           <MenuSection
             key={o.sectionTitle}
             editor={editor}
-            afterOptionInvoked={() => setOptionToInvoke(null)}
+            afterOptionInvoked={afterOptionInvoked}
             optionsList={o.optionsList}
             optionToInvoke={optionToInvoke}
             sectionTitle={o.sectionTitle}

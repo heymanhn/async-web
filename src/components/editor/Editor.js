@@ -145,8 +145,13 @@ const insertVoid = (editor, type, data = {}) => {
   Transforms.insertNodes(editor, DEFAULT_VALUE);
 };
 
-const clearBlock = editor =>
-  SlateEditor.deleteBackward(editor, { unit: 'block' });
+const clearBlock = editor => {
+  const { selection } = editor;
+  const [block] = getParentBlock(editor, selection);
+
+  if (!SlateEditor.isEmpty(editor, block))
+    SlateEditor.deleteBackward(editor, { unit: 'block' });
+};
 
 const replaceBlock = (editor, type, source) => {
   clearBlock(editor);
