@@ -59,7 +59,11 @@ const TopicComposer = ({ initialTopic, ...props }) => {
 
   return (
     <Slate editor={topicEditor} value={topic} onChange={v => setTopic(v)}>
-      <TopicEditable onBlur={handleUpdate} {...props} />
+      <TopicEditable
+        onBlur={handleUpdate}
+        placeholder="Untitled Discussion"
+        {...props}
+      />
     </Slate>
   );
 };

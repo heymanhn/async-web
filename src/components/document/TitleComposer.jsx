@@ -67,7 +67,11 @@ const TitleComposer = ({ afterUpdate, initialTitle, ...props }) => {
 
   return (
     <Slate editor={titleEditor} value={title} onChange={v => setTitle(v)}>
-      <TitleEditable onBlur={handleUpdate} {...props} />
+      <TitleEditable
+        onBlur={handleUpdate}
+        placeholder="Untitled Document"
+        {...props}
+      />
     </Slate>
   );
 };
