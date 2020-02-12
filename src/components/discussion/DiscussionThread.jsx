@@ -7,7 +7,7 @@ import discussionQuery from 'graphql/queries/discussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 import { snakedQueryParams } from 'utils/queryParams';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { DiscussionContext } from 'utils/contexts';
 
 import DiscussionMessage from './DiscussionMessage';
 import NewMessagesIndicator from './NewMessagesIndicator';
@@ -32,21 +32,18 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 
 const DiscussionThread = ({ isUnread }) => {
   const discussionRef = useRef(null);
-  const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
-
   const { markAsRead } = useViewedReaction();
+
   useEffect(() => {
-    return () => {
+    return () =>
       markAsRead({
         isUnread,
         objectType: 'discussion',
         objectId: discussionId,
-        parentId: documentId,
       });
-    };
   });
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
@@ -98,7 +95,7 @@ const DiscussionThread = ({ isUnread }) => {
 
   function firstNewMessageId() {
     const targetMessage = messages.find(
-      m => m.tags && m.tags.includes('new_messages')
+      m => m.tags && m.tags.includes('new_message')
     );
 
     return targetMessage ? targetMessage.id : null;

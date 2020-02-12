@@ -252,6 +252,43 @@ function deleteMessageFromDiscussion(
   return null;
 }
 
+function markDiscussionAsRead(_root, { discussionId }, { client }) {
+  const data = client.readQuery({
+    query: discussionQuery,
+    variables: { discussionId, queryParams: {} },
+  });
+
+  if (!data.discussion || !data.messages) return null;
+  const { messages, discussion } = data;
+  const { items, pageToken } = messages;
+  const messagesWithTags = (items || []).map(i => i.message);
+  const updatedMessageItems = messagesWithTags.map(m => ({
+    __typename: items[0].__typename,
+    message: {
+      ...m,
+      tags: null,
+    },
+  }));
+
+  client.writeQuery({
+    query: discussionQuery,
+    variables: { discussionId, queryParams: {} },
+    data: {
+      discussion: {
+        ...discussion,
+        tags: ['no_updates'],
+      },
+      messages: {
+        ...data.messages,
+        items: updatedMessageItems,
+        pageToken,
+      },
+    },
+  });
+
+  return null;
+}
+
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
@@ -262,6 +299,7 @@ const localResolvers = {
     removeMember,
     updateBadgeCount,
     deleteMessageFromDiscussion,
+    markDiscussionAsRead,
   },
 };
 

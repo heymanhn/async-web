@@ -24,6 +24,15 @@ const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
   background: colors.bgGrey,
 }));
 
+const StyledDiscussionMessage = styled(DiscussionMessage)(
+  ({ theme: { colors } }) => ({
+    background: colors.white,
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
+    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
+  })
+);
+
 /*
  * SLATE UPGRADE TODO:
  * - Create the discussion context properly with the new Slate API
@@ -119,7 +128,7 @@ const DiscussionModal = ({
         )} */}
         {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}
         {isComposing ? (
-          <DiscussionMessage
+          <StyledDiscussionMessage
             mode="compose"
             source="discussionModal"
             afterCreate={stopComposing}

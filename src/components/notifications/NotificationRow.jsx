@@ -62,6 +62,7 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
     payloadCamelJSON[camelCase(key)] = payloadJSON[key];
   });
   const { title, snippet } = payloadCamelJSON;
+  const { documentId, discussionId } = payloadCamelJSON;
 
   function context() {
     return type === 'new_message'
@@ -69,12 +70,18 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
       : `${author.fullName} invited you to collaborate on`;
   }
 
-  function notificationURL() {
-    const { documentId, discussionId } = payloadCamelJSON;
-
+  function documentURL() {
     return type === 'new_message'
-      ? `/discussions/${discussionId}`
+      ? `/d/${documentId}/discussions/${discussionId}`
       : `/d/${documentId}`;
+  }
+
+  function discussionURL() {
+    return `/discussions/${discussionId}`;
+  }
+
+  function notificationURL() {
+    return documentId ? documentURL() : discussionURL();
   }
 
   function closeDropdownAndNavigate(event) {
