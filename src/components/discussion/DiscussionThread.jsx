@@ -54,7 +54,7 @@ const DiscussionThread = ({ isUnread }) => {
       objectType: 'discussion',
       objectId: discussionId,
     });
-  });
+  }, []);
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
     variables: { discussionId, queryParams: {} },
