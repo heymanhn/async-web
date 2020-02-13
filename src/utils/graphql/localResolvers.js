@@ -67,7 +67,10 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
     query: discussionQuery,
     variables: { discussionId, queryParams: {} },
     data: {
-      discussion,
+      discussion: {
+        ...discussion,
+        tags: isUnread ? ['new_messages'] : null,
+      },
       messages: {
         messageCount: messageCount + 1,
         pageToken,
