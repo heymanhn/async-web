@@ -80,8 +80,33 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
   return null;
 }
 
-function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
-  const { pendingReplies } = client.readQuery({ query: localStateQuery });
+function addNewPendingMessage(_root, { message }, { client }) {
+  const { pendingMessages } = client.readQuery({ query: localStateQuery });
+
+  const { author: newAuthor, body: newBody } = message;
+  const newMessage = {
+    __typename: 'Message',
+    ...message,
+    author: {
+      __typename: 'Author',
+      ...newAuthor,
+    },
+    body: {
+      __typename: 'Body',
+      ...newBody,
+    },
+    tags: ['new_message'],
+  };
+
+  client.writeData({
+    data: { pendingMessages: [...pendingMessages, newMessage] },
+  });
+
+  return null;
+}
+
+function addPendingMessagesToDiscussion(_root, { discussionId }, { client }) {
+  const { pendingMessages } = client.readQuery({ query: localStateQuery });
 
   const data = client.readQuery({
     query: discussionQuery,
@@ -94,7 +119,7 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
     messages: { pageToken, items, __typename, messageCount },
   } = data;
 
-  const pendingMessageItems = pendingReplies.map(m => ({
+  const pendingMessageItems = pendingMessages.map(m => ({
     __typename: items[0].__typename,
     message: m,
   }));
@@ -113,7 +138,7 @@ function addPendingRepliesToDiscussion(_root, { discussionId }, { client }) {
     },
   });
 
-  client.writeData({ data: { pendingReplies: [] } });
+  client.writeData({ data: { pendingMessages: [] } });
 
   return null;
 }
@@ -294,7 +319,8 @@ const localResolvers = {
     addDraftToDiscussion,
     deleteDraftFromDiscussion,
     addNewMessageToDiscussion,
-    addPendingRepliesToDiscussion,
+    addNewPendingMessage,
+    addPendingMessagesToDiscussion,
     addMember,
     removeMember,
     updateBadgeCount,
