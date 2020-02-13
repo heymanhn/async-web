@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 
 import useAutoSave from 'utils/hooks/useAutoSave';
 
-import { DEFAULT_VALUE } from 'components/editor/utils';
+import { DEFAULT_BLOCK } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import Toolbar from 'components/editor/toolbar/Toolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
@@ -44,7 +44,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
     []
   );
   const [content, setContent] = useState(
-    initialContent ? JSON.parse(initialContent) : DEFAULT_VALUE
+    initialContent ? JSON.parse(initialContent) : DEFAULT_BLOCK
   );
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);

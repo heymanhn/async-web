@@ -1,11 +1,11 @@
 import { Node } from 'slate';
 
-export const DEFAULT_NODE = 'paragraph';
+export const DEFAULT_BLOCK_TYPE = 'paragraph';
 export const DEFAULT_PLAIN_NODE = 'line';
 
-export const DEFAULT_VALUE = [
+export const DEFAULT_BLOCK = [
   {
-    type: DEFAULT_NODE,
+    type: DEFAULT_BLOCK_TYPE,
     children: [{ text: '' }],
   },
 ];
@@ -64,7 +64,7 @@ export const CUT_PASTE_SOURCE = 'cutAndPaste';
  */
 export const deserializedTitle = title => [
   {
-    type: DEFAULT_NODE,
+    type: DEFAULT_BLOCK_TYPE,
     children: [{ text: title }],
   },
 ];

@@ -11,7 +11,7 @@ import { track } from 'utils/analytics';
 import { DocumentContext } from 'utils/contexts';
 
 import {
-  DEFAULT_VALUE,
+  DEFAULT_BLOCK,
   deserializedTitle,
   toPlainText,
 } from 'components/editor/utils';
@@ -39,7 +39,7 @@ const TitleComposer = ({ afterUpdate, initialTitle, ...props }) => {
   const { documentId } = useContext(DocumentContext);
   const titleEditor = useMemo(() => withReact(createEditor()), []);
   const [title, setTitle] = useState(
-    initialTitle ? deserializedTitle(initialTitle) : DEFAULT_VALUE
+    initialTitle ? deserializedTitle(initialTitle) : DEFAULT_BLOCK
   );
   const [updateDocument] = useMutation(updateDocumentMutation);
 

@@ -11,7 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
-  DEFAULT_NODE,
+  DEFAULT_BLOCK_TYPE,
   LARGE_FONT,
   MEDIUM_FONT,
   BULLETED_LIST,
@@ -42,7 +42,7 @@ import HeadingOptionIcon from './HeadingOptionIcon';
 export const TextOption = props => {
   const editor = useSlate();
   const handleTextOption = () =>
-    Editor.replaceBlock(editor, DEFAULT_NODE, COMPOSITION_MENU_SOURCE);
+    Editor.replaceBlock(editor, DEFAULT_BLOCK_TYPE, COMPOSITION_MENU_SOURCE);
 
   return (
     <MenuOption

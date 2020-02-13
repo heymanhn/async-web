@@ -10,7 +10,7 @@ import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import { track } from 'utils/analytics';
 import { DiscussionContext } from 'utils/contexts';
 
-import { DEFAULT_VALUE, toPlainText } from 'components/editor/utils';
+import { DEFAULT_BLOCK, toPlainText } from 'components/editor/utils';
 
 const TopicEditable = styled(Editable)(({ theme: { colors } }) => ({
   color: colors.mainText,
@@ -28,7 +28,7 @@ const TopicComposer = ({ initialTopic, ...props }) => {
   const { discussionId } = useContext(DiscussionContext);
   const topicEditor = useMemo(() => withReact(createEditor()), []);
   const [topic, setTopic] = useState(
-    initialTopic ? JSON.parse(initialTopic) : DEFAULT_VALUE
+    initialTopic ? JSON.parse(initialTopic) : DEFAULT_BLOCK
   );
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
 

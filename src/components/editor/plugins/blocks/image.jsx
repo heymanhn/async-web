@@ -11,7 +11,7 @@ import { track } from 'utils/analytics';
 import MenuOption from 'components/editor/compositionMenu/MenuOption';
 import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 import {
-  DEFAULT_NODE,
+  DEFAULT_BLOCK_TYPE,
   COMPOSITION_MENU_SOURCE,
   CUT_PASTE_SOURCE,
 } from 'components/editor/utils';
@@ -163,7 +163,7 @@ export function Image() {
 
   function insertNewBlockOnEnter(editor, next) {
     if (editor.hasBlock(IMAGE)) {
-      return editor.insertBlock(DEFAULT_NODE);
+      return editor.insertBlock(DEFAULT_BLOCK_TYPE);
     }
 
     return next();
@@ -176,7 +176,7 @@ export function Image() {
       const { startBlock } = editor.value;
       const { key } = startBlock;
 
-      return editor.insertBlock(DEFAULT_NODE).removeNodeByKey(key);
+      return editor.insertBlock(DEFAULT_BLOCK_TYPE).removeNodeByKey(key);
     }
 
     return next();
