@@ -9,11 +9,12 @@ import styled from '@emotion/styled';
 import { MessageContext } from 'utils/contexts';
 import useDrafts from 'utils/hooks/useDrafts';
 
-import { DEFAULT_VALUE } from 'components/editor/utils';
+import { DEFAULT_BLOCK } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import Toolbar from 'components/editor/toolbar/Toolbar';
 import withVoidElements from 'components/editor/withVoidElements';
+import withCustomBreaks from 'components/editor/withCustomBreaks';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import useMessageMutations from './useMessageMutations';
 import MessageActions from './MessageActions';
@@ -43,6 +44,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
   const messageEditor = useMemo(
     () =>
       compose(
+        withCustomBreaks,
         withMarkdownShortcuts,
         withVoidElements,
         withHistory,
@@ -51,7 +53,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
     []
   );
   const [message, setMessage] = useState(
-    initialMessage ? JSON.parse(initialMessage) : DEFAULT_VALUE
+    initialMessage ? JSON.parse(initialMessage) : DEFAULT_BLOCK
   );
 
   const { handleCreate, handleUpdate, isSubmitting } = useMessageMutations({
@@ -60,7 +62,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
 
   const coreEditorProps = useCoreEditorProps(messageEditor);
   useDrafts(message, messageEditor, isSubmitting);
-  const isEmptyMessage = message === JSON.stringify(DEFAULT_VALUE);
+  const isEmptyMessage = message === JSON.stringify(DEFAULT_BLOCK);
 
   return (
     <Container mode={mode} {...props}>

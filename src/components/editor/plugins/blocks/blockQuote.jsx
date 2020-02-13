@@ -1,4 +1,4 @@
-import { DEFAULT_NODE } from 'components/editor/utils';
+import { DEFAULT_BLOCK_TYPE } from 'components/editor/utils';
 import { CustomEnterAction, CustomBackspaceAction } from '../helpers';
 
 const BLOCK_QUOTE = 'block-quote';
@@ -8,7 +8,7 @@ export default function BlockQuotePlugin() {
 
   function exitBlockOnDoubleEnter(editor, next) {
     if (editor.isWrappedBy(BLOCK_QUOTE) && editor.isEmptyParagraph()) {
-      return editor.setBlocks(DEFAULT_NODE).unwrapBlock(BLOCK_QUOTE);
+      return editor.setBlocks(DEFAULT_BLOCK_TYPE).unwrapBlock(BLOCK_QUOTE);
     }
 
     return next();

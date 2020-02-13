@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { theme } from 'styles/theme';
 
-import { DEFAULT_NODE, DEFAULT_PLAIN_NODE } from './utils';
+import { DEFAULT_BLOCK_TYPE, DEFAULT_PLAIN_NODE } from './utils';
 import Link from './plugins/inlines/link';
 
 // HN: Not supporting drag and drop guides for now
@@ -63,7 +63,7 @@ export const queries = {
 
     if (blocks.size === 1) {
       const firstBlock = blocks.first();
-      const matchingTypes = [DEFAULT_NODE, DEFAULT_PLAIN_NODE];
+      const matchingTypes = [DEFAULT_BLOCK_TYPE, DEFAULT_PLAIN_NODE];
       return matchingTypes.includes(firstBlock.type) && !firstBlock.text;
     }
 

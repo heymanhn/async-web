@@ -1,4 +1,4 @@
-import { DEFAULT_NODE } from 'components/editor/utils';
+import { DEFAULT_BLOCK_TYPE } from 'components/editor/utils';
 import { CustomEnterAction, CustomBackspaceAction } from '../helpers';
 
 const CODE_BLOCK = 'code-block';
@@ -10,7 +10,7 @@ export default function CodeBlockPlugin() {
 
   function exitBlockOnDoubleEnter(editor, next) {
     if (editor.isWrappedBy(CODE_BLOCK) && editor.isEmptyParagraph()) {
-      return editor.setBlocks(DEFAULT_NODE).unwrapBlock(CODE_BLOCK);
+      return editor.setBlocks(DEFAULT_BLOCK_TYPE).unwrapBlock(CODE_BLOCK);
     }
 
     return next();
