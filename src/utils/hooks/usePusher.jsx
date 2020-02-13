@@ -13,6 +13,7 @@ import { isDiscussionOpen } from 'utils/navigation';
 
 const NEW_MESSAGE_EVENT = 'new_message';
 const DOCUMENT_ACCESS_EVENT = 'document_access';
+const DISCUSSION_ACCESS_EVENT = 'discussion_access';
 
 const {
   REACT_APP_ASYNC_API_URL,
@@ -70,10 +71,12 @@ const usePusher = () => {
 
     channel.bind(NEW_MESSAGE_EVENT, handleNewMessage);
     channel.bind(DOCUMENT_ACCESS_EVENT, handleBadgeCount);
+    channel.bind(DISCUSSION_ACCESS_EVENT, handleBadgeCount);
 
     return () => {
       channel.unbind(NEW_MESSAGE_EVENT, handleNewMessage);
-      channel.bind(DOCUMENT_ACCESS_EVENT, handleBadgeCount);
+      channel.unbind(DOCUMENT_ACCESS_EVENT, handleBadgeCount);
+      channel.unbind(DISCUSSION_ACCESS_EVENT, handleBadgeCount);
     };
   }, [isLoggedInData, client]);
 };
