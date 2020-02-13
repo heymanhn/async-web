@@ -50,8 +50,15 @@ const usePusher = () => {
 
     function handleNewMessage(pusherData) {
       const camelData = camelcaseKeys(pusherData, { deep: true });
-      const { message } = camelData;
+      const { message, notification } = camelData;
       const { discussionId } = message;
+
+      if (notification) {
+        client.mutate({
+          mutation: updateBadgeCountMutation,
+          variables: { userId, notification },
+        });
+      }
 
       if (isDiscussionOpen(discussionId)) {
         client.mutate({
