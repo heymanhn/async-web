@@ -14,6 +14,7 @@ import Toolbar from 'components/editor/toolbar/Toolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withVoidElements from 'components/editor/withVoidElements';
+import withCustomBreaks from 'components/editor/withCustomBreaks';
 import useDocumentMutations from './useDocumentMutations';
 
 const DocumentEditable = styled(Editable)({
@@ -34,6 +35,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const contentEditor = useMemo(
     () =>
       compose(
+        withCustomBreaks,
         withMarkdownShortcuts,
         withVoidElements,
         withHistory,

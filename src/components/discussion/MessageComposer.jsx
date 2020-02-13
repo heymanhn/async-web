@@ -14,6 +14,7 @@ import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import Toolbar from 'components/editor/toolbar/Toolbar';
 import withVoidElements from 'components/editor/withVoidElements';
+import withCustomBreaks from 'components/editor/withCustomBreaks';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import useMessageMutations from './useMessageMutations';
 import MessageActions from './MessageActions';
@@ -43,6 +44,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
   const messageEditor = useMemo(
     () =>
       compose(
+        withCustomBreaks,
         withMarkdownShortcuts,
         withVoidElements,
         withHistory,

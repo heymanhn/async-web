@@ -17,6 +17,9 @@ import {
   CHECKLIST,
   LIST_ITEM,
   CHECKLIST_ITEM,
+  LARGE_FONT,
+  MEDIUM_FONT,
+  SMALL_FONT,
 } from './utils';
 
 /*
@@ -77,6 +80,14 @@ const isEmptyParagraph = editor => {
 const isDefaultBlock = editor =>
   !isWrappedBlock(editor) && isBlockActive(editor, DEFAULT_NODE);
 
+const isHeadingBlock = editor => {
+  return (
+    isBlockActive(editor, LARGE_FONT) ||
+    isBlockActive(editor, MEDIUM_FONT) ||
+    isBlockActive(editor, SMALL_FONT)
+  );
+};
+
 // The cursor must be after the slash
 const isSlashCommand = editor => {
   const { selection } = editor;
@@ -86,6 +97,23 @@ const isSlashCommand = editor => {
   const [, path] = SlateEditor.node(editor, selection);
   const contents = SlateEditor.string(editor, path);
   return isDefaultBlock(editor) && contents === '/' && anchor.offset === 1;
+};
+
+const isAtEdge = (editor, callback) => {
+  const { selection } = editor;
+  if (!selection || Range.isExpanded(selection)) return false;
+
+  const { anchor } = selection;
+  const [, path] = SlateEditor.node(editor, selection);
+  return callback(editor, anchor, path);
+};
+
+const isAtBeginning = editor => {
+  return isAtEdge(editor, SlateEditor.isStart);
+};
+
+const isAtEnd = editor => {
+  return isAtEdge(editor, SlateEditor.isEnd);
 };
 
 /*
@@ -167,7 +195,10 @@ const Editor = {
   isWrappedBlock,
   isEmptyParagraph,
   isDefaultBlock,
+  isHeadingBlock,
   isSlashCommand,
+  isAtBeginning,
+  isAtEnd,
   getParentBlock,
   getCurrentNode,
   getCurrentText,
