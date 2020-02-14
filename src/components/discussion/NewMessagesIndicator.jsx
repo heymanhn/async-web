@@ -1,32 +1,38 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ theme: { colors, discussionViewport } }) => ({
+const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'center',
+  alignSelf: 'center',
 
-  margin: '0 -30px 30px',
-  padding: '0 30px',
-  height: '37px',
-  backgroundColor: colors.unreadBlue,
-  width: discussionViewport,
-}));
-
-const NewMessagesLabel = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey1,
-  fontSize: '16px',
+  background: colors.white,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  color: colors.blue,
+  fontSize: '12px',
   fontWeight: 500,
-  marginTop: '-2px',
-  padding: '0px 25px',
-  position: 'absolute',
+  height: '32px',
+  padding: '0 20px',
+  position: 'sticky',
+  marginTop: '-32px',
+  top: '160px',
+  cursor: 'pointer',
+  zIndex: 10,
+  transition: 'opacity 0.2s',
 }));
 
-const NewMessagesIndicator = () => (
-  <Container>
-    <NewMessagesLabel>show new replies</NewMessagesLabel>
+const NewMessagesIndicator = ({ count, ...props }) => (
+  <Container {...props}>
+    {`show ${count} new ${Pluralize('message', count, false)}`}
   </Container>
 );
+
+NewMessagesIndicator.propTypes = {
+  count: PropTypes.number.isRequired,
+};
 
 export default NewMessagesIndicator;

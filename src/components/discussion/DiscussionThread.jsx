@@ -1,15 +1,19 @@
-import React, { useContext, useRef, useState, useEffect } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
+import { useQuery, useMutation } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
+import localStateQuery from 'graphql/queries/localState';
+import localAddPendingMessages from 'graphql/mutations/local/addPendingMessagesToDiscussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
+import useMountEffect from 'utils/hooks/useMountEffect';
 import { snakedQueryParams } from 'utils/queryParams';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { DiscussionContext } from 'utils/contexts';
 
 import DiscussionMessage from './DiscussionMessage';
+import NewMessagesDivider from './NewMessagesDivider';
 import NewMessagesIndicator from './NewMessagesIndicator';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
@@ -32,32 +36,51 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 
 const DiscussionThread = ({ isUnread }) => {
   const discussionRef = useRef(null);
-  const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
   const [isFetching, setIsFetching] = useState(false);
+  const [pendingMessageCount, setPendingMessageCount] = useState(0);
+  const [addPendingMessages] = useMutation(localAddPendingMessages, {
+    variables: { discussionId },
+  });
 
   const { markAsRead } = useViewedReaction();
-  useEffect(() => {
-    return () => {
-      markAsRead({
-        isUnread,
-        objectType: 'discussion',
-        objectId: discussionId,
-        parentId: documentId,
-      });
-    };
+
+  useMountEffect(() => {
+    markAsRead({
+      isUnread,
+      objectType: 'discussion',
+      objectId: discussionId,
+    });
   });
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
     variables: { discussionId, queryParams: {} },
   });
+  const { data: localData } = useQuery(localStateQuery);
 
   if (loading) return null;
   if (error || !data.messages) return <div>{error}</div>;
 
   const { items, pageToken } = data.messages;
   const messages = (items || []).map(i => i.message);
+
+  if (localData) {
+    const { pendingMessages } = localData;
+    if (pendingMessages && pendingMessages.length !== pendingMessageCount) {
+      setPendingMessageCount(pendingMessages.length);
+    }
+  }
+
+  function handleAddPendingMessages() {
+    addPendingMessages();
+
+    markAsRead({
+      isUnread: false,
+      objectType: 'discussion',
+      objectId: discussionId,
+    });
+  }
 
   function fetchMoreMessages() {
     const newQueryParams = {};
@@ -98,7 +121,7 @@ const DiscussionThread = ({ isUnread }) => {
 
   function firstNewMessageId() {
     const targetMessage = messages.find(
-      m => m.tags && m.tags.includes('new_messages')
+      m => m.tags && m.tags.includes('new_message')
     );
 
     return targetMessage ? targetMessage.id : null;
@@ -110,10 +133,16 @@ const DiscussionThread = ({ isUnread }) => {
 
   return (
     <Container ref={discussionRef}>
+      {pendingMessageCount > 0 && (
+        <NewMessagesIndicator
+          count={pendingMessageCount}
+          onClick={handleAddPendingMessages}
+        />
+      )}
       {messages.map(m => (
         <React.Fragment key={m.id}>
           {firstNewMessageId() === m.id && m.id !== messages[0].id && (
-            <NewMessagesIndicator />
+            <NewMessagesDivider />
           )}
           <StyledDiscussionMessage
             message={m}

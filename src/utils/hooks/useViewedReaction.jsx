@@ -3,7 +3,6 @@ import { useApolloClient } from 'react-apollo';
 import createReactionMutation from 'graphql/mutations/createReaction';
 import markDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';
 import notificationsQuery from 'graphql/queries/notifications';
-import discussionQuery from 'graphql/queries/discussion';
 import { getLocalUser } from 'utils/auth';
 
 const useViewedReaction = () => {
@@ -25,10 +24,6 @@ const useViewedReaction = () => {
         {
           query: notificationsQuery,
           variables: { id: userId, queryParams: {} },
-        },
-        {
-          query: discussionQuery,
-          variables: { discussionId: objectId, queryParams: {} },
         },
       ],
       // We're updating the cache directly instead of using refetchQueries since the conversations

@@ -18,8 +18,7 @@ const TopicEditable = styled(Editable)(({ theme: { colors } }) => ({
   fontWeight: 600,
   letterSpacing: '-0.022em',
   lineHeight: '54px',
-  marginBottom: '30px',
-  marginLeft: '20px',
+  margin: '20px 30px',
   width: '100%',
   outline: 'none',
 }));
