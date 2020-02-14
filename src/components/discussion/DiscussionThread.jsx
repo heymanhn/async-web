@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery, useMutation } from 'react-apollo';
+import { useApolloClient, useQuery, useMutation } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
@@ -35,6 +35,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 );
 
 const DiscussionThread = ({ isUnread }) => {
+  const client = useApolloClient();
   const discussionRef = useRef(null);
   const { discussionId } = useContext(DiscussionContext);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
@@ -47,11 +48,15 @@ const DiscussionThread = ({ isUnread }) => {
   const { markAsRead } = useViewedReaction();
 
   useMountEffect(() => {
-    markAsRead({
-      isUnread,
-      objectType: 'discussion',
-      objectId: discussionId,
-    });
+    client.writeData({ data: { pendingMessages: [] } });
+
+    return () => {
+      markAsRead({
+        isUnread,
+        objectType: 'discussion',
+        objectId: discussionId,
+      });
+    };
   });
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
