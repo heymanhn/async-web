@@ -16,7 +16,6 @@ const Container = styled.div(({ theme: { colors } }) => ({
   fontSize: '12px',
   fontWeight: 500,
   height: '32px',
-  width: '130px',
   padding: '0 20px',
   position: 'sticky',
   marginTop: '-32px',

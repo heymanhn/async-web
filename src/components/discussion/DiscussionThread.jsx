@@ -1,6 +1,6 @@
-import React, { useContext, useRef, useState, useEffect } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient, useQuery, useMutation } from 'react-apollo';
+import { useQuery, useMutation } from 'react-apollo';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
@@ -8,6 +8,7 @@ import localStateQuery from 'graphql/queries/localState';
 import localAddPendingMessages from 'graphql/mutations/local/addPendingMessagesToDiscussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
+import useMountEffect from 'utils/hooks/useMountEffect';
 import { snakedQueryParams } from 'utils/queryParams';
 import { DiscussionContext } from 'utils/contexts';
 
@@ -34,7 +35,6 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 );
 
 const DiscussionThread = ({ isUnread }) => {
-  const client = useApolloClient();
   const discussionRef = useRef(null);
   const { discussionId } = useContext(DiscussionContext);
   const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
@@ -46,15 +46,13 @@ const DiscussionThread = ({ isUnread }) => {
 
   const { markAsRead } = useViewedReaction();
 
-  useEffect(() => {
-    client.writeData({ data: { pendingMessages: [] } });
-
-    return markAsRead({
+  useMountEffect(() => {
+    markAsRead({
       isUnread,
       objectType: 'discussion',
       objectId: discussionId,
     });
-  }, []);
+  });
 
   const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
     variables: { discussionId, queryParams: {} },
@@ -72,6 +70,16 @@ const DiscussionThread = ({ isUnread }) => {
     if (pendingMessages && pendingMessages.length !== pendingMessageCount) {
       setPendingMessageCount(pendingMessages.length);
     }
+  }
+
+  function handleAddPendingMessages() {
+    addPendingMessages();
+
+    markAsRead({
+      isUnread: false,
+      objectType: 'discussion',
+      objectId: discussionId,
+    });
   }
 
   function fetchMoreMessages() {
@@ -128,7 +136,7 @@ const DiscussionThread = ({ isUnread }) => {
       {pendingMessageCount > 0 && (
         <NewMessagesIndicator
           count={pendingMessageCount}
-          onClick={addPendingMessages()}
+          onClick={handleAddPendingMessages}
         />
       )}
       {messages.map(m => (

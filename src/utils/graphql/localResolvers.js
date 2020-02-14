@@ -84,14 +84,16 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
 }
 
 function addNewPendingMessage(_root, { message }, { client }) {
-  const { pendingMessages } = client.readQuery({ query: localStateQuery });
+  const { pendingMessages, ...localState } = client.readQuery({
+    query: localStateQuery,
+  });
 
   const { author: newAuthor, body: newBody } = message;
   const newMessage = {
     __typename: 'Message',
     ...message,
     author: {
-      __typename: 'Author',
+      __typename: 'User',
       ...newAuthor,
     },
     body: {
@@ -101,8 +103,12 @@ function addNewPendingMessage(_root, { message }, { client }) {
     tags: ['new_message'],
   };
 
-  client.writeData({
-    data: { pendingMessages: [...pendingMessages, newMessage] },
+  client.writeQuery({
+    query: localStateQuery,
+    data: {
+      ...localState,
+      pendingMessages: [...pendingMessages, newMessage],
+    },
   });
 
   return null;
