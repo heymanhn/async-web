@@ -5,21 +5,6 @@ import { Range } from 'slate';
 import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
-// import { DocumentContext } from 'utils/contexts';
-
-import {
-  BoldButton,
-  ItalicButton,
-  LargeFontButton,
-  MediumFontButton,
-  BulletedListButton,
-  CodeBlockButton,
-  BlockQuoteButton,
-} from './buttons';
-
-// import { BulletedListButton } from '../plugins/blocks/lists';
-// import { StartDiscussionButton } from '../plugins/inlineDiscussion';
-
 const Container = styled.div(
   ({ theme: { colors } }) => ({
     display: 'flex',
@@ -48,14 +33,7 @@ const Container = styled.div(
   }
 );
 
-const VerticalDivider = styled.div(({ theme: { colors } }) => ({
-  borderRight: `1px solid ${colors.grey1}`,
-  height: '24px',
-  margin: '0 5px',
-}));
-
-const Toolbar = () => {
-  // const { documentId, handleShowModal } = useContext(DocumentContext);
+const Toolbar = ({ children }) => {
   const ref = useRef(null);
   const editor = useSlate();
   const { selection } = editor;
@@ -82,36 +60,14 @@ const Toolbar = () => {
 
   return ReactDOM.createPortal(
     <Container ref={ref} coords={calculateToolbarPosition()} isOpen={isOpen}>
-      <BoldButton />
-      <ItalicButton />
-      <VerticalDivider />
-
-      <LargeFontButton />
-      <MediumFontButton />
-      <BulletedListButton />
-      <VerticalDivider />
-
-      <BlockQuoteButton />
-      <CodeBlockButton />
-
-      {/* SLATE UPGRADE TODO: Implement inline discussions
-      {source === 'document' && (
-        <>
-          <VerticalDivider />
-          <StartDiscussionButton
-            documentId={documentId}
-            editor={editor}
-            handleShowDiscussion={handleShowModal}
-          />
-        </>
-      )} */}
+      {children}
     </Container>,
     root
   );
 };
 
 Toolbar.propTypes = {
-  source: PropTypes.oneOf(['document', 'discussionMessage']).isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 export default Toolbar;
