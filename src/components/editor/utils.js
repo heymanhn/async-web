@@ -37,6 +37,12 @@ export const SECTION_BREAK = 'section-break';
 export const VOID_TYPES = [SECTION_BREAK];
 
 /*
+ * Inline elements
+ */
+export const HIGHLIGHT = 'highlight';
+export const INLINE_TYPES = [HIGHLIGHT];
+
+/*
  * Composition menu option titles
  */
 export const TEXT_OPTION_TITLE = 'Text';

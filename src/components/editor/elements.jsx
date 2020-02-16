@@ -167,3 +167,16 @@ const SectionBreak = styled.hr(({ theme: { colors } }) => ({
 export const SectionBreakElement = ({ attributes }) => (
   <SectionBreak {...attributes} />
 );
+
+/*
+ * Inline Discussion elements
+ */
+
+const Highlight = styled.span(({ theme: { colors } }) => ({
+  background: colors.highlightYellow,
+  padding: '2px 0px',
+}));
+
+export const HighlightElement = ({ attributes, children }) => (
+  <Highlight attributes={attributes}>{children}</Highlight>
+);

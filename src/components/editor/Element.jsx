@@ -13,6 +13,7 @@ import {
   CODE_BLOCK,
   BLOCK_QUOTE,
   SECTION_BREAK,
+  HIGHLIGHT,
 } from './utils';
 import {
   TextElement,
@@ -26,6 +27,7 @@ import {
   CodeBlockElement,
   BlockQuoteElement,
   SectionBreakElement,
+  HighlightElement,
 } from './elements';
 import ChecklistItemElement from './ChecklistItem';
 
@@ -56,6 +58,8 @@ const Element = props => {
       return <BlockQuoteElement {...props} />;
     case SECTION_BREAK:
       return <SectionBreakElement {...props} />;
+    case HIGHLIGHT:
+      return <HighlightElement {...props} />;
     default:
       return <TextElement {...props} />;
   }
