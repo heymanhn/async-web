@@ -59,7 +59,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
       <DocumentEditable {...props} {...coreEditorProps} />
-      <DocumentToolbar />
+      <DocumentToolbar content={content} />
       <CompositionMenuButton />
     </Slate>
   );

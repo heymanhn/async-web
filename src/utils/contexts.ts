@@ -4,6 +4,8 @@ import { createContext } from 'react';
 export const DEFAULT_DOCUMENT_CONTEXT = {
   documentId: null,
   modalDiscussionId: null,
+  inlineDiscussionTopic: null,
+
   handleShowModal: () => {},
   handleCloseModal: () => {},
 };

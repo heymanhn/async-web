@@ -1,26 +1,24 @@
 import React from 'react';
-
-// import { DocumentContext } from 'utils/contexts';
-// import { StartDiscussionButton } from '../plugins/inlineDiscussion';
+import PropTypes from 'prop-types';
 
 import Toolbar from './Toolbar';
 import FormattingButtons from './FormattingButtons';
 import BlockButtons from './BlockButtons';
 import VerticalDivider from './VerticalDivider';
+import InlineDiscussionButton from './InlineDiscussionButton';
 
-const DocumentToolbar = () => {
-  // SLATE UPGRADE TODO: inline discussions
-  // const { documentId, handleShowModal } = useContext(DocumentContext);
+const DocumentToolbar = ({ content, ...props }) => (
+  <Toolbar {...props}>
+    <FormattingButtons />
+    <VerticalDivider />
+    <BlockButtons />
+    <VerticalDivider />
+    <InlineDiscussionButton content={content} />
+  </Toolbar>
+);
 
-  return (
-    <Toolbar>
-      <FormattingButtons />
-      <VerticalDivider />
-      <BlockButtons />
-      <VerticalDivider />
-      {/* <InlineDiscussionButton /> */}
-    </Toolbar>
-  );
+DocumentToolbar.propTypes = {
+  content: PropTypes.array.isRequired,
 };
 
 export default DocumentToolbar;
