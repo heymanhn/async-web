@@ -17,27 +17,51 @@ const DocumentContainer = ({
   discussionId: initialDiscussionId,
   viewMode: initialViewMode,
 }) => {
-  const [viewMode, setViewMode] = useState(initialViewMode);
-  const [modalDiscussionId, setModalDiscussionId] = useState(
-    initialDiscussionId
-  );
-  const [isModalOpen, setIsModalOpen] = useState(!!modalDiscussionId);
+  const [state, setState] = useState({
+    viewMode: initialViewMode,
+    modalDiscussionId: initialDiscussionId,
+    isModalOpen: !!initialDiscussionId,
+    inlineDiscussionTopic: null,
+  });
+  const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
 
-  // SLATE UPGRADE TODO: Invoke this method in the selection toolbar icon
-  function handleShowModal(discussionId) {
-    setModalDiscussionId(discussionId);
-    setIsModalOpen(true);
+  function handleShowModal(discussionId, selection, content) {
+    const newState = {
+      modalDiscussionId: discussionId,
+      isModalOpen: true,
+    };
+
+    // For creating inline discussion context later on
+    if (selection && content)
+      newState.inlineDiscussionTopic = { selection, content };
+
+    setState(oldState => ({
+      ...oldState,
+      ...newState,
+    }));
   }
 
   function handleCloseModal() {
-    setModalDiscussionId(null);
-    setIsModalOpen(false);
+    setState(oldState => ({
+      ...oldState,
+      modalDiscussionId: null,
+      inlineDiscussionTopic: null,
+      isModalOpen: false,
+    }));
   }
+
+  const {
+    modalDiscussionId,
+    inlineDiscussionTopic,
+    isModalOpen,
+    viewMode,
+  } = state;
 
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
     documentId,
     modalDiscussionId,
+    inlineDiscussionTopic,
     handleShowModal,
     handleCloseModal,
   };
@@ -49,13 +73,7 @@ const DocumentContainer = ({
       {viewMode === 'discussions' && <DiscussionsList />}
 
       {isModalOpen && (
-        <DiscussionModal
-          isOpen={isModalOpen}
-          handleClose={handleCloseModal}
-          // createAnnotation={createAnnotation}
-          // documentEditor={documentEditor}
-          // selection={selection}
-        />
+        <DiscussionModal isOpen={isModalOpen} handleClose={handleCloseModal} />
       )}
     </DocumentContext.Provider>
   );

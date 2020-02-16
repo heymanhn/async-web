@@ -1,41 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { faCommentPlus } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
 
-import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
-import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 import InlineDiscussion from 'components/discussion/InlineDiscussion';
 import { RenderInline, RenderMark } from './helpers';
 
 export const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
 export const CONTEXT_HIGHLIGHT = 'context-highlight';
-
-/* **** Toolbar button **** */
-
-export function StartDiscussionButton({ documentId, editor, handleShowDiscussion, ...props }) {
-  function handleClick() {
-    // Next step: Pass the selection range to the modal
-    const { selection } = editor.value;
-
-    // Hack, will fix later
-    setTimeout(() => handleShowDiscussion(null, selection, editor), 0);
-
-    editor.moveToEnd().blur();
-  }
-
-  return (
-    <ToolbarButton handleClick={handleClick} {...props}>
-      <ButtonIcon icon={faCommentPlus} isActive={false} />
-    </ToolbarButton>
-  );
-}
-
-StartDiscussionButton.propTypes = {
-  documentId: PropTypes.string.isRequired,
-  editor: PropTypes.object.isRequired,
-  handleShowDiscussion: PropTypes.func.isRequired,
-};
 
 /* **** Slate plugin **** */
 
@@ -69,9 +39,7 @@ export function ContextHighlightPlugin() {
     const { attributes, children } = props; /* eslint react/prop-types: 0 */
 
     return (
-      <ContextHighlight attributes={attributes}>
-        {children}
-      </ContextHighlight>
+      <ContextHighlight attributes={attributes}>{children}</ContextHighlight>
     );
   }
 
