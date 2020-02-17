@@ -45,7 +45,7 @@ const DiscussionMessage = ({
   const { draft } = useContext(DiscussionContext);
 
   const [mode, setMode] = useState(initialMode);
-  const { hover, ...hoverProps } = useHover(mode !== 'display');
+  const { hover, ...hoverProps } = useHover(mode === 'display');
   const currentUser = useCurrentUser();
 
   const { createdAt, id: messageId, updatedAt, body } = message;

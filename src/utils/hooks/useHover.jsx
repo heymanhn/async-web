@@ -1,17 +1,26 @@
-// TODO: change the noHover usage away from a double negative. Super confusing
 import { useState } from 'react';
 
-const useHover = noHover => {
+const useHover = (
+  allowHover,
+  handleHoverOn = () => {},
+  handleHoverOff = () => {}
+) => {
   const [hover, setHover] = useState(false);
-
-  function disableHover(event) {
-    event.stopPropagation();
-    if (!noHover) setHover(false);
-  }
 
   function enableHover(event) {
     event.stopPropagation();
-    if (!noHover) setHover(true);
+    if (allowHover) {
+      setHover(true);
+      handleHoverOn();
+    }
+  }
+
+  function disableHover(event) {
+    event.stopPropagation();
+    if (allowHover) {
+      setHover(false);
+      handleHoverOff();
+    }
   }
 
   return {
