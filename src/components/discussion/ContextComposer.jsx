@@ -91,7 +91,7 @@ const ContextComposer = props => {
     Transforms.deselect(contextEditor);
   };
 
-  useMountEffect(() => {
+  const generateContext = () => {
     if (context) return;
 
     const [newContents, newSelection] = extractContents();
@@ -104,7 +104,9 @@ const ContextComposer = props => {
     deleteSurroundingText();
 
     setContext(content);
-  });
+  };
+
+  useMountEffect(generateContext);
 
   return (
     <Slate editor={contextEditor} value={content} onChange={v => setContent(v)}>

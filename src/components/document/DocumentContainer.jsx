@@ -33,7 +33,13 @@ const DocumentContainer = ({
 
     // For creating inline discussion context later on
     if (selection && content)
-      newState.inlineDiscussionTopic = { selection, content };
+      newState.inlineDiscussionTopic = {
+        selection,
+        content,
+
+        // This is set once an inline annotation is added to the document
+        annotation: false,
+      };
 
     setState(oldState => ({
       ...oldState,
