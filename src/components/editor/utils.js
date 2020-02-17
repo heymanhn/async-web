@@ -39,9 +39,9 @@ export const VOID_TYPES = [SECTION_BREAK];
 /*
  * Inline elements
  */
-export const HIGHLIGHT = 'highlight';
+export const CONTEXT_HIGHLIGHT = 'highlight';
 export const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
-export const INLINE_TYPES = [HIGHLIGHT, INLINE_DISCUSSION_ANNOTATION];
+export const INLINE_TYPES = [CONTEXT_HIGHLIGHT, INLINE_DISCUSSION_ANNOTATION];
 
 /*
  * Composition menu option titles

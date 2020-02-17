@@ -13,7 +13,7 @@ import withInlineElements from 'components/editor/withInlineElements';
 import withVoidElements from 'components/editor/withVoidElements';
 import {
   INLINE_DISCUSSION_SOURCE,
-  HIGHLIGHT,
+  CONTEXT_HIGHLIGHT,
   BUFFER_LENGTH,
 } from 'components/editor/utils';
 
@@ -63,7 +63,7 @@ const ContextComposer = props => {
 
   // Assumes that a highlight has been made
   const deleteSurroundingText = () => {
-    const [, path] = Editor.findNodeByType(contextEditor, HIGHLIGHT);
+    const [, path] = Editor.findNodeByType(contextEditor, CONTEXT_HIGHLIGHT);
 
     // Delete the end first so that the selection paths don't change
     Transforms.select(contextEditor, {
@@ -102,7 +102,7 @@ const ContextComposer = props => {
     Transforms.insertNodes(contextEditor, deepNewContents);
     Editor.wrapInline(
       contextEditor,
-      HIGHLIGHT,
+      CONTEXT_HIGHLIGHT,
       newSelection,
       INLINE_DISCUSSION_SOURCE
     );
