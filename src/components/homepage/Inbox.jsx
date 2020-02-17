@@ -4,6 +4,9 @@ import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
 import inboxQuery from 'graphql/queries/inbox';
+import NewDocumentButton from 'components/document/NewDocumentButton';
+import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
+
 import InboxRow from './InboxRow';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -24,6 +27,11 @@ const PageTitle = styled.div({
   marginBottom: '20px',
 });
 
+const ButtonContainer = styled.div({
+  display: 'flex',
+  marginTop: '20px',
+});
+
 const Inbox = () => {
   const { userId } = getLocalUser();
   const { loading, error, data } = useQuery(inboxQuery, {
@@ -42,6 +50,10 @@ const Inbox = () => {
           const object = item.document || item.discussion;
           return <InboxRow key={object.id} item={item} />;
         })}
+        <ButtonContainer>
+          <NewDocumentButton />
+          <NewDiscussionButton />
+        </ButtonContainer>
       </InnerContainer>
     </Container>
   );

@@ -34,6 +34,7 @@ const Title = styled.span(({ hover, theme: { colors } }) => ({
   color: hover ? colors.blue : colors.mainText,
   fontSize: '16px',
   fontWeight: 500,
+  letterSpacing: '-0.011em',
 }));
 
 const AdditionalInfo = styled.div(({ theme: { colors } }) => ({
@@ -43,6 +44,7 @@ const AdditionalInfo = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   cursor: 'default',
   fontSize: '14px',
+  letterSpacing: '-0.006em',
   marginTop: '3px',
 }));
 

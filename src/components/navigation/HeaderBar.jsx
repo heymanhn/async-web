@@ -7,9 +7,7 @@ import ResourceAccessContainer from 'components/participants/ResourceAccessConta
 import VerticalDivider from 'components/shared/VerticalDivider';
 import OrganizationSettings from 'components/navigation/OrganizationSettings';
 import NotificationsBell from 'components/notifications/NotificationsBell';
-import NewDocumentButton from 'components/document/NewDocumentButton';
 import DocumentViewMode from 'components/document/DocumentViewMode';
-import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
 import DocumentTitle from 'components/document/DocumentTitle';
 import DiscussionTitle from 'components/discussion/DiscussionTitle';
 
@@ -58,8 +56,6 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
       </MenuSection>
       <NavigationSection>
         <NotificationsBell />
-        <NewDocumentButton />
-        <NewDiscussionButton />
       </NavigationSection>
     </Container>
   );
