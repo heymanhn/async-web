@@ -12,11 +12,13 @@ const SHOW_PREVIEW_WAIT_INTERVAL = 800;
 const Highlight = styled.span(({ isHover, theme: { colors } }) => ({
   background: isHover ? colors.highlightYellow : 'none',
   borderBottom: isHover ? 'none' : `2px solid ${colors.highlightYellow}`,
+  cursor: 'pointer',
   opacity: isHover ? 0.9 : 1,
   padding: '2px 0px',
 }));
 
 const InlineDiscussionElement = ({ attributes, children, element }) => {
+  const ref = useRef(null);
   const [isHighlightHover, setIsHighlightHover] = useState(false);
   const [isPreviewHover, setIsPreviewHover] = useState(false);
   const { discussionId } = element;
@@ -64,18 +66,17 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
   delete previewHoverProps.hover;
 
   return (
-    <span {...highlightHoverProps}>
+    <span ref={ref} {...highlightHoverProps}>
       <Highlight isHover={isHighlightHover || isPreviewHover} {...attributes}>
         {children}
       </Highlight>
-      {discussionId && isPreviewHover ? (
+      {discussionId && (
         <InlineDiscussionPreview
+          parentRef={ref}
           discussionId={discussionId}
           isOpen={isPreviewHover}
           {...previewHoverProps}
         />
-      ) : (
-        undefined
       )}
     </span>
   );

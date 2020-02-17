@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import Truncate from 'react-truncate';
@@ -10,27 +11,31 @@ import { DocumentContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
-const Container = styled.div(
-  ({ isOpen, theme: { colors, documentViewport } }) => ({
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
+const OuterContainer = styled.div(({ isOpen, styles }) => ({
+  position: 'absolute',
+  width: '100vw',
+  opacity: isOpen ? 1 : 0,
+  transition: 'opacity 0.2s',
 
-    background: colors.white,
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
-    cursor: 'pointer',
-    height: '60px',
-    margin: '-2px -30px 0',
-    opacity: isOpen ? 1 : 0,
-    padding: '0 25px',
-    transition: 'opacity 0.2s',
-    width: documentViewport,
-    zIndex: isOpen ? 1 : -1,
-  })
-);
+  ...styles,
+}));
+
+const Container = styled.div(({ theme: { colors, documentViewport } }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  position: 'relative',
+
+  background: colors.white,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
+  cursor: 'pointer',
+  height: '60px',
+  margin: '0 auto',
+  padding: '0 25px',
+  width: documentViewport,
+}));
 
 const LastMessageDetails = styled.div({
   display: 'flex',
@@ -50,6 +55,10 @@ const PreviewSnippet = styled.div(({ theme: { colors } }) => ({
   letterSpacing: '-0.1px',
   lineHeight: '32px',
 }));
+
+const StyledTruncate = styled(Truncate)({
+  userSelect: 'none',
+});
 
 const MessageCountIndicator = styled.div(({ theme: { colors } }) => ({
   color: colors.grey2,
@@ -77,7 +86,7 @@ const NewReplyLabel = styled(MessageCountIndicator)(
   })
 );
 
-const InlineDiscussionPreview = ({ discussionId, isOpen }) => {
+const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef }) => {
   const { handleShowModal } = useContext(DocumentContext);
   const { loading, error, data: discussionData } = useQuery(discussionQuery, {
     variables: { discussionId, queryParams: {} },
@@ -98,25 +107,45 @@ const InlineDiscussionPreview = ({ discussionId, isOpen }) => {
   // HN: Make a better UI for a draft indicator in the preview in the future
   const displayText = draft ? `(Draft) ${text}` : text;
 
-  return (
-    <Container isOpen={isOpen} onClick={() => handleShowModal(discussionId)}>
-      <LastMessageDetails>
-        <AvatarWithMargin avatarUrl={profilePictureUrl} size={32} />
-        <PreviewSnippet>
-          <Truncate lines={1}>{displayText}</Truncate>
-        </PreviewSnippet>
-      </LastMessageDetails>
-      {newUpdates ? (
-        <NewReplyContainer>
-          <NewReplyIndicator />
-          <NewReplyLabel>{tags[0].replace('_', ' ')}</NewReplyLabel>
-        </NewReplyContainer>
-      ) : (
-        <MessageCountIndicator>
-          {Pluralize('reply', messageCount, true)}
-        </MessageCountIndicator>
-      )}
-    </Container>
+  const handleClick = event => {
+    event.preventDefault();
+    event.stopPropagation();
+    handleShowModal(discussionId);
+  };
+
+  const calculateTooltipPosition = () => {
+    if (!isOpen || !parentRef.current) return {};
+
+    const { offsetHeight, offsetTop } = parentRef.current;
+    return {
+      top: `${offsetTop + offsetHeight}px`,
+    };
+  };
+
+  const root = window.document.getElementById('root');
+
+  return ReactDOM.createPortal(
+    <OuterContainer isOpen={isOpen} styles={calculateTooltipPosition()}>
+      <Container onClick={handleClick}>
+        <LastMessageDetails>
+          <AvatarWithMargin avatarUrl={profilePictureUrl} size={32} />
+          <PreviewSnippet>
+            <StyledTruncate lines={1}>{displayText}</StyledTruncate>
+          </PreviewSnippet>
+        </LastMessageDetails>
+        {newUpdates ? (
+          <NewReplyContainer>
+            <NewReplyIndicator />
+            <NewReplyLabel>{tags[0].replace('_', ' ')}</NewReplyLabel>
+          </NewReplyContainer>
+        ) : (
+          <MessageCountIndicator>
+            {Pluralize('reply', messageCount, true)}
+          </MessageCountIndicator>
+        )}
+      </Container>
+    </OuterContainer>,
+    root
   );
 };
 
