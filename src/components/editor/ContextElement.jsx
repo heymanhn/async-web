@@ -22,7 +22,7 @@ import {
   HIGHLIGHT,
 } from './utils';
 import {
-  TextElement,
+  ParagraphElement,
   LargeFontElement,
   MediumFontElement,
   SmallFontElement,
@@ -67,7 +67,7 @@ const ContextElement = props => {
     case HIGHLIGHT:
       return <HighlightElement {...props} />;
     default:
-      return <TextElement {...props} />;
+      return <ParagraphElement {...props} />;
   }
 };
 

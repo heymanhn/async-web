@@ -2,19 +2,33 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { INLINE_TYPES } from './utils';
+
 /*
  * Default element, which is a paragraph block with better styling
  */
-const TextBlock = styled.div(({ theme: { colors } }) => ({
+
+const ParagraphInline = styled.span(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '16px',
+  letterSpacing: '-0.011em',
+}));
+
+const ParagraphBlock = styled.div(({ theme: { colors } }) => ({
+  color: colors.contentText,
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
 }));
 
-export const TextElement = ({ attributes, children }) => (
-  <TextBlock {...attributes}>{children}</TextBlock>
-);
+export const ParagraphElement = ({ attributes, children, element }) => {
+  const Element = INLINE_TYPES.includes(element.type)
+    ? ParagraphInline
+    : ParagraphBlock;
+
+  return <Element {...attributes}>{children}</Element>;
+};
 
 /*
  * Headings: Large, medium, small

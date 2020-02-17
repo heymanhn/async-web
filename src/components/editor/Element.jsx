@@ -18,7 +18,7 @@ import {
   INLINE_DISCUSSION_ANNOTATION,
 } from './utils';
 import {
-  TextElement,
+  ParagraphElement,
   LargeFontElement,
   MediumFontElement,
   SmallFontElement,
@@ -65,7 +65,7 @@ const Element = props => {
     case INLINE_DISCUSSION_ANNOTATION:
       return <InlineDiscussionElement {...props} />;
     default:
-      return <TextElement {...props} />;
+      return <ParagraphElement {...props} />;
   }
 };
 
