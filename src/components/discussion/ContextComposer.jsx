@@ -31,7 +31,7 @@ const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
 
 const ContextComposer = props => {
   const { inlineDiscussionTopic } = useContext(DocumentContext);
-  const { context } = useContext(DiscussionContext);
+  const { context, setContext } = useContext(DiscussionContext);
 
   const contextEditor = useMemo(
     () =>
@@ -92,18 +92,18 @@ const ContextComposer = props => {
   };
 
   useMountEffect(() => {
-    // Step 1: Load only the text we need
+    if (context) return;
+
     const [newContents, newSelection] = extractContents();
 
     // Needed to avoid editor focus issues relating to shallow references.
     const deepNewContents = JSON.parse(JSON.stringify(newContents));
+
     Transforms.insertNodes(contextEditor, deepNewContents);
-
-    // Step 2: Create a context highlight
     Editor.wrapHighlight(contextEditor, newSelection, INLINE_DISCUSSION_SOURCE);
-
-    // Step 3: Clip the text that exceeds the inline discussion buffer range
     deleteSurroundingText();
+
+    setContext(content);
   });
 
   return (

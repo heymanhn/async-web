@@ -16,6 +16,7 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   context: null,
   draft: null,
 
+  setContext: () => {},
   afterCreate: () => {},
   afterCreateDraft: () => {},
 };

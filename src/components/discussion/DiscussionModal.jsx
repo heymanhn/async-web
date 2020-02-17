@@ -50,7 +50,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     handleShowModal,
   } = useContext(DocumentContext);
   const [isComposing, setIsComposing] = useState(!modalDiscussionId);
-  // const [context, setContext] = useState(null);
+  const [context, setContext] = useState(null);
 
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
@@ -72,10 +72,11 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   if (loading) return null;
 
   let draft;
-  let context; // SLATE UPGRADE TODO: later this may need to be state instead
   if (data && data.discussion) {
     const { discussion } = data;
-    ({ draft, topic: context } = discussion);
+    ({ draft } = discussion);
+    const { topic } = discussion;
+    if (!context) setContext(topic);
   }
 
   if (draft && !isComposing) startComposing();
@@ -109,6 +110,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     context,
     draft,
 
+    setContext,
     afterCreate: id => handleShowModal(id),
   };
 

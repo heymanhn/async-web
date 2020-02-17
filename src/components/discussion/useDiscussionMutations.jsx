@@ -6,32 +6,27 @@ import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
 import { track } from 'utils/analytics';
 
-/*
- * SLATE UPGRADE TODO
- * - When context is implemented, save it during discussion create
- */
+import { toPlainText } from 'components/editor/utils';
+
 const useDiscussionMutations = () => {
   const [createDiscussion] = useMutation(createDiscussionMutation);
+  // SLATE UPGRADE TODO: what do I need this for again?
   // const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
   //   variables: { documentId, discussionId },
   // });
 
   const { documentId } = useContext(DocumentContext);
-  const { afterCreate } = useContext(DiscussionContext);
+  const { context, afterCreate } = useContext(DiscussionContext);
 
   async function handleCreate() {
     const input = documentId ? { documentId } : {};
-    // TODO: fix this when we implement extracting context
-    // if (context) {
-    //   const initialJSON = JSON.parse(context);
-    //   const value = Value.fromJSON(initialJSON);
-
-    //   input.topic = {
-    //     formatter: 'slatejs',
-    //     text: toPlainText(),
-    //     payload: context,
-    //   };
-    // }
+    if (context) {
+      input.topic = {
+        formatter: 'slatejs',
+        text: toPlainText(context),
+        payload: JSON.stringify(context),
+      };
+    }
 
     const { data: createDiscussionData } = await createDiscussion({
       variables: { input },
