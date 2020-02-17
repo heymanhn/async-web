@@ -55,7 +55,7 @@ export const ItalicButton = () => <MarkButton type={ITALIC} icon={faItalic} />;
  */
 function BlockButton({ type, icon, CustomIconElement, ...props }) {
   const editor = useSlate();
-  const isActive = Editor.isBlockActive(editor, type);
+  const isActive = Editor.isElementActive(editor, type);
 
   function handleClick() {
     Editor.toggleBlock(editor, type, TOOLBAR_SOURCE);

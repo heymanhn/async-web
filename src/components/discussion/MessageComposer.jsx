@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 import { MessageContext } from 'utils/contexts';
 import useDrafts from 'utils/hooks/useDrafts';
 
-import { DEFAULT_BLOCK } from 'components/editor/utils';
+import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
@@ -53,7 +53,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
     []
   );
   const [message, setMessage] = useState(
-    initialMessage ? JSON.parse(initialMessage) : DEFAULT_BLOCK
+    initialMessage ? JSON.parse(initialMessage) : DEFAULT_ELEMENT
   );
 
   const { handleCreate, handleUpdate, isSubmitting } = useMessageMutations({
@@ -62,7 +62,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
 
   const coreEditorProps = useCoreEditorProps(messageEditor);
   useDrafts(message, messageEditor, isSubmitting);
-  const isEmptyMessage = message === JSON.stringify(DEFAULT_BLOCK);
+  const isEmptyMessage = message === JSON.stringify(DEFAULT_ELEMENT);
 
   return (
     <Container mode={mode} {...props}>

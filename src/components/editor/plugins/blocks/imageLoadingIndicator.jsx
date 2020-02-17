@@ -3,7 +3,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
-import { DEFAULT_BLOCK_TYPE } from 'components/editor/utils';
+import { DEFAULT_ELEMENT_TYPE } from 'components/editor/utils';
 import { AddCommands, AddQueries, AddSchema, RenderBlock } from '../helpers';
 
 const IMAGE_LOADING_INDICATOR = 'image-loading-indicator';
@@ -46,7 +46,7 @@ export default function ImageLoadingIndicator() {
   function removeImageLoadingIndicator(editor) {
     const indicator = editor.findImageLoadingIndicator();
     if (indicator) {
-      editor.insertBlock(DEFAULT_BLOCK_TYPE).removeNodeByKey(indicator.key);
+      editor.insertBlock(DEFAULT_ELEMENT_TYPE).removeNodeByKey(indicator.key);
     }
 
     return editor;

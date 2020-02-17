@@ -1,11 +1,11 @@
 import { Node } from 'slate';
 
-export const DEFAULT_BLOCK_TYPE = 'paragraph';
+export const DEFAULT_ELEMENT_TYPE = 'paragraph';
 export const DEFAULT_PLAIN_NODE = 'line';
 
-export const DEFAULT_BLOCK = [
+export const DEFAULT_ELEMENT = [
   {
-    type: DEFAULT_BLOCK_TYPE,
+    type: DEFAULT_ELEMENT_TYPE,
     children: [{ text: '' }],
   },
 ];
@@ -63,6 +63,7 @@ export const COMPOSITION_MENU_SOURCE = 'compositionMenu';
 export const HOTKEY_SOURCE = 'hotkey';
 export const MARKDOWN_SOURCE = 'markdown';
 export const CUT_PASTE_SOURCE = 'cutAndPaste';
+export const INLINE_DISCUSSION_SOURCE = 'inlineDiscussion';
 
 /*
  * Helper functions
@@ -70,7 +71,7 @@ export const CUT_PASTE_SOURCE = 'cutAndPaste';
  */
 export const deserializedTitle = title => [
   {
-    type: DEFAULT_BLOCK_TYPE,
+    type: DEFAULT_ELEMENT_TYPE,
     children: [{ text: title }],
   },
 ];

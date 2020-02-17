@@ -1,5 +1,5 @@
 /* eslint react/prop-types: 0 */
-import { DEFAULT_BLOCK_TYPE } from 'components/editor/utils';
+import { DEFAULT_ELEMENT_TYPE } from 'components/editor/utils';
 import { CustomEnterAction, CustomBackspaceAction } from '../helpers';
 
 const SECTION_BREAK = 'section-break';
@@ -11,10 +11,11 @@ export default function SectionBreak() {
 
   function exitSectionBreakOnEnter(editor, next) {
     if (editor.hasBlock(SECTION_BREAK)) {
-      if (editor.isAtBeginning()) return editor.insertBlock(DEFAULT_BLOCK_TYPE);
+      if (editor.isAtBeginning())
+        return editor.insertBlock(DEFAULT_ELEMENT_TYPE);
 
       next();
-      return editor.setBlocks(DEFAULT_BLOCK_TYPE);
+      return editor.setBlocks(DEFAULT_ELEMENT_TYPE);
     }
 
     return next();

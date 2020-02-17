@@ -1,16 +1,16 @@
 import { Transforms } from 'slate';
 
-import { DEFAULT_BLOCK_TYPE, DEFAULT_BLOCK } from './utils';
+import { DEFAULT_ELEMENT_TYPE, DEFAULT_ELEMENT } from './utils';
 import Editor from './Editor';
 
 const exitHeadingBlockOnEnter = (editor, insertBreak) => {
   if (Editor.isAtBeginning(editor)) {
-    Transforms.insertNodes(editor, DEFAULT_BLOCK);
+    Transforms.insertNodes(editor, DEFAULT_ELEMENT);
     return Transforms.move(editor);
   }
 
   insertBreak();
-  return Editor.toggleBlock(editor, DEFAULT_BLOCK_TYPE);
+  return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
 };
 
 const withCustomBreaks = oldEditor => {

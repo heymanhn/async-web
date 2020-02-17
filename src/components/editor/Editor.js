@@ -10,8 +10,8 @@ import { Editor as SlateEditor, Range, Transforms } from 'slate';
 import { track } from 'utils/analytics';
 
 import {
-  DEFAULT_BLOCK,
-  DEFAULT_BLOCK_TYPE,
+  DEFAULT_ELEMENT,
+  DEFAULT_ELEMENT_TYPE,
   LIST_TYPES,
   WRAPPED_TYPES,
   CHECKLIST,
@@ -20,14 +20,16 @@ import {
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
+  HIGHLIGHT,
 } from './utils';
 
 /*
  * Queries
  */
 
-const isBlockActive = (editor, type) => {
+const isElementActive = (editor, type, range) => {
   const [match] = SlateEditor.nodes(editor, {
+    at: range || undefined,
     match: n => n.type === type,
   });
 
@@ -74,19 +76,19 @@ const isEmptyParagraph = editor => {
 
   const [block] = getParentBlock(editor);
   return (
-    block.type === DEFAULT_BLOCK_TYPE && SlateEditor.isEmpty(editor, block)
+    block.type === DEFAULT_ELEMENT_TYPE && SlateEditor.isEmpty(editor, block)
   );
 };
 
 // Paragraph node, not wrapped by anything
 const isDefaultBlock = editor =>
-  !isWrappedBlock(editor) && isBlockActive(editor, DEFAULT_BLOCK_TYPE);
+  !isWrappedBlock(editor) && isElementActive(editor, DEFAULT_ELEMENT_TYPE);
 
 const isHeadingBlock = editor => {
   return (
-    isBlockActive(editor, LARGE_FONT) ||
-    isBlockActive(editor, MEDIUM_FONT) ||
-    isBlockActive(editor, SMALL_FONT)
+    isElementActive(editor, LARGE_FONT) ||
+    isElementActive(editor, MEDIUM_FONT) ||
+    isElementActive(editor, SMALL_FONT)
   );
 };
 
@@ -123,7 +125,7 @@ const isAtEnd = editor => {
  */
 
 const toggleBlock = (editor, type, source) => {
-  const isActive = isBlockActive(editor, type);
+  const isActive = isElementActive(editor, type);
   const isList = LIST_TYPES.includes(type);
   const isWrapped = WRAPPED_TYPES.includes(type);
 
@@ -134,7 +136,9 @@ const toggleBlock = (editor, type, source) => {
 
   // Normal toggling is sufficient for this case
   if (!isWrapped) {
-    Transforms.setNodes(editor, { type: isActive ? DEFAULT_BLOCK_TYPE : type });
+    Transforms.setNodes(editor, {
+      type: isActive ? DEFAULT_ELEMENT_TYPE : type,
+    });
   }
 
   // Special treatment for lists: set leaf nodes to list item or checklist item
@@ -142,7 +146,7 @@ const toggleBlock = (editor, type, source) => {
     const isChecklist = type === CHECKLIST;
     const listItemType = isChecklist ? CHECKLIST_ITEM : LIST_ITEM;
     const payload = {
-      type: isActive ? DEFAULT_BLOCK_TYPE : listItemType,
+      type: isActive ? DEFAULT_ELEMENT_TYPE : listItemType,
     };
     if (isChecklist) payload.isChecked = false;
 
@@ -154,7 +158,7 @@ const toggleBlock = (editor, type, source) => {
   }
 
   // We're not interested in tracking text blocks...
-  if (!isActive && type !== DEFAULT_BLOCK_TYPE) {
+  if (!isActive && type !== DEFAULT_ELEMENT_TYPE) {
     track('Block inserted to content', { type, source });
   }
 };
@@ -170,9 +174,25 @@ const toggleMark = (editor, type, source) => {
   }
 };
 
+const wrapHighlight = (editor, range, source) => {
+  const isActive = isElementActive(editor, HIGHLIGHT, range);
+  const options = {};
+  if (range) options.at = range;
+
+  Transforms.wrapNodes(
+    editor,
+    { type: isActive ? DEFAULT_ELEMENT_TYPE : HIGHLIGHT },
+    options
+  );
+
+  if (!isActive) {
+    track('Highlight inserted to content', { source });
+  }
+};
+
 const insertVoid = (editor, type, data = {}) => {
   Transforms.setNodes(editor, { type, ...data, children: [] });
-  Transforms.insertNodes(editor, DEFAULT_BLOCK);
+  Transforms.insertNodes(editor, DEFAULT_ELEMENT);
 };
 
 const clearBlock = editor => {
@@ -192,7 +212,7 @@ const Editor = {
   ...SlateEditor,
 
   // Queries (no transforms)
-  isBlockActive,
+  isElementActive,
   isMarkActive,
   isWrappedBlock,
   isEmptyParagraph,
@@ -208,6 +228,7 @@ const Editor = {
   // Transforms
   toggleBlock,
   toggleMark,
+  wrapHighlight,
   insertVoid,
   clearBlock,
   replaceBlock,

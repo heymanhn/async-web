@@ -1,4 +1,4 @@
-import { DEFAULT_BLOCK_TYPE } from 'components/editor/utils';
+import { DEFAULT_ELEMENT_TYPE } from 'components/editor/utils';
 import { CustomEnterAction } from '../helpers';
 
 const LARGE_FONT = 'heading-one';
@@ -12,10 +12,11 @@ const HeadingsPlugin = () => {
       editor.hasBlock(MEDIUM_FONT) ||
       editor.hasBlock(SMALL_FONT)
     ) {
-      if (editor.isAtBeginning()) return editor.insertBlock(DEFAULT_BLOCK_TYPE);
+      if (editor.isAtBeginning())
+        return editor.insertBlock(DEFAULT_ELEMENT_TYPE);
 
       next();
-      return editor.setBlocks(DEFAULT_BLOCK_TYPE);
+      return editor.setBlocks(DEFAULT_ELEMENT_TYPE);
     }
 
     return next();

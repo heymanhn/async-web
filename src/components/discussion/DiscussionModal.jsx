@@ -12,8 +12,10 @@ import {
 } from 'utils/contexts';
 import useMountEffect from 'utils/hooks/useMountEffect';
 
+// SLATE UPGRADE TODO
 // import { CONTEXT_HIGHLIGHT } from 'components/editor/plugins/inlineDiscussion';
 import Modal from 'components/shared/Modal';
+import ContextComposer from './ContextComposer';
 import DiscussionThread from './DiscussionThread';
 import DiscussionMessage from './DiscussionMessage';
 import ModalAddReplyBox from './ModalAddReplyBox';
@@ -40,17 +42,13 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
  * - Create annotation in the document after discussion created
  */
 
-const DiscussionModal = ({
-  // createAnnotation,
-  // documentEditor,
-  isOpen,
-  handleClose,
-  // selection,
-  ...props
-}) => {
-  const { documentId, modalDiscussionId, handleShowModal } = useContext(
-    DocumentContext
-  );
+const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
+  const {
+    documentId,
+    modalDiscussionId,
+    inlineDiscussionTopic,
+    handleShowModal,
+  } = useContext(DocumentContext);
   const [isComposing, setIsComposing] = useState(!modalDiscussionId);
   // const [context, setContext] = useState(null);
 
@@ -81,8 +79,7 @@ const DiscussionModal = ({
   }
 
   if (draft && !isComposing) startComposing();
-  // if (!discussionId && !context) extractContext();
-
+  // SLATE UPGRADE TODO
   // createAnnotation(value);
 
   // Update the URL in the address bar to reflect the new discussion
@@ -118,14 +115,7 @@ const DiscussionModal = ({
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen} {...props}>
       <DiscussionContext.Provider value={value}>
-        {/* {context && (
-          <ContextComposer
-            contentType="discussionContext"
-            readOnly
-            initialValue={context}
-            mode="display"
-          />
-        )} */}
+        {(inlineDiscussionTopic || context) && <ContextComposer />}
         {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}
         {isComposing ? (
           <StyledDiscussionMessage
@@ -147,51 +137,10 @@ const DiscussionModal = ({
 };
 
 DiscussionModal.propTypes = {
+  // SLATE UPGRADE TODO
   // createAnnotation: PropTypes.func,
-  // documentEditor: PropTypes.object, // HN: do we still need this?
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  // selection: PropTypes.object,
 };
 
 export default DiscussionModal;
-
-/*
-// HN: I know this is a long-winded way to extract the inline discussion context. But we're
-// limited by what the Slate API gives us. There must be a better way.
-// FUTURE: Use the immutable APIs to dynamically create the context block
-function extractContext() {
-  const { start, end } = selection;
-
-  // Step 1: Delete everything before the highlight, factoring in some buffer space
-  // for the rest of the current block
-  documentEditor
-    .moveToStartOfDocument()
-    .moveEndToStartOfParentBlock(start)
-    .delete();
-
-  // Step 2: Delete everything after the highlight, similar to step 2
-  documentEditor
-    .moveToEndOfDocument()
-    .moveStartToEndOfParentBlock(end)
-    .delete();
-
-  // Step 3: Create the highlight within the current content
-  documentEditor
-    .moveStartTo(start.key, start.offset)
-    .moveEndTo(end.key, end.offset)
-    .wrapInline(CONTEXT_HIGHLIGHT);
-
-  const { value } = documentEditor;
-  const initialContext = JSON.stringify(value.toJSON());
-  setContext(initialContext);
-
-  // 1. Undo the highlight
-  // 2. Undo the end of document delete
-  // 3. Undo the beginning of document delete
-  documentEditor
-    .undo()
-    .undo()
-    .undo();
-}
-*/
