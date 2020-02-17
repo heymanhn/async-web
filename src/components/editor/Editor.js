@@ -177,7 +177,10 @@ const toggleMark = (editor, type, source) => {
 const wrapHighlight = (editor, range, source) => {
   const isActive = isElementActive(editor, HIGHLIGHT, range);
   const options = {};
-  if (range) options.at = range;
+  if (range) {
+    options.at = range;
+    options.split = true;
+  }
 
   Transforms.wrapNodes(
     editor,
