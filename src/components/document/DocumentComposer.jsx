@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
@@ -6,6 +6,7 @@ import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
+import { DocumentContext } from 'utils/contexts';
 import useAutoSave from 'utils/hooks/useAutoSave';
 
 import { DEFAULT_ELEMENT } from 'components/editor/utils';
@@ -33,6 +34,14 @@ const DocumentEditable = styled(Editable)({
  */
 
 const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
+  const {
+    modalDiscussionId,
+    inlineDiscussionTopic,
+    resetInlineTopic,
+  } = useContext(DocumentContext);
+  const { selection } = inlineDiscussionTopic || {};
+  const isAnnotationNeeded = modalDiscussionId && selection;
+
   const contentEditor = useMemo(
     () =>
       compose(
@@ -51,12 +60,38 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
 
-  async function handleUpdateWrapper() {
+  useAutoSave(content, async () => {
     await handleUpdate();
     afterUpdate();
-  }
+  });
 
-  useAutoSave(content, handleUpdateWrapper);
+  const createAnnotation = () => {};
+
+  /* SLATE UPGRADE TODO: implement this
+
+function createAnnotation(value, authorId) {
+  const { documentEditor, selection } = state;
+  const { start, end } = selection;
+
+  documentEditor.withoutSaving(() => {
+    documentEditor
+      .moveTo(start.key, start.offset)
+      .moveEndTo(end.key, end.offset)
+      .addMark({
+        type: 'inline-discussion',
+        data: {
+          discussionId: value,
+          authorId,
+        },
+      });
+  });
+}
+*/
+
+  if (isAnnotationNeeded) {
+    createAnnotation();
+    resetInlineTopic();
+  }
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>

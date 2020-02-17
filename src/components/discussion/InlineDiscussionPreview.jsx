@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import Truncate from 'react-truncate';
@@ -6,6 +6,7 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
+import { DocumentContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -76,11 +77,8 @@ const NewReplyLabel = styled(MessageCountIndicator)(
   })
 );
 
-const InlineDiscussionPreview = ({
-  discussionId,
-  handleShowDiscussion,
-  isOpen,
-}) => {
+const InlineDiscussionPreview = ({ discussionId, isOpen }) => {
+  const { handleShowModal } = useContext(DocumentContext);
   const { loading, error, data: discussionData } = useQuery(discussionQuery, {
     variables: { discussionId, queryParams: {} },
     fetchPolicy: 'cache-and-network',
@@ -101,10 +99,7 @@ const InlineDiscussionPreview = ({
   const displayText = draft ? `(Draft) ${text}` : text;
 
   return (
-    <Container
-      isOpen={isOpen}
-      onClick={() => handleShowDiscussion(discussionId)}
-    >
+    <Container isOpen={isOpen} onClick={() => handleShowModal(discussionId)}>
       <LastMessageDetails>
         <AvatarWithMargin avatarUrl={profilePictureUrl} size={32} />
         <PreviewSnippet>
@@ -127,7 +122,6 @@ const InlineDiscussionPreview = ({
 
 InlineDiscussionPreview.propTypes = {
   discussionId: PropTypes.string.isRequired,
-  handleShowDiscussion: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
 

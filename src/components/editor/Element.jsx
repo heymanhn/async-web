@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import InlineDiscussionElement from 'components/discussion/InlineDiscussionElement';
 import {
   LARGE_FONT,
   MEDIUM_FONT,
@@ -14,6 +15,7 @@ import {
   BLOCK_QUOTE,
   SECTION_BREAK,
   HIGHLIGHT,
+  INLINE_DISCUSSION_ANNOTATION,
 } from './utils';
 import {
   TextElement,
@@ -60,6 +62,8 @@ const Element = props => {
       return <SectionBreakElement {...props} />;
     case HIGHLIGHT:
       return <HighlightElement {...props} />;
+    case INLINE_DISCUSSION_ANNOTATION:
+      return <InlineDiscussionElement {...props} />;
     default:
       return <TextElement {...props} />;
   }

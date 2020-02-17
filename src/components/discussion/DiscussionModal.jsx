@@ -12,8 +12,6 @@ import {
 } from 'utils/contexts';
 import useMountEffect from 'utils/hooks/useMountEffect';
 
-// SLATE UPGRADE TODO
-// import { CONTEXT_HIGHLIGHT } from 'components/editor/plugins/inlineDiscussion';
 import Modal from 'components/shared/Modal';
 import ContextComposer from './ContextComposer';
 import DiscussionThread from './DiscussionThread';
@@ -34,13 +32,6 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
     boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
   })
 );
-
-/*
- * SLATE UPGRADE TODO:
- * - Create the discussion context properly with the new Slate API
- * - Pass discussion context into DocumentContext for child components
- * - Create annotation in the document after discussion created
- */
 
 const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   const {
@@ -80,8 +71,6 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   }
 
   if (draft && !isComposing) startComposing();
-  // SLATE UPGRADE TODO
-  // createAnnotation(value);
 
   // Update the URL in the address bar to reflect the new discussion
   // TODO (HN): Fix this implementation this later.
@@ -139,8 +128,6 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
 };
 
 DiscussionModal.propTypes = {
-  // SLATE UPGRADE TODO
-  // createAnnotation: PropTypes.func,
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
 };

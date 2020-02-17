@@ -6,6 +6,7 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   modalDiscussionId: null,
   inlineDiscussionTopic: null,
 
+  resetInlineTopic: () => {},
   handleShowModal: () => {},
   handleCloseModal: () => {},
 };

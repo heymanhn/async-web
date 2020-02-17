@@ -8,10 +8,6 @@ import HeaderBar from 'components/navigation/HeaderBar';
 import Document from './Document';
 import DiscussionsList from './DiscussionsList';
 
-/*
- * SLATE UPGRADE TODO:
- */
-
 const DocumentContainer = ({
   documentId,
   discussionId: initialDiscussionId,
@@ -23,9 +19,12 @@ const DocumentContainer = ({
     isModalOpen: !!initialDiscussionId,
     inlineDiscussionTopic: null,
   });
-  const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
 
-  function handleShowModal(discussionId, selection, content) {
+  const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
+  const resetInlineTopic = () =>
+    setState(old => ({ ...old, inlineDiscussionTopic: null }));
+
+  const handleShowModal = (discussionId, selection, content) => {
     const newState = {
       modalDiscussionId: discussionId,
       isModalOpen: true,
@@ -36,25 +35,19 @@ const DocumentContainer = ({
       newState.inlineDiscussionTopic = {
         selection,
         content,
-
-        // This is set once an inline annotation is added to the document
-        annotation: false,
       };
 
-    setState(oldState => ({
-      ...oldState,
-      ...newState,
-    }));
-  }
+    setState(oldState => ({ ...oldState, ...newState }));
+  };
 
-  function handleCloseModal() {
+  const handleCloseModal = () => {
     setState(oldState => ({
       ...oldState,
       modalDiscussionId: null,
       inlineDiscussionTopic: null,
       isModalOpen: false,
     }));
-  }
+  };
 
   const {
     modalDiscussionId,
@@ -68,6 +61,7 @@ const DocumentContainer = ({
     documentId,
     modalDiscussionId,
     inlineDiscussionTopic,
+    resetInlineTopic,
     handleShowModal,
     handleCloseModal,
   };
@@ -97,27 +91,3 @@ DocumentContainer.defaultProps = {
 };
 
 export default DocumentContainer;
-
-/* SLATE UPGRADE TODO: implement this
-// TODO: This will change later, when we introduce the concept of multiple co-authors
-const { userId } = getLocalUser();
-const isAuthor = userId === owner.id;
-
-function createAnnotation(value, authorId) {
-  const { documentEditor, selection } = state;
-  const { start, end } = selection;
-
-  documentEditor.withoutSaving(() => {
-    documentEditor
-      .moveTo(start.key, start.offset)
-      .moveEndTo(end.key, end.offset)
-      .addMark({
-        type: 'inline-discussion',
-        data: {
-          discussionId: value,
-          authorId,
-        },
-      });
-  });
-}
-*/
