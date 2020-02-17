@@ -44,7 +44,9 @@ const AvatarList = ({ avatarUrls, size, opacity, ...props }) => {
       {displayUrls.map(url => (
         <StyledAvatar avatarUrl={url} size={size} key={url} opacity={opacity} />
       ))}
-      {overflowCount > 0 && <AvatarWithCount size={size}>{`+${overflowCount}`}</AvatarWithCount>}
+      {overflowCount > 0 && (
+        <AvatarWithCount size={size}>{`+${overflowCount}`}</AvatarWithCount>
+      )}
     </Container>
   );
 };
