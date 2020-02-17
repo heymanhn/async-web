@@ -120,6 +120,16 @@ const isAtEnd = editor => {
   return isAtEdge(editor, SlateEditor.isEnd);
 };
 
+const findNodeByType = (editor, type) => {
+  return SlateEditor.nodes(editor, {
+    at: {
+      anchor: SlateEditor.start(editor, []),
+      focus: SlateEditor.end(editor, []),
+    },
+    match: n => n.type === type,
+  }).next().value;
+};
+
 /*
  * Transforms
  */
@@ -227,6 +237,7 @@ const Editor = {
   getParentBlock,
   getCurrentNode,
   getCurrentText,
+  findNodeByType,
 
   // Transforms
   toggleBlock,

@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { compose } from 'recompose';
-import { createEditor, Transforms } from 'slate';
+import { createEditor, Range, Transforms } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
@@ -11,7 +11,11 @@ import Editor from 'components/editor/Editor';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import withInlineElements from 'components/editor/withInlineElements';
 import withVoidElements from 'components/editor/withVoidElements';
-import { INLINE_DISCUSSION_SOURCE } from 'components/editor/utils';
+import {
+  INLINE_DISCUSSION_SOURCE,
+  HIGHLIGHT,
+  BUFFER_LENGTH,
+} from 'components/editor/utils';
 
 const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
   background: colors.grey7,
@@ -37,18 +41,69 @@ const ContextComposer = props => {
   const coreEditorProps = useCoreEditorProps(contextEditor, { readOnly: true });
   const [content, setContent] = useState(context ? JSON.parse(context) : []);
 
-  // Hmm.. how do you load initial content into the editor, dynamically?
-  useMountEffect(() => {
+  const extractContents = () => {
     const { selection, content: documentContent } = inlineDiscussionTopic;
+    const [start, end] = Range.edges(selection);
+    const endRange = end.path[0] + 1;
+    const newContents = [...documentContent].slice(start.path[0], endRange);
 
-    // Step 1: Load the text
-    Transforms.insertNodes(contextEditor, documentContent);
+    // Need to adjust the selection point paths based on the clipped contents
+    const newSelection = {
+      anchor: {
+        ...start,
+        path: [0, start.path[1]],
+      },
+      focus: {
+        ...end,
+        path: [newContents.length - 1, end.path[1]],
+      },
+    };
+    return [newContents, newSelection];
+  };
+
+  // Assumes that a highlight has been made
+  const deleteSurroundingText = () => {
+    const [, path] = Editor.findNodeByType(contextEditor, HIGHLIGHT);
+
+    // Delete the end first so that the selection paths don't change
+    Transforms.select(contextEditor, {
+      anchor: Editor.end(contextEditor, path),
+      focus: Editor.end(contextEditor, []),
+    });
+    Transforms.move(contextEditor, { edge: 'anchor', distance: BUFFER_LENGTH });
+    Transforms.delete(contextEditor);
+    Transforms.insertText(contextEditor, '...');
+
+    // Then deal with the start portion
+    Transforms.select(contextEditor, {
+      anchor: Editor.start(contextEditor, []),
+      focus: Editor.start(contextEditor, path),
+    });
+    Transforms.move(contextEditor, {
+      edge: 'focus',
+      distance: BUFFER_LENGTH,
+      reverse: true,
+    });
+    Transforms.delete(contextEditor);
+    Transforms.insertText(contextEditor, '...');
+
+    // Prevents the DOM range from overlapping with other Slate instances
+    Transforms.deselect(contextEditor);
+  };
+
+  useMountEffect(() => {
+    // Step 1: Load only the text we need
+    const [newContents, newSelection] = extractContents();
+
+    // Needed to avoid editor focus issues relating to shallow references.
+    const deepNewContents = JSON.parse(JSON.stringify(newContents));
+    Transforms.insertNodes(contextEditor, deepNewContents);
 
     // Step 2: Create a context highlight
-    Editor.wrapHighlight(contextEditor, selection, INLINE_DISCUSSION_SOURCE);
+    Editor.wrapHighlight(contextEditor, newSelection, INLINE_DISCUSSION_SOURCE);
 
-    // Step 2: Clip the text we don't want in the highlight
-    // Hint: use Transforms.unwrapNodes()
+    // Step 3: Clip the text that exceeds the inline discussion buffer range
+    deleteSurroundingText();
   });
 
   return (
@@ -59,43 +114,3 @@ const ContextComposer = props => {
 };
 
 export default ContextComposer;
-
-/*
-// HN: I know this is a long-winded way to extract the inline discussion context. But we're
-// limited by what the Slate API gives us. There must be a better way.
-// FUTURE: Use the immutable APIs to dynamically create the context block
-function extractContext() {
-  const { start, end } = selection;
-
-  // Step 1: Delete everything before the highlight, factoring in some buffer space
-  // for the rest of the current block
-  documentEditor
-    .moveToStartOfDocument()
-    .moveEndToStartOfParentBlock(start)
-    .delete();
-
-  // Step 2: Delete everything after the highlight, similar to step 2
-  documentEditor
-    .moveToEndOfDocument()
-    .moveStartToEndOfParentBlock(end)
-    .delete();
-
-  // Step 3: Create the highlight within the current content
-  documentEditor
-    .moveStartTo(start.key, start.offset)
-    .moveEndTo(end.key, end.offset)
-    .wrapInline(CONTEXT_HIGHLIGHT);
-
-  const { value } = documentEditor;
-  const initialContext = JSON.stringify(value.toJSON());
-  setContext(initialContext);
-
-  // 1. Undo the highlight
-  // 2. Undo the end of document delete
-  // 3. Undo the beginning of document delete
-  documentEditor
-    .undo()
-    .undo()
-    .undo();
-}
-*/

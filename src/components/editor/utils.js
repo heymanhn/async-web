@@ -66,6 +66,11 @@ export const CUT_PASTE_SOURCE = 'cutAndPaste';
 export const INLINE_DISCUSSION_SOURCE = 'inlineDiscussion';
 
 /*
+ * Inline discussion logic
+ */
+export const BUFFER_LENGTH = 200;
+
+/*
  * Helper functions
  * SLATE UPGRADE TODO: move these into the custom Editor object for consistency?
  */
