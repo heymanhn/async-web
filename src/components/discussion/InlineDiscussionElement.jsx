@@ -44,6 +44,7 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
     handleHighlightHoverOn,
     handleHighlightHoverOff
   );
+  delete highlightHoverProps.hover;
 
   const handlePreviewHoverOn = () => {
     setIsHighlightHover(true);
@@ -60,6 +61,7 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
     handlePreviewHoverOn,
     handlePreviewHoverOff
   );
+  delete previewHoverProps.hover;
 
   return (
     <span {...highlightHoverProps}>
