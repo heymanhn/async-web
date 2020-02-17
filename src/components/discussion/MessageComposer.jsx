@@ -41,6 +41,7 @@ const MessageEditable = styled(Editable)({
 
 const MessageComposer = ({ initialMessage, isModal, ...props }) => {
   const { mode } = useContext(MessageContext);
+  const readOnly = mode === 'display';
   const messageEditor = useMemo(
     () =>
       compose(
@@ -60,7 +61,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
     message,
   });
 
-  const coreEditorProps = useCoreEditorProps(messageEditor);
+  const coreEditorProps = useCoreEditorProps(messageEditor, { readOnly });
   useDrafts(message, messageEditor, isSubmitting);
   const isEmptyMessage = message === JSON.stringify(DEFAULT_ELEMENT);
 
@@ -70,12 +71,12 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
         editor={messageEditor}
         value={message}
         onChange={v => setMessage(v)}
-        key={mode === 'display'}
+        key={readOnly}
       >
-        <MessageEditable readOnly={mode === 'display'} {...coreEditorProps} />
+        <MessageEditable readOnly={readOnly} {...coreEditorProps} />
         <MessageToolbar />
         <CompositionMenuButton isModal={isModal} />
-        {mode !== 'display' && (
+        {!readOnly && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
             isSubmitDisabled={isEmptyMessage}

@@ -8,7 +8,7 @@ import { DocumentContext, DiscussionContext } from 'utils/contexts';
 import useMountEffect from 'utils/hooks/useMountEffect';
 
 import Editor from 'components/editor/Editor';
-import useCoreEditorProps from 'components/editor/useCoreEditorProps';
+import useContextEditorProps from 'components/editor/useContextEditorProps';
 import withInlineElements from 'components/editor/withInlineElements';
 import withVoidElements from 'components/editor/withVoidElements';
 import {
@@ -38,7 +38,7 @@ const ContextComposer = props => {
       compose(withInlineElements, withVoidElements, withReact)(createEditor()),
     []
   );
-  const coreEditorProps = useCoreEditorProps(contextEditor, { readOnly: true });
+  const editorProps = useContextEditorProps();
   const [content, setContent] = useState(context || []);
 
   const extractContents = () => {
@@ -115,7 +115,7 @@ const ContextComposer = props => {
 
   return (
     <Slate editor={contextEditor} value={content} onChange={v => setContent(v)}>
-      <ContextEditable readOnly {...props} {...coreEditorProps} />
+      <ContextEditable readOnly {...props} {...editorProps} />
     </Slate>
   );
 };
