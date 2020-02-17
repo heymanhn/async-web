@@ -67,7 +67,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     const { discussion } = data;
     ({ draft } = discussion);
     const { topic } = discussion;
-    if (!context) setContext(topic);
+    if (!context) setContext(JSON.parse(topic));
   }
 
   if (draft && !isComposing) startComposing();

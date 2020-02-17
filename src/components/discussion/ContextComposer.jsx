@@ -39,7 +39,7 @@ const ContextComposer = props => {
     []
   );
   const coreEditorProps = useCoreEditorProps(contextEditor, { readOnly: true });
-  const [content, setContent] = useState(context ? JSON.parse(context) : []);
+  const [content, setContent] = useState(context || []);
 
   const extractContents = () => {
     const { selection, content: documentContent } = inlineDiscussionTopic;
@@ -102,11 +102,11 @@ const ContextComposer = props => {
     Transforms.insertNodes(contextEditor, deepNewContents);
     Editor.wrapHighlight(contextEditor, newSelection, INLINE_DISCUSSION_SOURCE);
     deleteSurroundingText();
-
-    setContext(content);
   };
 
   useMountEffect(generateContext);
+
+  if (!context && content.length) setContext(content);
 
   return (
     <Slate editor={contextEditor} value={content} onChange={v => setContent(v)}>
