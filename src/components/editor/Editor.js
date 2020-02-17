@@ -1,6 +1,3 @@
-/* eslint import/prefer-default-export: 0 */
-/* eslint no-nested-ternary: 0 */
-
 /*
  * Majority of these plugins borrowed from the Slate examples:
  * https://github.com/ianstormtaylor/slate/blob/master/site/examples/richtext.js
@@ -20,7 +17,6 @@ import {
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
-  HIGHLIGHT,
 } from './utils';
 
 /*
@@ -184,8 +180,8 @@ const toggleMark = (editor, type, source) => {
   }
 };
 
-const wrapHighlight = (editor, range, source) => {
-  const isActive = isElementActive(editor, HIGHLIGHT, range);
+const wrapInline = (editor, type, range, source, props = {}) => {
+  const isActive = isElementActive(editor, type, range);
   const options = {};
   if (range) {
     options.at = range;
@@ -194,12 +190,15 @@ const wrapHighlight = (editor, range, source) => {
 
   Transforms.wrapNodes(
     editor,
-    { type: isActive ? DEFAULT_ELEMENT_TYPE : HIGHLIGHT },
+    {
+      type: isActive ? DEFAULT_ELEMENT_TYPE : type,
+      ...props,
+    },
     options
   );
 
   if (!isActive) {
-    track('Highlight inserted to content', { source });
+    track('Inline element inserted to content', { source, type });
   }
 };
 
@@ -242,7 +241,7 @@ const Editor = {
   // Transforms
   toggleBlock,
   toggleMark,
-  wrapHighlight,
+  wrapInline,
   insertVoid,
   clearBlock,
   replaceBlock,

@@ -9,7 +9,13 @@ import styled from '@emotion/styled';
 import { DocumentContext } from 'utils/contexts';
 import useAutoSave from 'utils/hooks/useAutoSave';
 
-import { DEFAULT_ELEMENT } from 'components/editor/utils';
+import Editor from 'components/editor/Editor';
+
+import {
+  DEFAULT_ELEMENT,
+  INLINE_DISCUSSION_ANNOTATION,
+  INLINE_DISCUSSION_SOURCE,
+} from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
@@ -65,28 +71,15 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
     afterUpdate();
   });
 
-  const createAnnotation = () => {};
-
-  /* SLATE UPGRADE TODO: implement this
-
-function createAnnotation(value, authorId) {
-  const { documentEditor, selection } = state;
-  const { start, end } = selection;
-
-  documentEditor.withoutSaving(() => {
-    documentEditor
-      .moveTo(start.key, start.offset)
-      .moveEndTo(end.key, end.offset)
-      .addMark({
-        type: 'inline-discussion',
-        data: {
-          discussionId: value,
-          authorId,
-        },
-      });
-  });
-}
-*/
+  const createAnnotation = () => {
+    Editor.wrapInline(
+      contentEditor,
+      INLINE_DISCUSSION_ANNOTATION,
+      selection,
+      INLINE_DISCUSSION_SOURCE,
+      { discussionId: modalDiscussionId }
+    );
+  };
 
   if (isAnnotationNeeded) {
     createAnnotation();

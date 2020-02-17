@@ -100,7 +100,12 @@ const ContextComposer = props => {
     const deepNewContents = JSON.parse(JSON.stringify(newContents));
 
     Transforms.insertNodes(contextEditor, deepNewContents);
-    Editor.wrapHighlight(contextEditor, newSelection, INLINE_DISCUSSION_SOURCE);
+    Editor.wrapInline(
+      contextEditor,
+      HIGHLIGHT,
+      newSelection,
+      INLINE_DISCUSSION_SOURCE
+    );
     deleteSurroundingText();
   };
 
