@@ -77,7 +77,7 @@ const DiscussionThread = ({ isUnread }) => {
     }
   }
 
-  function handleAddPendingMessages() {
+  const handleAddPendingMessages = () => {
     addPendingMessages();
 
     markAsRead({
@@ -85,9 +85,9 @@ const DiscussionThread = ({ isUnread }) => {
       objectType: 'discussion',
       objectId: discussionId,
     });
-  }
+  };
 
-  function fetchMoreMessages() {
+  const fetchMoreMessages = () => {
     const newQueryParams = {};
     if (pageToken) newQueryParams.pageToken = pageToken;
 
@@ -117,24 +117,21 @@ const DiscussionThread = ({ isUnread }) => {
         };
       },
     });
-  }
+  };
 
   if (shouldFetch && pageToken && !isFetching) {
     setIsFetching(true);
     fetchMoreMessages();
   }
 
-  function firstNewMessageId() {
+  const firstNewMessageId = () => {
     const targetMessage = messages.find(
       m => m.tags && m.tags.includes('new_message')
     );
 
     return targetMessage ? targetMessage.id : null;
-  }
-
-  function isNewMessage(m) {
-    return m.tags && m.tags.includes('new_message');
-  }
+  };
+  const isNewMessage = m => m.tags && m.tags.includes('new_message');
 
   return (
     <Container ref={discussionRef}>
@@ -144,12 +141,13 @@ const DiscussionThread = ({ isUnread }) => {
           onClick={handleAddPendingMessages}
         />
       )}
-      {messages.map(m => (
+      {messages.map((m, i) => (
         <React.Fragment key={m.id}>
           {firstNewMessageId() === m.id && m.id !== messages[0].id && (
             <NewMessagesDivider />
           )}
           <StyledDiscussionMessage
+            index={i}
             message={m}
             source="discussionModal"
             isUnread={isNewMessage(m)}

@@ -1,3 +1,4 @@
+/* eslint no-alert: 0 */
 import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,6 +8,7 @@ import styled from '@emotion/styled';
 import useClickOutside from 'utils/hooks/useClickOutside';
 import { MessageContext } from 'utils/contexts';
 
+import useDiscussionMutations from './useDiscussionMutations';
 import useMessageMutations from './useMessageMutations';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
@@ -60,26 +62,41 @@ const OptionName = styled.div(({ theme: { colors } }) => ({
   top: '1px',
 }));
 
-const MessageDropdown = ({ handleClose, isOpen, ...props }) => {
+const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
   const selector = useRef();
-  const { setMode } = useContext(MessageContext);
-  const { handleDelete } = useMessageMutations();
+  const { threadPosition, setMode } = useContext(MessageContext);
+  const { handleDelete: handleDeleteDiscussion } = useDiscussionMutations();
+  const { handleDelete: handleDeleteMessage } = useMessageMutations();
 
   function handleClickOutside() {
     if (!isOpen) return;
-    handleClose();
+    handleCloseDropdown();
   }
   useClickOutside({ handleClickOutside, isOpen, ref: selector });
 
+  // If the user is deleting the first message of a discussion, ask if they
+  // want to delete the whole discussion.
   function handleDeleteWrapper(event) {
     event.stopPropagation();
-    handleClose();
+
+    const resource = threadPosition ? 'message' : 'discussion';
+    const handleDelete = threadPosition
+      ? handleDeleteMessage
+      : handleDeleteDiscussion;
+
+    const userChoice = window.confirm(
+      `Are you sure you want to delete this ${resource}?`
+    );
+
+    if (!userChoice) return;
+
+    handleCloseDropdown();
     handleDelete();
   }
 
   function handleEdit(event) {
     event.stopPropagation();
-    handleClose();
+    handleCloseDropdown();
     setMode('edit');
   }
 
@@ -95,14 +112,16 @@ const MessageDropdown = ({ handleClose, isOpen, ...props }) => {
         <IconContainer>
           <StyledIcon icon={faTrash} />
         </IconContainer>
-        <OptionName>Delete</OptionName>
+        <OptionName>
+          {threadPosition ? 'Delete' : 'Delete Discussion'}
+        </OptionName>
       </DropdownOption>
     </Container>
   );
 };
 
 MessageDropdown.propTypes = {
-  handleClose: PropTypes.func.isRequired,
+  handleCloseDropdown: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
 

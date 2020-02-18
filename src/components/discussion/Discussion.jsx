@@ -60,6 +60,9 @@ const Discussion = () => {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     draft,
+    afterDelete: () => {
+      console.log('Inbox view TODO: Return to inbox ');
+    },
   };
 
   return (

@@ -33,17 +33,16 @@ const MessageActions = ({ handleSubmit, isSubmitDisabled, isSubmitting }) => {
   const { mode, handleCancel } = useContext(MessageContext);
   const { handleDeleteDraft } = useDraftMutations();
 
-  function handleSubmitWrapper(event) {
+  const handleSubmitWrapper = event => {
     event.stopPropagation();
     return isSubmitDisabled ? null : handleSubmit();
-  }
+  };
 
-  async function handleCancelWrapper(event) {
+  const handleCancelWrapper = event => {
     event.stopPropagation();
 
-    if (mode === 'compose' && draft) await handleDeleteDraft();
-    handleCancel();
-  }
+    return mode === 'compose' && draft ? handleDeleteDraft() : handleCancel();
+  };
 
   return (
     <Container>

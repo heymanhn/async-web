@@ -1,4 +1,3 @@
-/* eslint no-alert: 0 */
 import { useContext, useState } from 'react';
 import { useMutation } from 'react-apollo';
 
@@ -17,12 +16,6 @@ import {
 
 import { toPlainText } from 'components/editor/utils';
 import useDiscussionMutations from './useDiscussionMutations';
-
-/*
- * SLATE UPGRADE TODO:
- * - Handle deleting the entire discussion if the user deletes the first
- *   message of the discussion
- */
 
 const useMessageMutations = ({ message = null } = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,11 +107,6 @@ const useMessageMutations = ({ message = null } = {}) => {
   }
 
   function handleDelete() {
-    const userChoice = window.confirm(
-      'Are you sure you want to delete this message?'
-    );
-    if (!userChoice) return;
-
     deleteMessage();
     localDeleteMessage();
   }

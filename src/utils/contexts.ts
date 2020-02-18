@@ -20,14 +20,16 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   setContext: () => {},
   afterCreate: () => {},
   afterCreateDraft: () => {},
+  afterDelete: () => {},
 };
 export const DiscussionContext = createContext(DEFAULT_DISCUSSION_CONTEXT);
 
 export const DEFAULT_MESSAGE_CONTEXT = {
   messageId: null,
   mode: null,
-  setMode: () => {},
+  threadPosition: null,
 
+  setMode: () => {},
   afterCreate: () => {},
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);

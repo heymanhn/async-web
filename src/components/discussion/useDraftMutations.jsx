@@ -1,14 +1,12 @@
-/* eslint no-alert: 0 */
 import { useContext } from 'react';
 import { useApolloClient, useMutation } from 'react-apollo';
 
 import discussionQuery from 'graphql/queries/discussion';
-import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
 import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
 import localAddDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
 import localDeleteDraftFromDiscMtn from 'graphql/mutations/local/deleteDraftFromDiscussion';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { DiscussionContext } from 'utils/contexts';
 
 import { toPlainText } from 'components/editor/utils';
 import useDiscussionMutations from './useDiscussionMutations';
@@ -20,9 +18,8 @@ import useDiscussionMutations from './useDiscussionMutations';
 
 const useDraftMutations = (editor = null) => {
   const client = useApolloClient();
-  const { documentId } = useContext(DocumentContext);
   const { discussionId, afterCreateDraft } = useContext(DiscussionContext);
-  const { handleCreate } = useDiscussionMutations();
+  const { handleCreate, handleDelete } = useDiscussionMutations();
 
   const [createMessageDraft] = useMutation(createMessageDraftMutation);
   const [localAddDraftToDiscussion] = useMutation(localAddDraftToDiscussionMtn);
@@ -30,9 +27,7 @@ const useDraftMutations = (editor = null) => {
   const [deleteMessageDraft] = useMutation(deleteMessageDraftMutation, {
     variables: { discussionId },
   });
-  const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
-    variables: { documentId, discussionId },
-  });
+
   const [localRemoveDraftFromDscn] = useMutation(localDeleteDraftFromDiscMtn, {
     variables: { discussionId },
   });
@@ -88,11 +83,7 @@ const useDraftMutations = (editor = null) => {
         variables: { discussionId, queryParams: {} },
       });
 
-      if (!messageCount) {
-        // SLATE UPGRADE TODO: Delete highlight from text
-
-        await deleteDiscussion();
-      }
+      if (!messageCount) handleDelete();
 
       return Promise.resolve();
     }

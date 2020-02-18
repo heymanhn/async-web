@@ -81,18 +81,23 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   // return window.history.replaceState({}, `discussion: ${value}`, url);
   // }
 
-  function handleCancelCompose() {
+  const handleCancelCompose = () => {
     stopComposing();
     if (!modalDiscussionId) handleClose();
-  }
+  };
 
-  function isUnread() {
+  const isUnread = () => {
     const { tags } = data.discussion;
     const safeTags = tags || [];
     return (
       safeTags.includes('new_messages') || safeTags.includes('new_discussion')
     );
-  }
+  };
+
+  const afterDelete = () => {
+    // TODO: removeAnnotation();
+    handleClose();
+  };
 
   const value = {
     ...DEFAULT_DISCUSSION_CONTEXT,
@@ -102,6 +107,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
 
     setContext,
     afterCreate: id => handleShowModal(id),
+    afterDelete,
   };
 
   return (

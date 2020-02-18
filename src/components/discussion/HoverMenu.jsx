@@ -64,7 +64,7 @@ const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
         <ButtonContainer onClick={showDropdown}>
           <MenuIcon>•••</MenuIcon>
           <MessageDropdown
-            handleClose={closeDropdown}
+            handleCloseDropdown={closeDropdown}
             isOpen={isDropdownOpen}
           />
         </ButtonContainer>
