@@ -121,9 +121,10 @@ const InboxRow = ({ item, ...props }) => {
   if (loading) return null;
 
   const { objectMembers } = data;
+  const safeTopic = topic || {};
   const { members } = objectMembers;
   const fullNames = (members || []).map(m => m.user.fullName);
-  const titleText = isDocument ? title : topic.text;
+  const titleText = isDocument ? title : safeTopic.text;
 
   function titleize(input) {
     return input.charAt(0).toUpperCase() + input.slice(1);
