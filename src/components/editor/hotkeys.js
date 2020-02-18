@@ -35,6 +35,8 @@ const BLOCK_HOTKEYS = {
   'mod+shift+>': BLOCK_QUOTE,
 };
 
+const SOFT_BREAK_HOTKEY = 'shift+enter';
+
 export const triggerMarkHotkeys = (editor, event) => {
   Object.keys(MARK_HOTKEYS).forEach(hotkey => {
     if (isHotkey(hotkey, event)) {
@@ -53,4 +55,11 @@ export const triggerBlockHotkeys = (editor, event) => {
       Editor.toggleBlock(editor, type, HOTKEY_SOURCE);
     }
   });
+};
+
+export const triggerSoftBreak = (editor, event) => {
+  if (isHotkey(SOFT_BREAK_HOTKEY, event)) {
+    event.preventDefault();
+    Editor.insertText(editor, '\n');
+  }
 };
