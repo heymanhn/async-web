@@ -49,13 +49,6 @@ export const commands = {
 /* **** Queries  **** */
 
 export const queries = {
-  isAtBeginning: editor => {
-    const { value } = editor;
-    const { selection } = value;
-    return selection.isCollapsed && selection.anchor.offset === 0;
-  },
-  isEmptyBlock: editor =>
-    editor.value.startBlock && !editor.value.startBlock.text,
   isEmptyDocument: editor => {
     const { value } = editor;
     const { document: doc } = value;
@@ -75,15 +68,6 @@ export const queries = {
 
     return editor.isEmptyDocument() && !selection.isFocused;
   },
-  isWrappedBy: (editor, type) =>
-    editor.value.blocks.some(
-      block =>
-        !!editor.value.document.getClosest(
-          block.key,
-          parent => parent.type === type
-        )
-    ),
-  isWrappedByAnyBlock: editor => !!editor.getParentBlock(),
 };
 
 /* **** Plugins **** */
