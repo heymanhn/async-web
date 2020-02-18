@@ -205,15 +205,20 @@ const SectionBreakElement = ({ attributes }) => (
  * Inlines
  */
 
+const StyledLink = styled.a({
+  cursor: 'pointer',
+});
+
 const LinkElement = ({ attributes, children, element }) => (
-  <a
+  <StyledLink
     {...attributes}
     href={element.url}
     target="_blank"
     rel="noopener noreferrer"
+    onClick={() => window.open(element.url, '_blank')}
   >
     {children}
-  </a>
+  </StyledLink>
 );
 
 /*
