@@ -11,11 +11,7 @@ import useAutoSave from 'utils/hooks/useAutoSave';
 
 import Editor from 'components/editor/Editor';
 
-import {
-  DEFAULT_ELEMENT,
-  INLINE_DISCUSSION_ANNOTATION,
-  INLINE_DISCUSSION_SOURCE,
-} from 'components/editor/utils';
+import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
@@ -34,19 +30,18 @@ const DocumentEditable = styled(Editable)({
 
 /*
  * SLATE UPGRADE TODO:
- * - Figure out how to show the inline discussion modal given a discussion ID
  * - Figure out how to pass resourceId to the image plugin
- * - Figure out how plugins are instantiated here
  */
 
 const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const {
     modalDiscussionId,
+    deletedDiscussionId,
     inlineDiscussionTopic,
+    setDeletedDiscussionId,
     resetInlineTopic,
   } = useContext(DocumentContext);
   const { selection } = inlineDiscussionTopic || {};
-  const isAnnotationNeeded = modalDiscussionId && selection;
 
   const contentEditor = useMemo(
     () =>
@@ -71,19 +66,14 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
     afterUpdate();
   });
 
-  const createAnnotation = () => {
-    Editor.wrapInline(
-      contentEditor,
-      INLINE_DISCUSSION_ANNOTATION,
-      selection,
-      INLINE_DISCUSSION_SOURCE,
-      { discussionId: modalDiscussionId }
-    );
-  };
-
-  if (isAnnotationNeeded) {
-    createAnnotation();
+  if (modalDiscussionId && selection) {
+    Editor.wrapInlineAnnotation(contentEditor, modalDiscussionId, selection);
     resetInlineTopic();
+  }
+
+  if (deletedDiscussionId) {
+    Editor.removeInlineAnnotation(contentEditor, deletedDiscussionId);
+    setDeletedDiscussionId(null);
   }
 
   return (

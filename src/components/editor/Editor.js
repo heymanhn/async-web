@@ -17,11 +17,18 @@ import {
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
+  INLINE_DISCUSSION_ANNOTATION,
+  INLINE_DISCUSSION_SOURCE,
 } from './utils';
 
 /*
  * Queries
  */
+
+const documentSelection = editor => ({
+  anchor: SlateEditor.start(editor, []),
+  focus: SlateEditor.end(editor, []),
+});
 
 const isElementActive = (editor, type, range) => {
   const [match] = SlateEditor.nodes(editor, {
@@ -118,10 +125,7 @@ const isAtEnd = editor => {
 
 const findNodeByType = (editor, type) => {
   return SlateEditor.nodes(editor, {
-    at: {
-      anchor: SlateEditor.start(editor, []),
-      focus: SlateEditor.end(editor, []),
-    },
+    at: documentSelection(editor),
     match: n => n.type === type,
   }).next().value;
 };
@@ -220,10 +224,31 @@ const replaceBlock = (editor, type, source) => {
   return toggleBlock(editor, type, source);
 };
 
+const wrapInlineAnnotation = (editor, discussionId, selection) => {
+  wrapInline(
+    editor,
+    INLINE_DISCUSSION_ANNOTATION,
+    selection,
+    INLINE_DISCUSSION_SOURCE,
+    { discussionId }
+  );
+};
+
+const removeInlineAnnotation = (editor, discussionId) => {
+  Transforms.unwrapNodes(editor, {
+    at: documentSelection(editor),
+    match: n =>
+      n.type === INLINE_DISCUSSION_ANNOTATION &&
+      n.discussionId === discussionId,
+    split: true,
+  });
+};
+
 const Editor = {
   ...SlateEditor,
 
   // Queries (no transforms)
+  documentSelection,
   isElementActive,
   isMarkActive,
   isWrappedBlock,
@@ -245,6 +270,8 @@ const Editor = {
   insertVoid,
   clearBlock,
   replaceBlock,
+  wrapInlineAnnotation,
+  removeInlineAnnotation,
 };
 
 export default Editor;

@@ -11,17 +11,20 @@ import { MessageContext } from 'utils/contexts';
 import useDiscussionMutations from './useDiscussionMutations';
 import useMessageMutations from './useMessageMutations';
 
-const Container = styled.div(({ isOpen, theme: { colors } }) => ({
-  display: isOpen ? 'block' : 'none',
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  boxShadow: `0px 0px 8px ${colors.borderGrey}`,
-  position: 'absolute',
-  right: '-1px',
-  top: '-1px',
-  zIndex: 100,
-}));
+const Container = styled.div(
+  ({ isOpen, isFirstMessage, theme: { colors } }) => ({
+    display: isOpen ? 'block' : 'none',
+    background: colors.white,
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
+    boxShadow: `0px 0px 8px ${colors.borderGrey}`,
+    position: 'absolute',
+    right: '-1px',
+    top: '-1px',
+    zIndex: 100,
+    width: isFirstMessage ? '180px' : 'auto',
+  })
+);
 
 const DropdownOption = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -65,6 +68,7 @@ const OptionName = styled.div(({ theme: { colors } }) => ({
 const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
   const selector = useRef();
   const { threadPosition, setMode } = useContext(MessageContext);
+  const isFirstMessage = !threadPosition;
   const { handleDelete: handleDeleteDiscussion } = useDiscussionMutations();
   const { handleDelete: handleDeleteMessage } = useMessageMutations();
 
@@ -79,10 +83,10 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
   function handleDeleteWrapper(event) {
     event.stopPropagation();
 
-    const resource = threadPosition ? 'message' : 'discussion';
-    const handleDelete = threadPosition
-      ? handleDeleteMessage
-      : handleDeleteDiscussion;
+    const resource = isFirstMessage ? 'discussion' : 'message';
+    const handleDelete = isFirstMessage
+      ? handleDeleteDiscussion
+      : handleDeleteMessage;
 
     const userChoice = window.confirm(
       `Are you sure you want to delete this ${resource}?`
@@ -101,7 +105,12 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
   }
 
   return (
-    <Container isOpen={isOpen} ref={selector} {...props}>
+    <Container
+      isFirstMessage={isFirstMessage}
+      isOpen={isOpen}
+      ref={selector}
+      {...props}
+    >
       <DropdownOption onClick={handleEdit}>
         <IconContainer>
           <StyledIcon icon={faEdit} />
@@ -113,7 +122,7 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
           <StyledIcon icon={faTrash} />
         </IconContainer>
         <OptionName>
-          {threadPosition ? 'Delete' : 'Delete Discussion'}
+          {isFirstMessage ? 'Delete Discussion' : 'Delete'}
         </OptionName>
       </DropdownOption>
     </Container>

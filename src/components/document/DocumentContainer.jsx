@@ -16,11 +16,14 @@ const DocumentContainer = ({
   const [state, setState] = useState({
     viewMode: initialViewMode,
     modalDiscussionId: initialDiscussionId,
+    deletedDiscussionId: null,
     isModalOpen: !!initialDiscussionId,
     inlineDiscussionTopic: null,
   });
 
   const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
+  const setDeletedDiscussionId = id =>
+    setState(old => ({ ...old, deletedDiscussionId: id }));
   const resetInlineTopic = () =>
     setState(old => ({ ...old, inlineDiscussionTopic: null }));
 
@@ -51,6 +54,7 @@ const DocumentContainer = ({
 
   const {
     modalDiscussionId,
+    deletedDiscussionId,
     inlineDiscussionTopic,
     isModalOpen,
     viewMode,
@@ -60,7 +64,10 @@ const DocumentContainer = ({
     ...DEFAULT_DOCUMENT_CONTEXT,
     documentId,
     modalDiscussionId,
+    deletedDiscussionId,
     inlineDiscussionTopic,
+
+    setDeletedDiscussionId,
     resetInlineTopic,
     handleShowModal,
     handleCloseModal,

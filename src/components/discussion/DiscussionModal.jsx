@@ -38,6 +38,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     documentId,
     modalDiscussionId,
     inlineDiscussionTopic,
+    setDeletedDiscussionId,
     handleShowModal,
   } = useContext(DocumentContext);
   const [isComposing, setIsComposing] = useState(!modalDiscussionId);
@@ -95,7 +96,10 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   };
 
   const afterDelete = () => {
-    // TODO: removeAnnotation();
+    // The editor controller is in <DocumentComposer />. Setting the state
+    // propagates the message down to the composer to delete the inline discussion
+    setDeletedDiscussionId(modalDiscussionId);
+
     handleClose();
   };
 
