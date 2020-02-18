@@ -1,27 +1,33 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/pro-regular-svg-icons';
+import { faFileAlt } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import useDocumentMutations from './useDocumentMutations';
 
-const Container = styled.div({
+const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
 
+  background: colors.grey7,
+  borderRadius: '5px',
+  height: '32px',
   cursor: 'pointer',
   padding: '0 20px',
+  marginRight: '20px',
+}));
+
+const Label = styled.div({
+  fontSize: '12px',
+  fontWeight: 500,
+  margin: '0 10px',
 });
 
-const StyledPlus = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  fontSize: '20px',
-
-  ':hover': {
-    color: colors.grey1,
-  },
+const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '12px',
 }));
 
 const NewDocumentButton = () => {
@@ -31,7 +37,7 @@ const NewDocumentButton = () => {
     const { documentId } = await handleCreate();
 
     if (documentId) {
-      window.open(`/d/${documentId}`, '_blank');
+      window.open(`/documents/${documentId}`, '_blank');
     }
   }
 
@@ -40,7 +46,10 @@ const NewDocumentButton = () => {
       {isSubmitting ? (
         <LoadingIndicator color="grey4" size="18" />
       ) : (
-        <StyledPlus icon={faPlus} />
+        <>
+          <StyledIcon icon={faFileAlt} />
+          <Label>New document</Label>
+        </>
       )}
     </Container>
   );

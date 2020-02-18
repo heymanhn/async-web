@@ -72,8 +72,8 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
 
   function documentURL() {
     return type === 'new_message'
-      ? `/d/${documentId}/discussions/${discussionId}`
-      : `/d/${documentId}`;
+      ? `/documents/${documentId}/discussions/${discussionId}`
+      : `/documents/${documentId}`;
   }
 
   function discussionURL() {

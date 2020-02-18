@@ -1,20 +1,13 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { useQuery } from '@apollo/react-hooks';
 
-import organizationQuery from 'graphql/queries/organization';
-import { getLocalAppState } from 'utils/auth';
 import { DocumentContext } from 'utils/contexts';
-
 import ResourceAccessContainer from 'components/participants/ResourceAccessContainer';
-import Avatar from 'components/shared/Avatar';
 import VerticalDivider from 'components/shared/VerticalDivider';
-import DropdownMenu from 'components/navigation/DropdownMenu';
+import OrganizationSettings from 'components/navigation/OrganizationSettings';
 import NotificationsBell from 'components/notifications/NotificationsBell';
-import NewDocumentButton from 'components/document/NewDocumentButton';
 import DocumentViewMode from 'components/document/DocumentViewMode';
-import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
 import DocumentTitle from 'components/document/DocumentTitle';
 import DiscussionTitle from 'components/discussion/DiscussionTitle';
 
@@ -41,11 +34,6 @@ const MenuSection = styled.div({
   height: '100%',
 });
 
-const OrganizationAvatar = styled(Avatar)({
-  cursor: 'pointer',
-  marginRight: '15px',
-});
-
 const NavigationSection = styled.div({
   display: 'flex',
   alignItems: 'center',
@@ -54,38 +42,11 @@ const NavigationSection = styled.div({
 
 const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
   const { documentId } = useContext(DocumentContext);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  function openDropdown() {
-    setIsDropdownOpen(true);
-  }
-  function closeDropdown() {
-    setIsDropdownOpen(false);
-  }
-
-  const { organizationId } = getLocalAppState();
-
-  const { loading, data } = useQuery(organizationQuery, {
-    variables: { id: organizationId },
-    skip: !organizationId,
-  });
-
-  if (loading || !data.organization) return null;
-  const { logo } = data.organization;
 
   return (
     <Container {...props}>
       <MenuSection>
-        <OrganizationAvatar
-          avatarUrl={logo}
-          onClick={openDropdown}
-          size={24}
-          square
-        />
-        <DropdownMenu
-          handleClose={closeDropdown}
-          isOpen={isDropdownOpen}
-          organizationId={organizationId}
-        />
+        <OrganizationSettings />
         {documentId ? <DocumentTitle /> : <DiscussionTitle />}
         {documentId && (
           <DocumentViewMode viewMode={viewMode} setViewMode={setViewMode} />
@@ -95,8 +56,6 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
       </MenuSection>
       <NavigationSection>
         <NotificationsBell />
-        <NewDocumentButton />
-        <NewDiscussionButton />
       </NavigationSection>
     </Container>
   );

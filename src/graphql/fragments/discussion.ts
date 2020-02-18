@@ -28,6 +28,7 @@ export default gql`
     topic @type(name: "Body") {
       ...BodyObject
     }
+    messageCount
   }
   ${body}
   ${user}

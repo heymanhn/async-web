@@ -10,14 +10,12 @@ const Layout = ({ children }) => {
   useMediaQuery();
 
   // TEMP CODE
-  const isDocument = window.location.pathname.includes('/d/');
+  const isDocument = window.location.pathname.includes('/documents/');
 
   return (
     <Theme>
       <GlobalStyles bgColor={isDocument ? 'white' : null} />
-      <div>
-        {children}
-      </div>
+      <div>{children}</div>
     </Theme>
   );
 };

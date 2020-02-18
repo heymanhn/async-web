@@ -26,6 +26,7 @@ import Home from 'components/homepage/Home';
 import Login from 'components/auth/Login';
 import DemoLogin from 'components/auth/DemoLogin';
 import Logout from 'components/Logout';
+import Inbox from 'components/homepage/Inbox';
 import NotFound from 'components/navigation/NotFound';
 import SignUp from 'components/auth/SignUp';
 import CreateOrganization from 'components/auth/CreateOrganization';
@@ -110,14 +111,17 @@ const App = () => {
         <Login path="/login" />
         <DemoLogin path="/demo/login" />
         <Logout path="/logout" />
-
-        <PrivateRoute path="/d/:documentId" component={DocumentContainer} />
+        <PrivateRoute path="/inbox" component={Inbox} />
         <PrivateRoute
-          path="/d/:documentId/discussions/:discussionId"
+          path="/documents/:documentId"
           component={DocumentContainer}
         />
         <PrivateRoute
-          path="/d/:documentId/discussions"
+          path="/documents/:documentId/discussions/:discussionId"
+          component={DocumentContainer}
+        />
+        <PrivateRoute
+          path="/documents/:documentId/discussions"
           component={DocumentContainer}
           viewMode="discussions"
         />

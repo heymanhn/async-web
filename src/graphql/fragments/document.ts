@@ -17,6 +17,8 @@ export default gql`
     reactions @type(name: "Reaction") {
       ...ReactionObject
     }
+    discussionCount
+    tags
     createdAt
     updatedAt
   }

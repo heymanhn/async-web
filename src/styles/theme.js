@@ -6,7 +6,7 @@ export const breakpoints = [
   ['desktopUp', 1200],
 ];
 
-const mq = (n) => {
+const mq = n => {
   const [result] = breakpoints.reduce((acc, [name, size]) => {
     const mediaProp = name === 'mobileOnly' ? 'max-width' : 'min-width';
     if (n === name) return [...acc, `@media (${mediaProp}: ${size}px)`];
@@ -41,7 +41,7 @@ export const theme = {
   shortMargin: '30px auto',
   documentViewport: '740px',
   discussionViewport: '800px',
-  meetingSpaceViewport: '720px',
+  inboxViewport: '600px',
   wideViewport: '1220px',
   sidebarWidth: '250px',
 
