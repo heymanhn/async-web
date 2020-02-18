@@ -157,12 +157,10 @@ const InboxRow = ({ item, ...props }) => {
         <StyledIcon icon={isDocument ? faFileAlt : faCommentsAlt} />
         <ItemDetails>
           <Title>{titleText || `Untitled ${objectType}`}</Title>
-          <AdditionalInfo isUnread={isUnread()}>
-            <Tag>{tagText}</Tag>
+          <AdditionalInfo>
+            <Tag isUnread={isUnread()}>{tagText}</Tag>
             {separator}
-            <span>
-              <NameList names={fullNames} />
-            </span>
+            <NameList names={fullNames} />
             {separator}
             <span>
               <Timestamp fromNow parse="X">

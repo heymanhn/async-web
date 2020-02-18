@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 const Container = styled.div({
-  display: 'flex',
-  alignItems: 'center',
+  display: 'inline',
 });
 
 const NameList = ({ names, ...props }) => {
