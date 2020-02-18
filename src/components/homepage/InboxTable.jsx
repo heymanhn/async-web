@@ -65,7 +65,7 @@ const InboxTable = ({ viewMode }) => {
 
   return (
     <Container ref={inboxRef}>
-      {items.map(item => {
+      {(items || []).map(item => {
         const object = item.document || item.discussion;
         return <InboxRow key={object.id} item={item} />;
       })}
