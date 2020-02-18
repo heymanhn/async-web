@@ -8,7 +8,7 @@ import discussionQuery from 'graphql/queries/discussion';
 import { DiscussionContext } from 'utils/contexts';
 
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
-// import ContextComposer from 'components/discussion/ContextComposer';
+import ContextComposer from 'components/discussion/ContextComposer';
 import AvatarList from 'components/shared/AvatarList';
 import DiscussionListItemHeader from './DiscussionListItemHeader';
 
@@ -53,8 +53,9 @@ const DiscussionListItem = ({ discussionId }) => {
   if (loading) return null;
   if (!data.discussion || !data.messages) return null;
 
-  const { topic: context, lastMessage, messageCount, draft } = data.discussion;
-  // const { payload } = context || {};
+  const { topic, lastMessage, messageCount, draft } = data.discussion;
+  const { payload } = topic || {};
+  const context = payload ? JSON.parse(payload) : undefined;
   const { items } = data.messages;
   const messages = (items || []).map(i => i.message);
   if (!messages.length) return null;
@@ -65,25 +66,16 @@ const DiscussionListItem = ({ discussionId }) => {
 
   const value = {
     discussionId,
-    // context,
-    draft, // SLATE UPGRADE TODO
+    context,
+    draft,
   };
 
   return (
     <DiscussionContext.Provider value={value}>
       <Container>
         <DiscussionListItemHeader discussion={data.discussion} />
-        {/* SLATE UPGRADE TODO: Get context working in All Discussions page too */}
-        {/* {payload ? (
-          <ContextComposer
-            contentType="discussionContext"
-            readOnly
-            initialValue={payload}
-            mode="display"
-          />
-        ) : ( */}
+        {context && <ContextComposer />}
         <StyledDiscussionMessage message={firstMessage} />
-        {/* )} */}
         {moreReplyCount > 0 && (
           <MoreRepliesIndicator>
             <StyledAvatarList avatarUrls={avatarUrls} opacity={0.5} />
