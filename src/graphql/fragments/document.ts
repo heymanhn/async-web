@@ -8,7 +8,7 @@ export default gql`
   fragment DocumentObject on Document {
     id
     title
-    owner @type(name: "User") {
+    owner @type(name: "Owner") {
       ...UserObject
     }
     body @type(name: "Body") {
