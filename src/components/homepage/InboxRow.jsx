@@ -126,23 +126,23 @@ const InboxRow = ({ item, ...props }) => {
     return input.charAt(0).toUpperCase() + input.slice(1);
   }
 
-  function itemTag() {
+  const itemTag = () => {
     const count = isDocument ? discussionCount : messageCount;
     const label = isDocument ? 'discussion' : 'message';
 
     return tags.includes('no_updates')
       ? Pluralize(label, count, true)
       : tags[0].replace('_', ' ');
-  }
+  };
 
-  function isUnread() {
+  const isUnread = () => {
     return (
       tags.includes('new_messages') ||
       tags.includes('new_discussions') ||
       tags.includes('new_document') ||
       tags.includes('new_discussion')
     );
-  }
+  };
 
   const separator = <Separator>&#8226;</Separator>;
   const tagText = titleize(itemTag());

@@ -8,6 +8,7 @@ import NewDocumentButton from 'components/document/NewDocumentButton';
 import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
 
 import InboxRow from './InboxRow';
+import NavBar from './Navbar';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -44,6 +45,7 @@ const Inbox = () => {
 
   return (
     <Container>
+      <NavBar />
       <InnerContainer>
         <PageTitle>Inbox</PageTitle>
         {items.map(item => {
