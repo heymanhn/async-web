@@ -15,7 +15,8 @@ import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
-import withInlineElements from 'components/editor/withInlineElements';
+import withInlineDiscussions from 'components/editor/withInlineDiscussions';
+import withLinks from 'components/editor/withLinks';
 import withVoidElements from 'components/editor/withVoidElements';
 import withCustomBreaks from 'components/editor/withCustomBreaks';
 import useDocumentMutations from './useDocumentMutations';
@@ -47,7 +48,8 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
       compose(
         withCustomBreaks,
         withMarkdownShortcuts,
-        withInlineElements,
+        withLinks,
+        withInlineDiscussions,
         withVoidElements,
         withHistory,
         withReact

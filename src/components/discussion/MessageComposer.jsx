@@ -11,8 +11,9 @@ import useDrafts from 'utils/hooks/useDrafts';
 
 import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
-import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
+import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
+import withLinks from 'components/editor/withLinks';
 import withVoidElements from 'components/editor/withVoidElements';
 import withCustomBreaks from 'components/editor/withCustomBreaks';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
@@ -47,6 +48,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
       compose(
         withCustomBreaks,
         withMarkdownShortcuts,
+        withLinks,
         withVoidElements,
         withHistory,
         withReact

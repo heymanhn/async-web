@@ -30,6 +30,7 @@
         "import": "0.0.6",
         "inter-ui": "3.11.0",
         "is-hotkey": "^0.1.4",
+        "is-url": "^1.2.4",
         "jquery": "^3.4.1",
         "moment": "^2.24.0",
         "pluralize": "^8.0.0",

@@ -19,6 +19,7 @@ import {
   SMALL_FONT,
   INLINE_DISCUSSION_ANNOTATION,
   INLINE_DISCUSSION_SOURCE,
+  HYPERLINK,
 } from './utils';
 
 /*
@@ -244,6 +245,31 @@ const removeInlineAnnotation = (editor, discussionId) => {
   });
 };
 
+// Credit to https://github.com/ianstormtaylor/slate/blob/master/site/examples/links.js
+const unwrapLink = editor => {
+  Transforms.unwrapNodes(editor, { match: n => n.type === HYPERLINK });
+};
+
+// Credit to https://github.com/ianstormtaylor/slate/blob/master/site/examples/links.js
+const wrapLink = (editor, url) => {
+  if (isElementActive(editor, HYPERLINK)) unwrapLink(editor);
+
+  const { selection } = editor;
+  const isCollapsed = selection && Range.isCollapsed(selection);
+  const link = {
+    type: HYPERLINK,
+    url,
+    children: isCollapsed ? [{ text: url }] : [],
+  };
+
+  if (isCollapsed) {
+    Transforms.insertNodes(editor, link);
+  } else {
+    Transforms.wrapNodes(editor, link, { split: true });
+    Transforms.collapse(editor, { edge: 'end' });
+  }
+};
+
 const Editor = {
   ...SlateEditor,
 
@@ -272,6 +298,8 @@ const Editor = {
   replaceBlock,
   wrapInlineAnnotation,
   removeInlineAnnotation,
+  wrapLink,
+  unwrapLink,
 };
 
 export default Editor;
