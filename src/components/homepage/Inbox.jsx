@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 
@@ -9,6 +9,7 @@ import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
 
 import InboxRow from './InboxRow';
 import NavBar from './Navbar';
+import InboxViewMode from './InboxViewMode';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -34,9 +35,11 @@ const ButtonContainer = styled.div({
 });
 
 const Inbox = () => {
+  const [viewMode, setViewMode] = useState('all');
+
   const { userId } = getLocalUser();
   const { loading, error, data } = useQuery(inboxQuery, {
-    variables: { id: userId, queryParams: {} },
+    variables: { id: userId, queryParams: { type: viewMode } },
   });
   if (loading) return null;
   if (error || !data.inbox) return <Container>Error fetching page</Container>;
@@ -48,6 +51,7 @@ const Inbox = () => {
       <NavBar />
       <InnerContainer>
         <PageTitle>Inbox</PageTitle>
+        <InboxViewMode viewMode={viewMode} setViewMode={setViewMode} />
         {items.map(item => {
           const object = item.document || item.discussion;
           return <InboxRow key={object.id} item={item} />;

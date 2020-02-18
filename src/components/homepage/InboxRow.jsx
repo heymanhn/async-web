@@ -8,19 +8,23 @@ import { useQuery } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCommentsAlt, faFileAlt } from '@fortawesome/pro-solid-svg-icons';
 
-import useHover from 'utils/hooks/useHover';
 import objectMembersQuery from 'graphql/queries/objectMembers';
 import NameList from 'components/shared/NameList';
 
-const Container = styled.div(({ hover, theme: { colors } }) => ({
+const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
 
-  borderLeft: hover ? `8px solid ${colors.hoverBlue}` : 'none',
   padding: '20px 20px 24px',
-  paddingLeft: hover ? '12px' : '20px',
+  paddingLeft: '20px',
   width: '100%',
+
+  ':hover': {
+    paddingLeft: '12px',
+    borderLeft: `8px solid ${colors.hoverBlue}`,
+    color: colors.grey3,
+  },
 }));
 
 const ItemDetails = styled.div({
@@ -96,7 +100,6 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
 }));
 
 const InboxRow = ({ item, ...props }) => {
-  const { hover, ...hoverProps } = useHover(false);
   const { document, discussion } = item;
   const objectType = document ? 'document' : 'discussion';
   const isDocument = objectType === 'document';
@@ -149,10 +152,10 @@ const InboxRow = ({ item, ...props }) => {
 
   return (
     <StyledLink to={`/${Pluralize(objectType)}/${id}`}>
-      <Container hover={hover} {...hoverProps} {...props}>
+      <Container {...props}>
         <StyledIcon icon={isDocument ? faFileAlt : faCommentsAlt} />
         <ItemDetails>
-          <Title hover={hover}>{titleText || `Untitled ${objectType}`}</Title>
+          <Title>{titleText || `Untitled ${objectType}`}</Title>
           <AdditionalInfo isUnread={isUnread()}>
             <Tag>{tagText}</Tag>
             {separator}
