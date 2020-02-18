@@ -1,4 +1,4 @@
-import { DEFAULT_BLOCK_TYPE } from 'components/editor/utils';
+import { DEFAULT_ELEMENT_TYPE } from 'components/editor/utils';
 import {
   AddQueries,
   CustomEnterAction,
@@ -30,7 +30,7 @@ export default function ListsPlugin() {
   // Pressing Enter while on a blank list item removes the blank list item and exits the list
   function exitListAfterEmptyListItem(editor, next) {
     if (editor.hasListItems() && editor.isEmptyBlock()) {
-      return editor.setBlocks(DEFAULT_BLOCK_TYPE).unwrapListBlocks();
+      return editor.setBlocks(DEFAULT_ELEMENT_TYPE).unwrapListBlocks();
     }
 
     return next();
@@ -40,7 +40,7 @@ export default function ListsPlugin() {
   // resets the selection to a paragraph block
   function resetListItemToParagraph(editor, next) {
     if (editor.hasListItems() && editor.isAtBeginning()) {
-      return editor.unwrapListBlocks().setBlocks(DEFAULT_BLOCK_TYPE);
+      return editor.unwrapListBlocks().setBlocks(DEFAULT_ELEMENT_TYPE);
     }
 
     return next();

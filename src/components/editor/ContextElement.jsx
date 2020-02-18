@@ -1,3 +1,7 @@
+/*
+ * All the elements except for inline discussion annotations. We don't want to
+ * render them in the context UI.
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -7,10 +11,10 @@ import {
   listElements,
   wrappedBlockElements,
   voidElements,
-  inlineDiscussionElements,
+  discussionContextElements,
 } from './elements';
 
-const Element = props => {
+const ContextElement = props => {
   const { element } = props;
   const { type } = element;
 
@@ -19,15 +23,15 @@ const Element = props => {
     ...listElements,
     ...wrappedBlockElements,
     ...voidElements,
-    ...inlineDiscussionElements,
+    ...discussionContextElements,
   };
 
   const ElementToRender = elements[type] || ParagraphElement;
   return <ElementToRender {...props} />;
 };
 
-Element.propTypes = {
+ContextElement.propTypes = {
   element: PropTypes.object.isRequired,
 };
 
-export default Element;
+export default ContextElement;

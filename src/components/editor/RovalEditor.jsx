@@ -7,7 +7,7 @@ import Plain from 'slate-plain-serializer';
 import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
-import { DEFAULT_BLOCK } from './utils';
+import { DEFAULT_ELEMENT } from './utils';
 import { commands, plugins, queries } from './extensions';
 
 // Default styles for Roval editor UIs
@@ -133,11 +133,11 @@ class RovalEditor extends Component {
   }
 
   clearEditorValue() {
-    this.setState({ value: Value.fromJSON(DEFAULT_BLOCK) });
+    this.setState({ value: Value.fromJSON(DEFAULT_ELEMENT) });
   }
 
   loadDefaultValue() {
-    const value = Value.fromJSON(DEFAULT_BLOCK);
+    const value = Value.fromJSON(DEFAULT_ELEMENT);
 
     this.setState({ value });
   }
@@ -151,7 +151,7 @@ class RovalEditor extends Component {
     } else {
       const initialJSON = initialValue
         ? JSON.parse(initialValue)
-        : DEFAULT_BLOCK;
+        : DEFAULT_ELEMENT;
       value = Value.fromJSON(initialJSON);
     }
 

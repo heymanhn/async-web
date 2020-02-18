@@ -35,6 +35,7 @@ const StyledHoverMenu = styled(HoverMenu)({
 });
 
 const DiscussionMessage = ({
+  index, // Used only by <DiscussionThread /> to see which message is selected
   mode: initialMode,
   message,
   source,
@@ -45,7 +46,7 @@ const DiscussionMessage = ({
   const { draft } = useContext(DiscussionContext);
 
   const [mode, setMode] = useState(initialMode);
-  const { hover, ...hoverProps } = useHover(mode !== 'display');
+  const { hover, ...hoverProps } = useHover(mode === 'display');
   const currentUser = useCurrentUser();
 
   const { createdAt, id: messageId, updatedAt, body } = message;
@@ -68,6 +69,7 @@ const DiscussionMessage = ({
     ...DEFAULT_MESSAGE_CONTEXT,
     messageId,
     mode,
+    threadPosition: index,
     setMode,
     afterCreate,
     handleCancel: handleCancelWrapper,
@@ -100,6 +102,7 @@ const DiscussionMessage = ({
 };
 
 DiscussionMessage.propTypes = {
+  index: PropTypes.number,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
   source: PropTypes.string,
@@ -108,6 +111,7 @@ DiscussionMessage.propTypes = {
 };
 
 DiscussionMessage.defaultProps = {
+  index: null,
   mode: 'display',
   message: {},
   source: null,

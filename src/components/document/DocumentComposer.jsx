@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
@@ -6,13 +6,17 @@ import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
+import { DocumentContext } from 'utils/contexts';
 import useAutoSave from 'utils/hooks/useAutoSave';
 
-import { DEFAULT_BLOCK } from 'components/editor/utils';
+import Editor from 'components/editor/Editor';
+
+import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
-import Toolbar from 'components/editor/toolbar/Toolbar';
+import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
+import withInlineElements from 'components/editor/withInlineElements';
 import withVoidElements from 'components/editor/withVoidElements';
 import withCustomBreaks from 'components/editor/withCustomBreaks';
 import useDocumentMutations from './useDocumentMutations';
@@ -26,17 +30,25 @@ const DocumentEditable = styled(Editable)({
 
 /*
  * SLATE UPGRADE TODO:
- * - Figure out how to show the inline discussion modal given a discussion ID
  * - Figure out how to pass resourceId to the image plugin
- * - Figure out how plugins are instantiated here
  */
 
 const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
+  const {
+    modalDiscussionId,
+    deletedDiscussionId,
+    inlineDiscussionTopic,
+    setDeletedDiscussionId,
+    resetInlineTopic,
+  } = useContext(DocumentContext);
+  const { selection } = inlineDiscussionTopic || {};
+
   const contentEditor = useMemo(
     () =>
       compose(
         withCustomBreaks,
         withMarkdownShortcuts,
+        withInlineElements,
         withVoidElements,
         withHistory,
         withReact
@@ -44,22 +56,30 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
     []
   );
   const [content, setContent] = useState(
-    initialContent ? JSON.parse(initialContent) : DEFAULT_BLOCK
+    initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT
   );
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
 
-  async function handleUpdateWrapper() {
+  useAutoSave(content, async () => {
     await handleUpdate();
     afterUpdate();
+  });
+
+  if (modalDiscussionId && selection) {
+    Editor.wrapInlineAnnotation(contentEditor, modalDiscussionId, selection);
+    resetInlineTopic();
   }
 
-  useAutoSave(content, handleUpdateWrapper);
+  if (deletedDiscussionId) {
+    Editor.removeInlineAnnotation(contentEditor, deletedDiscussionId);
+    setDeletedDiscussionId(null);
+  }
 
   return (
     <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
       <DocumentEditable {...props} {...coreEditorProps} />
-      <Toolbar source="document" />
+      <DocumentToolbar content={content} />
       <CompositionMenuButton />
     </Slate>
   );

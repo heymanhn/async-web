@@ -2,19 +2,51 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import InlineDiscussionElement from 'components/discussion/InlineDiscussionElement';
+
+import ChecklistItemElement from './ChecklistItem';
+import {
+  LARGE_FONT,
+  MEDIUM_FONT,
+  SMALL_FONT,
+  BULLETED_LIST,
+  NUMBERED_LIST,
+  LIST_ITEM,
+  CHECKLIST_ITEM,
+  CHECKLIST,
+  CODE_BLOCK,
+  BLOCK_QUOTE,
+  SECTION_BREAK,
+  CONTEXT_HIGHLIGHT,
+  INLINE_DISCUSSION_ANNOTATION,
+  INLINE_TYPES,
+} from './utils';
+
 /*
  * Default element, which is a paragraph block with better styling
  */
-const TextBlock = styled.div(({ theme: { colors } }) => ({
+
+const ParagraphInline = styled.span(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '16px',
+  letterSpacing: '-0.011em',
+}));
+
+const ParagraphBlock = styled.div(({ theme: { colors } }) => ({
+  color: colors.contentText,
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
 }));
 
-export const TextElement = ({ attributes, children }) => (
-  <TextBlock {...attributes}>{children}</TextBlock>
-);
+export const ParagraphElement = ({ attributes, children, element }) => {
+  const Element = INLINE_TYPES.includes(element.type)
+    ? ParagraphInline
+    : ParagraphBlock;
+
+  return <Element {...attributes}>{children}</Element>;
+};
 
 /*
  * Headings: Large, medium, small
@@ -46,15 +78,15 @@ const SmallFont = styled.h3(({ theme: { colors } }) => ({
   margin: '12px 0px -10px',
 }));
 
-export const LargeFontElement = ({ attributes, children }) => (
+const LargeFontElement = ({ attributes, children }) => (
   <LargeFont {...attributes}>{children}</LargeFont>
 );
 
-export const MediumFontElement = ({ attributes, children }) => (
+const MediumFontElement = ({ attributes, children }) => (
   <MediumFont {...attributes}>{children}</MediumFont>
 );
 
-export const SmallFontElement = ({ attributes, children }) => (
+const SmallFontElement = ({ attributes, children }) => (
   <SmallFont {...attributes}>{children}</SmallFont>
 );
 
@@ -91,19 +123,19 @@ const Checklist = styled.ul({
   paddingLeft: '16px',
 });
 
-export const BulletedListElement = ({ attributes, children }) => (
+const BulletedListElement = ({ attributes, children }) => (
   <BulletedList {...attributes}>{children}</BulletedList>
 );
 
-export const NumberedListElement = ({ attributes, children }) => (
+const NumberedListElement = ({ attributes, children }) => (
   <NumberedList {...attributes}>{children}</NumberedList>
 );
 
-export const ChecklistElement = ({ attributes, children }) => (
+const ChecklistElement = ({ attributes, children }) => (
   <Checklist {...attributes}>{children}</Checklist>
 );
 
-export const ListItemElement = ({ attributes, children }) => (
+const ListItemElement = ({ attributes, children }) => (
   <ListItem {...attributes}>{children}</ListItem>
 );
 
@@ -132,7 +164,7 @@ const CodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
   },
 }));
 
-export const CodeBlockElement = ({ attributes, children }) => (
+const CodeBlockElement = ({ attributes, children }) => (
   <CodeBlock {...attributes}>{children}</CodeBlock>
 );
 
@@ -149,7 +181,7 @@ const BlockQuote = styled.blockquote(({ theme: { colors } }) => ({
   },
 }));
 
-export const BlockQuoteElement = ({ attributes, children }) => (
+const BlockQuoteElement = ({ attributes, children }) => (
   <BlockQuote {...attributes}>{children}</BlockQuote>
 );
 
@@ -164,6 +196,50 @@ const SectionBreak = styled.hr(({ theme: { colors } }) => ({
   width: '120px',
 }));
 
-export const SectionBreakElement = ({ attributes }) => (
+const SectionBreakElement = ({ attributes }) => (
   <SectionBreak {...attributes} />
 );
+
+export const voidElements = {};
+voidElements[SECTION_BREAK] = SectionBreakElement;
+
+/*
+ * Inline Discussion elements
+ */
+
+const ContextHighlight = styled.span(({ theme: { colors } }) => ({
+  background: colors.highlightYellow,
+  padding: '2px 0px',
+}));
+
+const ContextHighlightElement = ({ attributes, children }) => (
+  <ContextHighlight attributes={attributes}>{children}</ContextHighlight>
+);
+
+/*
+ * Mappings for exports
+ */
+
+export const formattingElements = {};
+formattingElements[LARGE_FONT] = LargeFontElement;
+formattingElements[MEDIUM_FONT] = MediumFontElement;
+formattingElements[SMALL_FONT] = SmallFontElement;
+
+export const listElements = {};
+listElements[BULLETED_LIST] = BulletedListElement;
+listElements[NUMBERED_LIST] = NumberedListElement;
+listElements[CHECKLIST] = ChecklistElement;
+listElements[LIST_ITEM] = ListItemElement;
+listElements[CHECKLIST_ITEM] = ChecklistItemElement;
+
+export const wrappedBlockElements = {};
+wrappedBlockElements[CODE_BLOCK] = CodeBlockElement;
+wrappedBlockElements[BLOCK_QUOTE] = BlockQuoteElement;
+
+export const discussionContextElements = {};
+discussionContextElements[CONTEXT_HIGHLIGHT] = ContextHighlightElement;
+
+export const inlineDiscussionElements = {};
+inlineDiscussionElements[
+  INLINE_DISCUSSION_ANNOTATION
+] = InlineDiscussionElement;

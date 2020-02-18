@@ -85,7 +85,7 @@ const Label = styled.div(({ theme: { colors } }) => ({
 
 const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
   const { discussionId } = useContext(DiscussionContext);
-  const { hover, ...hoverProps } = useHover(isComposing);
+  const { hover, ...hoverProps } = useHover(!isComposing);
   const currentUser = useCurrentUser();
 
   const [updateDiscussion] = useMutation(updateDiscussionMutation);

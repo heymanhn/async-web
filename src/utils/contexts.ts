@@ -4,6 +4,11 @@ import { createContext } from 'react';
 export const DEFAULT_DOCUMENT_CONTEXT = {
   documentId: null,
   modalDiscussionId: null,
+  deletedDiscussionId: null,
+  inlineDiscussionTopic: null,
+
+  setDeletedDiscussionId: () => {},
+  resetInlineTopic: () => {},
   handleShowModal: () => {},
   handleCloseModal: () => {},
 };
@@ -14,16 +19,19 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   context: null,
   draft: null,
 
+  setContext: () => {},
   afterCreate: () => {},
   afterCreateDraft: () => {},
+  afterDelete: () => {},
 };
 export const DiscussionContext = createContext(DEFAULT_DISCUSSION_CONTEXT);
 
 export const DEFAULT_MESSAGE_CONTEXT = {
   messageId: null,
   mode: null,
-  setMode: () => {},
+  threadPosition: null,
 
+  setMode: () => {},
   afterCreate: () => {},
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);

@@ -92,10 +92,7 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
   return (
     <Container isOpen={isOpen} ref={selector} {...props}>
       <AuthorSection>
-        <AvatarWithMargin
-          avatarUrl={user.profilePictureUrl}
-          size={24}
-        />
+        <AvatarWithMargin avatarUrl={user.profilePictureUrl} size={24} />
         <Name>{user.fullName}</Name>
       </AuthorSection>
       <MenuOptionList>

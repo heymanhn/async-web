@@ -8,36 +8,67 @@ import HeaderBar from 'components/navigation/HeaderBar';
 import Document from './Document';
 import DiscussionsList from './DiscussionsList';
 
-/*
- * SLATE UPGRADE TODO:
- */
-
 const DocumentContainer = ({
   documentId,
   discussionId: initialDiscussionId,
   viewMode: initialViewMode,
 }) => {
-  const [viewMode, setViewMode] = useState(initialViewMode);
-  const [modalDiscussionId, setModalDiscussionId] = useState(
-    initialDiscussionId
-  );
-  const [isModalOpen, setIsModalOpen] = useState(!!modalDiscussionId);
+  const [state, setState] = useState({
+    viewMode: initialViewMode,
+    modalDiscussionId: initialDiscussionId,
+    deletedDiscussionId: null,
+    isModalOpen: !!initialDiscussionId,
+    inlineDiscussionTopic: null,
+  });
 
-  // SLATE UPGRADE TODO: Invoke this method in the selection toolbar icon
-  function handleShowModal(discussionId) {
-    setModalDiscussionId(discussionId);
-    setIsModalOpen(true);
-  }
+  const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
+  const setDeletedDiscussionId = id =>
+    setState(old => ({ ...old, deletedDiscussionId: id }));
+  const resetInlineTopic = () =>
+    setState(old => ({ ...old, inlineDiscussionTopic: null }));
 
-  function handleCloseModal() {
-    setModalDiscussionId(null);
-    setIsModalOpen(false);
-  }
+  const handleShowModal = (discussionId, selection, content) => {
+    const newState = {
+      modalDiscussionId: discussionId,
+      isModalOpen: true,
+    };
+
+    // For creating inline discussion context later on
+    if (selection && content)
+      newState.inlineDiscussionTopic = {
+        selection,
+        content,
+      };
+
+    setState(oldState => ({ ...oldState, ...newState }));
+  };
+
+  const handleCloseModal = () => {
+    setState(oldState => ({
+      ...oldState,
+      modalDiscussionId: null,
+      inlineDiscussionTopic: null,
+      isModalOpen: false,
+    }));
+  };
+
+  const {
+    modalDiscussionId,
+    deletedDiscussionId,
+    inlineDiscussionTopic,
+    isModalOpen,
+    viewMode,
+  } = state;
 
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
     documentId,
     modalDiscussionId,
+    deletedDiscussionId,
+    inlineDiscussionTopic,
+
+    setDeletedDiscussionId,
+    resetInlineTopic,
     handleShowModal,
     handleCloseModal,
   };
@@ -49,13 +80,7 @@ const DocumentContainer = ({
       {viewMode === 'discussions' && <DiscussionsList />}
 
       {isModalOpen && (
-        <DiscussionModal
-          isOpen={isModalOpen}
-          handleClose={handleCloseModal}
-          // createAnnotation={createAnnotation}
-          // documentEditor={documentEditor}
-          // selection={selection}
-        />
+        <DiscussionModal isOpen={isModalOpen} handleClose={handleCloseModal} />
       )}
     </DocumentContext.Provider>
   );
@@ -73,27 +98,3 @@ DocumentContainer.defaultProps = {
 };
 
 export default DocumentContainer;
-
-/* SLATE UPGRADE TODO: implement this
-// TODO: This will change later, when we introduce the concept of multiple co-authors
-const { userId } = getLocalUser();
-const isAuthor = userId === owner.id;
-
-function createAnnotation(value, authorId) {
-  const { documentEditor, selection } = state;
-  const { start, end } = selection;
-
-  documentEditor.withoutSaving(() => {
-    documentEditor
-      .moveTo(start.key, start.offset)
-      .moveEndTo(end.key, end.offset)
-      .addMark({
-        type: 'inline-discussion',
-        data: {
-          discussionId: value,
-          authorId,
-        },
-      });
-  });
-}
-*/

@@ -9,10 +9,10 @@ import styled from '@emotion/styled';
 import { MessageContext } from 'utils/contexts';
 import useDrafts from 'utils/hooks/useDrafts';
 
-import { DEFAULT_BLOCK } from 'components/editor/utils';
+import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
-import Toolbar from 'components/editor/toolbar/Toolbar';
+import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import withVoidElements from 'components/editor/withVoidElements';
 import withCustomBreaks from 'components/editor/withCustomBreaks';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
@@ -41,6 +41,7 @@ const MessageEditable = styled(Editable)({
 
 const MessageComposer = ({ initialMessage, isModal, ...props }) => {
   const { mode } = useContext(MessageContext);
+  const readOnly = mode === 'display';
   const messageEditor = useMemo(
     () =>
       compose(
@@ -53,16 +54,16 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
     []
   );
   const [message, setMessage] = useState(
-    initialMessage ? JSON.parse(initialMessage) : DEFAULT_BLOCK
+    initialMessage ? JSON.parse(initialMessage) : DEFAULT_ELEMENT
   );
 
   const { handleCreate, handleUpdate, isSubmitting } = useMessageMutations({
     message,
   });
 
-  const coreEditorProps = useCoreEditorProps(messageEditor);
+  const coreEditorProps = useCoreEditorProps(messageEditor, { readOnly });
   useDrafts(message, messageEditor, isSubmitting);
-  const isEmptyMessage = message === JSON.stringify(DEFAULT_BLOCK);
+  const isEmptyMessage = message === JSON.stringify(DEFAULT_ELEMENT);
 
   return (
     <Container mode={mode} {...props}>
@@ -70,12 +71,12 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
         editor={messageEditor}
         value={message}
         onChange={v => setMessage(v)}
-        key={mode === 'display'}
+        key={readOnly}
       >
-        <MessageEditable readOnly={mode === 'display'} {...coreEditorProps} />
-        <Toolbar source="discussionMessage" />
+        <MessageEditable readOnly={readOnly} {...coreEditorProps} />
+        <MessageToolbar />
         <CompositionMenuButton isModal={isModal} />
-        {mode !== 'display' && (
+        {!readOnly && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
             isSubmitDisabled={isEmptyMessage}

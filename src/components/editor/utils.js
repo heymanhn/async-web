@@ -1,11 +1,11 @@
 import { Node } from 'slate';
 
-export const DEFAULT_BLOCK_TYPE = 'paragraph';
+export const DEFAULT_ELEMENT_TYPE = 'paragraph';
 export const DEFAULT_PLAIN_NODE = 'line';
 
-export const DEFAULT_BLOCK = [
+export const DEFAULT_ELEMENT = [
   {
-    type: DEFAULT_BLOCK_TYPE,
+    type: DEFAULT_ELEMENT_TYPE,
     children: [{ text: '' }],
   },
 ];
@@ -37,6 +37,13 @@ export const SECTION_BREAK = 'section-break';
 export const VOID_TYPES = [SECTION_BREAK];
 
 /*
+ * Inline elements
+ */
+export const CONTEXT_HIGHLIGHT = 'highlight';
+export const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
+export const INLINE_TYPES = [CONTEXT_HIGHLIGHT, INLINE_DISCUSSION_ANNOTATION];
+
+/*
  * Composition menu option titles
  */
 export const TEXT_OPTION_TITLE = 'Text';
@@ -57,6 +64,12 @@ export const COMPOSITION_MENU_SOURCE = 'compositionMenu';
 export const HOTKEY_SOURCE = 'hotkey';
 export const MARKDOWN_SOURCE = 'markdown';
 export const CUT_PASTE_SOURCE = 'cutAndPaste';
+export const INLINE_DISCUSSION_SOURCE = 'inlineDiscussion';
+
+/*
+ * Inline discussion logic
+ */
+export const BUFFER_LENGTH = 200;
 
 /*
  * Helper functions
@@ -64,7 +77,7 @@ export const CUT_PASTE_SOURCE = 'cutAndPaste';
  */
 export const deserializedTitle = title => [
   {
-    type: DEFAULT_BLOCK_TYPE,
+    type: DEFAULT_ELEMENT_TYPE,
     children: [{ text: title }],
   },
 ];

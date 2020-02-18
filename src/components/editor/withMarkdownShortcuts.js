@@ -24,7 +24,7 @@ const setNode = (editor, type) => {
       { type },
       { match: n => Editor.isBlock(editor, n) }
     );
-  } else if (!Editor.isBlockActive(editor, type)) {
+  } else if (!Editor.isElementActive(editor, type)) {
     Editor.toggleBlock(editor, type, MARKDOWN_SOURCE);
   }
 };
