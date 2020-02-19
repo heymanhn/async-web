@@ -15,6 +15,7 @@ import {
   SMALL_FONT,
   SECTION_BREAK,
   CODE_HIGHLIGHT,
+  NUMBERED_LIST,
 } from './utils';
 import Editor from './Editor';
 
@@ -51,6 +52,12 @@ const MARKDOWN_SHORTCUTS = [
     before: /^(-)$/,
     when: editor => !Editor.isWrappedBlock(editor),
     change: editor => setNode(editor, BULLETED_LIST),
+  },
+  {
+    trigger: 'space',
+    before: /^(\d.)$/,
+    when: editor => !Editor.isWrappedBlock(editor),
+    change: editor => setNode(editor, NUMBERED_LIST),
   },
   {
     trigger: 'space',
