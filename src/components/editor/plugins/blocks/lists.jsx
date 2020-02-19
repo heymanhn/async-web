@@ -1,9 +1,5 @@
 import { DEFAULT_ELEMENT_TYPE } from 'components/editor/utils';
-import {
-  AddQueries,
-  CustomEnterAction,
-  CustomBackspaceAction,
-} from '../helpers';
+import { AddQueries, CustomBackspaceAction } from '../helpers';
 
 const BULLETED_LIST = 'bulleted-list';
 const NUMBERED_LIST = 'numbered-list';
@@ -26,15 +22,6 @@ export default function ListsPlugin() {
   }
 
   /* **** Hotkeys **** */
-
-  // Pressing Enter while on a blank list item removes the blank list item and exits the list
-  function exitListAfterEmptyListItem(editor, next) {
-    if (editor.hasListItems() && editor.isEmptyBlock()) {
-      return editor.setBlocks(DEFAULT_ELEMENT_TYPE).unwrapListBlocks();
-    }
-
-    return next();
-  }
 
   // Consistency with other rich text editors, where pressing backspace on an empty list item
   // resets the selection to a paragraph block
@@ -81,7 +68,6 @@ export default function ListsPlugin() {
   // }
 
   const hotkeys = [
-    CustomEnterAction(exitListAfterEmptyListItem),
     CustomBackspaceAction(resetListItemToParagraph),
     // CustomBackspaceAction(mergeAdjacentLists),
   ];
