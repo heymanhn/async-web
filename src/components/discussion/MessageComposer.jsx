@@ -36,11 +36,6 @@ const MessageEditable = styled(Editable)({
   marginTop: '15px',
 });
 
-/*
- * SLATE UPGRADE TODO:
- * - Get the keyboard shortcuts working for saving the message (cmd + enter)
- */
-
 const MessageComposer = ({ initialMessage, isModal, ...props }) => {
   const { mode } = useContext(MessageContext);
   const readOnly = mode === 'display';

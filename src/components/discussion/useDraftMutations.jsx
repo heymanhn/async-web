@@ -11,11 +11,6 @@ import { DiscussionContext } from 'utils/contexts';
 import { toPlainText } from 'components/editor/utils';
 import useDiscussionMutations from './useDiscussionMutations';
 
-/*
- * SLATE UPGRADE TODO:
- * - remove the draft from the discussion in local cache instead of refetching
- */
-
 const useDraftMutations = (editor = null) => {
   const client = useApolloClient();
   const { discussionId, afterCreateDraft } = useContext(DiscussionContext);

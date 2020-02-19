@@ -22,10 +22,6 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
   padding: '0 30px',
 }));
 
-/*
- * SLATE UPGRADE TODO:
- */
-
 const Document = () => {
   const { documentId } = useContext(DocumentContext);
   const { markAsRead } = useViewedReaction();
@@ -59,10 +55,6 @@ const Document = () => {
   // Initialize the state here
   if (!updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
   const setUpdatedTimestampToNow = () => setUpdatedTimestamp(Date.now());
-
-  // SLATE UPGRADE TODO: do I need these state variables?
-  // documentEditor,
-  // selection,
 
   return (
     <Container>

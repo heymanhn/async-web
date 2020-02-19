@@ -30,7 +30,7 @@ const DocumentEditable = styled(Editable)({
 });
 
 /*
- * SLATE UPGRADE TODO:
+ * IMAGE SUPPORT TODO:
  * - Figure out how to pass resourceId to the image plugin
  */
 
