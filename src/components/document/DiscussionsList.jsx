@@ -91,35 +91,41 @@ const DiscussionsList = () => {
 
   if (!discussionCount && !isComposing) setIsComposing(true);
 
-  function fetchMoreDiscussions() {
+  async function fetchMoreDiscussions() {
     const newQueryParams = { order: 'desc' };
     if (pageToken) newQueryParams.pageToken = pageToken;
 
-    fetchMore({
-      query: documentDiscussionsQuery,
-      variables: {
-        id: documentId,
-        queryParams: snakedQueryParams(newQueryParams),
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        const { items: previousItems } = previousResult.documentDiscussions;
-        const {
-          items: newItems,
-          pageToken: newToken,
-        } = fetchMoreResult.documentDiscussions;
-        setShouldFetch(false);
-        setIsFetching(false);
-
-        return {
-          documentDiscussions: {
+    // HN TODO: DRY this up for all usages of fetchMore()
+    try {
+      await fetchMore({
+        query: documentDiscussionsQuery,
+        variables: {
+          id: documentId,
+          queryParams: snakedQueryParams(newQueryParams),
+        },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          const { items: previousItems } = previousResult.documentDiscussions;
+          const {
+            items: newItems,
             pageToken: newToken,
-            totalHits: fetchMoreResult.documentDiscussions.totalHits,
-            items: [...previousItems, ...newItems],
-            __typename: fetchMoreResult.documentDiscussions.__typename,
-          },
-        };
-      },
-    });
+          } = fetchMoreResult.documentDiscussions;
+          setShouldFetch(false);
+          setIsFetching(false);
+
+          return {
+            documentDiscussions: {
+              pageToken: newToken,
+              totalHits: fetchMoreResult.documentDiscussions.totalHits,
+              items: [...previousItems, ...newItems],
+              __typename: fetchMoreResult.documentDiscussions.__typename,
+            },
+          };
+        },
+      });
+    } catch (e) {
+      // See https://github.com/apollographql/apollo-client/issues/4114
+      if (e.name !== 'Invariant Violation') throw e;
+    }
   }
 
   if (shouldFetch && pageToken && !isFetching) {
