@@ -114,8 +114,8 @@ const isAtEdge = (editor, callback) => {
   const { selection } = editor;
   if (!selection || Range.isExpanded(selection)) return false;
 
+  const [, path] = getParentBlock(editor, selection);
   const { anchor } = selection;
-  const [, path] = SlateEditor.node(editor, selection);
   return callback(editor, anchor, path);
 };
 
