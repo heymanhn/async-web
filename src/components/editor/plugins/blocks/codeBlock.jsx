@@ -1,5 +1,5 @@
 import { DEFAULT_ELEMENT_TYPE } from 'components/editor/utils';
-import { CustomEnterAction, CustomBackspaceAction } from '../helpers';
+import { CustomEnterAction } from '../helpers';
 
 const CODE_BLOCK = 'code-block';
 
@@ -16,22 +16,7 @@ export default function CodeBlockPlugin() {
     return next();
   }
 
-  function exitOnBackspace(editor, next) {
-    const { value } = editor;
-    const { startBlock, previousBlock } = value;
-
-    if (editor.isEmptyParagraph() && editor.isWrappedBy(CODE_BLOCK)) {
-      editor.unwrapBlock(startBlock.key);
-      return previousBlock ? editor.removeNodeByKey(startBlock.key) : next();
-    }
-
-    return next();
-  }
-
-  const hotkeys = [
-    CustomEnterAction(exitBlockOnDoubleEnter),
-    CustomBackspaceAction(exitOnBackspace),
-  ];
+  const hotkeys = [CustomEnterAction(exitBlockOnDoubleEnter)];
 
   return [hotkeys];
 }

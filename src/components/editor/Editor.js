@@ -74,15 +74,18 @@ const getCurrentText = editor => {
   return SlateEditor.string(editor, path);
 };
 
-const isEmptyParagraph = editor => {
+const isEmptyElement = (editor, type) => {
   const { selection } = editor;
   if (!selection || Range.isExpanded(selection)) return false;
 
   const [block] = getParentBlock(editor);
-  return (
-    block.type === DEFAULT_ELEMENT_TYPE && SlateEditor.isEmpty(editor, block)
-  );
+  return block.type === type && SlateEditor.isEmpty(editor, block);
 };
+
+const isEmptyParagraph = editor => isEmptyElement(editor, DEFAULT_ELEMENT_TYPE);
+
+const isEmptyListItem = editor =>
+  isEmptyElement(editor, LIST_ITEM) || isEmptyElement(editor, CHECKLIST_ITEM);
 
 // Paragraph node, not wrapped by anything
 const isDefaultBlock = editor =>
@@ -116,13 +119,13 @@ const isAtEdge = (editor, callback) => {
   return callback(editor, anchor, path);
 };
 
-const isAtBeginning = editor => {
-  return isAtEdge(editor, SlateEditor.isStart);
-};
+const isAtBeginning = editor => isAtEdge(editor, SlateEditor.isStart);
 
-const isAtEnd = editor => {
-  return isAtEdge(editor, SlateEditor.isEnd);
-};
+const isAtEnd = editor => isAtEdge(editor, SlateEditor.isEnd);
+
+const isEmptyNodeInWrappedBlock = editor =>
+  isWrappedBlock(editor) &&
+  (isEmptyParagraph(editor) || isEmptyListItem(editor));
 
 const findNodeByType = (editor, type) => {
   return SlateEditor.nodes(editor, {
@@ -278,12 +281,15 @@ const Editor = {
   isElementActive,
   isMarkActive,
   isWrappedBlock,
+  isEmptyElement,
   isEmptyParagraph,
+  isEmptyListItem,
   isDefaultBlock,
   isHeadingBlock,
   isSlashCommand,
   isAtBeginning,
   isAtEnd,
+  isEmptyNodeInWrappedBlock,
   getParentBlock,
   getCurrentNode,
   getCurrentText,
