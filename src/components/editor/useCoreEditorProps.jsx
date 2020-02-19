@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 
 import {
-  triggerMarkHotkeys,
-  triggerBlockHotkeys,
-  triggerSoftBreak,
+  markHotkeys,
+  blockHotkeys,
+  softBreak,
   exitCodeHighlight,
 } from './hotkeys';
 import Leaf from './Leaf';
@@ -16,9 +16,9 @@ const useCoreEditorProps = (editor, { readOnly } = {}) => {
   const onKeyDown = event => {
     if (readOnly) return;
 
-    triggerMarkHotkeys(editor, event);
-    triggerBlockHotkeys(editor, event);
-    triggerSoftBreak(editor, event);
+    markHotkeys(editor, event);
+    blockHotkeys(editor, event);
+    softBreak(editor, event);
     exitCodeHighlight(editor, event);
   };
 

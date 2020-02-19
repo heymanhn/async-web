@@ -39,7 +39,7 @@ const BLOCK_HOTKEYS = {
 const SOFT_BREAK_HOTKEY = 'shift+enter';
 const RIGHT_ARROW_HOTKEY = 'right';
 
-const triggerMarkHotkeys = (editor, event) => {
+const markHotkeys = (editor, event) => {
   Object.keys(MARK_HOTKEYS).forEach(hotkey => {
     if (isHotkey(hotkey, event)) {
       event.preventDefault();
@@ -54,7 +54,7 @@ const triggerMarkHotkeys = (editor, event) => {
   });
 };
 
-const triggerBlockHotkeys = (editor, event) => {
+const blockHotkeys = (editor, event) => {
   Object.keys(BLOCK_HOTKEYS).forEach(hotkey => {
     if (isHotkey(hotkey, event)) {
       event.preventDefault();
@@ -64,7 +64,7 @@ const triggerBlockHotkeys = (editor, event) => {
   });
 };
 
-const triggerSoftBreak = (editor, event) => {
+const softBreak = (editor, event) => {
   if (isHotkey(SOFT_BREAK_HOTKEY, event)) {
     event.preventDefault();
     Editor.insertText(editor, '\n');
@@ -82,9 +82,4 @@ const exitCodeHighlight = (editor, event) => {
   }
 };
 
-export {
-  triggerMarkHotkeys,
-  triggerBlockHotkeys,
-  triggerSoftBreak,
-  exitCodeHighlight,
-};
+export { markHotkeys, blockHotkeys, softBreak, exitCodeHighlight };
