@@ -18,7 +18,7 @@ import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withLinks from 'components/editor/withLinks';
 import withVoidElements from 'components/editor/withVoidElements';
-import withCustomBreaks from 'components/editor/withCustomBreaks';
+import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import useDocumentMutations from './useDocumentMutations';
 
 const DocumentEditable = styled(Editable)({
@@ -46,7 +46,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const contentEditor = useMemo(
     () =>
       compose(
-        withCustomBreaks,
+        withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
         withInlineDiscussions,

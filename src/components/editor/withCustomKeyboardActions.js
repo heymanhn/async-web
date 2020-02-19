@@ -1,4 +1,4 @@
-import { Transforms } from 'slate';
+import { Range, Transforms } from 'slate';
 
 import { DEFAULT_ELEMENT_TYPE, DEFAULT_ELEMENT } from './utils';
 import Editor from './Editor';
@@ -16,9 +16,27 @@ const handleExitHeadingBlock = (editor, insertBreak) => {
 const handleExitWrappedBlock = editor =>
   Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
 
-const withCustomBreaks = oldEditor => {
+const isBeginningOfWrappedBlock = editor => {
+  const { selection } = editor;
+  return (
+    selection &&
+    Range.isCollapsed(selection) &&
+    Editor.isWrappedBlock(editor) &&
+    Editor.isAtBeginning(editor)
+  );
+};
+
+const withCustomKeyboardActions = oldEditor => {
   const editor = oldEditor;
-  const { insertBreak } = editor;
+  const { deleteBackward, insertBreak } = editor;
+
+  editor.deleteBackward = (...args) => {
+    if (isBeginningOfWrappedBlock(editor)) {
+      return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+    }
+
+    return deleteBackward(...args);
+  };
 
   editor.insertBreak = () => {
     if (Editor.isHeadingBlock(editor))
@@ -33,4 +51,4 @@ const withCustomBreaks = oldEditor => {
   return editor;
 };
 
-export default withCustomBreaks;
+export default withCustomKeyboardActions;
