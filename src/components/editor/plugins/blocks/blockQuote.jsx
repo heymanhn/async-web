@@ -1,18 +1,9 @@
-import { DEFAULT_ELEMENT_TYPE } from 'components/editor/utils';
-import { CustomEnterAction, CustomBackspaceAction } from '../helpers';
+import { CustomBackspaceAction } from '../helpers';
 
 const BLOCK_QUOTE = 'block-quote';
 
 export default function BlockQuotePlugin() {
   /* **** Hotkeys **** */
-
-  function exitBlockOnDoubleEnter(editor, next) {
-    if (editor.isWrappedBy(BLOCK_QUOTE) && editor.isEmptyParagraph()) {
-      return editor.setBlocks(DEFAULT_ELEMENT_TYPE).unwrapBlock(BLOCK_QUOTE);
-    }
-
-    return next();
-  }
 
   function exitOnBackspace(editor, next) {
     const { value } = editor;
@@ -26,10 +17,7 @@ export default function BlockQuotePlugin() {
     return next();
   }
 
-  const hotkeys = [
-    CustomEnterAction(exitBlockOnDoubleEnter),
-    CustomBackspaceAction(exitOnBackspace),
-  ];
+  const hotkeys = [CustomBackspaceAction(exitOnBackspace)];
 
   return [hotkeys];
 }

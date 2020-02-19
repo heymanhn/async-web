@@ -1,12 +1,4 @@
 /*
-componentDidUpdate(prevProps) {
-    // The editor is only autofocused when initially mounted
-    const { mode } = this.props;
-    if (mode === 'edit' && prevProps.mode === 'display') {
-      this.editor.current.focus().moveToEndOfDocument();
-    }
-  }
-
   handlePressEscape(editor, next) {
     const { value } = this.state;
     const { selection } = value;
