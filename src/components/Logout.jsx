@@ -11,14 +11,14 @@ const Logout = () => {
   const { data } = useQuery(isLoggedInQuery);
   if (!data) return null;
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     await clearLocalUser();
     await clearLocalAppState();
     track('Logged out');
     reset();
 
     client.resetStore();
-  }
+  };
 
   if (data.isLoggedIn) {
     handleLogout();

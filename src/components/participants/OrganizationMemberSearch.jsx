@@ -79,7 +79,7 @@ const OrganizationMemberSearch = ({
   const { resourceMembers } = objectMembership.objectMembers;
   const participants = (resourceMembers || []).map(p => p.user);
 
-  function memberSearch() {
+  const memberSearch = () => {
     if (!searchQuery) return [];
 
     return members.filter(({ email, fullName }) => {
@@ -90,22 +90,20 @@ const OrganizationMemberSearch = ({
         fullName.toLowerCase().includes(sanitizedQuery)
       );
     });
-  }
+  };
 
-  function handleChange(event) {
+  const handleChange = event => {
     const currentQuery = event.target.value;
     setSearchQuery(currentQuery);
     setSelectedIndex(0);
     handleShowDropdown();
-  }
+  };
 
   // Neat trick to support modular arithmetic for negative numbers
   // https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
-  function mod(x, n) {
-    return ((x % n) + n) % n;
-  }
+  const mod = (x, n) => ((x % n) + n) % n;
 
-  function handleAddMember(user) {
+  const handleAddMember = user => {
     if (participants.find(({ id: pid }) => pid === user.id)) return;
 
     addMember({
@@ -130,11 +128,11 @@ const OrganizationMemberSearch = ({
 
     setSearchQuery('');
     setSelectedIndex(0);
-  }
+  };
 
   const results = memberSearch();
 
-  function handleKeyPress(event) {
+  const handleKeyPress = event => {
     if (!results.length) return null;
 
     if (isHotkey('ArrowDown', event)) {
@@ -153,11 +151,10 @@ const OrganizationMemberSearch = ({
     if (isHotkey('Escape', event)) return handleHideDropdown();
 
     return null;
-  }
+  };
 
-  function updateSelectedIndex(index) {
-    if (index !== selectedIndex) setSelectedIndex(index);
-  }
+  const updateSelectedIndex = index =>
+    index !== selectedIndex && setSelectedIndex(index);
 
   return (
     <Container>
