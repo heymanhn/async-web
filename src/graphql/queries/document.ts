@@ -11,6 +11,9 @@ export default gql`
         method: "GET"
       ) {
       ...DocumentObject
+      reactions @type(name: "Reaction") {
+        ...ReactionObject
+      }
     }
   }
   ${doc}

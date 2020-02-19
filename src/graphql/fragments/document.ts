@@ -14,11 +14,6 @@ export default gql`
     body @type(name: "Body") {
       ...BodyObject
     }
-    reactions @type(name: "Reaction") {
-      ...ReactionObject
-    }
-    discussionCount
-    tags
     createdAt
     updatedAt
   }

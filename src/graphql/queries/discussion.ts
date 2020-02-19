@@ -14,6 +14,7 @@ export default gql`
       ) {
       ...DiscussionObject
       ...MessageContext
+      tags
     }
     messages(discussionId: $discussionId, queryParams: $queryParams)
       @rest(

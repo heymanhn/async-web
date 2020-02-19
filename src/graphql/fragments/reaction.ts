@@ -9,7 +9,7 @@ export default gql`
     objectType
     objectId
     author @type(name: "User") {
-      ...UserObject
+      id
     }
     createdAt
     updatedAt

@@ -12,7 +12,6 @@ export default gql`
     }
     createdAt
     updatedAt
-    tags
     status @type(name: "DiscussionStatus") {
       author @type(name: "User") {
         ...UserObject
@@ -28,7 +27,6 @@ export default gql`
     topic @type(name: "Body") {
       ...BodyObject
     }
-    messageCount
   }
   ${body}
   ${user}

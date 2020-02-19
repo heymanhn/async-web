@@ -9,9 +9,13 @@ export default gql`
       items @type(name: "InboxItem]") {
         discussion @type(name: "Discussion") {
           ...DiscussionObject
+          tags
+          messageCount
         }
         document @type(name: "Document") {
           ...DocumentObject
+          tags
+          discussionCount
         }
       }
       pageToken
