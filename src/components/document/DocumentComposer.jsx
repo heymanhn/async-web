@@ -10,15 +10,15 @@ import { DocumentContext } from 'utils/contexts';
 import useAutoSave from 'utils/hooks/useAutoSave';
 
 import Editor from 'components/editor/Editor';
-
 import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
-import withInlineElements from 'components/editor/withInlineElements';
+import withInlineDiscussions from 'components/editor/withInlineDiscussions';
+import withLinks from 'components/editor/withLinks';
 import withVoidElements from 'components/editor/withVoidElements';
-import withCustomBreaks from 'components/editor/withCustomBreaks';
+import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import useDocumentMutations from './useDocumentMutations';
 
 const DocumentEditable = styled(Editable)({
@@ -46,9 +46,10 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const contentEditor = useMemo(
     () =>
       compose(
-        withCustomBreaks,
+        withCustomKeyboardActions,
         withMarkdownShortcuts,
-        withInlineElements,
+        withLinks,
+        withInlineDiscussions,
         withVoidElements,
         withHistory,
         withReact

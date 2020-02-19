@@ -7,6 +7,7 @@ import {
   listElements,
   wrappedBlockElements,
   voidElements,
+  inlineElements,
   inlineDiscussionElements,
 } from './elements';
 
@@ -19,6 +20,7 @@ const Element = props => {
     ...listElements,
     ...wrappedBlockElements,
     ...voidElements,
+    ...inlineElements,
     ...inlineDiscussionElements,
   };
 

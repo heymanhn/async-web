@@ -17,6 +17,7 @@ import {
   CODE_BLOCK,
   BLOCK_QUOTE,
   SECTION_BREAK,
+  HYPERLINK,
   CONTEXT_HIGHLIGHT,
   INLINE_DISCUSSION_ANNOTATION,
   INLINE_TYPES,
@@ -200,8 +201,25 @@ const SectionBreakElement = ({ attributes }) => (
   <SectionBreak {...attributes} />
 );
 
-export const voidElements = {};
-voidElements[SECTION_BREAK] = SectionBreakElement;
+/*
+ * Inlines
+ */
+
+const StyledLink = styled.a({
+  cursor: 'pointer',
+});
+
+const LinkElement = ({ attributes, children, element }) => (
+  <StyledLink
+    {...attributes}
+    href={element.url}
+    target="_blank"
+    rel="noopener noreferrer"
+    onClick={() => window.open(element.url, '_blank')}
+  >
+    {children}
+  </StyledLink>
+);
 
 /*
  * Inline Discussion elements
@@ -235,6 +253,12 @@ listElements[CHECKLIST_ITEM] = ChecklistItemElement;
 export const wrappedBlockElements = {};
 wrappedBlockElements[CODE_BLOCK] = CodeBlockElement;
 wrappedBlockElements[BLOCK_QUOTE] = BlockQuoteElement;
+
+export const voidElements = {};
+voidElements[SECTION_BREAK] = SectionBreakElement;
+
+export const inlineElements = {};
+inlineElements[HYPERLINK] = LinkElement;
 
 export const discussionContextElements = {};
 discussionContextElements[CONTEXT_HIGHLIGHT] = ContextHighlightElement;

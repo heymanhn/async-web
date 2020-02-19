@@ -19,6 +19,7 @@ import {
   SMALL_FONT,
   INLINE_DISCUSSION_ANNOTATION,
   INLINE_DISCUSSION_SOURCE,
+  HYPERLINK,
 } from './utils';
 
 /*
@@ -73,15 +74,23 @@ const getCurrentText = editor => {
   return SlateEditor.string(editor, path);
 };
 
-const isEmptyParagraph = editor => {
+const isEmptyContent = editor => {
+  const { children } = editor;
+  return children.length === 1 && SlateEditor.isEmpty(editor, children[0]);
+};
+
+const isEmptyElement = (editor, type) => {
   const { selection } = editor;
   if (!selection || Range.isExpanded(selection)) return false;
 
   const [block] = getParentBlock(editor);
-  return (
-    block.type === DEFAULT_ELEMENT_TYPE && SlateEditor.isEmpty(editor, block)
-  );
+  return block.type === type && SlateEditor.isEmpty(editor, block);
 };
+
+const isEmptyParagraph = editor => isEmptyElement(editor, DEFAULT_ELEMENT_TYPE);
+
+const isEmptyListItem = editor =>
+  isEmptyElement(editor, LIST_ITEM) || isEmptyElement(editor, CHECKLIST_ITEM);
 
 // Paragraph node, not wrapped by anything
 const isDefaultBlock = editor =>
@@ -110,18 +119,18 @@ const isAtEdge = (editor, callback) => {
   const { selection } = editor;
   if (!selection || Range.isExpanded(selection)) return false;
 
+  const [, path] = getParentBlock(editor, selection);
   const { anchor } = selection;
-  const [, path] = SlateEditor.node(editor, selection);
   return callback(editor, anchor, path);
 };
 
-const isAtBeginning = editor => {
-  return isAtEdge(editor, SlateEditor.isStart);
-};
+const isAtBeginning = editor => isAtEdge(editor, SlateEditor.isStart);
 
-const isAtEnd = editor => {
-  return isAtEdge(editor, SlateEditor.isEnd);
-};
+const isAtEnd = editor => isAtEdge(editor, SlateEditor.isEnd);
+
+const isEmptyNodeInWrappedBlock = editor =>
+  isWrappedBlock(editor) &&
+  (isEmptyParagraph(editor) || isEmptyListItem(editor));
 
 const findNodeByType = (editor, type) => {
   return SlateEditor.nodes(editor, {
@@ -244,6 +253,31 @@ const removeInlineAnnotation = (editor, discussionId) => {
   });
 };
 
+// Credit to https://github.com/ianstormtaylor/slate/blob/master/site/examples/links.js
+const unwrapLink = editor => {
+  Transforms.unwrapNodes(editor, { match: n => n.type === HYPERLINK });
+};
+
+// Credit to https://github.com/ianstormtaylor/slate/blob/master/site/examples/links.js
+const wrapLink = (editor, url) => {
+  if (isElementActive(editor, HYPERLINK)) unwrapLink(editor);
+
+  const { selection } = editor;
+  const isCollapsed = selection && Range.isCollapsed(selection);
+  const link = {
+    type: HYPERLINK,
+    url,
+    children: isCollapsed ? [{ text: url }] : [],
+  };
+
+  if (isCollapsed) {
+    Transforms.insertNodes(editor, link);
+  } else {
+    Transforms.wrapNodes(editor, link, { split: true });
+    Transforms.collapse(editor, { edge: 'end' });
+  }
+};
+
 const Editor = {
   ...SlateEditor,
 
@@ -252,12 +286,16 @@ const Editor = {
   isElementActive,
   isMarkActive,
   isWrappedBlock,
+  isEmptyContent,
+  isEmptyElement,
   isEmptyParagraph,
+  isEmptyListItem,
   isDefaultBlock,
   isHeadingBlock,
   isSlashCommand,
   isAtBeginning,
   isAtEnd,
+  isEmptyNodeInWrappedBlock,
   getParentBlock,
   getCurrentNode,
   getCurrentText,
@@ -272,6 +310,8 @@ const Editor = {
   replaceBlock,
   wrapInlineAnnotation,
   removeInlineAnnotation,
+  wrapLink,
+  unwrapLink,
 };
 
 export default Editor;

@@ -9,7 +9,7 @@ import useMountEffect from 'utils/hooks/useMountEffect';
 
 import Editor from 'components/editor/Editor';
 import useContextEditorProps from 'components/editor/useContextEditorProps';
-import withInlineElements from 'components/editor/withInlineElements';
+import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withVoidElements from 'components/editor/withVoidElements';
 import {
   INLINE_DISCUSSION_SOURCE,
@@ -35,7 +35,11 @@ const ContextComposer = props => {
 
   const contextEditor = useMemo(
     () =>
-      compose(withInlineElements, withVoidElements, withReact)(createEditor()),
+      compose(
+        withInlineDiscussions,
+        withVoidElements,
+        withReact
+      )(createEditor()),
     []
   );
   const editorProps = useContextEditorProps();

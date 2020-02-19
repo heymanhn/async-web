@@ -11,10 +11,11 @@ import useDrafts from 'utils/hooks/useDrafts';
 
 import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
-import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
+import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
+import withLinks from 'components/editor/withLinks';
 import withVoidElements from 'components/editor/withVoidElements';
-import withCustomBreaks from 'components/editor/withCustomBreaks';
+import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import useMessageMutations from './useMessageMutations';
 import MessageActions from './MessageActions';
@@ -45,8 +46,9 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
   const messageEditor = useMemo(
     () =>
       compose(
-        withCustomBreaks,
+        withCustomKeyboardActions,
         withMarkdownShortcuts,
+        withLinks,
         withVoidElements,
         withHistory,
         withReact
@@ -63,7 +65,6 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
 
   const coreEditorProps = useCoreEditorProps(messageEditor, { readOnly });
   useDrafts(message, messageEditor, isSubmitting);
-  const isEmptyMessage = message === JSON.stringify(DEFAULT_ELEMENT);
 
   return (
     <Container mode={mode} {...props}>
@@ -79,7 +80,6 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
         {!readOnly && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
-            isSubmitDisabled={isEmptyMessage}
             isSubmitting={isSubmitting}
           />
         )}
