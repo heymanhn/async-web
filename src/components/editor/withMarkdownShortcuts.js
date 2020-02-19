@@ -72,7 +72,7 @@ const MARKDOWN_SHORTCUTS = [
   },
   {
     trigger: '`',
-    before: /`.+$/,
+    before: /`[^`]+$/,
     when: editor =>
       !Editor.isElementActive(editor, CODE_BLOCK) &&
       !Editor.isElementActive(editor, BLOCK_QUOTE),
