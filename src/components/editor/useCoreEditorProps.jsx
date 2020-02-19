@@ -4,6 +4,7 @@ import {
   triggerMarkHotkeys,
   triggerBlockHotkeys,
   triggerSoftBreak,
+  exitCodeHighlight,
 } from './hotkeys';
 import Leaf from './Leaf';
 import Element from './Element';
@@ -18,6 +19,7 @@ const useCoreEditorProps = (editor, { readOnly } = {}) => {
     triggerMarkHotkeys(editor, event);
     triggerBlockHotkeys(editor, event);
     triggerSoftBreak(editor, event);
+    exitCodeHighlight(editor, event);
   };
 
   return {

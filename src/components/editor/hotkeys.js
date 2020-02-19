@@ -1,4 +1,5 @@
 import { isHotkey } from 'is-hotkey';
+import { Transforms } from 'slate';
 
 import {
   BOLD,
@@ -36,14 +37,19 @@ const BLOCK_HOTKEYS = {
 };
 
 const SOFT_BREAK_HOTKEY = 'shift+enter';
-const ENTER_HOTKEY = 'enter';
+const RIGHT_ARROW_HOTKEY = 'right';
 
 const triggerMarkHotkeys = (editor, event) => {
   Object.keys(MARK_HOTKEYS).forEach(hotkey => {
     if (isHotkey(hotkey, event)) {
       event.preventDefault();
       const type = MARK_HOTKEYS[hotkey];
-      Editor.toggleMark(editor, type, HOTKEY_SOURCE);
+
+      if (type === CODE_HIGHLIGHT && Editor.isAtEnd(editor)) {
+        Transforms.insertNodes(editor, { text: ' ' });
+      } else {
+        Editor.toggleMark(editor, type, HOTKEY_SOURCE);
+      }
     }
   });
 };
@@ -65,4 +71,20 @@ const triggerSoftBreak = (editor, event) => {
   }
 };
 
-export { triggerMarkHotkeys, triggerBlockHotkeys, triggerSoftBreak };
+const exitCodeHighlight = (editor, event) => {
+  if (
+    isHotkey(RIGHT_ARROW_HOTKEY, event) &&
+    Editor.isMarkActive(editor, CODE_HIGHLIGHT) &&
+    Editor.isAtEnd(editor)
+  ) {
+    event.preventDefault();
+    Transforms.insertNodes(editor, { text: ' ' });
+  }
+};
+
+export {
+  triggerMarkHotkeys,
+  triggerBlockHotkeys,
+  triggerSoftBreak,
+  exitCodeHighlight,
+};
