@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 import { MessageContext } from 'utils/contexts';
 import useDrafts from 'utils/hooks/useDrafts';
 
+import Editor from 'components/editor/Editor';
 import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
@@ -65,7 +66,6 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
 
   const coreEditorProps = useCoreEditorProps(messageEditor, { readOnly });
   useDrafts(message, messageEditor, isSubmitting);
-  const isEmptyMessage = message === JSON.stringify(DEFAULT_ELEMENT);
 
   return (
     <Container mode={mode} {...props}>
@@ -81,7 +81,6 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
         {!readOnly && (
           <MessageActions
             handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
-            isSubmitDisabled={isEmptyMessage}
             isSubmitting={isSubmitting}
           />
         )}

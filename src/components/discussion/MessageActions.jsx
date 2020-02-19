@@ -1,11 +1,16 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import isHotkey from 'is-hotkey';
+import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { DiscussionContext, MessageContext } from 'utils/contexts';
 
 import Button from 'components/shared/Button';
+import Editor from 'components/editor/Editor';
 import useDraftMutations from './useDraftMutations';
+
+const SUBMIT_HOTKEY = 'cmd+enter';
 
 const Container = styled.div({
   display: 'flex',
@@ -28,10 +33,12 @@ const StyledButton = styled(Button)({
   padding: '4px 25px',
 });
 
-const MessageActions = ({ handleSubmit, isSubmitDisabled, isSubmitting }) => {
+const MessageActions = ({ handleSubmit, isSubmitting }) => {
   const { draft } = useContext(DiscussionContext);
   const { mode, handleCancel } = useContext(MessageContext);
   const { handleDeleteDraft } = useDraftMutations();
+  const editor = useSlate();
+  const isSubmitDisabled = Editor.isEmptyContent(editor);
 
   const handleSubmitWrapper = event => {
     event.stopPropagation();
@@ -43,6 +50,22 @@ const MessageActions = ({ handleSubmit, isSubmitDisabled, isSubmitting }) => {
 
     return mode === 'compose' && draft ? handleDeleteDraft() : handleCancel();
   };
+
+  useEffect(() => {
+    const handleKeyDown = event => {
+      if (isHotkey(SUBMIT_HOTKEY, event)) {
+        event.preventDefault();
+        handleSubmitWrapper(event);
+      }
+    };
+
+    if (isSubmitDisabled) return () => {};
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  });
 
   return (
     <Container>
@@ -66,7 +89,6 @@ const MessageActions = ({ handleSubmit, isSubmitDisabled, isSubmitting }) => {
 
 MessageActions.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  isSubmitDisabled: PropTypes.bool.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
 };
 

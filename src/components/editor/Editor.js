@@ -74,6 +74,11 @@ const getCurrentText = editor => {
   return SlateEditor.string(editor, path);
 };
 
+const isEmptyContent = editor => {
+  const { children } = editor;
+  return children.length === 1 && SlateEditor.isEmpty(editor, children[0]);
+};
+
 const isEmptyElement = (editor, type) => {
   const { selection } = editor;
   if (!selection || Range.isExpanded(selection)) return false;
@@ -281,6 +286,7 @@ const Editor = {
   isElementActive,
   isMarkActive,
   isWrappedBlock,
+  isEmptyContent,
   isEmptyElement,
   isEmptyParagraph,
   isEmptyListItem,
