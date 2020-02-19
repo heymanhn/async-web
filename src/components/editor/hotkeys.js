@@ -45,7 +45,11 @@ const markHotkeys = (editor, event) => {
       event.preventDefault();
       const type = MARK_HOTKEYS[hotkey];
 
-      if (type === CODE_HIGHLIGHT && Editor.isAtEnd(editor)) {
+      if (
+        type === CODE_HIGHLIGHT &&
+        Editor.isMarkActive(editor, CODE_HIGHLIGHT) &&
+        Editor.isAtEnd(editor)
+      ) {
         Transforms.insertNodes(editor, { text: ' ' });
       } else {
         Editor.toggleMark(editor, type, HOTKEY_SOURCE);
