@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCommentCheck } from '@fortawesome/pro-solid-svg-icons';
 
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
@@ -123,7 +122,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
                 avatarUrl={status.author.profilePictureUrl}
                 size={32}
               />
-              <ResolvedDiscussionIcon icon={faCommentCheck} />
+              <ResolvedDiscussionIcon icon="comment-check" />
             </ResolveAuthorContainter>
             <AddReplyLabel>{`${status.author.fullName} marked this discussion as resolved`}</AddReplyLabel>
           </AddReplyItem>

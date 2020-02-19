@@ -1,11 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCommentsAlt,
-  faFileAlt,
-  faPlus,
-} from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import VerticalDivider from 'components/shared/VerticalDivider';
@@ -78,15 +73,15 @@ const DocumentViewMode = ({ setViewMode, viewMode }) => {
         isSelected={viewMode === 'content'}
         onClick={() => setViewMode('content')}
       >
-        <StyledDocumentIcon icon={faFileAlt} />
+        <StyledDocumentIcon icon="file-alt" />
       </ContentModeButton>
       <DiscussionModeButton
         isSelected={viewMode === 'discussions'}
         onClick={() => setViewMode('discussions')}
       >
         <DiscussionsIconContainer>
-          <StyledDiscussionsIcon icon={faCommentsAlt} />
-          <StyledPlusIcon icon={faPlus} />
+          <StyledDiscussionsIcon icon="comments-alt" />
+          <StyledPlusIcon icon="plus" />
         </DiscussionsIconContainer>
       </DiscussionModeButton>
     </>

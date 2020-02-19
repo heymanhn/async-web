@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { Transforms } from 'slate';
 import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquare } from '@fortawesome/free-regular-svg-icons';
-import { faCheckSquare } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 const Container = styled.li({
@@ -42,7 +40,7 @@ const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
 const ChecklistItem = ({ attributes, children, element }) => {
   const editor = useSlate();
   const { isChecked } = element;
-  const icon = isChecked ? faCheckSquare : faSquare;
+  const icon = isChecked ? 'check-square' : 'square';
   const isReadOnly = ReactEditor.isReadOnly(editor);
 
   async function handleClick(event) {

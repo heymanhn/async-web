@@ -10,9 +10,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   marginTop: '3px',
 }));
 
-const OptionIcon = ({ icon }) => (
-  <StyledIcon icon={icon} />
-);
+const OptionIcon = ({ icon }) => <StyledIcon icon={icon} />;
 
 OptionIcon.propTypes = {
   icon: PropTypes.object.isRequired,

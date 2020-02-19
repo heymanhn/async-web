@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeading } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 const Container = styled.div(({ number, theme: { colors } }) => ({
@@ -24,7 +23,7 @@ const NumberDisplay = styled.span(({ number }) => ({
 
 const HeadingOptionIcon = ({ number, ...props }) => (
   <Container number={number} {...props}>
-    <FontAwesomeIcon icon={faHeading} />
+    <FontAwesomeIcon icon="heading" />
     <NumberDisplay number={number}>{number}</NumberDisplay>
   </Container>
 );

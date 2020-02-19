@@ -1,6 +1,5 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCommentsAlt } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
@@ -47,7 +46,7 @@ const NewDiscussionButton = () => {
         <LoadingIndicator color="grey4" size="18" />
       ) : (
         <>
-          <StyledIcon icon={faCommentsAlt} />
+          <StyledIcon icon="comments-alt" />
           <Label>New discussion</Label>
         </>
       )}

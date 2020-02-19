@@ -8,6 +8,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from 'react-apollo';
 import { RestLink } from 'apollo-link-rest';
 import { ApolloLink, concat } from 'apollo-link';
+import { library } from '@fortawesome/fontawesome-svg-core';
 import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
@@ -16,6 +17,7 @@ import {
   isLocalTokenPresent,
   isUserOnboarding,
 } from 'utils/auth';
+import iconSet from 'styles/iconSet';
 import fileSerializer from 'utils/graphql/fileSerializer';
 import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
@@ -97,6 +99,9 @@ client.onResetStore(() =>
 
 // TEMP: set client as a global variable for non-React usages
 window.Roval = { apolloClient: client };
+
+// Initialize FontAwesome icons
+library.add(...iconSet);
 
 const App = () => {
   usePusher();

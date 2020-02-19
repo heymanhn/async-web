@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell } from '@fortawesome/pro-solid-svg-icons';
 import styled from '@emotion/styled';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -68,7 +67,7 @@ const NotificationsBell = () => {
   return (
     <div>
       <Container onClick={handleShowDropdown} ref={iconRef}>
-        <StyledIcon icon={faBell} />
+        <StyledIcon icon="bell" />
         {unreadNotifications.length ? <UnreadBadge /> : undefined}
       </Container>
       {notifications && (

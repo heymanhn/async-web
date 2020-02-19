@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLaugh } from '@fortawesome/free-regular-svg-icons';
 import styled from '@emotion/styled';
 
 import ReactionPicker from './ReactionPicker';
@@ -65,7 +64,7 @@ const AddReactionButton = ({ onPickerStateChange, placement, ...props }) => {
   return (
     <Container {...props}>
       <ButtonContainer onClick={handleOpenPicker}>
-        <StyledIcon icon={faLaugh} />
+        <StyledIcon icon="laugh" />
         <PlusSign>+</PlusSign>
       </ButtonContainer>
       <ReactionPicker

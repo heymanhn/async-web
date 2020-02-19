@@ -1,11 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCommentsAlt,
-  faCommentCheck,
-} from '@fortawesome/pro-solid-svg-icons';
-import { faComment } from '@fortawesome/free-solid-svg-icons';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
@@ -96,9 +91,9 @@ const DiscussionListItemHeader = ({ discussion }) => {
   }
 
   function headerIcon() {
-    if (isResolved()) return faCommentCheck;
+    if (isResolved()) return 'comment-check';
 
-    return tags.includes('new_messages') ? faComment : faCommentsAlt;
+    return tags.includes('new_messages') ? 'comment' : 'comments-alt';
   }
 
   return (

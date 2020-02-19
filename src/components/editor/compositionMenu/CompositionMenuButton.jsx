@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/pro-light-svg-icons';
 import styled from '@emotion/styled';
 
 import Editor from 'components/editor/Editor';
@@ -144,7 +143,7 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
         onMouseDown={handleMouseDown}
         {...props}
       >
-        <StyledIcon icon={faPlus} />
+        <StyledIcon icon={['fal', 'plus']} />
       </ButtonContainer>
       {showButton && (
         <CompositionMenuPlaceholder isModal={isModal} isVisible={showButton} />

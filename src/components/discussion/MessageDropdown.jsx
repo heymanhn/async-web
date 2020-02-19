@@ -2,7 +2,6 @@
 import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
@@ -113,13 +112,13 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
     >
       <DropdownOption onClick={handleEdit}>
         <IconContainer>
-          <StyledIcon icon={faEdit} />
+          <StyledIcon icon="edit" />
         </IconContainer>
         <OptionName>Edit</OptionName>
       </DropdownOption>
       <DropdownOption onClick={handleDeleteWrapper}>
         <IconContainer>
-          <StyledIcon icon={faTrash} />
+          <StyledIcon icon="trash" />
         </IconContainer>
         <OptionName>
           {isFirstMessage ? 'Delete Discussion' : 'Delete'}

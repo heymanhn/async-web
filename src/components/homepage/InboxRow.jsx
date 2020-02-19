@@ -6,7 +6,6 @@ import Moment from 'react-moment';
 import styled from '@emotion/styled';
 import { useQuery } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCommentsAlt, faFileAlt } from '@fortawesome/pro-solid-svg-icons';
 
 import objectMembersQuery from 'graphql/queries/objectMembers';
 import NameList from 'components/shared/NameList';
@@ -154,7 +153,7 @@ const InboxRow = ({ item, ...props }) => {
   return (
     <StyledLink to={`/${Pluralize(objectType)}/${id}`}>
       <Container {...props}>
-        <StyledIcon icon={isDocument ? faFileAlt : faCommentsAlt} />
+        <StyledIcon icon={isDocument ? 'file-alt' : 'comments-alt'} />
         <ItemDetails>
           <Title>{titleText || `Untitled ${objectType}`}</Title>
           <AdditionalInfo>
