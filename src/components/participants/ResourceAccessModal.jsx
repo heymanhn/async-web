@@ -18,7 +18,7 @@ const StyledModal = styled(Modal)({
 
 const customBackdropStyle = {
   background: 'black',
-  opacity: 0.4,
+  opacity: 0.5,
 };
 
 const Header = styled.div(({ theme: { colors } }) => ({

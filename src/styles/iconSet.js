@@ -3,6 +3,7 @@ import {
   faCheckSquare,
   faEdit,
   faHeading,
+  faTerminal,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -15,16 +16,17 @@ import {
 import { faPlus as faLightPlus } from '@fortawesome/pro-light-svg-icons';
 
 export default [
-  faLaugh,
-  faSquare,
-  faCheckSquare,
-  faEdit,
-  faHeading,
-  faTrash,
   faBell,
+  faCheckSquare,
   faCommentsAlt,
   faCommentCheck,
+  faEdit,
   faFileAlt,
-  faSolidPlus,
+  faHeading,
+  faLaugh,
   faLightPlus,
+  faSolidPlus,
+  faSquare,
+  faTerminal,
+  faTrash,
 ];
