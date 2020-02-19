@@ -11,7 +11,6 @@ export default gql`
         method: "GET"
       ) {
       ...DocumentObject
-      tags
       discussionCount
       reactions @type(name: "Reaction") {
         ...ReactionObject
