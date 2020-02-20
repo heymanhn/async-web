@@ -16,7 +16,7 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   flexDirection: 'column',
   justifyContent: 'center',
 
-  minWidth: discussionViewport,
+  width: discussionViewport,
 }));
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
