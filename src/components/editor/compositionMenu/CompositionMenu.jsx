@@ -1,11 +1,12 @@
 /* eslint react/no-find-dom-node: 0 */
 /* eslint no-mixed-operators: 0 */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
+import useKeyDownHandlers from 'utils/hooks/useKeyDownHandlers';
 import { mod } from 'utils/helpers';
 
 import Editor from 'components/editor/Editor';
@@ -13,6 +14,10 @@ import optionsList from './optionsList';
 import MenuSection from './MenuSection';
 
 const MAX_MENU_HEIGHT = 260;
+const UP_KEY = 'up';
+const DOWN_KEY = 'down';
+const ENTER_KEY = 'enter';
+const ESCAPE_KEY = 'esc';
 
 const Container = styled.div(
   ({ isOpen, theme: { colors } }) => ({
@@ -106,45 +111,34 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
     };
   };
 
-  useEffect(() => {
-    const handleKeyDown = event => {
-      const optionsToSelect = filteredOptions();
-
-      if (event.key === 'ArrowUp') {
-        event.preventDefault();
+  const handlers = [
+    [
+      UP_KEY,
+      () =>
         setSelectedIndex(prevIndex =>
-          mod(prevIndex - 1, optionsToSelect.length)
-        );
-      }
-
-      if (event.key === 'ArrowDown') {
-        event.preventDefault();
+          mod(prevIndex - 1, filteredOptions().length)
+        ),
+    ],
+    [
+      DOWN_KEY,
+      () =>
         setSelectedIndex(prevIndex =>
-          mod(prevIndex + 1, optionsToSelect.length)
-        );
-      }
-
-      if (event.key === 'Enter') {
-        event.preventDefault();
+          mod(prevIndex + 1, filteredOptions().length)
+        ),
+    ],
+    [
+      ENTER_KEY,
+      () => {
+        const optionsToSelect = filteredOptions();
         if (!optionsToSelect.length) return;
 
         const option = optionsToSelect[selectedIndex];
         setOptionToInvoke(option.title);
-      }
-
-      if (event.key === 'Esc') {
-        event.preventDefault();
-        handleClose();
-      }
-    };
-
-    if (!isOpen) return () => {};
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  });
+      },
+    ],
+    [ESCAPE_KEY, handleClose],
+  ];
+  useKeyDownHandlers(handlers, !isOpen);
 
   const setSanitizedQuery = () => {
     let newQuery = Editor.getCurrentText(editor);

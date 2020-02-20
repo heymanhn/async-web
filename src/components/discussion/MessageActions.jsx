@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import isHotkey from 'is-hotkey';
 import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
@@ -52,23 +51,7 @@ const MessageActions = ({ handleSubmit, isSubmitting }) => {
     return mode === 'compose' && draft ? handleDeleteDraft() : handleCancel();
   };
 
-  // HERMAN: WIP
-  // useKeyDownHandlers([[SUBMIT_HOTKEY]]);
-  // useEffect(() => {
-  //   const handleKeyDown = event => {
-  //     if (isHotkey(SUBMIT_HOTKEY, event)) {
-  //       event.preventDefault();
-  //       handleSubmitWrapper(event);
-  //     }
-  //   };
-
-  //   if (isSubmitDisabled) return () => {};
-  //   window.addEventListener('keydown', handleKeyDown);
-
-  //   return () => {
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //   };
-  // });
+  useKeyDownHandlers([SUBMIT_HOTKEY, handleSubmitWrapper], isSubmitDisabled);
 
   return (
     <Container>

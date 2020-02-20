@@ -17,7 +17,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 const CommandCenter = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useKeyDownHandlers([[COMMAND_CENTER_HOTKEY, () => setIsModalOpen(true)]]);
+  useKeyDownHandlers([COMMAND_CENTER_HOTKEY, () => setIsModalOpen(true)]);
 
   return (
     <>
