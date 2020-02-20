@@ -10,6 +10,11 @@ import Modal from 'components/shared/Modal';
 import useCommandCenterSearch from './useCommandCenterSearch';
 import CommandRow from './CommandRow';
 
+const UP_KEY = 'up';
+const DOWN_KEY = 'down';
+const ENTER_KEY = 'enter';
+const ESCAPE_KEY = 'esc';
+
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
 
@@ -67,6 +72,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
 
     // Customize sources later
     track('Command Center launched', { source: 'inbox' });
+    setSelectedIndex(0);
 
     if (inputRef.current) inputRef.current.focus();
   }, [isOpen]);
@@ -80,15 +86,19 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const handleKeyDown = event => {
     if (!results.length) return null;
 
-    if (isHotkey('ArrowDown', event)) {
+    if (isHotkey(DOWN_KEY, event)) {
       return setSelectedIndex(prevIndex => mod(prevIndex + 1, results.length));
     }
 
-    if (isHotkey('ArrowUp', event)) {
+    if (isHotkey(UP_KEY, event)) {
       return setSelectedIndex(prevIndex => mod(prevIndex - 1, results.length));
     }
 
-    if (isHotkey('Escape', event)) {
+    if (isHotkey(ENTER_KEY, event)) {
+      results[selectedIndex].action();
+    }
+
+    if (isHotkey(ESCAPE_KEY, event)) {
       return searchQuery ? setSearchQuery('') : handleClose();
     }
 
@@ -116,7 +126,12 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
         />
       </Header>
       {results.map((r, i) => (
-        <CommandRow data={r} isSelected={selectedIndex === i} />
+        <CommandRow
+          data={r}
+          key={r.title}
+          isSelected={selectedIndex === i}
+          onMouseMove={() => setSelectedIndex(i)}
+        />
       ))}
     </StyledModal>
   );

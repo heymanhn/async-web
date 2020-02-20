@@ -12,10 +12,6 @@ const Container = styled.div(({ isSelected, theme: { colors } }) => ({
   height: '54px',
   padding: '0 30px',
   userSelect: 'none',
-
-  ':hover': {
-    background: colors.grey7,
-  },
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)({

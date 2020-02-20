@@ -111,31 +111,24 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
     };
   };
 
-  const handlers = [
-    [
-      UP_KEY,
-      () =>
-        setSelectedIndex(prevIndex =>
-          mod(prevIndex - 1, filteredOptions().length)
-        ),
-    ],
-    [
-      DOWN_KEY,
-      () =>
-        setSelectedIndex(prevIndex =>
-          mod(prevIndex + 1, filteredOptions().length)
-        ),
-    ],
-    [
-      ENTER_KEY,
-      () => {
-        const optionsToSelect = filteredOptions();
-        if (!optionsToSelect.length) return;
+  const handleUpKey = () =>
+    setSelectedIndex(prevIndex => mod(prevIndex - 1, filteredOptions().length));
 
-        const option = optionsToSelect[selectedIndex];
-        setOptionToInvoke(option.title);
-      },
-    ],
+  const handleDownKey = () =>
+    setSelectedIndex(prevIndex => mod(prevIndex + 1, filteredOptions().length));
+
+  const handleEnterKey = () => {
+    const optionsToSelect = filteredOptions();
+    if (!optionsToSelect.length) return;
+
+    const option = optionsToSelect[selectedIndex];
+    setOptionToInvoke(option.title);
+  };
+
+  const handlers = [
+    [UP_KEY, handleUpKey],
+    [DOWN_KEY, handleDownKey],
+    [ENTER_KEY, handleEnterKey],
     [ESCAPE_KEY, handleClose],
   ];
   useKeyDownHandler(handlers, !isOpen);
