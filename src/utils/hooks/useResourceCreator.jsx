@@ -16,13 +16,16 @@ const useResourceCreator = resource => {
   const isSubmitting =
     resource === 'documents' ? isSubmittingDocument : isSubmittingDiscussion;
 
-  const handleCreateResource = async () => {
+  const handleCreateResource = async openInNewTab => {
     const data = await handleCreate();
     const resourceId =
       resource === 'documents' ? data.documentId : data.discussionId;
 
     if (resourceId) {
-      window.open(`/${resource}/${resourceId}`, '_blank');
+      window.open(
+        `/${resource}/${resourceId}`,
+        openInNewTab ? '_blank' : '_self'
+      );
     }
   };
 
