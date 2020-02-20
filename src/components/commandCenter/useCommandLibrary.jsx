@@ -1,6 +1,10 @@
+import { navigate } from '@reach/router';
+
+import { getLocalAppState } from 'utils/auth';
 import useResourceCreator from 'utils/hooks/useResourceCreator';
 
 const useCommandLibrary = source => {
+  const { organizationId } = getLocalAppState();
   const { handleCreateResource: handleCreateDocument } = useResourceCreator(
     'documents'
   );
@@ -32,7 +36,7 @@ const useCommandLibrary = source => {
   const inviteTeamCommand = {
     icon: ['fal', 'user-circle'],
     title: 'Invite your team',
-    action: () => {},
+    action: () => navigate(`/organizations/${organizationId}/invites`),
     shortcut: 'T',
   };
 
