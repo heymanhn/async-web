@@ -15,7 +15,7 @@ const isHandler = entry => {
   return typeof key === 'string' && typeof callback === 'function';
 };
 
-const useKeyDownHandlers = (handlers, isDisabled) => {
+const useKeyDownHandler = (handlers, isDisabled) => {
   useEffect(() => {
     if (isDisabled) return () => {};
 
@@ -37,4 +37,4 @@ const useKeyDownHandlers = (handlers, isDisabled) => {
   });
 };
 
-export default useKeyDownHandlers;
+export default useKeyDownHandler;

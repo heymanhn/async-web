@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import useKeyDownHandlers from 'utils/hooks/useKeyDownHandlers';
+import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 import CommandCenterModal from './CommandCenterModal';
 
 const COMMAND_CENTER_HOTKEY = 'cmd+k';
@@ -17,7 +17,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 const CommandCenter = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useKeyDownHandlers([COMMAND_CENTER_HOTKEY, () => setIsModalOpen(true)]);
+  useKeyDownHandler([COMMAND_CENTER_HOTKEY, () => setIsModalOpen(true)]);
 
   return (
     <>

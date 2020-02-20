@@ -6,7 +6,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
-import useKeyDownHandlers from 'utils/hooks/useKeyDownHandlers';
+import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 import { mod } from 'utils/helpers';
 
 import Editor from 'components/editor/Editor';
@@ -138,7 +138,7 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
     ],
     [ESCAPE_KEY, handleClose],
   ];
-  useKeyDownHandlers(handlers, !isOpen);
+  useKeyDownHandler(handlers, !isOpen);
 
   const setSanitizedQuery = () => {
     let newQuery = Editor.getCurrentText(editor);

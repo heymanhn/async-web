@@ -4,7 +4,7 @@ import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { DiscussionContext, MessageContext } from 'utils/contexts';
-import useKeyDownHandlers from 'utils/hooks/useKeyDownHandlers';
+import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
 import Button from 'components/shared/Button';
 import Editor from 'components/editor/Editor';
@@ -51,7 +51,7 @@ const MessageActions = ({ handleSubmit, isSubmitting }) => {
     return mode === 'compose' && draft ? handleDeleteDraft() : handleCancel();
   };
 
-  useKeyDownHandlers([SUBMIT_HOTKEY, handleSubmit], isSubmitDisabled);
+  useKeyDownHandler([SUBMIT_HOTKEY, handleSubmit], isSubmitDisabled);
 
   return (
     <Container>
