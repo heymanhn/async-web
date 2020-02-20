@@ -166,7 +166,6 @@ const OrganizationMemberSearch = ({
       />
       {isDropdownVisible ? (
         <MemberResults
-          documentId={documentId}
           handleAddMember={handleAddMember}
           members={participants}
           results={results}
