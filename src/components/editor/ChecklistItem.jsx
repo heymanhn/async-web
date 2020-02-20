@@ -40,7 +40,7 @@ const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
 const ChecklistItem = ({ attributes, children, element }) => {
   const editor = useSlate();
   const { isChecked } = element;
-  const icon = isChecked ? 'check-square' : 'square';
+  const icon = isChecked ? 'check-square' : ['far', 'square'];
   const isReadOnly = ReactEditor.isReadOnly(editor);
 
   async function handleClick(event) {

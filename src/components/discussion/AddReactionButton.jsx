@@ -64,7 +64,7 @@ const AddReactionButton = ({ onPickerStateChange, placement, ...props }) => {
   return (
     <Container {...props}>
       <ButtonContainer onClick={handleOpenPicker}>
-        <StyledIcon icon="laugh" />
+        <StyledIcon icon={['far', 'laugh']} />
         <PlusSign>+</PlusSign>
       </ButtonContainer>
       <ReactionPicker
