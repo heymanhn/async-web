@@ -12,7 +12,7 @@ const withPasteShim = oldEditor => {
     const text = data.getData('text/plain');
 
     if (text) {
-      let lines = text.split('\n');
+      let lines = text.split(/\r?\n/);
 
       // We want to mimic pasting of plain-text behavior in CODE_BLOCK, aka preserve empty lines.
       if (!Editor.isElementActive(editor, CODE_BLOCK)) {

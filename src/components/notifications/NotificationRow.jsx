@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { navigate } from '@reach/router';
 import Moment from 'react-moment';
+import Truncate from 'react-truncate';
 import camelCase from 'camelcase';
 import styled from '@emotion/styled';
 
@@ -102,7 +103,11 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
           {`${context()} `}
           <span>{title}</span>
         </NotificationText>
-        {snippet && <SnippetText>{snippet}</SnippetText>}
+        {snippet && (
+          <SnippetText>
+            <Truncate lines={2}>{snippet}</Truncate>
+          </SnippetText>
+        )}
         <Timestamp fromNow parse="X">
           {updatedAt}
         </Timestamp>
