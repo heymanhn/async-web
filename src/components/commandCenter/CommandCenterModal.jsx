@@ -63,9 +63,8 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
 
 const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { results } = useCommandCenterSearch();
+  const { searchQuery, setSearchQuery, results } = useCommandCenterSearch();
 
   useEffect(() => {
     if (!isOpen) return;
