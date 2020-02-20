@@ -63,9 +63,25 @@ const InboxTable = ({ viewMode }) => {
     fetchMoreItems();
   }
 
+  const compare = (a, b) => {
+    const objectA = a.document || a.discussion;
+    const objectB = b.document || b.discussion;
+    const { updatedAt: t1 } = objectA;
+    const { updatedAt: t2 } = objectB;
+
+    if (t1 < t2) {
+      return 1;
+    }
+    if (t1 > t2) {
+      return -1;
+    }
+
+    return 0;
+  };
+
   return (
     <Container ref={inboxRef}>
-      {(items || []).map(item => {
+      {(items || []).sort(compare).map(item => {
         const object = item.document || item.discussion;
         return <InboxRow key={object.id} item={item} />;
       })}
