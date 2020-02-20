@@ -6,6 +6,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
+import { mod } from 'utils/helpers';
 
 import Editor from 'components/editor/Editor';
 import optionsList from './optionsList';
@@ -44,10 +45,6 @@ const NoResults = styled.div(({ theme: { colors } }) => ({
   marginLeft: '20px',
   marginTop: '15px',
 }));
-
-// Neat trick to support modular arithmetic for negative numbers
-// https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
-const mod = (x, n) => ((x % n) + n) % n;
 
 const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
   const menuRef = useRef(null);

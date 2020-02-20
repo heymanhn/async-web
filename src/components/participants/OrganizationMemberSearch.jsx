@@ -9,6 +9,7 @@ import objectMembersQuery from 'graphql/queries/objectMembers';
 import addMemberMutation from 'graphql/mutations/addMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import { getLocalAppState } from 'utils/auth';
+import { mod } from 'utils/helpers';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import MemberResults from './MemberResults';
@@ -99,10 +100,6 @@ const OrganizationMemberSearch = ({
     handleShowDropdown();
   };
 
-  // Neat trick to support modular arithmetic for negative numbers
-  // https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
-  const mod = (x, n) => ((x % n) + n) % n;
-
   const handleAddMember = user => {
     if (participants.find(({ id: pid }) => pid === user.id)) return;
 
@@ -132,7 +129,7 @@ const OrganizationMemberSearch = ({
 
   const results = memberSearch();
 
-  const handleKeyPress = event => {
+  const handleKeyDown = event => {
     if (!results.length) return null;
 
     if (isHotkey('ArrowDown', event)) {
@@ -161,7 +158,7 @@ const OrganizationMemberSearch = ({
       <SearchInput
         onChange={handleChange}
         onClick={e => e.stopPropagation()}
-        onKeyDown={handleKeyPress}
+        onKeyDown={handleKeyDown}
         placeholder="Enter an email address or name"
         spellCheck="false"
         type="text"
