@@ -20,11 +20,14 @@ const Container = styled.div(({ isSelected, theme: { colors } }) => ({
 
 const StyledIcon = styled(FontAwesomeIcon)({
   fontSize: '20px',
+  marginRight: '12px',
 });
 
 const Title = styled.div({
   fontSize: '14px',
+  fontWeight: 500,
   letterSpacing: '-0.006em',
+  marginTop: '-2px',
 });
 
 const CommandRow = ({ data, isSelected, ...props }) => {
