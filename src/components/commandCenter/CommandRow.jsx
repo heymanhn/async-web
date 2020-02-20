@@ -12,6 +12,11 @@ const Container = styled.div(({ isSelected, theme: { colors } }) => ({
   height: '54px',
   padding: '0 30px',
   userSelect: 'none',
+
+  ':last-of-type': {
+    borderBottomLeftRadius: '5px',
+    borderBottomRightRadius: '5px',
+  },
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)({
