@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import isHotkey from 'is-hotkey';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
+import useKeyDownHandlers from 'utils/hooks/useKeyDownHandlers';
 import CommandCenterModal from './CommandCenterModal';
 
 const COMMAND_CENTER_HOTKEY = 'cmd+k';
@@ -14,27 +14,10 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   margin: '0 15px',
 }));
 
-/*
- * COMMAND CENTER TODO: Clsoe modal on Escape key, if no search query
- */
-
 const CommandCenter = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const handleKeyDown = event => {
-      if (isHotkey(COMMAND_CENTER_HOTKEY, event)) {
-        event.preventDefault();
-        setIsModalOpen(true);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  });
+  useKeyDownHandlers([[COMMAND_CENTER_HOTKEY, () => setIsModalOpen(true)]]);
 
   return (
     <>

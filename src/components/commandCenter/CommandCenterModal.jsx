@@ -7,6 +7,8 @@ import { track } from 'utils/analytics';
 import { mod } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
+import useCommandCenterSearch from './useCommandCenterSearch';
+import CommandRow from './CommandRow';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
@@ -22,8 +24,9 @@ const customBackdropStyle = {
   opacity: 0.5,
 };
 
-const Header = styled.div(({ theme: { colors } }) => ({
+const Header = styled.div(({ resultCount, theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
+  borderRadius: resultCount ? '0' : '5px',
   padding: '15px 30px 0',
 }));
 
@@ -57,6 +60,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { results } = useCommandCenterSearch();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -74,14 +78,15 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   };
 
   const handleKeyDown = event => {
-    // if (!results.length) return null;
+    if (!results.length) return null;
 
-    // if (isHotkey('ArrowDown', event)) {
-    //   return setSelectedIndex(prevIndex => mod(prevIndex + 1, results.length));
-    // }
-    // if (isHotkey('ArrowUp', event)) {
-    //   return setSelectedIndex(prevIndex => mod(prevIndex - 1, results.length));
-    // }
+    if (isHotkey('ArrowDown', event)) {
+      return setSelectedIndex(prevIndex => mod(prevIndex + 1, results.length));
+    }
+
+    if (isHotkey('ArrowUp', event)) {
+      return setSelectedIndex(prevIndex => mod(prevIndex - 1, results.length));
+    }
 
     if (isHotkey('Escape', event)) {
       return searchQuery ? setSearchQuery('') : handleClose();
@@ -97,7 +102,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
       isOpen={isOpen}
       {...props}
     >
-      <Header>
+      <Header resultCount={results.length}>
         <Title>Inbox</Title>
         <SearchInput
           ref={inputRef}
@@ -110,6 +115,9 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
           value={searchQuery}
         />
       </Header>
+      {results.map((r, i) => (
+        <CommandRow data={r} isSelected={selectedIndex === i} />
+      ))}
     </StyledModal>
   );
 };
