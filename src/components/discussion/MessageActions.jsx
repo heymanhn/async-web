@@ -1,10 +1,11 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
 import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { DiscussionContext, MessageContext } from 'utils/contexts';
+import useKeyDownHandlers from 'utils/hooks/useKeyDownHandlers';
 
 import Button from 'components/shared/Button';
 import Editor from 'components/editor/Editor';
@@ -51,21 +52,23 @@ const MessageActions = ({ handleSubmit, isSubmitting }) => {
     return mode === 'compose' && draft ? handleDeleteDraft() : handleCancel();
   };
 
-  useEffect(() => {
-    const handleKeyDown = event => {
-      if (isHotkey(SUBMIT_HOTKEY, event)) {
-        event.preventDefault();
-        handleSubmitWrapper(event);
-      }
-    };
+  // HERMAN: WIP
+  // useKeyDownHandlers([[SUBMIT_HOTKEY]]);
+  // useEffect(() => {
+  //   const handleKeyDown = event => {
+  //     if (isHotkey(SUBMIT_HOTKEY, event)) {
+  //       event.preventDefault();
+  //       handleSubmitWrapper(event);
+  //     }
+  //   };
 
-    if (isSubmitDisabled) return () => {};
-    window.addEventListener('keydown', handleKeyDown);
+  //   if (isSubmitDisabled) return () => {};
+  //   window.addEventListener('keydown', handleKeyDown);
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  });
+  //   return () => {
+  //     window.removeEventListener('keydown', handleKeyDown);
+  //   };
+  // });
 
   return (
     <Container>
