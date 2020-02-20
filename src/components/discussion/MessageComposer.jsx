@@ -15,6 +15,7 @@ import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withLinks from 'components/editor/withLinks';
 import withVoidElements from 'components/editor/withVoidElements';
+import withPasteShim from 'components/editor/withPasteShim';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import useMessageMutations from './useMessageMutations';
@@ -50,6 +51,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
         withMarkdownShortcuts,
         withLinks,
         withVoidElements,
+        withPasteShim,
         withHistory,
         withReact
       )(createEditor()),

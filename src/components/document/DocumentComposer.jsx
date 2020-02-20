@@ -17,6 +17,7 @@ import CompositionMenuButton from 'components/editor/compositionMenu/Composition
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withLinks from 'components/editor/withLinks';
+import withPasteShim from 'components/editor/withPasteShim';
 import withVoidElements from 'components/editor/withVoidElements';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import useDocumentMutations from './useDocumentMutations';
@@ -51,6 +52,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
         withLinks,
         withInlineDiscussions,
         withVoidElements,
+        withPasteShim,
         withHistory,
         withReact
       )(createEditor()),
