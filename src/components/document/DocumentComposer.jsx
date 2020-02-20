@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 
 import { DocumentContext } from 'utils/contexts';
 import useAutoSave from 'utils/hooks/useAutoSave';
+import useDocumentMutations from 'utils/hooks/useDocumentMutations';
 
 import Editor from 'components/editor/Editor';
 import { DEFAULT_ELEMENT } from 'components/editor/utils';
@@ -20,7 +21,6 @@ import withLinks from 'components/editor/withLinks';
 import withPasteShim from 'components/editor/withPasteShim';
 import withVoidElements from 'components/editor/withVoidElements';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
-import useDocumentMutations from './useDocumentMutations';
 
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',

@@ -52,7 +52,7 @@ const PreviewSnippet = styled.div(({ theme: { colors } }) => ({
   flexGrow: 1,
   color: colors.grey2,
   fontSize: '14px',
-  letterSpacing: '-0.1px',
+  letterSpacing: '-0.006em',
   lineHeight: '32px',
 }));
 

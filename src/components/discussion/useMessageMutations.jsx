@@ -7,6 +7,7 @@ import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import localDeleteMessageMutation from 'graphql/mutations/local/deleteMessageFromDiscussion';
+import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
 import { track } from 'utils/analytics';
 import {
   DocumentContext,
@@ -15,7 +16,6 @@ import {
 } from 'utils/contexts';
 
 import { toPlainText } from 'components/editor/utils';
-import useDiscussionMutations from './useDiscussionMutations';
 
 const useMessageMutations = ({ message = null } = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);

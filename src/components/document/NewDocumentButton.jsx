@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
-import useDocumentMutations from './useDocumentMutations';
+import useResourceCreator from 'utils/hooks/useResourceCreator';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -30,18 +30,12 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const NewDocumentButton = () => {
-  const { handleCreate, isSubmitting } = useDocumentMutations();
-
-  async function handleCreateDocument() {
-    const { documentId } = await handleCreate();
-
-    if (documentId) {
-      window.open(`/documents/${documentId}`, '_blank');
-    }
-  }
+  const { handleCreateResource, isSubmitting } = useResourceCreator(
+    'documents'
+  );
 
   return (
-    <Container onClick={handleCreateDocument}>
+    <Container onClick={handleCreateResource}>
       {isSubmitting ? (
         <LoadingIndicator color="grey4" size="18" />
       ) : (

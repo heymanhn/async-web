@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useMutation } from 'react-apollo';
 
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
@@ -10,6 +10,7 @@ import { toPlainText } from 'components/editor/utils';
 
 const useDiscussionMutations = () => {
   const { discussionId, afterDelete } = useContext(DiscussionContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [createDiscussion] = useMutation(createDiscussionMutation);
   const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
     variables: { discussionId },
@@ -19,6 +20,8 @@ const useDiscussionMutations = () => {
   const { context, afterCreate } = useContext(DiscussionContext);
 
   const handleCreate = async () => {
+    setIsSubmitting(true);
+
     const input = documentId ? { documentId } : {};
     if (context) {
       input.topic = {
@@ -40,6 +43,7 @@ const useDiscussionMutations = () => {
       });
 
       afterCreate(newDiscussionId);
+      setIsSubmitting(false);
 
       return Promise.resolve({ discussionId: newDiscussionId });
     }
@@ -61,6 +65,8 @@ const useDiscussionMutations = () => {
   return {
     handleCreate,
     handleDelete,
+
+    isSubmitting,
   };
 };
 

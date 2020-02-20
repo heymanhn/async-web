@@ -22,11 +22,16 @@ const StyledIcon = styled(FontAwesomeIcon)({
   fontSize: '20px',
 });
 
+const Title = styled.div({
+  fontSize: '14px',
+  letterSpacing: '-0.006em',
+});
+
 const CommandRow = ({ data, isSelected, ...props }) => {
   const { icon, title, action } = data;
 
   return (
-    <Container isSelected={isSelected} {...props}>
+    <Container isSelected={isSelected} onClick={action} {...props}>
       <StyledIcon icon={icon} />
       <Title>{title}</Title>
     </Container>
