@@ -30,6 +30,7 @@ const MenuSection = styled.div({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
+
   marginLeft: '30px',
   height: '100%',
 });
@@ -37,7 +38,9 @@ const MenuSection = styled.div({
 const NavigationSection = styled.div({
   display: 'flex',
   alignItems: 'center',
+
   height: '100%',
+  marginRight: '30px',
 });
 
 const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
