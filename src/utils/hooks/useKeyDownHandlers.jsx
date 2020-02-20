@@ -17,11 +17,10 @@ const isHandler = entry => {
 
 const useKeyDownHandlers = (handlers, isDisabled) => {
   useEffect(() => {
-    if (isDisabled) return null;
+    if (isDisabled) return () => {};
 
     const handleKeyDown = event => {
       const mappings = isHandler(handlers) ? [handlers] : handlers;
-
       mappings.forEach(([key, callback]) => {
         if (isHotkey(key, event)) {
           event.preventDefault();

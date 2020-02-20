@@ -51,7 +51,7 @@ const MessageActions = ({ handleSubmit, isSubmitting }) => {
     return mode === 'compose' && draft ? handleDeleteDraft() : handleCancel();
   };
 
-  useKeyDownHandlers([SUBMIT_HOTKEY, handleSubmitWrapper], isSubmitDisabled);
+  useKeyDownHandlers([SUBMIT_HOTKEY, handleSubmit], isSubmitDisabled);
 
   return (
     <Container>
