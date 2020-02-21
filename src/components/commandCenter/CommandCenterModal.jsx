@@ -99,6 +99,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
 
     if (isHotkey(ENTER_KEY, event)) {
       results[selectedIndex].action();
+      handleClose();
     }
 
     if (isHotkey(ESCAPE_KEY, event)) {
@@ -134,6 +135,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
           key={r.title}
           isSelected={selectedIndex === i}
           onMouseMove={() => setSelectedIndex(i)}
+          handleClose={handleClose}
         />
       ))}
     </StyledModal>

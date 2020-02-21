@@ -1,4 +1,3 @@
-/* eslint import/prefer-default-export: 0 */
 import { createContext } from 'react';
 
 export const DEFAULT_DOCUMENT_CONTEXT = {
@@ -35,3 +34,12 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   afterCreate: () => {},
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);
+
+// For the share modals
+export const DEFAULT_RESOURCE_ACCESS_CONTEXT = {
+  isModalOpen: false,
+  setIsModalOpen: () => {},
+};
+export const ResourceAccessContext = createContext(
+  DEFAULT_RESOURCE_ACCESS_CONTEXT
+);

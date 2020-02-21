@@ -31,11 +31,17 @@ const Title = styled.div({
   marginTop: '-2px',
 });
 
-const CommandRow = ({ data, isSelected, ...props }) => {
+const CommandRow = ({ data, isSelected, handleClose, ...props }) => {
   const { icon, title, action } = data;
 
+  const handleClick = event => {
+    event.preventDefault();
+    action();
+    handleClose();
+  };
+
   return (
-    <Container isSelected={isSelected} onClick={action} {...props}>
+    <Container isSelected={isSelected} onClick={handleClick} {...props}>
       <StyledIcon icon={icon} />
       <Title>{title}</Title>
     </Container>
@@ -45,6 +51,7 @@ const CommandRow = ({ data, isSelected, ...props }) => {
 CommandRow.propTypes = {
   data: PropTypes.object.isRequired,
   isSelected: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
 };
 
 export default CommandRow;

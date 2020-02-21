@@ -1,8 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import { DocumentContext } from 'utils/contexts';
+import {
+  DocumentContext,
+  ResourceAccessContext,
+  DEFAULT_RESOURCE_ACCESS_CONTEXT,
+} from 'utils/contexts';
 import ResourceAccessContainer from 'components/participants/ResourceAccessContainer';
 import VerticalDivider from 'components/shared/VerticalDivider';
 import OrganizationSettings from 'components/navigation/OrganizationSettings';
@@ -47,22 +51,33 @@ const NavigationSection = styled.div({
 const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
   const { documentId } = useContext(DocumentContext);
 
+  // For the Resource Access modal. Storing state here so that the context can
+  // be shared with the Command Center as well as the modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const value = {
+    ...DEFAULT_RESOURCE_ACCESS_CONTEXT,
+    isModalOpen,
+    setIsModalOpen,
+  };
+
   return (
-    <Container {...props}>
-      <MenuSection>
-        <OrganizationSettings />
-        {documentId ? <DocumentTitle /> : <DiscussionTitle />}
-        {documentId && (
-          <DocumentViewMode viewMode={viewMode} setViewMode={setViewMode} />
-        )}
-        <VerticalDivider />
-        <ResourceAccessContainer />
-      </MenuSection>
-      <NavigationSection>
-        <NotificationsBell />
-        <CommandCenter source={documentId ? 'document' : 'discussion'} />
-      </NavigationSection>
-    </Container>
+    <ResourceAccessContext.Provider value={value}>
+      <Container {...props}>
+        <MenuSection>
+          <OrganizationSettings />
+          {documentId ? <DocumentTitle /> : <DiscussionTitle />}
+          {documentId && (
+            <DocumentViewMode viewMode={viewMode} setViewMode={setViewMode} />
+          )}
+          <VerticalDivider />
+          <ResourceAccessContainer />
+        </MenuSection>
+        <NavigationSection>
+          <NotificationsBell />
+          <CommandCenter source={documentId ? 'document' : 'discussion'} />
+        </NavigationSection>
+      </Container>
+    </ResourceAccessContext.Provider>
   );
 };
 
