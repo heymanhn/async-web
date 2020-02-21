@@ -1,5 +1,6 @@
 import React, { useRef, useState, useContext } from 'react';
 import { useQuery } from 'react-apollo';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
@@ -42,27 +43,32 @@ const Discussion = () => {
   if (loading) return null;
   if (error || !data.discussion) return <NotFound />;
 
-  const { topic, draft } = data.discussion;
+  const { topic, draft, messageCount } = data.discussion;
   const { payload } = topic || {};
   const { items } = data.messages;
 
   if ((draft || !items) && !isComposing) startComposing();
 
-  function isUnread() {
+  const isUnread = () => {
     const { tags } = data.discussion;
     const safeTags = tags || [];
     return (
       safeTags.includes('new_messages') || safeTags.includes('new_discussion')
     );
-  }
+  };
+
+  const returnToInbox = () => navigate('/inbox');
+
+  const handleCancelCompose = () => {
+    stopComposing();
+    if (!messageCount) returnToInbox();
+  };
 
   const value = {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     draft,
-    afterDelete: () => {
-      console.log('Inbox view TODO: Return to inbox ');
-    },
+    afterDelete: returnToInbox,
   };
 
   return (
@@ -74,7 +80,7 @@ const Discussion = () => {
           <StyledDiscussionMessage
             mode="compose"
             afterCreate={stopComposing}
-            handleCancel={stopComposing}
+            handleCancel={handleCancelCompose}
           />
         ) : (
           <ModalAddReplyBox

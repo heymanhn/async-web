@@ -78,7 +78,6 @@ export const BUFFER_LENGTH = 200;
 
 /*
  * Helper functions
- * SLATE UPGRADE TODO: move these into the custom Editor object for consistency?
  */
 export const deserializedTitle = title => [
   {

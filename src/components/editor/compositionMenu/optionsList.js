@@ -22,7 +22,7 @@ import {
   SectionBreakOption,
 } from './options';
 
-// SLATE UPGRADE TODO: Get images working
+// IMAGE SUPPORT TODO
 // import { IMAGE_OPTION_TITLE, ImageOption } from '../plugins/blocks/image';
 
 const BASIC_SECTION = 'BASIC';
@@ -79,7 +79,7 @@ const optionsList = [
     Component: SectionBreakOption,
   },
 
-  // SLATE UPGRADE TODO: Get images working
+  // IMAGE SUPPORT TODO
   // Media section
   // {
   //   section: MEDIA_SECTION,

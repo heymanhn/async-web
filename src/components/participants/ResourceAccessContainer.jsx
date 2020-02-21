@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import styled from '@emotion/styled';
+
+import { ResourceAccessContext } from 'utils/contexts';
 
 import ResourceAccessModal from './ResourceAccessModal';
 
@@ -20,7 +22,7 @@ const ShareButton = styled.div(({ theme: { colors } }) => ({
 }));
 
 const ResourceAccessContainer = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isModalOpen, setIsModalOpen } = useContext(ResourceAccessContext);
 
   return (
     <>

@@ -2,8 +2,9 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
+import useResourceCreator from 'utils/hooks/useResourceCreator';
+
 import LoadingIndicator from 'components/shared/LoadingIndicator';
-import useDiscussionMutations from './useDiscussionMutations';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -30,18 +31,12 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const NewDiscussionButton = () => {
-  const { handleCreate, isSubmitting } = useDiscussionMutations();
-
-  async function handleCreateDiscussion() {
-    const { discussionId } = await handleCreate();
-
-    if (discussionId) {
-      window.open(`/discussions/${discussionId}`, '_blank');
-    }
-  }
+  const { handleCreateResource, isSubmitting } = useResourceCreator(
+    'discussions'
+  );
 
   return (
-    <Container onClick={handleCreateDiscussion}>
+    <Container onClick={handleCreateResource}>
       {isSubmitting ? (
         <LoadingIndicator color="grey4" size="18" />
       ) : (

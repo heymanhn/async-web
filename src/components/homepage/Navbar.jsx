@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import OrganizationSettings from 'components/navigation/OrganizationSettings';
 import NotificationsBell from 'components/notifications/NotificationsBell';
+import CommandCenter from 'components/commandCenter/CommandCenter';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -31,7 +32,7 @@ const NavigationSection = styled.div({
   display: 'flex',
   alignItems: 'center',
   height: '100%',
-  marginRight: '30px',
+  marginRight: '15px',
 });
 
 const Title = styled.span({
@@ -51,6 +52,7 @@ const NavBar = () => {
       </MenuSection>
       <NavigationSection>
         <NotificationsBell />
+        <CommandCenter source="inbox" />
       </NavigationSection>
     </Container>
   );

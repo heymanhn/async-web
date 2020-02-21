@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
+import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
 import { MessageContext } from 'utils/contexts';
 
-import useDiscussionMutations from './useDiscussionMutations';
 import useMessageMutations from './useMessageMutations';
 
 const Container = styled.div(

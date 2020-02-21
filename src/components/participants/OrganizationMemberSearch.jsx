@@ -1,5 +1,4 @@
-/* eslint no-mixed-operators: 0 */
-import React, { useState, useContext } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import { isHotkey } from 'is-hotkey';
@@ -9,6 +8,7 @@ import objectMembersQuery from 'graphql/queries/objectMembers';
 import addMemberMutation from 'graphql/mutations/addMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import { getLocalAppState } from 'utils/auth';
+import { mod } from 'utils/helpers';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import MemberResults from './MemberResults';
@@ -44,10 +44,13 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
 }));
 
 const OrganizationMemberSearch = ({
+  isModalOpen,
   isDropdownVisible,
   handleShowDropdown,
   handleHideDropdown,
+  handleCloseModal,
 }) => {
+  const inputRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const DEFAULT_ACCESS_TYPE = 'collaborator';
@@ -57,6 +60,12 @@ const OrganizationMemberSearch = ({
   const { discussionId } = useContext(DiscussionContext);
   const objectType = documentId ? 'documents' : 'discussions';
   const objectId = documentId || discussionId;
+
+  useEffect(() => {
+    if (!isModalOpen || !inputRef.current) return;
+
+    if (inputRef.current) inputRef.current.focus();
+  });
 
   const { loading: l1, data: orgMembership } = useQuery(objectMembersQuery, {
     variables: { objectType: 'organizations', id },
@@ -79,7 +88,7 @@ const OrganizationMemberSearch = ({
   const { resourceMembers } = objectMembership.objectMembers;
   const participants = (resourceMembers || []).map(p => p.user);
 
-  function memberSearch() {
+  const memberSearch = () => {
     if (!searchQuery) return [];
 
     return members.filter(({ email, fullName }) => {
@@ -90,22 +99,16 @@ const OrganizationMemberSearch = ({
         fullName.toLowerCase().includes(sanitizedQuery)
       );
     });
-  }
+  };
 
-  function handleChange(event) {
+  const handleChange = event => {
     const currentQuery = event.target.value;
     setSearchQuery(currentQuery);
     setSelectedIndex(0);
     handleShowDropdown();
-  }
+  };
 
-  // Neat trick to support modular arithmetic for negative numbers
-  // https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
-  function mod(x, n) {
-    return ((x % n) + n) % n;
-  }
-
-  function handleAddMember(user) {
+  const handleAddMember = user => {
     if (participants.find(({ id: pid }) => pid === user.id)) return;
 
     addMember({
@@ -130,11 +133,29 @@ const OrganizationMemberSearch = ({
 
     setSearchQuery('');
     setSelectedIndex(0);
-  }
+  };
 
   const results = memberSearch();
 
-  function handleKeyPress(event) {
+  // What this means: at most three presses of the Escape key to close modal
+  const handleCancel = () => {
+    if (isDropdownVisible) return handleHideDropdown();
+
+    if (searchQuery) {
+      setSearchQuery('');
+      return setSelectedIndex(0);
+    }
+
+    return handleCloseModal();
+  };
+
+  const handleKeyDown = event => {
+    // This first hotkey should trigger even if there are no results
+    if (isHotkey('Escape', event)) {
+      event.preventDefault();
+      return handleCancel();
+    }
+
     if (!results.length) return null;
 
     if (isHotkey('ArrowDown', event)) {
@@ -150,21 +171,19 @@ const OrganizationMemberSearch = ({
       return handleAddMember(results[selectedIndex]);
     }
 
-    if (isHotkey('Escape', event)) return handleHideDropdown();
-
     return null;
-  }
+  };
 
-  function updateSelectedIndex(index) {
-    if (index !== selectedIndex) setSelectedIndex(index);
-  }
+  const updateSelectedIndex = index =>
+    index !== selectedIndex && setSelectedIndex(index);
 
   return (
     <Container>
       <SearchInput
+        ref={inputRef}
         onChange={handleChange}
         onClick={e => e.stopPropagation()}
-        onKeyDown={handleKeyPress}
+        onKeyDown={handleKeyDown}
         placeholder="Enter an email address or name"
         spellCheck="false"
         type="text"
@@ -172,7 +191,6 @@ const OrganizationMemberSearch = ({
       />
       {isDropdownVisible ? (
         <MemberResults
-          documentId={documentId}
           handleAddMember={handleAddMember}
           members={participants}
           results={results}
@@ -187,9 +205,11 @@ const OrganizationMemberSearch = ({
 };
 
 OrganizationMemberSearch.propTypes = {
+  isModalOpen: PropTypes.bool.isRequired,
   isDropdownVisible: PropTypes.bool.isRequired,
   handleShowDropdown: PropTypes.func.isRequired,
   handleHideDropdown: PropTypes.func.isRequired,
+  handleCloseModal: PropTypes.func.isRequired,
 };
 
 export default OrganizationMemberSearch;

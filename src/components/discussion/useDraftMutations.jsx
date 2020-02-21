@@ -6,15 +6,10 @@ import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';
 import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
 import localAddDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
 import localDeleteDraftFromDiscMtn from 'graphql/mutations/local/deleteDraftFromDiscussion';
+import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
 import { DiscussionContext } from 'utils/contexts';
 
 import { toPlainText } from 'components/editor/utils';
-import useDiscussionMutations from './useDiscussionMutations';
-
-/*
- * SLATE UPGRADE TODO:
- * - remove the draft from the discussion in local cache instead of refetching
- */
 
 const useDraftMutations = (editor = null) => {
   const client = useApolloClient();

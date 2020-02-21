@@ -14,6 +14,7 @@ const Container = styled.div({
   alignItems: 'center',
 
   cursor: 'pointer',
+  margin: '0 15px',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
@@ -65,7 +66,7 @@ const NotificationsBell = () => {
   }
 
   return (
-    <div>
+    <>
       <Container onClick={handleShowDropdown} ref={iconRef}>
         <StyledIcon icon="bell" />
         {unreadNotifications.length ? <UnreadBadge /> : undefined}
@@ -78,7 +79,7 @@ const NotificationsBell = () => {
           handleCloseDropdown={handleCloseDropdown}
         />
       )}
-    </div>
+    </>
   );
 };
 

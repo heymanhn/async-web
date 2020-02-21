@@ -9,7 +9,7 @@ import updateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
 import addNewMessageToDiscussion from 'graphql/mutations/local/addNewMessageToDiscussion';
 
 import { getLocalUser } from 'utils/auth';
-import { isDiscussionOpen } from 'utils/navigation';
+import { isDiscussionOpen } from 'utils/helpers';
 
 const NEW_MESSAGE_EVENT = 'new_message';
 const DOCUMENT_ACCESS_EVENT = 'document_access';
