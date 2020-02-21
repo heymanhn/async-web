@@ -39,12 +39,8 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { documentId } = useContext(DocumentContext);
 
-  function handleShowDropdown() {
-    setIsDropdownVisible(true);
-  }
-  function handleHideDropdown() {
-    setIsDropdownVisible(false);
-  }
+  const handleShowDropdown = () => setIsDropdownVisible(true);
+  const handleHideDropdown = () => setIsDropdownVisible(false);
 
   return (
     <StyledModal
@@ -53,13 +49,15 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
       isOpen={isOpen}
     >
       <Header onClick={handleHideDropdown}>
-        Share this {documentId ? 'Document' : 'Discussion'}
+        {`Share this ${documentId ? 'Document' : 'Discussion'}`}
       </Header>
       <Contents onClick={handleHideDropdown}>
         <OrganizationMemberSearch
+          isModalOpen={isOpen}
           isDropdownVisible={isDropdownVisible}
           handleShowDropdown={handleShowDropdown}
           handleHideDropdown={handleHideDropdown}
+          handleCloseModal={handleClose}
         />
         <ParticipantsList />
       </Contents>

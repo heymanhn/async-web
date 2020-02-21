@@ -1,5 +1,4 @@
-/* eslint no-mixed-operators: 0 */
-import React, { useState, useContext } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import { isHotkey } from 'is-hotkey';
@@ -45,10 +44,13 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
 }));
 
 const OrganizationMemberSearch = ({
+  isModalOpen,
   isDropdownVisible,
   handleShowDropdown,
   handleHideDropdown,
+  handleCloseModal,
 }) => {
+  const inputRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const DEFAULT_ACCESS_TYPE = 'collaborator';
@@ -58,6 +60,12 @@ const OrganizationMemberSearch = ({
   const { discussionId } = useContext(DiscussionContext);
   const objectType = documentId ? 'documents' : 'discussions';
   const objectId = documentId || discussionId;
+
+  useEffect(() => {
+    if (!isModalOpen || !inputRef.current) return;
+
+    if (inputRef.current) inputRef.current.focus();
+  });
 
   const { loading: l1, data: orgMembership } = useQuery(objectMembersQuery, {
     variables: { objectType: 'organizations', id },
@@ -129,7 +137,25 @@ const OrganizationMemberSearch = ({
 
   const results = memberSearch();
 
+  // What this means: at most three presses of the Escape key to close modal
+  const handleCancel = () => {
+    if (isDropdownVisible) return handleHideDropdown();
+
+    if (searchQuery) {
+      setSearchQuery('');
+      return setSelectedIndex(0);
+    }
+
+    return handleCloseModal();
+  };
+
   const handleKeyDown = event => {
+    // This first hotkey should trigger even if there are no results
+    if (isHotkey('Escape', event)) {
+      event.preventDefault();
+      return handleCancel();
+    }
+
     if (!results.length) return null;
 
     if (isHotkey('ArrowDown', event)) {
@@ -145,8 +171,6 @@ const OrganizationMemberSearch = ({
       return handleAddMember(results[selectedIndex]);
     }
 
-    if (isHotkey('Escape', event)) return handleHideDropdown();
-
     return null;
   };
 
@@ -156,6 +180,7 @@ const OrganizationMemberSearch = ({
   return (
     <Container>
       <SearchInput
+        ref={inputRef}
         onChange={handleChange}
         onClick={e => e.stopPropagation()}
         onKeyDown={handleKeyDown}
@@ -180,9 +205,11 @@ const OrganizationMemberSearch = ({
 };
 
 OrganizationMemberSearch.propTypes = {
+  isModalOpen: PropTypes.bool.isRequired,
   isDropdownVisible: PropTypes.bool.isRequired,
   handleShowDropdown: PropTypes.func.isRequired,
   handleHideDropdown: PropTypes.func.isRequired,
+  handleCloseModal: PropTypes.func.isRequired,
 };
 
 export default OrganizationMemberSearch;
