@@ -8,7 +8,7 @@ export default gql`
     code
     objectType
     objectId
-    author @type(name: "User") {
+    author @type(name: "Author") {
       id
     }
     createdAt
