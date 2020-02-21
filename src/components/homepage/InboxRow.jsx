@@ -5,7 +5,7 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import ResourceDetails from 'components/shared/ResourceDetails';
+import useResourceDetails from 'utils/hooks/useResourceDetails';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -71,8 +71,11 @@ const InboxRow = ({ item, ...props }) => {
   const resourceType = document ? 'document' : 'discussion';
   const isDocument = resourceType === 'document';
   const resource = document || discussion;
-  const { id, title, topic } = resource;
 
+  const ResourceDetails = useResourceDetails(resourceType, resource);
+  if (!ResourceDetails) return null;
+
+  const { id, title, topic } = resource;
   const safeTopic = topic || {};
   const titleText = isDocument ? title : safeTopic.text;
 
@@ -84,7 +87,7 @@ const InboxRow = ({ item, ...props }) => {
         </IconContainer>
         <ItemDetails>
           <Title>{titleText || `Untitled ${resourceType}`}</Title>
-          <ResourceDetails type={resourceType} resource={resource} />
+          <ResourceDetails />
         </ItemDetails>
       </Container>
     </StyledLink>

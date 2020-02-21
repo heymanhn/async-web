@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Pluralize from 'pluralize';
-import { useQuery } from 'react-apollo';
 import Moment from 'react-moment';
 import styled from '@emotion/styled';
 
-import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import { titleize } from 'utils/helpers';
 
 import NameList from 'components/shared/NameList';
@@ -34,22 +32,11 @@ const Timestamp = styled(Moment)({
 });
 
 // Resource is either a document or a discussion
-const ResourceDetails = ({ resource, type, ...props }) => {
-  const { updatedAt, id, tags, messageCount, discussionCount } = resource;
-  const isDocument = type === 'document';
-
-  // Gets names of people who are associated with this document/discussion
-  const { loading, data } = useQuery(resourceMembersQuery, {
-    variables: { id, resourceType: Pluralize(type) },
-  });
-
-  if (loading) return null;
-  const { resourceMembers } = data;
-  const { members } = resourceMembers;
-  const names = (members || []).map(m => m.user.fullName);
+const ResourceDetails = ({ type, resource, names, ...props }) => {
+  const { updatedAt, tags, messageCount, discussionCount } = resource;
 
   const itemTag = () => {
-    const count = isDocument ? discussionCount : messageCount;
+    const count = type === 'document' ? discussionCount : messageCount;
 
     return tags.includes('no_updates')
       ? Pluralize(type, count, true)
@@ -86,6 +73,7 @@ const ResourceDetails = ({ resource, type, ...props }) => {
 ResourceDetails.propTypes = {
   type: PropTypes.oneOf(['document', 'discussion']).isRequired,
   resource: PropTypes.object.isRequired,
+  names: PropTypes.array.isRequired,
 };
 
 export default ResourceDetails;
