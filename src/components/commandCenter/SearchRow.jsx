@@ -20,7 +20,7 @@ const Container = styled.div(({ isSelected, theme: { colors } }) => ({
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)({
-  fontSize: '20px',
+  fontSize: '16px',
   marginRight: '12px',
 });
 
@@ -31,7 +31,7 @@ const Title = styled.div({
   marginTop: '-2px',
 });
 
-const CommandRow = ({ data, isSelected, ...props }) => {
+const SearchRow = ({ data, isSelected, handleClose, ...props }) => {
   const { icon, title } = data;
 
   return (
@@ -42,9 +42,10 @@ const CommandRow = ({ data, isSelected, ...props }) => {
   );
 };
 
-CommandRow.propTypes = {
+SearchRow.propTypes = {
   data: PropTypes.object.isRequired,
   isSelected: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
 };
 
-export default CommandRow;
+export default SearchRow;

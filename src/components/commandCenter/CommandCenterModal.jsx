@@ -66,7 +66,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const title = useCommandCenterTitle(source);
-  const { searchQuery, setSearchQuery, results } = useCommandCenterSearch(
+  const { queryString, setQueryString, results } = useCommandCenterSearch(
     source
   );
 
@@ -82,7 +82,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
 
   const handleChange = event => {
     const currentQuery = event.target.value;
-    setSearchQuery(currentQuery);
+    setQueryString(currentQuery);
     setSelectedIndex(0);
   };
 
@@ -103,7 +103,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
     }
 
     if (isHotkey(ESCAPE_KEY, event)) {
-      return searchQuery ? setSearchQuery('') : handleClose();
+      return queryString ? setQueryString('') : handleClose();
     }
 
     return null;
@@ -126,7 +126,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
           placeholder="Type a command or search"
           spellCheck="false"
           type="text"
-          value={searchQuery}
+          value={queryString}
         />
       </Header>
       {results.map((r, i) => (
