@@ -10,6 +10,7 @@ import NotificationsBell from 'components/notifications/NotificationsBell';
 import DocumentViewMode from 'components/document/DocumentViewMode';
 import DocumentTitle from 'components/document/DocumentTitle';
 import DiscussionTitle from 'components/discussion/DiscussionTitle';
+import CommandCenter from 'components/commandCenter/CommandCenter';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -40,7 +41,7 @@ const NavigationSection = styled.div({
   alignItems: 'center',
 
   height: '100%',
-  marginRight: '30px',
+  marginRight: '15px',
 });
 
 const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
@@ -59,6 +60,7 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
       </MenuSection>
       <NavigationSection>
         <NotificationsBell />
+        <CommandCenter source={documentId ? 'document' : 'discussion'} />
       </NavigationSection>
     </Container>
   );

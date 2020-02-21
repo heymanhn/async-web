@@ -52,7 +52,7 @@ const NavBar = () => {
       </MenuSection>
       <NavigationSection>
         <NotificationsBell />
-        <CommandCenter />
+        <CommandCenter source="inbox" />
       </NavigationSection>
     </Container>
   );

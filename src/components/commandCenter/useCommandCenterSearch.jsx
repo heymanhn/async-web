@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import useCommandLibrary from './useCommandLibrary';
 
-const useCommandCenterSearch = () => {
-  const commands = useCommandLibrary('inbox');
+const useCommandCenterSearch = source => {
+  const commands = useCommandLibrary(source);
   // HN: Use this state later for search results
   // const [results, setResults] = useState(commands);
   const [searchQuery, setSearchQuery] = useState('');

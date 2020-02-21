@@ -61,20 +61,22 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
   },
 }));
 
-const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
+const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { searchQuery, setSearchQuery, results } = useCommandCenterSearch();
+  const { searchQuery, setSearchQuery, results } = useCommandCenterSearch(
+    source
+  );
 
   useEffect(() => {
     if (!isOpen) return;
 
     // Customize sources later
-    track('Command Center launched', { source: 'inbox' });
+    track('Command Center launched', { source });
     setSelectedIndex(0);
 
     if (inputRef.current) inputRef.current.focus();
-  }, [isOpen]);
+  }, [isOpen, source]);
 
   const handleChange = event => {
     const currentQuery = event.target.value;
@@ -112,6 +114,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
       {...props}
     >
       <Header resultCount={results.length}>
+        {/* TODO: Make this title dynamic based on document/discussion/inbox */}
         <Title>Inbox</Title>
         <SearchInput
           ref={inputRef}
@@ -137,6 +140,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
 };
 
 CommandCenterModal.propTypes = {
+  source: PropTypes.oneOf(['inbox', 'document', 'discussion']).isRequired,
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
 };
