@@ -1,6 +1,6 @@
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
-import objectMembersQuery from 'graphql/queries/objectMembers';
+import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
@@ -152,15 +152,15 @@ function addPendingMessagesToDiscussion(_root, { discussionId }, { client }) {
   return null;
 }
 
-function addMember(_root, { objectType, id, user, accessType }, { client }) {
+function addMember(_root, { resourceType, id, user, accessType }, { client }) {
   const data = client.readQuery({
-    query: objectMembersQuery,
-    variables: { objectType, id },
+    query: resourceMembersQuery,
+    variables: { resourceType, id },
   });
   if (!data) return null;
 
-  const { objectMembers } = data;
-  const { members, __typename } = objectMembers;
+  const { resourceMembers } = data;
+  const { members, __typename } = resourceMembers;
 
   const newMember = {
     ...members[0],
@@ -169,10 +169,10 @@ function addMember(_root, { objectType, id, user, accessType }, { client }) {
   };
 
   client.writeQuery({
-    query: objectMembersQuery,
-    variables: { objectType, id },
+    query: resourceMembersQuery,
+    variables: { resourceType, id },
     data: {
-      objectMembers: {
+      resourceMembers: {
         members: [...members, newMember],
         __typename,
       },
@@ -184,22 +184,22 @@ function addMember(_root, { objectType, id, user, accessType }, { client }) {
 
 function removeMember(_root, { objectType, id, userId }, { client }) {
   const data = client.readQuery({
-    query: objectMembersQuery,
+    query: resourceMembersQuery,
     variables: { objectType, id },
   });
   if (!data) return null;
 
-  const { objectMembers } = data;
-  const { members, __typename } = objectMembers;
+  const { resourceMembers } = data;
+  const { members, __typename } = resourceMembers;
 
   const index = members.findIndex(p => p.user.id === userId);
   if (index < 0) return null;
 
   client.writeQuery({
-    query: objectMembersQuery,
+    query: resourceMembersQuery,
     variables: { objectType, id },
     data: {
-      objectMembers: {
+      resourceMembers: {
         members: [...members.slice(0, index), ...members.slice(index + 1)],
         __typename,
       },
