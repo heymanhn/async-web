@@ -43,7 +43,7 @@ const useCommandLibrary = source => {
   const goToInboxCommand = {
     icon: ['fal', 'arrow-circle-right'],
     title: 'Go to Inbox',
-    action: () => {},
+    action: () => navigate('/inbox'),
     shortcut: 'I',
   };
 
