@@ -7,6 +7,7 @@ import { track } from 'utils/analytics';
 import { mod } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
+import useCommandCenterTitle from './useCommandCenterTitle';
 import useCommandCenterSearch from './useCommandCenterSearch';
 import CommandRow from './CommandRow';
 
@@ -64,6 +65,7 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
 const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const title = useCommandCenterTitle(source);
   const { searchQuery, setSearchQuery, results } = useCommandCenterSearch(
     source
   );
@@ -114,8 +116,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
       {...props}
     >
       <Header resultCount={results.length}>
-        {/* TODO: Make this title dynamic based on document/discussion/inbox */}
-        <Title>Inbox</Title>
+        <Title>{title}</Title>
         <SearchInput
           ref={inputRef}
           onChange={handleChange}
