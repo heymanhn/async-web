@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Pluralize from 'pluralize';
+import { useQuery } from 'react-apollo';
 import Moment from 'react-moment';
 import styled from '@emotion/styled';
 
+import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import { titleize } from 'utils/helpers';
 
-import ResourceNameList from 'components/shared/ResourceNameList';
+import NameList from 'components/shared/NameList';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   color: colors.grey2,
@@ -36,6 +38,16 @@ const ResourceDetails = ({ resource, type, ...props }) => {
   const { updatedAt, id, tags, messageCount, discussionCount } = resource;
   const isDocument = type === 'document';
 
+  // Gets names of people who are associated with this document/discussion
+  const { loading, data } = useQuery(resourceMembersQuery, {
+    variables: { id, resourceType: Pluralize(type) },
+  });
+
+  if (loading) return null;
+  const { resourceMembers } = data;
+  const { members } = resourceMembers;
+  const names = (members || []).map(m => m.user.fullName);
+
   const itemTag = () => {
     const count = isDocument ? discussionCount : messageCount;
 
@@ -60,7 +72,7 @@ const ResourceDetails = ({ resource, type, ...props }) => {
     <Container {...props}>
       <Tag isUnread={isUnread()}>{tagText}</Tag>
       {separator}
-      <ResourceNameList type={type} id={id} />
+      <NameList names={names} />
       {separator}
       <span>
         <Timestamp fromNow parse="X">
