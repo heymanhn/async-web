@@ -7,32 +7,29 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import useResourceDetails from 'utils/hooks/useResourceDetails';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div({
   display: 'flex',
   flexDirection: 'row',
 
-  padding: '20px 20px 24px',
-  paddingLeft: '20px',
+  padding: '20px 0',
   width: '100%',
-
-  ':hover': {
-    paddingLeft: '12px',
-    borderLeft: `8px solid ${colors.hoverBlue}`,
-    color: colors.grey3,
-  },
-}));
+});
 
 const ItemDetails = styled.div({
   display: 'flex',
   flexDirection: 'column',
 });
 
-const Title = styled.span(({ hover, theme: { colors } }) => ({
-  color: hover ? colors.blue : colors.mainText,
+const Title = styled.span(({ theme: { colors } }) => ({
+  color: colors.mainText,
   fontSize: '16px',
   fontWeight: 500,
   letterSpacing: '-0.011em',
   marginBottom: '2px',
+
+  ':hover': {
+    color: colors.blue,
+  },
 }));
 
 const IconContainer = styled.div({
