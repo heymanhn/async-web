@@ -9,7 +9,7 @@ import { mod } from 'utils/helpers';
 import Modal from 'components/shared/Modal';
 import useCommandCenterTitle from './useCommandCenterTitle';
 import useCommandCenterSearch from './useCommandCenterSearch';
-import CommandRow from './CommandRow';
+import ResultRow from './ResultRow';
 
 const UP_KEY = 'up';
 const DOWN_KEY = 'down';
@@ -130,9 +130,9 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
         />
       </Header>
       {results.map((r, i) => (
-        <CommandRow
-          data={r}
+        <ResultRow
           key={r.title}
+          data={r}
           isSelected={selectedIndex === i}
           onMouseMove={() => setSelectedIndex(i)}
           handleClose={handleClose}

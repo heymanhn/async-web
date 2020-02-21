@@ -3,25 +3,15 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ isSelected, theme: { colors } }) => ({
-  display: 'flex',
-  alignItems: 'center',
+import useResourceDetails from 'utils/hooks/useResourceDetails';
 
-  background: isSelected ? colors.grey7 : colors.bgGrey,
-  cursor: 'pointer',
-  height: '54px',
-  padding: '0 30px',
-  userSelect: 'none',
-
-  ':last-of-type': {
-    borderBottomLeftRadius: '5px',
-    borderBottomRightRadius: '5px',
-  },
-}));
+const IconContainer = styled.div({
+  marginTop: '5px',
+  width: '32px',
+});
 
 const StyledIcon = styled(FontAwesomeIcon)({
   fontSize: '16px',
-  marginRight: '12px',
 });
 
 const Title = styled.div({
@@ -31,21 +21,28 @@ const Title = styled.div({
   marginTop: '-2px',
 });
 
-const SearchRow = ({ data, isSelected, handleClose, ...props }) => {
-  const { icon, title } = data;
+const SearchRow = ({ data }) => {
+  const { type, icon, title, resource } = data;
+  const [resourceType] = type.match(/document|discussion/);
+
+  const ResourceDetails = useResourceDetails(resourceType, resource);
+  if (!ResourceDetails) return null;
 
   return (
-    <Container isSelected={isSelected} {...props}>
-      <StyledIcon icon={icon} />
-      <Title>{title}</Title>
-    </Container>
+    <>
+      <IconContainer>
+        <StyledIcon icon={icon} />
+      </IconContainer>
+      <div>
+        <Title>{title}</Title>
+        <ResourceDetails />
+      </div>
+    </>
   );
 };
 
 SearchRow.propTypes = {
   data: PropTypes.object.isRequired,
-  isSelected: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
 };
 
 export default SearchRow;

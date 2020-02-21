@@ -34,7 +34,7 @@ const Title = styled.span(({ theme: { colors } }) => ({
 
 const IconContainer = styled.div({
   marginTop: '5px',
-  width: '30px',
+  width: '32px',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({

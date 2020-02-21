@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { navigate } from '@reach/router';
 import { useApolloClient } from '@apollo/react-hooks';
+import Pluralize from 'pluralize';
 
 import searchQuery from 'graphql/queries/search';
 
@@ -20,22 +21,24 @@ const useCommandCenterSearch = source => {
   };
 
   /* Massages the data into the object structure of a command
-   * - type, icon, title, action
+   * - type, icon, title, resource, action
    *
    * Assumes that a search result must have either a document or discussion
    */
   const formatResult = item => {
     const { document, discussion } = item;
-    const { id, title, topic } = document || discussion;
-    const resource = document ? 'documents' : 'discussions';
+    const resource = document || discussion;
+    const { id, title, topic } = resource;
+    const resourceType = document ? 'document' : 'discussion';
 
     return {
-      type: 'searchResult',
+      type: `${resourceType}Result`,
       title: title || topic.text,
-      icon: resource === 'documents' ? 'file-alt' : 'comments-alt',
+      icon: resourceType === 'document' ? 'file-alt' : 'comments-alt',
+      resource,
 
       // figure out target=_blank later
-      action: () => navigate(`/${resource}/${id}`),
+      action: () => navigate(`/${Pluralize(resourceType)}/${id}`),
     };
   };
 
