@@ -107,12 +107,17 @@ const DiscussionThread = ({ isUnread }) => {
         setIsFetching(false);
 
         return {
+          // REFACTOR TODO:
+          // Can I simply spread fetchMoreResult here?
+          // Can I do the same for other usages?
+          //
+          // OR: break the query back apart into two.
           discussion: fetchMoreResult.discussion,
           messages: {
             pageToken: newToken,
             messageCount: fetchMoreResult.messages.messageCount,
             items: [...previousItems, ...newItems],
-            __typename: fetchMoreResult.messages.__typename,
+            __typename: fetchMoreResult.messages.__typename, // instead of doing this, spread it.
           },
         };
       },

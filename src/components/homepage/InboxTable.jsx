@@ -24,7 +24,7 @@ const InboxTable = ({ viewMode }) => {
   if (loading) return null;
   if (error || !data.inbox) return <Container>Error fetching page</Container>;
 
-  const { items, pageToken, totalHits } = data.inbox;
+  const { items, pageToken } = data.inbox;
 
   const fetchMoreItems = () => {
     const newQueryParams = { type: viewMode };
@@ -38,11 +38,7 @@ const InboxTable = ({ viewMode }) => {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         const { items: previousItems } = previousResult.inbox;
-        const {
-          items: newItems,
-          pageToken: newToken,
-          totalHits: newHits,
-        } = fetchMoreResult.inbox;
+        const { items: newItems, pageToken: newToken } = fetchMoreResult.inbox;
         setShouldFetch(false);
         setIsFetching(false);
 
@@ -50,7 +46,6 @@ const InboxTable = ({ viewMode }) => {
           inbox: {
             items: [...previousItems, ...newItems],
             pageToken: newToken,
-            totalHits: totalHits + newHits,
             __typename: fetchMoreResult.inbox.__typename,
           },
         };

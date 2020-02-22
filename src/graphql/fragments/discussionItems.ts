@@ -12,7 +12,6 @@ export default gql`
       }
     }
     pageToken
-    totalHits
   }
   ${discussion}
   ${messageContext}

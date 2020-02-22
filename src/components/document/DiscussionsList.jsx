@@ -115,7 +115,6 @@ const DiscussionsList = () => {
           return {
             documentDiscussions: {
               pageToken: newToken,
-              totalHits: fetchMoreResult.documentDiscussions.totalHits,
               items: [...previousItems, ...newItems],
               __typename: fetchMoreResult.documentDiscussions.__typename,
             },
