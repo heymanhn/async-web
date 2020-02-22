@@ -64,10 +64,7 @@ const MenuOption = styled.div(({ theme: { colors } }) => ({
 
 const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
   const selector = useRef();
-  function handleClickOutside() {
-    if (!isOpen) return;
-    handleClose();
-  }
+  const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: selector });
 
   const { userId } = getLocalUser();
@@ -77,17 +74,16 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
   if (loading || !data.user) return null;
   const { user } = data;
 
-  function handleSelectInvite(event) {
+  const handleNavigate = (event, route) => {
     event.stopPropagation();
     handleClose();
-    return navigate(`/organizations/${organizationId}/invites`);
-  }
+    return navigate(route);
+  };
 
-  function handleLogout(event) {
-    event.stopPropagation();
-    handleClose();
-    return navigate('/logout');
-  }
+  const handleNavigateInbox = event => handleNavigate(event, '/inbox');
+  const handleSelectInvite = event =>
+    handleNavigate(event, `/organizations/${organizationId}/invites`);
+  const handleLogout = event => handleNavigate(event, '/logout');
 
   return (
     <Container isOpen={isOpen} ref={selector} {...props}>
@@ -96,6 +92,7 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
         <Name>{user.fullName}</Name>
       </AuthorSection>
       <MenuOptionList>
+        <MenuOption onClick={handleNavigateInbox}>Inbox</MenuOption>
         <MenuOption onClick={handleSelectInvite}>Invite people</MenuOption>
         <MenuOption onClick={handleLogout}>Sign out</MenuOption>
       </MenuOptionList>

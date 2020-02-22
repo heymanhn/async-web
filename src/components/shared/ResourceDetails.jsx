@@ -18,7 +18,9 @@ const Container = styled.div(({ theme: { colors } }) => ({
 const Separator = styled.span(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '10px',
-  margin: '-3px 8px 0',
+  margin: '0 8px',
+  position: 'relative',
+  top: '-1px',
 }));
 
 const Tag = styled.span(({ isUnread, theme: { colors } }) => ({
@@ -37,9 +39,10 @@ const ResourceDetails = ({ type, resource, names, ...props }) => {
 
   const itemTag = () => {
     const count = type === 'document' ? discussionCount : messageCount;
+    const label = type === 'document' ? 'discussion' : 'message';
 
     return tags.includes('no_updates')
-      ? Pluralize(type, count, true)
+      ? Pluralize(label, count, true)
       : tags[0].replace('_', ' ');
   };
 
