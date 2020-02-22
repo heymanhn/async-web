@@ -26,7 +26,7 @@ const useCommandCenterTitle = source => {
 
     case 'discussion':
       if (!discussionData || !discussionData.discussion) return null;
-      return discussionData.discussion.topic;
+      return discussionData.discussion.topic.text;
 
     default:
       return source[0].toUpperCase() + source.slice(1);
