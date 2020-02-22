@@ -11,8 +11,12 @@ const useCommandCenterSearch = source => {
   const client = useApolloClient();
   const commands = useCommandLibrary(source);
   const [queryString, setQueryString] = useState('');
+  const [prevQueryString, setPrevQueryString] = useState(queryString);
+  const [results, setResults] = useState(commands);
 
   const filterCommands = () => {
+    if (!queryString) return commands;
+
     const sanitizedString = queryString.toLowerCase();
 
     return commands.filter(({ title }) =>
@@ -45,31 +49,40 @@ const useCommandCenterSearch = source => {
   // Calling the search API synchronously because I don't want the UI
   // to render before the search query has completed
   const executeSearch = async () => {
-    const searchResults = [];
     const { data } = await client.query({
       query: searchQuery,
       variables: { queryString },
-      fetchResults: queryString > 1,
+      fetchResults: queryString.length > 1,
     });
 
     if (data && data.search) {
       const { items } = data.search;
-      searchResults.push(items.map(item => formatResult(item)));
+      const safeItems = items || [];
+
+      const searchResults = safeItems.map(item => formatResult(item));
+      return Promise.resolve(searchResults);
     }
 
-    return Promise.resolve(searchResults);
+    return Promise.reject(new Error('Failed to search in command center'));
   };
 
-  const getResults = () => {
-    if (!queryString) return commands;
+  const getResults = async () => {
+    let newResults = filterCommands();
 
-    const results = filterCommands();
-    if (queryString.length > 1) results.push(executeSearch());
+    if (queryString.length > 1) {
+      const searchResults = await executeSearch();
+      newResults = [...newResults, ...searchResults];
+    }
 
-    return results;
+    setResults(newResults);
   };
 
-  return { queryString, setQueryString, results: getResults() };
+  if (queryString !== prevQueryString) {
+    setPrevQueryString(queryString);
+    getResults();
+  }
+
+  return { queryString, setQueryString, results };
 };
 
 export default useCommandCenterSearch;

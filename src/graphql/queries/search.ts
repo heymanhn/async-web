@@ -8,7 +8,7 @@ export default gql`
     search(queryString: $queryString)
       @rest(
         type: "SearchResultResponse"
-        path: "/search?q={args.query}"
+        path: "/search?q={args.queryString}"
         method: "GET"
       ) {
       items @type(name: "[SearchResultItem]") {

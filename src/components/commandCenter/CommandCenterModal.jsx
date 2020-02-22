@@ -82,8 +82,8 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
 
   const handleChange = event => {
     const currentQuery = event.target.value;
-    setQueryString(currentQuery);
     setSelectedIndex(0);
+    setQueryString(currentQuery);
   };
 
   const handleKeyDown = event => {
