@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import useResourceDetails from 'utils/hooks/useResourceDetails';
 
 const IconContainer = styled.div({
-  marginTop: '5px',
+  marginTop: '2px',
   width: '32px',
 });
 

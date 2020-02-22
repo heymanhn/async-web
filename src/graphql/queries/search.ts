@@ -14,9 +14,13 @@ export default gql`
       items @type(name: "[SearchResultItem]") {
         document @type(name: "Document") {
           ...DocumentObject
+          tags
+          discussionCount
         }
         discussion @type(name: "Discussion") {
           ...DiscussionObject
+          tags
+          messageCount
         }
         searchScore
       }
