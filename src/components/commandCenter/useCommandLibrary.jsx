@@ -16,6 +16,7 @@ const useCommandLibrary = source => {
   );
 
   const newDocumentCommand = {
+    type: 'command',
     icon: ['fal', 'plus-circle'],
     title: 'New document',
     action: handleCreateDocument,
@@ -23,6 +24,7 @@ const useCommandLibrary = source => {
   };
 
   const newDiscussionCommand = {
+    type: 'command',
     icon: ['fal', 'plus-circle'],
     title: 'New discussion',
     action: handleCreateDiscussion,
@@ -30,6 +32,7 @@ const useCommandLibrary = source => {
   };
 
   const invitePeopleCommand = {
+    type: 'command',
     icon: ['fal', 'user-circle'],
     title: 'Invite people',
     action: () => setIsModalOpen(true),
@@ -37,6 +40,7 @@ const useCommandLibrary = source => {
   };
 
   const inviteTeamCommand = {
+    type: 'command',
     icon: ['fal', 'user-circle'],
     title: 'Invite your team',
     action: () => navigate(`/organizations/${organizationId}/invites`),
@@ -44,6 +48,7 @@ const useCommandLibrary = source => {
   };
 
   const goToInboxCommand = {
+    type: 'command',
     icon: ['fal', 'arrow-circle-right'],
     title: 'Go to Inbox',
     action: () => navigate('/inbox'),

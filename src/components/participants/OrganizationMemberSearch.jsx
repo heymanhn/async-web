@@ -4,7 +4,7 @@ import { useMutation, useQuery } from 'react-apollo';
 import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
-import objectMembersQuery from 'graphql/queries/objectMembers';
+import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import addMemberMutation from 'graphql/mutations/addMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import { getLocalAppState } from 'utils/auth';
@@ -67,25 +67,28 @@ const OrganizationMemberSearch = ({
     if (inputRef.current) inputRef.current.focus();
   });
 
-  const { loading: l1, data: orgMembership } = useQuery(objectMembersQuery, {
+  const { loading: l1, data: orgMembership } = useQuery(resourceMembersQuery, {
     variables: { objectType: 'organizations', id },
   });
 
-  const { loading: l2, data: objectMembership } = useQuery(objectMembersQuery, {
-    variables: { objectType, id: objectId },
-  });
+  const { loading: l2, data: resourceMembership } = useQuery(
+    resourceMembersQuery,
+    {
+      variables: { objectType, id: objectId },
+    }
+  );
 
   const [addMember] = useMutation(addMemberMutation);
   const [localAddMember] = useMutation(localAddMemberMutation);
 
-  if (l1 || l2 || !orgMembership.objectMembers) {
+  if (l1 || l2 || !orgMembership.resourceMembers) {
     return null;
   }
 
-  let { members } = orgMembership.objectMembers || [];
+  let { members } = orgMembership.resourceMembers || [];
   members = members.map(m => m.user);
 
-  const { resourceMembers } = objectMembership.objectMembers;
+  const { resourceMembers } = resourceMembership.resourceMembers;
   const participants = (resourceMembers || []).map(p => p.user);
 
   const memberSearch = () => {

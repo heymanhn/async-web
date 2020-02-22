@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useQuery } from 'react-apollo';
 
-import objectMembersQuery from 'graphql/queries/objectMembers';
+import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import ParticipantRow from './ParticipantRow';
@@ -10,18 +10,18 @@ const ParticipantsList = () => {
   const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
 
-  const objectType = documentId ? 'documents' : 'discussions';
+  const resourceType = documentId ? 'documents' : 'discussions';
   const id = documentId || discussionId;
 
-  const { loading, data } = useQuery(objectMembersQuery, {
-    variables: { id, objectType },
+  const { loading, data } = useQuery(resourceMembersQuery, {
+    variables: { id, resourceType },
     fetchPolicy: 'cache-and-network',
   });
 
   if (loading) return null;
 
-  const { objectMembers } = data;
-  const { members } = objectMembers;
+  const { resourceMembers } = data;
+  const { members } = resourceMembers;
 
   return (members || []).map(p => (
     <ParticipantRow key={p.user.id} accessType={p.accessType} user={p.user} />

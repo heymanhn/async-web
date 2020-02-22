@@ -6,3 +6,5 @@ export const isDiscussionOpen = id => {
 // Neat trick to support modular arithmetic for negative numbers
 // https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
 export const mod = (x, n) => ((x % n) + n) % n;
+
+export const titleize = str => str.charAt(0).toUpperCase() + str.slice(1);

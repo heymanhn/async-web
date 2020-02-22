@@ -2,77 +2,48 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 import Pluralize from 'pluralize';
-import Moment from 'react-moment';
 import styled from '@emotion/styled';
-import { useQuery } from 'react-apollo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import objectMembersQuery from 'graphql/queries/objectMembers';
-import NameList from 'components/shared/NameList';
+import useResourceDetails from 'utils/hooks/useResourceDetails';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'center',
 
-  padding: '20px 20px 24px',
-  paddingLeft: '20px',
+  padding: '20px 0',
   width: '100%',
-
-  ':hover': {
-    paddingLeft: '12px',
-    borderLeft: `8px solid ${colors.hoverBlue}`,
-    color: colors.grey3,
-  },
-}));
+});
 
 const ItemDetails = styled.div({
   display: 'flex',
   flexDirection: 'column',
-
-  marginLeft: '20px',
 });
 
-const Title = styled.span(({ hover, theme: { colors } }) => ({
-  color: hover ? colors.blue : colors.mainText,
+const Title = styled.span(({ theme: { colors } }) => ({
+  color: colors.mainText,
   fontSize: '16px',
   fontWeight: 500,
   letterSpacing: '-0.011em',
+  marginBottom: '2px',
+
+  ':hover': {
+    color: colors.blue,
+  },
 }));
 
-const AdditionalInfo = styled.div(({ theme: { colors } }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-
-  color: colors.grey3,
-  cursor: 'default',
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
-  marginTop: '3px',
-}));
-
-const Tag = styled.span(({ isUnread, theme: { colors } }) => ({
-  color: isUnread ? colors.blue : colors.grey3,
-  fontSize: '14px',
-}));
-
-const Separator = styled.span(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  fontSize: '14px',
-  margin: '0 10px',
-}));
+const IconContainer = styled.div({
+  marginTop: '5px',
+  width: '32px',
+});
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
 
-  ':hover': {
-    color: colors.grey1,
-  },
-
   color: colors.grey2,
-  fontSize: '18px',
+  fontSize: '16px',
 }));
 
 const StyledLink = styled(Link)(({ theme: { colors } }) => ({
@@ -92,81 +63,28 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   },
 }));
 
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  cursor: 'default',
-  fontSize: '14px',
-}));
-
 const InboxRow = ({ item, ...props }) => {
   const { document, discussion } = item;
-  const objectType = document ? 'document' : 'discussion';
-  const isDocument = objectType === 'document';
-  const object = document || discussion;
-  const {
-    updatedAt,
-    id,
-    title,
-    topic,
-    tags,
-    messageCount,
-    discussionCount,
-  } = object;
+  const resourceType = document ? 'document' : 'discussion';
+  const isDocument = resourceType === 'document';
+  const resource = document || discussion;
 
-  const { loading, data } = useQuery(objectMembersQuery, {
-    variables: { id, objectType: Pluralize(objectType) },
-  });
+  const ResourceDetails = useResourceDetails(resourceType, resource);
+  if (!ResourceDetails) return null;
 
-  if (loading) return null;
-
-  const { objectMembers } = data;
+  const { id, title, topic } = resource;
   const safeTopic = topic || {};
-  const { members } = objectMembers;
-  const fullNames = (members || []).map(m => m.user.fullName);
   const titleText = isDocument ? title : safeTopic.text;
 
-  function titleize(input) {
-    return input.charAt(0).toUpperCase() + input.slice(1);
-  }
-
-  const itemTag = () => {
-    const count = isDocument ? discussionCount : messageCount;
-    const label = isDocument ? 'discussion' : 'message';
-
-    return tags.includes('no_updates')
-      ? Pluralize(label, count, true)
-      : tags[0].replace('_', ' ');
-  };
-
-  const isUnread = () => {
-    return (
-      tags.includes('new_messages') ||
-      tags.includes('new_discussions') ||
-      tags.includes('new_document') ||
-      tags.includes('new_discussion')
-    );
-  };
-
-  const separator = <Separator>&#8226;</Separator>;
-  const tagText = titleize(itemTag());
-
   return (
-    <StyledLink to={`/${Pluralize(objectType)}/${id}`}>
+    <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
       <Container {...props}>
-        <StyledIcon icon={isDocument ? 'file-alt' : 'comments-alt'} />
+        <IconContainer>
+          <StyledIcon icon={isDocument ? 'file-alt' : 'comments-alt'} />
+        </IconContainer>
         <ItemDetails>
-          <Title>{titleText || `Untitled ${objectType}`}</Title>
-          <AdditionalInfo>
-            <Tag isUnread={isUnread()}>{tagText}</Tag>
-            {separator}
-            <NameList names={fullNames} />
-            {separator}
-            <span>
-              <Timestamp fromNow parse="X">
-                {updatedAt}
-              </Timestamp>
-            </span>
-          </AdditionalInfo>
+          <Title>{titleText || `Untitled ${resourceType}`}</Title>
+          <ResourceDetails />
         </ItemDetails>
       </Container>
     </StyledLink>

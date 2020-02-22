@@ -9,7 +9,7 @@ import { mod } from 'utils/helpers';
 import Modal from 'components/shared/Modal';
 import useCommandCenterTitle from './useCommandCenterTitle';
 import useCommandCenterSearch from './useCommandCenterSearch';
-import CommandRow from './CommandRow';
+import ResultRow from './ResultRow';
 
 const UP_KEY = 'up';
 const DOWN_KEY = 'down';
@@ -66,7 +66,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const title = useCommandCenterTitle(source);
-  const { searchQuery, setSearchQuery, results } = useCommandCenterSearch(
+  const { queryString, setQueryString, results } = useCommandCenterSearch(
     source
   );
 
@@ -82,8 +82,8 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
 
   const handleChange = event => {
     const currentQuery = event.target.value;
-    setSearchQuery(currentQuery);
     setSelectedIndex(0);
+    setQueryString(currentQuery);
   };
 
   const handleKeyDown = event => {
@@ -103,7 +103,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
     }
 
     if (isHotkey(ESCAPE_KEY, event)) {
-      return searchQuery ? setSearchQuery('') : handleClose();
+      return queryString ? setQueryString('') : handleClose();
     }
 
     return null;
@@ -126,13 +126,13 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
           placeholder="Type a command or search"
           spellCheck="false"
           type="text"
-          value={searchQuery}
+          value={queryString}
         />
       </Header>
       {results.map((r, i) => (
-        <CommandRow
-          data={r}
+        <ResultRow
           key={r.title}
+          data={r}
           isSelected={selectedIndex === i}
           onMouseMove={() => setSelectedIndex(i)}
           handleClose={handleClose}
