@@ -4,7 +4,7 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 
-function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
+const addDraftToDiscussion = (_root, { discussionId, draft }, { client }) => {
   const data = client.readQuery({
     query: discussionQuery,
     variables: { discussionId },
@@ -25,18 +25,17 @@ function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
   });
 
   return null;
-}
+};
 
 // Cheeky. I know. But it works
-function deleteDraftFromDiscussion(_root, { discussionId }, { client }) {
-  return addDraftToDiscussion(_root, { discussionId, draft: null }, { client });
-}
+const deleteDraftFromDiscussion = (_root, { discussionId }, { client }) =>
+  addDraftToDiscussion(_root, { discussionId, draft: null }, { client });
 
-function addNewMessageToDiscussionMessages(
+const addNewMessageToDiscussionMessages = (
   _root,
   { isUnread, message },
   { client }
-) {
+) => {
   const { body: newBody, author: newAuthor, discussionId } = message;
 
   const data = client.readQuery({
@@ -100,9 +99,9 @@ function addNewMessageToDiscussionMessages(
   });
 
   return null;
-}
+};
 
-function addNewPendingMessage(_root, { message }, { client }) {
+const addNewPendingMessage = (_root, { message }, { client }) => {
   const { pendingMessages, ...localState } = client.readQuery({
     query: localStateQuery,
   });
@@ -131,9 +130,13 @@ function addNewPendingMessage(_root, { message }, { client }) {
   });
 
   return null;
-}
+};
 
-function addPendingMessagesToDiscussion(_root, { discussionId }, { client }) {
+const addPendingMessagesToDiscussion = (
+  _root,
+  { discussionId },
+  { client }
+) => {
   const { pendingMessages } = client.readQuery({ query: localStateQuery });
 
   const data = client.readQuery({
@@ -167,9 +170,13 @@ function addPendingMessagesToDiscussion(_root, { discussionId }, { client }) {
   client.writeData({ data: { pendingMessages: [] } });
 
   return null;
-}
+};
 
-function addMember(_root, { resourceType, id, user, accessType }, { client }) {
+const addMember = (
+  _root,
+  { resourceType, id, user, accessType },
+  { client }
+) => {
   const data = client.readQuery({
     query: resourceMembersQuery,
     variables: { resourceType, id },
@@ -197,9 +204,9 @@ function addMember(_root, { resourceType, id, user, accessType }, { client }) {
   });
 
   return null;
-}
+};
 
-function removeMember(_root, { objectType, id, userId }, { client }) {
+const removeMember = (_root, { objectType, id, userId }, { client }) => {
   const data = client.readQuery({
     query: resourceMembersQuery,
     variables: { objectType, id },
@@ -224,9 +231,9 @@ function removeMember(_root, { objectType, id, userId }, { client }) {
   });
 
   return null;
-}
+};
 
-function updateBadgeCount(_root, { userId, notification }, { client }) {
+const updateBadgeCount = (_root, { userId, notification }, { client }) => {
   const data = client.readQuery({
     query: notificationsQuery,
     variables: { id: userId },
@@ -270,13 +277,13 @@ function updateBadgeCount(_root, { userId, notification }, { client }) {
   });
 
   return null;
-}
+};
 
-function deleteMessageFromDiscussion(
+const deleteMessageFromDiscussion = (
   _root,
   { discussionId, messageId },
   { client }
-) {
+) => {
   const {
     messages: { pageToken, items, __typename, messageCount },
   } = client.readQuery({
@@ -299,9 +306,9 @@ function deleteMessageFromDiscussion(
   });
 
   return null;
-}
+};
 
-function markDiscussionAsRead(_root, { discussionId }, { client }) {
+const markDiscussionAsRead = (_root, { discussionId }, { client }) => {
   const data = client.readQuery({
     query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
@@ -350,7 +357,7 @@ function markDiscussionAsRead(_root, { discussionId }, { client }) {
   });
 
   return null;
-}
+};
 
 const localResolvers = {
   Mutation: {
