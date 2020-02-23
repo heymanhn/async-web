@@ -40,15 +40,14 @@ const InboxTable = ({ viewMode }) => {
   if (!data.inbox) return <NotFound />;
 
   const { items } = data.inbox;
-  const sortedItems = (items || [])
-    .sort(compare)
-    .map(item => item.document || item.discussion);
+  const sortedItems = (items || []).sort(compare);
 
   return (
     <div ref={inboxRef}>
-      {sortedItems.map(item => (
-        <InboxRow key={item.id} item={item} />
-      ))}
+      {sortedItems.map(item => {
+        const object = item.document || item.discussion;
+        return <InboxRow key={object.id} item={item} />;
+      })}
     </div>
   );
 };
