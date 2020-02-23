@@ -46,7 +46,8 @@ const usePaginatedResource = (ref, { query, key, variables }) => {
   }, [handleScroll]);
 
   const { loading, data, fetchMore } = useQuery(query, { variables });
-  if (loading) return { loading };
+  if (loading || !data[key]) return { loading, data: null };
+
   const { pageToken } = data[key];
 
   const fetchMoreItems = async () => {
@@ -87,7 +88,7 @@ const usePaginatedResource = (ref, { query, key, variables }) => {
     fetchMoreItems();
   }
 
-  return { loading, data };
+  return { loading, data: data[key] };
 };
 
 export default usePaginatedResource;

@@ -57,18 +57,17 @@ const DiscussionThread = ({ isUnread }) => {
     };
   });
 
-  const key = 'messages';
   const { data: localData } = useQuery(localStateQuery);
   const { loading, data } = usePaginatedResource(discussionRef, {
     query: discussionMessagesQuery,
-    key,
+    key: 'messages',
     variables: { discussionId, queryParams: {} },
   });
 
   if (loading) return null;
-  if (!data[key]) return <NotFound />;
+  if (!data) return <NotFound />;
 
-  const { items } = data[key];
+  const { items } = data;
   const messages = (items || []).map(i => i.message);
 
   if (localData) {

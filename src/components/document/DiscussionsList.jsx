@@ -71,17 +71,16 @@ const DiscussionsList = () => {
     setIsComposing(false);
   };
 
-  const key = 'documentDiscussions';
   const { loading, data } = usePaginatedResource(listRef, {
     query: documentDiscussionsQuery,
-    key,
+    key: 'documentDiscussions',
     variables: { id: documentId, queryParams: { order: 'desc' } },
   });
 
   if (loading) return null;
-  if (!data[key]) return <NotFound />;
+  if (!data) return <NotFound />;
 
-  const { items } = data[key];
+  const { items } = data;
   const discussions = (items || []).map(i => i.discussion);
   const discussionCount = discussions.length;
 

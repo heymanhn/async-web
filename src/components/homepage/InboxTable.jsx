@@ -29,17 +29,16 @@ const InboxTable = ({ viewMode }) => {
   const inboxRef = useRef(null);
   const { userId } = getLocalUser();
 
-  const key = 'inbox';
   const { loading, data } = usePaginatedResource(inboxRef, {
     query: inboxQuery,
-    key,
+    key: 'inbox',
     variables: { id: userId, queryParams: { type: viewMode } },
   });
 
   if (loading) return null;
-  if (!data.inbox) return <NotFound />;
+  if (!data) return <NotFound />;
 
-  const { items } = data.inbox;
+  const { items } = data;
   const sortedItems = (items || []).sort(compare);
 
   return (
