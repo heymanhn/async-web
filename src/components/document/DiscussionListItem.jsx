@@ -5,11 +5,13 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
+import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import { DiscussionContext } from 'utils/contexts';
 
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import ContextComposer from 'components/discussion/ContextComposer';
 import AvatarList from 'components/shared/AvatarList';
+import NotFound from 'components/navigation/NotFound';
 import DiscussionListItemHeader from './DiscussionListItemHeader';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -50,13 +52,18 @@ const DiscussionListItem = ({ discussionId }) => {
   const { loading, data } = useQuery(discussionQuery, {
     variables: { discussionId },
   });
-  if (loading) return null;
-  if (!data.discussion || !data.messages) return null;
+
+  const { loading: loading2, data: data2 } = useQuery(discussionMessagesQuery, {
+    variables: { discussionId, queryParams: {} },
+  });
+
+  if (loading || loading2) return null;
+  if (!data.discussion || !data2.messages) return <NotFound />;
 
   const { topic, lastMessage, messageCount, draft } = data.discussion;
   const { payload } = topic || {};
   const context = payload ? JSON.parse(payload) : undefined;
-  const { items } = data.messages;
+  const { items } = data2.messages;
   const messages = (items || []).map(i => i.message);
   if (!messages.length) return null;
 

@@ -15,7 +15,7 @@ const useCommandCenterTitle = source => {
   });
 
   const { data: discussionData } = useQuery(discussionQuery, {
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId },
     skip: !discussionId,
   });
 

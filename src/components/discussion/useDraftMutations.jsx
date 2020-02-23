@@ -75,7 +75,7 @@ const useDraftMutations = (editor = null) => {
         discussion: { messageCount },
       } = client.readQuery({
         query: discussionQuery,
-        variables: { discussionId, queryParams: {} },
+        variables: { discussionId },
       });
 
       if (!messageCount) handleDelete();

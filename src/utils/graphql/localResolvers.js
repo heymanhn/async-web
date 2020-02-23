@@ -1,50 +1,59 @@
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
+import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 
-function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
+const addDraftToDiscussion = (_root, { discussionId, draft }, { client }) => {
   const data = client.readQuery({
     query: discussionQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId },
   });
   if (!data) return null;
 
-  const { discussion, messages } = data;
+  const { discussion } = data;
 
   client.writeQuery({
     query: discussionQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId },
     data: {
       discussion: {
         ...discussion,
         draft,
       },
-      messages,
     },
   });
 
   return null;
-}
+};
 
 // Cheeky. I know. But it works
-function deleteDraftFromDiscussion(_root, { discussionId }, { client }) {
-  return addDraftToDiscussion(_root, { discussionId, draft: null }, { client });
-}
+const deleteDraftFromDiscussion = (_root, { discussionId }, { client }) =>
+  addDraftToDiscussion(_root, { discussionId, draft: null }, { client });
 
-function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
+const addNewMessageToDiscussionMessages = (
+  _root,
+  { isUnread, message },
+  { client }
+) => {
   const { body: newBody, author: newAuthor, discussionId } = message;
 
   const data = client.readQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
   });
-  if (!data) return null;
+
+  const data2 = client.readQuery({
+    query: discussionQuery,
+    variables: { discussionId },
+  });
+
+  if (!data || !data2) return null;
 
   const {
-    discussion,
     messages: { pageToken, items, __typename, messageCount },
   } = data;
+  const tags = isUnread ? ['new_message'] : null;
 
   const newMessageItem = {
     __typename: 'MessageItem',
@@ -59,18 +68,14 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
         __typename: 'Body',
         ...newBody,
       },
-      tags: isUnread ? ['new_message'] : null,
+      tags,
     },
   };
 
   client.writeQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
     data: {
-      discussion: {
-        ...discussion,
-        tags: isUnread ? ['new_messages'] : null,
-      },
       messages: {
         messageCount: messageCount + 1,
         pageToken,
@@ -80,10 +85,23 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
     },
   });
 
-  return null;
-}
+  const { discussion } = data2;
 
-function addNewPendingMessage(_root, { message }, { client }) {
+  client.writeQuery({
+    query: discussionQuery,
+    variables: { discussionId },
+    data: {
+      discussion: {
+        ...discussion,
+        tags,
+      },
+    },
+  });
+
+  return null;
+};
+
+const addNewPendingMessage = (_root, { message }, { client }) => {
   const { pendingMessages, ...localState } = client.readQuery({
     query: localStateQuery,
   });
@@ -112,19 +130,22 @@ function addNewPendingMessage(_root, { message }, { client }) {
   });
 
   return null;
-}
+};
 
-function addPendingMessagesToDiscussion(_root, { discussionId }, { client }) {
+const addPendingMessagesToDiscussion = (
+  _root,
+  { discussionId },
+  { client }
+) => {
   const { pendingMessages } = client.readQuery({ query: localStateQuery });
 
   const data = client.readQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
   });
   if (!data) return null;
 
   const {
-    discussion,
     messages: { pageToken, items, __typename, messageCount },
   } = data;
 
@@ -134,10 +155,9 @@ function addPendingMessagesToDiscussion(_root, { discussionId }, { client }) {
   }));
 
   client.writeQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
     data: {
-      discussion,
       messages: {
         messageCount: messageCount + pendingMessageItems.length,
         pageToken,
@@ -150,9 +170,13 @@ function addPendingMessagesToDiscussion(_root, { discussionId }, { client }) {
   client.writeData({ data: { pendingMessages: [] } });
 
   return null;
-}
+};
 
-function addMember(_root, { resourceType, id, user, accessType }, { client }) {
+const addMember = (
+  _root,
+  { resourceType, id, user, accessType },
+  { client }
+) => {
   const data = client.readQuery({
     query: resourceMembersQuery,
     variables: { resourceType, id },
@@ -180,9 +204,9 @@ function addMember(_root, { resourceType, id, user, accessType }, { client }) {
   });
 
   return null;
-}
+};
 
-function removeMember(_root, { objectType, id, userId }, { client }) {
+const removeMember = (_root, { objectType, id, userId }, { client }) => {
   const data = client.readQuery({
     query: resourceMembersQuery,
     variables: { objectType, id },
@@ -207,9 +231,9 @@ function removeMember(_root, { objectType, id, userId }, { client }) {
   });
 
   return null;
-}
+};
 
-function updateBadgeCount(_root, { userId, notification }, { client }) {
+const updateBadgeCount = (_root, { userId, notification }, { client }) => {
   const data = client.readQuery({
     query: notificationsQuery,
     variables: { id: userId },
@@ -253,27 +277,25 @@ function updateBadgeCount(_root, { userId, notification }, { client }) {
   });
 
   return null;
-}
+};
 
-function deleteMessageFromDiscussion(
+const deleteMessageFromDiscussion = (
   _root,
   { discussionId, messageId },
   { client }
-) {
+) => {
   const {
-    discussion,
     messages: { pageToken, items, __typename, messageCount },
   } = client.readQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
   });
 
   const index = items.findIndex(i => i.message.id === messageId);
   client.writeQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
     data: {
-      discussion,
       messages: {
         messageCount: messageCount - 1,
         pageToken,
@@ -284,16 +306,21 @@ function deleteMessageFromDiscussion(
   });
 
   return null;
-}
+};
 
-function markDiscussionAsRead(_root, { discussionId }, { client }) {
+const markDiscussionAsRead = (_root, { discussionId }, { client }) => {
   const data = client.readQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
   });
 
-  if (!data.discussion || !data.messages) return null;
-  const { messages, discussion } = data;
+  const data2 = client.readQuery({
+    query: discussionQuery,
+    variables: { discussionId },
+  });
+
+  if (!data || !data2) return null;
+  const { messages } = data;
   const { items, pageToken } = messages;
   const messagesWithTags = (items || []).map(i => i.message);
   const updatedMessageItems = messagesWithTags.map(m => ({
@@ -305,13 +332,9 @@ function markDiscussionAsRead(_root, { discussionId }, { client }) {
   }));
 
   client.writeQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
     data: {
-      discussion: {
-        ...discussion,
-        tags: ['no_updates'],
-      },
       messages: {
         ...data.messages,
         items: updatedMessageItems,
@@ -320,14 +343,27 @@ function markDiscussionAsRead(_root, { discussionId }, { client }) {
     },
   });
 
+  const { discussion } = data2;
+
+  client.writeQuery({
+    query: discussionQuery,
+    variables: { discussionId },
+    data: {
+      discussion: {
+        ...discussion,
+        tags: ['no_updates'],
+      },
+    },
+  });
+
   return null;
-}
+};
 
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
     deleteDraftFromDiscussion,
-    addNewMessageToDiscussion,
+    addNewMessageToDiscussionMessages,
     addNewPendingMessage,
     addPendingMessagesToDiscussion,
     addMember,

@@ -4,6 +4,7 @@ import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
+import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
@@ -37,15 +38,19 @@ const Discussion = () => {
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
 
-  const { loading, error, data } = useQuery(discussionQuery, {
+  const { loading, data } = useQuery(discussionQuery, {
+    variables: { discussionId },
+  });
+
+  const { loading: loading2, data: data2 } = useQuery(discussionMessagesQuery, {
     variables: { discussionId, queryParams: {} },
   });
-  if (loading) return null;
-  if (error || !data.discussion) return <NotFound />;
+  if (loading || loading2) return null;
+  if (!data.discussion || !data2.messages) return <NotFound />;
 
   const { topic, draft, messageCount } = data.discussion;
   const { payload } = topic || {};
-  const { items } = data.messages;
+  const { items } = data2.messages;
 
   if ((draft || !items) && !isComposing) startComposing();
 

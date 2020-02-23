@@ -88,16 +88,16 @@ const NewReplyLabel = styled(MessageCountIndicator)(
 
 const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef }) => {
   const { handleShowModal } = useContext(DocumentContext);
-  const { loading, error, data: discussionData } = useQuery(discussionQuery, {
-    variables: { discussionId, queryParams: {} },
+  const { loading, error, data } = useQuery(discussionQuery, {
+    variables: { discussionId },
     fetchPolicy: 'cache-and-network',
   });
 
   if (loading) return null;
-  if (error || !discussionData.discussion) return null;
+  if (error || !data.discussion) return null;
 
-  const { draft, lastMessage, messageCount, tags } = discussionData.discussion;
-  const { author } = lastMessage || discussionData.discussion;
+  const { draft, lastMessage, messageCount, tags } = data.discussion;
+  const { author } = lastMessage || data.discussion;
   const { body } = draft || lastMessage;
   const { profilePictureUrl } = author;
   const { text } = body;

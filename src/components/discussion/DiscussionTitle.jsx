@@ -15,7 +15,7 @@ const DiscussionTitle = () => {
   const { discussionId } = useContext(DiscussionContext);
 
   const { loading, data } = useQuery(discussionQuery, {
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId },
   });
 
   if (loading || !data.discussion) return null;

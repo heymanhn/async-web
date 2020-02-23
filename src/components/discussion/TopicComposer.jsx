@@ -31,6 +31,8 @@ const TopicComposer = ({ initialTopic, ...props }) => {
   );
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
 
+  // BACKEND TODO: Once the Update Discussion API call returns the updated
+  // discussion, we don't need to refetch the query, thanks to Apollo.
   async function handleUpdate() {
     const { data: updateDiscussionTopicData } = await updateDiscussion({
       variables: {
@@ -46,7 +48,7 @@ const TopicComposer = ({ initialTopic, ...props }) => {
       refetchQueries: [
         {
           query: discussionQuery,
-          variables: { discussionId, queryParams: {} },
+          variables: { discussionId },
         },
       ],
     });

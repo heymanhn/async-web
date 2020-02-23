@@ -46,7 +46,7 @@ const useMessageMutations = ({ message = null } = {}) => {
     const refetchQueries = [
       {
         query: discussionQuery,
-        variables: { discussionId: messageDiscussionId, queryParams: {} },
+        variables: { discussionId: messageDiscussionId },
       },
     ];
     if (!discussionId) {
