@@ -6,12 +6,12 @@ import styled from '@emotion/styled';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import localStateQuery from 'graphql/queries/localState';
 import localAddPendingMessages from 'graphql/mutations/local/addPendingMessagesToDiscussion';
-import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
+import usePaginatedResource from 'utils/hooks/usePaginatedResource';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 import useMountEffect from 'utils/hooks/useMountEffect';
-import { snakedQueryParams } from 'utils/queryParams';
 import { DiscussionContext } from 'utils/contexts';
 
+import NotFound from 'components/navigation/NotFound';
 import DiscussionMessage from './DiscussionMessage';
 import NewMessagesDivider from './NewMessagesDivider';
 import NewMessagesIndicator from './NewMessagesIndicator';
@@ -38,8 +38,6 @@ const DiscussionThread = ({ isUnread }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
   const { discussionId } = useContext(DiscussionContext);
-  const [shouldFetch, setShouldFetch] = useInfiniteScroll(discussionRef);
-  const [isFetching, setIsFetching] = useState(false);
   const [pendingMessageCount, setPendingMessageCount] = useState(0);
   const [addPendingMessages] = useMutation(localAddPendingMessages, {
     variables: { discussionId },
@@ -59,18 +57,18 @@ const DiscussionThread = ({ isUnread }) => {
     };
   });
 
-  const { loading, error, data, fetchMore } = useQuery(
-    discussionMessagesQuery,
-    {
-      variables: { discussionId, queryParams: {} },
-    }
-  );
+  const key = 'messages';
   const { data: localData } = useQuery(localStateQuery);
+  const { loading, data } = usePaginatedResource(discussionRef, {
+    query: discussionMessagesQuery,
+    key,
+    variables: { discussionId, queryParams: {} },
+  });
 
   if (loading) return null;
-  if (error || !data.messages) return <div>{error}</div>;
+  if (!data[key]) return <NotFound />;
 
-  const { items, pageToken } = data.messages;
+  const { items } = data[key];
   const messages = (items || []).map(i => i.message);
 
   if (localData) {
@@ -89,44 +87,6 @@ const DiscussionThread = ({ isUnread }) => {
       objectId: discussionId,
     });
   };
-
-  const fetchMoreMessages = () => {
-    const newQueryParams = {};
-    if (pageToken) newQueryParams.pageToken = pageToken;
-
-    fetchMore({
-      query: discussionMessagesQuery,
-      variables: {
-        discussionId,
-        queryParams: snakedQueryParams(newQueryParams),
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        const { items: previousItems } = previousResult.messages;
-        const {
-          items: newItems,
-          pageToken: newToken,
-        } = fetchMoreResult.messages;
-        setShouldFetch(false);
-        setIsFetching(false);
-
-        return {
-          // REFACTOR TODO:
-          // Can I simply spread fetchMoreResult here?
-          // Can I do the same for other usages?
-          messages: {
-            ...fetchMoreResult.messages,
-            pageToken: newToken,
-            items: [...previousItems, ...newItems],
-          },
-        };
-      },
-    });
-  };
-
-  if (shouldFetch && pageToken && !isFetching) {
-    setIsFetching(true);
-    fetchMoreMessages();
-  }
 
   const firstNewMessageId = () => {
     const targetMessage = messages.find(
