@@ -7,6 +7,10 @@ import NotificationRow from './NotificationRow';
 
 const Container = styled.div(({ iconWidth, isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
+  alignSelf: 'flex-start',
+  position: 'absolute',
+  overflow: 'scroll',
+
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
@@ -14,8 +18,6 @@ const Container = styled.div(({ iconWidth, isOpen, theme: { colors } }) => ({
   marginLeft: iconWidth ? `${-350 + iconWidth}px` : '0',
   marginTop: '10px',
   maxHeight: `${window.innerHeight - 80}px`,
-  overflow: 'scroll',
-  position: 'absolute',
   width: '350px',
   zIndex: 1000,
 }));
