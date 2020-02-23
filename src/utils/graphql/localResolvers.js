@@ -1,26 +1,26 @@
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
+import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 
 function addDraftToDiscussion(_root, { discussionId, draft }, { client }) {
   const data = client.readQuery({
     query: discussionQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId },
   });
   if (!data) return null;
 
-  const { discussion, messages } = data;
+  const { discussion } = data;
 
   client.writeQuery({
     query: discussionQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId },
     data: {
       discussion: {
         ...discussion,
         draft,
       },
-      messages,
     },
   });
 
@@ -32,19 +32,29 @@ function deleteDraftFromDiscussion(_root, { discussionId }, { client }) {
   return addDraftToDiscussion(_root, { discussionId, draft: null }, { client });
 }
 
-function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
+function addNewMessageToDiscussionMessages(
+  _root,
+  { isUnread, message },
+  { client }
+) {
   const { body: newBody, author: newAuthor, discussionId } = message;
 
   const data = client.readQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
   });
-  if (!data) return null;
+
+  const data2 = client.readQuery({
+    query: discussionQuery,
+    variables: { discussionId },
+  });
+
+  if (!data || !data2) return null;
 
   const {
-    discussion,
     messages: { pageToken, items, __typename, messageCount },
   } = data;
+  const tags = isUnread ? ['new_message'] : null;
 
   const newMessageItem = {
     __typename: 'MessageItem',
@@ -59,23 +69,32 @@ function addNewMessageToDiscussion(_root, { isUnread, message }, { client }) {
         __typename: 'Body',
         ...newBody,
       },
-      tags: isUnread ? ['new_message'] : null,
+      tags,
     },
   };
 
   client.writeQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
     data: {
-      discussion: {
-        ...discussion,
-        tags: isUnread ? ['new_messages'] : null,
-      },
       messages: {
         messageCount: messageCount + 1,
         pageToken,
         items: [...(items || []), newMessageItem],
         __typename,
+      },
+    },
+  });
+
+  const { discussion } = data2;
+
+  client.writeQuery({
+    query: discussionQuery,
+    variables: { discussionId },
+    data: {
+      discussion: {
+        ...discussion,
+        tags,
       },
     },
   });
@@ -118,13 +137,12 @@ function addPendingMessagesToDiscussion(_root, { discussionId }, { client }) {
   const { pendingMessages } = client.readQuery({ query: localStateQuery });
 
   const data = client.readQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
   });
   if (!data) return null;
 
   const {
-    discussion,
     messages: { pageToken, items, __typename, messageCount },
   } = data;
 
@@ -134,10 +152,9 @@ function addPendingMessagesToDiscussion(_root, { discussionId }, { client }) {
   }));
 
   client.writeQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
     data: {
-      discussion,
       messages: {
         messageCount: messageCount + pendingMessageItems.length,
         pageToken,
@@ -261,19 +278,17 @@ function deleteMessageFromDiscussion(
   { client }
 ) {
   const {
-    discussion,
     messages: { pageToken, items, __typename, messageCount },
   } = client.readQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
   });
 
   const index = items.findIndex(i => i.message.id === messageId);
   client.writeQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
     data: {
-      discussion,
       messages: {
         messageCount: messageCount - 1,
         pageToken,
@@ -288,12 +303,17 @@ function deleteMessageFromDiscussion(
 
 function markDiscussionAsRead(_root, { discussionId }, { client }) {
   const data = client.readQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
   });
 
-  if (!data.discussion || !data.messages) return null;
-  const { messages, discussion } = data;
+  const data2 = client.readQuery({
+    query: discussionQuery,
+    variables: { discussionId },
+  });
+
+  if (!data || !data2) return null;
+  const { messages } = data;
   const { items, pageToken } = messages;
   const messagesWithTags = (items || []).map(i => i.message);
   const updatedMessageItems = messagesWithTags.map(m => ({
@@ -305,17 +325,26 @@ function markDiscussionAsRead(_root, { discussionId }, { client }) {
   }));
 
   client.writeQuery({
-    query: discussionQuery,
+    query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
     data: {
-      discussion: {
-        ...discussion,
-        tags: ['no_updates'],
-      },
       messages: {
         ...data.messages,
         items: updatedMessageItems,
         pageToken,
+      },
+    },
+  });
+
+  const { discussion } = data2;
+
+  client.writeQuery({
+    query: discussionQuery,
+    variables: { discussionId },
+    data: {
+      discussion: {
+        ...discussion,
+        tags: ['no_updates'],
       },
     },
   });
@@ -327,7 +356,7 @@ const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
     deleteDraftFromDiscussion,
-    addNewMessageToDiscussion,
+    addNewMessageToDiscussionMessages,
     addNewPendingMessage,
     addPendingMessagesToDiscussion,
     addMember,

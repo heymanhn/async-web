@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useApolloClient, useQuery, useMutation } from 'react-apollo';
 import styled from '@emotion/styled';
 
-import discussionQuery from 'graphql/queries/discussion';
+import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import localStateQuery from 'graphql/queries/localState';
 import localAddPendingMessages from 'graphql/mutations/local/addPendingMessagesToDiscussion';
 import useInfiniteScroll from 'utils/hooks/useInfiniteScroll';
@@ -59,9 +59,12 @@ const DiscussionThread = ({ isUnread }) => {
     };
   });
 
-  const { loading, error, data, fetchMore } = useQuery(discussionQuery, {
-    variables: { discussionId, queryParams: {} },
-  });
+  const { loading, error, data, fetchMore } = useQuery(
+    discussionMessagesQuery,
+    {
+      variables: { discussionId, queryParams: {} },
+    }
+  );
   const { data: localData } = useQuery(localStateQuery);
 
   if (loading) return null;
@@ -92,7 +95,7 @@ const DiscussionThread = ({ isUnread }) => {
     if (pageToken) newQueryParams.pageToken = pageToken;
 
     fetchMore({
-      query: discussionQuery,
+      query: discussionMessagesQuery,
       variables: {
         discussionId,
         queryParams: snakedQueryParams(newQueryParams),
@@ -110,14 +113,10 @@ const DiscussionThread = ({ isUnread }) => {
           // REFACTOR TODO:
           // Can I simply spread fetchMoreResult here?
           // Can I do the same for other usages?
-          //
-          // OR: break the query back apart into two.
-          discussion: fetchMoreResult.discussion,
           messages: {
+            ...fetchMoreResult.messages,
             pageToken: newToken,
-            messageCount: fetchMoreResult.messages.messageCount,
             items: [...previousItems, ...newItems],
-            __typename: fetchMoreResult.messages.__typename, // instead of doing this, spread it.
           },
         };
       },

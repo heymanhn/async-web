@@ -89,7 +89,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
 
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
   const { loading, data } = useQuery(discussionQuery, {
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId },
   });
 
   if (loading || !data.discussion) return null;
@@ -102,9 +102,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
       },
     };
 
-    updateDiscussion({
-      variables: { discussionId, input },
-    });
+    updateDiscussion({ variables: { discussionId, input } });
   }
 
   return (

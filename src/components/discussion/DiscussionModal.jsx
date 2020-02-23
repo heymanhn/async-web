@@ -57,7 +57,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   });
 
   const { loading, data } = useQuery(discussionQuery, {
-    variables: { discussionId: modalDiscussionId, queryParams: {} },
+    variables: { discussionId: modalDiscussionId },
     skip: !modalDiscussionId,
   });
 

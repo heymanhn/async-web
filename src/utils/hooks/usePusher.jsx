@@ -6,7 +6,7 @@ import camelcaseKeys from 'camelcase-keys';
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import addNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
 import updateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
-import addNewMessageToDiscussion from 'graphql/mutations/local/addNewMessageToDiscussion';
+import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
 
 import { getLocalUser } from 'utils/auth';
 import { isDiscussionOpen } from 'utils/helpers';
@@ -67,7 +67,7 @@ const usePusher = () => {
         });
       } else {
         client.mutate({
-          mutation: addNewMessageToDiscussion,
+          mutation: addNewMsgMutation,
           variables: {
             isUnread: true,
             message,
