@@ -75,8 +75,6 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
 
     // Customize sources later
     track('Command Center launched', { source });
-    setSelectedIndex(0);
-    setQueryString('');
 
     if (inputRef.current) inputRef.current.focus();
   }, [isOpen, source]);
@@ -87,9 +85,15 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
     setQueryString(currentQuery);
   };
 
+  const handleCloseWrapper = () => {
+    handleClose();
+    setSelectedIndex(0);
+    setQueryString('');
+  };
+
   const handleKeyDown = event => {
     if (isHotkey(ESCAPE_KEY, event)) {
-      return queryString ? setQueryString('') : handleClose();
+      return queryString ? setQueryString('') : handleCloseWrapper();
     }
 
     if (!results.length) return null;
@@ -104,7 +108,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
 
     if (isHotkey(ENTER_KEY, event)) {
       results[selectedIndex].action();
-      handleClose();
+      handleCloseWrapper();
     }
 
     return null;
@@ -113,7 +117,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
   return (
     <StyledModal
       backdropStyle={customBackdropStyle}
-      handleClose={handleClose}
+      handleClose={handleCloseWrapper}
       isOpen={isOpen}
       {...props}
     >
@@ -136,7 +140,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
           data={r}
           isSelected={selectedIndex === i}
           onMouseMove={() => setSelectedIndex(i)}
-          handleClose={handleClose}
+          handleClose={handleCloseWrapper}
         />
       ))}
     </StyledModal>
