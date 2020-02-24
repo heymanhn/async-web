@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { navigate } from '@reach/router';
 import { useApolloClient } from '@apollo/react-hooks';
 import Pluralize from 'pluralize';
@@ -13,6 +13,14 @@ const useCommandCenterSearch = source => {
   const [queryString, setQueryString] = useState('');
   const [prevQueryString, setPrevQueryString] = useState(queryString);
   const [results, setResults] = useState(commands);
+
+  // Neat way to reset the results to the initial list when the dropdown is closed
+  useEffect(() => {
+    if (!queryString && prevQueryString) {
+      setPrevQueryString(queryString);
+      setResults(commands);
+    }
+  }, [queryString, prevQueryString]);
 
   const filterCommands = () => {
     if (!queryString) return commands;
