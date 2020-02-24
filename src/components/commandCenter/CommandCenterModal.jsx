@@ -76,6 +76,7 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
     // Customize sources later
     track('Command Center launched', { source });
     setSelectedIndex(0);
+    setQueryString('');
 
     if (inputRef.current) inputRef.current.focus();
   }, [isOpen, source]);
