@@ -88,6 +88,10 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
   };
 
   const handleKeyDown = event => {
+    if (isHotkey(ESCAPE_KEY, event)) {
+      return queryString ? setQueryString('') : handleClose();
+    }
+
     if (!results.length) return null;
 
     if (isHotkey(DOWN_KEY, event)) {
@@ -101,10 +105,6 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
     if (isHotkey(ENTER_KEY, event)) {
       results[selectedIndex].action();
       handleClose();
-    }
-
-    if (isHotkey(ESCAPE_KEY, event)) {
-      return queryString ? setQueryString('') : handleClose();
     }
 
     return null;
