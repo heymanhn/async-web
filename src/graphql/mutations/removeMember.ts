@@ -1,8 +1,17 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation RemoveMember($objectType: String!, $id: String!, $userId: String!) {
-    removeMember(objectType: $objectType, id: $id, userId: $userId) @rest(type: "Success", path: "/{args.objectType}/{args.id}/access?user_id={args.userId}", method: "DELETE") {
+  mutation RemoveMember(
+    $resourceType: String!
+    $id: String!
+    $userId: String!
+  ) {
+    removeMember(resourceType: $resourceType, id: $id, userId: $userId)
+      @rest(
+        type: "Success"
+        path: "/{args.resourceType}/{args.id}/access?user_id={args.userId}"
+        method: "DELETE"
+      ) {
       success
     }
   }

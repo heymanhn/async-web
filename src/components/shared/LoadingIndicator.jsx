@@ -11,7 +11,7 @@ const Container = styled.div({
 });
 
 const StyledSpinner = styled(Spinner)(({ color, size, theme: { colors } }) => ({
-  border: `.05em solid ${colors[color]}`,
+  border: `.08em solid ${colors[color]}`,
   borderRightColor: 'transparent',
   width: `${size}px`,
   height: `${size}px`,

@@ -10,6 +10,7 @@ import {
 } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
+import LoadingIndicator from 'components/shared/LoadingIndicator';
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import DiscussionListItem from './DiscussionListItem';
 
@@ -17,6 +18,10 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
   margin: '60px auto',
   width: documentViewport,
 }));
+
+const StyledLoadingIndicator = styled(LoadingIndicator)({
+  margin: '40px auto',
+});
 
 const TitleSection = styled.div({
   display: 'flex',
@@ -77,7 +82,7 @@ const DiscussionsList = () => {
     variables: { id: documentId, queryParams: { order: 'desc' } },
   });
 
-  if (loading) return null;
+  if (loading) return <StyledLoadingIndicator color="borderGrey" />;
   if (!data) return <NotFound />;
 
   const { items } = data;

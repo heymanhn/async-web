@@ -9,7 +9,7 @@ import { getLocalUser } from 'utils/auth';
 const useViewedReaction = () => {
   const client = useApolloClient();
 
-  function markAsRead({ isUnread, objectType, objectId } = {}) {
+  function markAsRead({ isUnread, resourceType, resourceId } = {}) {
     const { userId } = getLocalUser();
     let refetchQueries = [
       {
@@ -18,12 +18,12 @@ const useViewedReaction = () => {
       },
     ];
 
-    if (objectType === 'document') {
+    if (resourceType === 'document') {
       refetchQueries = [
         ...refetchQueries,
         {
           query: documentQuery,
-          variables: { documentId: objectId, queryParams: {} },
+          variables: { documentId: resourceId, queryParams: {} },
         },
       ];
     }
@@ -31,8 +31,8 @@ const useViewedReaction = () => {
       mutation: createReactionMutation,
       variables: {
         input: {
-          objectType,
-          objectId,
+          objectType: resourceType,
+          objectId: resourceId,
           code: 'viewed',
         },
       },
@@ -43,11 +43,11 @@ const useViewedReaction = () => {
       update: () => {
         if (!isUnread) return;
 
-        if (objectType === 'discussion') {
+        if (resourceType === 'discussion') {
           client.mutate({
             mutation: markDiscussionAsReadMutation,
             variables: {
-              discussionId: objectId,
+              discussionId: resourceId,
             },
           });
         }

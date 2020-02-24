@@ -55,22 +55,22 @@ const RemoveButton = styled.div(({ theme: { colors } }) => ({
 const ParticipantRow = ({ accessType, user }) => {
   const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
-  const objectType = documentId ? 'documents' : 'discussions';
-  const objectId = documentId || discussionId;
+  const resourceType = documentId ? 'documents' : 'discussions';
+  const resourceId = documentId || discussionId;
 
   const { fullName, id, profilePictureUrl } = user;
 
   const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
     variables: {
-      objectType,
-      id: objectId,
+      resourceType,
+      id: resourceId,
       userId: id,
     },
   });
   const [removeMember] = useMutation(removeMemberMutation, {
     variables: {
-      objectType,
-      id: objectId,
+      resourceType,
+      id: resourceId,
       userId: id,
     },
   });

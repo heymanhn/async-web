@@ -206,10 +206,10 @@ const addMember = (
   return null;
 };
 
-const removeMember = (_root, { objectType, id, userId }, { client }) => {
+const removeMember = (_root, { resourceType, id, userId }, { client }) => {
   const data = client.readQuery({
     query: resourceMembersQuery,
-    variables: { objectType, id },
+    variables: { resourceType, id },
   });
   if (!data) return null;
 
@@ -221,7 +221,7 @@ const removeMember = (_root, { objectType, id, userId }, { client }) => {
 
   client.writeQuery({
     query: resourceMembersQuery,
-    variables: { objectType, id },
+    variables: { resourceType, id },
     data: {
       resourceMembers: {
         members: [...members.slice(0, index), ...members.slice(index + 1)],

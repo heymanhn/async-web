@@ -1,10 +1,16 @@
 import React, { useContext } from 'react';
 import { useQuery } from 'react-apollo';
+import styled from '@emotion/styled';
 
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
+import LoadingIndicator from 'components/shared/LoadingIndicator';
 import ParticipantRow from './ParticipantRow';
+
+const StyledLoadingIndicator = styled(LoadingIndicator)({
+  margin: '20px 0',
+});
 
 const ParticipantsList = () => {
   const { documentId } = useContext(DocumentContext);
@@ -18,7 +24,7 @@ const ParticipantsList = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  if (loading) return null;
+  if (loading) return <StyledLoadingIndicator color="borderGrey" />;
 
   const { resourceMembers } = data;
   const { members } = resourceMembers;

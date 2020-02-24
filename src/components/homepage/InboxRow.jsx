@@ -58,6 +58,10 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
     borderBottom: `1px solid ${colors.borderGrey}`,
   },
 
+  ':first-of-type': {
+    borderTop: 'none',
+  },
+
   ':hover,:active,:visited': {
     textDecoration: 'none',
   },

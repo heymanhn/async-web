@@ -58,8 +58,8 @@ const OrganizationMemberSearch = ({
   const { organizationId: id } = getLocalAppState();
   const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
-  const objectType = documentId ? 'documents' : 'discussions';
-  const objectId = documentId || discussionId;
+  const resourceType = documentId ? 'documents' : 'discussions';
+  const resourceId = documentId || discussionId;
 
   useEffect(() => {
     if (!isModalOpen || !inputRef.current) return;
@@ -68,13 +68,13 @@ const OrganizationMemberSearch = ({
   });
 
   const { loading: l1, data: orgMembership } = useQuery(resourceMembersQuery, {
-    variables: { objectType: 'organizations', id },
+    variables: { resourceType: 'organizations', id },
   });
 
   const { loading: l2, data: resourceMembership } = useQuery(
     resourceMembersQuery,
     {
-      variables: { objectType, id: objectId },
+      variables: { resourceType, id: resourceId },
     }
   );
 
@@ -116,8 +116,8 @@ const OrganizationMemberSearch = ({
 
     addMember({
       variables: {
-        objectType,
-        id: objectId,
+        resourceType,
+        id: resourceId,
         input: {
           userId: user.id,
           accessType: DEFAULT_ACCESS_TYPE,
@@ -127,8 +127,8 @@ const OrganizationMemberSearch = ({
 
     localAddMember({
       variables: {
-        objectType,
-        id: objectId,
+        resourceType,
+        id: resourceId,
         user,
         accessType: DEFAULT_ACCESS_TYPE,
       },

@@ -12,6 +12,7 @@ import useMountEffect from 'utils/hooks/useMountEffect';
 import { DiscussionContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
+import LoadingIndicator from 'components/shared/LoadingIndicator';
 import DiscussionMessage from './DiscussionMessage';
 import NewMessagesDivider from './NewMessagesDivider';
 import NewMessagesIndicator from './NewMessagesIndicator';
@@ -23,6 +24,10 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 
   maxWidth: discussionViewport,
 }));
+
+const StyledLoadingIndicator = styled(LoadingIndicator)({
+  margin: '20px auto',
+});
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ isUnread, theme: { colors } }) => ({
@@ -51,8 +56,8 @@ const DiscussionThread = ({ isUnread }) => {
     return () => {
       markAsRead({
         isUnread,
-        objectType: 'discussion',
-        objectId: discussionId,
+        resourceType: 'discussion',
+        resourceId: discussionId,
       });
     };
   });
@@ -64,7 +69,7 @@ const DiscussionThread = ({ isUnread }) => {
     variables: { discussionId, queryParams: {} },
   });
 
-  if (loading) return null;
+  if (loading) return <StyledLoadingIndicator color="borderGrey" />;
   if (!data) return <NotFound />;
 
   const { items } = data;
@@ -82,8 +87,8 @@ const DiscussionThread = ({ isUnread }) => {
 
     markAsRead({
       isUnread: false,
-      objectType: 'discussion',
-      objectId: discussionId,
+      resourceType: 'discussion',
+      resourceId: discussionId,
     });
   };
 

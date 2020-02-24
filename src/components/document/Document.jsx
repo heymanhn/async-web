@@ -47,8 +47,8 @@ const Document = () => {
   if (!hasCurrentUserViewed()) {
     markAsRead({
       isUnread: true,
-      objectType: 'document',
-      objectId: documentId,
+      resourceType: 'document',
+      resourceId: documentId,
     });
   }
 

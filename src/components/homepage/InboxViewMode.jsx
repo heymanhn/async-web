@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const Container = styled.div({
+const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
-});
+  borderBottom: `1px solid ${colors.borderGrey}`,
+}));
 
 const ModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
   borderBottom: isSelected ? `2px solid ${colors.mainText}` : 'none',

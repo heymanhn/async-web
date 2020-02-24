@@ -8,6 +8,7 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
+import LoadingIndicator from 'components/shared/LoadingIndicator';
 import TopicComposer from './TopicComposer';
 import DiscussionMessage from './DiscussionMessage';
 import DiscussionThread from './DiscussionThread';
@@ -20,6 +21,10 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 
   width: discussionViewport,
 }));
+
+const StyledLoadingIndicator = styled(LoadingIndicator)({
+  marginTop: '30px',
+});
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
@@ -45,7 +50,7 @@ const Discussion = () => {
   const { loading: loading2, data: data2 } = useQuery(discussionMessagesQuery, {
     variables: { discussionId, queryParams: {} },
   });
-  if (loading || loading2) return null;
+  if (loading || loading2) return <StyledLoadingIndicator color="borderGrey" />;
   if (!data.discussion || !data2.messages) return <NotFound />;
 
   const { topic, draft, messageCount } = data.discussion;
