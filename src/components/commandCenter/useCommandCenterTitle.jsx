@@ -22,11 +22,11 @@ const useCommandCenterTitle = source => {
   switch (source) {
     case 'document':
       if (!documentData || !documentData.document) return null;
-      return documentData.document.title;
+      return documentData.document.title || 'Untitled Document';
 
     case 'discussion':
       if (!discussionData || !discussionData.discussion) return null;
-      return discussionData.discussion.topic.text;
+      return discussionData.discussion.topic.text || 'Untitled Discussion';
 
     default:
       return source[0].toUpperCase() + source.slice(1);
