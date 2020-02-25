@@ -37,7 +37,7 @@ const useCommandCenterSearch = source => {
 
     return {
       type: `${resourceType}Result`,
-      title: title || topic.text,
+      title: title || (topic && topic.text),
       icon: resourceType === 'document' ? 'file-alt' : 'comments-alt',
       resource,
 

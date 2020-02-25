@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { useMutation } from 'react-apollo';
+import { useApolloClient, useMutation } from 'react-apollo';
 
 import discussionQuery from 'graphql/queries/discussion';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
@@ -7,6 +7,7 @@ import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import localDeleteMessageMutation from 'graphql/mutations/local/deleteMessageFromDiscussion';
+import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
 import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
 import { track } from 'utils/analytics';
 import {
@@ -18,6 +19,7 @@ import {
 import { toPlainText } from 'components/editor/utils';
 
 const useMessageMutations = ({ message = null } = {}) => {
+  const client = useApolloClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
@@ -73,6 +75,13 @@ const useMessageMutations = ({ message = null } = {}) => {
 
     if (data.createMessage) {
       const { id } = data.createMessage;
+      client.mutate({
+        mutation: addNewMsgMutation,
+        variables: {
+          isUnread: false,
+          message: data.createMessage,
+        },
+      });
       setIsSubmitting(false);
       track('New message posted', {
         messageId: id,
