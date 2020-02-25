@@ -53,7 +53,7 @@ const addNewMessageToDiscussionMessages = (
   const {
     messages: { pageToken, items, __typename, messageCount },
   } = data;
-  const tags = isUnread ? ['new_message'] : null;
+  const tags = isUnread ? ['new_message'] : ['no_updates'];
 
   const newMessageItem = {
     __typename: 'MessageItem',
@@ -327,7 +327,7 @@ const markDiscussionAsRead = (_root, { discussionId }, { client }) => {
     __typename: items[0].__typename,
     message: {
       ...m,
-      tags: null,
+      tags: ['no_updates'],
     },
   }));
 

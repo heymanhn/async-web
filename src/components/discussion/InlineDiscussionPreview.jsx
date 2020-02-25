@@ -90,7 +90,6 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef }) => {
   const { handleShowModal } = useContext(DocumentContext);
   const { loading, error, data } = useQuery(discussionQuery, {
     variables: { discussionId },
-    fetchPolicy: 'cache-and-network',
   });
 
   if (loading) return null;

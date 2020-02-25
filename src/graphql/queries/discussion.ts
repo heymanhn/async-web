@@ -14,6 +14,7 @@ export default gql`
       ...DiscussionObject
       ...MessageContext
       tags
+      messageCount
     }
   }
   ${discussion}

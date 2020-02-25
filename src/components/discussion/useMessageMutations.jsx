@@ -7,6 +7,7 @@ import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import localDeleteMessageMutation from 'graphql/mutations/local/deleteMessageFromDiscussion';
+import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
 import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
 import { track } from 'utils/analytics';
 import {
@@ -33,6 +34,7 @@ const useMessageMutations = ({ message = null } = {}) => {
   const [localDeleteMessage] = useMutation(localDeleteMessageMutation, {
     variables: { discussionId, messageId },
   });
+  const [localAddMessage] = useMutation(addNewMsgMutation);
 
   async function handleCreate() {
     setIsSubmitting(true);
@@ -73,6 +75,12 @@ const useMessageMutations = ({ message = null } = {}) => {
 
     if (data.createMessage) {
       const { id } = data.createMessage;
+      localAddMessage({
+        variables: {
+          isUnread: false,
+          message: data.createMessage,
+        },
+      });
       setIsSubmitting(false);
       track('New message posted', {
         messageId: id,
