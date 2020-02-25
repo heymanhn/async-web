@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { useApolloClient, useMutation } from 'react-apollo';
+import { useMutation } from 'react-apollo';
 
 import discussionQuery from 'graphql/queries/discussion';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
@@ -19,7 +19,6 @@ import {
 import { toPlainText } from 'components/editor/utils';
 
 const useMessageMutations = ({ message = null } = {}) => {
-  const client = useApolloClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
@@ -35,6 +34,7 @@ const useMessageMutations = ({ message = null } = {}) => {
   const [localDeleteMessage] = useMutation(localDeleteMessageMutation, {
     variables: { discussionId, messageId },
   });
+  const [localAddMessage] = useMutation(addNewMsgMutation);
 
   async function handleCreate() {
     setIsSubmitting(true);
@@ -75,8 +75,7 @@ const useMessageMutations = ({ message = null } = {}) => {
 
     if (data.createMessage) {
       const { id } = data.createMessage;
-      client.mutate({
-        mutation: addNewMsgMutation,
+      localAddMessage({
         variables: {
           isUnread: false,
           message: data.createMessage,
