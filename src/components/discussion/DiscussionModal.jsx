@@ -19,7 +19,7 @@ import DiscussionMessage from './DiscussionMessage';
 import ModalAddReplyBox from './ModalAddReplyBox';
 
 const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
-  alignSelf: 'center',
+  alignSelf: 'flex-start',
   padding: '25px 25px',
   background: colors.bgGrey,
 }));
