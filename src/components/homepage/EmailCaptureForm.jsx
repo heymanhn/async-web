@@ -11,11 +11,11 @@ const { REACT_APP_AIRTABLE_API_KEY, REACT_APP_AIRTABLE_BASE_KEY } = process.env;
 const Container = styled.div(({ theme: { mq } }) => ({
   display: 'flex',
   flexDirection: 'column',
-  flexWrap: 'wrap',
   alignItems: 'center',
 
   [mq('tabletUp')]: {
     flexDirection: 'row',
+    justifyContent: 'center',
   },
 }));
 
@@ -25,7 +25,7 @@ const StyledInput = styled.input(({ theme: { colors, mq } }) => ({
   borderRadius: '5px',
   color: colors.mainText,
   marginBottom: '15px',
-  padding: '8px 15px',
+  padding: '12px 20px 13px',
   fontSize: '14px',
   letterSpacing: '-0.006em',
   width: '100%',
@@ -55,14 +55,14 @@ const StyledButton = styled(Button)(({ theme: { mq, colors } }) => ({
   textAlign: 'center',
   width: '100%',
 
-  [mq('tabletUp)')]: {
+  [mq('tabletUp')]: {
     paddingLeft: '20px',
     paddingRight: '20px',
     width: 'auto',
   },
 }));
 
-const EmailCaptureForm = () => {
+const EmailCaptureForm = props => {
   const [email, setEmail] = useState('');
   const handleChangeEmail = event => setEmail(event.target.value);
 
@@ -104,7 +104,7 @@ const EmailCaptureForm = () => {
   };
 
   return (
-    <Container>
+    <Container {...props}>
       <StyledInput
         onChange={handleChangeEmail}
         onKeyDown={handleKeyDown}
