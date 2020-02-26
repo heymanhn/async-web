@@ -85,12 +85,7 @@ const DiscussionListItem = ({ discussionId }) => {
     context,
     draft,
     afterDelete: () =>
-      localDeleteDiscussion({
-        variables: {
-          documentId,
-          discussionId,
-        },
-      }),
+      localDeleteDiscussion({ variables: { documentId, discussionId } }),
   };
 
   return (
