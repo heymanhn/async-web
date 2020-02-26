@@ -1,6 +1,7 @@
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
+import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 
@@ -308,6 +309,34 @@ const deleteMessageFromDiscussion = (
   return null;
 };
 
+const deleteDiscussionFromDocument = (
+  _root,
+  { documentId, discussionId },
+  { client }
+) => {
+  const {
+    documentDiscussions: { items, pageToken, __typename },
+  } = client.readQuery({
+    query: documentDiscussionsQuery,
+    variables: { id: documentId, queryParams: { order: 'desc' } },
+  });
+
+  const index = items.findIndex(i => i.discussion.id === discussionId);
+  client.writeQuery({
+    query: documentDiscussionsQuery,
+    variables: { id: documentId, queryParams: { order: 'desc' } },
+    data: {
+      documentDiscussions: {
+        items: [...items.slice(0, index), ...items.slice(index + 1)],
+        pageToken,
+        __typename,
+      },
+    },
+  });
+
+  return null;
+};
+
 const markDiscussionAsRead = (_root, { discussionId }, { client }) => {
   const data = client.readQuery({
     query: discussionMessagesQuery,
@@ -370,6 +399,7 @@ const localResolvers = {
     removeMember,
     updateBadgeCount,
     deleteMessageFromDiscussion,
+    deleteDiscussionFromDocument,
     markDiscussionAsRead,
   },
 };

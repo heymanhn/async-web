@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from 'react-apollo';
+import { useQuery, useMutation } from 'react-apollo';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
-import { DiscussionContext } from 'utils/contexts';
+import localDeleteDiscussionMutation from 'graphql/mutations/local/deleteDiscussionFromDocument';
+import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import ContextComposer from 'components/discussion/ContextComposer';
@@ -56,11 +57,18 @@ const DiscussionListItem = ({ discussionId }) => {
   const { loading: loading2, data: data2 } = useQuery(discussionMessagesQuery, {
     variables: { discussionId, queryParams: {} },
   });
+  const [localDeleteDiscussion] = useMutation(localDeleteDiscussionMutation);
 
   if (loading || loading2) return null;
   if (!data.discussion || !data2.messages) return <NotFound />;
 
-  const { topic, lastMessage, messageCount, draft } = data.discussion;
+  const {
+    topic,
+    lastMessage,
+    messageCount,
+    draft,
+    documentId,
+  } = data.discussion;
   const { payload } = topic || {};
   const context = payload ? JSON.parse(payload) : undefined;
   const { items } = data2.messages;
@@ -72,9 +80,17 @@ const DiscussionListItem = ({ discussionId }) => {
   const moreReplyCount = messageCount - (context ? 1 : 2);
 
   const value = {
+    ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     context,
     draft,
+    afterDelete: () =>
+      localDeleteDiscussion({
+        variables: {
+          documentId,
+          discussionId,
+        },
+      }),
   };
 
   return (
