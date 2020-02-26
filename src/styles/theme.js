@@ -50,6 +50,7 @@ export const theme = {
     white: '#fff',
     yellow: '#df9401',
 
+    grey0: '#3a4b56',
     grey1: '#54636d',
     grey2: '#70828e',
     grey3: '#8798a4',
@@ -60,7 +61,6 @@ export const theme = {
 
     mainText: '#313f48',
     contentText: '#232d34',
-    altContentText: '#3a4b56',
 
     bgBlue: '#eff9fd',
     darkBlue: '#2d4d62',

@@ -5,7 +5,7 @@ import { Redirect } from '@reach/router';
 import localStateQuery from 'graphql/queries/localState';
 import { getLocalAppState } from 'utils/auth';
 
-import LoggedOutHome from './LoggedOutHome';
+import LandingPage from 'components/landing/LandingPage';
 
 const Home = () => {
   const { data: localStateData } = useQuery(localStateQuery);
@@ -13,7 +13,7 @@ const Home = () => {
   const { organizationId } = getLocalAppState();
 
   if (!localStateData) return null;
-  if (!isLoggedIn) return <LoggedOutHome />;
+  if (!isLoggedIn) return <LandingPage />;
 
   if (isOnboarding) {
     const path = organizationId

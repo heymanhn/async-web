@@ -30,7 +30,7 @@ const TitleSection = styled.div({
 });
 
 const Title = styled.div(({ theme: { colors } }) => ({
-  color: colors.altContentText,
+  color: colors.mainText,
   fontSize: '32px',
   fontWeight: 600,
   letterSpacing: '-0.021em',
