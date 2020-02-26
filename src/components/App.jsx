@@ -28,7 +28,7 @@ import Home from 'components/homepage/Home';
 import Login from 'components/auth/Login';
 import DemoLogin from 'components/auth/DemoLogin';
 import Logout from 'components/Logout';
-import Inbox from 'components/homepage/Inbox';
+import Inbox from 'components/inbox/Inbox';
 import NotFound from 'components/navigation/NotFound';
 import SignUp from 'components/auth/SignUp';
 import CreateOrganization from 'components/auth/CreateOrganization';
