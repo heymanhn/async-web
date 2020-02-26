@@ -12,7 +12,7 @@ const Container = styled.div(({ theme: { bgColors } }) => ({
   alignItems: 'center',
 
   background: bgColors.main,
-  padding: '20px 30px',
+  padding: '20px 30px 24px',
 }));
 
 const LogoContainer = styled.div({

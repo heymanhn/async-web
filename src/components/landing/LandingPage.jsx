@@ -36,7 +36,7 @@ const LandingPage = () => {
       </ThemeProvider>
       {contentsWithModules.map(({ Module, mode, content }, i) => (
         <ThemeProvider key={i} theme={themes[mode]}>
-          <Module mode={mode} {...content} />
+          <Module {...content} />
         </ThemeProvider>
       ))}
       <ThemeProvider theme={themes[lastMode]}>
