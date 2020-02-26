@@ -11,6 +11,7 @@ const Container = styled.div(({ isDisabled }) => ({
   display: 'inline-block',
   fontWeight: 500,
   fontSize: '14px',
+  letterSpacing: '-0.006em',
   padding: '9px 25px 10px',
   userSelect: 'none',
 
@@ -18,7 +19,7 @@ const Container = styled.div(({ isDisabled }) => ({
 }));
 
 const StyledSpinner = styled(Spinner)(({ title }) => ({
-  margin: `0 ${Math.floor(title.length * 5 / 2)}px`,
+  margin: `0 ${Math.floor((title.length * 5) / 2)}px`,
 }));
 
 const BlueContainer = styled(Container)(({ theme: { colors } }) => ({
@@ -48,7 +49,7 @@ const GreyContainer = styled(Container)(({ theme: { colors } }) => ({
   color: colors.grey3,
 }));
 
-const getButtonType = (type) => {
+const getButtonType = type => {
   if (type === 'light') return LightContainer;
   if (type === 'grey') return GreyContainer;
 
