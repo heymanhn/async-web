@@ -30,14 +30,16 @@ const StyledTitle = styled(Title)(({ theme: { mq } }) => ({
 }));
 
 const StyledDescription = styled(Description)(({ theme: { mq } }) => ({
+  marginBottom: '30px',
+
   [mq('tabletUp')]: {
     maxWidth: '580px',
     textAlign: 'center',
   },
 }));
 
-const LargeGraphic = ({ icon, title, description, image }) => (
-  <Container>
+const LargeGraphic = ({ icon, title, description, image, ...props }) => (
+  <Container {...props}>
     {icon && <TitleIcon icon={icon} />}
     <StyledTitle>{title}</StyledTitle>
     <StyledDescription>{description}</StyledDescription>

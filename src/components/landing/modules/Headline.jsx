@@ -18,9 +18,9 @@ const Container = styled.div(({ theme: { bgColors, mq } }) => ({
   },
 }));
 
-const Headline = ({ title, description }) => {
+const Headline = ({ title, description, ...props }) => {
   return (
-    <Container>
+    <Container {...props}>
       <Title>{title}</Title>
       <Description>{description}</Description>
       <EmailCaptureForm />

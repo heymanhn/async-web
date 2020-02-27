@@ -28,7 +28,7 @@ const Details = styled.div({
 const Title = styled.span(({ theme: { textColors } }) => ({
   color: textColors.main,
   fontWeight: 600,
-  marginRight: '2px',
+  marginRight: '4px',
 }));
 
 const Description = styled.span(({ theme: { textColors } }) => ({

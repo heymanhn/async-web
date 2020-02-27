@@ -50,7 +50,6 @@ export const SmallDescription = styled.div(({ theme: { textColors } }) => ({
   color: textColors.alt,
   fontSize: '18px',
   lineHeight: '28px',
-  marginBottom: '30px',
 }));
 
 export const TitleIcon = styled(FontAwesomeIcon)(
