@@ -6,6 +6,7 @@ import {
   SmallTitle as Title,
   SmallDescription as Description,
   TitleIcon,
+  Image,
 } from './styles';
 
 const Container = styled.div(({ theme: { bgColors, mq } }) => ({
@@ -21,25 +22,26 @@ const Container = styled.div(({ theme: { bgColors, mq } }) => ({
   },
 }));
 
-const StyledImage = styled.img(({ theme: { mq } }) => ({
-  boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.1)',
-  maxWidth: 'calc(100% + 60px)',
-  marginLeft: '-30px',
-  marginRight: '-30px',
-
+const StyledTitle = styled(Title)(({ theme: { mq } }) => ({
   [mq('tabletUp')]: {
-    marginLeft: '30px',
-    marginRight: '30px',
-    maxWidth: 'calc(100% - 60px)',
+    maxWidth: '520px',
+    textAlign: 'center',
+  },
+}));
+
+const StyledDescription = styled(Description)(({ theme: { mq } }) => ({
+  [mq('tabletUp')]: {
+    maxWidth: '580px',
+    textAlign: 'center',
   },
 }));
 
 const LargeGraphic = ({ icon, title, description, image }) => (
   <Container>
     {icon && <TitleIcon icon={icon} />}
-    <Title>{title}</Title>
-    <Description>{description}</Description>
-    <StyledImage srcSet={`${image} 2x`} />
+    <StyledTitle>{title}</StyledTitle>
+    <StyledDescription>{description}</StyledDescription>
+    <Image srcSet={`${image} 2x`} />
   </Container>
 );
 

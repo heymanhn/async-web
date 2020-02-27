@@ -34,9 +34,9 @@ const LandingPage = () => {
       <ThemeProvider theme={themes[firstMode]}>
         <NavBar />
       </ThemeProvider>
-      {contentsWithModules.map(({ Module, mode, content }, i) => (
-        <ThemeProvider key={i} theme={themes[mode]}>
-          <Module {...content} />
+      {contentsWithModules.map(({ Module, content, ...fwdProps }, i) => (
+        <ThemeProvider key={i} theme={themes[fwdProps.mode]}>
+          <Module {...content} {...fwdProps} />
         </ThemeProvider>
       ))}
       <ThemeProvider theme={themes[lastMode]}>

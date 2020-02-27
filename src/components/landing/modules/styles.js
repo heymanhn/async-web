@@ -41,23 +41,16 @@ export const SmallTitle = styled.div(({ theme: { mq, textColors } }) => ({
   [mq('tabletUp')]: {
     fontSize: '36px',
     lineHeight: '44px',
-    maxWidth: '520px',
-    textAlign: 'center',
   },
 }));
 
 // Not specifying a letter-spacing for this one. It looks too compressed
 // with the recommended value.
-export const SmallDescription = styled.div(({ theme: { mq, textColors } }) => ({
+export const SmallDescription = styled.div(({ theme: { textColors } }) => ({
   color: textColors.alt,
   fontSize: '18px',
   lineHeight: '28px',
   marginBottom: '30px',
-
-  [mq('tabletUp')]: {
-    maxWidth: '580px',
-    textAlign: 'center',
-  },
 }));
 
 export const TitleIcon = styled(FontAwesomeIcon)(
@@ -71,3 +64,14 @@ export const TitleIcon = styled(FontAwesomeIcon)(
     },
   })
 );
+
+export const Image = styled.img(({ theme: { mq } }) => ({
+  boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.1)',
+  maxWidth: '100%',
+
+  [mq('tabletUp')]: {
+    marginLeft: '30px',
+    marginRight: '30px',
+    maxWidth: 'calc(100% - 60px)',
+  },
+}));
