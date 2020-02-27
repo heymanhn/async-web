@@ -37,6 +37,39 @@ const moduleList = [
       image: sideGraphic,
     },
   },
+  {
+    type: SIDE_GRAPHIC,
+    side: 'left',
+    mode: 'dark',
+    content: {
+      icon: 'list-ul',
+      title: 'Super Feature Three',
+      description:
+        'Take a look at this beautiful screenshot of the product. We’re describing how it works right here.',
+      image: sideGraphic,
+      features: [
+        {
+          icon: 'arrow-circle-right',
+          title: 'List item 1',
+          description:
+            'Some text followed by some not so bold text. Anything can be here.',
+          lineBreak: true,
+        },
+        {
+          icon: 'arrow-circle-right',
+          title: 'List item 2.',
+          description:
+            'Some text followed by some not so bold text. But it’s inline.',
+        },
+        {
+          icon: 'arrow-circle-right',
+          title: 'List item 3.',
+          description:
+            'Some text followed by some not so bold text. Also inline.',
+        },
+      ],
+    },
+  },
   // {
   //   type: REASONS,
   //   mode: 'dark',

@@ -1,3 +1,4 @@
+/* eslint react/no-array-index-key: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
@@ -8,6 +9,7 @@ import {
   TitleIcon,
   Image,
 } from './styles';
+import ListItem from './ListItem';
 
 const Container = styled.div(({ theme: { bgColors, mq } }) => ({
   display: 'flex',
@@ -33,7 +35,7 @@ const ContentContainer = styled.div(({ theme: { mq } }) => ({
   },
 }));
 
-const SideGraphic = ({ icon, title, description, image, side }) => {
+const SideGraphic = ({ icon, title, description, image, features, side }) => {
   const imageComponent = <Image srcSet={`${image} 2x`} />;
 
   return (
@@ -43,6 +45,9 @@ const SideGraphic = ({ icon, title, description, image, side }) => {
         {icon && <TitleIcon icon={icon} />}
         <Title>{title}</Title>
         <Description>{description}</Description>
+        {features.map((feature, i) => (
+          <ListItem key={i} {...feature} />
+        ))}
       </ContentContainer>
       {side === 'right' && imageComponent}
     </Container>
@@ -54,11 +59,13 @@ SideGraphic.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
+  features: PropTypes.array,
   side: PropTypes.oneOf(['left', 'right']).isRequired,
 };
 
 SideGraphic.defaultProps = {
   icon: null,
+  features: [],
 };
 
 export default SideGraphic;
