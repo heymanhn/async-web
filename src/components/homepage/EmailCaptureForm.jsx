@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+/* eslint no-alert: 0 */
+import React, { useState } from 'react';
+import isHotkey from 'is-hotkey';
 import Airtable from 'airtable';
 import styled from '@emotion/styled';
 
 import Button from 'components/shared/Button';
 
-const AIRTABLE_API_KEY = 'key3qqel4AvZJG4P7';
-const AIRTABLE_BASE_KEY = 'appKgutXo3juylRwd';
+const { REACT_APP_AIRTABLE_API_KEY, REACT_APP_AIRTABLE_BASE_KEY } = process.env;
 
 const Container = styled.div(({ theme: { mq } }) => ({
   display: 'flex',
   flexDirection: 'column',
-  flexWrap: 'wrap',
   alignItems: 'center',
 
   [mq('tabletUp')]: {
@@ -18,62 +18,59 @@ const Container = styled.div(({ theme: { mq } }) => ({
   },
 }));
 
-const FormField = styled.input(({ theme: { colors, mq } }) => ({
-  background: colors.white,
+const StyledInput = styled.input(({ theme: { colors, mq } }) => ({
+  background: colors.bgGrey,
   border: `1px solid ${colors.formBorderGrey}`,
-  borderRadius: '3px',
+  borderRadius: '5px',
   color: colors.mainText,
-  marginBottom: '20px',
-  padding: '8px 15px',
-  textAlign: 'left',
-  fontSize: '16px',
+  marginBottom: '15px',
+  padding: '12px 20px 13px',
+  fontSize: '14px',
+  letterSpacing: '-0.006em',
   width: '100%',
   outline: 'none',
 
   '::placeholder': {
-    color: colors.formPlaceholderGrey,
-    fontSize: '16px',
+    color: colors.grey4,
+    fontSize: '14px',
+    letterSpacing: '-0.006em',
     opacity: 1, // Firefox
   },
 
   [mq('tabletUp')]: {
-    maxWidth: '270px',
+    width: '300px',
 
-    marginRight: '20px',
-    marginBottom: '10px',
+    marginRight: '15px',
+    marginBottom: 0,
   },
 }));
 
-const StyledButton = styled(Button)({
-  marginBottom: '10px',
-});
+const StyledButton = styled(Button)(({ theme: { mq, colors } }) => ({
+  background: colors.grey1,
+  color: colors.white,
+  fontWeight: 500,
+  paddingTop: '12px',
+  paddingBottom: '13px',
+  textAlign: 'center',
+  width: '100%',
 
-export default class EmailCaptureForm extends Component {
-  constructor(data) {
-    super(data);
+  [mq('tabletUp')]: {
+    paddingLeft: '20px',
+    paddingRight: '20px',
+    width: 'auto',
+  },
+}));
 
-    this.state = { email: '' };
-    this.handleChangeEmail = this.handleChangeEmail.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChangeEmail(event) {
-    this.setState({ email: event.target.value });
-  }
-
-  handleKeyPress(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.handleSubmit();
-    }
-  }
+const EmailCaptureForm = props => {
+  const [email, setEmail] = useState('');
+  const handleChangeEmail = event => setEmail(event.target.value);
 
   // Send email address to Airtable
   // TODO(HN): Custom success/error message UI
-  handleSubmit() {
-    const { email } = this.state;
-    const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_KEY);
+  const handleSubmit = () => {
+    const base = new Airtable({ apiKey: REACT_APP_AIRTABLE_API_KEY }).base(
+      REACT_APP_AIRTABLE_BASE_KEY
+    );
 
     // Scrappy way of email validation
     if (!email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) {
@@ -81,34 +78,42 @@ export default class EmailCaptureForm extends Component {
       return;
     }
 
-    base('Leads').create({
-      Email: email,
-      Source: 'Company Website - top email form',
-    }, (err) => {
-      if (err) {
-        alert('Sorry, an error occurred');
-        return;
+    base('Leads').create(
+      {
+        Email: email,
+        Source: 'Roval Website - email form',
+      },
+      err => {
+        if (err) {
+          alert('Sorry, an error occurred');
+          return;
+        }
+
+        alert(`${email} added to the early access list. Stay tuned!`);
+        setEmail('');
       }
-
-      alert(`${email} added to the waitlist. Stay tuned!`);
-      this.setState({ email: '' });
-    });
-  }
-
-  render() {
-    const { email } = this.state;
-
-    return (
-      <Container>
-        <FormField
-          onChange={this.handleChangeEmail}
-          onKeyPress={this.handleKeyPress}
-          placeholder="Enter your email"
-          type="email"
-          value={email}
-        />
-        <StyledButton onClick={this.handleSubmit} title="Request Access" />
-      </Container>
     );
-  }
-}
+  };
+
+  const handleKeyDown = event => {
+    if (isHotkey('Enter', event)) {
+      event.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  return (
+    <Container {...props}>
+      <StyledInput
+        onChange={handleChangeEmail}
+        onKeyDown={handleKeyDown}
+        placeholder="Enter your work email"
+        type="email"
+        value={email}
+      />
+      <StyledButton onClick={handleSubmit} title="Request early access" />
+    </Container>
+  );
+};
+
+export default EmailCaptureForm;

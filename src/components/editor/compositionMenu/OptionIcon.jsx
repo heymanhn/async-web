@@ -13,7 +13,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 const OptionIcon = ({ icon }) => <StyledIcon icon={icon} />;
 
 OptionIcon.propTypes = {
-  icon: PropTypes.object.isRequired,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
 };
 
 export default OptionIcon;

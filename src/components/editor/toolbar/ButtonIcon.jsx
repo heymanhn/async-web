@@ -20,7 +20,7 @@ const ButtonIcon = ({ icon, isActive }) => (
 );
 
 ButtonIcon.propTypes = {
-  icon: PropTypes.object.isRequired,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
   isActive: PropTypes.bool.isRequired,
 };
 

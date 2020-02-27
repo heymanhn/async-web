@@ -1,13 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useSlate } from 'slate-react';
-import {
-  faBold,
-  faItalic,
-  faListUl,
-  faCode,
-  faQuoteRight,
-} from '@fortawesome/free-solid-svg-icons';
 
 import Editor from '../Editor';
 import {
@@ -44,11 +37,11 @@ function MarkButton({ type, icon, ...props }) {
 
 MarkButton.propTypes = {
   type: PropTypes.string.isRequired,
-  icon: PropTypes.object.isRequired,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
 };
 
-export const BoldButton = () => <MarkButton type={BOLD} icon={faBold} />;
-export const ItalicButton = () => <MarkButton type={ITALIC} icon={faItalic} />;
+export const BoldButton = () => <MarkButton type={BOLD} icon="bold" />;
+export const ItalicButton = () => <MarkButton type={ITALIC} icon="italic" />;
 
 /*
  * Base button for blocks
@@ -71,7 +64,7 @@ function BlockButton({ type, icon, CustomIconElement, ...props }) {
 
 BlockButton.propTypes = {
   type: PropTypes.string.isRequired,
-  icon: PropTypes.object,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   CustomIconElement: PropTypes.func,
 };
 
@@ -81,10 +74,10 @@ BlockButton.defaultProps = {
 };
 
 export const CodeBlockButton = () => (
-  <BlockButton type={CODE_BLOCK} icon={faCode} />
+  <BlockButton type={CODE_BLOCK} icon="code" />
 );
 export const BlockQuoteButton = () => (
-  <BlockButton type={BLOCK_QUOTE} icon={faQuoteRight} />
+  <BlockButton type={BLOCK_QUOTE} icon="quote-right" />
 );
 
 /*
@@ -116,5 +109,5 @@ export const MediumFontButton = () => <HeadingButton type={MEDIUM_FONT} />;
  */
 
 export const BulletedListButton = () => (
-  <BlockButton type={BULLETED_LIST} icon={faListUl} />
+  <BlockButton type={BULLETED_LIST} icon="list-ul" />
 );
