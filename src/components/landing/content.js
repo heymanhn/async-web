@@ -1,6 +1,12 @@
 import largeGraphic from 'images/roval-screenshot-1.png';
 import sideGraphic from 'images/roval-screenshot-2.png';
-import { HEADLINE, LARGE_GRAPHIC, SIDE_GRAPHIC, REASONS } from './modules';
+import {
+  HEADLINE,
+  LARGE_GRAPHIC,
+  SIDE_GRAPHIC,
+  REASONS,
+  EMAIL_CAPTURE,
+} from './modules';
 
 const DEFAULT_PROPERTIES = {
   mode: 'light',
@@ -112,6 +118,15 @@ const moduleList = [
             'Some text followed by some not so bold text. Also inline.',
         },
       ],
+    },
+  },
+  {
+    type: EMAIL_CAPTURE,
+    mode: 'dark',
+    content: {
+      title: 'Ready to give it a spin?',
+      description:
+        'Roval is in private beta right now. But happy to give you some access if you’re interested. Let us know.',
     },
   },
 ];

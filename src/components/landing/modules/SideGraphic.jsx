@@ -70,7 +70,7 @@ const SideGraphic = ({
         {icon && <TitleIcon icon={icon} />}
         <Title>{title}</Title>
         <Description>{description}</Description>
-        {features.length && (
+        {!!features.length && (
           <List>
             {features.map((feature, i) => (
               <ListItem key={i} {...feature} />
