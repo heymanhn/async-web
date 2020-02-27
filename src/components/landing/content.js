@@ -18,6 +18,7 @@ const moduleList = [
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
+      icon: 'comments-alt',
       title: 'Super Feature One',
       description:
         'This feature kicks the competition out of the park. Once you use it, you won’t be able to turn back. We guarantee.',

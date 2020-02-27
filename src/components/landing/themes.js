@@ -30,6 +30,7 @@ const themes = {
         sub: colors.grey5,
         alt: colors.grey4,
       },
+      accentColor: colors.blue,
     };
   },
 };
