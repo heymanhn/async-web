@@ -39,7 +39,7 @@ const StyledInput = styled.input(({ theme: { colors, mq } }) => ({
   },
 
   [mq('tabletUp')]: {
-    maxWidth: '300px',
+    width: '300px',
 
     marginRight: '15px',
     marginBottom: 0,

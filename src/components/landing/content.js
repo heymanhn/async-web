@@ -1,4 +1,5 @@
-import { HEADLINE } from './modules';
+import largeGraphic from 'images/roval-screenshot-1.png';
+import { HEADLINE, LARGE_GRAPHIC } from './modules';
 
 const DEFAULT_PROPERTIES = {
   mode: 'light',
@@ -13,20 +14,20 @@ const moduleList = [
         'Roval is an app that does something great. Everyone should use it. The description might exceed one line. That’s fine.',
     },
   },
-  // {
-  //   type: LARGE_GRAPHIC,
-  //   mode: 'dark',
-  //   contents: {
-  //     title: 'Super Feature One',
-  //     description:
-  //       'This feature kicks the competition out of the park. Once you use it, you won’t be able to turn back. We guarantee.',
-  //     imageUrl: 'images/roval-screenshot-1.png',
-  //   },
-  // },
+  {
+    type: LARGE_GRAPHIC,
+    mode: 'dark',
+    content: {
+      title: 'Super Feature One',
+      description:
+        'This feature kicks the competition out of the park. Once you use it, you won’t be able to turn back. We guarantee.',
+      image: largeGraphic,
+    },
+  },
   // {
   //   type: REASONS,
   //   mode: 'dark',
-  //   contents: {
+  //   content: {
   //     title: 'Super Feature One',
   //     description:
   //       'This feature kicks the competition out of the park. Once you use it, you won’t be able to turn back. We guarantee.',
