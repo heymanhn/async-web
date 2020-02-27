@@ -18,12 +18,20 @@ const Container = styled.div(({ theme: { bgColors, mq } }) => ({
   },
 }));
 
+const StyledEmailCaptureForm = styled(EmailCaptureForm)(
+  ({ theme: { mq } }) => ({
+    [mq('tabletUp')]: {
+      justifyContent: 'center',
+    },
+  })
+);
+
 const Headline = ({ title, description, ...props }) => {
   return (
     <Container {...props}>
       <Title>{title}</Title>
       <Description>{description}</Description>
-      <EmailCaptureForm />
+      <StyledEmailCaptureForm />
     </Container>
   );
 };

@@ -15,7 +15,6 @@ const Container = styled.div(({ theme: { mq } }) => ({
 
   [mq('tabletUp')]: {
     flexDirection: 'row',
-    justifyContent: 'center',
   },
 }));
 
@@ -82,7 +81,7 @@ const EmailCaptureForm = props => {
     base('Leads').create(
       {
         Email: email,
-        Source: 'Company Website - top email form',
+        Source: 'Roval Website - email form',
       },
       err => {
         if (err) {
@@ -108,7 +107,7 @@ const EmailCaptureForm = props => {
       <StyledInput
         onChange={handleChangeEmail}
         onKeyDown={handleKeyDown}
-        placeholder="Enter your email"
+        placeholder="Enter your work email"
         type="email"
         value={email}
       />

@@ -6,13 +6,21 @@ import EmailCaptureForm from 'components/homepage/EmailCaptureForm';
 import { SmallTitle as Title, SmallDescription as Description } from './styles';
 
 const Container = styled.div(({ theme: { bgColors, mq } }) => ({
+  display: 'flex',
+  justifyContent: 'center',
   background: bgColors.main,
   padding: '60px 30px',
+
+  [mq('tabletUp')]: {
+    padding: '80px 30px',
+  },
+}));
+
+const InnerContainer = styled.div(({ theme: { mq } }) => ({
   width: '100%',
 
   [mq('tabletUp')]: {
     maxWidth: '600px',
-    padding: '80px 30px',
   },
 }));
 
@@ -21,15 +29,17 @@ const StyledTitle = styled(Title)({
 });
 
 const StyledDescription = styled(Description)({
-  marginBottom: '30px',
+  marginBottom: '25px',
 });
 
 const EmailCapture = ({ title, description, ...props }) => {
   return (
     <Container {...props}>
-      <StyledTitle>{title}</StyledTitle>
-      <StyledDescription>{description}</StyledDescription>
-      <EmailCaptureForm />
+      <InnerContainer>
+        <StyledTitle>{title}</StyledTitle>
+        <StyledDescription>{description}</StyledDescription>
+        <EmailCaptureForm />
+      </InnerContainer>
     </Container>
   );
 };
