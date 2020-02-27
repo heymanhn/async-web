@@ -37,7 +37,7 @@ function MarkButton({ type, icon, ...props }) {
 
 MarkButton.propTypes = {
   type: PropTypes.string.isRequired,
-  icon: PropTypes.object.isRequired,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
 };
 
 export const BoldButton = () => <MarkButton type={BOLD} icon="bold" />;
@@ -64,7 +64,7 @@ function BlockButton({ type, icon, CustomIconElement, ...props }) {
 
 BlockButton.propTypes = {
   type: PropTypes.string.isRequired,
-  icon: PropTypes.object,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   CustomIconElement: PropTypes.func,
 };
 

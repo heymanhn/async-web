@@ -63,7 +63,7 @@ const Reasons = ({ icon, title, description, reasons, ...props }) => (
 );
 
 Reasons.propTypes = {
-  icon: PropTypes.string,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   reasons: PropTypes.array,

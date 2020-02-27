@@ -53,15 +53,9 @@ const GridItem = ({ icon, title, description, ...props }) => {
 };
 
 GridItem.propTypes = {
-  icon: PropTypes.string,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  lineBreak: PropTypes.bool,
-};
-
-GridItem.defaultProps = {
-  icon: 'arrow-circle-right',
-  lineBreak: false,
 };
 
 export default GridItem;

@@ -48,7 +48,7 @@ const LargeGraphic = ({ icon, title, description, image, ...props }) => (
 );
 
 LargeGraphic.propTypes = {
-  icon: PropTypes.string,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,

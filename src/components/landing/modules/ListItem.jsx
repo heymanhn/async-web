@@ -49,7 +49,7 @@ const ListItem = ({ icon, title, description, lineBreak, ...props }) => {
 };
 
 ListItem.propTypes = {
-  icon: PropTypes.string,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   lineBreak: PropTypes.bool,
