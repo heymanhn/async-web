@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Transforms } from 'slate';
 import { useSlate } from 'slate-react';
-import { faCommentPlus } from '@fortawesome/pro-solid-svg-icons';
 
 import { DocumentContext } from 'utils/contexts';
 
@@ -23,7 +22,7 @@ const InlineDiscussionButton = ({ content, ...props }) => {
 
   return (
     <ToolbarButton handleClick={handleClick} {...props}>
-      <ButtonIcon icon={faCommentPlus} isActive={false} />
+      <ButtonIcon icon="comment-plus" isActive={false} />
     </ToolbarButton>
   );
 };

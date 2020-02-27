@@ -2,7 +2,6 @@
 import React, { useCallback, useState } from 'react';
 import { useMutation } from 'react-apollo';
 import { useDropzone } from 'react-dropzone';
-import { faImage } from '@fortawesome/free-solid-svg-icons';
 import styled from '@emotion/styled';
 
 import uploadFileMutation from 'graphql/mutations/uploadFile';
@@ -84,7 +83,7 @@ export function ImageOption({ editor, ...props }) {
     open();
   }
 
-  const icon = <OptionIcon icon={faImage} />;
+  const icon = <OptionIcon icon="image" />;
   return (
     <>
       <input {...getInputProps()} />

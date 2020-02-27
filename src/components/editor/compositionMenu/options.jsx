@@ -1,14 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useSlate } from 'slate-react';
-import { faHorizontalRule, faText } from '@fortawesome/pro-solid-svg-icons';
-import {
-  faCode,
-  faListOl,
-  faListUl,
-  faQuoteRight,
-  faTasks,
-} from '@fortawesome/free-solid-svg-icons';
 
 import {
   DEFAULT_ELEMENT_TYPE,
@@ -47,7 +39,7 @@ export const TextOption = props => {
   return (
     <MenuOption
       handleInvoke={handleTextOption}
-      icon={<OptionIcon icon={faText} />}
+      icon={<OptionIcon icon="text" />}
       title={TEXT_OPTION_TITLE}
       {...props}
     />
@@ -96,9 +88,9 @@ export const MediumTitleOption = props => (
  * Lists
  */
 const LIST_ICONS = {};
-LIST_ICONS[BULLETED_LIST] = faListUl;
-LIST_ICONS[NUMBERED_LIST] = faListOl;
-LIST_ICONS[CHECKLIST] = faTasks;
+LIST_ICONS[BULLETED_LIST] = 'list-ul';
+LIST_ICONS[NUMBERED_LIST] = 'list-ol';
+LIST_ICONS[CHECKLIST] = 'tasks';
 
 const LIST_OPTION_TITLES = {};
 LIST_OPTION_TITLES[BULLETED_LIST] = BULLETED_LIST_OPTION_TITLE;
@@ -147,7 +139,7 @@ export const CodeBlockOption = props => {
   return (
     <MenuOption
       handleInvoke={handleCodeBlockOption}
-      icon={<OptionIcon icon={faCode} />}
+      icon={<OptionIcon icon="code" />}
       title={CODE_BLOCK_OPTION_TITLE}
       {...props}
     />
@@ -165,7 +157,7 @@ export const BlockQuoteOption = props => {
   return (
     <MenuOption
       handleInvoke={handleBlockQuoteOption}
-      icon={<OptionIcon icon={faQuoteRight} />}
+      icon={<OptionIcon icon="quote-right" />}
       title={BLOCK_QUOTE_OPTION_TITLE}
       {...props}
     />
@@ -185,7 +177,7 @@ export const SectionBreakOption = props => {
   return (
     <MenuOption
       handleInvoke={handleSectionBreakOption}
-      icon={<OptionIcon icon={faHorizontalRule} />}
+      icon={<OptionIcon icon="horizontal-rule" />}
       title={SECTION_BREAK_OPTION_TITLE}
       {...props}
     />
