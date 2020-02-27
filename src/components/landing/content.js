@@ -1,6 +1,6 @@
 import largeGraphic from 'images/roval-screenshot-1.png';
 import sideGraphic from 'images/roval-screenshot-2.png';
-import { HEADLINE, LARGE_GRAPHIC, SIDE_GRAPHIC } from './modules';
+import { HEADLINE, LARGE_GRAPHIC, SIDE_GRAPHIC, REASONS } from './modules';
 
 const DEFAULT_PROPERTIES = {
   mode: 'light',
@@ -38,9 +38,53 @@ const moduleList = [
     },
   },
   {
+    type: REASONS,
+    mode: 'dark',
+    content: {
+      icon: 'bell',
+      title: 'Super Reasons',
+      description:
+        'Here are a number of reasons why this next set of features is up your alley. Read each of them carefully.',
+      reasons: [
+        {
+          icon: ['fal', 'arrow-circle-right'],
+          title: 'Reason 1',
+          description: 'Explanation one. This is the reason why it’s so great.',
+        },
+        {
+          icon: 'terminal',
+          title: 'Reason 2',
+          description: 'Explanation two. Fits at most two lines, so be terse.',
+        },
+        {
+          icon: 'comments-alt',
+          title: 'Reason 3',
+          description:
+            'Explanation three. One icon, one reason, one explanation.',
+        },
+        {
+          icon: ['fal', 'arrow-circle-right'],
+          title: 'Reason 4',
+          description:
+            'Explanation four. This is the reason why it’s so great.',
+        },
+        {
+          icon: 'terminal',
+          title: 'Reason 5',
+          description: 'Explanation five. Fits at most two lines, so be terse.',
+        },
+        {
+          icon: 'comments-alt',
+          title: 'Reason 6',
+          description:
+            'Explanation six. One icon, one reason, one explanation.',
+        },
+      ],
+    },
+  },
+  {
     type: SIDE_GRAPHIC,
     side: 'left',
-    mode: 'dark',
     content: {
       icon: 'list-ul',
       title: 'Super Feature Three',
@@ -70,16 +114,6 @@ const moduleList = [
       ],
     },
   },
-  // {
-  //   type: REASONS,
-  //   mode: 'dark',
-  //   content: {
-  //     title: 'Super Feature One',
-  //     description:
-  //       'This feature kicks the competition out of the park. Once you use it, you won’t be able to turn back. We guarantee.',
-  //     imageUrl: 'images/roval-screenshot-1.png',
-  //   },
-  // },
 ];
 
 export default moduleList.map(m => ({ ...DEFAULT_PROPERTIES, ...m }));
