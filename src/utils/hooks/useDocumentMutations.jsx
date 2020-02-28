@@ -9,13 +9,13 @@ import { track } from 'utils/analytics';
 import { toPlainText } from 'components/editor/utils';
 
 const useDocumentMutations = (editor = null) => {
-  const { documentId } = useContext(DocumentContext);
+  const { documentId, afterUpdate } = useContext(DocumentContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [createDocument] = useMutation(createDocumentMutation);
   const [updateDocument] = useMutation(updateDocumentMutation);
 
-  async function handleCreate() {
+  const handleCreate = async () => {
     setIsSubmitting(true);
 
     const { data } = await createDocument({ variables: { input: {} } });
@@ -29,10 +29,11 @@ const useDocumentMutations = (editor = null) => {
     }
 
     return Promise.reject(new Error('Failed to create new document'));
-  }
-  async function handleUpdate() {
+  };
+
+  const handleUpdate = async () => {
     const { children } = editor;
-    const { data: updateDocumentBodyData } = await updateDocument({
+    const { data } = await updateDocument({
       variables: {
         documentId,
         input: {
@@ -45,18 +46,34 @@ const useDocumentMutations = (editor = null) => {
       },
     });
 
-    if (updateDocumentBodyData.updateDocument) {
+    if (data.updateDocument) {
+      afterUpdate();
       return Promise.resolve();
     }
 
     return Promise.reject(new Error('Failed to update document'));
-  }
+  };
+
+  const handleUpdateTitle = async title => {
+    const { data } = await updateDocument({
+      variables: { documentId, input: { title } },
+    });
+
+    if (data.updateDocument) {
+      track('Document title updated', { documentId });
+      afterUpdate();
+      return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('Failed to update document title'));
+  };
 
   return {
     isSubmitting,
 
     handleCreate,
     handleUpdate,
+    handleUpdateTitle,
   };
 };
 

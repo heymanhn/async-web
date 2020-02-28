@@ -23,7 +23,8 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
 }));
 
 const Document = () => {
-  const { documentId } = useContext(DocumentContext);
+  const documentContext = useContext(DocumentContext);
+  const { documentId } = documentContext;
   const { markAsRead } = useViewedReaction();
 
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
@@ -56,17 +57,19 @@ const Document = () => {
   if (!updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
   const setUpdatedTimestampToNow = () => setUpdatedTimestamp(Date.now());
 
+  // Extend the Document Context. We want to keep the updatedTimestamp defined
+  // here instead of in the parent component.
+  const value = {
+    ...documentContext,
+    afterUpdate: setUpdatedTimestampToNow,
+  };
+
   return (
     <Container>
-      <TitleComposer
-        afterUpdate={setUpdatedTimestampToNow}
-        autoFocus={!title && !content}
-        initialTitle={title}
-      />
-      <DocumentComposer
-        afterUpdate={setUpdatedTimestampToNow}
-        initialContent={content}
-      />
+      <DocumentContext.Provider value={value}>
+        <TitleComposer autoFocus={!title && !content} initialTitle={title} />
+        <DocumentComposer initialContent={content} />
+      </DocumentContext.Provider>
       {updatedTimestamp && (
         <LastUpdatedIndicator timestamp={updatedTimestamp} />
       )}
