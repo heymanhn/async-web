@@ -193,6 +193,13 @@ const toggleMark = (editor, type, source) => {
   }
 };
 
+const removeAllMarks = editor => {
+  const marks = SlateEditor.marks(editor);
+  const markTypes = Object.keys(marks);
+
+  markTypes.forEach(type => SlateEditor.removeMark(editor, type));
+}
+
 const wrapInline = (editor, type, range, source, props = {}) => {
   const isActive = isElementActive(editor, type, range);
   const options = {};
@@ -304,6 +311,7 @@ const Editor = {
   // Transforms
   toggleBlock,
   toggleMark,
+  removeAllMarks,
   wrapInline,
   insertVoid,
   clearBlock,

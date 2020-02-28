@@ -53,7 +53,10 @@ const withCustomKeyboardActions = oldEditor => {
     if (Editor.isEmptyNodeInWrappedBlock(editor))
       return handleExitWrappedBlock(editor);
 
-    return insertBreak();
+    insertBreak();
+    if (Editor.isEmptyParagraph(editor)) Editor.removeAllMarks(editor);
+
+    return null;
   };
 
   return editor;

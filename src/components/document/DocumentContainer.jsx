@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
@@ -26,6 +26,10 @@ const DocumentContainer = ({
     setState(old => ({ ...old, deletedDiscussionId: id }));
   const resetInlineTopic = () =>
     setState(old => ({ ...old, inlineDiscussionTopic: null }));
+
+  useEffect(() => {
+    setState(old => ({ ...old, viewMode: initialViewMode }));
+  }, [initialViewMode]);
 
   const handleShowModal = (discussionId, selection, content) => {
     const newState = {
