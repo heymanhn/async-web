@@ -1,27 +1,8 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation } from 'react-apollo';
-import { createEditor } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
-import documentQuery from 'graphql/queries/document';
-import updateDocumentMutation from 'graphql/mutations/updateDocument';
-import { track } from 'utils/analytics';
-import { DocumentContext } from 'utils/contexts';
-import useContentState from 'utils/hooks/useContentState';
-
-const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
-  color: colors.mainText,
-  fontSize: '42px',
-  fontWeight: 600,
-  letterSpacing: '-0.022em',
-  lineHeight: '54px',
-  marginTop: '60px',
-  marginBottom: '15px',
-  width: '100%',
-  outline: 'none',
-}));
+import useDocumentMutations from 'utils/hooks/useDocumentMutations';
 
 /*
  * SLATE UPGRADE TODO:
@@ -30,44 +11,77 @@ const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
  * - Pressing Enter changes focus to the beginning of the content
  */
 
-const TitleComposer = ({ afterUpdate, initialTitle, ...props }) => {
-  const { documentId } = useContext(DocumentContext);
-  const titleEditor = useMemo(() => withReact(createEditor()), []);
-  const { content: title, ...contentProps } = useContentState(initialTitle, {
-    isJSON: false,
-  });
-  const [updateDocument] = useMutation(updateDocumentMutation);
+const Container = styled.div({
+  display: 'flex',
+  position: 'relative',
+});
 
-  async function handleUpdate() {
-    const { data: updateDocumentTitleData } = await updateDocument({
-      variables: { documentId, input: { title } },
-      refetchQueries: [
-        {
-          query: documentQuery,
-          variables: { documentId, queryParams: {} },
-        },
-      ],
-    });
+const Title = styled.div(({ theme: { colors } }) => ({
+  color: colors.mainText,
+  fontSize: '42px',
+  fontWeight: 600,
+  letterSpacing: '-0.022em',
+  lineHeight: '54px',
+  marginTop: '60px',
+  marginBottom: '15px',
+  outline: 'none',
+  width: '100%',
+}));
 
-    if (updateDocumentTitleData.updateDocument) {
-      track('Document title updated', { documentId });
-      afterUpdate();
+const Placeholder = styled(Title)(({ theme: { colors } }) => ({
+  color: colors.titlePlaceholder,
+  cursor: 'text',
+  position: 'absolute',
+  userSelect: 'none',
+}));
+
+const TitleComposer = ({ initialTitle, ...props }) => {
+  const titleRef = useRef(null);
+  const [showPlaceholder, setShowPlaceholder] = useState(!initialTitle);
+  const { handleUpdateTitle } = useDocumentMutations();
+
+  const handleCheckPlaceholder = event => {
+    event.preventDefault();
+    const { current } = titleRef || {};
+
+    if (current && !!current.innerText === showPlaceholder) {
+      setShowPlaceholder(!showPlaceholder);
     }
-  }
+  };
+
+  const handleSelectTitle = event => {
+    event.preventDefault();
+    const { current } = titleRef || {};
+
+    if (current) current.focus();
+  };
+
+  const handleUpdate = () => {
+    const { current } = titleRef || {};
+    if (!current) return null;
+
+    return handleUpdateTitle(current.innerText);
+  };
 
   return (
-    <Slate editor={titleEditor} {...contentProps}>
-      <TitleEditable
+    <Container>
+      <Title
+        contentEditable
+        ref={titleRef}
+        dangerouslySetInnerHTML={{ __html: initialTitle }}
         onBlur={handleUpdate}
-        placeholder="Untitled Document"
+        onInput={handleCheckPlaceholder}
+        spellCheck={false}
         {...props}
       />
-    </Slate>
+      {showPlaceholder && (
+        <Placeholder onClick={handleSelectTitle}>Untitled Document</Placeholder>
+      )}
+    </Container>
   );
 };
 
 TitleComposer.propTypes = {
-  afterUpdate: PropTypes.func.isRequired,
   initialTitle: PropTypes.string,
 };
 
