@@ -21,10 +21,9 @@ const useContentState = (initialContent, { isJSON = true } = {}) => {
     initialContent ? formatContent(initialContent) : DEFAULT_ELEMENT
   );
 
-  useEffect(() => initialContent && setContent(formatContent(initialContent)), [
-    initialContent,
-    formatContent,
-  ]);
+  useEffect(() => {
+    if (initialContent) setContent(formatContent(initialContent));
+  }, [initialContent, formatContent]);
 
   return {
     content: isJSON ? content : toPlainText(content),
