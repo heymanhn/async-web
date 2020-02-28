@@ -1,5 +1,8 @@
-import largeGraphic from 'images/roval-screenshot-1.png';
-import sideGraphic from 'images/roval-screenshot-2.png';
+import writeClearly from 'images/writeClearly.png';
+import writeDiscuss from 'images/writeDiscuss.png';
+import cmdCenter from 'images/cmdCenter.png';
+import contributeAsync from 'images/contributeAsync.png';
+
 import {
   HEADLINE,
   LARGE_GRAPHIC,
@@ -16,113 +19,138 @@ const moduleList = [
   {
     type: HEADLINE,
     content: {
-      title: 'All your discussions, in one place.',
+      title: 'Discuss ideas and build knowledge together',
       description:
-        'Roval is an app that does something great. Everyone should use it. The description might exceed one line. That’s fine.',
+        'Teams use Roval to drive better decisions and build productive, inclusive, and transparent communication culture.',
     },
   },
   {
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      icon: 'comments-alt',
-      title: 'Super Feature One',
-      description:
-        'This feature kicks the competition out of the park. Once you use it, you won’t be able to turn back. We guarantee.',
-      image: largeGraphic,
+      title: 'Write, discuss, and make decisions, all in one place.',
+      image: writeDiscuss,
     },
   },
   {
     type: SIDE_GRAPHIC,
     side: 'right',
     content: {
-      icon: 'file-alt',
-      title: 'Super Feature Two',
+      icon: 'comments-alt',
+      title: 'Contribute asynchronously',
       description:
-        'Take a look at this beautiful screenshot of the product. We’re describing how it works right here.',
-      image: sideGraphic,
+        'Follow a discussion from start to finish and communicate asynchronously without missing a beat.',
+      image: contributeAsync,
+      features: [
+        {
+          icon: 'arrow-circle-right',
+          title: 'Stop scheduling meetings',
+          description:
+            'Roval makes it easy to provide feedback and follow discussions asynchronously.',
+          lineBreak: true,
+        },
+        {
+          icon: 'arrow-circle-right',
+          title: 'Contribute on your schedule',
+          description:
+            'No pressure to respond immediately. You can take a step back, think about what is being discussed, and follow up with a thoughtful response at a later time.',
+          lineBreak: true,
+        },
+        {
+          icon: 'arrow-circle-right',
+          title: 'Reminders & Notifications',
+          description:
+            'Roval does not demand your immediate attention. Yet, it gently reminds everyone to move the work forward.',
+          lineBreak: true,
+        },
+      ],
+    },
+  },
+  {
+    type: LARGE_GRAPHIC,
+    mode: 'dark',
+    content: {
+      title: 'Write Clearly',
+      description: 'A powerful editor that makes your words stand out.',
+      image: writeClearly,
+    },
+    features: [
+      {
+        icon: 'arrow-circle-right',
+        title: 'Stop scheduling meetings',
+        description:
+          'Roval makes it easy to provide feedback and follow discussions asynchronously.',
+        lineBreak: true,
+      },
+      {
+        icon: 'arrow-circle-right',
+        title: 'Contribute on your schedule',
+        description:
+          'No pressure to respond immediately. You can take a step back, think about what is being discussed, and follow up with a thoughtful response at a later time.',
+        lineBreak: true,
+      },
+      {
+        icon: 'arrow-circle-right',
+        title: 'Reminders & Notifications',
+        description:
+          'Roval does not demand your immediate attention. Yet, it gently reminds everyone to move the work forward.',
+        lineBreak: true,
+      },
+    ],
+  },
+  {
+    type: SIDE_GRAPHIC,
+    side: 'right',
+    content: {
+      icon: 'terminal',
+      title: 'Meet your Command Center',
+      description:
+        'Use ⌘ + K shortcut for everything. Perform any actions or search in seconds with the command center.',
+      image: cmdCenter,
     },
   },
   {
     type: REASONS,
     mode: 'dark',
     content: {
-      icon: 'bell',
-      title: 'Super Reasons',
-      description:
-        'Here are a number of reasons why this next set of features is up your alley. Read each of them carefully.',
+      title: 'Why teams switch to Roval?',
       reasons: [
         {
           icon: ['fal', 'arrow-circle-right'],
-          title: 'Reason 1',
-          description: 'Explanation one. This is the reason why it’s so great.',
+          title: 'Asynchronous',
+          description: 'Contribute asynchronously on your schedule',
         },
         {
-          icon: 'terminal',
-          title: 'Reason 2',
-          description: 'Explanation two. Fits at most two lines, so be terse.',
+          icon: ['fal', 'comments-alt'],
+          title: 'Conversational',
+          description: 'All your decisions and discussions, in one place',
         },
         {
-          icon: 'comments-alt',
-          title: 'Reason 3',
+          icon: ['fal', 'font-case'],
+          title: 'Expressive',
+          description: 'A modern editor that makes your thoughts stand out',
+        },
+        {
+          icon: ['fal', 'infinity'],
+          title: 'Inclusive',
+          description: 'Welcomes inputs from everyone without interruptions',
+        },
+        {
+          icon: ['fal', 'comment-lines'],
+          title: 'Thoughtful',
           description:
-            'Explanation three. One icon, one reason, one explanation.',
+            'Communicate in full thoughts rather than one line at a time',
         },
         {
-          icon: ['fal', 'arrow-circle-right'],
-          title: 'Reason 4',
-          description:
-            'Explanation four. This is the reason why it’s so great.',
-        },
-        {
-          icon: 'terminal',
-          title: 'Reason 5',
-          description: 'Explanation five. Fits at most two lines, so be terse.',
-        },
-        {
-          icon: 'comments-alt',
-          title: 'Reason 6',
-          description:
-            'Explanation six. One icon, one reason, one explanation.',
-        },
-      ],
-    },
-  },
-  {
-    type: SIDE_GRAPHIC,
-    side: 'left',
-    content: {
-      icon: 'list-ul',
-      title: 'Super Feature Three',
-      description:
-        'Take a look at this beautiful screenshot of the product. We’re describing how it works right here.',
-      image: sideGraphic,
-      features: [
-        {
-          icon: 'arrow-circle-right',
-          title: 'List item 1',
-          description:
-            'Some text followed by some not so bold text. Anything can be here.',
-          lineBreak: true,
-        },
-        {
-          icon: 'arrow-circle-right',
-          title: 'List item 2.',
-          description:
-            'Some text followed by some not so bold text. But it’s inline.',
-        },
-        {
-          icon: 'arrow-circle-right',
-          title: 'List item 3.',
-          description:
-            'Some text followed by some not so bold text. Also inline.',
+          icon: ['fal', 'file-search'],
+          title: 'Transparent',
+          description: 'All discussions and decisions are self-documented',
         },
       ],
     },
   },
   {
     type: EMAIL_CAPTURE,
-    mode: 'dark',
     content: {
       title: 'Ready to give it a spin?',
       description:

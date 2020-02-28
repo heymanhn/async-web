@@ -12,7 +12,7 @@ export const LargeTitle = styled.div(({ theme: { mq, textColors } }) => ({
   [mq('tabletUp')]: {
     fontSize: '52px',
     lineHeight: '63px',
-    maxWidth: '520px',
+    maxWidth: '550px',
     textAlign: 'center',
   },
 }));
