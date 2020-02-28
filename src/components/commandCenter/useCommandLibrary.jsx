@@ -3,10 +3,11 @@ import { navigate } from '@reach/router';
 
 import { getLocalAppState } from 'utils/auth';
 import useResourceCreator from 'utils/hooks/useResourceCreator';
-import { ResourceAccessContext } from 'utils/contexts';
+import { ResourceAccessContext, DocumentContext } from 'utils/contexts';
 
 const useCommandLibrary = source => {
   const { setIsModalOpen } = useContext(ResourceAccessContext);
+  const { documentId } = useContext(DocumentContext);
   const { organizationId } = getLocalAppState();
   const { handleCreateResource: handleCreateDocument } = useResourceCreator(
     'documents'
@@ -21,6 +22,14 @@ const useCommandLibrary = source => {
     title: 'New document',
     action: handleCreateDocument,
     shortcut: 'N',
+  };
+
+  const newDocumentDiscussionCommand = {
+    type: 'command',
+    icon: ['fal', 'plus-circle'],
+    title: 'Start a discussion',
+    action: () => navigate(`/documents/${documentId}/discussions`),
+    shortcut: 'D',
   };
 
   const newDiscussionCommand = {
@@ -59,7 +68,7 @@ const useCommandLibrary = source => {
     inbox: [newDocumentCommand, newDiscussionCommand, inviteTeamCommand],
     document: [
       newDocumentCommand,
-      newDiscussionCommand,
+      newDocumentDiscussionCommand,
       invitePeopleCommand,
       goToInboxCommand,
     ],

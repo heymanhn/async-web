@@ -10,10 +10,11 @@ import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussion
 
 import { getLocalUser } from 'utils/auth';
 import { isDiscussionOpen } from 'utils/helpers';
-
-const NEW_MESSAGE_EVENT = 'new_message';
-const DOCUMENT_ACCESS_EVENT = 'document_access';
-const DISCUSSION_ACCESS_EVENT = 'discussion_access';
+import {
+  NEW_MESSAGE_EVENT,
+  DOCUMENT_ACCESS_EVENT,
+  DISCUSSION_ACCESS_EVENT,
+} from 'utils/constants';
 
 const {
   REACT_APP_ASYNC_API_URL,
