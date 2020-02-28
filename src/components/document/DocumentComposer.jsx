@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
@@ -7,11 +7,11 @@ import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
 import { DocumentContext } from 'utils/contexts';
+import useContentState from 'utils/hooks/useContentState';
 import useAutoSave from 'utils/hooks/useAutoSave';
 import useDocumentMutations from 'utils/hooks/useDocumentMutations';
 
 import Editor from 'components/editor/Editor';
-import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
@@ -58,9 +58,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
       )(createEditor()),
     []
   );
-  const [content, setContent] = useState(
-    initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT
-  );
+  const { content, ...contentProps } = useContentState(initialContent);
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
 
@@ -80,7 +78,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   }
 
   return (
-    <Slate editor={contentEditor} value={content} onChange={v => setContent(v)}>
+    <Slate editor={contentEditor} {...contentProps}>
       <DocumentEditable {...props} {...coreEditorProps} />
       <DocumentToolbar content={content} />
       <CompositionMenuButton />

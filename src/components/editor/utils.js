@@ -79,10 +79,10 @@ export const BUFFER_LENGTH = 200;
 /*
  * Helper functions
  */
-export const deserializedTitle = title => [
+export const deserializeString = str => [
   {
     type: DEFAULT_ELEMENT_TYPE,
-    children: [{ text: title }],
+    children: [{ text: str }],
   },
 ];
 

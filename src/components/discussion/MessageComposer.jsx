@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
@@ -7,9 +7,9 @@ import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
 import { MessageContext } from 'utils/contexts';
+import useContentState from 'utils/hooks/useContentState';
 import useDrafts from 'utils/hooks/useDrafts';
 
-import { DEFAULT_ELEMENT } from 'components/editor/utils';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
@@ -52,9 +52,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
       )(createEditor()),
     []
   );
-  const [message, setMessage] = useState(
-    initialMessage ? JSON.parse(initialMessage) : DEFAULT_ELEMENT
-  );
+  const { content: message, ...contentProps } = useContentState(initialMessage);
 
   const { handleCreate, handleUpdate, isSubmitting } = useMessageMutations({
     message,
@@ -65,12 +63,7 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
 
   return (
     <Container mode={mode} {...props}>
-      <Slate
-        editor={messageEditor}
-        value={message}
-        onChange={v => setMessage(v)}
-        key={readOnly}
-      >
+      <Slate editor={messageEditor} key={readOnly} {...contentProps}>
         <MessageEditable readOnly={readOnly} {...coreEditorProps} />
         <MessageToolbar />
         <CompositionMenuButton isModal={isModal} />
