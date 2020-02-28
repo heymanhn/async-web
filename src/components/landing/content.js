@@ -34,7 +34,7 @@ const moduleList = [
   },
   {
     type: SIDE_GRAPHIC,
-    side: 'right',
+    side: 'left',
     content: {
       icon: 'comments-alt',
       title: 'Contribute asynchronously',
