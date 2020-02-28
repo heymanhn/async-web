@@ -28,7 +28,7 @@ const useCommandLibrary = source => {
     type: 'command',
     icon: ['fal', 'plus-circle'],
     title: 'Start a discussion',
-    action: () => window.open(`/documents/${documentId}/discussions`, '_blank'),
+    action: () => navigate(`/documents/${documentId}/discussions`),
     shortcut: 'D',
   };
 

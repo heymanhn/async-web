@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { navigate } from '@reach/router';
 import { useApolloClient } from '@apollo/react-hooks';
 import Pluralize from 'pluralize';
 
@@ -40,7 +41,8 @@ const useCommandCenterSearch = source => {
       icon: resourceType === 'document' ? 'file-alt' : 'comments-alt',
       resource,
 
-      action: () => window.open(`/${Pluralize(resourceType)}/${id}`, '_blank'),
+      // figure out target=_blank later
+      action: () => navigate(`/${Pluralize(resourceType)}/${id}`),
     };
   };
 
