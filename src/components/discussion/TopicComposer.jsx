@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import { createEditor } from 'slate';
@@ -9,8 +9,9 @@ import discussionQuery from 'graphql/queries/discussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import { track } from 'utils/analytics';
 import { DiscussionContext } from 'utils/contexts';
+import useContentState from 'utils/hooks/useContentState';
 
-import { DEFAULT_ELEMENT, toPlainText } from 'components/editor/utils';
+import { toPlainText } from 'components/editor/utils';
 
 const TopicEditable = styled(Editable)(({ theme: { colors } }) => ({
   color: colors.mainText,
@@ -26,9 +27,7 @@ const TopicEditable = styled(Editable)(({ theme: { colors } }) => ({
 const TopicComposer = ({ initialTopic, ...props }) => {
   const { discussionId } = useContext(DiscussionContext);
   const topicEditor = useMemo(() => withReact(createEditor()), []);
-  const [topic, setTopic] = useState(
-    initialTopic ? JSON.parse(initialTopic) : DEFAULT_ELEMENT
-  );
+  const { content, ...contentProps } = useContentState(initialTopic);
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
 
   // BACKEND TODO: Once the Update Discussion API call returns the updated
@@ -40,8 +39,8 @@ const TopicComposer = ({ initialTopic, ...props }) => {
         input: {
           topic: {
             formatter: 'slatejs',
-            text: toPlainText(topic),
-            payload: JSON.stringify(topic),
+            text: toPlainText(content),
+            payload: JSON.stringify(content),
           },
         },
       },
@@ -59,7 +58,7 @@ const TopicComposer = ({ initialTopic, ...props }) => {
   }
 
   return (
-    <Slate editor={topicEditor} value={topic} onChange={v => setTopic(v)}>
+    <Slate editor={topicEditor} {...contentProps}>
       <TopicEditable
         onBlur={handleUpdate}
         placeholder="Untitled Discussion"

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-apollo';
 import { createEditor } from 'slate';
@@ -9,12 +9,7 @@ import documentQuery from 'graphql/queries/document';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import { track } from 'utils/analytics';
 import { DocumentContext } from 'utils/contexts';
-
-import {
-  DEFAULT_ELEMENT,
-  deserializedTitle,
-  toPlainText,
-} from 'components/editor/utils';
+import useContentState from 'utils/hooks/useContentState';
 
 const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
   color: colors.mainText,
@@ -38,19 +33,14 @@ const TitleEditable = styled(Editable)(({ theme: { colors } }) => ({
 const TitleComposer = ({ afterUpdate, initialTitle, ...props }) => {
   const { documentId } = useContext(DocumentContext);
   const titleEditor = useMemo(() => withReact(createEditor()), []);
-  const [title, setTitle] = useState(
-    initialTitle ? deserializedTitle(initialTitle) : DEFAULT_ELEMENT
-  );
+  const { content: title, ...contentProps } = useContentState(initialTitle, {
+    isJSON: false,
+  });
   const [updateDocument] = useMutation(updateDocumentMutation);
 
   async function handleUpdate() {
     const { data: updateDocumentTitleData } = await updateDocument({
-      variables: {
-        documentId,
-        input: {
-          title: toPlainText(title),
-        },
-      },
+      variables: { documentId, input: { title } },
       refetchQueries: [
         {
           query: documentQuery,
@@ -66,7 +56,7 @@ const TitleComposer = ({ afterUpdate, initialTitle, ...props }) => {
   }
 
   return (
-    <Slate editor={titleEditor} value={title} onChange={v => setTitle(v)}>
+    <Slate editor={titleEditor} {...contentProps}>
       <TitleEditable
         onBlur={handleUpdate}
         placeholder="Untitled Document"
