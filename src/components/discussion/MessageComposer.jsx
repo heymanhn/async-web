@@ -36,7 +36,7 @@ const MessageEditable = styled(Editable)({
   marginTop: '15px',
 });
 
-const MessageComposer = ({ initialMessage, isModal, ...props }) => {
+const MessageComposer = ({ initialMessage, autoFocus, isModal, ...props }) => {
   const { mode } = useContext(MessageContext);
   const readOnly = mode === 'display';
   const messageEditor = useMemo(
@@ -64,7 +64,11 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
   return (
     <Container mode={mode} {...props}>
       <Slate editor={messageEditor} key={readOnly} {...contentProps}>
-        <MessageEditable readOnly={readOnly} {...coreEditorProps} />
+        <MessageEditable
+          autoFocus={autoFocus}
+          readOnly={readOnly}
+          {...coreEditorProps}
+        />
         <MessageToolbar />
         <CompositionMenuButton isModal={isModal} />
         {!readOnly && (
@@ -80,11 +84,13 @@ const MessageComposer = ({ initialMessage, isModal, ...props }) => {
 
 MessageComposer.propTypes = {
   initialMessage: PropTypes.string,
+  autoFocus: PropTypes.bool,
   isModal: PropTypes.bool,
 };
 
 MessageComposer.defaultProps = {
   initialMessage: '',
+  autoFocus: false,
   isModal: false,
 };
 

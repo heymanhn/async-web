@@ -93,6 +93,7 @@ const DiscussionMessage = ({
         </HeaderSection>
         <MessageComposer
           initialMessage={loadInitialContent()}
+          autoFocus={mode !== 'display'}
           isModal={source === 'discussionModal'}
         />
         {mode === 'display' && <MessageReactions />}

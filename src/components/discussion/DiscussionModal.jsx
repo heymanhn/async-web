@@ -118,8 +118,11 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     <StyledModal handleClose={handleClose} isOpen={isOpen} {...props}>
       <DiscussionContext.Provider value={value}>
         {(inlineDiscussionTopic || context) && <ContextComposer />}
-        {modalDiscussionId && <DiscussionThread isUnread={isUnread} />}
-        {isComposing ? (
+        {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}
+
+        {/* Showing the message composer after the context is created
+            ensures that it is in focus */}
+        {isComposing && context ? (
           <StyledDiscussionMessage
             mode="compose"
             source="discussionModal"
