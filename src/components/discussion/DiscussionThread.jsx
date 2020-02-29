@@ -39,7 +39,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
   })
 );
 
-const DiscussionThread = ({ isUnread }) => {
+const DiscussionThread = ({ isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
   const { discussionId } = useContext(DiscussionContext);
@@ -102,7 +102,7 @@ const DiscussionThread = ({ isUnread }) => {
   const isNewMessage = m => m.tags && m.tags.includes('new_message');
 
   return (
-    <Container ref={discussionRef}>
+    <Container ref={discussionRef} {...props}>
       {pendingMessageCount > 0 && (
         <NewMessagesIndicator
           count={pendingMessageCount}

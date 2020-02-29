@@ -10,6 +10,7 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   resetInlineTopic: () => {},
   handleShowModal: () => {},
   handleCloseModal: () => {},
+  afterUpdate: () => {},
 };
 export const DocumentContext = createContext(DEFAULT_DOCUMENT_CONTEXT);
 

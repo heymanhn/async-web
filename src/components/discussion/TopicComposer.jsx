@@ -1,70 +1,24 @@
-import React, { useContext, useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useMutation } from 'react-apollo';
-import { createEditor } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
-import discussionQuery from 'graphql/queries/discussion';
-import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
-import { track } from 'utils/analytics';
-import { DiscussionContext } from 'utils/contexts';
-import useContentState from 'utils/hooks/useContentState';
+import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
 
-import { toPlainText } from 'components/editor/utils';
+import TitleEditable from 'components/shared/TitleEditable';
 
-const TopicEditable = styled(Editable)(({ theme: { colors } }) => ({
-  color: colors.mainText,
-  fontSize: '42px',
-  fontWeight: 600,
-  letterSpacing: '-0.022em',
-  lineHeight: '54px',
-  margin: '20px 30px',
-  width: '100%',
-  outline: 'none',
-}));
+const StyledTitleEditable = styled(TitleEditable)({
+  marginBottom: '30px',
+});
 
 const TopicComposer = ({ initialTopic, ...props }) => {
-  const { discussionId } = useContext(DiscussionContext);
-  const topicEditor = useMemo(() => withReact(createEditor()), []);
-  const { content, ...contentProps } = useContentState(initialTopic);
-  const [updateDiscussion] = useMutation(updateDiscussionMutation);
-
-  // BACKEND TODO: Once the Update Discussion API call returns the updated
-  // discussion, we don't need to refetch the query, thanks to Apollo.
-  async function handleUpdate() {
-    const { data: updateDiscussionTopicData } = await updateDiscussion({
-      variables: {
-        discussionId,
-        input: {
-          topic: {
-            formatter: 'slatejs',
-            text: toPlainText(content),
-            payload: JSON.stringify(content),
-          },
-        },
-      },
-      refetchQueries: [
-        {
-          query: discussionQuery,
-          variables: { discussionId },
-        },
-      ],
-    });
-
-    if (updateDiscussionTopicData.updateDiscussion) {
-      track('Discussion topic updated', { discussionId });
-    }
-  }
+  const { handleUpdateTopic } = useDiscussionMutations();
 
   return (
-    <Slate editor={topicEditor} {...contentProps}>
-      <TopicEditable
-        onBlur={handleUpdate}
-        placeholder="Untitled Discussion"
-        {...props}
-      />
-    </Slate>
+    <StyledTitleEditable
+      initialTitle={initialTopic}
+      handleUpdateTitle={handleUpdateTopic}
+      {...props}
+    />
   );
 };
 

@@ -34,7 +34,7 @@ const DocumentEditable = styled(Editable)({
  * - Figure out how to pass resourceId to the image plugin
  */
 
-const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
+const DocumentComposer = ({ initialContent, ...props }) => {
   const {
     modalDiscussionId,
     deletedDiscussionId,
@@ -62,10 +62,7 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
 
-  useAutoSave(content, async () => {
-    await handleUpdate();
-    afterUpdate();
-  });
+  useAutoSave(content, handleUpdate);
 
   if (modalDiscussionId && selection) {
     Editor.wrapInlineAnnotation(contentEditor, modalDiscussionId, selection);
@@ -87,7 +84,6 @@ const DocumentComposer = ({ afterUpdate, initialContent, ...props }) => {
 };
 
 DocumentComposer.propTypes = {
-  afterUpdate: PropTypes.func.isRequired,
   initialContent: PropTypes.string,
 };
 
