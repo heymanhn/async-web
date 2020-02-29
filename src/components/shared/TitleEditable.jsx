@@ -6,6 +6,7 @@
  */
 import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
 
 const Container = styled.div({
@@ -31,11 +32,6 @@ const Placeholder = styled(Title)(({ theme: { colors } }) => ({
   position: 'absolute',
   userSelect: 'none',
 }));
-
-/*
- * SLATE UPGRADE TODO:
- * - Pressing Enter changes focus to the beginning of the content
- */
 
 const TitleEditable = ({
   autoFocus,
@@ -67,7 +63,21 @@ const TitleEditable = ({
     if (current) current.focus();
   };
 
-  const handleKeyDown = event => {};
+  const handleKeyDown = event => {
+    if (isHotkey('Enter', event)) {
+      event.preventDefault();
+
+      const { current } = titleRef || {};
+      if (current) {
+        // ALERT: A little hacky, but since triggering events to React
+        // elements doesn't work, look for the next sibling to this element's
+        // parent and focus it. Doesn't work if order of elements changes.
+        const { parentNode } = current;
+        const { nextSibling } = parentNode;
+        if (nextSibling) nextSibling.focus();
+      }
+    }
+  };
 
   const handleUpdate = () => {
     const { current } = titleRef || {};
