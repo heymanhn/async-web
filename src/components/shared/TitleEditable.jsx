@@ -4,7 +4,7 @@
  *
  * Tracking issue: https://github.com/ianstormtaylor/slate/pull/3506
  */
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -34,13 +34,22 @@ const Placeholder = styled(Title)(({ theme: { colors } }) => ({
 
 /*
  * SLATE UPGRADE TODO:
- * - Handle autofocus on open (passed from parent)
  * - Pressing Enter changes focus to the beginning of the content
  */
 
-const TitleEditable = ({ initialTitle, handleUpdateTitle, ...props }) => {
+const TitleEditable = ({
+  autoFocus,
+  initialTitle,
+  handleUpdateTitle,
+  ...props
+}) => {
   const titleRef = useRef(null);
   const [showPlaceholder, setShowPlaceholder] = useState(!initialTitle);
+
+  useEffect(() => {
+    const { current } = titleRef || {};
+    if (autoFocus && current) current.focus();
+  }, [autoFocus]);
 
   const handleCheckPlaceholder = event => {
     event.preventDefault();
@@ -87,11 +96,13 @@ const TitleEditable = ({ initialTitle, handleUpdateTitle, ...props }) => {
 };
 
 TitleEditable.propTypes = {
+  autoFocus: PropTypes.bool,
   initialTitle: PropTypes.string,
   handleUpdateTitle: PropTypes.func.isRequired,
 };
 
 TitleEditable.defaultProps = {
+  autoFocus: false,
   initialTitle: '',
 };
 
