@@ -76,24 +76,21 @@ const moduleList = [
     },
     features: [
       {
-        icon: 'arrow-circle-right',
-        title: 'Stop scheduling meetings',
+        title: 'Distraction-free writing',
         description:
-          'Roval makes it easy to provide feedback and follow discussions asynchronously.',
+          'When you begin typing, you’ll only see what’s essential – your words',
         lineBreak: true,
       },
       {
-        icon: 'arrow-circle-right',
-        title: 'Contribute on your schedule',
+        title: 'Keyboard-first UX',
         description:
-          'No pressure to respond immediately. You can take a step back, think about what is being discussed, and follow up with a thoughtful response at a later time.',
+          'Styling text is as easy as typing it. Optimized for efficiency with extensive keyboard shortcuts',
         lineBreak: true,
       },
       {
-        icon: 'arrow-circle-right',
-        title: 'Reminders & Notifications',
+        title: 'Modern editor',
         description:
-          'Roval does not demand your immediate attention. Yet, it gently reminds everyone to move the work forward.',
+          'Use `/` command to add rich-text content like code, images, links, and more',
         lineBreak: true,
       },
     ],
@@ -137,9 +134,9 @@ const moduleList = [
         },
         {
           icon: ['fal', 'comment-lines'],
-          title: 'Thoughtful',
+          title: 'Threaded',
           description:
-            'Communicate in full thoughts rather than one line at a time',
+            'Discussions are organized into threads that stay on topic and in context',
         },
         {
           icon: ['fal', 'file-search'],

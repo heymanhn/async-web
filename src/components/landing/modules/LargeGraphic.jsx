@@ -8,6 +8,7 @@ import {
   TitleIcon,
   Image,
 } from './styles';
+import GridItem from './GridItem';
 
 const Container = styled.div(({ theme: { bgColors, mq } }) => ({
   display: 'flex',
@@ -38,12 +39,35 @@ const StyledDescription = styled(Description)(({ theme: { mq } }) => ({
   },
 }));
 
-const LargeGraphic = ({ icon, title, description, image, ...props }) => (
+const FeatureGrid = styled.div(({ theme: { mq } }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  flexWrap: 'wrap',
+
+  marginTop: '25px',
+
+  [mq('tabletUp')]: {
+    maxWidth: '800px',
+  },
+}));
+
+const LargeGraphic = ({
+  icon,
+  title,
+  description,
+  image,
+  features,
+  ...props
+}) => (
   <Container {...props}>
     {icon && <TitleIcon icon={icon} />}
     <StyledTitle>{title}</StyledTitle>
     <StyledDescription>{description}</StyledDescription>
     <Image srcSet={`${image} 2x`} />
+    <FeatureGrid>
+      {!!features.length &&
+        features.map((feature, i) => <GridItem key={i} {...feature} />)}
+    </FeatureGrid>
   </Container>
 );
 
@@ -52,10 +76,12 @@ LargeGraphic.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
+  features: PropTypes.array,
 };
 
 LargeGraphic.defaultProps = {
   icon: null,
+  features: [],
 };
 
 export default LargeGraphic;
