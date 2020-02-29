@@ -2,16 +2,18 @@ import { useContext, useState } from 'react';
 import { useMutation } from 'react-apollo';
 
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
+import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
 import { track } from 'utils/analytics';
 
-import { toPlainText } from 'components/editor/utils';
+import { deserializeString, toPlainText } from 'components/editor/utils';
 
 const useDiscussionMutations = () => {
   const { discussionId, afterDelete } = useContext(DiscussionContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createDiscussion] = useMutation(createDiscussionMutation);
+  const [updateDiscussion] = useMutation(updateDiscussionMutation);
   const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
     variables: { discussionId },
   });
@@ -31,12 +33,12 @@ const useDiscussionMutations = () => {
       };
     }
 
-    const { data: createDiscussionData } = await createDiscussion({
+    const { data } = await createDiscussion({
       variables: { input },
     });
 
-    if (createDiscussionData.createDiscussion) {
-      const { id: newDiscussionId } = createDiscussionData.createDiscussion;
+    if (data.createDiscussion) {
+      const { id: newDiscussionId } = data.createDiscussion;
       track('New discussion created', {
         documentId,
         discussionId: newDiscussionId,
@@ -51,10 +53,33 @@ const useDiscussionMutations = () => {
     return Promise.reject(new Error('Failed to create discussion'));
   };
 
-  const handleDelete = async () => {
-    const { data: deleteDiscussionData } = await deleteDiscussion();
+  // Only used for adhoc discussion topics
+  const handleUpdateTopic = async text => {
+    const { data } = await updateDiscussion({
+      variables: {
+        discussionId,
+        input: {
+          topic: {
+            formatter: 'slatejs',
+            text,
+            payload: JSON.stringify(deserializeString(text)),
+          },
+        },
+      },
+    });
 
-    if (deleteDiscussionData.deleteDiscussion) {
+    if (data.updateDiscussion) {
+      track('Discussion topic updated', { discussionId });
+      return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('Failed to update discussion topic'));
+  };
+
+  const handleDelete = async () => {
+    const { data } = await deleteDiscussion();
+
+    if (data.deleteDiscussion) {
       afterDelete();
       return Promise.resolve();
     }
@@ -64,6 +89,7 @@ const useDiscussionMutations = () => {
 
   return {
     handleCreate,
+    handleUpdateTopic,
     handleDelete,
 
     isSubmitting,

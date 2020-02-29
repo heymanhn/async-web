@@ -22,6 +22,10 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   width: discussionViewport,
 }));
 
+const StyledDiscussionThread = styled(DiscussionThread)({
+  marginTop: '15px',
+});
+
 const StyledLoadingIndicator = styled(LoadingIndicator)({
   marginTop: '30px',
 });
@@ -54,7 +58,7 @@ const Discussion = () => {
   if (!data.discussion || !data2.messages) return <NotFound />;
 
   const { topic, draft, messageCount } = data.discussion;
-  const { payload } = topic || {};
+  const { text } = topic || {};
   const { items } = data2.messages;
 
   if ((draft || !items) && !isComposing) startComposing();
@@ -84,8 +88,8 @@ const Discussion = () => {
   return (
     <DiscussionContext.Provider value={value}>
       <Container ref={discussionRef}>
-        <TopicComposer initialTopic={payload} autoFocus={!payload || !items} />
-        {items && <DiscussionThread isUnread={isUnread()} />}
+        <TopicComposer initialTopic={text} autoFocus={!text || !items} />
+        {items && <StyledDiscussionThread isUnread={isUnread()} />}
         {isComposing ? (
           <StyledDiscussionMessage
             mode="compose"
