@@ -34,7 +34,7 @@ const Dialog = styled.div(({ theme: { colors, documentViewport } }) => ({
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
-  margin: '100px auto',
+  margin: '120px auto',
   width: documentViewport,
 }));
 
