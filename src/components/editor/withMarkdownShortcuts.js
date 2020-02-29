@@ -112,7 +112,7 @@ const MARKDOWN_SHORTCUTS = [
   {
     trigger: 'space',
     before: /(--)$/,
-    when: editor => !Editor.isWrappedBlock(editor),
+    when: () => true,
     change: editor => editor.insertText('— '),
   },
   {
