@@ -4,10 +4,12 @@
  *
  * Tracking issue: https://github.com/ianstormtaylor/slate/pull/3506
  */
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
+
+import { DocumentContext } from 'utils/contexts';
 
 const Container = styled.div({
   display: 'flex',
@@ -39,6 +41,7 @@ const TitleEditable = ({
   handleUpdateTitle,
   ...props
 }) => {
+  const { documentId } = useContext(DocumentContext);
   const titleRef = useRef(null);
   const [showPlaceholder, setShowPlaceholder] = useState(!initialTitle);
 
@@ -99,7 +102,9 @@ const TitleEditable = ({
         {...props}
       />
       {showPlaceholder && (
-        <Placeholder onClick={handleSelectTitle}>Untitled Document</Placeholder>
+        <Placeholder onClick={handleSelectTitle}>
+          {`Untitled ${documentId ? 'Document' : 'Discussion'}`}
+        </Placeholder>
       )}
     </Container>
   );

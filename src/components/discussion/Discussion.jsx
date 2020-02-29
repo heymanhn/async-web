@@ -22,10 +22,6 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   width: discussionViewport,
 }));
 
-const StyledDiscussionThread = styled(DiscussionThread)({
-  marginTop: '15px',
-});
-
 const StyledLoadingIndicator = styled(LoadingIndicator)({
   marginTop: '30px',
 });
@@ -89,7 +85,7 @@ const Discussion = () => {
     <DiscussionContext.Provider value={value}>
       <Container ref={discussionRef}>
         <TopicComposer initialTopic={text} autoFocus={!text || !items} />
-        {items && <StyledDiscussionThread isUnread={isUnread()} />}
+        {items && <DiscussionThread isUnread={isUnread()} />}
         {isComposing ? (
           <StyledDiscussionMessage
             mode="compose"
