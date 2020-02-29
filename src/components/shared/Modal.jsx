@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
@@ -41,7 +41,13 @@ const Dialog = styled.div(({ theme: { colors, documentViewport } }) => ({
 const Modal = ({ backdropStyle, children, handleClose, isOpen, ...props }) => {
   const root = window.document.getElementById('root');
 
-  document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
   return ReactDOM.createPortal(
