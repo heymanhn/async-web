@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
@@ -34,6 +34,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 );
 
 const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
+  const modalRef = useRef(null);
   const {
     documentId,
     modalDiscussionId,
@@ -108,6 +109,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     discussionId: modalDiscussionId,
     context,
     draft,
+    modalRef,
 
     setContext,
     afterCreate: id => handleShowModal(id),
@@ -115,7 +117,12 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   };
 
   return (
-    <StyledModal handleClose={handleClose} isOpen={isOpen} {...props}>
+    <StyledModal
+      ref={modalRef}
+      handleClose={handleClose}
+      isOpen={isOpen}
+      {...props}
+    >
       <DiscussionContext.Provider value={value}>
         {(inlineDiscussionTopic || context) && <ContextComposer />}
         {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}

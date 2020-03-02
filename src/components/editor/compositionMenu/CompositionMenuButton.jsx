@@ -145,9 +145,7 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
       >
         <StyledIcon icon={['fal', 'plus']} />
       </ButtonContainer>
-      {showButton && (
-        <CompositionMenuPlaceholder isModal={isModal} isVisible={showButton} />
-      )}
+      {showButton && <CompositionMenuPlaceholder isVisible={showButton} />}
       <CompositionMenu
         editor={editor}
         handleClose={handleCloseMenu}

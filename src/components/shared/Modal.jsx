@@ -38,30 +38,32 @@ const Dialog = styled.div(({ theme: { colors, documentViewport } }) => ({
   width: documentViewport,
 }));
 
-const Modal = ({ backdropStyle, children, handleClose, isOpen, ...props }) => {
-  const root = window.document.getElementById('root');
+const Modal = React.forwardRef(
+  ({ backdropStyle, children, handleClose, isOpen, ...props }, ref) => {
+    const root = window.document.getElementById('root');
 
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+    useEffect(() => {
+      document.body.style.overflow = isOpen ? 'hidden' : 'auto';
 
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isOpen]);
+      return () => {
+        document.body.style.overflow = 'auto';
+      };
+    }, [isOpen]);
 
-  if (!isOpen) return null;
-  return ReactDOM.createPortal(
-    <>
-      <Container onClick={handleClose}>
-        <Dialog onClick={e => e.stopPropagation()} {...props}>
-          {children}
-        </Dialog>
-      </Container>
-      <Backdrop customStyle={backdropStyle} />
-    </>,
-    root
-  );
-};
+    if (!isOpen) return null;
+    return ReactDOM.createPortal(
+      <>
+        <Container ref={ref} onClick={handleClose}>
+          <Dialog onClick={e => e.stopPropagation()} {...props}>
+            {children}
+          </Dialog>
+        </Container>
+        <Backdrop customStyle={backdropStyle} />
+      </>,
+      root
+    );
+  }
+);
 
 Modal.propTypes = {
   backdropStyle: PropTypes.object,
