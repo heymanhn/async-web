@@ -9,7 +9,7 @@ import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
 import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
 
-const INLINE_DISCUSSION_HOTKEY = 'cmd+shift+d';
+const INLINE_DISCUSSION_HOTKEY = 'cmd+opt+d';
 
 const InlineDiscussionButton = ({ content, ...props }) => {
   const editor = useSlate();
