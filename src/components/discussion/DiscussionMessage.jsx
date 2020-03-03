@@ -94,7 +94,6 @@ const DiscussionMessage = ({
         <MessageComposer
           initialMessage={loadInitialContent()}
           autoFocus={mode !== 'display'}
-          isModal={source === 'discussionModal'}
         />
         {mode === 'display' && <MessageReactions />}
       </MessageContext.Provider>
