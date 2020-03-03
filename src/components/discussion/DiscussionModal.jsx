@@ -59,9 +59,10 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   });
 
   useEffect(() => {
+    const { origin } = window.location;
+    const baseUrl = `${origin}/documents/${documentId}`;
     const setUrl = () => {
-      const { origin } = window.location;
-      const url = `${origin}/documents/${documentId}/discussions/${modalDiscussionId}`;
+      const url = `${baseUrl}/discussions/${modalDiscussionId}`;
       return window.history.replaceState(
         {},
         `discussion: ${modalDiscussionId}`,
@@ -69,6 +70,9 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
       );
     };
     if (modalDiscussionId) setUrl();
+
+    return () =>
+      window.history.replaceState({}, `document: ${documentId}`, baseUrl);
   }, [documentId, modalDiscussionId]);
 
   const { loading, data } = useQuery(discussionQuery, {
