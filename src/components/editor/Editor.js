@@ -198,7 +198,7 @@ const removeAllMarks = editor => {
   const markTypes = Object.keys(marks);
 
   markTypes.forEach(type => SlateEditor.removeMark(editor, type));
-}
+};
 
 const wrapInline = (editor, type, range, source, props = {}) => {
   const isActive = isElementActive(editor, type, range);

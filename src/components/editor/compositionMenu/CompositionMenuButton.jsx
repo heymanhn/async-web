@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Transforms } from 'slate';
 import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
@@ -78,9 +79,21 @@ const CompositionMenuButton = props => {
     }));
   };
 
+  // Only clears formatting from the previous character, assuming that a slash
+  // command was activated.
+  const resetFormatting = () => {
+    Transforms.move(editor, {
+      edge: 'anchor',
+      reverse: true,
+    });
+    Editor.removeAllMarks(editor);
+    Transforms.collapse(editor, { edge: 'focus' });
+  };
+
   if (Editor.isWrappedBlock(editor)) return null;
 
   if (Editor.isSlashCommand(editor) && !isKeyboardInvoked && !isMenuDismissed) {
+    resetFormatting();
     setState(oldState => ({ ...oldState, isKeyboardInvoked: true }));
   }
 
