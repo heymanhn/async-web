@@ -16,8 +16,10 @@ const handleExitHeadingBlock = (editor, insertBreak) => {
   return null;
 };
 
-const handleExitWrappedBlock = editor =>
+const handleExitWrappedBlock = editor => {
   Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+  Editor.removeAllMarks(editor);
+};
 
 const isBeginningOfWrappedBlock = editor => {
   const { selection } = editor;
