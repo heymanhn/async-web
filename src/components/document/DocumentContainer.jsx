@@ -13,15 +13,21 @@ const DocumentContainer = ({
   discussionId: initialDiscussionId,
   viewMode: initialViewMode,
 }) => {
+  // TODO (HN): Instead of all these different discussionId fields, suggest
+  // implementing a state machine that oscillates from
+  // new => first_message => deleted
   const [state, setState] = useState({
     viewMode: initialViewMode,
     modalDiscussionId: initialDiscussionId,
+    firstMsgDiscussionId: null,
     deletedDiscussionId: null,
     isModalOpen: !!initialDiscussionId,
     inlineDiscussionTopic: null,
   });
 
   const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
+  const setFirstMsgDiscussionId = id =>
+    setState(old => ({ ...old, firstMsgDiscussionId: id }));
   const setDeletedDiscussionId = id =>
     setState(old => ({ ...old, deletedDiscussionId: id }));
   const resetInlineTopic = () =>
@@ -58,6 +64,7 @@ const DocumentContainer = ({
 
   const {
     modalDiscussionId,
+    firstMsgDiscussionId,
     deletedDiscussionId,
     inlineDiscussionTopic,
     isModalOpen,
@@ -68,9 +75,11 @@ const DocumentContainer = ({
     ...DEFAULT_DOCUMENT_CONTEXT,
     documentId,
     modalDiscussionId,
+    firstMsgDiscussionId,
     deletedDiscussionId,
     inlineDiscussionTopic,
 
+    setFirstMsgDiscussionId,
     setDeletedDiscussionId,
     resetInlineTopic,
     handleShowModal,

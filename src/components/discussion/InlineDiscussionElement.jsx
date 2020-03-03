@@ -1,7 +1,9 @@
+/* eslint no-nested-ternary: 0 */
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
 
 import InlineDiscussionPreview from './InlineDiscussionPreview';
@@ -9,19 +11,28 @@ import InlineDiscussionPreview from './InlineDiscussionPreview';
 const HIDE_PREVIEW_WAIT_INTERVAL = 200;
 const SHOW_PREVIEW_WAIT_INTERVAL = 800;
 
-const Highlight = styled.span(({ isHover, theme: { colors } }) => ({
-  background: isHover ? colors.highlightYellow : 'none',
-  borderBottom: isHover ? 'none' : `2px solid ${colors.highlightYellow}`,
-  cursor: 'pointer',
-  opacity: isHover ? 0.9 : 1,
-  padding: '2px 0px',
-}));
+// TODO (HN): Not my brightest code moment. :\
+const Highlight = styled.span(
+  ({ isHover, isInitialDraft, theme: { colors } }) => ({
+    background: isHover
+      ? isInitialDraft
+        ? colors.blue
+        : colors.highlightYellow
+      : 'none',
+    borderBottom: isHover
+      ? 'none'
+      : `2px solid ${isInitialDraft ? colors.blue : colors.highlightYellow}`,
+    cursor: 'pointer',
+    opacity: isHover ? 0.9 : 1,
+    padding: '2px 0px',
+  })
+);
 
 const InlineDiscussionElement = ({ attributes, children, element }) => {
   const ref = useRef(null);
   const [isHighlightHover, setIsHighlightHover] = useState(false);
   const [isPreviewHover, setIsPreviewHover] = useState(false);
-  const { discussionId } = element;
+  const { discussionId, isInitialDraft, authorId } = element;
 
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
   const isHighlightHoverRef = useRef(isHighlightHover);
@@ -65,9 +76,19 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
   );
   delete previewHoverProps.hover;
 
+  const { userId } = getLocalUser();
+  const isAuthor = userId === authorId;
+  if (isInitialDraft && !isAuthor) {
+    return <span>{children}</span>;
+  }
+
   return (
     <span ref={ref} {...highlightHoverProps}>
-      <Highlight isHover={isHighlightHover || isPreviewHover} {...attributes}>
+      <Highlight
+        isHover={isHighlightHover || isPreviewHover}
+        isInitialDraft={isInitialDraft}
+        {...attributes}
+      >
         {children}
       </Highlight>
       {discussionId && (

@@ -240,14 +240,23 @@ const replaceBlock = (editor, type, source) => {
   return toggleBlock(editor, type, source);
 };
 
-const wrapInlineAnnotation = (editor, discussionId, selection) => {
+const wrapInlineAnnotation = (editor, selection, data) => {
   wrapInline(
     editor,
     INLINE_DISCUSSION_ANNOTATION,
     selection,
     INLINE_DISCUSSION_SOURCE,
-    { discussionId }
+    data
   );
+};
+
+const updateInlineAnnotation = (editor, discussionId, data) => {
+  Transforms.setNodes(editor, data, {
+    at: documentSelection(editor),
+    match: n =>
+      n.type === INLINE_DISCUSSION_ANNOTATION &&
+      n.discussionId === discussionId,
+  });
 };
 
 const removeInlineAnnotation = (editor, discussionId) => {
@@ -317,6 +326,7 @@ const Editor = {
   clearBlock,
   replaceBlock,
   wrapInlineAnnotation,
+  updateInlineAnnotation,
   removeInlineAnnotation,
   wrapLink,
   unwrapLink,

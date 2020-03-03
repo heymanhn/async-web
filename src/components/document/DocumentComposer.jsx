@@ -6,6 +6,7 @@ import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
+import { getLocalUser } from 'utils/auth';
 import { DocumentContext } from 'utils/contexts';
 import useContentState from 'utils/hooks/useContentState';
 import useAutoSave from 'utils/hooks/useAutoSave';
@@ -39,8 +40,10 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     documentId,
     modalDiscussionId,
     deletedDiscussionId,
+    firstMsgDiscussionId,
     inlineDiscussionTopic,
     setDeletedDiscussionId,
+    setFirstMsgDiscussionId,
     resetInlineTopic,
   } = useContext(DocumentContext);
   const { selection } = inlineDiscussionTopic || {};
@@ -68,9 +71,23 @@ const DocumentComposer = ({ initialContent, ...props }) => {
 
   useAutoSave(content, handleUpdate);
 
+  // Implicit state indicating we are ready to create the inline annotation
   if (modalDiscussionId && selection) {
-    Editor.wrapInlineAnnotation(contentEditor, modalDiscussionId, selection);
+    const { userId: authorId } = getLocalUser();
+
+    Editor.wrapInlineAnnotation(contentEditor, selection, {
+      discussionId: modalDiscussionId,
+      authorId,
+      isInitialDraft: true, // Toggled to false once first message is created
+    });
     resetInlineTopic();
+  }
+
+  if (firstMsgDiscussionId) {
+    Editor.updateInlineAnnotation(contentEditor, firstMsgDiscussionId, {
+      isInitialDraft: false,
+    });
+    setFirstMsgDiscussionId(null);
   }
 
   if (deletedDiscussionId) {

@@ -40,6 +40,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     modalDiscussionId,
     inlineDiscussionTopic,
     setDeletedDiscussionId,
+    setFirstMsgDiscussionId,
     handleShowModal,
   } = useContext(DocumentContext);
   const [isComposing, setIsComposing] = useState(!modalDiscussionId);
@@ -65,9 +66,10 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   if (loading) return null;
 
   let draft;
+  let messageCount;
   if (data && data.discussion) {
     const { discussion } = data;
-    ({ draft } = discussion);
+    ({ draft, messageCount } = discussion);
 
     const { topic } = discussion;
     if (!context && topic) setContext(JSON.parse(topic.payload));
@@ -94,6 +96,18 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     return (
       safeTags.includes('new_messages') || safeTags.includes('new_discussion')
     );
+  };
+
+  const handleCreateMessage = () => {
+    stopComposing();
+
+    /* The editor controller is in <DocumentComposer />. Setting the state
+     * propagates the message down to the composer to delete the inline discussion.
+     *
+     * Only need to set this once, when the first message in the discussion
+     * is created.
+     */
+    if (!messageCount) setFirstMsgDiscussionId(modalDiscussionId);
   };
 
   const afterDelete = () => {
@@ -133,7 +147,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
           <StyledDiscussionMessage
             mode="compose"
             source="discussionModal"
-            afterCreate={stopComposing}
+            afterCreate={handleCreateMessage}
             handleCancel={handleCancelCompose}
             {...props}
           />
