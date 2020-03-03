@@ -69,7 +69,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
       );
     };
     if (modalDiscussionId) setUrl();
-  }, [modalDiscussionId]);
+  }, [documentId, modalDiscussionId]);
 
   const { loading, data } = useQuery(discussionQuery, {
     variables: { discussionId: modalDiscussionId },
