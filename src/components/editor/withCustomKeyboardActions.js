@@ -10,11 +10,16 @@ const handleExitHeadingBlock = (editor, insertBreak) => {
   }
 
   insertBreak();
-  return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+  Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+  if (Editor.isEmptyParagraph(editor)) Editor.removeAllMarks(editor);
+
+  return null;
 };
 
-const handleExitWrappedBlock = editor =>
+const handleExitWrappedBlock = editor => {
   Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+  Editor.removeAllMarks(editor);
+};
 
 const isBeginningOfWrappedBlock = editor => {
   const { selection } = editor;
