@@ -250,6 +250,12 @@ const wrapInlineAnnotation = (editor, selection, data) => {
   );
 };
 
+const updateInlineAnnotation = (editor, discussionId, data) => {
+  Transforms.setNodes(editor, data, {
+    match: node => node.discussionId === discussionId,
+  });
+};
+
 const removeInlineAnnotation = (editor, discussionId) => {
   Transforms.unwrapNodes(editor, {
     at: documentSelection(editor),
@@ -317,6 +323,7 @@ const Editor = {
   clearBlock,
   replaceBlock,
   wrapInlineAnnotation,
+  updateInlineAnnotation,
   removeInlineAnnotation,
   wrapLink,
   unwrapLink,

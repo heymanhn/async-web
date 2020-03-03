@@ -40,8 +40,10 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     documentId,
     modalDiscussionId,
     deletedDiscussionId,
+    firstMsgDiscussionId,
     inlineDiscussionTopic,
     setDeletedDiscussionId,
+    setFirstMsgDiscussionId,
     resetInlineTopic,
   } = useContext(DocumentContext);
   const { selection } = inlineDiscussionTopic || {};
@@ -79,6 +81,13 @@ const DocumentComposer = ({ initialContent, ...props }) => {
       isInitialDraft: true, // Toggled to false once first message is created
     });
     resetInlineTopic();
+  }
+
+  if (firstMsgDiscussionId) {
+    Editor.updateInlineAnnotation(contentEditor, firstMsgDiscussionId, {
+      isInitialDraft: false,
+    });
+    setFirstMsgDiscussionId(null);
   }
 
   if (deletedDiscussionId) {

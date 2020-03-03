@@ -68,7 +68,9 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
 
   const { userId } = getLocalUser();
   const isAuthor = userId === authorId;
-  if (isInitialDraft && !isAuthor) return children;
+  if (isInitialDraft && !isAuthor) {
+    return <span>{children}</span>;
+  }
 
   return (
     <span ref={ref} {...highlightHoverProps}>
