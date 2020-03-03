@@ -7,14 +7,18 @@ import { DEFAULT_ELEMENT } from 'components/editor/utils';
  *
  * Updates the state value if the initial content has changed.
  */
-const useContentState = initialContent => {
+const useContentState = ({ resourceId: initialResourceId, initialContent }) => {
+  const [resourceId, setResourceId] = useState(initialResourceId);
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT
   );
 
   useEffect(() => {
-    setContent(initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT);
-  }, [initialContent]);
+    if (resourceId && resourceId !== initialResourceId) {
+      setResourceId(initialResourceId);
+      setContent(initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT);
+    }
+  }, [resourceId, initialResourceId, initialContent]);
 
   return {
     content,
