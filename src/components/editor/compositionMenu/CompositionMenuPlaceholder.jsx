@@ -1,22 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ isVisible, theme: { colors } }) => ({
-  display: isVisible ? 'block' : 'none',
-  color: colors.textPlaceholder,
-  fontSize: '16px',
-  opacity: 0,
-  top: '-10000px',
-  left: '-10000px',
-  position: 'absolute',
-  pointerEvents: 'none',
-}), ({ coords, isVisible }) => {
-  if (!isVisible || !coords) return {};
+import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
 
-  const { top, left } = coords;
-  return { opacity: 1, top, left };
-});
+const Container = styled.div(
+  ({ isVisible, theme: { colors } }) => ({
+    display: isVisible ? 'block' : 'none',
+    color: colors.textPlaceholder,
+    fontSize: '16px',
+    opacity: 0,
+    top: '-10000px',
+    left: '-10000px',
+    position: 'absolute',
+    pointerEvents: 'none',
+  }),
+  ({ coords, isVisible }) => {
+    if (!isVisible || !coords) return {};
+
+    const { top, left } = coords;
+    return { opacity: 1, top, left };
+  }
+);
 
 const SlashKey = styled.span(({ theme: { colors } }) => ({
   background: colors.formGrey,
@@ -26,36 +31,21 @@ const SlashKey = styled.span(({ theme: { colors } }) => ({
   padding: '2px 6px',
 }));
 
-const CompositionMenuPlaceholder = ({ isModal, isVisible }) => {
-  const [coords, setCoords] = useState(null);
+const CompositionMenuPlaceholder = ({ isVisible }) => {
+  const { coords } = useSelectionDimensions({ skip: !isVisible });
 
-  function updatePlaceholderPosition() {
-    const native = window.getSelection();
-    const range = native.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
+  const adjustedCoords = () => {
+    if (!isVisible || !coords) return null;
 
-    const windowYOffset = isModal ? 0 : window.pageYOffset;
-    const windowXOffset = isModal ? 0 : window.pageXOffset;
-
-    const newCoords = {
-      top: `${rect.top + windowYOffset - 3}px`, // Vertically aligning the placeholder
-      left: `${rect.left + windowXOffset + 2}px`, // Some breathing room after the cursor
+    const { top, left } = coords;
+    return {
+      top: `${top - 3}px`, // Vertically aligning the placeholder
+      left: `${left + 2}px`, // Some breathing room after the cursor
     };
-
-    if (coords && newCoords.top === coords.top && newCoords.left === coords.left) return;
-
-    if (!isVisible) {
-      newCoords.top = -10000;
-      newCoords.left = -10000;
-    }
-
-    setCoords(newCoords);
-  }
-
-  setTimeout(updatePlaceholderPosition, 0);
+  };
 
   return (
-    <Container coords={coords} isVisible={isVisible}>
+    <Container coords={adjustedCoords()} isVisible={isVisible}>
       Type
       <SlashKey>/</SlashKey>
       for options
@@ -64,12 +54,7 @@ const CompositionMenuPlaceholder = ({ isModal, isVisible }) => {
 };
 
 CompositionMenuPlaceholder.propTypes = {
-  isModal: PropTypes.bool,
   isVisible: PropTypes.bool.isRequired,
-};
-
-CompositionMenuPlaceholder.defaultProps = {
-  isModal: false,
 };
 
 export default CompositionMenuPlaceholder;

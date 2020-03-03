@@ -1,9 +1,10 @@
 import React, { useRef } from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { Range } from 'slate';
 import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
+
+import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
 
 const Container = styled.div(
   ({ theme: { colors } }) => ({
@@ -39,30 +40,27 @@ const Toolbar = ({ children }) => {
   const { selection } = editor;
 
   const isOpen = selection && Range.isExpanded(selection);
-  const root = window.document.getElementById('root');
+  const { coords, rect } = useSelectionDimensions({ skip: !isOpen });
 
-  // Figure out where the toolbar should be displayed based on the user's text selection
-  function calculateToolbarPosition() {
-    if (!isOpen || !ref.current) return {};
+  // Figure out where the toolbar should be displayed based on the user's
+  // text selection
+  const adjustedCoords = () => {
+    const { current: toolbarRef } = ref;
+    if (!isOpen || !toolbarRef || !coords) return {};
 
-    const native = window.getSelection();
-    const range = native.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-
+    const { top, left } = coords;
     return {
-      top: `${rect.top + window.pageYOffset - ref.current.offsetHeight}px`,
-      left: `${rect.left +
-        window.pageXOffset -
-        ref.current.offsetWidth / 2 +
-        rect.width / 2}px`,
-    };
-  }
+      top: `${top - toolbarRef.offsetHeight}px`,
 
-  return ReactDOM.createPortal(
-    <Container ref={ref} coords={calculateToolbarPosition()} isOpen={isOpen}>
+      // Horizontally center align the toolbar against the selection range
+      left: `${left - toolbarRef.offsetWidth / 2 + rect.width / 2}px`,
+    };
+  };
+
+  return (
+    <Container ref={ref} coords={adjustedCoords()} isOpen={isOpen}>
       {children}
-    </Container>,
-    root
+    </Container>
   );
 };
 

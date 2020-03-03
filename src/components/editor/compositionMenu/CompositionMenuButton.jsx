@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { Transforms } from 'slate';
 import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
+
+import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
 
 import Editor from 'components/editor/Editor';
 import CompositionMenuPlaceholder from './CompositionMenuPlaceholder';
@@ -43,14 +45,19 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const CompositionMenuButton = ({ isModal, ...props }) => {
+const CompositionMenuButton = props => {
   const editor = useSlate();
   const [state, setState] = useState({
-    coords: null,
     isMenuOpen: false,
     isMenuDismissed: false, // distinguishing a user action
     isKeyboardInvoked: false,
   });
+  const { isMenuOpen, isMenuDismissed, isKeyboardInvoked } = state;
+  const showButton =
+    ReactEditor.isFocused(editor) &&
+    !isMenuOpen &&
+    Editor.isEmptyParagraph(editor);
+  const { coords } = useSelectionDimensions({ skip: !showButton });
 
   // Don't let the button handle the event, so that it won't reset its visibility
   const handleMouseDown = event => event.preventDefault();
@@ -72,45 +79,24 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
     }));
   };
 
-  const updateButtonPosition = () => {
-    const native = window.getSelection();
-    const range = native.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-    const { coords } = state;
-
-    const windowYOffset = isModal ? 0 : window.pageYOffset;
-    const windowXOffset = isModal ? 0 : window.pageXOffset;
-
-    const newCoords = {
-      top: `${rect.top + windowYOffset - 7}px`, // 7px is half of 15px button height
-      left: `${rect.left + windowXOffset - 45}px`, // 30px margin + half of 30px width
-    };
-
-    if (
-      coords &&
-      newCoords.top === state.coords.top &&
-      newCoords.left === coords.left
-    )
-      return;
-
-    setState(oldState => ({ ...oldState, coords: newCoords }));
+  // Only clears formatting from the previous character, assuming that a slash
+  // command was activated.
+  const resetFormatting = () => {
+    Transforms.move(editor, {
+      edge: 'anchor',
+      reverse: true,
+    });
+    Editor.removeAllMarks(editor);
+    Transforms.collapse(editor, { edge: 'focus' });
   };
 
   if (Editor.isWrappedBlock(editor)) return null;
 
-  const { coords, isMenuOpen, isMenuDismissed, isKeyboardInvoked } = state;
-  const showButton =
-    ReactEditor.isFocused(editor) &&
-    !isMenuOpen &&
-    Editor.isEmptyParagraph(editor);
-
-  if (showButton) setTimeout(updateButtonPosition, 0);
-  if (!showButton && coords) {
-    setState(oldState => ({ ...oldState, coords: null }));
-  }
   if (Editor.isSlashCommand(editor) && !isKeyboardInvoked && !isMenuDismissed) {
+    resetFormatting();
     setState(oldState => ({ ...oldState, isKeyboardInvoked: true }));
   }
+
   if (isKeyboardInvoked && !isMenuOpen) {
     setState(oldState => ({ ...oldState, isMenuOpen: true }));
   }
@@ -134,10 +120,20 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
     setState(oldState => ({ ...oldState, isMenuDismissed: false }));
   }
 
+  const adjustedCoords = () => {
+    if (!showButton || !coords) return null;
+
+    const { top, left } = coords;
+    return {
+      top: `${top - 7}px`, // 7px is half of 15px button height
+      left: `${left - 45}px`, // 30px margin + half of 30px button width
+    };
+  };
+
   return (
     <>
       <ButtonContainer
-        coords={coords}
+        coords={adjustedCoords()}
         isVisible={showButton}
         onClick={handleOpenMenu}
         onMouseDown={handleMouseDown}
@@ -145,25 +141,10 @@ const CompositionMenuButton = ({ isModal, ...props }) => {
       >
         <StyledIcon icon={['fal', 'plus']} />
       </ButtonContainer>
-      {showButton && (
-        <CompositionMenuPlaceholder isModal={isModal} isVisible={showButton} />
-      )}
-      <CompositionMenu
-        editor={editor}
-        handleClose={handleCloseMenu}
-        isModal={isModal}
-        isOpen={isMenuOpen}
-      />
+      {showButton && <CompositionMenuPlaceholder isVisible={showButton} />}
+      <CompositionMenu handleClose={handleCloseMenu} isOpen={isMenuOpen} />
     </>
   );
-};
-
-CompositionMenuButton.propTypes = {
-  isModal: PropTypes.bool,
-};
-
-CompositionMenuButton.defaultProps = {
-  isModal: false,
 };
 
 export default CompositionMenuButton;
