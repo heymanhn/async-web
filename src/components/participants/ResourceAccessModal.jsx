@@ -10,16 +10,9 @@ import ParticipantsList from './ParticipantsList';
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
 
-  border: 'none',
-  boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.08)',
   margin: `${window.innerHeight * 0.2}px auto`,
   width: '450px',
 });
-
-const customBackdropStyle = {
-  background: 'black',
-  opacity: 0.5,
-};
 
 const Header = styled.div(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
@@ -43,11 +36,7 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
   const handleHideDropdown = () => setIsDropdownVisible(false);
 
   return (
-    <StyledModal
-      backdropStyle={customBackdropStyle}
-      handleClose={handleClose}
-      isOpen={isOpen}
-    >
+    <StyledModal handleClose={handleClose} isOpen={isOpen}>
       <Header onClick={handleHideDropdown}>
         {`Share this ${documentId ? 'Document' : 'Discussion'}`}
       </Header>

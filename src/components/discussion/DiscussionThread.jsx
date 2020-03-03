@@ -117,7 +117,6 @@ const DiscussionThread = ({ isUnread, ...props }) => {
           <StyledDiscussionMessage
             index={i}
             message={m}
-            source="discussionModal"
             isUnread={isNewMessage(m)}
           />
         </React.Fragment>

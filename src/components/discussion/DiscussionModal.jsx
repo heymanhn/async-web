@@ -154,7 +154,6 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
         {isComposing && context ? (
           <StyledDiscussionMessage
             mode="compose"
-            source="discussionModal"
             afterCreate={handleCreateMessage}
             handleCancel={handleCancelCompose}
             {...props}
