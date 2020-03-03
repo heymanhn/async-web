@@ -36,6 +36,7 @@ const DocumentEditable = styled(Editable)({
 
 const DocumentComposer = ({ initialContent, ...props }) => {
   const {
+    documentId,
     modalDiscussionId,
     deletedDiscussionId,
     inlineDiscussionTopic,
@@ -58,7 +59,10 @@ const DocumentComposer = ({ initialContent, ...props }) => {
       )(createEditor()),
     []
   );
-  const { content, ...contentProps } = useContentState(initialContent);
+  const { content, ...contentProps } = useContentState({
+    resourceId: documentId,
+    initialContent,
+  });
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
 

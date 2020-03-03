@@ -6,7 +6,7 @@ import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
-import { MessageContext } from 'utils/contexts';
+import { DiscussionContext, MessageContext } from 'utils/contexts';
 import useContentState from 'utils/hooks/useContentState';
 import useDrafts from 'utils/hooks/useDrafts';
 
@@ -37,6 +37,7 @@ const MessageEditable = styled(Editable)({
 });
 
 const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
+  const { discussionId } = useContext(DiscussionContext);
   const { mode } = useContext(MessageContext);
   const readOnly = mode === 'display';
   const messageEditor = useMemo(
@@ -52,7 +53,10 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
       )(createEditor()),
     []
   );
-  const { content: message, ...contentProps } = useContentState(initialMessage);
+  const { content: message, ...contentProps } = useContentState({
+    resourceId: discussionId,
+    initialContent: initialMessage,
+  });
 
   const { handleCreate, handleUpdate, isSubmitting } = useMessageMutations({
     message,
