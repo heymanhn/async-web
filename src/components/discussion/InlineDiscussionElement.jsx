@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
 
 import InlineDiscussionPreview from './InlineDiscussionPreview';
@@ -21,7 +22,7 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
   const ref = useRef(null);
   const [isHighlightHover, setIsHighlightHover] = useState(false);
   const [isPreviewHover, setIsPreviewHover] = useState(false);
-  const { discussionId } = element;
+  const { discussionId, isInitialDraft, authorId } = element;
 
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
   const isHighlightHoverRef = useRef(isHighlightHover);
@@ -64,6 +65,10 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
     handlePreviewHoverOff
   );
   delete previewHoverProps.hover;
+
+  const { userId } = getLocalUser();
+  const isAuthor = userId === authorId;
+  if (isInitialDraft && !isAuthor) return children;
 
   return (
     <span ref={ref} {...highlightHoverProps}>

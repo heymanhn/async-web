@@ -240,13 +240,13 @@ const replaceBlock = (editor, type, source) => {
   return toggleBlock(editor, type, source);
 };
 
-const wrapInlineAnnotation = (editor, discussionId, selection) => {
+const wrapInlineAnnotation = (editor, selection, data) => {
   wrapInline(
     editor,
     INLINE_DISCUSSION_ANNOTATION,
     selection,
     INLINE_DISCUSSION_SOURCE,
-    { discussionId }
+    data
   );
 };
 
