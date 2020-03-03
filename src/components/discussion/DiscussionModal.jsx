@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
@@ -58,6 +58,19 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     track(`${title} viewed`, properties);
   });
 
+  useEffect(() => {
+    const setUrl = () => {
+      const { origin } = window.location;
+      const url = `${origin}/documents/${documentId}/discussions/${modalDiscussionId}`;
+      return window.history.replaceState(
+        {},
+        `discussion: ${modalDiscussionId}`,
+        url
+      );
+    };
+    if (modalDiscussionId) setUrl();
+  }, [modalDiscussionId]);
+
   const { loading, data } = useQuery(discussionQuery, {
     variables: { discussionId: modalDiscussionId },
     skip: !modalDiscussionId,
@@ -76,14 +89,6 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   }
 
   if (draft && !isComposing) startComposing();
-
-  // Update the URL in the address bar to reflect the new discussion
-  // TODO (HN): Fix this implementation this later.
-  //
-  // const { origin } = window.location;
-  // const url = `${origin}/discussions/${value}`;
-  // return window.history.replaceState({}, `discussion: ${value}`, url);
-  // }
 
   const handleCancelCompose = () => {
     stopComposing();
