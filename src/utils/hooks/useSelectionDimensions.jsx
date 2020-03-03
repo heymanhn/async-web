@@ -15,17 +15,35 @@ import { ReactEditor, useSlate } from 'slate-react';
 import useMountEffect from 'utils/hooks/useMountEffect';
 import { DiscussionContext } from 'utils/contexts';
 
-const useSelectionDimensions = skip => {
+import Editor from 'components/editor/Editor';
+
+const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
   const { modalRef } = useContext(DiscussionContext);
   const [data, setData] = useState({});
   const editor = useSlate();
+
+  // Gets the bounding rectangle for either the current selection, or the
+  // parent block of the current selection
+  const rectForSource = () => {
+    switch (source) {
+      case 'block': {
+        const [block] = Editor.getParentBlock(editor);
+        const element = ReactEditor.toDOMNode(editor, block);
+        return element.getBoundingClientRect();
+      }
+      default: {
+        const { selection } = editor;
+        const range = ReactEditor.toDOMRange(editor, selection);
+        return range.getBoundingClientRect();
+      }
+    }
+  };
 
   const calculateDimensions = () => {
     const { selection } = editor;
     if (!selection || skip) return;
 
-    const range = ReactEditor.toDOMRange(editor, selection);
-    const rect = range.getBoundingClientRect();
+    const rect = rectForSource();
     const { height, width } = rect;
 
     // When a modal is visible, the window isn't scrolled, only the modal component.
@@ -54,7 +72,7 @@ const useSelectionDimensions = skip => {
     )
       return;
 
-    setData({ coords, dimensions });
+    setData({ coords, dimensions, rect });
   };
 
   useMountEffect(() => {

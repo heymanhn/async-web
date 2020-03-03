@@ -56,7 +56,7 @@ const CompositionMenuButton = props => {
     ReactEditor.isFocused(editor) &&
     !isMenuOpen &&
     Editor.isEmptyParagraph(editor);
-  const { coords } = useSelectionDimensions();
+  const { coords } = useSelectionDimensions({ skip: !showButton });
 
   // Don't let the button handle the event, so that it won't reset its visibility
   const handleMouseDown = event => event.preventDefault();
@@ -117,7 +117,6 @@ const CompositionMenuButton = props => {
     };
   };
 
-  console.log('rendering button');
   return (
     <>
       <ButtonContainer
@@ -129,7 +128,7 @@ const CompositionMenuButton = props => {
       >
         <StyledIcon icon={['fal', 'plus']} />
       </ButtonContainer>
-      {/* {showButton && <CompositionMenuPlaceholder isVisible={showButton} />} */}
+      {showButton && <CompositionMenuPlaceholder isVisible={showButton} />}
       <CompositionMenu handleClose={handleCloseMenu} isOpen={isMenuOpen} />
     </>
   );

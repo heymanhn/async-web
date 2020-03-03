@@ -2,11 +2,12 @@
 /* eslint no-mixed-operators: 0 */
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { ReactEditor, useSlate } from 'slate-react';
+import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
 import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
+import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
 import { mod } from 'utils/helpers';
 
 import Editor from 'components/editor/Editor';
@@ -36,7 +37,7 @@ const Container = styled.div(
     width: '240px',
     zIndex: 1,
   }),
-  ({ coords, isOpen }) => {
+  ({ isOpen, coords }) => {
     if (!isOpen || !coords) return {};
 
     const { top, left } = coords;
@@ -51,12 +52,16 @@ const NoResults = styled.div(({ theme: { colors } }) => ({
   marginTop: '15px',
 }));
 
-const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
+const CompositionMenu = ({ handleClose, isOpen, ...props }) => {
   const menuRef = useRef(null);
   const editor = useSlate();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [optionToInvoke, setOptionToInvoke] = useState(null);
+  const { coords, rect } = useSelectionDimensions({
+    skip: !isOpen,
+    source: 'block',
+  });
 
   const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: menuRef });
@@ -71,18 +76,10 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
 
   // Displays the menu either above or below the current block, based on the block's
   // relative position on the page
-  const calculateMenuPosition = () => {
-    if (!isOpen) return {};
-    const [block] = Editor.getParentBlock(editor);
-    const element = ReactEditor.toDOMNode(editor, block);
-    if (!element) return {};
+  const adjustedCoords = () => {
+    if (!isOpen || !coords || !rect) return {};
+    const { top, left } = coords;
 
-    const rect = element.getBoundingClientRect();
-
-    const windowYOffset = isModal ? 0 : window.pageYOffset;
-    const windowXOffset = isModal ? 0 : window.pageXOffset;
-    const elemYOffset = rect.top + windowYOffset;
-    const elemXOffset = rect.left + windowXOffset;
     const BLOCK_HEIGHT = 30;
 
     if (rect.top > window.innerHeight / 2) {
@@ -100,14 +97,14 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
       const offsetHeight = Math.min(calculatedHeight, MAX_MENU_HEIGHT);
 
       return {
-        top: `${elemYOffset - offsetHeight - 5}px`,
-        left: `${elemXOffset}px`,
+        top: `${top - offsetHeight - 5}px`,
+        left: `${left}px`,
       };
     }
 
     return {
-      top: `${elemYOffset + BLOCK_HEIGHT}px`,
-      left: `${elemXOffset}px`,
+      top: `${top + BLOCK_HEIGHT}px`,
+      left: `${left}px`,
     };
   };
 
@@ -170,7 +167,7 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
 
   return (
     <Container
-      coords={calculateMenuPosition()}
+      coords={adjustedCoords()}
       isOpen={isOpen}
       onClick={handleClose}
       ref={menuRef}
@@ -197,12 +194,7 @@ const CompositionMenu = ({ handleClose, isModal, isOpen, ...props }) => {
 
 CompositionMenu.propTypes = {
   handleClose: PropTypes.func.isRequired,
-  isModal: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
-};
-
-CompositionMenu.defaultProps = {
-  isModal: false,
 };
 
 export default CompositionMenu;

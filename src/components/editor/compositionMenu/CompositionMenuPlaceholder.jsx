@@ -32,10 +32,10 @@ const SlashKey = styled.span(({ theme: { colors } }) => ({
 }));
 
 const CompositionMenuPlaceholder = ({ isVisible }) => {
-  const { coords } = useSelectionDimensions();
+  const { coords } = useSelectionDimensions({ skip: !isVisible });
 
   const adjustedCoords = () => {
-    if (!isVisible) return null;
+    if (!isVisible || !coords) return null;
 
     const { top, left } = coords;
     return {
