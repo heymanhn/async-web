@@ -25,8 +25,11 @@ const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
   fontWeight: 400,
   letterSpacing: '-0.011em',
   lineHeight: '26px',
-  opacity: 0.6,
   padding: '10px 30px 5px',
+
+  span: {
+    color: `${colors.grey3} !important`,
+  },
 }));
 
 const ContextComposer = props => {
