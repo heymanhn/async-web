@@ -36,13 +36,23 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
     borderRadius: '5px',
     boxShadow: `0px 0px 3px ${colors.grey7}`,
     marginBottom: '30px',
-  })
+  }),
+  ({ isModal, theme: { colors } }) => {
+    if (!isModal) return {};
+    return {
+      border: 'none',
+      borderTop: `1px solid ${colors.borderGrey}`,
+      borderRadius: 0,
+      boxShadow: 'none',
+      marginBottom: 0,
+    };
+  }
 );
 
 const DiscussionThread = ({ isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
-  const { discussionId } = useContext(DiscussionContext);
+  const { discussionId, modalRef } = useContext(DiscussionContext);
   const [pendingMessageCount, setPendingMessageCount] = useState(0);
   const [addPendingMessages] = useMutation(localAddPendingMessages, {
     variables: { discussionId },
@@ -116,6 +126,7 @@ const DiscussionThread = ({ isUnread, ...props }) => {
           )}
           <StyledDiscussionMessage
             index={i}
+            isModal={!!modalRef.current}
             message={m}
             isUnread={isNewMessage(m)}
           />

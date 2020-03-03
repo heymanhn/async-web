@@ -23,15 +23,6 @@ const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
   background: colors.bgGrey,
 }));
 
-const StyledDiscussionMessage = styled(DiscussionMessage)(
-  ({ theme: { colors } }) => ({
-    background: colors.white,
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
-  })
-);
-
 const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   const modalRef = useRef(null);
   const {
@@ -152,7 +143,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
         {/* Showing the message composer after the context is created
             ensures that it is in focus */}
         {isComposing && context ? (
-          <StyledDiscussionMessage
+          <DiscussionMessage
             mode="compose"
             afterCreate={handleCreateMessage}
             handleCancel={handleCancelCompose}

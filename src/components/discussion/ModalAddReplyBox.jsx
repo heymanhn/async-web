@@ -28,7 +28,19 @@ const AddReplyContainer = styled.div(
     opacity: hover || status === 'resolved' ? 1 : 0.6,
     padding: '20px 25px',
     transition: 'opacity 0.2s',
-  })
+  }),
+  ({ isModal, theme: { colors } }) => {
+    if (!isModal) return {};
+    return {
+      background: colors.grey7,
+      border: 'none',
+      borderTop: `1px solid ${colors.borderGrey}`,
+      borderRadius: 0,
+      borderBottomLeftRadius: '5px',
+      borderBottomRightRadius: '5px',
+      boxShadow: 'none',
+    };
+  }
 );
 
 const AddReplyItem = styled.div({
@@ -47,15 +59,17 @@ const ResolveAuthorContainter = styled.div({
   alignItems: 'center',
 });
 
-const ResolveDiscussionButton = styled.div(({ theme: { colors } }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  background: colors.bgGrey,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  cursor: 'pointer',
-  padding: '4px 15px',
-}));
+const ResolveDiscussionButton = styled.div(
+  ({ isModal, theme: { colors } }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    background: colors.bgGrey,
+    border: `1px solid ${isModal ? colors.white : colors.borderGrey}`,
+    borderRadius: '5px',
+    cursor: 'pointer',
+    padding: '4px 15px',
+  })
+);
 
 const ResolvedDiscussionIcon = styled(FontAwesomeIcon)(
   ({ theme: { colors } }) => ({
@@ -83,7 +97,7 @@ const Label = styled.div(({ theme: { colors } }) => ({
 }));
 
 const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
-  const { discussionId } = useContext(DiscussionContext);
+  const { discussionId, modalRef } = useContext(DiscussionContext);
   const { hover, ...hoverProps } = useHover(!isComposing);
   const currentUser = useCurrentUser();
 
@@ -95,7 +109,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
   if (loading || !data.discussion) return null;
   const { status } = data.discussion;
 
-  async function updateDiscussionStatus({ currentState }) {
+  const updateDiscussionStatus = ({ currentState }) => {
     const input = {
       status: {
         state: currentState,
@@ -103,10 +117,11 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
     };
 
     updateDiscussion({ variables: { discussionId, input } });
-  }
+  };
 
   return (
     <AddReplyContainer
+      isModal={!!modalRef.current}
       status={status && status.state}
       hover={hover}
       {...props}
@@ -126,6 +141,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
           </AddReplyItem>
           <AddReplyItem>
             <ResolveDiscussionButton
+              isModal={!!modalRef.current}
               onClick={() =>
                 updateDiscussionStatus({ currentState: status.state })
               }
