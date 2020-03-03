@@ -9,10 +9,9 @@
  * - DiscussionContext provided with a reference to the modal component, if
  *   a modal is currently displayed
  */
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
 
-import useMountEffect from 'utils/hooks/useMountEffect';
 import { DiscussionContext } from 'utils/contexts';
 
 import Editor from 'components/editor/Editor';
@@ -75,7 +74,7 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
     setData({ coords, dimensions, rect });
   };
 
-  useMountEffect(() => {
+  useEffect(() => {
     window.addEventListener('resize', calculateDimensions);
     return () => {
       window.removeEventListener('resize', calculateDimensions);
