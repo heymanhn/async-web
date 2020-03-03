@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-apollo';
 
 import { snakedQueryParams } from 'utils/queryParams';
 import { debounce } from 'utils/helpers';
+import { DiscussionContext } from 'utils/contexts';
 
 const DEBOUNCE_INTERVAL = 500;
 
@@ -17,33 +18,40 @@ const DEBOUNCE_INTERVAL = 500;
  * custom fetchMore() logic
  */
 const usePaginatedResource = (ref, { query, key, variables }) => {
+  const { modalRef } = useContext(DiscussionContext);
   const [shouldFetch, setShouldFetch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
-  const handleScroll = useCallback(() => {
+  const handleScroll = () => {
     const elem = ref.current;
     if (!elem) return;
 
-    // Subtracting 200px from the offsetHeight to trigger the fetching action sooner.
-    const reachedBottom =
-      window.innerHeight + window.scrollY >= elem.offsetHeight - 200;
+    // Subtracting 200px to trigger the fetching action sooner.
+    const { current: modal } = modalRef;
+    const scrollOffset = modal
+      ? modal.scrollHeight
+      : window.clientHeight + window.scrollY;
+
+    const reachedBottom = scrollOffset >= elem.offsetHeight - 200;
 
     if (!reachedBottom || shouldFetch) return;
     setShouldFetch(true);
-  }, [shouldFetch, ref]);
+  };
 
   useEffect(() => {
-    window.addEventListener(
+    const { current: modal } = modalRef;
+    const target = modal || window;
+    target.addEventListener(
       'scroll',
       debounce(handleScroll, DEBOUNCE_INTERVAL)
     );
 
     return () =>
-      window.removeEventListener(
+      target.removeEventListener(
         'scroll',
         debounce(handleScroll, DEBOUNCE_INTERVAL)
       );
-  }, [handleScroll]);
+  });
 
   const { loading, data, fetchMore } = useQuery(query, { variables });
   if (loading || !data || !data[key]) return { loading, data: null };
