@@ -252,6 +252,7 @@ const wrapInlineAnnotation = (editor, selection, data) => {
 
 const updateInlineAnnotation = (editor, discussionId, data) => {
   Transforms.setNodes(editor, data, {
+    at: documentSelection(editor),
     match: n =>
       n.type === INLINE_DISCUSSION_ANNOTATION &&
       n.discussionId === discussionId,

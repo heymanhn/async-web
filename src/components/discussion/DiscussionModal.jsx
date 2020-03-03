@@ -107,7 +107,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
      * Only need to set this once, when the first message in the discussion
      * is created.
      */
-    if (messageCount === 1) setFirstMsgDiscussionId(modalDiscussionId);
+    if (!messageCount) setFirstMsgDiscussionId(modalDiscussionId);
   };
 
   const afterDelete = () => {
