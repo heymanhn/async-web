@@ -52,7 +52,7 @@ const addNewMessageToDiscussionMessages = (
   if (!data || !data2) return null;
 
   const {
-    messages: { pageToken, items, __typename, messageCount },
+    messages: { pageToken, items, __typename },
   } = data;
   const tags = isUnread ? ['new_message'] : ['no_updates'];
 
@@ -78,7 +78,6 @@ const addNewMessageToDiscussionMessages = (
     variables: { discussionId, queryParams: {} },
     data: {
       messages: {
-        messageCount: messageCount + 1,
         pageToken,
         items: [...(items || []), newMessageItem],
         __typename,
@@ -87,6 +86,7 @@ const addNewMessageToDiscussionMessages = (
   });
 
   const { discussion } = data2;
+  const { messageCount } = discussion;
 
   client.writeQuery({
     query: discussionQuery,
@@ -94,6 +94,7 @@ const addNewMessageToDiscussionMessages = (
     data: {
       discussion: {
         ...discussion,
+        messageCount: messageCount + 1,
         tags,
       },
     },
