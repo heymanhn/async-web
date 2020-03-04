@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from 'react-apollo';
 import styled from '@emotion/styled';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
@@ -12,8 +11,10 @@ import useHover from 'utils/hooks/useHover';
 import Avatar from 'components/shared/Avatar';
 import { DiscussionContext } from 'utils/contexts';
 
-const AddReplyContainer = styled.div(
-  ({ hover, status, theme: { colors } }) => ({
+import AvatarWithIcon from './AvatarWithIcon';
+
+const Container = styled.div(
+  ({ theme: { colors } }) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -23,11 +24,8 @@ const AddReplyContainer = styled.div(
     border: `1px solid ${colors.borderGrey}`,
     borderRadius: '5px',
     boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
-    color: colors.grey4,
     cursor: 'pointer',
-    opacity: hover || status === 'resolved' ? 1 : 0.6,
     padding: '20px 25px',
-    transition: 'opacity 0.2s',
   }),
   ({ isModal, theme: { colors } }) => {
     if (!isModal) return {};
@@ -43,53 +41,34 @@ const AddReplyContainer = styled.div(
   }
 );
 
-const AddReplyItem = styled.div({
+const IndicatorContainer = styled.div(({ hover, isResolved }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-});
-
-const AddReplyLabel = styled.div({
-  fontSize: '16px',
-});
-
-const ResolveAuthorContainter = styled.div({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-});
-
-const ResolveDiscussionButton = styled.div(
-  ({ isModal, theme: { colors } }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    background: isModal ? colors.white : colors.bgGrey,
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-    cursor: 'pointer',
-    padding: '4px 15px',
-  })
-);
-
-const ResolvedDiscussionIcon = styled(FontAwesomeIcon)(
-  ({ theme: { colors } }) => ({
-    position: 'absolute',
-    marginTop: '10px',
-    marginLeft: '10px',
-
-    background: colors.white,
-    color: colors.successGreen,
-    fontSize: '18px',
-    marginRight: '12px',
-  })
-);
+  opacity: hover || isResolved ? 1 : 0.6,
+  transition: 'opacity 0.2s',
+}));
 
 const AvatarWithMargin = styled(Avatar)({
   flexShrink: 0,
   marginRight: '12px',
 });
 
-const Label = styled.div(({ theme: { colors } }) => ({
+const IndicatorLabel = styled.div(({ isResolved, theme: { colors } }) => ({
+  color: isResolved ? colors.grey2 : colors.grey4,
+  fontSize: isResolved ? '14px' : '16px',
+  marginLeft: '5px',
+}));
+
+const ActionButton = styled.div(({ isModal, theme: { colors } }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  background: isModal ? colors.white : colors.bgGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  cursor: 'pointer',
+  padding: '4px 15px',
+
   color: colors.mainText,
   fontSize: '14px',
   fontWeight: 500,
@@ -109,68 +88,65 @@ const AddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
   if (loading || !data.discussion) return null;
   const { status } = data.discussion;
 
-  const updateDiscussionStatus = ({ currentState }) => {
-    const input = {
-      status: {
-        state: currentState,
+  const updateDiscussionStatus = state => {
+    updateDiscussion({
+      variables: {
+        discussionId,
+        input: { status: { state } },
       },
-    };
+    });
+  };
 
-    updateDiscussion({ variables: { discussionId, input } });
+  const { state, author } = status || {};
+  const newStatus = state || 'open';
+  const isResolved = newStatus === 'resolved';
+
+  // Either an indication that the discussion is resolved, or a call-out for
+  // the current user to add a reply
+  const renderIndicator = () => {
+    const avatar = isResolved ? (
+      <AvatarWithIcon
+        avatarUrl={status.author.profilePictureUrl}
+        icon="comment-check"
+      />
+    ) : (
+      <AvatarWithMargin avatarUrl={currentUser.profilePictureUrl} size={32} />
+    );
+
+    const message = isResolved
+      ? `${author.fullName} marked this discussion as resolved`
+      : 'Add a reply...';
+
+    const clickHandler = isResolved ? undefined : handleClickReply;
+
+    return (
+      <IndicatorContainer hover={hover} isResolved={isResolved}>
+        {avatar}
+        <IndicatorLabel isResolved={isResolved} onClick={clickHandler}>
+          {message}
+        </IndicatorLabel>
+      </IndicatorContainer>
+    );
+  };
+
+  const renderActionButton = () => {
+    const label = isResolved ? 'Re-open discussion' : 'Resolve discussion';
+
+    return (
+      <ActionButton
+        isModal={isModal}
+        onClick={() => updateDiscussionStatus(newStatus)}
+      >
+        {label}
+      </ActionButton>
+    );
   };
 
   return (
-    <AddReplyContainer
-      isModal={isModal}
-      status={status && status.state}
-      hover={hover}
-      {...props}
-      {...hoverProps}
-    >
-      {status && status.state === 'resolved' ? (
-        <React.Fragment>
-          <AddReplyItem>
-            <ResolveAuthorContainter>
-              <AvatarWithMargin
-                avatarUrl={status.author.profilePictureUrl}
-                size={32}
-              />
-              <ResolvedDiscussionIcon icon="comment-check" />
-            </ResolveAuthorContainter>
-            <AddReplyLabel>{`${status.author.fullName} marked this discussion as resolved`}</AddReplyLabel>
-          </AddReplyItem>
-          <AddReplyItem>
-            <ResolveDiscussionButton
-              isModal={isModal}
-              onClick={() =>
-                updateDiscussionStatus({ currentState: status.state })
-              }
-            >
-              <Label>Re-open discussion</Label>
-            </ResolveDiscussionButton>
-          </AddReplyItem>
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <AddReplyItem>
-            <AvatarWithMargin
-              avatarUrl={currentUser.profilePictureUrl}
-              size={32}
-            />
-            <AddReplyLabel onClick={handleClickReply}>
-              Add a reply...
-            </AddReplyLabel>
-          </AddReplyItem>
-          <AddReplyItem>
-            <ResolveDiscussionButton
-              onClick={() => updateDiscussionStatus({ currentState: 'open' })}
-            >
-              <Label>Resolve discussion</Label>
-            </ResolveDiscussionButton>
-          </AddReplyItem>
-        </React.Fragment>
-      )}
-    </AddReplyContainer>
+    <Container isModal={isModal} {...props} {...hoverProps}>
+      {renderIndicator()}
+      {renderActionButton()}
+    </Container>
   );
 };
 
