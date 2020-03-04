@@ -14,7 +14,7 @@ const DocumentContainer = ({
   viewMode: initialViewMode,
 }) => {
   // TODO (HN): Instead of all these different discussionId fields, suggest
-  // implementing a state machine that oscillates from
+  // implementing a state machine that transitions from
   // new => first_message => deleted
   const [state, setState] = useState({
     viewMode: initialViewMode,

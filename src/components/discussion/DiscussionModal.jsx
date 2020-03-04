@@ -74,12 +74,10 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
       window.history.replaceState({}, `document: ${documentId}`, baseUrl);
   }, [documentId, modalDiscussionId]);
 
-  const { loading, data } = useQuery(discussionQuery, {
+  const { data } = useQuery(discussionQuery, {
     variables: { discussionId: modalDiscussionId },
     skip: !modalDiscussionId,
   });
-
-  if (loading) return null;
 
   let draft;
   let messageCount;
@@ -99,6 +97,8 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   };
 
   const isUnread = () => {
+    if (!data) return false;
+
     const { tags } = data.discussion;
     const safeTags = tags || [];
     return (

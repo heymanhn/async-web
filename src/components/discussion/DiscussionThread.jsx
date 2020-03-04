@@ -79,7 +79,7 @@ const DiscussionThread = ({ isUnread, ...props }) => {
     variables: { discussionId, queryParams: {} },
   });
 
-  if (loading) return <StyledLoadingIndicator color="borderGrey" />;
+  if (loading) return null;
   if (!data) return <NotFound />;
 
   const { items } = data;
