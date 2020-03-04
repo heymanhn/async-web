@@ -106,7 +106,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     );
   };
 
-  const handleCreateMessage = () => {
+  const handleCreateMessage = newDiscussionId => {
     stopComposing();
 
     /* The editor controller is in <DocumentComposer />. Setting the state
@@ -115,7 +115,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
      * Only need to set this once, when the first message in the discussion
      * is created.
      */
-    if (!messageCount) setFirstMsgDiscussionId(modalDiscussionId);
+    if (!messageCount) setFirstMsgDiscussionId(newDiscussionId);
   };
 
   const afterDelete = () => {
