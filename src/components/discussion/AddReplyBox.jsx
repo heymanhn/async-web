@@ -32,7 +32,7 @@ const AddReplyContainer = styled.div(
   ({ isModal, theme: { colors } }) => {
     if (!isModal) return {};
     return {
-      background: colors.grey7,
+      background: colors.bgGrey,
       border: 'none',
       borderTop: `1px solid ${colors.borderGrey}`,
       borderRadius: 0,
@@ -63,8 +63,8 @@ const ResolveDiscussionButton = styled.div(
   ({ isModal, theme: { colors } }) => ({
     display: 'flex',
     alignItems: 'center',
-    background: colors.bgGrey,
-    border: `1px solid ${isModal ? colors.white : colors.borderGrey}`,
+    background: isModal ? colors.white : colors.bgGrey,
+    border: `1px solid ${colors.borderGrey}`,
     borderRadius: '5px',
     cursor: 'pointer',
     padding: '4px 15px',
@@ -96,8 +96,8 @@ const Label = styled.div(({ theme: { colors } }) => ({
   letterSpacing: '-0.006em',
 }));
 
-const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
-  const { discussionId, modalRef } = useContext(DiscussionContext);
+const AddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
+  const { discussionId, isModal } = useContext(DiscussionContext);
   const { hover, ...hoverProps } = useHover(!isComposing);
   const currentUser = useCurrentUser();
 
@@ -121,7 +121,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
 
   return (
     <AddReplyContainer
-      isModal={!!modalRef.current}
+      isModal={isModal}
       status={status && status.state}
       hover={hover}
       {...props}
@@ -141,7 +141,7 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
           </AddReplyItem>
           <AddReplyItem>
             <ResolveDiscussionButton
-              isModal={!!modalRef.current}
+              isModal={isModal}
               onClick={() =>
                 updateDiscussionStatus({ currentState: status.state })
               }
@@ -174,9 +174,9 @@ const ModalAddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
   );
 };
 
-ModalAddReplyBox.propTypes = {
+AddReplyBox.propTypes = {
   handleClickReply: PropTypes.func.isRequired,
   isComposing: PropTypes.bool.isRequired,
 };
 
-export default ModalAddReplyBox;
+export default AddReplyBox;

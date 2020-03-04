@@ -16,7 +16,7 @@ import Modal from 'components/shared/Modal';
 import ContextComposer from './ContextComposer';
 import DiscussionThread from './DiscussionThread';
 import DiscussionMessage from './DiscussionMessage';
-import ModalAddReplyBox from './ModalAddReplyBox';
+import AddReplyBox from './AddReplyBox';
 
 const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
   alignSelf: 'flex-start',
@@ -123,6 +123,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     context,
     draft,
     modalRef,
+    isModal: true,
 
     setContext,
     afterCreate: id => handleShowModal(id),
@@ -150,7 +151,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
             {...props}
           />
         ) : (
-          <ModalAddReplyBox
+          <AddReplyBox
             handleClickReply={startComposing}
             isComposing={isComposing}
           />
