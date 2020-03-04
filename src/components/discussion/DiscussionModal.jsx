@@ -28,7 +28,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
     borderTop: `1px solid ${colors.borderGrey}`,
     borderBottomLeftRadius: '5px',
     borderBottomRightRadius: '5px',
-    marginBottom: '10px',
+    paddingBottom: '25px',
   })
 );
 
