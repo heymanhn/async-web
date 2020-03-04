@@ -139,6 +139,14 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     afterDelete,
   };
 
+  /* Three conditions when ready to show the composer:
+   * 1. Inline discussion and the context has been created. This ensures the
+   *    composer is in focus when it's rendered.
+   * 2. General discussion. There won't be a topic to create context for.
+   * 3. Subsequent messages to a discussion. Also won't be a topic present.
+   */
+  const readyToCompose = isComposing && (!inlineDiscussionTopic || context);
+
   return (
     <StyledModal
       ref={modalRef}
@@ -149,10 +157,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
       <DiscussionContext.Provider value={value}>
         {(inlineDiscussionTopic || context) && <ContextComposer />}
         {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}
-
-        {/* Showing the message composer after the context is created
-            ensures that it is in focus */}
-        {isComposing && context ? (
+        {readyToCompose ? (
           <StyledDiscussionMessage
             mode="compose"
             afterCreate={handleCreateMessage}
