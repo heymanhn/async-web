@@ -27,7 +27,7 @@ const useDraftMutations = (editor = null) => {
     variables: { discussionId },
   });
 
-  async function handleSaveDraft() {
+  const handleSaveDraft = async () => {
     const { children } = editor;
 
     let draftDiscussionId = discussionId;
@@ -63,9 +63,9 @@ const useDraftMutations = (editor = null) => {
     }
 
     return Promise.reject(new Error('Failed to save message draft'));
-  }
+  };
 
-  async function handleDeleteDraft() {
+  const handleDeleteDraft = async () => {
     const { data } = await deleteMessageDraft();
 
     if (data.deleteMessageDraft) {
@@ -84,7 +84,7 @@ const useDraftMutations = (editor = null) => {
     }
 
     return Promise.reject(new Error('Failed to delete message draft'));
-  }
+  };
 
   return {
     handleSaveDraft,
