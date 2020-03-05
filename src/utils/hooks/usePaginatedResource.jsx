@@ -30,7 +30,7 @@ const usePaginatedResource = (ref, { query, key, ...props }) => {
     const { current: modal } = modalRef;
     const scrollOffset = modal
       ? modal.scrollHeight
-      : window.clientHeight + window.scrollY;
+      : window.innerHeight + window.scrollY;
 
     const reachedBottom = scrollOffset >= elem.offsetHeight - 200;
 
