@@ -56,6 +56,11 @@ const addNewMessageToDiscussionMessages = (
   } = data;
   const tags = isUnread ? ['new_message'] : ['no_updates'];
 
+  // Avoid inserting duplicate entries in the cache. This could happen if the
+  // queries have already been fetched before the cache update.
+  const { id } = message;
+  if (items.find(i => i.message.id === id)) return null;
+
   const newMessageItem = {
     __typename: 'MessageItem',
     message: {
