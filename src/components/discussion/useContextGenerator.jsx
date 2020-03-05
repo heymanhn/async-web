@@ -34,30 +34,41 @@ const useContextGenerator = editor => {
   };
 
   // Assumes that a highlight has been made
+  // Only truncates from each end if there is too much content after the selection
   const deleteSurroundingText = () => {
     const [, path] = Editor.findNodeByType(editor, CONTEXT_HIGHLIGHT);
 
     // Delete the end first so that the selection paths don't change
-    Transforms.select(editor, {
+    const endSelection = {
       anchor: Editor.end(editor, path),
       focus: Editor.end(editor, []),
-    });
-    Transforms.move(editor, { edge: 'anchor', distance: BUFFER_LENGTH });
-    Transforms.delete(editor);
-    Transforms.insertText(editor, '...');
+    };
+    Transforms.select(editor, endSelection);
+
+    const endText = Editor.string(editor, endSelection);
+    if (endText.length > BUFFER_LENGTH) {
+      Transforms.move(editor, { edge: 'anchor', distance: BUFFER_LENGTH });
+      Transforms.delete(editor);
+      Transforms.insertText(editor, '...');
+    }
 
     // Then deal with the start portion
-    Transforms.select(editor, {
+    const startSelection = {
       anchor: Editor.start(editor, []),
       focus: Editor.start(editor, path),
-    });
-    Transforms.move(editor, {
-      edge: 'focus',
-      distance: BUFFER_LENGTH,
-      reverse: true,
-    });
-    Transforms.delete(editor);
-    Transforms.insertText(editor, '...');
+    };
+    Transforms.select(editor, startSelection);
+
+    const startText = Editor.string(editor, startSelection);
+    if (startText.length > BUFFER_LENGTH) {
+      Transforms.move(editor, {
+        edge: 'focus',
+        distance: BUFFER_LENGTH,
+        reverse: true,
+      });
+      Transforms.delete(editor);
+      Transforms.insertText(editor, '...');
+    }
 
     // Prevents the DOM range from overlapping with other Slate instances
     Transforms.deselect(editor);
@@ -70,12 +81,14 @@ const useContextGenerator = editor => {
     const deepNewContents = JSON.parse(JSON.stringify(newContents));
 
     Transforms.insertNodes(editor, deepNewContents);
+
     Editor.wrapInline(
       editor,
       CONTEXT_HIGHLIGHT,
       newSelection,
       INLINE_DISCUSSION_SOURCE
     );
+
     deleteSurroundingText();
   };
 };
