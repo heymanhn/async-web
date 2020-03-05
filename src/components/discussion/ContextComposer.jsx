@@ -49,7 +49,9 @@ const ContextComposer = props => {
   const editorProps = useContextEditorProps();
   const [content, setContent] = useState(context || []);
   const generateContext = useContextGenerator(contextEditor);
-  useMountEffect(() => !context && generateContext());
+  useMountEffect(() => {
+    if (!context) generateContext();
+  });
 
   if (!context && content.length) setContext(content);
 

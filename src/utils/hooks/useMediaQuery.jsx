@@ -9,7 +9,9 @@ const useMediaQuery = () => {
 
   useMountEffect(() => {
     function handleWindowSizeChange() {
-      const { mediaBreakpoint } = client.readQuery({ query: mediaBreakpointQuery });
+      const { mediaBreakpoint } = client.readQuery({
+        query: mediaBreakpointQuery,
+      });
 
       const newBreakpoint = getBreakpoint();
       if (newBreakpoint !== mediaBreakpoint) {

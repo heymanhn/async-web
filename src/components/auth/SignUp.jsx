@@ -67,7 +67,9 @@ const SignUp = ({ inviteCode }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const client = useApolloClient();
-  useMountEffect(() => track('Sign Up page viewed'));
+  useMountEffect(() => {
+    track('Sign Up page viewed');
+  });
 
   const [createUser] = useMutation(createUserMutation, {
     variables: {
@@ -78,11 +80,12 @@ const SignUp = ({ inviteCode }) => {
         inviteCode,
       },
     },
-    onCompleted: (data) => {
+    onCompleted: data => {
       const { id: userId, token: userToken, organizationId } = data.createUser;
 
       setLocalUser({ userId, userToken });
-      if (organizationId) setLocalAppState({ organizationId, isOnboarding: true });
+      if (organizationId)
+        setLocalAppState({ organizationId, isOnboarding: true });
       client.writeData({
         data: {
           isLoggedIn: true,
@@ -95,10 +98,12 @@ const SignUp = ({ inviteCode }) => {
       if (organizationId) group(organizationId);
       track('Signed up');
 
-      const returnPath = organizationId ? `/organizations/${organizationId}/invites` : '/organizations';
+      const returnPath = organizationId
+        ? `/organizations/${organizationId}/invites`
+        : '/organizations';
       navigate(returnPath);
     },
-    onError: async (err) => {
+    onError: async err => {
       await clearLocalUser();
       await clearLocalAppState();
       client.resetStore();

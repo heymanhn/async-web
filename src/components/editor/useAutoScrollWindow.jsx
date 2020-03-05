@@ -11,16 +11,18 @@ const MINIMUM_DISTANCE_FROM_BOTTOM = 60;
 const useAutoScrollWindow = editor => {
   const updateWindowPosition = () => {
     const { selection } = editor;
-    if (!selection) return; // Means the editor is blurred
 
-    const range = ReactEditor.toDOMRange(editor, selection);
-    const rect = range.getBoundingClientRect();
+    if (selection) {
+      const range = ReactEditor.toDOMRange(editor, selection);
+      const rect = range.getBoundingClientRect();
 
-    const distanceFromBottom = window.innerHeight - rect.bottom;
+      const distanceFromBottom = window.innerHeight - rect.bottom;
 
-    if (distanceFromBottom < MINIMUM_DISTANCE_FROM_BOTTOM) {
-      const scrollDistance = MINIMUM_DISTANCE_FROM_BOTTOM - distanceFromBottom;
-      window.scroll({ top: window.scrollY + scrollDistance });
+      if (distanceFromBottom < MINIMUM_DISTANCE_FROM_BOTTOM) {
+        const scrollDistance =
+          MINIMUM_DISTANCE_FROM_BOTTOM - distanceFromBottom;
+        window.scroll({ top: window.scrollY + scrollDistance });
+      }
     }
   };
 

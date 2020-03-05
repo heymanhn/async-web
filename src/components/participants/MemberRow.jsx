@@ -65,9 +65,9 @@ const MemberRow = ({
     }
   }, [isSelected]);
 
-  function handleClick() {
+  const handleClick = () => {
     return isMember ? null : handleAddMember(member);
-  }
+  };
 
   const { email, fullName, profilePictureUrl } = member;
 

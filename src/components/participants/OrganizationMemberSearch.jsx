@@ -62,9 +62,7 @@ const OrganizationMemberSearch = ({
   const resourceId = documentId || discussionId;
 
   useEffect(() => {
-    if (!isModalOpen || !inputRef.current) return;
-
-    if (inputRef.current) inputRef.current.focus();
+    if (isModalOpen && inputRef.current) inputRef.current.focus();
   });
 
   const { loading: l1, data: orgMembership } = useQuery(resourceMembersQuery, {
