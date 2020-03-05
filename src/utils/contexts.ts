@@ -21,6 +21,7 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   context: null,
   draft: null,
   modalRef: {},
+  isModal: false,
 
   setContext: () => {},
   afterCreate: () => {},

@@ -12,7 +12,6 @@ import useMountEffect from 'utils/hooks/useMountEffect';
 import { DiscussionContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
-import LoadingIndicator from 'components/shared/LoadingIndicator';
 import DiscussionMessage from './DiscussionMessage';
 import NewMessagesDivider from './NewMessagesDivider';
 import NewMessagesIndicator from './NewMessagesIndicator';
@@ -25,10 +24,6 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   maxWidth: discussionViewport,
 }));
 
-const StyledLoadingIndicator = styled(LoadingIndicator)({
-  margin: '20px auto',
-});
-
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ isUnread, theme: { colors } }) => ({
     backgroundColor: isUnread ? colors.unreadBlue : 'default',
@@ -36,13 +31,23 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
     borderRadius: '5px',
     boxShadow: `0px 0px 3px ${colors.grey7}`,
     marginBottom: '30px',
-  })
+  }),
+  ({ isModal, theme: { colors } }) => {
+    if (!isModal) return {};
+    return {
+      border: 'none',
+      borderTop: `1px solid ${colors.borderGrey}`,
+      borderRadius: 0,
+      boxShadow: 'none',
+      marginBottom: 0,
+    };
+  }
 );
 
-const DiscussionThread = ({ isUnread, ...props }) => {
+const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
-  const { discussionId } = useContext(DiscussionContext);
+  const { discussionId, isModal } = useContext(DiscussionContext);
   const [pendingMessageCount, setPendingMessageCount] = useState(0);
   const [addPendingMessages] = useMutation(localAddPendingMessages, {
     variables: { discussionId },
@@ -69,7 +74,9 @@ const DiscussionThread = ({ isUnread, ...props }) => {
     variables: { discussionId, queryParams: {} },
   });
 
-  if (loading) return <StyledLoadingIndicator color="borderGrey" />;
+  // Workaround to make sure two copies of the first message aren't rendered
+  // on the modal at the same time
+  if (loading || isComposingFirstMsg) return null;
   if (!data) return <NotFound />;
 
   const { items } = data;
@@ -116,8 +123,8 @@ const DiscussionThread = ({ isUnread, ...props }) => {
           )}
           <StyledDiscussionMessage
             index={i}
+            isModal={isModal}
             message={m}
-            source="discussionModal"
             isUnread={isNewMessage(m)}
           />
         </React.Fragment>
@@ -127,6 +134,7 @@ const DiscussionThread = ({ isUnread, ...props }) => {
 };
 
 DiscussionThread.propTypes = {
+  isComposingFirstMsg: PropTypes.bool.isRequired,
   isUnread: PropTypes.bool.isRequired,
 };
 

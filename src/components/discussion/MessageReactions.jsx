@@ -15,7 +15,6 @@ const Container = styled.div(({ theme: { colors } }) => ({
   alignItems: 'center',
 
   color: colors.grey3,
-  marginTop: '20px',
   minHeight: defaultHeight,
 }));
 

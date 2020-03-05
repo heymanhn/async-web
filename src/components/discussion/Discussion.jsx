@@ -12,7 +12,7 @@ import LoadingIndicator from 'components/shared/LoadingIndicator';
 import TopicComposer from './TopicComposer';
 import DiscussionMessage from './DiscussionMessage';
 import DiscussionThread from './DiscussionThread';
-import ModalAddReplyBox from './ModalAddReplyBox';
+import AddReplyBox from './AddReplyBox';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
@@ -93,7 +93,7 @@ const Discussion = () => {
             handleCancel={handleCancelCompose}
           />
         ) : (
-          <ModalAddReplyBox
+          <AddReplyBox
             handleClickReply={startComposing}
             isComposing={isComposing}
           />

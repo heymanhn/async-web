@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 const Backdrop = styled.div(({ customStyle, theme: { colors } }) => ({
-  background: colors.white,
-  opacity: 0.75,
+  background: colors.contentText,
+  opacity: 0.6,
   position: 'fixed',
   top: 0,
   left: 0,
@@ -31,9 +31,8 @@ const Container = styled.div({
 
 const Dialog = styled.div(({ theme: { colors, documentViewport } }) => ({
   background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
-  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
+  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
   margin: '120px auto',
   width: documentViewport,
 }));

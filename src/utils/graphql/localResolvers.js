@@ -52,9 +52,14 @@ const addNewMessageToDiscussionMessages = (
   if (!data || !data2) return null;
 
   const {
-    messages: { pageToken, items, __typename, messageCount },
+    messages: { pageToken, items, __typename },
   } = data;
   const tags = isUnread ? ['new_message'] : ['no_updates'];
+
+  // Avoid inserting duplicate entries in the cache. This could happen if the
+  // queries have already been fetched before the cache update.
+  const { id } = message;
+  if ((items || []).find(i => i.message.id === id)) return null;
 
   const newMessageItem = {
     __typename: 'MessageItem',
@@ -78,7 +83,6 @@ const addNewMessageToDiscussionMessages = (
     variables: { discussionId, queryParams: {} },
     data: {
       messages: {
-        messageCount: messageCount + 1,
         pageToken,
         items: [...(items || []), newMessageItem],
         __typename,
@@ -87,6 +91,7 @@ const addNewMessageToDiscussionMessages = (
   });
 
   const { discussion } = data2;
+  const { messageCount } = discussion;
 
   client.writeQuery({
     query: discussionQuery,
@@ -94,6 +99,7 @@ const addNewMessageToDiscussionMessages = (
     data: {
       discussion: {
         ...discussion,
+        messageCount: messageCount + 1,
         tags,
       },
     },

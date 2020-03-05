@@ -19,7 +19,7 @@ import DraftSavedIndicator from './DraftSavedIndicator';
 const Container = styled.div(({ mode, theme: { colors } }) => ({
   background: colors.white,
   cursor: 'default',
-  padding: mode === 'edit' ? '15px 30px 25px !important' : '15px 30px 25px',
+  padding: mode === 'edit' ? '20px 30px 15px !important' : '20px 30px 15px',
 }));
 
 const HeaderSection = styled.div({
@@ -38,12 +38,11 @@ const DiscussionMessage = ({
   index, // Used only by <DiscussionThread /> to see which message is selected
   mode: initialMode,
   message,
-  source,
   afterCreate,
   handleCancel,
   ...props
 }) => {
-  const { draft } = useContext(DiscussionContext);
+  const { draft, modalRef } = useContext(DiscussionContext);
 
   const [mode, setMode] = useState(initialMode);
   const { hover, ...hoverProps } = useHover(mode === 'display');
@@ -76,7 +75,12 @@ const DiscussionMessage = ({
   };
 
   return (
-    <Container mode={mode} {...hoverProps} {...props}>
+    <Container
+      mode={mode}
+      isModal={!!modalRef.current}
+      {...hoverProps}
+      {...props}
+    >
       <MessageContext.Provider value={value}>
         <HeaderSection>
           <AuthorDetails
@@ -105,7 +109,6 @@ DiscussionMessage.propTypes = {
   index: PropTypes.number,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
-  source: PropTypes.string,
   afterCreate: PropTypes.func,
   handleCancel: PropTypes.func,
 };
@@ -114,7 +117,6 @@ DiscussionMessage.defaultProps = {
   index: null,
   mode: 'display',
   message: {},
-  source: null,
   afterCreate: () => {},
   handleCancel: () => {},
 };

@@ -7,6 +7,7 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
+import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import { DocumentContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
@@ -88,7 +89,7 @@ const NewReplyLabel = styled(MessageCountIndicator)(
 
 const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef }) => {
   const { handleShowModal } = useContext(DocumentContext);
-  const { loading, error, data } = useQuery(discussionQuery, {
+  const { loading, error, data, client } = useQuery(discussionQuery, {
     variables: { discussionId },
   });
 
@@ -120,6 +121,13 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef }) => {
       top: `${offsetTop + offsetHeight}px`,
     };
   };
+
+  // Optimistically pre-fetch the messages for the discussion, so that the
+  // discussion modal loads immediately
+  client.query({
+    query: discussionMessagesQuery,
+    variables: { discussionId, queryParams: {} },
+  });
 
   const root = window.document.getElementById('root');
 

@@ -16,20 +16,19 @@ import Modal from 'components/shared/Modal';
 import ContextComposer from './ContextComposer';
 import DiscussionThread from './DiscussionThread';
 import DiscussionMessage from './DiscussionMessage';
-import ModalAddReplyBox from './ModalAddReplyBox';
+import AddReplyBox from './AddReplyBox';
 
 const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
   alignSelf: 'flex-start',
-  padding: '25px 25px',
   background: colors.bgGrey,
 }));
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
-    background: colors.white,
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
+    borderTop: `1px solid ${colors.borderGrey}`,
+    borderBottomLeftRadius: '5px',
+    borderBottomRightRadius: '5px',
+    paddingBottom: '25px',
   })
 );
 
@@ -75,12 +74,10 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
       window.history.replaceState({}, `document: ${documentId}`, baseUrl);
   }, [documentId, modalDiscussionId]);
 
-  const { loading, data } = useQuery(discussionQuery, {
+  const { data } = useQuery(discussionQuery, {
     variables: { discussionId: modalDiscussionId },
     skip: !modalDiscussionId,
   });
-
-  if (loading) return null;
 
   let draft;
   let messageCount;
@@ -100,6 +97,8 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   };
 
   const isUnread = () => {
+    if (!data) return false;
+
     const { tags } = data.discussion;
     const safeTags = tags || [];
     return (
@@ -107,7 +106,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     );
   };
 
-  const handleCreateMessage = () => {
+  const handleCreateMessage = newDiscussionId => {
     stopComposing();
 
     /* The editor controller is in <DocumentComposer />. Setting the state
@@ -116,7 +115,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
      * Only need to set this once, when the first message in the discussion
      * is created.
      */
-    if (!messageCount) setFirstMsgDiscussionId(modalDiscussionId);
+    if (!messageCount) setFirstMsgDiscussionId(newDiscussionId);
   };
 
   const afterDelete = () => {
@@ -133,11 +132,21 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     context,
     draft,
     modalRef,
+    isModal: true,
 
     setContext,
     afterCreate: id => handleShowModal(id),
     afterDelete,
   };
+
+  /* Three conditions when ready to show the composer:
+   * 1. Inline discussion and the context has been created. This ensures the
+   *    composer is in focus when it's rendered.
+   * 2. General discussion. There won't be a topic to create context for.
+   * 3. Subsequent messages to a discussion. Also won't be a topic present.
+   */
+  const readyToCompose = isComposing && (!inlineDiscussionTopic || context);
+  const isComposingFirstMsg = isComposing && !messageCount;
 
   return (
     <StyledModal
@@ -148,20 +157,21 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     >
       <DiscussionContext.Provider value={value}>
         {(inlineDiscussionTopic || context) && <ContextComposer />}
-        {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}
-
-        {/* Showing the message composer after the context is created
-            ensures that it is in focus */}
-        {isComposing && context ? (
+        {modalDiscussionId && (
+          <DiscussionThread
+            isComposingFirstMsg={isComposingFirstMsg}
+            isUnread={isUnread()}
+          />
+        )}
+        {readyToCompose ? (
           <StyledDiscussionMessage
             mode="compose"
-            source="discussionModal"
             afterCreate={handleCreateMessage}
             handleCancel={handleCancelCompose}
             {...props}
           />
         ) : (
-          <ModalAddReplyBox
+          <AddReplyBox
             handleClickReply={startComposing}
             isComposing={isComposing}
           />
