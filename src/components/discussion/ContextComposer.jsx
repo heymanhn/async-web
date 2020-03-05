@@ -12,15 +12,22 @@ import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withVoidElements from 'components/editor/withVoidElements';
 import useContextGenerator from './useContextGenerator';
 
-const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
-  background: colors.grey7,
+const Container = styled.div(({ theme: { colors } }) => ({
   borderTopLeftRadius: '5px',
   borderTopRightRadius: '5px',
+
+  ':after': {
+    background: colors.grey7,
+  },
+}));
+
+const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
   fontSize: '16px',
   fontWeight: 400,
   letterSpacing: '-0.011em',
   lineHeight: '26px',
-  padding: '10px 30px 5px',
+  padding: '10px 30px 0px',
+  marginBottom: '25px',
 
   span: {
     color: `${colors.grey3} !important`,
@@ -47,9 +54,15 @@ const ContextComposer = props => {
   if (!context && content.length) setContext(content);
 
   return (
-    <Slate editor={contextEditor} value={content} onChange={v => setContent(v)}>
-      <ContextEditable readOnly {...props} {...editorProps} />
-    </Slate>
+    <Container>
+      <Slate
+        editor={contextEditor}
+        value={content}
+        onChange={v => setContent(v)}
+      >
+        <ContextEditable readOnly {...props} {...editorProps} />
+      </Slate>
+    </Container>
   );
 };
 
