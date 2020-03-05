@@ -17,7 +17,7 @@ const DEBOUNCE_INTERVAL = 500;
  * Now this is essentially a wrapper on Apollo's useQuery, bundled with
  * custom fetchMore() logic
  */
-const usePaginatedResource = (ref, { query, key, variables }) => {
+const usePaginatedResource = (ref, { query, key, ...props }) => {
   const { modalRef } = useContext(DiscussionContext);
   const [shouldFetch, setShouldFetch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -53,10 +53,11 @@ const usePaginatedResource = (ref, { query, key, variables }) => {
       );
   });
 
-  const { loading, data, fetchMore } = useQuery(query, { variables });
+  const { loading, data, fetchMore } = useQuery(query, props);
   if (loading || !data || !data[key]) return { loading, data: null };
 
   const { pageToken } = data[key];
+  const { variables } = props;
 
   const fetchMoreItems = async () => {
     const newQueryParams = variables.queryParams;
