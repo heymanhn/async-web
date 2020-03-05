@@ -146,6 +146,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
    * 3. Subsequent messages to a discussion. Also won't be a topic present.
    */
   const readyToCompose = isComposing && (!inlineDiscussionTopic || context);
+  const isComposingFirstMsg = isComposing && !messageCount;
 
   return (
     <StyledModal
@@ -156,7 +157,12 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     >
       <DiscussionContext.Provider value={value}>
         {(inlineDiscussionTopic || context) && <ContextComposer />}
-        {modalDiscussionId && <DiscussionThread isUnread={isUnread()} />}
+        {modalDiscussionId && (
+          <DiscussionThread
+            isComposingFirstMsg={isComposingFirstMsg}
+            isUnread={isUnread()}
+          />
+        )}
         {readyToCompose ? (
           <StyledDiscussionMessage
             mode="compose"

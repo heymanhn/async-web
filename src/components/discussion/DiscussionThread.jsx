@@ -12,7 +12,6 @@ import useMountEffect from 'utils/hooks/useMountEffect';
 import { DiscussionContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
-import LoadingIndicator from 'components/shared/LoadingIndicator';
 import DiscussionMessage from './DiscussionMessage';
 import NewMessagesDivider from './NewMessagesDivider';
 import NewMessagesIndicator from './NewMessagesIndicator';
@@ -24,10 +23,6 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 
   maxWidth: discussionViewport,
 }));
-
-const StyledLoadingIndicator = styled(LoadingIndicator)({
-  margin: '20px auto',
-});
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ isUnread, theme: { colors } }) => ({
@@ -49,7 +44,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
   }
 );
 
-const DiscussionThread = ({ isUnread, ...props }) => {
+const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
   const { discussionId, isModal } = useContext(DiscussionContext);
@@ -79,7 +74,9 @@ const DiscussionThread = ({ isUnread, ...props }) => {
     variables: { discussionId, queryParams: {} },
   });
 
-  if (loading) return null;
+  // Workaround to make sure two copies of the first message aren't rendered
+  // on the modal at the same time
+  if (loading || isComposingFirstMsg) return null;
   if (!data) return <NotFound />;
 
   const { items } = data;
@@ -137,6 +134,7 @@ const DiscussionThread = ({ isUnread, ...props }) => {
 };
 
 DiscussionThread.propTypes = {
+  isComposingFirstMsg: PropTypes.bool.isRequired,
   isUnread: PropTypes.bool.isRequired,
 };
 
