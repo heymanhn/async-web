@@ -14,7 +14,10 @@ import { toPlainText } from 'components/editor/utils';
 const useDraftMutations = (editor = null) => {
   const client = useApolloClient();
   const { discussionId, afterCreateDraft } = useContext(DiscussionContext);
-  const { handleCreate, handleDelete } = useDiscussionMutations();
+  const {
+    handleCreate: handleCreateDiscussion,
+    handleDelete: handleDeleteDiscussion,
+  } = useDiscussionMutations();
 
   const [createMessageDraft] = useMutation(createMessageDraftMutation);
   const [localAddDraftToDiscussion] = useMutation(localAddDraftToDiscussionMtn);
@@ -32,7 +35,7 @@ const useDraftMutations = (editor = null) => {
 
     let draftDiscussionId = discussionId;
     if (!draftDiscussionId) {
-      const { discussionId: did } = await handleCreate();
+      const { discussionId: did } = await handleCreateDiscussion();
       draftDiscussionId = did;
     }
 
@@ -66,20 +69,24 @@ const useDraftMutations = (editor = null) => {
   };
 
   const handleDeleteDraft = async () => {
+    const {
+      discussion: { messageCount },
+    } = client.readQuery({
+      query: discussionQuery,
+      variables: { discussionId },
+    });
+
+    // No need to delete the draft in this case. Just delete the
+    // discussion directly
+    if (!messageCount) {
+      handleDeleteDiscussion();
+      return Promise.resolve();
+    }
+
     const { data } = await deleteMessageDraft();
 
     if (data.deleteMessageDraft) {
       localRemoveDraftFromDscn();
-
-      const {
-        discussion: { messageCount },
-      } = client.readQuery({
-        query: discussionQuery,
-        variables: { discussionId },
-      });
-
-      if (!messageCount) handleDelete();
-
       return Promise.resolve();
     }
 

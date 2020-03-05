@@ -27,7 +27,7 @@ const usePusher = () => {
   const { data: isLoggedInData } = useQuery(isLoggedInQuery);
 
   useEffect(() => {
-    if (!isLoggedInData || !isLoggedInData.isLoggedIn) return undefined;
+    if (!isLoggedInData || !isLoggedInData.isLoggedIn) return () => {};
     const { userId } = getLocalUser();
 
     const pusher = new Pusher(REACT_APP_PUSHER_APP_KEY, {
@@ -39,7 +39,7 @@ const usePusher = () => {
     const channelName = `private-channel-${userId}`;
     const channel = pusher.subscribe(channelName);
 
-    function handleBadgeCount(pusherData) {
+    const handleBadgeCount = pusherData => {
       const camelData = camelcaseKeys(pusherData, { deep: true });
       const { notification } = camelData;
 
@@ -47,9 +47,9 @@ const usePusher = () => {
         mutation: updateBadgeCountMutation,
         variables: { userId, notification },
       });
-    }
+    };
 
-    function handleNewMessage(pusherData) {
+    const handleNewMessage = pusherData => {
       const camelData = camelcaseKeys(pusherData, { deep: true });
       const { message, notification } = camelData;
       const { discussionId } = message;
@@ -75,7 +75,7 @@ const usePusher = () => {
           },
         });
       }
-    }
+    };
 
     channel.bind(NEW_MESSAGE_EVENT, handleNewMessage);
     channel.bind(DOCUMENT_ACCESS_EVENT, handleBadgeCount);

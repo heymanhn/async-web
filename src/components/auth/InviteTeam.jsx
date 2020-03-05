@@ -38,7 +38,9 @@ const InviteTeam = ({ organizationId }) => {
   const [thirdEmail, setThirdEmail] = useState('');
   const client = useApolloClient();
   const { isOnboarding } = client.readQuery({ query: localStateQuery });
-  useMountEffect(() => track('Onboarding page viewed: Invite Team', { isOnboarding }));
+  useMountEffect(() => {
+    track('Onboarding page viewed: Invite Team', { isOnboarding });
+  });
 
   function handleSkip() {
     setLocalAppState({ isOnboarding: false });
@@ -52,7 +54,7 @@ const InviteTeam = ({ organizationId }) => {
 
   const [createInvites] = useMutation(createInvitesMutation, {
     onCompleted: handleSkip,
-    onError: (err) => {
+    onError: err => {
       console.dir(err); // TODO: Error handling on the page
     },
   });

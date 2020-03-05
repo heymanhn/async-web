@@ -45,10 +45,12 @@ const MessageActions = ({ handleSubmit, isSubmitting }) => {
     return isSubmitDisabled ? null : handleSubmit();
   };
 
-  const handleCancelWrapper = event => {
+  const handleCancelWrapper = async event => {
     event.stopPropagation();
 
-    return mode === 'compose' && draft ? handleDeleteDraft() : handleCancel();
+    if (mode === 'compose' && draft) await handleDeleteDraft();
+
+    handleCancel();
   };
 
   useKeyDownHandler([SUBMIT_HOTKEY, handleSubmit], isSubmitDisabled);

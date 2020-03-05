@@ -37,6 +37,7 @@ export const DEFAULT_MESSAGE_CONTEXT = {
 
   setMode: () => {},
   afterCreate: () => {},
+  handleCancel: () => {},
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);
 

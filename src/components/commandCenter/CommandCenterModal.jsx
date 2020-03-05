@@ -71,12 +71,12 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
   );
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (isOpen) {
+      // Customize sources later
+      track('Command Center launched', { source });
 
-    // Customize sources later
-    track('Command Center launched', { source });
-
-    if (inputRef.current) inputRef.current.focus();
+      if (inputRef.current) inputRef.current.focus();
+    }
   }, [isOpen, source]);
 
   const handleChange = event => {

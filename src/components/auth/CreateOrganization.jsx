@@ -24,7 +24,9 @@ const StyledButton = styled(Button)({
 
 const OrganizationCreate = () => {
   const [title, setTitle] = useState('');
-  useMountEffect(() => track('Onboarding page viewed: Create Organization'));
+  useMountEffect(() => {
+    track('Onboarding page viewed: Create Organization');
+  });
 
   const [createOrganization] = useMutation(createOrganizationMutation, {
     variables: {
@@ -32,14 +34,14 @@ const OrganizationCreate = () => {
         title,
       },
     },
-    onCompleted: (data) => {
+    onCompleted: data => {
       const { id: organizationId } = data.createOrganization;
 
       setLocalAppState({ organizationId });
       group(organizationId);
       navigate(`/organizations/${organizationId}/invites`);
     },
-    onError: (err) => {
+    onError: err => {
       console.dir(err); // TODO: Error handling on the page
     },
   });
