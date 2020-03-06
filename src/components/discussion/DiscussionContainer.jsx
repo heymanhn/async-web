@@ -96,11 +96,15 @@ const DiscussionContainer = ({ discussionId }) => {
       <OuterContainer>
         <HeaderBar />
         <ContentContainer ref={discussionRef}>
-          <TopicComposer initialTopic={text} autoFocus={!text && !items} />
+          <TopicComposer
+            initialTopic={text}
+            autoFocus={!text && !messageCount}
+          />
           {items && <DiscussionThread isUnread={isUnread()} />}
           {isComposing ? (
             <StyledDiscussionMessage
               mode="compose"
+              disableAutoFocus={!messageCount}
               afterCreate={stopComposing}
               handleCancel={handleCancelCompose}
             />

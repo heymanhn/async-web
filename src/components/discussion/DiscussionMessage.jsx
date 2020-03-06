@@ -38,6 +38,7 @@ const DiscussionMessage = ({
   index, // Used only by <DiscussionThread /> to see which message is selected
   mode: initialMode,
   message,
+  disableAutoFocus,
   afterCreate,
   handleCancel,
   ...props
@@ -97,7 +98,7 @@ const DiscussionMessage = ({
         </HeaderSection>
         <MessageComposer
           initialMessage={loadInitialContent()}
-          autoFocus={mode !== 'display'}
+          autoFocus={mode !== 'display' && !disableAutoFocus}
         />
         {mode === 'display' && <MessageReactions />}
       </MessageContext.Provider>
@@ -109,6 +110,7 @@ DiscussionMessage.propTypes = {
   index: PropTypes.number,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
+  disableAutoFocus: PropTypes.bool,
   afterCreate: PropTypes.func,
   handleCancel: PropTypes.func,
 };
@@ -117,6 +119,7 @@ DiscussionMessage.defaultProps = {
   index: null,
   mode: 'display',
   message: {},
+  disableAutoFocus: false,
   afterCreate: () => {},
   handleCancel: () => {},
 };
