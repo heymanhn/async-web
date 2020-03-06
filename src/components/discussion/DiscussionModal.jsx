@@ -23,6 +23,11 @@ const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
   background: colors.bgGrey,
 }));
 
+const StyledContextComposer = styled(ContextComposer)({
+  borderTopLeftRadius: '5px',
+  borderTopRightRadius: '5px',
+});
+
 const StyledDiscussionMessage = styled(DiscussionMessage)(
   ({ theme: { colors } }) => ({
     borderTop: `1px solid ${colors.borderGrey}`,
@@ -156,7 +161,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
       {...props}
     >
       <DiscussionContext.Provider value={value}>
-        {(inlineDiscussionTopic || context) && <ContextComposer />}
+        {(inlineDiscussionTopic || context) && <StyledContextComposer />}
         {modalDiscussionId && (
           <DiscussionThread
             isComposingFirstMsg={isComposingFirstMsg}
