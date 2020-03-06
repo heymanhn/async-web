@@ -15,7 +15,7 @@ const InnerContainer = styled.div(({ theme: { colors, inboxViewport } }) => ({
   background: colors.white,
   margin: '0px auto',
   maxWidth: inboxViewport,
-  padding: '80px 20px 40px',
+  padding: '60px 20px 40px',
 }));
 
 const PageTitle = styled.div({
