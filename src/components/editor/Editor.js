@@ -201,25 +201,15 @@ const removeAllMarks = editor => {
 };
 
 const wrapInline = (editor, type, range, source, props = {}) => {
-  const isActive = isElementActive(editor, type, range);
   const options = {};
   if (range) {
     options.at = range;
     options.split = true;
   }
 
-  Transforms.wrapNodes(
-    editor,
-    {
-      type: isActive ? DEFAULT_ELEMENT_TYPE : type,
-      ...props,
-    },
-    options
-  );
+  Transforms.wrapNodes(editor, { type, ...props }, options);
 
-  if (!isActive) {
-    track('Inline element inserted to content', { source, type });
-  }
+  track('Inline element inserted to content', { source, type });
 };
 
 const insertVoid = (editor, type, data = {}) => {
