@@ -4,12 +4,15 @@ import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
 import { compare } from 'utils/helpers';
+import usePrefetchQueries from 'utils/hooks/usePrefetchQueries';
 import inboxQuery from 'graphql/queries/inbox';
 import usePaginatedResource from 'utils/hooks/usePaginatedResource';
 
 import NotFound from 'components/navigation/NotFound';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import InboxRow from './InboxRow';
+
+const VIEW_MODES = ['all', 'document', 'discussion'];
 
 const StyledLoadingIndicator = styled(LoadingIndicator)({
   margin: '20px 0',
@@ -18,6 +21,14 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 const InboxTable = ({ viewMode }) => {
   const inboxRef = useRef(null);
   const { userId } = getLocalUser();
+
+  const buildQueryDetails = () =>
+    VIEW_MODES.map(mode => ({
+      query: inboxQuery,
+      variables: { id: userId, queryParams: { type: mode } },
+    }));
+
+  usePrefetchQueries(buildQueryDetails());
 
   const { loading, data } = usePaginatedResource(inboxRef, {
     query: inboxQuery,
@@ -45,7 +56,7 @@ const InboxTable = ({ viewMode }) => {
 };
 
 InboxTable.propTypes = {
-  viewMode: PropTypes.oneOf(['all', 'document', 'discussion']).isRequired,
+  viewMode: PropTypes.oneOf(VIEW_MODES).isRequired,
 };
 
 export default InboxTable;
