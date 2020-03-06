@@ -15,14 +15,14 @@ const InnerContainer = styled.div(({ theme: { colors, inboxViewport } }) => ({
   background: colors.white,
   margin: '0px auto',
   maxWidth: inboxViewport,
-  padding: '40px 20px',
+  padding: '60px 20px 40px',
 }));
 
 const PageTitle = styled.div({
-  fontSize: '32px',
+  fontSize: '42px',
   fontWeight: 600,
-  letterSpacing: '-0.021em',
-  marginBottom: '20px',
+  letterSpacing: '-0.022em',
+  marginBottom: '10px',
 });
 
 const ButtonContainer = styled.div({

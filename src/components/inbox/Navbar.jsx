@@ -5,20 +5,18 @@ import OrganizationSettings from 'components/navigation/OrganizationSettings';
 import NotificationsBell from 'components/notifications/NotificationsBell';
 import CommandCenter from 'components/commandCenter/CommandCenter';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
 
-  background: colors.bgGrey,
-  borderBottom: `1px solid ${colors.borderGrey}`,
   height: '54px',
   position: 'sticky',
   top: '0px',
   width: '100%',
   zIndex: 1,
-}));
+});
 
 const MenuSection = styled.div({
   display: 'flex',
@@ -36,11 +34,10 @@ const NavigationSection = styled.div({
 });
 
 const Title = styled.span({
-  fontSize: '18px',
+  fontSize: '16px',
   fontWeight: 500,
   position: 'relative',
-  top: '2px',
-  letterSpacing: '-0.014em',
+  letterSpacing: '-0.011em',
 });
 
 const NavBar = () => {
