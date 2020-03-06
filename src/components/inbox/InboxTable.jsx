@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
-import { compare } from 'utils/helpers';
+import { compareOnProperty } from 'utils/helpers';
 import usePrefetchQueries from 'utils/hooks/usePrefetchQueries';
 import inboxQuery from 'graphql/queries/inbox';
 import usePaginatedResource from 'utils/hooks/usePaginatedResource';
@@ -40,10 +40,8 @@ const InboxTable = ({ viewMode }) => {
   if (!data) return <NotFound />;
 
   const { items } = data;
-  const sortedItems = (items || [])
-    .map(item => item.document || item.discussion)
-    .map(resource => resource.updatedAt)
-    .sort(compare);
+  const propertyLookup = i => (i.document || i.discussion).updatedAt;
+  const sortedItems = (items || []).sort(compareOnProperty(propertyLookup));
 
   return (
     <div ref={inboxRef}>

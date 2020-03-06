@@ -30,7 +30,7 @@ export const debounce = (func, wait, immediate) => {
   };
 };
 
-export const compare = (a, b) => {
+const compare = (a, b) => {
   if (a < b) {
     return 1;
   }
@@ -41,3 +41,6 @@ export const compare = (a, b) => {
 
   return 0;
 };
+
+export const compareOnProperty = propertyLookup => (a, b) =>
+  compare(propertyLookup(a), propertyLookup(b));
