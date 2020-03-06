@@ -7,8 +7,7 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   alignItems: 'center',
   justifyContent: 'center',
 
-  margin: '0 -30px 30px',
-  padding: '0 30px',
+  marginBottom: '30px',
   width: discussionViewport,
 }));
 

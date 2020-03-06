@@ -40,7 +40,7 @@ export const theme = {
   documentContainerMargin: '60px auto',
   shortMargin: '30px auto',
   documentViewport: '740px',
-  discussionViewport: '800px',
+  discussionViewport: '740px',
   inboxViewport: '600px',
   wideViewport: '1220px',
   sidebarWidth: '250px',

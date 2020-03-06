@@ -23,7 +23,7 @@ const Container = styled.div(
     background: colors.white,
     border: `1px solid ${colors.borderGrey}`,
     borderRadius: '5px',
-    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
+    boxShadow: `0px 0px 3px ${colors.grey7}`,
     cursor: 'pointer',
     padding: '20px 25px',
   }),
