@@ -76,11 +76,15 @@ const DiscussionsList = () => {
     setIsComposing(false);
   };
 
-  const { loading, data } = usePaginatedResource(listRef, {
-    query: documentDiscussionsQuery,
-    key: 'documentDiscussions',
-    variables: { id: documentId, queryParams: { order: 'desc' } },
-  });
+  const { loading, data } = usePaginatedResource(
+    listRef,
+    {
+      query: documentDiscussionsQuery,
+      key: 'documentDiscussions',
+      variables: { id: documentId, queryParams: { order: 'desc' } },
+    },
+    300
+  );
 
   if (loading) return <StyledLoadingIndicator color="borderGrey" />;
   if (!data) return <NotFound />;

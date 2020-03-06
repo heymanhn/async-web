@@ -68,11 +68,15 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
   });
 
   const { data: localData } = useQuery(localStateQuery);
-  const { loading, data } = usePaginatedResource(discussionRef, {
-    query: discussionMessagesQuery,
-    key: 'messages',
-    variables: { discussionId, queryParams: {} },
-  });
+  const { loading, data } = usePaginatedResource(
+    discussionRef,
+    {
+      query: discussionMessagesQuery,
+      key: 'messages',
+      variables: { discussionId, queryParams: {} },
+    },
+    isModal ? undefined : 300
+  );
 
   // Workaround to make sure two copies of the first message aren't rendered
   // on the modal at the same time

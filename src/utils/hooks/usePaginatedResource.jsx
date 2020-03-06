@@ -6,6 +6,7 @@ import { debounce } from 'utils/helpers';
 import { DiscussionContext } from 'utils/contexts';
 
 const DEBOUNCE_INTERVAL = 500;
+const DISTANCE_FROM_BOTTOM = 200;
 
 /*
  * Inspired by https://upmostly.com/tutorials/build-an-infinite-scroll-component-in-react-using-react-hooks
@@ -17,7 +18,11 @@ const DEBOUNCE_INTERVAL = 500;
  * Now this is essentially a wrapper on Apollo's useQuery, bundled with
  * custom fetchMore() logic
  */
-const usePaginatedResource = (ref, { query, key, ...props }) => {
+const usePaginatedResource = (
+  ref,
+  { query, key, ...props },
+  gap = DISTANCE_FROM_BOTTOM
+) => {
   const { modalRef } = useContext(DiscussionContext);
   const [shouldFetch, setShouldFetch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -32,7 +37,7 @@ const usePaginatedResource = (ref, { query, key, ...props }) => {
       ? modal.scrollHeight
       : window.innerHeight + window.scrollY;
 
-    const reachedBottom = scrollOffset >= elem.offsetHeight - 200;
+    const reachedBottom = scrollOffset >= elem.offsetHeight - gap;
 
     if (!reachedBottom || shouldFetch) return;
     setShouldFetch(true);
