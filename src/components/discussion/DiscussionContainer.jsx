@@ -65,9 +65,8 @@ const DiscussionContainer = ({ discussionId }) => {
 
   const { topic, draft, messageCount } = data.discussion;
   const { text } = topic || {};
-  const { items } = data2.messages;
 
-  if ((draft || !items) && !isComposing) startComposing();
+  if ((draft || !messageCount) && !isComposing) startComposing();
 
   const isUnread = () => {
     const { tags } = data.discussion;
@@ -100,7 +99,12 @@ const DiscussionContainer = ({ discussionId }) => {
             initialTopic={text}
             autoFocus={!text && !messageCount}
           />
-          {items && <DiscussionThread isUnread={isUnread()} />}
+          {!!messageCount && (
+            <DiscussionThread
+              isUnread={isUnread()}
+              isComposingFirstMsg={!messageCount}
+            />
+          )}
           {isComposing ? (
             <StyledDiscussionMessage
               mode="compose"
