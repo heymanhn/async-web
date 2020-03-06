@@ -18,7 +18,7 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
   justifyContent: 'center',
   margin: '0 auto',
   maxWidth: documentViewport,
-  minHeight: 'calc(100vh - 54px)', // Header is 54px tall
+  minHeight: 'calc(100vh - 54px)', // Header bar is 54px tall
   padding: '0 30px',
 }));
 
@@ -39,11 +39,11 @@ const Document = () => {
   const { body, title, updatedAt, reactions } = data.document;
   const { payload: content } = body || {};
 
-  function hasCurrentUserViewed() {
+  const hasCurrentUserViewed = () => {
     return !!(reactions || []).find(
       r => r.code === 'viewed' && matchCurrentUserId(r.author.id)
     );
-  }
+  };
 
   if (!hasCurrentUserViewed()) {
     markAsRead({
