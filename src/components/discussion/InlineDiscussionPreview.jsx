@@ -17,6 +17,8 @@ const OuterContainer = styled.div(({ isOpen, styles }) => ({
   width: '100vw',
   opacity: isOpen ? 1 : 0,
   transition: 'opacity 0.2s',
+  top: '-10000px',
+  left: '-10000px',
 
   ...styles,
 }));
