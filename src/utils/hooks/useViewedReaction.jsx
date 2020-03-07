@@ -23,7 +23,7 @@ const useViewedReaction = () => {
         ...refetchQueries,
         {
           query: documentQuery,
-          variables: { documentId: resourceId, queryParams: {} },
+          variables: { documentId: resourceId },
         },
       ];
     }

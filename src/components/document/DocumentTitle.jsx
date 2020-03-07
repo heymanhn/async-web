@@ -15,7 +15,7 @@ const DocumentTitle = () => {
   const { documentId } = useContext(DocumentContext);
 
   const { loading, data } = useQuery(documentQuery, {
-    variables: { documentId, queryParams: {} },
+    variables: { documentId },
   });
 
   if (loading || !data.document) return null;

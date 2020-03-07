@@ -30,7 +30,7 @@ const Document = () => {
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
 
   const { loading, error, data } = useQuery(documentQuery, {
-    variables: { documentId, queryParams: {} },
+    variables: { documentId },
   });
 
   if (loading) return null;
