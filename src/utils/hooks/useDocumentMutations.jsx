@@ -3,17 +3,19 @@ import { useMutation } from 'react-apollo';
 
 import createDocumentMutation from 'graphql/mutations/createDocument';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
+import deleteDocumentMutation from 'graphql/mutations/deleteDocument';
 import { DocumentContext } from 'utils/contexts';
 import { track } from 'utils/analytics';
 
 import { toPlainText } from 'components/editor/utils';
 
 const useDocumentMutations = (editor = null) => {
-  const { documentId, afterUpdate } = useContext(DocumentContext);
+  const { documentId, afterUpdate, afterDelete } = useContext(DocumentContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [createDocument] = useMutation(createDocumentMutation);
   const [updateDocument] = useMutation(updateDocumentMutation);
+  const [deleteDocument] = useMutation(deleteDocumentMutation);
 
   const handleCreate = async () => {
     setIsSubmitting(true);
@@ -68,12 +70,24 @@ const useDocumentMutations = (editor = null) => {
     return Promise.reject(new Error('Failed to update document title'));
   };
 
+  const handleDelete = async () => {
+    const { data } = await deleteDocument();
+
+    if (data.deleteDocument) {
+      afterDelete();
+      return Promise.resolve();
+    }
+
+    return Promise.reject(new Error('Failed to delete document'));
+  };
+
   return {
     isSubmitting,
 
     handleCreate,
     handleUpdate,
     handleUpdateTitle,
+    handleDelete,
   };
 };
 
