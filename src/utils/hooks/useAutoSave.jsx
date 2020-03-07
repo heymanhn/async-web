@@ -3,9 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 const DEBOUNCE_INTERVAL = 1000;
 const IDLE_INTERVAL = 2000;
 
-const useAutoSave = (content, handleSave, isDisabled) => {
+const useAutoSave = ({
+  content,
+  handleSave,
+  isDisabled,
+  isJSON = true,
+} = {}) => {
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
-  const contentString = JSON.stringify(content);
+  const contentString = isJSON ? JSON.stringify(content) : content;
   const contentStringRef = useRef(contentString);
   const isDisabledRef = useRef(isDisabled);
 
@@ -19,7 +24,7 @@ const useAutoSave = (content, handleSave, isDisabled) => {
     timer: null,
   });
 
-  function handleAutoSave(oldContent) {
+  const handleAutoSave = oldContent => {
     const newContent = contentStringRef.current;
 
     // This can be counterintuitive. When this function is invoked we
@@ -34,9 +39,9 @@ const useAutoSave = (content, handleSave, isDisabled) => {
       isTyping: false,
       timer: null,
     }));
-  }
+  };
 
-  function handleTrackTyping(oldContent) {
+  const handleTrackTyping = oldContent => {
     const newContent = contentStringRef.current;
 
     let timer;
@@ -50,7 +55,7 @@ const useAutoSave = (content, handleSave, isDisabled) => {
     }
 
     setState(oldState => ({ ...oldState, timer }));
-  }
+  };
 
   const { savedContent, isTyping, timer } = state;
   useEffect(() => () => clearTimeout(timer), [timer]);

@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
 
+import useAutoSave from 'utils/hooks/useAutoSave';
 import { DocumentContext } from 'utils/contexts';
 
 const Container = styled.div({
@@ -43,7 +44,24 @@ const TitleEditable = ({
 }) => {
   const { documentId } = useContext(DocumentContext);
   const titleRef = useRef(null);
-  const [showPlaceholder, setShowPlaceholder] = useState(!initialTitle);
+  const [title, setTitle] = useState(initialTitle);
+  const [showPlaceholder, setShowPlaceholder] = useState(!title);
+
+  // Workaround to prevent DOM from updating
+  const [DOMTitle] = useState(initialTitle);
+
+  const handleUpdate = () => {
+    const { current } = titleRef || {};
+    if (!current) return null;
+
+    return handleUpdateTitle(current.innerText);
+  };
+
+  useAutoSave({
+    content: title,
+    handleSave: handleUpdate,
+    isJSON: false,
+  });
 
   useEffect(() => {
     const { current } = titleRef || {};
@@ -67,10 +85,11 @@ const TitleEditable = ({
   };
 
   const handleKeyDown = event => {
+    const { current } = titleRef || {};
+
     if (isHotkey('Enter', event)) {
       event.preventDefault();
 
-      const { current } = titleRef || {};
       if (current) {
         // ALERT: A little hacky, but since triggering events to React
         // elements doesn't work, look for the next sibling to this element's
@@ -79,14 +98,9 @@ const TitleEditable = ({
         const { nextSibling } = parentNode;
         if (nextSibling) nextSibling.focus();
       }
+    } else {
+      setTitle(current.innerText);
     }
-  };
-
-  const handleUpdate = () => {
-    const { current } = titleRef || {};
-    if (!current) return null;
-
-    return handleUpdateTitle(current.innerText);
   };
 
   return (
@@ -94,7 +108,7 @@ const TitleEditable = ({
       <Title
         contentEditable
         ref={titleRef}
-        dangerouslySetInnerHTML={{ __html: initialTitle }}
+        dangerouslySetInnerHTML={{ __html: DOMTitle }}
         onBlur={handleUpdate}
         onInput={handleCheckPlaceholder}
         onKeyDown={handleKeyDown}

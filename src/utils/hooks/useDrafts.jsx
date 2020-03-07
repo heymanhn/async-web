@@ -9,7 +9,7 @@ const useDrafts = (message, editor, isSubmitting) => {
   const { handleSaveDraft } = useDraftMutations(editor);
 
   const isDisabled = mode !== 'compose' || isSubmitting;
-  useAutoSave(message, handleSaveDraft, isDisabled);
+  useAutoSave({ content: message, handleSave: handleSaveDraft, isDisabled });
 };
 
 export default useDrafts;

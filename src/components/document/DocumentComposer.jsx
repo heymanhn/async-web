@@ -69,7 +69,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
 
-  useAutoSave(content, handleUpdate);
+  useAutoSave({ content, handleSave: handleUpdate });
 
   // Implicit state indicating we are ready to create the inline annotation
   if (modalDiscussionId && selection) {
