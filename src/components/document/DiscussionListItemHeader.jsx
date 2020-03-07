@@ -13,6 +13,8 @@ const Container = styled.div(({ theme: { colors } }) => ({
 
   background: colors.bgGrey,
   borderBottom: `1px solid ${colors.borderGrey}`,
+  borderTopLeftRadius: '5px',
+  borderTopRightRadius: '5px',
   fontSize: '16px',
   fontWeight: 500,
   letterSpacing: '-0.011em',

@@ -23,6 +23,12 @@ const Container = styled.div(({ theme: { colors } }) => ({
   margin: '40px 0',
 }));
 
+const StyledContextComposer = styled(ContextComposer)(
+  ({ theme: { colors } }) => ({
+    borderBottom: `1px solid ${colors.borderGrey}`,
+  })
+);
+
 const MoreRepliesIndicator = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -41,12 +47,16 @@ const StyledAvatarList = styled(AvatarList)({
 });
 
 const StyledDiscussionMessage = styled(DiscussionMessage)(
-  ({ theme: { colors } }) => ({
-    borderTopLeftRadius: '5px',
-    borderTopRightRadius: '5px',
-    borderBottom: `1px solid ${colors.borderGrey}`,
+  {
     paddingBottom: '10px',
-  })
+  },
+  ({ isLast }) => {
+    if (!isLast) return {};
+    return {
+      borderBottomLeftRadius: '5px',
+      borderBottomRightRadius: '5px',
+    };
+  }
 );
 
 const DiscussionListItem = ({ discussionId }) => {
@@ -92,8 +102,11 @@ const DiscussionListItem = ({ discussionId }) => {
     <DiscussionContext.Provider value={value}>
       <Container>
         <DiscussionListItemHeader discussion={data.discussion} />
-        {context && <ContextComposer />}
-        <StyledDiscussionMessage message={firstMessage} />
+        {context && <StyledContextComposer />}
+        <StyledDiscussionMessage
+          isLast={lastMessage.id === firstMessage.id}
+          message={firstMessage}
+        />
         {moreReplyCount > 0 && (
           <MoreRepliesIndicator>
             <StyledAvatarList avatarUrls={avatarUrls} opacity={0.5} />
@@ -101,7 +114,7 @@ const DiscussionListItem = ({ discussionId }) => {
           </MoreRepliesIndicator>
         )}
         {lastMessage && lastMessage.id !== firstMessage.id && (
-          <StyledDiscussionMessage message={lastMessage} />
+          <StyledDiscussionMessage isLast message={lastMessage} />
         )}
       </Container>
     </DiscussionContext.Provider>
