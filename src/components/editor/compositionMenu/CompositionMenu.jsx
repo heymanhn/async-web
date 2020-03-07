@@ -37,11 +37,10 @@ const Container = styled.div(
     width: '240px',
     zIndex: 1,
   }),
-  ({ isOpen, coords }) => {
-    if (!isOpen || !coords) return {};
+  ({ isOpen, styles }) => {
+    if (!isOpen || !styles) return {};
 
-    const { top, left } = coords;
-    return { opacity: 1, top, left };
+    return { opacity: 1, ...styles };
   }
 );
 
@@ -167,7 +166,7 @@ const CompositionMenu = ({ handleClose, isOpen, ...props }) => {
 
   return (
     <Container
-      coords={adjustedCoords()}
+      styles={adjustedCoords()}
       isOpen={isOpen}
       onClick={handleClose}
       ref={menuRef}

@@ -6,33 +6,27 @@ import styled from '@emotion/styled';
 
 import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
 
-const Container = styled.div(
-  ({ theme: { colors } }) => ({
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    top: '-10000px',
-    left: '-10000px',
+const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  top: '-10000px',
+  left: '-10000px',
 
-    background: colors.mainText,
-    borderRadius: '5px',
-    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.25)',
-    fontSize: '16px',
-    height: '40px',
-    marginTop: '-6px',
-    opacity: 0,
-    padding: '0px 5px',
-    position: 'absolute',
-    transition: 'opacity 0.3s',
-    zIndex: 10000,
-  }),
-  ({ coords, isOpen }) => {
-    if (!isOpen) return {};
+  background: colors.mainText,
+  borderRadius: '5px',
+  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.25)',
+  fontSize: '16px',
+  height: '40px',
+  marginTop: '-6px',
+  opacity: isOpen ? 1 : 0,
+  padding: '0px 5px',
+  position: 'absolute',
+  transition: 'opacity 0.3s',
+  zIndex: 10000,
 
-    const { top, left } = coords;
-    return { opacity: isOpen ? 1 : 0, top, left };
-  }
-);
+  ...styles,
+}));
 
 const Toolbar = ({ children }) => {
   const ref = useRef(null);
@@ -58,7 +52,7 @@ const Toolbar = ({ children }) => {
   };
 
   return (
-    <Container ref={ref} coords={adjustedCoords()} isOpen={isOpen}>
+    <Container ref={ref} styles={adjustedCoords()} isOpen={isOpen}>
       {children}
     </Container>
   );

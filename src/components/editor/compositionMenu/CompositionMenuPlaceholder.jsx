@@ -15,11 +15,9 @@ const Container = styled.div(
     position: 'absolute',
     pointerEvents: 'none',
   }),
-  ({ coords, isVisible }) => {
-    if (!isVisible || !coords) return {};
-
-    const { top, left } = coords;
-    return { opacity: 1, top, left };
+  ({ isVisible, styles }) => {
+    if (!isVisible || !styles) return {};
+    return { opacity: 1, ...styles };
   }
 );
 
@@ -45,7 +43,7 @@ const CompositionMenuPlaceholder = ({ isVisible }) => {
   };
 
   return (
-    <Container coords={adjustedCoords()} isVisible={isVisible}>
+    <Container styles={adjustedCoords()} isVisible={isVisible}>
       Type
       <SlashKey>/</SlashKey>
       for options

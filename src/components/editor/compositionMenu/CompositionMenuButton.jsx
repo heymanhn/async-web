@@ -32,11 +32,10 @@ const ButtonContainer = styled.div(
       background: colors.formGrey,
     },
   }),
-  ({ coords, isVisible }) => {
-    if (!isVisible || !coords) return {};
+  ({ isVisible, styles }) => {
+    if (!isVisible || !styles) return {};
 
-    const { top, left } = coords;
-    return { opacity: 1, top, left };
+    return { opacity: 1, ...styles };
   }
 );
 
@@ -133,7 +132,7 @@ const CompositionMenuButton = props => {
   return (
     <>
       <ButtonContainer
-        coords={adjustedCoords()}
+        styles={adjustedCoords()}
         isVisible={showButton}
         onClick={handleOpenMenu}
         onMouseDown={handleMouseDown}
