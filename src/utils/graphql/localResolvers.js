@@ -407,7 +407,7 @@ const deleteFromInboxQuery = (type, { resourceType, resourceId }, client) => {
     inbox: { items, pageToken, __typename },
   } = client.readQuery({
     query: inboxQuery,
-    variables: { id: userId, queryParams: { type } },
+    variables: { userId, queryParams: { type } },
   });
 
   const index = items.findIndex(item => {
@@ -417,7 +417,7 @@ const deleteFromInboxQuery = (type, { resourceType, resourceId }, client) => {
 
   client.writeQuery({
     query: inboxQuery,
-    variables: { id: userId, queryParams: { type } },
+    variables: { userId, queryParams: { type } },
     data: {
       inbox: {
         items: [...items.slice(0, index), ...items.slice(index + 1)],
