@@ -13,6 +13,7 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   handleShowModal: () => {},
   handleCloseModal: () => {},
   afterUpdate: () => {},
+  afterDelete: () => {},
 };
 export const DocumentContext = createContext(DEFAULT_DOCUMENT_CONTEXT);
 

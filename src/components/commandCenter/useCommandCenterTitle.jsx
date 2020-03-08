@@ -10,7 +10,7 @@ const useCommandCenterTitle = source => {
   const { discussionId } = useContext(DiscussionContext);
 
   const { data: documentData } = useQuery(documentQuery, {
-    variables: { documentId, queryParams: {} },
+    variables: { documentId },
     skip: !documentId,
   });
 
