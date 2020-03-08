@@ -1,3 +1,5 @@
+import { navigate } from '@reach/router';
+
 import useDocumentMutations from 'utils/hooks/useDocumentMutations';
 import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
 
@@ -22,11 +24,15 @@ const useResourceCreator = resource => {
       resource === 'documents' ? data.documentId : data.discussionId;
 
     if (resourceId) {
-      window.open(
-        `/${resource}/${resourceId}`,
-        openInNewTab ? '_blank' : '_self'
-      );
+      const path = `/${resource}/${resourceId}`;
+      if (openInNewTab) {
+        window.open(path, '_blank');
+      } else {
+        navigate(path);
+      }
     }
+
+    return Promise.resolve();
   };
 
   return { handleCreateResource, isSubmitting };

@@ -1,10 +1,12 @@
 import { useContext, useState } from 'react';
 import { useMutation } from 'react-apollo';
 
+import inboxQuery from 'graphql/queries/inbox';
 import createDocumentMutation from 'graphql/mutations/createDocument';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import deleteDocumentMutation from 'graphql/mutations/deleteDocument';
 import { DocumentContext } from 'utils/contexts';
+import { getLocalUser } from 'utils/auth';
 import { track } from 'utils/analytics';
 
 import { toPlainText } from 'components/editor/utils';
@@ -12,6 +14,7 @@ import { toPlainText } from 'components/editor/utils';
 const useDocumentMutations = (editor = null) => {
   const { documentId, afterUpdate, afterDelete } = useContext(DocumentContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { userId } = getLocalUser();
 
   const [createDocument] = useMutation(createDocumentMutation);
   const [updateDocument] = useMutation(updateDocumentMutation);
@@ -22,7 +25,19 @@ const useDocumentMutations = (editor = null) => {
   const handleCreate = async () => {
     setIsSubmitting(true);
 
-    const { data } = await createDocument({ variables: { input: {} } });
+    const { data } = await createDocument({
+      variables: { input: {} },
+      refetchQueries: [
+        {
+          query: inboxQuery,
+          variables: { userId, queryParams: { type: 'all' } },
+        },
+        {
+          query: inboxQuery,
+          variables: { userId, queryParams: { type: 'document' } },
+        },
+      ],
+    });
 
     if (data.createDocument) {
       const { id: newDocumentId } = data.createDocument;
