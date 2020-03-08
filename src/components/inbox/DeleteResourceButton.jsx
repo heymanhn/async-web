@@ -22,7 +22,7 @@ const Container = styled.div(({ hover, theme: { colors } }) => ({
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   marginRight: '20px',
-  padding: '1px 5px',
+  padding: '1px 6px',
 
   ':hover': {
     background: colors.bgGrey,

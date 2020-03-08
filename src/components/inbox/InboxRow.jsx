@@ -10,16 +10,23 @@ import localDeleteResourceFromInboxMtn from 'graphql/mutations/local/deleteResou
 import useResourceDetails from 'utils/hooks/useResourceDetails';
 import useHover from 'utils/hooks/useHover';
 import { getLocalUser } from 'utils/auth';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import {
+  DEFAULT_DOCUMENT_CONTEXT,
+  DEFAULT_DISCUSSION_CONTEXT,
+  DocumentContext,
+  DiscussionContext,
+} from 'utils/contexts';
 
 import DeleteResourceButton from './DeleteResourceButton';
 
 const contexts = {
   document: {
     ResourceContext: DocumentContext,
+    defaultContext: DEFAULT_DOCUMENT_CONTEXT,
   },
   discussion: {
     ResourceContext: DiscussionContext,
+    defaultContext: DEFAULT_DISCUSSION_CONTEXT,
   },
 };
 
@@ -105,8 +112,9 @@ const InboxRow = ({ item, ...props }) => {
   const { id: authorId } = author || owner;
   const isAuthor = userId === authorId;
 
-  const { ResourceContext } = contexts[resourceType];
-  const value = { afterDelete: deleteResourceFromInbox };
+  const { ResourceContext, defaultContext } = contexts[resourceType];
+  const value = { ...defaultContext };
+  // const value = { afterDelete: deleteResourceFromInbox };
   value[`${resourceType}Id`] = id;
 
   return (
