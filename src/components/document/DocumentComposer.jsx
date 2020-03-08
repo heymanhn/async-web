@@ -12,6 +12,7 @@ import useContentState from 'utils/hooks/useContentState';
 import useAutoSave from 'utils/hooks/useAutoSave';
 import useDocumentMutations from 'utils/hooks/useDocumentMutations';
 
+import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import Editor from 'components/editor/Editor';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
@@ -99,6 +100,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     <Slate editor={contentEditor} {...contentProps}>
       <DocumentEditable {...props} {...coreEditorProps} />
       <DocumentToolbar content={content} />
+      <DefaultPlaceholder />
       <CompositionMenuButton />
     </Slate>
   );

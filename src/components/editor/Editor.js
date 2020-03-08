@@ -119,7 +119,7 @@ const isAtEdge = (editor, callback) => {
   const { selection } = editor;
   if (!selection || Range.isExpanded(selection)) return false;
 
-  const [, path] = getParentBlock(editor, selection);
+  const [, path] = getParentBlock(editor);
   const { anchor } = selection;
   return callback(editor, anchor, path);
 };
@@ -218,8 +218,7 @@ const insertVoid = (editor, type, data = {}) => {
 };
 
 const clearBlock = editor => {
-  const { selection } = editor;
-  const [block] = getParentBlock(editor, selection);
+  const [block] = getParentBlock(editor);
 
   if (!SlateEditor.isEmpty(editor, block))
     SlateEditor.deleteBackward(editor, { unit: 'block' });
