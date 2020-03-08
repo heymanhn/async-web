@@ -62,7 +62,8 @@ const addNewMessageToDiscussionMessages = (
   // Avoid inserting duplicate entries in the cache. This could happen if the
   // queries have already been fetched before the cache update.
   const { id } = message;
-  if ((items || []).find(i => i.message.id === id)) return null;
+  const safeItems = items || [];
+  if (safeItems.find(i => i.message.id === id)) return null;
 
   const newMessageItem = {
     __typename: 'MessageItem',
@@ -95,6 +96,9 @@ const addNewMessageToDiscussionMessages = (
 
   const { discussion } = data2;
   const { messageCount } = discussion;
+
+  // Only update if the discussion query hasn't already been refetched
+  if (messageCount > safeItems.length) return null;
 
   client.writeQuery({
     query: discussionQuery,
