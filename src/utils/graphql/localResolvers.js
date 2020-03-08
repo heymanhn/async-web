@@ -401,7 +401,7 @@ const markDiscussionAsRead = (_root, { discussionId }, { client }) => {
  * Remove the entry from two of the tabs. The "All" tab, and either the
  * "Documents" or "Discussions" tab.
  */
-const deleteFromInboxQuery = (type, resourceId, client) => {
+const deleteFromInboxQuery = (type, { resourceType, resourceId }, client) => {
   const { userId } = getLocalUser();
   const {
     inbox: { items, pageToken, __typename },
@@ -410,7 +410,10 @@ const deleteFromInboxQuery = (type, resourceId, client) => {
     variables: { id: userId, queryParams: { type } },
   });
 
-  const index = items.findIndex(item => item[type].id === resourceId);
+  const index = items.findIndex(item => {
+    const resource = item[resourceType];
+    return resource && resource.id === resourceId;
+  });
 
   client.writeQuery({
     query: inboxQuery,
@@ -425,13 +428,11 @@ const deleteFromInboxQuery = (type, resourceId, client) => {
   });
 };
 
-const deleteResourceFromInbox = (
-  _root,
-  { resourceType, resourceId },
-  { client }
-) => {
-  deleteFromInboxQuery('all', resourceId, client);
-  deleteFromInboxQuery(resourceType, resourceId, client);
+const deleteResourceFromInbox = (_root, props, { client }) => {
+  const { resourceType } = props;
+  ['all', resourceType].forEach(type =>
+    deleteFromInboxQuery(type, props, client)
+  );
 
   return null;
 };

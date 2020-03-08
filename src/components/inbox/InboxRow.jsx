@@ -112,9 +112,20 @@ const InboxRow = ({ item, ...props }) => {
   const { id: authorId } = author || owner;
   const isAuthor = userId === authorId;
 
+  const afterDelete = () => {
+    deleteResourceFromInbox({
+      variables: {
+        resourceType,
+        resourceId: id,
+      },
+    });
+  };
+
   const { ResourceContext, defaultContext } = contexts[resourceType];
-  const value = { ...defaultContext };
-  // const value = { afterDelete: deleteResourceFromInbox };
+  const value = {
+    ...defaultContext,
+    afterDelete,
+  };
   value[`${resourceType}Id`] = id;
 
   return (
