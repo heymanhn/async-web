@@ -11,6 +11,7 @@ import useContentState from 'utils/hooks/useContentState';
 import useDrafts from 'utils/hooks/useDrafts';
 
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
+import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withLinks from 'components/editor/withLinks';
@@ -74,6 +75,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
           {...coreEditorProps}
         />
         <MessageToolbar />
+        <DefaultPlaceholder />
         <CompositionMenuButton />
         {!readOnly && (
           <MessageActions

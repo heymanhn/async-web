@@ -1,10 +1,12 @@
 import { useContext, useState } from 'react';
 import { useMutation } from 'react-apollo';
 
+import inboxQuery from 'graphql/queries/inbox';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { getLocalUser } from 'utils/auth';
 import { track } from 'utils/analytics';
 
 import { deserializeString, toPlainText } from 'components/editor/utils';
@@ -12,6 +14,8 @@ import { deserializeString, toPlainText } from 'components/editor/utils';
 const useDiscussionMutations = () => {
   const { discussionId, afterDelete } = useContext(DiscussionContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { userId } = getLocalUser();
+
   const [createDiscussion] = useMutation(createDiscussionMutation);
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
   const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
@@ -33,8 +37,24 @@ const useDiscussionMutations = () => {
       };
     }
 
+    // Only refetch if an adhoc discussion is being created
+    const refetchQueries = [];
+    if (!documentId) {
+      refetchQueries.push(
+        {
+          query: inboxQuery,
+          variables: { userId, queryParams: { type: 'all' } },
+        },
+        {
+          query: inboxQuery,
+          variables: { userId, queryParams: { type: 'discussion' } },
+        }
+      );
+    }
+
     const { data } = await createDiscussion({
       variables: { input },
+      refetchQueries,
     });
 
     if (data.createDiscussion) {

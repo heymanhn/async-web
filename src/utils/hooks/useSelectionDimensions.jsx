@@ -25,11 +25,20 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
   // parent block of the current selection
   const rectForSource = () => {
     switch (source) {
+      // Assumes only one child in the editor: the first content node
+      case 'notFocused': {
+        const { children } = editor;
+        const node = children[0];
+        const element = ReactEditor.toDOMNode(editor, node);
+        return element.getBoundingClientRect();
+      }
+
       case 'block': {
         const [block] = Editor.getParentBlock(editor);
         const element = ReactEditor.toDOMNode(editor, block);
         return element.getBoundingClientRect();
       }
+
       default: {
         const { selection } = editor;
         const range = ReactEditor.toDOMRange(editor, selection);
@@ -40,7 +49,8 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
 
   const calculateDimensions = () => {
     const { selection } = editor;
-    if (!selection || skip) return;
+    if (!selection && source !== 'notFocused') return;
+    if (skip) return;
 
     const rect = rectForSource();
     const { height, width } = rect;
@@ -75,16 +85,13 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
   };
 
   useEffect(() => {
+    calculateDimensions();
+
     window.addEventListener('resize', calculateDimensions);
     return () => {
       window.removeEventListener('resize', calculateDimensions);
     };
   });
-
-  // Needed so that the DOM has a chance to:
-  // 1. Render any new nodes and ranges for text insertions
-  // 2. Update the selection range so that getBoundingClientRect() is correct
-  setTimeout(calculateDimensions, 0);
 
   return data;
 };

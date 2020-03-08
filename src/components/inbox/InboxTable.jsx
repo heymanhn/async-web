@@ -25,7 +25,7 @@ const InboxTable = ({ viewMode }) => {
   const buildQueryDetails = () =>
     VIEW_MODES.map(mode => ({
       query: inboxQuery,
-      variables: { id: userId, queryParams: { type: mode } },
+      variables: { userId, queryParams: { type: mode } },
     }));
 
   usePrefetchQueries(buildQueryDetails());
@@ -33,7 +33,7 @@ const InboxTable = ({ viewMode }) => {
   const { loading, data } = usePaginatedResource(inboxRef, {
     query: inboxQuery,
     key: 'inbox',
-    variables: { id: userId, queryParams: { type: viewMode } },
+    variables: { userId, queryParams: { type: viewMode } },
   });
 
   if (loading) return <StyledLoadingIndicator color="borderGrey" />;

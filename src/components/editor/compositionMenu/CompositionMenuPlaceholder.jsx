@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 
 import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
 
+import ContentPlaceholder from 'components/editor/ContentPlaceholder';
+
 const Container = styled.div(
   ({ isVisible, theme: { colors } }) => ({
     display: isVisible ? 'block' : 'none',
@@ -21,14 +23,6 @@ const Container = styled.div(
   }
 );
 
-const SlashKey = styled.span(({ theme: { colors } }) => ({
-  background: colors.formGrey,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '3px',
-  margin: '0 4px',
-  padding: '2px 6px',
-}));
-
 const CompositionMenuPlaceholder = ({ isVisible }) => {
   const { coords } = useSelectionDimensions({ skip: !isVisible });
 
@@ -44,9 +38,7 @@ const CompositionMenuPlaceholder = ({ isVisible }) => {
 
   return (
     <Container styles={adjustedCoords()} isVisible={isVisible}>
-      Type
-      <SlashKey>/</SlashKey>
-      for options
+      <ContentPlaceholder />
     </Container>
   );
 };
