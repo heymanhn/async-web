@@ -4,6 +4,9 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import notificationsQuery from 'graphql/queries/notifications';
+import inboxQuery from 'graphql/queries/inbox';
+
+import { getLocalUser } from 'utils/auth';
 
 const addDraftToDiscussion = (_root, { discussionId, draft }, { client }) => {
   const data = client.readQuery({
@@ -394,6 +397,45 @@ const markDiscussionAsRead = (_root, { discussionId }, { client }) => {
   return null;
 };
 
+/*
+ * Remove the entry from two of the tabs. The "All" tab, and either the
+ * "Documents" or "Discussions" tab.
+ */
+const deleteFromInboxQuery = (type, resourceId, client) => {
+  const { userId } = getLocalUser();
+  const {
+    inbox: { items, pageToken, __typename },
+  } = client.readQuery({
+    query: inboxQuery,
+    variables: { id: userId, queryParams: { type } },
+  });
+
+  const index = items.findIndex(item => item[type].id === resourceId);
+
+  client.writeQuery({
+    query: inboxQuery,
+    variables: { id: userId, queryParams: { type } },
+    data: {
+      inbox: {
+        items: [...items.slice(0, index), ...items.slice(index + 1)],
+        pageToken,
+        __typename,
+      },
+    },
+  });
+};
+
+const deleteResourceFromInbox = (
+  _root,
+  { resourceType, resourceId },
+  { client }
+) => {
+  deleteFromInboxQuery('all', resourceId, client);
+  deleteFromInboxQuery(resourceType, resourceId, client);
+
+  return null;
+};
+
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
@@ -407,6 +449,7 @@ const localResolvers = {
     deleteMessageFromDiscussion,
     deleteDiscussionFromDocument,
     markDiscussionAsRead,
+    deleteResourceFromInbox,
   },
 };
 

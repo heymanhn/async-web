@@ -15,7 +15,9 @@ const useDocumentMutations = (editor = null) => {
 
   const [createDocument] = useMutation(createDocumentMutation);
   const [updateDocument] = useMutation(updateDocumentMutation);
-  const [deleteDocument] = useMutation(deleteDocumentMutation);
+  const [deleteDocument] = useMutation(deleteDocumentMutation, {
+    variables: { documentId },
+  });
 
   const handleCreate = async () => {
     setIsSubmitting(true);

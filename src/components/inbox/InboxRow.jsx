@@ -1,18 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
+import { useMutation } from 'react-apollo';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import localDeleteResourceFromInboxMtn from 'graphql/mutations/local/deleteResourceFromInbox';
 import useResourceDetails from 'utils/hooks/useResourceDetails';
+import useHover from 'utils/hooks/useHover';
+import { getLocalUser } from 'utils/auth';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
+
+import DeleteResourceButton from './DeleteResourceButton';
+
+const contexts = {
+  document: {
+    ResourceContext: DocumentContext,
+  },
+  discussion: {
+    ResourceContext: DiscussionContext,
+  },
+};
 
 const Container = styled.div({
   display: 'flex',
-  flexDirection: 'row',
 
   padding: '20px 0',
   width: '100%',
+});
+
+const DetailsContainer = styled.div({
+  display: 'flex',
+  justifyContent: 'space-between',
+  flexGrow: 1,
 });
 
 const ItemDetails = styled.div({
@@ -20,16 +41,12 @@ const ItemDetails = styled.div({
   flexDirection: 'column',
 });
 
-const Title = styled.span(({ theme: { colors } }) => ({
-  color: colors.mainText,
+const Title = styled.span(({ hover, theme: { colors } }) => ({
+  color: hover ? colors.blue : colors.mainText,
   fontSize: '16px',
   fontWeight: 500,
   letterSpacing: '-0.011em',
   marginBottom: '2px',
-
-  ':hover': {
-    color: colors.blue,
-  },
 }));
 
 const IconContainer = styled.div({
@@ -68,30 +85,51 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
 }));
 
 const InboxRow = ({ item, ...props }) => {
+  const { hover, ...hoverProps } = useHover();
   const { document, discussion } = item;
   const resourceType = document ? 'document' : 'discussion';
   const isDocument = resourceType === 'document';
   const resource = document || discussion;
 
+  const [deleteResourceFromInbox] = useMutation(
+    localDeleteResourceFromInboxMtn
+  );
   const ResourceDetails = useResourceDetails(resourceType, resource);
   if (!ResourceDetails) return null;
 
-  const { id, title, topic } = resource;
+  const { id, title, topic, author, owner } = resource;
   const safeTopic = topic || {};
   const titleText = isDocument ? title : safeTopic.text;
 
+  const { userId } = getLocalUser();
+  const { id: authorId } = author || owner;
+  const isAuthor = userId === authorId;
+
+  const { ResourceContext } = contexts[resourceType];
+  const value = { afterDelete: deleteResourceFromInbox };
+  value[`${resourceType}Id`] = id;
+
   return (
-    <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
-      <Container {...props}>
-        <IconContainer>
-          <StyledIcon icon={isDocument ? 'file-alt' : 'comments-alt'} />
-        </IconContainer>
-        <ItemDetails>
-          <Title>{titleText || `Untitled ${resourceType}`}</Title>
-          <ResourceDetails />
-        </ItemDetails>
-      </Container>
-    </StyledLink>
+    <ResourceContext.Provider value={value}>
+      <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
+        <Container {...hoverProps} {...props}>
+          <IconContainer>
+            <StyledIcon icon={isDocument ? 'file-alt' : 'comments-alt'} />
+          </IconContainer>
+          <DetailsContainer>
+            <ItemDetails>
+              <Title hover={hover}>
+                {titleText || `Untitled ${resourceType}`}
+              </Title>
+              <ResourceDetails />
+            </ItemDetails>
+            {isAuthor && (
+              <DeleteResourceButton hover={hover} resourceType={resourceType} />
+            )}
+          </DetailsContainer>
+        </Container>
+      </StyledLink>
+    </ResourceContext.Provider>
   );
 };
 

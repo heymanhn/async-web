@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const useHover = (
-  allowHover,
+  allowHover = true,
   handleHoverOn = () => {},
   handleHoverOff = () => {}
 ) => {
