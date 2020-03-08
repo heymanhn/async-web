@@ -75,16 +75,13 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
   };
 
   useEffect(() => {
+    calculateDimensions();
+
     window.addEventListener('resize', calculateDimensions);
     return () => {
       window.removeEventListener('resize', calculateDimensions);
     };
   });
-
-  // Needed so that the DOM has a chance to:
-  // 1. Render any new nodes and ranges for text insertions
-  // 2. Update the selection range so that getBoundingClientRect() is correct
-  setTimeout(calculateDimensions, 0);
 
   return data;
 };
