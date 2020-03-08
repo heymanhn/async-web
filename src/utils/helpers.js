@@ -44,3 +44,12 @@ const compare = (a, b) => {
 
 export const compareOnProperty = propertyLookup => (a, b) =>
   compare(propertyLookup(a), propertyLookup(b));
+
+export const isResourceUnread = tags => {
+  return (
+    tags.includes('new_messages') ||
+    tags.includes('new_discussions') ||
+    tags.includes('new_document') ||
+    tags.includes('new_discussion')
+  );
+};

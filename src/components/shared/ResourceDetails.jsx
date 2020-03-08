@@ -4,7 +4,7 @@ import Pluralize from 'pluralize';
 import Moment from 'react-moment';
 import styled from '@emotion/styled';
 
-import { titleize } from 'utils/helpers';
+import { isResourceUnread, titleize } from 'utils/helpers';
 
 import NameList from 'components/shared/NameList';
 
@@ -46,21 +46,12 @@ const ResourceDetails = ({ type, resource, names, ...props }) => {
       : tags[0].replace('_', ' ');
   };
 
-  const isUnread = () => {
-    return (
-      tags.includes('new_messages') ||
-      tags.includes('new_discussions') ||
-      tags.includes('new_document') ||
-      tags.includes('new_discussion')
-    );
-  };
-
   const separator = <Separator>&#8226;</Separator>;
   const tagText = titleize(itemTag());
 
   return (
     <Container {...props}>
-      <Tag isUnread={isUnread()}>{tagText}</Tag>
+      <Tag isUnread={isResourceUnread(tags)}>{tagText}</Tag>
       {separator}
       <NameList names={names} />
       {separator}

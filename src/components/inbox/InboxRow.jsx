@@ -10,6 +10,7 @@ import localDeleteResourceFromInboxMtn from 'graphql/mutations/local/deleteResou
 import useResourceDetails from 'utils/hooks/useResourceDetails';
 import useHover from 'utils/hooks/useHover';
 import { getLocalUser } from 'utils/auth';
+import { isResourceUnread } from 'utils/helpers';
 import {
   DEFAULT_DOCUMENT_CONTEXT,
   DEFAULT_DISCUSSION_CONTEXT,
@@ -48,10 +49,10 @@ const ItemDetails = styled.div({
   flexDirection: 'column',
 });
 
-const Title = styled.span(({ hover, theme: { colors } }) => ({
+const Title = styled.span(({ hover, isUnread, theme: { colors } }) => ({
   color: hover ? colors.blue : colors.mainText,
   fontSize: '16px',
-  fontWeight: 500,
+  fontWeight: isUnread ? 600 : 400,
   letterSpacing: '-0.011em',
   marginBottom: '2px',
 }));
@@ -104,7 +105,7 @@ const InboxRow = ({ item, ...props }) => {
   const ResourceDetails = useResourceDetails(resourceType, resource);
   if (!ResourceDetails) return null;
 
-  const { id, title, topic, author, owner } = resource;
+  const { id, tags, title, topic, author, owner } = resource;
   const safeTopic = topic || {};
   const titleText = isDocument ? title : safeTopic.text;
 
@@ -137,7 +138,7 @@ const InboxRow = ({ item, ...props }) => {
           </IconContainer>
           <DetailsContainer>
             <ItemDetails>
-              <Title hover={hover}>
+              <Title hover={hover} isUnread={isResourceUnread(tags)}>
                 {titleText || `Untitled ${resourceType}`}
               </Title>
               <ResourceDetails />
