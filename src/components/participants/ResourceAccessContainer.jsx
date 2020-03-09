@@ -5,7 +5,7 @@ import { ResourceAccessContext } from 'utils/contexts';
 
 import ResourceAccessModal from './ResourceAccessModal';
 
-const ShareButton = styled.div(({ theme: { colors } }) => ({
+const InviteButton = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
 
@@ -26,7 +26,7 @@ const ResourceAccessContainer = () => {
 
   return (
     <>
-      <ShareButton onClick={() => setIsModalOpen(true)}>Share</ShareButton>
+      <InviteButton onClick={() => setIsModalOpen(true)}>Invite</InviteButton>
       <ResourceAccessModal
         handleClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
