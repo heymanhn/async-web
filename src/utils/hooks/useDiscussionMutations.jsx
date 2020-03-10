@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 
 import inboxQuery from 'graphql/queries/inbox';
+import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
@@ -97,7 +98,14 @@ const useDiscussionMutations = () => {
   };
 
   const handleDelete = async () => {
-    const { data } = await deleteDiscussion();
+    const refetchQueries = [];
+    if (documentId) {
+      refetchQueries.push({
+        query: documentDiscussionsQuery,
+        variables: { id: documentId, queryParams: { order: 'desc' } },
+      });
+    }
+    const { data } = await deleteDiscussion({ refetchQueries });
 
     if (data.deleteDiscussion) {
       afterDelete();
