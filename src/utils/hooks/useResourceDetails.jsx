@@ -1,6 +1,6 @@
 import React from 'react';
 import Pluralize from 'pluralize';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 

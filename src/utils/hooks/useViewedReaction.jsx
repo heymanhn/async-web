@@ -1,4 +1,4 @@
-import { useApolloClient } from 'react-apollo';
+import { useApolloClient } from '@apollo/react-hooks';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import markDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';

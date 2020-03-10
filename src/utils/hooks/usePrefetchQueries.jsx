@@ -2,7 +2,7 @@
  * Takes a list of query details and fetches them without caring about the
  * response value.
  */
-import { useApolloClient } from 'react-apollo';
+import { useApolloClient } from '@apollo/react-hooks';
 
 import useMountEffect from 'utils/hooks/useMountEffect';
 

@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient, useQuery, useMutation } from 'react-apollo';
+import { useApolloClient, useQuery, useMutation } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';

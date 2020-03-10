@@ -38,7 +38,6 @@
         "pusher-js": "^5.0.2",
         "query-string": "^6.7.0",
         "react": "^16.8.6",
-        "react-apollo": "^3.0.0",
         "react-dom": "^16.8.6",
         "react-dropzone": "^10.1.9",
         "react-helmet": "^5.2.1",

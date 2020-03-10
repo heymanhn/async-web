@@ -1,6 +1,6 @@
 /* eslint react/prop-types: 0 */
 import React, { useCallback, useState } from 'react';
-import { useMutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { useDropzone } from 'react-dropzone';
 import styled from '@emotion/styled';
 

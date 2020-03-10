@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useApolloClient, useQuery } from 'react-apollo';
+import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import Pusher from 'pusher-js';
 import camelcaseKeys from 'camelcase-keys';
 

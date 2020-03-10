@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';

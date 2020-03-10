@@ -1,4 +1,4 @@
-import { useApolloClient } from 'react-apollo';
+import { useApolloClient } from '@apollo/react-hooks';
 
 import localStateQuery from 'graphql/queries/localState';
 

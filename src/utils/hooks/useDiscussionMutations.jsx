@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { useMutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 
 import inboxQuery from 'graphql/queries/inbox';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';

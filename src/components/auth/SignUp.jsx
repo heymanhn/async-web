@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation, useApolloClient } from 'react-apollo';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import { Redirect, navigate } from '@reach/router';
 import styled from '@emotion/styled';
 

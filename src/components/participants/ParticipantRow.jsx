@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';

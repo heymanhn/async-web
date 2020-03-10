@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { Redirect } from '@reach/router';
 
 import localStateQuery from 'graphql/queries/localState';

@@ -5,7 +5,7 @@ import React from 'react';
 import { Router } from '@reach/router';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from '@apollo/react-hooks';
 import { RestLink } from 'apollo-link-rest';
 import { ApolloLink, concat } from 'apollo-link';
 import { library } from '@fortawesome/fontawesome-svg-core';

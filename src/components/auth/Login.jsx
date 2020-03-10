@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMutation, useApolloClient } from 'react-apollo';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import { Redirect, navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
@@ -62,8 +62,13 @@ const Login = () => {
         password,
       },
     },
-    onCompleted: (data) => {
-      const { id: userId, token: userToken, fullName, organizationId } = data.createSession;
+    onCompleted: data => {
+      const {
+        id: userId,
+        token: userToken,
+        fullName,
+        organizationId,
+      } = data.createSession;
 
       setLocalUser({ userId, userToken });
       setLocalAppState({ organizationId });
@@ -73,7 +78,7 @@ const Login = () => {
       track('Logged in');
       navigate('/');
     },
-    onError: (err) => {
+    onError: err => {
       clearLocalUser();
       clearLocalAppState();
       client.resetStore();

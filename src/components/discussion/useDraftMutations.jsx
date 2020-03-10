@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useApolloClient, useMutation } from 'react-apollo';
+import { useApolloClient, useMutation } from '@apollo/react-hooks';
 
 import discussionQuery from 'graphql/queries/discussion';
 import createMessageDraftMutation from 'graphql/mutations/createMessageDraft';

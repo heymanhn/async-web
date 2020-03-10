@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient, useQuery } from 'react-apollo';
+import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import { navigate, Redirect } from '@reach/router';
 
 import {

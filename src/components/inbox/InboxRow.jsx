@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
-import { useMutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

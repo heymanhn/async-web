@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import documentQuery from 'graphql/queries/document';
 import discussionQuery from 'graphql/queries/discussion';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 
 const useCommandCenterTitle = source => {
   const { documentId } = useContext(DocumentContext);

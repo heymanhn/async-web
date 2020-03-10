@@ -1,4 +1,4 @@
-import { useApolloClient } from 'react-apollo';
+import { useApolloClient } from '@apollo/react-hooks';
 
 import mediaBreakpointQuery from 'graphql/queries/mediaBreakpoint';
 import getBreakpoint from 'utils/mediaQuery';

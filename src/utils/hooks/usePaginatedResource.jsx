@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 
 import { snakedQueryParams } from 'utils/queryParams';
 import { debounce } from 'utils/helpers';

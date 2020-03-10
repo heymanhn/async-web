@@ -9,7 +9,7 @@
  */
 
 import { useContext } from 'react';
-import { useMutation, useQuery } from 'react-apollo';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import deleteReactionMutation from 'graphql/mutations/deleteReaction';

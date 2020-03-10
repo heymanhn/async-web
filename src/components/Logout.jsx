@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApolloClient, useQuery } from 'react-apollo';
+import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import { Redirect } from '@reach/router';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
