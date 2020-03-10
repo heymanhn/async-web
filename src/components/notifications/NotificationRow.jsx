@@ -65,25 +65,38 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
   const { title, snippet } = payloadCamelJSON;
   const { documentId, discussionId } = payloadCamelJSON;
 
-  function context() {
-    return type === 'new_message'
-      ? `${author.fullName} replied to`
-      : `${author.fullName} invited you to collaborate on`;
-  }
+  const context = () => {
+    let output;
+    switch (type) {
+      case 'new_message': {
+        output = `${author.fullName} replied to`;
+        break;
+      }
+      case 'edit_discussion': {
+        output = `${author.fullName} resolved`;
+        break;
+      }
+      default: {
+        output = `${author.fullName} invited you to collaborate on`;
+      }
+    }
 
-  function documentURL() {
+    return output;
+  };
+
+  const documentURL = () => {
     return type === 'new_message'
       ? `/documents/${documentId}/discussions/${discussionId}`
       : `/documents/${documentId}`;
-  }
+  };
 
-  function discussionURL() {
+  const discussionURL = () => {
     return `/discussions/${discussionId}`;
-  }
+  };
 
-  function notificationURL() {
+  const notificationURL = () => {
     return documentId ? documentURL() : discussionURL();
-  }
+  };
 
   function closeDropdownAndNavigate(event) {
     event.stopPropagation();
