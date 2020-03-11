@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
@@ -75,8 +76,9 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     };
     if (modalDiscussionId) setUrl();
 
-    return () =>
-      window.history.replaceState({}, `document: ${documentId}`, baseUrl);
+    // Triggering a navigation so that the discussionId prop can be reset in
+    // the parent <DocumentContainer /> component.
+    return () => navigate(baseUrl);
   }, [documentId, modalDiscussionId]);
 
   const { data } = useQuery(discussionQuery, {

@@ -37,6 +37,14 @@ const DocumentContainer = ({
     setState(old => ({ ...old, viewMode: initialViewMode }));
   }, [initialViewMode]);
 
+  useEffect(() => {
+    setState(old => ({
+      ...old,
+      modalDiscussionId: initialDiscussionId,
+      isModalOpen: !!initialDiscussionId,
+    }));
+  }, [initialDiscussionId]);
+
   const handleShowModal = (discussionId, selection, content) => {
     const newState = {
       modalDiscussionId: discussionId,
