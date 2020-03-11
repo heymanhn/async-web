@@ -23,11 +23,11 @@ const useContextGenerator = editor => {
     const newSelection = {
       anchor: {
         ...start,
-        path: [0, start.path[1]],
+        path: [0, ...start.path.slice(1)],
       },
       focus: {
         ...end,
-        path: [newContents.length - 1, end.path[1]],
+        path: [newContents.length - 1, ...end.path.slice(1)],
       },
     };
     return [newContents, newSelection];
