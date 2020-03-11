@@ -9,6 +9,7 @@ import useMountEffect from 'utils/hooks/useMountEffect';
 
 import useContextEditorProps from 'components/editor/useContextEditorProps';
 import withInlineDiscussions from 'components/editor/withInlineDiscussions';
+import withLinks from 'components/editor/withLinks';
 import withVoidElements from 'components/editor/withVoidElements';
 import useContextGenerator from './useContextGenerator';
 
@@ -41,6 +42,7 @@ const ContextComposer = props => {
     () =>
       compose(
         withInlineDiscussions,
+        withLinks,
         withVoidElements,
         withReact
       )(createEditor()),
