@@ -48,7 +48,14 @@ const TitleEditable = ({
   const [showPlaceholder, setShowPlaceholder] = useState(!title);
 
   // Workaround to prevent DOM from updating
-  const [DOMTitle] = useState(initialTitle);
+  const [DOMTitle, setDOMTitle] = useState(initialTitle);
+
+  useEffect(() => {
+    if (initialTitle) {
+      setTitle(initialTitle);
+      setDOMTitle(initialTitle);
+    }
+  }, [initialTitle]);
 
   const handleUpdate = () => {
     const { current } = titleRef || {};
