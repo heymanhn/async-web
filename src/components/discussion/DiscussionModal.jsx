@@ -12,12 +12,15 @@ import {
   DEFAULT_DISCUSSION_CONTEXT,
 } from 'utils/contexts';
 import useMountEffect from 'utils/hooks/useMountEffect';
+import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
 import Modal from 'components/shared/Modal';
 import ContextComposer from './ContextComposer';
 import DiscussionThread from './DiscussionThread';
 import DiscussionMessage from './DiscussionMessage';
 import AddReplyBox from './AddReplyBox';
+
+const ESCAPE_HOTKEY = 'Escape';
 
 const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
   alignSelf: 'flex-start',
@@ -80,6 +83,8 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     // the parent <DocumentContainer /> component.
     return () => navigate(baseUrl);
   }, [documentId, modalDiscussionId]);
+
+  useKeyDownHandler([ESCAPE_HOTKEY, () => !isComposing && handleClose()]);
 
   const { data } = useQuery(discussionQuery, {
     variables: { discussionId: modalDiscussionId },
