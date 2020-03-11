@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useApolloClient, useMutation } from '@apollo/react-hooks';
-import { Redirect, navigate } from '@reach/router';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import createInvitesMutation from 'graphql/mutations/createInvites';
@@ -12,7 +12,13 @@ import { track } from 'utils/analytics';
 
 import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
+import Modal from 'components/shared/Modal';
 import OnboardingContainer from './OnboardingContainer';
+
+const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
+  alignSelf: 'center',
+  background: colors.bgGrey,
+}));
 
 const FieldsContainer = styled.div({
   marginTop: '30px',
@@ -32,7 +38,7 @@ const StyledButton = styled(Button)({
   width: '300px',
 });
 
-const InviteTeam = ({ organizationId }) => {
+const InviteTeam = ({ organizationId, isOpen, handleClose }) => {
   const [firstEmail, setFirstEmail] = useState('');
   const [secondEmail, setSecondEmail] = useState('');
   const [thirdEmail, setThirdEmail] = useState('');
@@ -73,50 +79,54 @@ const InviteTeam = ({ organizationId }) => {
     }
   }
 
-  if (!organizationId) return <Redirect to="/" noThrow />;
+  if (!organizationId) handleClose();
 
   return (
-    <OnboardingContainer title="Invite your team by email">
-      <FieldsContainer>
-        <OnboardingInputField
-          name="firstEmail"
-          onChange={event => setFirstEmail(event.target.value)}
-          placeholder="jane@example.com"
-          type="email"
-          value={firstEmail}
-          onKeyPress={handleKeyPress}
-        />
-        <OnboardingInputField
-          name="secondEmail"
-          onChange={event => setSecondEmail(event.target.value)}
-          placeholder="jack@example.com"
-          type="email"
-          value={secondEmail}
-          onKeyPress={handleKeyPress}
-        />
-        <OnboardingInputField
-          name="thirdEmail"
-          onChange={event => setThirdEmail(event.target.value)}
-          placeholder="jess@example.com"
-          type="email"
-          value={thirdEmail}
-          onKeyPress={handleKeyPress}
-        />
-      </FieldsContainer>
+    <StyledModal isOpen={isOpen} handleClose={handleClose}>
+      <OnboardingContainer title="Invite your team by email">
+        <FieldsContainer>
+          <OnboardingInputField
+            name="firstEmail"
+            onChange={event => setFirstEmail(event.target.value)}
+            placeholder="jane@example.com"
+            type="email"
+            value={firstEmail}
+            onKeyPress={handleKeyPress}
+          />
+          <OnboardingInputField
+            name="secondEmail"
+            onChange={event => setSecondEmail(event.target.value)}
+            placeholder="jack@example.com"
+            type="email"
+            value={secondEmail}
+            onKeyPress={handleKeyPress}
+          />
+          <OnboardingInputField
+            name="thirdEmail"
+            onChange={event => setThirdEmail(event.target.value)}
+            placeholder="jess@example.com"
+            type="email"
+            value={thirdEmail}
+            onKeyPress={handleKeyPress}
+          />
+        </FieldsContainer>
 
-      <StyledButton
-        isDisabled={!gatherEmails().length}
-        onClick={handleCreateInvites}
-        title="Send invites"
-      />
+        <StyledButton
+          isDisabled={!gatherEmails().length}
+          onClick={handleCreateInvites}
+          title="Send invites"
+        />
 
-      <SkipStep onClick={handleSkip}>Not now, thanks</SkipStep>
-    </OnboardingContainer>
+        <SkipStep onClick={handleSkip}>Not now, thanks</SkipStep>
+      </OnboardingContainer>
+    </StyledModal>
   );
 };
 
 InviteTeam.propTypes = {
   organizationId: PropTypes.string,
+  isOpen: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
 };
 
 InviteTeam.defaultProps = {

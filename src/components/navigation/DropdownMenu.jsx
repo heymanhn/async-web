@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import { navigate } from '@reach/router';
@@ -9,6 +9,7 @@ import { getLocalUser } from 'utils/auth';
 import useClickOutside from 'utils/hooks/useClickOutside';
 
 import Avatar from 'components/shared/Avatar';
+import InviteTeam from 'components/auth/InviteTeam';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
@@ -63,9 +64,18 @@ const MenuOption = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const selector = useRef();
   const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: selector });
+
+  const showInviteModal = () => {
+    setIsInviteModalOpen(true);
+  };
+
+  const hideInviteModal = () => {
+    setIsInviteModalOpen(false);
+  };
 
   const { userId } = getLocalUser();
   const { loading, data } = useQuery(currentUserQuery, {
@@ -81,8 +91,6 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
   };
 
   const handleNavigateInbox = event => handleNavigate(event, '/inbox');
-  const handleSelectInvite = event =>
-    handleNavigate(event, `/organizations/${organizationId}/invites`);
   const handleLogout = event => handleNavigate(event, '/logout');
 
   return (
@@ -93,9 +101,16 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
       </AuthorSection>
       <MenuOptionList>
         <MenuOption onClick={handleNavigateInbox}>Inbox</MenuOption>
-        <MenuOption onClick={handleSelectInvite}>Invite people</MenuOption>
+        <MenuOption onClick={showInviteModal}>Invite people</MenuOption>
         <MenuOption onClick={handleLogout}>Sign out</MenuOption>
       </MenuOptionList>
+      {isInviteModalOpen && (
+        <InviteTeam
+          organizationId={organizationId}
+          isOpen={isInviteModalOpen}
+          handleClose={hideInviteModal}
+        />
+      )}
     </Container>
   );
 };
