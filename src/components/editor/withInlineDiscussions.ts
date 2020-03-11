@@ -7,7 +7,7 @@ const withInlineDiscussions = oldEditor => {
   editor.isInline = element => {
     return INLINE_DISCUSSION_TYPES.includes(element.type)
       ? true
-      : isInline(editor);
+      : isInline(element);
   };
 
   return editor;
