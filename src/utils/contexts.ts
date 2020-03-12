@@ -14,6 +14,7 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   handleCloseModal: () => {},
   afterUpdate: () => {},
   afterDelete: () => {},
+  setForceUpdate: () => {},
 };
 export const DocumentContext = createContext(DEFAULT_DOCUMENT_CONTEXT);
 
@@ -28,6 +29,7 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   afterCreate: () => {},
   afterCreateDraft: () => {},
   afterDelete: () => {},
+  setForceUpdate: () => {},
 };
 export const DiscussionContext = createContext(DEFAULT_DISCUSSION_CONTEXT);
 

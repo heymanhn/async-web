@@ -23,6 +23,7 @@ const DocumentContainer = ({
     deletedDiscussionId: null,
     isModalOpen: !!initialDiscussionId,
     inlineDiscussionTopic: null,
+    forceUpdate: false,
   });
 
   const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
@@ -32,6 +33,7 @@ const DocumentContainer = ({
     setState(old => ({ ...old, deletedDiscussionId: id }));
   const resetInlineTopic = () =>
     setState(old => ({ ...old, inlineDiscussionTopic: null }));
+  const setForceUpdate = fu => setState(old => ({ ...old, forceUpdate: fu }));
 
   useEffect(() => {
     setState(old => ({ ...old, viewMode: initialViewMode }));
@@ -77,7 +79,9 @@ const DocumentContainer = ({
     inlineDiscussionTopic,
     isModalOpen,
     viewMode,
+    forceUpdate,
   } = state;
+  if (forceUpdate) setForceUpdate(false);
 
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
@@ -89,6 +93,7 @@ const DocumentContainer = ({
 
     setFirstMsgDiscussionId,
     setDeletedDiscussionId,
+    setForceUpdate,
     resetInlineTopic,
     handleShowModal,
     handleCloseModal,

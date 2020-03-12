@@ -42,12 +42,20 @@ const TitleEditable = ({
   handleUpdateTitle,
   ...props
 }) => {
-  const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
+  const { documentId, setForceUpdate: setForceUpdateDocument } = useContext(
+    DocumentContext
+  );
+  const { discussionId, setForceUpdate: setForceUpdateDiscussion } = useContext(
+    DiscussionContext
+  );
+  const setForceUpdate = documentId
+    ? setForceUpdateDocument
+    : setForceUpdateDiscussion;
   const titleRef = useRef(null);
   const [title, setTitle] = useState(initialTitle);
   const [resourceId, setResourceId] = useState(documentId || discussionId);
   const [showPlaceholder, setShowPlaceholder] = useState(!title);
+  const [elementHeight, setElementHeight] = useState(null);
 
   // Workaround to prevent DOM from updating
   const [DOMTitle, setDOMTitle] = useState(initialTitle);
@@ -95,6 +103,17 @@ const TitleEditable = ({
     if (current) current.focus();
   };
 
+  const handleForceUpdate = () => {
+    const { current } = titleRef || {};
+    if (current) {
+      const { offsetHeight } = current;
+      if (elementHeight !== offsetHeight) {
+        setElementHeight(offsetHeight);
+        setForceUpdate(true);
+      }
+    }
+  };
+
   const handleKeyDown = event => {
     const { current } = titleRef || {};
 
@@ -109,9 +128,12 @@ const TitleEditable = ({
         const { nextSibling } = parentNode;
         if (nextSibling) nextSibling.focus();
       }
-    } else {
-      setTitle(current.innerText);
+
+      return;
     }
+
+    setTitle(current.innerText);
+    setTimeout(handleForceUpdate, 0);
   };
 
   return (
