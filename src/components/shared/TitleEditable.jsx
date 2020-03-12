@@ -10,7 +10,7 @@ import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import useAutoSave from 'utils/hooks/useAutoSave';
-import { DocumentContext } from 'utils/contexts';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 const Container = styled.div({
   display: 'flex',
@@ -43,19 +43,23 @@ const TitleEditable = ({
   ...props
 }) => {
   const { documentId } = useContext(DocumentContext);
+  const { discussionId } = useContext(DiscussionContext);
   const titleRef = useRef(null);
   const [title, setTitle] = useState(initialTitle);
+  const [resourceId, setResourceId] = useState(documentId || discussionId);
   const [showPlaceholder, setShowPlaceholder] = useState(!title);
 
   // Workaround to prevent DOM from updating
   const [DOMTitle, setDOMTitle] = useState(initialTitle);
 
   useEffect(() => {
-    if (initialTitle) {
+    const newResourceId = documentId || discussionId;
+    if (resourceId !== newResourceId) {
+      setResourceId(newResourceId);
       setTitle(initialTitle);
       setDOMTitle(initialTitle);
     }
-  }, [initialTitle]);
+  }, [initialTitle, documentId, discussionId, resourceId]);
 
   const handleUpdate = () => {
     const { current } = titleRef || {};
