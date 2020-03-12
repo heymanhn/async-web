@@ -21,7 +21,6 @@ const Icon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   marginTop: '10px',
   marginLeft: '10px',
 
-  background: colors.white,
   color: colors.successGreen,
   fontSize: '18px',
   marginRight: '12px',
