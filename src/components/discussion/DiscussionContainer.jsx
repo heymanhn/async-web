@@ -47,6 +47,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 const DiscussionContainer = ({ discussionId }) => {
   const discussionRef = useRef(null);
   const [isComposing, setIsComposing] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
@@ -82,11 +83,14 @@ const DiscussionContainer = ({ discussionId }) => {
     if (!messageCount) returnToInbox();
   };
 
+  if (forceUpdate) setForceUpdate(false);
+
   const value = {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     draft,
     afterDelete: returnToInbox,
+    setForceUpdate,
   };
 
   return (
