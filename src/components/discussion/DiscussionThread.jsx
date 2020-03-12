@@ -122,9 +122,9 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
       )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
-          {firstNewMessageId() === m.id && m.id !== messages[0].id && (
-            <NewMessagesDivider />
-          )}
+          {!isModal &&
+            firstNewMessageId() === m.id &&
+            m.id !== messages[0].id && <NewMessagesDivider />}
           <StyledDiscussionMessage
             index={i}
             isModal={isModal}
