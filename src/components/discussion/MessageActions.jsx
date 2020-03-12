@@ -1,3 +1,4 @@
+/* eslint no-alert: 0 */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useSlate } from 'slate-react';
@@ -11,6 +12,7 @@ import Editor from 'components/editor/Editor';
 import useDraftMutations from './useDraftMutations';
 
 const SUBMIT_HOTKEY = 'cmd+enter';
+const ESCAPE_HOTKEY = 'Escape';
 
 const Container = styled.div({
   display: 'flex',
@@ -38,11 +40,11 @@ const MessageActions = ({ handleSubmit, isSubmitting }) => {
   const { mode, handleCancel } = useContext(MessageContext);
   const { handleDeleteDraft } = useDraftMutations();
   const editor = useSlate();
-  const isSubmitDisabled = Editor.isEmptyContent(editor);
+  const isEmptyContent = Editor.isEmptyContent(editor);
 
   const handleSubmitWrapper = event => {
     event.stopPropagation();
-    return isSubmitDisabled ? null : handleSubmit();
+    return isEmptyContent ? null : handleSubmit();
   };
 
   const handleCancelWrapper = async event => {
@@ -53,13 +55,34 @@ const MessageActions = ({ handleSubmit, isSubmitting }) => {
     handleCancel();
   };
 
-  useKeyDownHandler([SUBMIT_HOTKEY, handleSubmit], isSubmitDisabled);
+  const handleEscapeKey = event => {
+    event.preventDefault();
+
+    if (!isEmptyContent) {
+      const actionText = draft
+        ? 'discard this draft'
+        : 'stop composing this message';
+      const userChoice = window.confirm(
+        `Are you sure you want to ${actionText}?`
+      );
+
+      if (!userChoice) return null;
+    }
+
+    return handleCancelWrapper(event);
+  };
+
+  const handlers = [
+    [SUBMIT_HOTKEY, handleSubmitWrapper],
+    [ESCAPE_HOTKEY, handleEscapeKey],
+  ];
+  useKeyDownHandler(handlers);
 
   return (
     <Container>
       <ButtonsContainer>
         <StyledButton
-          isDisabled={isSubmitDisabled}
+          isDisabled={isEmptyContent}
           loading={isSubmitting}
           onClick={handleSubmitWrapper}
           title={mode === 'compose' ? 'Post' : 'Save'}
