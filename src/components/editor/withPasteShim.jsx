@@ -4,14 +4,18 @@ import { Transforms } from 'slate';
 import Editor from './Editor';
 import { CODE_BLOCK } from './utils';
 
+const SLATE_FRAGMENT_TYPE = 'application/x-slate-fragment';
+const PLAIN_TEXT_TYPE = 'text/plain';
+
 const withPasteShim = oldEditor => {
   const editor = oldEditor;
   const { insertData } = editor;
 
   editor.insertData = data => {
-    const text = data.getData('text/plain');
+    const fragment = data.getData(SLATE_FRAGMENT_TYPE);
+    const text = data.getData(PLAIN_TEXT_TYPE);
 
-    if (text) {
+    if (text && !fragment) {
       let lines = text.split(/\r?\n/);
 
       // We want to mimic pasting of plain-text behavior in CODE_BLOCK, aka preserve empty lines.
