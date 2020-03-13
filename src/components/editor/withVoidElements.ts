@@ -5,7 +5,7 @@ const withVoidElements = oldEditor => {
   const { isVoid } = editor;
 
   editor.isVoid = element => {
-    return VOID_TYPES.includes(element.type) ? true : isVoid(editor);
+    return VOID_TYPES.includes(element.type) ? true : isVoid(element);
   };
 
   return editor;
