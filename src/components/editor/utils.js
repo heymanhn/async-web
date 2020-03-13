@@ -33,9 +33,6 @@ export const LARGE_FONT = 'heading-one';
 export const MEDIUM_FONT = 'heading-two';
 export const SMALL_FONT = 'heading-three';
 
-export const SECTION_BREAK = 'section-break';
-export const VOID_TYPES = [SECTION_BREAK];
-
 /*
  * Inline elements
  */
@@ -47,6 +44,12 @@ export const INLINE_DISCUSSION_TYPES = [
   INLINE_DISCUSSION_ANNOTATION,
 ];
 export const INLINE_TYPES = [HYPERLINK, ...INLINE_DISCUSSION_TYPES];
+
+/*
+ * Void elements
+ */
+export const SECTION_BREAK = 'section-break';
+export const IMAGE = 'image';
 
 /*
  * Composition menu option titles

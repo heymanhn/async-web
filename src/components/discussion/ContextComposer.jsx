@@ -10,7 +10,7 @@ import useMountEffect from 'utils/hooks/useMountEffect';
 import useContextEditorProps from 'components/editor/useContextEditorProps';
 import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withLinks from 'components/editor/withLinks';
-import withVoidElements from 'components/editor/withVoidElements';
+import withSectionBreak from 'components/editor/withSectionBreak';
 import useContextGenerator from './useContextGenerator';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -43,7 +43,7 @@ const ContextComposer = props => {
       compose(
         withInlineDiscussions,
         withLinks,
-        withVoidElements,
+        withSectionBreak,
         withReact
       )(createEditor()),
     []

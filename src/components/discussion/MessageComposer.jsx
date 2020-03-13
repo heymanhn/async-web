@@ -15,7 +15,7 @@ import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withLinks from 'components/editor/withLinks';
-import withVoidElements from 'components/editor/withVoidElements';
+import withSectionBreak from 'components/editor/withSectionBreak';
 import withPasteShim from 'components/editor/withPasteShim';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
@@ -47,7 +47,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
         withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
-        withVoidElements,
+        withSectionBreak,
         withPasteShim,
         withHistory,
         withReact
