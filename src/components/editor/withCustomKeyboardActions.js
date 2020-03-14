@@ -39,16 +39,18 @@ const withCustomKeyboardActions = oldEditor => {
   const editor = oldEditor;
   const { deleteBackward, insertBreak } = editor;
 
-  editor.deleteBackward = (...args) => {
-    if (isBeginningOfWrappedBlock(editor)) {
-      return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+  editor.deleteBackward = unit => {
+    if (unit === 'character') {
+      if (isBeginningOfWrappedBlock(editor)) {
+        return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+      }
+
+      if (isEmptyCodeHighlight(editor)) {
+        return Editor.toggleMark(editor, CODE_HIGHLIGHT);
+      }
     }
 
-    if (isEmptyCodeHighlight(editor)) {
-      return Editor.toggleMark(editor, CODE_HIGHLIGHT);
-    }
-
-    return deleteBackward(...args);
+    return deleteBackward(unit);
   };
 
   editor.insertBreak = () => {

@@ -15,16 +15,6 @@ import {
 /* **** Slate plugin **** */
 
 export default function Image() {
-  /* **** Custom keyboard actions **** */
-
-  function insertNewBlockOnEnter(editor, next) {
-    if (editor.hasBlock(IMAGE)) {
-      return editor.insertBlock(DEFAULT_ELEMENT_TYPE);
-    }
-
-    return next();
-  }
-
   // Need to ensure there's at least a text block present in the composer before the image
   // is deleted.
   function ensureBlockPresentOnRemove(editor, next) {
