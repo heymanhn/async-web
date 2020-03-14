@@ -73,7 +73,7 @@ const InviteTeam = ({ organizationId }) => {
     }
   }
 
-  if (!organizationId) Redirect('/');
+  if (!organizationId) return <Redirect to="/" noThrow />;
 
   return (
     <OnboardingContainer title="Invite your team by email">

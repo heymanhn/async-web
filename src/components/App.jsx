@@ -32,6 +32,7 @@ import Inbox from 'components/inbox/Inbox';
 import NotFound from 'components/navigation/NotFound';
 import SignUp from 'components/auth/SignUp';
 import CreateOrganization from 'components/auth/CreateOrganization';
+import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
 import DocumentContainer from 'components/document/DocumentContainer';
 import DiscussionContainer from './discussion/DiscussionContainer';
@@ -113,6 +114,7 @@ const App = () => {
         <CreateOrganization path="/organizations" />
         <Login path="/login" />
         <DemoLogin path="/demo/login" />
+        <InviteTeam path="/organizations/:organizationId/invites" />
         <Logout path="/logout" />
         <PrivateRoute path="/inbox" component={Inbox} />
         <PrivateRoute
