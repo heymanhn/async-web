@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { ReactEditor, useFocused, useSelected, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
+import LoadingIndicator from 'components/shared/LoadingIndicator';
+
 const StyledImage = styled.img(
   ({ isFocused, readOnly, theme: { colors } }) => ({
     display: 'block',
@@ -17,6 +19,18 @@ const StyledImage = styled.img(
   })
 );
 
+const StyledImageLoadingIndicator = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  margin: '1em auto',
+});
+
+const StyledIndicator = styled(LoadingIndicator)({
+  width: '30px',
+  height: '30px',
+});
+
 const ImageElement = ({ attributes, children, element }) => {
   const editor = useSlate();
   const isSelected = useSelected();
@@ -24,15 +38,25 @@ const ImageElement = ({ attributes, children, element }) => {
   const isReadOnly = ReactEditor.isReadOnly(editor);
   const { src } = element;
 
+  const image = (
+    <div contentEditable={false}>
+      <StyledImage
+        src={src}
+        isFocused={isSelected && isFocused}
+        readOnly={isReadOnly}
+      />
+    </div>
+  );
+
+  const loadingIndicator = (
+    <StyledImageLoadingIndicator>
+      <StyledIndicator />
+    </StyledImageLoadingIndicator>
+  );
+
   return (
     <div {...attributes}>
-      <div contentEditable={false}>
-        <StyledImage
-          src={src}
-          isFocused={isSelected && isFocused}
-          readOnly={isReadOnly}
-        />
-      </div>
+      {src ? image : loadingIndicator}
       {children}
     </div>
   );

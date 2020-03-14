@@ -63,6 +63,7 @@ export const CHECKLIST_OPTION_TITLE = 'Checklist';
 export const CODE_BLOCK_OPTION_TITLE = 'Code block';
 export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
 export const SECTION_BREAK_OPTION_TITLE = 'Section break';
+export const IMAGE_OPTION_TITLE = 'Image';
 
 /*
  * Source constants for analytics tracking

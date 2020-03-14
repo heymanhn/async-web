@@ -1,133 +1,20 @@
-/* eslint react/prop-types: 0 */
-import React, { useCallback, useState } from 'react';
-import { useMutation } from '@apollo/react-hooks';
-import { useDropzone } from 'react-dropzone';
-import styled from '@emotion/styled';
-
-import uploadFileMutation from 'graphql/mutations/uploadFile';
 import { track } from 'utils/analytics';
 
-import MenuOption from 'components/editor/compositionMenu/MenuOption';
-import OptionIcon from 'components/editor/compositionMenu/OptionIcon';
 import {
   DEFAULT_ELEMENT_TYPE,
-  COMPOSITION_MENU_SOURCE,
   CUT_PASTE_SOURCE,
 } from 'components/editor/utils';
 import {
   AddCommands,
-  AddSchema,
   CustomBackspaceAction,
   CustomEnterAction,
   CustomDropAction,
   CustomPasteAction,
-  RenderBlock,
 } from '../helpers';
-
-const IMAGE = 'image';
-export const IMAGE_OPTION_TITLE = 'Image';
-
-/* **** Composition menu option **** */
-/* The image option uploads an image to the editor */
-
-export function ImageOption({ editor, ...props }) {
-  const initialState = {
-    selectedFile: null,
-    uploadStarted: false,
-  };
-  const [state, setState] = useState(initialState);
-  const { selectedFile, uploadStarted } = state;
-  const { resourceId } = editor.props;
-
-  const [uploadFile] = useMutation(uploadFileMutation, {
-    variables: {
-      resourceId,
-    },
-    onCompleted: data => {
-      if (data && data.uploadFile) {
-        const { url } = data.uploadFile;
-        editor
-          .removeImageLoadingIndicator()
-          .insertImage(url, COMPOSITION_MENU_SOURCE);
-      } else {
-        editor.removeImageLoadingIndicator();
-      }
-    },
-  });
-
-  const onDrop = useCallback(acceptedFiles => {
-    if (acceptedFiles.length > 0) {
-      setState(oldState => ({ ...oldState, selectedFile: acceptedFiles[0] }));
-    }
-  }, []);
-
-  const { getInputProps, open } = useDropzone({
-    accept: 'image/*',
-    maxSize: 10485760, // 10MB max
-    multiple: false,
-    noDrag: true,
-    noClick: true,
-    noKeyboard: true,
-    onDrop,
-  });
-
-  if (selectedFile && !uploadStarted) {
-    setState(oldState => ({ ...oldState, uploadStarted: true }));
-    editor.insertImageLoadingIndicator();
-    uploadFile({ variables: { input: { file: selectedFile } } });
-  }
-
-  function openFileDialog() {
-    editor.clearBlock();
-    setState(initialState);
-    open();
-  }
-
-  const icon = <OptionIcon icon="image" />;
-  return (
-    <>
-      <input {...getInputProps()} />
-      <MenuOption
-        handleInvoke={openFileDialog}
-        icon={icon}
-        title={IMAGE_OPTION_TITLE}
-        {...props}
-      />
-    </>
-  );
-}
 
 /* **** Slate plugin **** */
 
-export function Image() {
-  /* **** Schema **** */
-
-  const imageSchema = {
-    blocks: {
-      image: {
-        isVoid: true,
-      },
-    },
-  };
-
-  /* **** Commands **** */
-
-  function insertImage(editor, imageSource, source) {
-    track('Image inserted to content', { source });
-
-    if (editor.isEmptyParagraph()) {
-      return editor.setBlocks({
-        type: IMAGE,
-        data: { src: imageSource },
-      });
-    }
-
-    return editor.moveToEndOfBlock().insertBlock({
-      type: IMAGE,
-      data: { src: imageSource },
-    });
-  }
-
+export default function Image() {
   /* **** Custom keyboard actions **** */
 
   function insertNewBlockOnEnter(editor, next) {
@@ -199,9 +86,7 @@ export function Image() {
   }
 
   return [
-    AddSchema(imageSchema),
     AddCommands({ insertImage }),
-    RenderBlock(IMAGE, renderImage),
     CustomBackspaceAction(ensureBlockPresentOnRemove),
     CustomEnterAction(insertNewBlockOnEnter),
     CustomDropAction(insertImageOnDrop),

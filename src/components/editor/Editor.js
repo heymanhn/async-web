@@ -20,6 +20,7 @@ import {
   INLINE_DISCUSSION_ANNOTATION,
   INLINE_DISCUSSION_SOURCE,
   HYPERLINK,
+  IMAGE,
 } from './utils';
 
 /*
@@ -213,7 +214,8 @@ const wrapInline = (editor, type, range, source, props = {}) => {
 };
 
 const insertVoid = (editor, type, data = {}) => {
-  Transforms.setNodes(editor, { type, ...data, children: [] });
+  const text = { text: '' };
+  Transforms.setNodes(editor, { type, ...data, children: [text] });
   Transforms.insertNodes(editor, DEFAULT_ELEMENT);
 };
 
@@ -283,6 +285,34 @@ const wrapLink = (editor, url) => {
   }
 };
 
+const insertImage = (editor, src) => {
+  const id = Date.now();
+  const text = { text: '' };
+  const node = { type: IMAGE, id, src, children: [text] };
+
+  if (isEmptyParagraph(editor)) {
+    Transforms.setNodes(editor, node);
+  } else {
+    Transforms.insertNodes(editor, node);
+  }
+
+  return node;
+};
+
+const updateImage = (editor, id, data) => {
+  Transforms.setNodes(editor, data, {
+    at: documentSelection(editor),
+    match: n => n.type === IMAGE && n.id === id,
+  });
+};
+
+const removeImage = (editor, id) => {
+  Transforms.removeNodes(editor, {
+    at: documentSelection(editor),
+    match: n => n.type === IMAGE && n.id === id,
+  });
+};
+
 const Editor = {
   ...SlateEditor,
 
@@ -319,6 +349,9 @@ const Editor = {
   removeInlineAnnotation,
   wrapLink,
   unwrapLink,
+  insertImage,
+  updateImage,
+  removeImage,
 };
 
 export default Editor;

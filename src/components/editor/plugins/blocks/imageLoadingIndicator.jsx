@@ -10,18 +10,6 @@ const IMAGE_LOADING_INDICATOR = 'image-loading-indicator';
 
 /* **** Slate plugin **** */
 
-const StyledImageLoadingIndicator = styled.div({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  margin: '1em auto',
-});
-
-const StyledIndicator = styled(LoadingIndicator)({
-  width: '30px',
-  height: '30px',
-});
-
 export default function ImageLoadingIndicator() {
   /* **** Schema **** */
 
