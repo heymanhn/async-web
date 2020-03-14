@@ -112,9 +112,9 @@ const App = () => {
         <Home path="/" />
         <SignUp path="/invites/:inviteCode" />
         <CreateOrganization path="/organizations" />
+        <InviteTeam path="/organizations/:organizationId/invites" />
         <Login path="/login" />
         <DemoLogin path="/demo/login" />
-        <InviteTeam path="/organizations/:organizationId/invites" />
         <Logout path="/logout" />
         <PrivateRoute path="/inbox" component={Inbox} />
         <PrivateRoute
