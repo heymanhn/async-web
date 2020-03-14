@@ -23,6 +23,7 @@ import withLinks from 'components/editor/withLinks';
 import withPasteShim from 'components/editor/withPasteShim';
 import withSectionBreak from 'components/editor/withSectionBreak';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
+import withImages from 'components/editor/withImages';
 
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
@@ -55,6 +56,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
         withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
+        withImages,
         withInlineDiscussions,
         withSectionBreak,
         withPasteShim,

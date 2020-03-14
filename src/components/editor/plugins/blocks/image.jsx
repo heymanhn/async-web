@@ -99,20 +99,6 @@ export function ImageOption({ editor, ...props }) {
 
 /* **** Slate plugin **** */
 
-const StyledImage = styled.img(
-  ({ isFocused, readOnly, theme: { colors } }) => ({
-    display: 'block',
-    margin: '1em auto',
-    maxWidth: '100%',
-    maxHeight: '20em',
-    boxShadow: `${isFocused ? `0 0 0 3px ${colors.blue}` : 'none'}`,
-
-    ':hover': {
-      boxShadow: readOnly ? 'none' : `0 0 0 3px ${colors.blue}`,
-    },
-  })
-);
-
 export function Image() {
   /* **** Schema **** */
 
@@ -140,22 +126,6 @@ export function Image() {
       type: IMAGE,
       data: { src: imageSource },
     });
-  }
-
-  /* **** Render methods **** */
-
-  function renderImage(props) {
-    const { attributes, isFocused, node, readOnly } = props;
-
-    const src = node.data.get('src');
-    return (
-      <StyledImage
-        {...attributes}
-        src={src}
-        isFocused={isFocused}
-        readOnly={readOnly}
-      />
-    );
   }
 
   /* **** Custom keyboard actions **** */

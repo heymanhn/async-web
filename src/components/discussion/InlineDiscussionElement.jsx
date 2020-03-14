@@ -105,7 +105,7 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
 
 InlineDiscussionElement.propTypes = {
   attributes: PropTypes.object.isRequired,
-  children: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
   element: PropTypes.object.isRequired,
 };
 
