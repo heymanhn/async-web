@@ -1,15 +1,16 @@
 import isUrl from 'is-url';
-import { Transforms } from 'slate';
+import { Range, Transforms } from 'slate';
 
 import { DEFAULT_ELEMENT_TYPE, IMAGE } from './utils';
 import Editor from './Editor';
 
-const isBeginningOfWrappedBlock = editor => {
+const isBeginningOfBlock = editor => {
   const { selection } = editor;
+
   return (
     selection &&
     Range.isCollapsed(selection) &&
-    Editor.isWrappedBlock(editor) &&
+    !Editor.isWrappedBlock(editor) &&
     Editor.isAtBeginning(editor)
   );
 };
@@ -37,10 +38,13 @@ const withImages = oldEditor => {
   };
 
   editor.deleteBackward = unit => {
-    if (unit === 'character') {
-      if (isBeginningOfWrappedBlock(editor)) {
-        return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
-      }
+    if (unit === 'character' && isBeginningOfBlock(editor)) {
+      const [, path] = Editor.previous(editor, {
+        match: n => Editor.isBlock(editor, n),
+      });
+
+      if (Editor.isElementActive(editor, IMAGE, path))
+        return Transforms.removeNodes(editor);
     }
 
     return deleteBackward(unit);
