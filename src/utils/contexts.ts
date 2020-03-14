@@ -42,11 +42,10 @@ export const DEFAULT_MESSAGE_CONTEXT = {
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);
 
-// For the share modals
-export const DEFAULT_RESOURCE_ACCESS_CONTEXT = {
-  isModalOpen: false,
-  setIsModalOpen: () => {},
+export const DEFAULT_HEADER_CONTEXT = {
+  isResourceAccessModalOpen: false,
+  isInviteModalOpen: false,
+  setIsResourceAccessModalOpen: () => {},
+  setIsInviteModalOpen: () => {},
 };
-export const ResourceAccessContext = createContext(
-  DEFAULT_RESOURCE_ACCESS_CONTEXT
-);
+export const HeaderContext = createContext(DEFAULT_HEADER_CONTEXT);

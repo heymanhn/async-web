@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import styled from '@emotion/styled';
 
-import { ResourceAccessContext } from 'utils/contexts';
+import { HeaderContext } from 'utils/contexts';
 
 import ResourceAccessModal from './ResourceAccessModal';
 
@@ -22,14 +22,19 @@ const InviteButton = styled.div(({ theme: { colors } }) => ({
 }));
 
 const ResourceAccessContainer = () => {
-  const { isModalOpen, setIsModalOpen } = useContext(ResourceAccessContext);
+  const {
+    isResourceAccessModalOpen,
+    setIsResourceAccessModalOpen,
+  } = useContext(HeaderContext);
 
   return (
     <>
-      <InviteButton onClick={() => setIsModalOpen(true)}>Invite</InviteButton>
+      <InviteButton onClick={() => setIsResourceAccessModalOpen(true)}>
+        Invite
+      </InviteButton>
       <ResourceAccessModal
-        handleClose={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
+        handleClose={() => setIsResourceAccessModalOpen(false)}
+        isOpen={isResourceAccessModalOpen}
       />
     </>
   );

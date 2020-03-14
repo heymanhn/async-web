@@ -1,15 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
+import { HeaderContext } from 'utils/contexts';
 import currentUserQuery from 'graphql/queries/currentUser';
 import { getLocalUser } from 'utils/auth';
 import useClickOutside from 'utils/hooks/useClickOutside';
 
 import Avatar from 'components/shared/Avatar';
-import InviteTeam from 'components/auth/InviteTeam';
+import InviteTeamModal from './InviteTeamModal';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
@@ -64,17 +65,13 @@ const MenuOption = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const { isInviteModalOpen, setIsInviteModalOpen } = useContext(HeaderContext);
   const selector = useRef();
   const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: selector });
 
   const showInviteModal = () => {
     setIsInviteModalOpen(true);
-  };
-
-  const hideInviteModal = () => {
-    setIsInviteModalOpen(false);
   };
 
   const { userId } = getLocalUser();
@@ -104,13 +101,7 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
         <MenuOption onClick={showInviteModal}>Invite people</MenuOption>
         <MenuOption onClick={handleLogout}>Sign out</MenuOption>
       </MenuOptionList>
-      {isInviteModalOpen && (
-        <InviteTeam
-          organizationId={organizationId}
-          isOpen={isInviteModalOpen}
-          handleClose={hideInviteModal}
-        />
-      )}
+      {isInviteModalOpen && <InviteTeamModal organizationId={organizationId} />}
     </Container>
   );
 };

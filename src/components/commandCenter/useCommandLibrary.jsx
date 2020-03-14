@@ -1,14 +1,14 @@
 import { useContext } from 'react';
 import { navigate } from '@reach/router';
 
-import { getLocalAppState } from 'utils/auth';
 import useResourceCreator from 'utils/hooks/useResourceCreator';
-import { ResourceAccessContext, DocumentContext } from 'utils/contexts';
+import { HeaderContext, DocumentContext } from 'utils/contexts';
 
 const useCommandLibrary = source => {
-  const { setIsModalOpen } = useContext(ResourceAccessContext);
+  const { setIsResourceAccessModalOpen, setIsInviteModalOpen } = useContext(
+    HeaderContext
+  );
   const { documentId } = useContext(DocumentContext);
-  const { organizationId } = getLocalAppState();
   const { handleCreateResource: handleCreateDocument } = useResourceCreator(
     'documents'
   );
@@ -44,7 +44,7 @@ const useCommandLibrary = source => {
     type: 'command',
     icon: ['fal', 'user-circle'],
     title: 'Invite people',
-    action: () => setIsModalOpen(true),
+    action: () => setIsResourceAccessModalOpen(true),
     shortcut: 'P',
   };
 
@@ -52,7 +52,7 @@ const useCommandLibrary = source => {
     type: 'command',
     icon: ['fal', 'user-circle'],
     title: 'Invite your team',
-    action: () => navigate(`/organizations/${organizationId}/invites`),
+    action: () => setIsInviteModalOpen(true),
     shortcut: 'T',
   };
 
