@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 
+import { NavContext, DEFAULT_NAV_CONTEXT } from 'utils/contexts';
 import OrganizationSettings from 'components/navigation/OrganizationSettings';
 import NotificationsBell from 'components/notifications/NotificationsBell';
 import CommandCenter from 'components/commandCenter/CommandCenter';
@@ -41,17 +42,27 @@ const Title = styled.span({
 });
 
 const NavBar = () => {
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
+  const value = {
+    ...DEFAULT_NAV_CONTEXT,
+    isInviteModalOpen,
+    setIsInviteModalOpen,
+  };
+
   return (
-    <Container>
-      <MenuSection>
-        <OrganizationSettings />
-        <Title>Roval</Title>
-      </MenuSection>
-      <NavigationSection>
-        <NotificationsBell />
-        <CommandCenter source="inbox" />
-      </NavigationSection>
-    </Container>
+    <NavContext.Provider value={value}>
+      <Container>
+        <MenuSection>
+          <OrganizationSettings />
+          <Title>Roval</Title>
+        </MenuSection>
+        <NavigationSection>
+          <NotificationsBell />
+          <CommandCenter source="inbox" />
+        </NavigationSection>
+      </Container>
+    </NavContext.Provider>
   );
 };
 

@@ -42,10 +42,10 @@ export const DEFAULT_MESSAGE_CONTEXT = {
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);
 
-export const DEFAULT_HEADER_CONTEXT = {
+export const DEFAULT_NAV_CONTEXT = {
   isResourceAccessModalOpen: false,
   isInviteModalOpen: false,
   setIsResourceAccessModalOpen: () => {},
   setIsInviteModalOpen: () => {},
 };
-export const HeaderContext = createContext(DEFAULT_HEADER_CONTEXT);
+export const NavContext = createContext(DEFAULT_NAV_CONTEXT);

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import styled from '@emotion/styled';
 
-import { HeaderContext } from 'utils/contexts';
+import { NavContext } from 'utils/contexts';
 
 import ResourceAccessModal from './ResourceAccessModal';
 
@@ -25,7 +25,7 @@ const ResourceAccessContainer = () => {
   const {
     isResourceAccessModalOpen,
     setIsResourceAccessModalOpen,
-  } = useContext(HeaderContext);
+  } = useContext(NavContext);
 
   return (
     <>
