@@ -1,11 +1,11 @@
 import { Range, Transforms } from 'slate';
 
-import { DEFAULT_ELEMENT_TYPE, DEFAULT_ELEMENT, CODE_HIGHLIGHT } from './utils';
+import { DEFAULT_ELEMENT_TYPE, CODE_HIGHLIGHT } from './utils';
 import Editor from './Editor';
 
 const handleExitHeadingBlock = (editor, insertBreak) => {
   if (Editor.isAtBeginning(editor)) {
-    Transforms.insertNodes(editor, DEFAULT_ELEMENT);
+    Editor.insertDefaultElement(editor);
     return Transforms.move(editor);
   }
 

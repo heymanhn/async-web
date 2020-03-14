@@ -144,6 +144,10 @@ const findNodeByType = (editor, type) => {
  * Transforms
  */
 
+const insertDefaultElement = editor => {
+  Transforms.insertNodes(editor, DEFAULT_ELEMENT);
+};
+
 const toggleBlock = (editor, type, source) => {
   const isActive = isElementActive(editor, type);
   const isList = LIST_TYPES.includes(type);
@@ -216,7 +220,7 @@ const wrapInline = (editor, type, range, source, props = {}) => {
 const insertVoid = (editor, type, data = {}) => {
   const text = { text: '' };
   Transforms.setNodes(editor, { type, ...data, children: [text] });
-  Transforms.insertNodes(editor, DEFAULT_ELEMENT);
+  insertDefaultElement(editor);
 };
 
 const clearBlock = editor => {
@@ -337,6 +341,7 @@ const Editor = {
   findNodeByType,
 
   // Transforms
+  insertDefaultElement,
   toggleBlock,
   toggleMark,
   removeAllMarks,
