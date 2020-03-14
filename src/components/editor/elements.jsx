@@ -192,15 +192,18 @@ const BlockQuoteElement = ({ attributes, children }) => (
  * Section break
  */
 
-const SectionBreak = styled.hr(({ theme: { colors } }) => ({
+const SectionBreak = styled.div(({ theme: { colors } }) => ({
   borderRadius: '20px',
   borderTop: `2px solid ${colors.borderGrey}`,
   margin: '2em auto',
   width: '120px',
 }));
 
-const SectionBreakElement = ({ attributes }) => (
-  <SectionBreak {...attributes} />
+const SectionBreakElement = ({ attributes, children }) => (
+  <div {...attributes}>
+    <SectionBreak />
+    {children}
+  </div>
 );
 
 /*
