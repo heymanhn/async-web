@@ -2,7 +2,7 @@ import { Range, Transforms } from 'slate';
 
 import uploadImage from 'utils/imageUpload';
 
-import { DEFAULT_ELEMENT, DEFAULT_ELEMENT_TYPE, IMAGE } from './utils';
+import { IMAGE } from './utils';
 import Editor from './Editor';
 
 const isBeginningOfBlock = editor => {
@@ -39,15 +39,8 @@ const withImages = (oldEditor, resourceId) => {
   };
 
   editor.insertBreak = () => {
-    if (Editor.isElementActive(editor, IMAGE)) {
-      // HN: Had to do this extra dance to overcome a likely Slate bug, where
-      // repeatedly inserting a break when an image is selected causes a
-      // duplicate key warning
-      Transforms.move(editor);
-      insertBreak();
-      Transforms.move(editor, { reverse: true });
-      return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
-    }
+    if (Editor.isElementActive(editor, IMAGE))
+      return Editor.insertDefaultElement(editor);
 
     return insertBreak();
   };
