@@ -145,8 +145,7 @@ const findNodeByType = (editor, type) => {
  */
 
 const insertDefaultElement = editor => {
-  const element = JSON.parse(JSON.stringify(DEFAULT_ELEMENT));
-  Transforms.insertNodes(editor, element);
+  Transforms.insertNodes(editor, DEFAULT_ELEMENT());
 };
 
 const toggleBlock = (editor, type, source) => {

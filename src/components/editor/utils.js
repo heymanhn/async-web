@@ -3,7 +3,7 @@ import { Node } from 'slate';
 export const DEFAULT_ELEMENT_TYPE = 'paragraph';
 export const DEFAULT_PLAIN_NODE = 'line';
 
-export const DEFAULT_ELEMENT = [
+export const DEFAULT_ELEMENT = () => [
   {
     type: DEFAULT_ELEMENT_TYPE,
     children: [{ text: '' }],

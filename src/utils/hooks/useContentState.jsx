@@ -10,13 +10,15 @@ import { DEFAULT_ELEMENT } from 'components/editor/utils';
 const useContentState = ({ resourceId: initialResourceId, initialContent }) => {
   const [resourceId, setResourceId] = useState(initialResourceId);
   const [content, setContent] = useState(
-    initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT
+    initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT()
   );
 
   useEffect(() => {
     if (resourceId && resourceId !== initialResourceId) {
       setResourceId(initialResourceId);
-      setContent(initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT);
+      setContent(
+        initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT()
+      );
     }
   }, [resourceId, initialResourceId, initialContent]);
 
