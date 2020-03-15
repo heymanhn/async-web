@@ -2,7 +2,7 @@ import { Range, Transforms } from 'slate';
 
 import uploadImage from 'utils/imageUpload';
 
-import { DEFAULT_ELEMENT_TYPE, IMAGE } from './utils';
+import { DEFAULT_ELEMENT, DEFAULT_ELEMENT_TYPE, IMAGE } from './utils';
 import Editor from './Editor';
 
 const isBeginningOfBlock = editor => {
@@ -63,13 +63,20 @@ const withImages = (oldEditor, resourceId) => {
   };
 
   editor.deleteBackward = unit => {
-    if (unit === 'character' && isBeginningOfBlock(editor)) {
-      const [, path] = Editor.previous(editor, {
-        match: n => Editor.isBlock(editor, n),
-      });
+    if (unit === 'character') {
+      if (Editor.isElementActive(editor, IMAGE)) {
+        Transforms.removeNodes(editor);
+        return Editor.insertDefaultElement(editor);
+      }
 
-      if (Editor.isElementActive(editor, IMAGE, path))
-        return Transforms.removeNodes(editor);
+      if (isBeginningOfBlock(editor)) {
+        const [, path] = Editor.previous(editor, {
+          match: n => Editor.isBlock(editor, n),
+        });
+
+        if (Editor.isElementActive(editor, IMAGE, path))
+          return Transforms.removeNodes(editor);
+      }
     }
 
     return deleteBackward(unit);
