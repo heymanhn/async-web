@@ -33,9 +33,6 @@ export const LARGE_FONT = 'heading-one';
 export const MEDIUM_FONT = 'heading-two';
 export const SMALL_FONT = 'heading-three';
 
-export const SECTION_BREAK = 'section-break';
-export const VOID_TYPES = [SECTION_BREAK];
-
 /*
  * Inline elements
  */
@@ -49,6 +46,12 @@ export const INLINE_DISCUSSION_TYPES = [
 export const INLINE_TYPES = [HYPERLINK, ...INLINE_DISCUSSION_TYPES];
 
 /*
+ * Void elements
+ */
+export const SECTION_BREAK = 'section-break';
+export const IMAGE = 'image';
+
+/*
  * Composition menu option titles
  */
 export const TEXT_OPTION_TITLE = 'Text';
@@ -60,6 +63,7 @@ export const CHECKLIST_OPTION_TITLE = 'Checklist';
 export const CODE_BLOCK_OPTION_TITLE = 'Code block';
 export const BLOCK_QUOTE_OPTION_TITLE = 'Quote';
 export const SECTION_BREAK_OPTION_TITLE = 'Section break';
+export const IMAGE_OPTION_TITLE = 'Image';
 
 /*
  * Source constants for analytics tracking

@@ -1,11 +1,11 @@
 import { Range, Transforms } from 'slate';
 
-import { DEFAULT_ELEMENT_TYPE, DEFAULT_ELEMENT, CODE_HIGHLIGHT } from './utils';
+import { DEFAULT_ELEMENT_TYPE, CODE_HIGHLIGHT } from './utils';
 import Editor from './Editor';
 
 const handleExitHeadingBlock = (editor, insertBreak) => {
   if (Editor.isAtBeginning(editor)) {
-    Transforms.insertNodes(editor, DEFAULT_ELEMENT);
+    Editor.insertDefaultElement(editor);
     return Transforms.move(editor);
   }
 
@@ -39,16 +39,18 @@ const withCustomKeyboardActions = oldEditor => {
   const editor = oldEditor;
   const { deleteBackward, insertBreak } = editor;
 
-  editor.deleteBackward = (...args) => {
-    if (isBeginningOfWrappedBlock(editor)) {
-      return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+  editor.deleteBackward = unit => {
+    if (unit === 'character') {
+      if (isBeginningOfWrappedBlock(editor)) {
+        return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+      }
+
+      if (isEmptyCodeHighlight(editor)) {
+        return Editor.toggleMark(editor, CODE_HIGHLIGHT);
+      }
     }
 
-    if (isEmptyCodeHighlight(editor)) {
-      return Editor.toggleMark(editor, CODE_HIGHLIGHT);
-    }
-
-    return deleteBackward(...args);
+    return deleteBackward(unit);
   };
 
   editor.insertBreak = () => {

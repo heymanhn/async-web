@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
@@ -21,8 +21,9 @@ import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withLinks from 'components/editor/withLinks';
 import withPasteShim from 'components/editor/withPasteShim';
-import withVoidElements from 'components/editor/withVoidElements';
+import withSectionBreak from 'components/editor/withSectionBreak';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
+import withImages from 'components/editor/withImages';
 
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
@@ -30,11 +31,6 @@ const DocumentEditable = styled(Editable)({
   letterSpacing: '-0.011em',
   marginBottom: '80px',
 });
-
-/*
- * IMAGE SUPPORT TODO:
- * - Figure out how to pass resourceId to the image plugin
- */
 
 const DocumentComposer = ({ initialContent, ...props }) => {
   const {
@@ -49,19 +45,24 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   } = useContext(DocumentContext);
   const { selection } = inlineDiscussionTopic || {};
 
+  const withImagesWrapper = useCallback(
+    editor => withImages(editor, documentId),
+    [documentId]
+  );
   const contentEditor = useMemo(
     () =>
       compose(
         withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
+        withImagesWrapper,
         withInlineDiscussions,
-        withVoidElements,
+        withSectionBreak,
         withPasteShim,
         withHistory,
         withReact
       )(createEditor()),
-    []
+    [withImagesWrapper]
   );
   const { content, ...contentProps } = useContentState({
     resourceId: documentId,

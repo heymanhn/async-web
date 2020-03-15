@@ -3,6 +3,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import InlineDiscussionElement from 'components/discussion/InlineDiscussionElement';
+import ImageElement from './ImageElement';
 
 import ChecklistItemElement from './ChecklistItem';
 import {
@@ -17,6 +18,7 @@ import {
   CODE_BLOCK,
   BLOCK_QUOTE,
   SECTION_BREAK,
+  IMAGE,
   HYPERLINK,
   CONTEXT_HIGHLIGHT,
   INLINE_DISCUSSION_ANNOTATION,
@@ -190,15 +192,18 @@ const BlockQuoteElement = ({ attributes, children }) => (
  * Section break
  */
 
-const SectionBreak = styled.hr(({ theme: { colors } }) => ({
+const SectionBreak = styled.div(({ theme: { colors } }) => ({
   borderRadius: '20px',
   borderTop: `2px solid ${colors.borderGrey}`,
   margin: '2em auto',
   width: '120px',
 }));
 
-const SectionBreakElement = ({ attributes }) => (
-  <SectionBreak {...attributes} />
+const SectionBreakElement = ({ attributes, children }) => (
+  <div {...attributes}>
+    <SectionBreak />
+    {children}
+  </div>
 );
 
 /*
@@ -256,6 +261,7 @@ wrappedBlockElements[BLOCK_QUOTE] = BlockQuoteElement;
 
 export const voidElements = {};
 voidElements[SECTION_BREAK] = SectionBreakElement;
+voidElements[IMAGE] = ImageElement;
 
 export const inlineElements = {};
 inlineElements[HYPERLINK] = LinkElement;

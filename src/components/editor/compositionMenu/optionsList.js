@@ -8,6 +8,7 @@ import {
   CODE_BLOCK_OPTION_TITLE,
   BLOCK_QUOTE_OPTION_TITLE,
   SECTION_BREAK_OPTION_TITLE,
+  IMAGE_OPTION_TITLE,
 } from '../utils';
 
 import {
@@ -22,12 +23,11 @@ import {
   SectionBreakOption,
 } from './options';
 
-// IMAGE SUPPORT TODO
-// import { IMAGE_OPTION_TITLE, ImageOption } from '../plugins/blocks/image';
+import ImageOption from './ImageOption';
 
 const BASIC_SECTION = 'BASIC';
 const SECTIONS_SECTION = 'SECTIONS';
-// const MEDIA_SECTION = 'MEDIA';
+const MEDIA_SECTION = 'MEDIA';
 
 const optionsList = [
   // Basic section
@@ -79,13 +79,12 @@ const optionsList = [
     Component: SectionBreakOption,
   },
 
-  // IMAGE SUPPORT TODO
   // Media section
-  // {
-  //   section: MEDIA_SECTION,
-  //   title: IMAGE_OPTION_TITLE,
-  //   Component: ImageOption,
-  // },
+  {
+    section: MEDIA_SECTION,
+    title: IMAGE_OPTION_TITLE,
+    Component: ImageOption,
+  },
 ];
 
 export default optionsList;

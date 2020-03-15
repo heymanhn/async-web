@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
@@ -15,9 +15,10 @@ import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withLinks from 'components/editor/withLinks';
-import withVoidElements from 'components/editor/withVoidElements';
+import withSectionBreak from 'components/editor/withSectionBreak';
 import withPasteShim from 'components/editor/withPasteShim';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
+import withImages from 'components/editor/withImages';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import useMessageMutations from './useMessageMutations';
 import MessageActions from './MessageActions';
@@ -41,18 +42,24 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
   const { discussionId } = useContext(DiscussionContext);
   const { mode } = useContext(MessageContext);
   const readOnly = mode === 'display';
+
+  const withImagesWrapper = useCallback(
+    editor => withImages(editor, discussionId),
+    [discussionId]
+  );
   const messageEditor = useMemo(
     () =>
       compose(
         withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
-        withVoidElements,
+        withImagesWrapper,
+        withSectionBreak,
         withPasteShim,
         withHistory,
         withReact
       )(createEditor()),
-    []
+    [withImagesWrapper]
   );
   const { content: message, ...contentProps } = useContentState({
     resourceId: discussionId,

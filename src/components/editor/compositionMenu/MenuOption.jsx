@@ -52,16 +52,16 @@ const MenuOption = ({
     }
   }, [selectedOption, title]);
 
-  function handleAction(event) {
+  const handleAction = event => {
     if (event) event.preventDefault();
     handleInvoke();
     return afterOptionInvoked();
-  }
+  };
 
   // Don't let the toolbar handle the event, so that it won't reset its visibility
-  function handleMouseDown(event) {
+  const handleMouseDown = event => {
     event.preventDefault();
-  }
+  };
 
   if (optionToInvoke === title) handleAction();
 
