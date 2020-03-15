@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
@@ -50,20 +50,24 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   } = useContext(DocumentContext);
   const { selection } = inlineDiscussionTopic || {};
 
+  const withImagesWrapper = useCallback(
+    editor => withImages(editor, documentId),
+    [documentId]
+  );
   const contentEditor = useMemo(
     () =>
       compose(
         withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
-        withImages,
+        withImagesWrapper,
         withInlineDiscussions,
         withSectionBreak,
         withPasteShim,
         withHistory,
         withReact
       )(createEditor()),
-    []
+    [withImagesWrapper]
   );
   const { content, ...contentProps } = useContentState({
     resourceId: documentId,
