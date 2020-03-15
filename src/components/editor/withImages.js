@@ -1,6 +1,6 @@
 import { Range, Transforms } from 'slate';
 
-import uploadFileMutation from 'graphql/mutations/uploadFile';
+import uploadImage from 'utils/imageUpload';
 
 import { DEFAULT_ELEMENT_TYPE, IMAGE } from './utils';
 import Editor from './Editor';
@@ -16,39 +16,23 @@ const isBeginningOfBlock = editor => {
   );
 };
 
-// NOTE: Need to do this custom way because HOCs don't have access to hooks
-// Essentially the same logic as in the useImageUpload hook
-const uploadAndInsertImage = async (editor, items, resourceId) => {
-  let image;
-  for (let i = 0; i < items.length; i += 1) {
-    const item = items[i];
-    if (item.type.includes('image')) {
-      image = item;
-      break;
-    }
-  }
-  if (!image) return null;
-
-  // Using a global variable until I find a better way
-  const client = window.Roval.apolloClient;
-
-  const { id } = Editor.insertImage(editor); // empty image
-  const { data } = await client.mutate({
-    mutation: uploadFileMutation,
-    variables: { resourceId, input: { file: image } },
-  });
-
-  if (data.uploadFile) {
-    const { url } = data.uploadFile;
-    return Editor.updateImage(editor, id, { src: url });
-  }
-
-  return Editor.removeImage(editor, id);
-};
-
 const withImages = (oldEditor, resourceId) => {
   const editor = oldEditor;
   const { deleteBackward, insertBreak, insertData, isVoid } = editor;
+
+  const findAndUploadImage = async items => {
+    let image;
+    for (let i = 0; i < items.length; i += 1) {
+      const item = items[i];
+      if (item.type.includes('image')) {
+        image = item;
+        break;
+      }
+    }
+    if (!image) return null;
+
+    return uploadImage(editor, resourceId, image);
+  };
 
   editor.isVoid = element => {
     return element.type === IMAGE ? true : isVoid(element);
@@ -72,7 +56,7 @@ const withImages = (oldEditor, resourceId) => {
     const { files } = data;
 
     if (files && files.length > 0) {
-      return uploadAndInsertImage(editor, files, resourceId);
+      return findAndUploadImage(files);
     }
 
     return insertData(data);

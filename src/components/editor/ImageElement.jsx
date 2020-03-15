@@ -64,8 +64,12 @@ const ImageElement = ({ attributes, children, element }) => {
 
 ImageElement.propTypes = {
   attributes: PropTypes.object.isRequired,
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   element: PropTypes.object.isRequired,
+};
+
+ImageElement.defaultProps = {
+  children: null,
 };
 
 export default ImageElement;

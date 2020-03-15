@@ -2,7 +2,7 @@ import React, { useCallback, useContext } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useEditor } from 'slate-react';
 
-import useImageUpload from 'utils/hooks/useImageUpload';
+import uploadImage from 'utils/imageUpload';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import { IMAGE_OPTION_TITLE } from '../utils';
@@ -14,14 +14,14 @@ const ImageOption = props => {
   const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
   const resourceId = documentId || discussionId;
-  const uploadImage = useImageUpload(resourceId);
   const editor = useEditor();
 
   const onDrop = useCallback(
     acceptedFiles => {
-      if (acceptedFiles.length) uploadImage(acceptedFiles[0]);
+      if (acceptedFiles.length)
+        uploadImage(editor, resourceId, acceptedFiles[0]);
     },
-    [uploadImage]
+    [editor, resourceId]
   );
 
   const { getInputProps, open } = useDropzone({

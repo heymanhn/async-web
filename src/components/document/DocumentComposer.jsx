@@ -32,11 +32,6 @@ const DocumentEditable = styled(Editable)({
   marginBottom: '80px',
 });
 
-/*
- * IMAGE SUPPORT TODO:
- * - Figure out how to pass resourceId to the image plugin
- */
-
 const DocumentComposer = ({ initialContent, ...props }) => {
   const {
     documentId,
