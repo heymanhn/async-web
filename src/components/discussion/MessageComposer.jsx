@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
@@ -43,24 +43,28 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
   const { mode } = useContext(MessageContext);
   const readOnly = mode === 'display';
 
-  const withImagesWrapper = useCallback(
-    editor => withImages(editor, discussionId),
-    [discussionId]
-  );
-  const messageEditor = useMemo(
-    () =>
-      compose(
-        withCustomKeyboardActions,
-        withMarkdownShortcuts,
-        withLinks,
-        withImagesWrapper,
-        withSectionBreak,
-        withPasteShim,
-        withHistory,
-        withReact
-      )(createEditor()),
-    [withImagesWrapper]
-  );
+  const baseEditor = useMemo(() => {
+    return compose(
+      withCustomKeyboardActions,
+      withMarkdownShortcuts,
+      withLinks,
+      withSectionBreak,
+      withPasteShim,
+      withHistory,
+      withReact
+    )(createEditor());
+  }, []);
+
+  /* HN: Slate doesn't allow the editor instance to be re-created on subsequent
+   * renders, but we need to pass an updated resourceId into withImages().
+   * Workaround is to memoize the base editor instance, and extend it by calling
+   * withImages() with an updated discussionId when needed.
+   */
+  const messageEditor = useMemo(() => withImages(baseEditor, discussionId), [
+    baseEditor,
+    discussionId,
+  ]);
+
   const { content: message, ...contentProps } = useContentState({
     resourceId: discussionId,
     initialContent: initialMessage,
