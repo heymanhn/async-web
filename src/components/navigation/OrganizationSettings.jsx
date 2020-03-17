@@ -21,6 +21,7 @@ const OrganizationAvatar = styled(Avatar)({
 
 const OrganizationSettings = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   function openDropdown() {
     setIsDropdownOpen(true);
   }

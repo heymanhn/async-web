@@ -18,7 +18,7 @@ const InnerContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
-  marginTop: '100px',
+  margin: '50px 0',
   padding: '50px',
   width: '600px',
 }));
