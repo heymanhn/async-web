@@ -99,8 +99,11 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef }) => {
   if (error || !data.discussion) return null;
 
   const { draft, lastMessage, messageCount, tags } = data.discussion;
+  const content = draft || lastMessage;
+  if (!content) return null;
+
   const { author } = lastMessage || data.discussion;
-  const { body } = draft || lastMessage;
+  const { body } = content;
   const { profilePictureUrl } = author;
   const { text } = body;
   const newUpdates =
