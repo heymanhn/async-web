@@ -43,17 +43,19 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
   const { mode } = useContext(MessageContext);
   const readOnly = mode === 'display';
 
-  const baseEditor = useMemo(() => {
-    return compose(
-      withCustomKeyboardActions,
-      withMarkdownShortcuts,
-      withLinks,
-      withSectionBreak,
-      withPasteShim,
-      withHistory,
-      withReact
-    )(createEditor());
-  }, []);
+  const baseEditor = useMemo(
+    () =>
+      compose(
+        withCustomKeyboardActions,
+        withMarkdownShortcuts,
+        withLinks,
+        withSectionBreak,
+        withPasteShim,
+        withHistory,
+        withReact
+      )(createEditor()),
+    []
+  );
 
   /* HN: Slate doesn't allow the editor instance to be re-created on subsequent
    * renders, but we need to pass an updated resourceId into withImages().

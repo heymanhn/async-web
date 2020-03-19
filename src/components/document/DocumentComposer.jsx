@@ -45,25 +45,31 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   } = useContext(DocumentContext);
   const { selection } = inlineDiscussionTopic || {};
 
-  const withImagesWrapper = useCallback(
-    editor => withImages(editor, documentId),
-    [documentId]
-  );
-  const contentEditor = useMemo(
+  const baseEditor = useMemo(
     () =>
       compose(
         withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
-        withImagesWrapper,
         withInlineDiscussions,
         withSectionBreak,
         withPasteShim,
         withHistory,
         withReact
       )(createEditor()),
-    [withImagesWrapper]
+    []
   );
+
+  /* HN: Slate doesn't allow the editor instance to be re-created on subsequent
+   * renders, but we need to pass an updated resourceId into withImages().
+   * Workaround is to memoize the base editor instance, and extend it by calling
+   * withImages() with an updated documentId when needed.
+   */
+  const contentEditor = useMemo(() => withImages(baseEditor, documentId), [
+    baseEditor,
+    documentId,
+  ]);
+
   const { content, ...contentProps } = useContentState({
     resourceId: documentId,
     initialContent,
