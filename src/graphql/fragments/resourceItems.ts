@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 
 import discussion from './discussion';
 import document from './document';
+import notification from './notification';
 
 export default gql`
   fragment ResourceItems on ResourcesResponse {
@@ -14,10 +15,14 @@ export default gql`
         ...DocumentObject
         discussionCount
       }
+      lastUpdate @type(name: "Notification") {
+        ...NotificationObject
+      }
     }
     totalHits
     pageToken
   }
   ${discussion}
   ${document}
+  ${notification}
 `;
