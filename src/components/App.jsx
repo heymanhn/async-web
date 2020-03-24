@@ -34,6 +34,7 @@ import SignUp from 'components/auth/SignUp';
 import CreateOrganization from 'components/auth/CreateOrganization';
 import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
+import WorkspaceContainer from 'components/workspace/WorkspaceContainer';
 import DocumentContainer from 'components/document/DocumentContainer';
 import DiscussionContainer from './discussion/DiscussionContainer';
 
@@ -116,7 +117,15 @@ const App = () => {
         <Login path="/login" />
         <DemoLogin path="/demo/login" />
         <Logout path="/logout" />
+
+        {/* HN: Keeping the Inbox page around until we support a way for users
+                to browse all their resources */}
         <PrivateRoute path="/inbox" component={Inbox} />
+
+        <PrivateRoute
+          path="/workspaces/:workspaceId"
+          component={WorkspaceContainer}
+        />
         <PrivateRoute
           path="/documents/:documentId"
           component={DocumentContainer}

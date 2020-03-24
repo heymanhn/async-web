@@ -5,6 +5,7 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import { DocumentContext } from 'utils/contexts';
+import { titleize } from 'utils/helpers';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -67,36 +68,32 @@ const DiscussionListItemHeader = ({ discussion }) => {
   const { id, tags, status, messageCount } = discussion;
   const { state, author } = status || {};
 
-  function isUnread() {
+  const isUnread = () => {
     return (
       state === 're-opened' ||
       tags.includes('new_messages') ||
       tags.includes('new_discussion')
     );
-  }
+  };
 
-  function titleize(input) {
-    return input.charAt(0).toUpperCase() + input.slice(1);
-  }
-
-  function headerLabel() {
+  const headerLabel = () => {
     if (state === 're-opened' || state === 'resolved')
       return `${author.fullName} ${state} this discussion`;
 
     return tags.includes('no_updates')
       ? Pluralize('reply', messageCount, true)
       : tags[0].replace('_', ' ');
-  }
+  };
 
-  function isResolved() {
+  const isResolved = () => {
     return state === 'resolved';
-  }
+  };
 
-  function headerIcon() {
+  const headerIcon = () => {
     if (isResolved()) return 'comment-check';
 
     return tags.includes('new_messages') ? 'comment' : 'comments-alt';
-  }
+  };
 
   return (
     <Container>
