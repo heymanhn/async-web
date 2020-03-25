@@ -3,3 +3,38 @@ export const MEETINGS_QUERY_SIZE = 25;
 export const NEW_MESSAGE_EVENT = 'new_message';
 export const DOCUMENT_ACCESS_EVENT = 'access_document';
 export const DISCUSSION_ACCESS_EVENT = 'access_discussion';
+
+export const VIEW_MODES = [
+  {
+    mode: 'all',
+    displayText: 'All',
+  },
+  {
+    mode: 'document',
+    displayText: 'Documents',
+  },
+  {
+    mode: 'discussion',
+    displayText: 'Discussions',
+  },
+];
+
+// for Moment.JS
+// Includes custom formatting to replace months with weeks
+export const RELATIVE_TIME_STRINGS = {
+  s: '1s',
+  ss: '%ds',
+  m: '1m',
+  mm: '%dm',
+  h: '1h',
+  hh: '%dh',
+  d: '1d',
+  dd: numDays => {
+    if (numDays < 7) return `${numDays}d`; // Moment uses "d" when it's just 1 day.
+
+    const weeks = Math.round(numDays / 7);
+    return `${weeks}w`;
+  },
+  y: '1yr',
+  yy: '%dyrs',
+};

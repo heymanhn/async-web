@@ -1,5 +1,13 @@
 import { createContext } from 'react';
 
+export const DEFAULT_WORKSPACE_CONTEXT = {
+  workspaceId: null,
+  viewMode: null,
+
+  setViewMode: () => {},
+};
+export const WorkspaceContext = createContext(DEFAULT_WORKSPACE_CONTEXT);
+
 export const DEFAULT_DOCUMENT_CONTEXT = {
   documentId: null,
   modalDiscussionId: null,

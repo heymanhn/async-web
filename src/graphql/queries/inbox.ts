@@ -11,7 +11,7 @@ export default gql`
         path: "/users/{args.userId}/inbox?{args.queryParams}"
         method: "GET"
       ) {
-      items @type(name: "InboxItem]") {
+      items @type(name: "[InboxItem]") {
         discussion @type(name: "Discussion") {
           ...DiscussionObject
           tags

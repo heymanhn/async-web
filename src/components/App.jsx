@@ -9,6 +9,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import { RestLink } from 'apollo-link-rest';
 import { ApolloLink, concat } from 'apollo-link';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import moment from 'moment';
 import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
@@ -17,11 +18,12 @@ import {
   isLocalTokenPresent,
   isUserOnboarding,
 } from 'utils/auth';
-import iconSet from 'styles/iconSet';
+import { RELATIVE_TIME_STRINGS } from 'utils/constants';
 import fileSerializer from 'utils/graphql/fileSerializer';
 import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
 import usePusher from 'utils/hooks/usePusher';
+import iconSet from 'styles/iconSet';
 
 import Layout from 'components/Layout';
 import Home from 'components/homepage/Home';
@@ -34,6 +36,7 @@ import SignUp from 'components/auth/SignUp';
 import CreateOrganization from 'components/auth/CreateOrganization';
 import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
+import WorkspaceContainer from 'components/workspace/WorkspaceContainer';
 import DocumentContainer from 'components/document/DocumentContainer';
 import DiscussionContainer from './discussion/DiscussionContainer';
 
@@ -103,6 +106,13 @@ window.Roval = { apolloClient: client };
 // Initialize FontAwesome icons
 library.add(...iconSet);
 
+// Custom interval strings for Moment.JS
+// TODO (HN): See if these settings can only be applied for a component
+moment.updateLocale('en', {
+  relativeTime: RELATIVE_TIME_STRINGS,
+});
+moment.relativeTimeThreshold('d', 361);
+
 const App = () => {
   usePusher();
 
@@ -116,7 +126,15 @@ const App = () => {
         <Login path="/login" />
         <DemoLogin path="/demo/login" />
         <Logout path="/logout" />
+
+        {/* HN: Keeping the Inbox page around until we support a way for users
+                to browse all their resources */}
         <PrivateRoute path="/inbox" component={Inbox} />
+
+        <PrivateRoute
+          path="/workspaces/:workspaceId"
+          component={WorkspaceContainer}
+        />
         <PrivateRoute
           path="/documents/:documentId"
           component={DocumentContainer}
