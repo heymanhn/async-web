@@ -9,10 +9,24 @@ import { WorkspaceContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
+import NewDocumentButton from 'components/document/NewDocumentButton';
+import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
+import ResourceFilters from './ResourceFilters';
 import ResourceRow from './ResourceRow';
 
 const StyledLoadingIndicator = styled(LoadingIndicator)({
   margin: '20px 0',
+});
+
+const WelcomeMessage = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey1,
+  fontSize: '16px',
+  letterSpacing: '-0.011em',
+  marginBottom: '20px',
+}));
+
+const ButtonsContainer = styled.div({
+  display: 'flex',
 });
 
 const ResourcesList = () => {
@@ -38,14 +52,30 @@ const ResourcesList = () => {
 
   const { items } = data;
 
-  return (
+  const renderWelcomeMessage = () => (
+    <div>
+      <WelcomeMessage>
+        Welcome to the workspace! Get started by creating a document or
+        discussion.
+      </WelcomeMessage>
+      <ButtonsContainer>
+        <NewDocumentButton />
+        <NewDiscussionButton />
+      </ButtonsContainer>
+    </div>
+  );
+
+  const renderResourceList = () => (
     <div ref={listRef}>
+      <ResourceFilters />
       {items.map(item => {
         const object = item.document || item.discussion;
         return <ResourceRow key={object.id} item={item} />;
       })}
     </div>
   );
+
+  return <div>{items ? renderResourceList() : renderWelcomeMessage()}</div>;
 };
 
 export default ResourcesList;

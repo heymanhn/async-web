@@ -8,7 +8,6 @@ import { DEFAULT_WORKSPACE_CONTEXT, WorkspaceContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import TitleComposer from './TitleComposer';
-import ResourceFilters from './ResourceFilters';
 import ResourcesList from './ResourcesList';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -49,7 +48,7 @@ const WorkspaceContainer = ({ workspaceId }) => {
         {/* <NavBar /> */}
         <InnerContainer>
           <TitleComposer initialTitle={title} />
-          <ResourceFilters />
+          {}
           <ResourcesList />
         </InnerContainer>
       </Container>

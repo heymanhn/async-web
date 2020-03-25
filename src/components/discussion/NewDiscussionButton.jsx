@@ -11,23 +11,26 @@ const Container = styled.div(({ theme: { colors } }) => ({
   flexDirection: 'row',
   alignItems: 'center',
 
-  background: colors.grey7,
+  background: colors.altBlue,
   borderRadius: '5px',
-  height: '32px',
+  color: colors.white,
+  height: '34px',
   cursor: 'pointer',
-  padding: '0 20px',
+  padding: '0 15px',
   marginRight: '20px',
 }));
 
 const Label = styled.div({
-  fontSize: '12px',
+  fontSize: '14px',
   fontWeight: 500,
+  letterSpacing: '-0.006em',
   margin: '0 10px',
+  marginTop: '-2px',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.mainText,
-  fontSize: '12px',
+  color: colors.white,
+  fontSize: '14px',
 }));
 
 const NewDiscussionButton = () => {
