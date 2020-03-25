@@ -63,6 +63,7 @@ export const theme = {
     mainText: '#313f48',
     contentText: '#232d34',
 
+    altBlue: '#0a90dc',
     bgBlue: '#eff9fd',
     darkBlue: '#2d4d62',
     darkHoverBlue: '#1f3a4d',
@@ -71,7 +72,7 @@ export const theme = {
     selectedValueBlue: '#beeafe',
     lightestBlue: '#f3f9ff',
     sidebarBlue: '#4b93c2',
-    unreadBlue: '#F4FCFF',
+    unreadBlue: '#f4fcff',
 
     highlightYellow: '#fff495',
 

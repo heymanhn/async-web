@@ -3,16 +3,15 @@ import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Pluralize from 'pluralize';
-import Truncate from 'react-truncate';
 import moment from 'moment';
-import camelCase from 'camelcase';
 import styled from '@emotion/styled';
 
 import useHover from 'utils/hooks/useHover';
 // import { getLocalUser } from 'utils/auth';
 // import { isResourceUnread } from 'utils/helpers';
 
-import Avatar from 'components/shared/Avatar';
+import UnreadIndicator from 'components/shared/UnreadIndicator';
+import LastUpdate from './LastUpdate';
 
 const Container = styled.div({
   display: 'flex',
@@ -28,7 +27,7 @@ const DetailsContainer = styled.div({
 const ItemDetails = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'baseline',
+  alignItems: 'center',
 });
 
 const Title = styled.span(({ hover, isUnread, theme: { colors } }) => ({
@@ -41,16 +40,19 @@ const Title = styled.span(({ hover, isUnread, theme: { colors } }) => ({
 const IconContainer = styled.div({
   marginTop: '5px',
   width: '32px',
+  flexShrink: 0,
 });
 
-const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+const StyledIcon = styled(FontAwesomeIcon)(
+  ({ isunread, theme: { colors } }) => ({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
 
-  color: colors.grey3,
-  fontSize: '16px',
-}));
+    color: isunread === 'true' ? colors.grey0 : colors.grey3,
+    fontSize: '16px',
+  })
+);
 
 const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   display: 'flex',
@@ -73,34 +75,19 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   },
 }));
 
+const StyledIndicator = styled(UnreadIndicator)({
+  marginRight: '5px',
+  marginTop: '1px',
+});
+
+const TimestampContainer = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+});
+
 const Timestamp = styled.span(({ theme: { colors } }) => ({
   color: colors.grey2,
   cursor: 'default',
-  fontSize: '13px',
-  letterSpacing: '-0.0025em',
-}));
-
-const LastUpdate = styled.div({
-  display: 'flex',
-  alignItems: 'center',
-  marginTop: '10px',
-});
-
-const StyledAvatar = styled(Avatar)({
-  flexShrink: 0,
-  marginRight: '8px',
-});
-
-const Name = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey0,
-  fontSize: '13px',
-  fontWeight: 500,
-  letterSpacing: '-0.0025em',
-  marginRight: '5px',
-}));
-
-const Snippet = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey2,
   fontSize: '13px',
   letterSpacing: '-0.0025em',
 }));
@@ -115,46 +102,29 @@ const ResourceRow = ({ item, ...props }) => {
   const { id, title, topic } = resource;
   const safeTopic = topic || {};
   const titleText = isDocument ? title : safeTopic.text;
-
-  // const { userId } = getLocalUser();
-  // const { id: authorId } = author || owner;
-  // const isAuthor = userId === authorId;
-  const { author, payload, readAt, updatedAt } = lastUpdate;
-  const { fullName, profilePictureUrl } = author;
-  const isUnread = !readAt;
-
-  const payloadJSON = JSON.parse(payload);
-  const payloadCamelJSON = {};
-  Object.keys(payloadJSON).forEach(key => {
-    payloadCamelJSON[camelCase(key)] = payloadJSON[key];
-  });
-  const { snippet } = payloadCamelJSON;
+  const { readAt, updatedAt } = lastUpdate;
+  const isUnread = readAt === -1;
 
   return (
     <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
       <Container {...hoverProps} {...props}>
         <IconContainer>
-          <StyledIcon icon={isDocument ? 'file-alt' : 'comments-alt'} />
+          <StyledIcon
+            icon={isDocument ? 'file-alt' : 'comments-alt'}
+            isunread={isUnread.toString()}
+          />
         </IconContainer>
         <DetailsContainer>
           <ItemDetails>
-            <Title hover={hover} isUnread={false}>
+            <Title hover={hover} isUnread={isUnread}>
               {titleText || `Untitled ${resourceType}`}
             </Title>
-            <Timestamp>{moment(updatedAt, 'X').fromNow()}</Timestamp>
+            <TimestampContainer>
+              {isUnread && <StyledIndicator diameter={6} />}
+              <Timestamp>{moment(updatedAt, 'X').fromNow()}</Timestamp>
+            </TimestampContainer>
           </ItemDetails>
-          <LastUpdate>
-            <StyledAvatar
-              avatarUrl={profilePictureUrl}
-              title={fullName}
-              alt={fullName}
-              size={20}
-            />
-            <Name>{fullName}</Name>
-            <Snippet>
-              <Truncate lines={1}>{snippet}</Truncate>
-            </Snippet>
-          </LastUpdate>
+          <LastUpdate notification={lastUpdate} />
         </DetailsContainer>
       </Container>
     </StyledLink>
