@@ -52,10 +52,13 @@ export const DEFAULT_MESSAGE_CONTEXT = {
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);
 
-export const DEFAULT_NAV_CONTEXT = {
+export const DEFAULT_NAVIGATION_CONTEXT = {
+  selectedResourceId: null, // used by the sidebar
   isResourceAccessModalOpen: false,
   isInviteModalOpen: false,
+
+  setSelectedResourceId: () => {},
   setIsResourceAccessModalOpen: () => {},
   setIsInviteModalOpen: () => {},
 };
-export const NavContext = createContext(DEFAULT_NAV_CONTEXT);
+export const NavigationContext = createContext(DEFAULT_NAVIGATION_CONTEXT);

@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
-import { NavContext } from 'utils/contexts';
+import { NavigationContext } from 'utils/contexts';
 import currentUserQuery from 'graphql/queries/currentUser';
 import { getLocalUser } from 'utils/auth';
 import useClickOutside from 'utils/hooks/useClickOutside';
@@ -65,7 +65,7 @@ const MenuOption = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
-  const { setIsInviteModalOpen } = useContext(NavContext);
+  const { setIsInviteModalOpen } = useContext(NavigationContext);
   const selector = useRef();
   const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: selector });

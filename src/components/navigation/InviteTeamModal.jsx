@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import { NavContext } from 'utils/contexts';
+import { NavigationContext } from 'utils/contexts';
 import Modal from 'components/shared/Modal';
 import InviteTeam from 'components/auth/InviteTeam';
 
@@ -12,7 +12,9 @@ const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
 }));
 
 const InviteTeamModal = ({ organizationId }) => {
-  const { isInviteModalOpen, setIsInviteModalOpen } = useContext(NavContext);
+  const { isInviteModalOpen, setIsInviteModalOpen } = useContext(
+    NavigationContext
+  );
 
   if (!isInviteModalOpen) return null;
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 
-import { NavContext, DEFAULT_NAV_CONTEXT } from 'utils/contexts';
+import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
 import OrganizationSettings from 'components/navigation/OrganizationSettings';
 import NotificationsBell from 'components/notifications/NotificationsBell';
 import CommandCenter from 'components/commandCenter/CommandCenter';
@@ -45,13 +45,13 @@ const NavBar = () => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const value = {
-    ...DEFAULT_NAV_CONTEXT,
+    ...DEFAULT_NAVIGATION_CONTEXT,
     isInviteModalOpen,
     setIsInviteModalOpen,
   };
 
   return (
-    <NavContext.Provider value={value}>
+    <NavigationContext.Provider value={value}>
       <Container>
         <MenuSection>
           <OrganizationSettings />
@@ -62,7 +62,7 @@ const NavBar = () => {
           <CommandCenter source="inbox" />
         </NavigationSection>
       </Container>
-    </NavContext.Provider>
+    </NavigationContext.Provider>
   );
 };
 

@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 
 import {
   DocumentContext,
-  NavContext,
-  DEFAULT_NAV_CONTEXT,
+  NavigationContext,
+  DEFAULT_NAVIGATION_CONTEXT,
 } from 'utils/contexts';
 import ResourceAccessContainer from 'components/participants/ResourceAccessContainer';
 import VerticalDivider from 'components/shared/VerticalDivider';
@@ -59,7 +59,7 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const value = {
-    ...DEFAULT_NAV_CONTEXT,
+    ...DEFAULT_NAVIGATION_CONTEXT,
     isResourceAccessModalOpen,
     isInviteModalOpen,
     setIsResourceAccessModalOpen,
@@ -67,7 +67,7 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
   };
 
   return (
-    <NavContext.Provider value={value}>
+    <NavigationContext.Provider value={value}>
       <Container {...props}>
         <MenuSection>
           <OrganizationSettings />
@@ -83,7 +83,7 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
           <CommandCenter source={documentId ? 'document' : 'discussion'} />
         </NavigationSection>
       </Container>
-    </NavContext.Provider>
+    </NavigationContext.Provider>
   );
 };
 
