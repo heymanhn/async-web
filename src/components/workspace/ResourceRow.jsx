@@ -1,15 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
-import Pluralize from 'pluralize';
-import moment from 'moment';
-import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Pluralize from 'pluralize';
+import Truncate from 'react-truncate';
+import moment from 'moment';
+import camelCase from 'camelcase';
+import styled from '@emotion/styled';
 
 import useHover from 'utils/hooks/useHover';
-import { RELATIVE_TIME_STRINGS } from 'utils/constants';
 // import { getLocalUser } from 'utils/auth';
 // import { isResourceUnread } from 'utils/helpers';
+
+import Avatar from 'components/shared/Avatar';
 
 const Container = styled.div({
   display: 'flex',
@@ -29,11 +32,10 @@ const ItemDetails = styled.div({
 });
 
 const Title = styled.span(({ hover, isUnread, theme: { colors } }) => ({
-  color: hover ? colors.blue : colors.mainText,
+  color: hover ? colors.blue : colors.grey0,
   fontSize: '16px',
   fontWeight: isUnread ? 600 : 400,
   letterSpacing: '-0.011em',
-  marginBottom: '2px',
 }));
 
 const IconContainer = styled.div({
@@ -46,7 +48,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   justifyContent: 'center',
   alignItems: 'center',
 
-  color: colors.grey2,
+  color: colors.grey3,
   fontSize: '16px',
 }));
 
@@ -78,11 +80,30 @@ const Timestamp = styled.span(({ theme: { colors } }) => ({
   letterSpacing: '-0.0025em',
 }));
 
-// Custom interval strings for Moment.JS
-moment.updateLocale('en', {
-  relativeTime: RELATIVE_TIME_STRINGS,
+const LastUpdate = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  marginTop: '10px',
 });
-moment.relativeTimeThreshold('d', 361);
+
+const StyledAvatar = styled(Avatar)({
+  flexShrink: 0,
+  marginRight: '8px',
+});
+
+const Name = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey0,
+  fontSize: '13px',
+  fontWeight: 500,
+  letterSpacing: '-0.0025em',
+  marginRight: '5px',
+}));
+
+const Snippet = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey2,
+  fontSize: '13px',
+  letterSpacing: '-0.0025em',
+}));
 
 const ResourceRow = ({ item, ...props }) => {
   const { hover, ...hoverProps } = useHover();
@@ -98,9 +119,16 @@ const ResourceRow = ({ item, ...props }) => {
   // const { userId } = getLocalUser();
   // const { id: authorId } = author || owner;
   // const isAuthor = userId === authorId;
-  const { author, updatedAt, readAt } = lastUpdate;
-  const { fullName } = author;
+  const { author, payload, readAt, updatedAt } = lastUpdate;
+  const { fullName, profilePictureUrl } = author;
   const isUnread = !readAt;
+
+  const payloadJSON = JSON.parse(payload);
+  const payloadCamelJSON = {};
+  Object.keys(payloadJSON).forEach(key => {
+    payloadCamelJSON[camelCase(key)] = payloadJSON[key];
+  });
+  const { snippet } = payloadCamelJSON;
 
   return (
     <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
@@ -115,11 +143,18 @@ const ResourceRow = ({ item, ...props }) => {
             </Title>
             <Timestamp>{moment(updatedAt, 'X').fromNow()}</Timestamp>
           </ItemDetails>
-          {/* <LastUpdate>
-            <StyledAvatar />
+          <LastUpdate>
+            <StyledAvatar
+              avatarUrl={profilePictureUrl}
+              title={fullName}
+              alt={fullName}
+              size={20}
+            />
             <Name>{fullName}</Name>
-            <Description></Description>
-          </LastUpdate> */}
+            <Snippet>
+              <Truncate lines={1}>{snippet}</Truncate>
+            </Snippet>
+          </LastUpdate>
         </DetailsContainer>
       </Container>
     </StyledLink>

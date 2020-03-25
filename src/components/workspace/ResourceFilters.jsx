@@ -19,6 +19,7 @@ const ModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
   height: '100%',
   letterSpacing: '-0.0025em',
   marginRight: '25px',
+  padding: '0px 3px 2px',
 }));
 
 const ResourceFilters = () => {
