@@ -4,6 +4,8 @@ import Truncate from 'react-truncate';
 import camelCase from 'camelcase';
 import styled from '@emotion/styled';
 
+import { getLocalUser } from 'utils/auth';
+
 import Avatar from 'components/shared/Avatar';
 
 const Container = styled.div({
@@ -34,7 +36,10 @@ const Snippet = styled.div(({ theme: { colors } }) => ({
 
 const LastUpdate = ({ notification }) => {
   const { author, payload } = notification;
-  const { fullName, profilePictureUrl } = author;
+  const { id, fullName, profilePictureUrl } = author;
+  const { userId } = getLocalUser();
+  const isAuthor = userId === id;
+  const authorName = isAuthor ? 'You' : fullName;
 
   const payloadJSON = JSON.parse(payload);
   const payloadCamelJSON = {};
@@ -42,10 +47,6 @@ const LastUpdate = ({ notification }) => {
     payloadCamelJSON[camelCase(key)] = payloadJSON[key];
   });
   const { snippet } = payloadCamelJSON;
-
-  // const { userId } = getLocalUser();
-  // const { id: authorId } = author || owner;
-  // const isAuthor = userId === authorId;
 
   return (
     <Container>
@@ -55,7 +56,7 @@ const LastUpdate = ({ notification }) => {
         alt={fullName}
         size={20}
       />
-      <Name>{fullName}</Name>
+      <Name>{authorName}</Name>
       <Snippet>
         <Truncate lines={1}>{snippet}</Truncate>
       </Snippet>
