@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 import Pluralize from 'pluralize';
+import moment from 'moment';
 import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import useHover from 'utils/hooks/useHover';
+import { RELATIVE_TIME_STRINGS } from 'utils/constants';
 // import { getLocalUser } from 'utils/auth';
 // import { isResourceUnread } from 'utils/helpers';
 
@@ -17,14 +19,13 @@ const Container = styled.div({
 });
 
 const DetailsContainer = styled.div({
-  display: 'flex',
-  justifyContent: 'space-between',
   flexGrow: 1,
 });
 
 const ItemDetails = styled.div({
   display: 'flex',
-  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'baseline',
 });
 
 const Title = styled.span(({ hover, isUnread, theme: { colors } }) => ({
@@ -70,9 +71,22 @@ const StyledLink = styled(Link)(({ theme: { colors } }) => ({
   },
 }));
 
+const Timestamp = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey2,
+  cursor: 'default',
+  fontSize: '13px',
+  letterSpacing: '-0.0025em',
+}));
+
+// Custom interval strings for Moment.JS
+moment.updateLocale('en', {
+  relativeTime: RELATIVE_TIME_STRINGS,
+});
+moment.relativeTimeThreshold('d', 361);
+
 const ResourceRow = ({ item, ...props }) => {
   const { hover, ...hoverProps } = useHover();
-  const { document, discussion } = item;
+  const { document, discussion, lastUpdate } = item;
   const resourceType = document ? 'document' : 'discussion';
   const isDocument = resourceType === 'document';
   const resource = document || discussion;
@@ -84,6 +98,9 @@ const ResourceRow = ({ item, ...props }) => {
   // const { userId } = getLocalUser();
   // const { id: authorId } = author || owner;
   // const isAuthor = userId === authorId;
+  const { author, updatedAt, readAt } = lastUpdate;
+  const { fullName } = author;
+  const isUnread = !readAt;
 
   return (
     <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
@@ -96,7 +113,13 @@ const ResourceRow = ({ item, ...props }) => {
             <Title hover={hover} isUnread={false}>
               {titleText || `Untitled ${resourceType}`}
             </Title>
+            <Timestamp>{moment(updatedAt, 'X').fromNow()}</Timestamp>
           </ItemDetails>
+          {/* <LastUpdate>
+            <StyledAvatar />
+            <Name>{fullName}</Name>
+            <Description></Description>
+          </LastUpdate> */}
         </DetailsContainer>
       </Container>
     </StyledLink>
