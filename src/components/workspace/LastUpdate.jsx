@@ -4,6 +4,11 @@ import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
+import {
+  DOCUMENT_EDIT_EVENT,
+  DISCUSSION_EDIT_EVENT,
+  DISCUSSION_RESOLVE_EVENT,
+} from 'utils/constants';
 import { camelCaseObjString } from 'utils/helpers';
 
 import Avatar from 'components/shared/Avatar';
@@ -43,11 +48,11 @@ const LastUpdate = ({ notification, resourceType }) => {
 
   const snippetForEvent = eventType => {
     switch (eventType) {
-      case 'edit_document':
+      case DOCUMENT_EDIT_EVENT:
         return `made edits`;
-      case 'resolve_discussion':
+      case DISCUSSION_RESOLVE_EVENT:
         return 'resolved this discussion';
-      case 'edit_discussion':
+      case DISCUSSION_EDIT_EVENT:
         return 'updated the discussion title';
       default:
         return `added this ${resourceType}`;
