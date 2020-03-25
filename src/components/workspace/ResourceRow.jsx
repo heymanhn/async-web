@@ -124,7 +124,7 @@ const ResourceRow = ({ item, ...props }) => {
               <Timestamp>{moment(updatedAt, 'X').fromNow()}</Timestamp>
             </TimestampContainer>
           </ItemDetails>
-          <LastUpdate notification={lastUpdate} />
+          <LastUpdate notification={lastUpdate} resourceType={resourceType} />
         </DetailsContainer>
       </Container>
     </StyledLink>

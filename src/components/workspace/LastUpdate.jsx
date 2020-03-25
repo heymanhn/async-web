@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Truncate from 'react-truncate';
-import camelCase from 'camelcase';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
+import { camelCaseObjString } from 'utils/helpers';
 
 import Avatar from 'components/shared/Avatar';
 
 const Container = styled.div({
   display: 'flex',
   alignItems: 'center',
-  marginTop: '10px',
+  marginTop: '8px',
 });
 
 const StyledAvatar = styled(Avatar)({
@@ -32,21 +32,42 @@ const Snippet = styled.div(({ theme: { colors } }) => ({
   color: colors.grey2,
   fontSize: '13px',
   letterSpacing: '-0.0025em',
+  flexGrow: 1,
 }));
 
-const LastUpdate = ({ notification }) => {
-  const { author, payload } = notification;
+const LastUpdate = ({ notification, resourceType }) => {
+  const { author, payload, type } = notification;
   const { id, fullName, profilePictureUrl } = author;
   const { userId } = getLocalUser();
   const isAuthor = userId === id;
-  const authorName = isAuthor ? 'You' : fullName;
 
-  const payloadJSON = JSON.parse(payload);
-  const payloadCamelJSON = {};
-  Object.keys(payloadJSON).forEach(key => {
-    payloadCamelJSON[camelCase(key)] = payloadJSON[key];
-  });
-  const { snippet } = payloadCamelJSON;
+  const snippetForEvent = eventType => {
+    switch (eventType) {
+      case 'edit_document':
+        return `made edits`;
+      case 'resolve_discussion':
+        return 'resolved this discussion';
+      case 'edit_discussion':
+        return 'updated the discussion title';
+      default:
+        return `added this ${resourceType}`;
+    }
+  };
+
+  const generateSnippet = () => {
+    let authorName = isAuthor ? 'You' : fullName;
+    const payloadObj = camelCaseObjString(payload);
+    let { snippet } = payloadObj;
+    if (snippet) {
+      authorName += ':';
+    } else {
+      snippet = snippetForEvent(type);
+    }
+
+    return { authorName, snippet };
+  };
+
+  const { authorName, snippet } = generateSnippet();
 
   return (
     <Container>
@@ -64,6 +85,9 @@ const LastUpdate = ({ notification }) => {
   );
 };
 
-LastUpdate.propTypes = { notification: PropTypes.object.isRequired };
+LastUpdate.propTypes = {
+  notification: PropTypes.object.isRequired,
+  resourceType: PropTypes.string.isRequired,
+};
 
 export default LastUpdate;

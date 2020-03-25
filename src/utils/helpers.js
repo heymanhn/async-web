@@ -1,3 +1,5 @@
+import camelCase from 'camelcase';
+
 export const isDiscussionOpen = id => {
   const { href } = window.location;
   return href.includes(id);
@@ -52,4 +54,14 @@ export const isResourceUnread = tags => {
     tags.includes('new_document') ||
     tags.includes('new_discussion')
   );
+};
+
+export const camelCaseObjString = str => {
+  const obj = JSON.parse(str);
+  const camelCaseObj = {};
+  Object.keys(obj).forEach(key => {
+    camelCaseObj[camelCase(key)] = obj[key];
+  });
+
+  return camelCaseObj;
 };
