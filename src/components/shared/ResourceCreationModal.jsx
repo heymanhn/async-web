@@ -26,6 +26,7 @@ const StyledModal = styled(Modal)({
 const Header = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
+  padding: '15px 25px',
 });
 
 const Title = styled.div(({ theme: { colors } }) => ({
@@ -33,16 +34,16 @@ const Title = styled.div(({ theme: { colors } }) => ({
   fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '-0.006em',
-  padding: '15px 25px',
 }));
 
 const CloseIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey3,
+  cursor: 'pointer',
   fontSize: '16px',
 }));
 
 const Contents = styled.div({
-  padding: '20px 0',
+  paddingBottom: '20px',
 });
 
 const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {

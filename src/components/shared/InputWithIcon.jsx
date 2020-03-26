@@ -13,22 +13,26 @@ const Container = styled.div(({ theme: { colors } }) => ({
 }));
 
 const IconContainer = styled.div({
+  padding: '10px 0',
   width: '30px',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey4,
   fontSize: '16px',
-  padding: '15px 0',
 }));
 
 const StyledInput = styled.input(({ theme: { colors } }) => ({
   // Remove all default styles for an input element
   WebkitAppearance: 'none',
+  background: 'none',
+  border: 'none',
 
   color: colors.grey0,
   fontSize: '16px',
+  fontWeight: 500,
   letterSpacing: '-0.011em',
+  outline: 'none',
 
   '::placeholder': {
     color: colors.grey4,
