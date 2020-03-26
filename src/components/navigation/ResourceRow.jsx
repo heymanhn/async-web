@@ -18,7 +18,7 @@ const Container = styled.div(({ isSelected, isUnread, theme: { colors } }) => ({
   fontWeight: isUnread ? 500 : 400,
 
   ':hover': {
-    background: isSelected ? colors.grey7 : 'none',
+    background: colors.grey7,
   },
 }));
 
