@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
-import OrganizationSettings from 'components/navigation/OrganizationSettings';
 import NotificationsBell from 'components/notifications/NotificationsBell';
 import CommandCenter from 'components/commandCenter/CommandCenter';
 
@@ -54,8 +53,7 @@ const NavBar = () => {
     <NavigationContext.Provider value={value}>
       <Container>
         <MenuSection>
-          <OrganizationSettings />
-          <Title>Roval</Title>
+          <Title>Inbox</Title>
         </MenuSection>
         <NavigationSection>
           <NotificationsBell />

@@ -9,7 +9,6 @@ import {
 } from 'utils/contexts';
 import ResourceAccessContainer from 'components/participants/ResourceAccessContainer';
 import VerticalDivider from 'components/shared/VerticalDivider';
-import OrganizationSettings from 'components/navigation/OrganizationSettings';
 import NotificationsBell from 'components/notifications/NotificationsBell';
 import DocumentViewMode from 'components/document/DocumentViewMode';
 import DocumentTitle from 'components/document/DocumentTitle';
@@ -70,7 +69,6 @@ const HeaderBar = ({ setViewMode, viewMode, ...props }) => {
     <NavigationContext.Provider value={value}>
       <Container {...props}>
         <MenuSection>
-          <OrganizationSettings />
           {documentId ? <DocumentTitle /> : <DiscussionTitle />}
           {documentId && (
             <DocumentViewMode viewMode={viewMode} setViewMode={setViewMode} />

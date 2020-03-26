@@ -15,14 +15,15 @@ import InviteTeamModal from './InviteTeamModal';
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
   background: colors.white,
+  border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
-  boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.08)',
+  boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.1)',
   opacity: isOpen ? 1 : 0,
   outline: 'none',
   position: 'absolute',
   top: '60px',
   left: '20px',
-  width: '180px',
+  width: '200px',
   zIndex: 1000,
   transition: 'opacity 0.1s',
 }));

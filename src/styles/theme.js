@@ -44,7 +44,7 @@ export const theme = {
   workspaceViewport: '740px',
   inboxViewport: '600px',
   wideViewport: '1220px',
-  sidebarWidth: '250px',
+  sidebarWidth: '240px',
 
   colors: {
     blue: '#19a5e4',
@@ -71,7 +71,6 @@ export const theme = {
     secondaryBlue: '#86d9ff',
     selectedValueBlue: '#beeafe',
     lightestBlue: '#f3f9ff',
-    sidebarBlue: '#4b93c2',
     unreadBlue: '#f4fcff',
 
     highlightYellow: '#fff495',
