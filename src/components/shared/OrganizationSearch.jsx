@@ -61,8 +61,8 @@ const OrganizationSearch = ({
     });
   };
 
-  const handleChange = event => {
-    const currentQuery = event.target.value;
+  const handleChange = value => {
+    const currentQuery = value;
     setSearchQuery(currentQuery);
     setSelectedIndex(0);
     handleShowDropdown();
