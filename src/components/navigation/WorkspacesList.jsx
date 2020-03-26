@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
+import { getLocalUser } from 'utils/auth';
 import workspacesQuery from 'graphql/queries/workspaces';
 import { WORKSPACES_QUERY_SIZE } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
@@ -32,10 +33,13 @@ const Heading = styled.div(({ theme: { colors } }) => ({
 
 const WorkspacesList = () => {
   const { selectedResourceId } = useContext(NavigationContext);
+  const { userId } = getLocalUser();
+
   // TODO (HN): Use paginated resource when we figure out how to paginate
   // workspaces and recent items in the sidebar
   const { loading, data } = useQuery(workspacesQuery, {
     variables: {
+      id: userId,
       queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
     },
   });
