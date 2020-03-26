@@ -1,4 +1,5 @@
 import { faLaugh, faSquare } from '@fortawesome/free-regular-svg-icons';
+import { faPlusCircle as faRegularPlusCircle } from '@fortawesome/pro-regular-svg-icons';
 import {
   faArrowCircleRight as faSolidArrowCircleRight,
   faBold,
@@ -33,7 +34,7 @@ import {
   faFileSearch,
   faInfinity,
   faPlus as faLightPlus,
-  faPlusCircle,
+  faPlusCircle as faLightPlusCircle,
   faUserCircle,
 } from '@fortawesome/pro-light-svg-icons';
 
@@ -58,10 +59,11 @@ export default [
   faLightArrowCircleRight,
   faLightCommentsAlt,
   faLightPlus,
+  faLightPlusCircle,
   faListOl,
   faListUl,
-  faPlusCircle,
   faQuoteRight,
+  faRegularPlusCircle,
   faSolidArrowCircleRight,
   faSolidPlus,
   faFileSearch,

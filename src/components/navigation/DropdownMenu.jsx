@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
-import { NavContext } from 'utils/contexts';
+import { NavigationContext } from 'utils/contexts';
 import currentUserQuery from 'graphql/queries/currentUser';
 import { getLocalUser } from 'utils/auth';
 import useClickOutside from 'utils/hooks/useClickOutside';
@@ -15,14 +15,15 @@ import InviteTeamModal from './InviteTeamModal';
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
   background: colors.white,
+  border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
-  boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.08)',
+  boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.1)',
   opacity: isOpen ? 1 : 0,
   outline: 'none',
   position: 'absolute',
   top: '60px',
   left: '20px',
-  width: '180px',
+  width: '200px',
   zIndex: 1000,
   transition: 'opacity 0.1s',
 }));
@@ -65,7 +66,7 @@ const MenuOption = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
-  const { setIsInviteModalOpen } = useContext(NavContext);
+  const { setIsInviteModalOpen } = useContext(NavigationContext);
   const selector = useRef();
   const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: selector });

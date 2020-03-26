@@ -6,7 +6,6 @@ export default gql`
   query LocalState {
     isLoggedIn @client
     isOnboarding @client
-    selectedMeetingId @client
     pendingMessages @client {
       ...MessageObject
       tags

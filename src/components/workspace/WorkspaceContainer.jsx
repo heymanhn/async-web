@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 
 import workspaceQuery from 'graphql/queries/workspace';
 import { DEFAULT_WORKSPACE_CONTEXT, WorkspaceContext } from 'utils/contexts';
+import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import NotFound from 'components/navigation/NotFound';
 import TitleComposer from './TitleComposer';
@@ -24,6 +25,7 @@ const InnerContainer = styled.div(
 );
 
 const WorkspaceContainer = ({ workspaceId }) => {
+  useUpdateSelectedResource(workspaceId);
   const [viewMode, setViewMode] = useState('all');
 
   const { loading, data } = useQuery(workspaceQuery, {

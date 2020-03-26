@@ -1,8 +1,13 @@
 /* eslint import/prefer-default-export: 0 */
-export const MEETINGS_QUERY_SIZE = 25;
+export const WORKSPACES_QUERY_SIZE = 25;
+
+// Pusher/notification events
 export const NEW_MESSAGE_EVENT = 'new_message';
 export const DOCUMENT_ACCESS_EVENT = 'access_document';
 export const DISCUSSION_ACCESS_EVENT = 'access_discussion';
+export const DOCUMENT_EDIT_EVENT = 'edit_document';
+export const DISCUSSION_EDIT_EVENT = 'edit_discussion';
+export const DISCUSSION_RESOLVE_EVENT = 'resolve_discussion';
 
 export const VIEW_MODES = [
   {

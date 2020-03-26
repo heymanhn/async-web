@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
+import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import DiscussionModal from 'components/discussion/DiscussionModal';
 import HeaderBar from 'components/navigation/HeaderBar';
@@ -13,6 +14,8 @@ const DocumentContainer = ({
   discussionId: initialDiscussionId,
   viewMode: initialViewMode,
 }) => {
+  useUpdateSelectedResource(documentId);
+
   // TODO (HN): Instead of all these different discussionId fields, suggest
   // implementing a state machine that transitions from
   // new => first_message => deleted

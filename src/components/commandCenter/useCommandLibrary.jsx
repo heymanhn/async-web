@@ -2,11 +2,11 @@ import { useContext } from 'react';
 import { navigate } from '@reach/router';
 
 import useResourceCreator from 'utils/hooks/useResourceCreator';
-import { NavContext, DocumentContext } from 'utils/contexts';
+import { NavigationContext, DocumentContext } from 'utils/contexts';
 
 const useCommandLibrary = source => {
   const { setIsResourceAccessModalOpen, setIsInviteModalOpen } = useContext(
-    NavContext
+    NavigationContext
   );
   const { documentId } = useContext(DocumentContext);
   const { handleCreateResource: handleCreateDocument } = useResourceCreator(
