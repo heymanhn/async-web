@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
+import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import NotFound from 'components/navigation/NotFound';
@@ -45,6 +46,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 );
 
 const DiscussionContainer = ({ discussionId }) => {
+  useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
   const [isComposing, setIsComposing] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
