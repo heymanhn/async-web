@@ -1,93 +1,52 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+/*
+ * Also searches for workspaces in the organization, when needed
+ */
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
-import addMemberMutation from 'graphql/mutations/addMember';
-import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import { getLocalAppState } from 'utils/auth';
 import { mod } from 'utils/helpers';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
-import MemberResults from './MemberResults';
+import InputWithIcon from 'components/shared/InputWithIcon';
+import MemberResults from 'components/participants/MemberResults';
 
 const Container = styled.div({
   position: 'relative',
   marginBottom: '20px',
 });
 
-const SearchInput = styled.input(({ theme: { colors } }) => ({
-  // Remove all default styles for an input element
-  WebkitAppearance: 'none',
-
-  background: colors.bgGrey,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  color: colors.mainText,
-  fontSize: '14px',
-  fontWeight: 400,
-  outline: 'none',
-  padding: '7px 15px',
-  letterSpacing: '-0.006em',
-  width: '100%',
-
-  '::placeholder': {
-    color: colors.grey4,
-    opacity: 1, // Firefox
-  },
-
-  ':focus': {
-    border: `1px solid ${colors.grey4}`,
-  },
-}));
-
-const OrganizationMemberSearch = ({
+const OrganizationSearch = ({
   isModalOpen,
   isDropdownVisible,
+  currentMembers,
+
+  handleAddMember,
   handleShowDropdown,
   handleHideDropdown,
   handleCloseModal,
+  ...props
 }) => {
   const inputRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const DEFAULT_ACCESS_TYPE = 'collaborator';
 
   const { organizationId: id } = getLocalAppState();
-  const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
-  const resourceType = documentId ? 'documents' : 'discussions';
-  const resourceId = documentId || discussionId;
 
   useEffect(() => {
     if (isModalOpen && inputRef.current) inputRef.current.focus();
   });
 
-  const { loading: l1, data: orgMembership } = useQuery(resourceMembersQuery, {
+  const { loading, data } = useQuery(resourceMembersQuery, {
     variables: { resourceType: 'organizations', id },
   });
 
-  const { loading: l2, data: resourceMembership } = useQuery(
-    resourceMembersQuery,
-    {
-      variables: { resourceType, id: resourceId },
-    }
-  );
-
-  const [addMember] = useMutation(addMemberMutation);
-  const [localAddMember] = useMutation(localAddMemberMutation);
-
-  if (l1 || l2 || !orgMembership.resourceMembers) {
-    return null;
-  }
-
-  let { members } = orgMembership.resourceMembers || [];
+  if (loading || !data.resourceMembers) return null;
+  let { members } = data.resourceMembers || [];
   members = members.map(m => m.user);
-
-  const { resourceMembers } = resourceMembership.resourceMembers;
-  const participants = (resourceMembers || []).map(p => p.user);
 
   const memberSearch = () => {
     if (!searchQuery) return [];
@@ -109,29 +68,10 @@ const OrganizationMemberSearch = ({
     handleShowDropdown();
   };
 
-  const handleAddMember = user => {
-    if (participants.find(({ id: pid }) => pid === user.id)) return;
+  const handleAddSelection = user => {
+    if (currentMembers.find(({ id: pid }) => pid === user.id)) return;
 
-    addMember({
-      variables: {
-        resourceType,
-        id: resourceId,
-        input: {
-          userId: user.id,
-          accessType: DEFAULT_ACCESS_TYPE,
-        },
-      },
-    });
-
-    localAddMember({
-      variables: {
-        resourceType,
-        id: resourceId,
-        user,
-        accessType: DEFAULT_ACCESS_TYPE,
-      },
-    });
-
+    handleAddMember(user);
     setSearchQuery('');
     setSelectedIndex(0);
   };
@@ -169,7 +109,7 @@ const OrganizationMemberSearch = ({
     if (isHotkey('Enter', event)) {
       event.preventDefault();
 
-      return handleAddMember(results[selectedIndex]);
+      return handleAddSelection(results[selectedIndex]);
     }
 
     return null;
@@ -179,21 +119,20 @@ const OrganizationMemberSearch = ({
     index !== selectedIndex && setSelectedIndex(index);
 
   return (
-    <Container>
-      <SearchInput
+    <Container {...props}>
+      <InputWithIcon
         ref={inputRef}
-        onChange={handleChange}
+        icon="users"
         onClick={e => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         placeholder="Enter an email address or name"
-        spellCheck="false"
-        type="text"
         value={searchQuery}
+        setValue={handleChange}
       />
       {isDropdownVisible ? (
         <MemberResults
-          handleAddMember={handleAddMember}
-          members={participants}
+          handleAddSelection={handleAddSelection}
+          members={currentMembers}
           results={results}
           selectedIndex={selectedIndex}
           updateSelectedIndex={updateSelectedIndex}
@@ -205,12 +144,15 @@ const OrganizationMemberSearch = ({
   );
 };
 
-OrganizationMemberSearch.propTypes = {
+OrganizationSearch.propTypes = {
   isModalOpen: PropTypes.bool.isRequired,
   isDropdownVisible: PropTypes.bool.isRequired,
+  currentMembers: PropTypes.array.isRequired,
+
+  handleAddMember: PropTypes.func.isRequired,
   handleShowDropdown: PropTypes.func.isRequired,
   handleHideDropdown: PropTypes.func.isRequired,
   handleCloseModal: PropTypes.func.isRequired,
 };
 
-export default OrganizationMemberSearch;
+export default OrganizationSearch;

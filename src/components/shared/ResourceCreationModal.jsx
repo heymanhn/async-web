@@ -7,9 +7,9 @@ import { titleize } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
 import InputWithIcon from 'components/shared/InputWithIcon';
+import ParticipantsList from 'components/participants/ParticipantsList';
 
 // import OrganizationMemberSearch from './OrganizationMemberSearch';
-// import ParticipantsList from './ParticipantsList';
 
 const ICON_FOR_RESOURCE_TYPE = {
   workspace: 'layer-group',
@@ -69,6 +69,7 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
           setValue={setTitle}
         />
         {/* // People picker // participants list // Create Button */}
+        <ParticipantsList />
       </Contents>
     </StyledModal>
   );

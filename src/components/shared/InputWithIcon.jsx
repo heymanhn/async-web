@@ -23,6 +23,8 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const StyledInput = styled.input(({ theme: { colors } }) => ({
+  flexGrow: 1,
+
   // Remove all default styles for an input element
   WebkitAppearance: 'none',
   background: 'none',
@@ -40,8 +42,15 @@ const StyledInput = styled.input(({ theme: { colors } }) => ({
   },
 }));
 
-const InputWithIcon = ({ icon, placeholder, value, setValue }) => (
-  <Container>
+const InputWithIcon = ({
+  icon,
+  placeholder,
+  value,
+  setValue,
+  onKeyDown,
+  ...props
+}) => (
+  <Container {...props}>
     <IconContainer>
       <StyledIcon icon={icon} />
     </IconContainer>
@@ -49,6 +58,9 @@ const InputWithIcon = ({ icon, placeholder, value, setValue }) => (
       placeholder={placeholder}
       value={value}
       onChange={event => setValue(event.target.value)}
+      onKeyDown={onKeyDown}
+      spellCheck="false"
+      type="text"
     />
   </Container>
 );
@@ -58,10 +70,12 @@ InputWithIcon.propTypes = {
   placeholder: PropTypes.string.isRequired,
   value: PropTypes.string,
   setValue: PropTypes.func.isRequired,
+  onKeyDown: PropTypes.func,
 };
 
 InputWithIcon.defaultProps = {
   value: '',
+  onKeyDown: () => {},
 };
 
 export default InputWithIcon;

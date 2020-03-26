@@ -19,6 +19,7 @@ import {
   faTasks,
   faTerminal,
   faTrash,
+  faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faBell,
@@ -79,4 +80,5 @@ export default [
   faTimes,
   faTrash,
   faUserCircle,
+  faUsers,
 ];

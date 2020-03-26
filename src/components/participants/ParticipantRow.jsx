@@ -27,19 +27,21 @@ const Details = styled.div({
 
 const StyledAvatar = styled(Avatar)({
   flexShrink: 0,
-  marginRight: '15px',
+  marginRight: '10px',
 });
 
-const Label = styled.div({
-  fontSize: '13px',
-  letterSpacing: '-0.0025em',
-});
+const Label = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey0,
+  fontSize: '14px',
+  letterSpacing: '-0.006em',
+}));
 
-const Name = styled.div({
+const Name = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey0,
   fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '-0.006em',
-});
+}));
 
 const RemoveButton = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
@@ -75,10 +77,10 @@ const ParticipantRow = ({ accessType, user }) => {
     },
   });
 
-  function handleRemoveMember() {
+  const handleRemoveMember = () => {
     removeMember();
     localRemoveMember();
-  }
+  };
 
   const removeParticipantButton = (
     <RemoveButton onClick={handleRemoveMember}>remove</RemoveButton>
@@ -90,7 +92,7 @@ const ParticipantRow = ({ accessType, user }) => {
         <StyledAvatar
           alt={fullName}
           avatarUrl={profilePictureUrl}
-          size={30}
+          size={24}
           title={fullName}
         />
         <Name>{fullName}</Name>
