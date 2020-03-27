@@ -5,7 +5,7 @@ import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import DiscussionModal from 'components/discussion/DiscussionModal';
-import HeaderBar from 'components/navigation/HeaderBar';
+import NavigationBar from 'components/navigation/NavigationBar';
 import Document from './Document';
 import DiscussionsList from './DiscussionsList';
 
@@ -104,7 +104,8 @@ const DocumentContainer = ({
 
   return (
     <DocumentContext.Provider value={value}>
-      <HeaderBar setViewMode={setViewMode} viewMode={viewMode} />
+      {/* <HeaderBar setViewMode={setViewMode} viewMode={viewMode} /> */}
+      <NavigationBar />
       {viewMode === 'content' && <Document />}
       {viewMode === 'discussions' && <DiscussionsList />}
 

@@ -14,6 +14,7 @@ export default gql`
     body @type(name: "Body") {
       ...BodyObject
     }
+    workspaces
     createdAt
     updatedAt
   }
