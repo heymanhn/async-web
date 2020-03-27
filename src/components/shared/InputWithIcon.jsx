@@ -42,27 +42,23 @@ const StyledInput = styled.input(({ theme: { colors } }) => ({
   },
 }));
 
-const InputWithIcon = ({
-  icon,
-  placeholder,
-  value,
-  setValue,
-  onKeyDown,
-  ...props
-}) => (
-  <Container {...props}>
-    <IconContainer>
-      <StyledIcon icon={icon} />
-    </IconContainer>
-    <StyledInput
-      placeholder={placeholder}
-      value={value}
-      onChange={event => setValue(event.target.value)}
-      onKeyDown={onKeyDown}
-      spellCheck="false"
-      type="text"
-    />
-  </Container>
+const InputWithIcon = React.forwardRef(
+  ({ icon, placeholder, value, setValue, onKeyDown, ...props }, ref) => (
+    <Container {...props}>
+      <IconContainer>
+        <StyledIcon icon={icon} />
+      </IconContainer>
+      <StyledInput
+        ref={ref}
+        placeholder={placeholder}
+        value={value}
+        onChange={event => setValue(event.target.value)}
+        onKeyDown={onKeyDown}
+        spellCheck="false"
+        type="text"
+      />
+    </Container>
+  )
 );
 
 InputWithIcon.propTypes = {

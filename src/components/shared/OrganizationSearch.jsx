@@ -45,13 +45,13 @@ const OrganizationSearch = ({
   });
 
   if (loading || !data.resourceMembers) return null;
-  let { members } = data.resourceMembers || [];
-  members = members.map(m => m.user);
+  const { members } = data.resourceMembers;
+  const orgMembers = (members || []).map(m => m.user);
 
   const memberSearch = () => {
     if (!searchQuery) return [];
 
-    return members.filter(({ email, fullName }) => {
+    return orgMembers.filter(({ email, fullName }) => {
       const sanitizedQuery = searchQuery.toLowerCase();
 
       return (

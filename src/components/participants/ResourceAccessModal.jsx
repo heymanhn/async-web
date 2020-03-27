@@ -6,9 +6,11 @@ import styled from '@emotion/styled';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import addMemberMutation from 'graphql/mutations/addMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
+import { getLocalAppState } from 'utils/auth';
 import { DiscussionContext, DocumentContext } from 'utils/contexts';
 
 import Modal from 'components/shared/Modal';
+import LoadingIndicator from 'components/shared/LoadingIndicator';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
 import ParticipantsList from './ParticipantsList';
 
@@ -38,6 +40,10 @@ const StyledOrganizationSearch = styled(OrganizationSearch)({
   marginRight: '-25px',
 });
 
+const StyledLoadingIndicator = styled(LoadingIndicator)({
+  margin: '20px 0',
+});
+
 const ResourceAccessModal = ({ handleClose, isOpen }) => {
   const { documentId } = useContext(DocumentContext);
   const { discussionId } = useContext(DiscussionContext);
@@ -53,13 +59,23 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
   const [addMember] = useMutation(addMemberMutation);
   const [localAddMember] = useMutation(localAddMemberMutation);
 
-  const { loading, data } = useQuery(resourceMembersQuery, {
-    variables: { resourceType, id: resourceId },
+  // Prefetch the data so that the input field loads at the same time as the
+  // participants list
+  const { organizationId: id } = getLocalAppState();
+  useQuery(resourceMembersQuery, {
+    variables: { resourceType: 'organizations', id },
   });
 
-  if (loading || !data.resourceMembers) return null;
-  const { resourceMembers } = data.resourceMembers;
-  const participants = (resourceMembers || []).map(p => p.user);
+  const { loading, data } = useQuery(resourceMembersQuery, {
+    variables: { resourceType, id: resourceId },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  if (loading) return <StyledLoadingIndicator color="borderGrey" />;
+  if (!data || !data.resourceMembers) return null;
+
+  const { members } = data.resourceMembers;
+  const participants = members || [];
 
   const handleAddMember = user => {
     addMember({
@@ -92,13 +108,13 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
         <StyledOrganizationSearch
           isModalOpen={isOpen}
           isDropdownVisible={isDropdownVisible}
-          currentMembers={participants}
+          currentMembers={participants.map(p => p.user)}
           handleAddMember={handleAddMember}
           handleShowDropdown={handleShowDropdown}
           handleHideDropdown={handleHideDropdown}
           handleCloseModal={handleClose}
         />
-        <ParticipantsList />
+        <ParticipantsList participants={participants} />
       </Contents>
     </StyledModal>
   );
