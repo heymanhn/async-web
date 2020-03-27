@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query CurrentUser($id: String!) {
-    user(id: $id) @rest(type: "User", path: "/users/{args.id}") {
+  query CurrentUser($userId: String!) {
+    user(userId: $userId) @rest(type: "User", path: "/users/{args.userId}") {
       id
       firstName
       lastName

@@ -1,11 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
+import { DocumentContext } from 'utils/contexts';
+
 import VerticalDivider from 'components/shared/VerticalDivider';
 
-const ContentModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
+const ModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -16,21 +17,8 @@ const ContentModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
   height: '100%',
   width: '30px',
   marginRight: '15px',
+  paddingBottom: '5px',
 }));
-
-const DiscussionModeButton = styled.div(
-  ({ isSelected, theme: { colors } }) => ({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-
-    borderBottom: isSelected ? `3px solid ${colors.blue}` : 'none',
-    borderTop: isSelected ? `3px solid ${colors.white}` : 'none',
-    cursor: 'pointer',
-    height: '100%',
-    width: '30px',
-  })
-);
 
 const DiscussionsIconContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -65,17 +53,21 @@ const StyledPlusIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   marginTop: '-20px',
 }));
 
-const DocumentViewMode = ({ setViewMode, viewMode }) => {
+const DocumentViewMode = () => {
+  // TODO (HN): replace this extra UI with the redesigned document conversations
+  // UX in the future
+  const { viewMode, setViewMode } = useContext(DocumentContext);
+
   return (
     <>
       <VerticalDivider />
-      <ContentModeButton
+      <ModeButton
         isSelected={viewMode === 'content'}
         onClick={() => setViewMode('content')}
       >
         <StyledDocumentIcon icon="file-alt" />
-      </ContentModeButton>
-      <DiscussionModeButton
+      </ModeButton>
+      <ModeButton
         isSelected={viewMode === 'discussions'}
         onClick={() => setViewMode('discussions')}
       >
@@ -83,14 +75,9 @@ const DocumentViewMode = ({ setViewMode, viewMode }) => {
           <StyledDiscussionsIcon icon="comments-alt" />
           <StyledPlusIcon icon="plus" />
         </DiscussionsIconContainer>
-      </DiscussionModeButton>
+      </ModeButton>
     </>
   );
-};
-
-DocumentViewMode.propTypes = {
-  setViewMode: PropTypes.func.isRequired,
-  viewMode: PropTypes.oneOf(['content', 'discussions']).isRequired,
 };
 
 export default DocumentViewMode;

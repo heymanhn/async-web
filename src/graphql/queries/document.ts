@@ -15,6 +15,7 @@ export default gql`
       reactions @type(name: "Reaction") {
         ...ReactionObject
       }
+      workspaces
     }
   }
   ${doc}

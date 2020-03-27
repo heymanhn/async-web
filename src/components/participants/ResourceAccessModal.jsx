@@ -13,7 +13,6 @@ import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
 import { DiscussionContext, DocumentContext } from 'utils/contexts';
 
 import Modal from 'components/shared/Modal';
-import LoadingIndicator from 'components/shared/LoadingIndicator';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
 import ParticipantsList from './ParticipantsList';
 
@@ -39,10 +38,6 @@ const Contents = styled.div({
 const StyledOrganizationSearch = styled(OrganizationSearch)({
   marginLeft: '-25px',
   marginRight: '-25px',
-});
-
-const StyledLoadingIndicator = styled(LoadingIndicator)({
-  margin: '20px 0',
 });
 
 const ResourceAccessModal = ({ handleClose, isOpen }) => {
@@ -85,8 +80,7 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
     fetchPolicy: 'cache-and-network',
   });
 
-  if (loading) return <StyledLoadingIndicator color="borderGrey" />;
-  if (!data || !data.resourceMembers) return null;
+  if (loading || !data || !data.resourceMembers) return null;
 
   const { members } = data.resourceMembers;
   const participants = members || [];

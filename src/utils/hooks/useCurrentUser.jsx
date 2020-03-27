@@ -6,7 +6,7 @@ import { getLocalUser } from 'utils/auth';
 const useCurrentUser = () => {
   const { userId } = getLocalUser();
   const { data } = useQuery(currentUserQuery, {
-    variables: { id: userId },
+    variables: { userId },
   });
 
   return data ? data.user : {};

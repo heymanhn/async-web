@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import { track } from 'utils/analytics';
+import { NavigationContext } from 'utils/contexts';
 import { mod } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
@@ -62,8 +63,11 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
   },
 }));
 
-const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
+const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
+  const {
+    resource: { resourceType: source },
+  } = useContext(NavigationContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const title = useCommandCenterTitle(source);
   const { queryString, setQueryString, results } = useCommandCenterSearch(
@@ -148,7 +152,8 @@ const CommandCenterModal = ({ source, isOpen, handleClose, ...props }) => {
 };
 
 CommandCenterModal.propTypes = {
-  source: PropTypes.oneOf(['inbox', 'document', 'discussion']).isRequired,
+  source: PropTypes.oneOf(['inbox', 'workspace', 'document', 'discussion'])
+    .isRequired,
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
 };

@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
+
+import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
 
 import OrganizationSettings from 'components/navigation/OrganizationSettings';
 import WorkspacesList from './WorkspacesList';
@@ -23,11 +25,21 @@ const StyledOrganizationSettings = styled(OrganizationSettings)({
 });
 
 const Sidebar = () => {
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
+  const value = {
+    ...DEFAULT_NAVIGATION_CONTEXT,
+    isInviteModalOpen,
+    setIsInviteModalOpen,
+  };
+
   return (
-    <Container>
-      <StyledOrganizationSettings />
-      <WorkspacesList />
-    </Container>
+    <NavigationContext.Provider value={value}>
+      <Container>
+        <StyledOrganizationSettings />
+        <WorkspacesList />
+      </Container>
+    </NavigationContext.Provider>
   );
 };
 

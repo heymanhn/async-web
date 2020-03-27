@@ -14,6 +14,7 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   firstMsgDiscussionId: null,
   deletedDiscussionId: null,
   inlineDiscussionTopic: null,
+  viewMode: null,
 
   setFirstMsgDiscussionId: () => {},
   setDeletedDiscussionId: () => {},
@@ -23,6 +24,7 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   afterUpdate: () => {},
   afterDelete: () => {},
   setForceUpdate: () => {},
+  setViewMode: () => {},
 };
 export const DocumentContext = createContext(DEFAULT_DOCUMENT_CONTEXT);
 
@@ -53,6 +55,7 @@ export const DEFAULT_MESSAGE_CONTEXT = {
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);
 
 export const DEFAULT_NAVIGATION_CONTEXT = {
+  resource: null,
   selectedResourceId: null, // used by the sidebar
   isResourceAccessModalOpen: false,
   isInviteModalOpen: false,
