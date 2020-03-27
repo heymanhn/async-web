@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
@@ -42,14 +42,28 @@ const StyledInput = styled.input(({ theme: { colors } }) => ({
   },
 }));
 
-const InputWithIcon = React.forwardRef(
-  ({ icon, placeholder, value, setValue, onKeyDown, ...props }, ref) => (
+const InputWithIcon = ({
+  icon,
+  placeholder,
+  value,
+  setValue,
+  autoFocus,
+  onKeyDown,
+  ...props
+}) => {
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (autoFocus && inputRef.current) inputRef.current.focus();
+  }, [autoFocus]);
+
+  return (
     <Container {...props}>
       <IconContainer>
         <StyledIcon icon={icon} />
       </IconContainer>
       <StyledInput
-        ref={ref}
+        ref={inputRef}
         placeholder={placeholder}
         value={value}
         onChange={event => setValue(event.target.value)}
@@ -58,19 +72,21 @@ const InputWithIcon = React.forwardRef(
         type="text"
       />
     </Container>
-  )
-);
+  );
+};
 
 InputWithIcon.propTypes = {
   icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
   placeholder: PropTypes.string.isRequired,
   value: PropTypes.string,
   setValue: PropTypes.func.isRequired,
+  autoFocus: PropTypes.bool,
   onKeyDown: PropTypes.func,
 };
 
 InputWithIcon.defaultProps = {
   value: '',
+  autoFocus: false,
   onKeyDown: () => {},
 };
 

@@ -1,7 +1,7 @@
 /*
  * Also searches for workspaces in the organization, when needed
  */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import { isHotkey } from 'is-hotkey';
@@ -23,6 +23,7 @@ const OrganizationSearch = ({
   isModalOpen,
   isDropdownVisible,
   currentMembers,
+  autoFocus,
 
   handleAdd,
   handleShowDropdown,
@@ -30,15 +31,10 @@ const OrganizationSearch = ({
   handleCloseModal,
   ...props
 }) => {
-  const inputRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { organizationId: id } = getLocalAppState();
-
-  useEffect(() => {
-    if (isModalOpen && inputRef.current) inputRef.current.focus();
-  });
 
   const { loading, data } = useQuery(resourceMembersQuery, {
     variables: { resourceType: 'organizations', id },
@@ -121,8 +117,8 @@ const OrganizationSearch = ({
   return (
     <Container {...props}>
       <InputWithIcon
-        ref={inputRef}
         icon="users"
+        autoFocus={autoFocus}
         onClick={e => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         placeholder="Enter an email address or name"
@@ -148,11 +144,16 @@ OrganizationSearch.propTypes = {
   isModalOpen: PropTypes.bool.isRequired,
   isDropdownVisible: PropTypes.bool.isRequired,
   currentMembers: PropTypes.array.isRequired,
+  autoFocus: PropTypes.bool,
 
   handleAdd: PropTypes.func.isRequired,
   handleShowDropdown: PropTypes.func.isRequired,
   handleHideDropdown: PropTypes.func.isRequired,
   handleCloseModal: PropTypes.func.isRequired,
+};
+
+OrganizationSearch.defaultProps = {
+  autoFocus: false,
 };
 
 export default OrganizationSearch;

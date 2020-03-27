@@ -83,11 +83,12 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
         <CloseIcon icon={['far', 'times']} onClick={handleClose} />
       </Header>
       <Contents onClick={handleHideDropdown}>
-        <InputWithIcon
+        <StyledInput
           icon={ICON_FOR_RESOURCE_TYPE[resourceType]}
           placeholder="Give it a name"
           value={title}
           setValue={setTitle}
+          autoFocus
         />
         <OrganizationSearch
           isModalOpen={isOpen}

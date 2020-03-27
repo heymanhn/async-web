@@ -125,6 +125,7 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
       </Header>
       <Contents onClick={handleHideDropdown}>
         <StyledOrganizationSearch
+          autoFocus
           isModalOpen={isOpen}
           isDropdownVisible={isDropdownVisible}
           currentMembers={participants.map(p => p.user)}
