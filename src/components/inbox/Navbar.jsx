@@ -47,6 +47,7 @@ const NavBar = () => {
     ...DEFAULT_NAVIGATION_CONTEXT,
     isInviteModalOpen,
     setIsInviteModalOpen,
+    resource: { resourceType: 'inbox' },
   };
 
   return (
@@ -57,7 +58,7 @@ const NavBar = () => {
         </MenuSection>
         <NavigationSection>
           <NotificationsBell />
-          <CommandCenter source="inbox" />
+          <CommandCenter />
         </NavigationSection>
       </Container>
     </NavigationContext.Provider>

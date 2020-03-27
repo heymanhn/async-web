@@ -7,6 +7,7 @@ import workspaceQuery from 'graphql/queries/workspace';
 import { DEFAULT_WORKSPACE_CONTEXT, WorkspaceContext } from 'utils/contexts';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
+import NavigationBar from 'components/navigation/NavigationBar';
 import NotFound from 'components/navigation/NotFound';
 import TitleComposer from './TitleComposer';
 import ResourcesList from './ResourcesList';
@@ -47,10 +48,9 @@ const WorkspaceContainer = ({ workspaceId }) => {
   return (
     <WorkspaceContext.Provider value={value}>
       <Container>
-        {/* <NavBar /> */}
+        <NavigationBar />
         <InnerContainer>
           <TitleComposer initialTitle={title} />
-          {}
           <ResourcesList />
         </InnerContainer>
       </Container>
