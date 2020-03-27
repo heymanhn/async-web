@@ -1,6 +1,9 @@
 /* eslint import/prefer-default-export: 0 */
 export const WORKSPACES_QUERY_SIZE = 25;
 
+// Resource access types
+export const DEFAULT_ACCESS_TYPE = 'collaborator';
+
 // Pusher/notification events
 export const NEW_MESSAGE_EVENT = 'new_message';
 export const DOCUMENT_ACCESS_EVENT = 'access_document';

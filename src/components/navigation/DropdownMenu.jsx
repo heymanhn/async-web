@@ -1,13 +1,11 @@
 import React, { useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from '@apollo/react-hooks';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import { NavigationContext } from 'utils/contexts';
-import currentUserQuery from 'graphql/queries/currentUser';
-import { getLocalUser } from 'utils/auth';
 import useClickOutside from 'utils/hooks/useClickOutside';
+import useCurrentUser from 'utils/hooks/useCurrentUser';
 
 import Avatar from 'components/shared/Avatar';
 import InviteTeamModal from './InviteTeamModal';
@@ -68,19 +66,13 @@ const MenuOption = styled.div(({ theme: { colors } }) => ({
 const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
   const { setIsInviteModalOpen } = useContext(NavigationContext);
   const selector = useRef();
+  const currentUser = useCurrentUser();
   const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: selector });
 
   const showInviteModal = () => {
     setIsInviteModalOpen(true);
   };
-
-  const { userId } = getLocalUser();
-  const { loading, data } = useQuery(currentUserQuery, {
-    variables: { id: userId },
-  });
-  if (loading || !data.user) return null;
-  const { user } = data;
 
   const handleNavigate = (event, route) => {
     event.stopPropagation();
@@ -91,11 +83,13 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
   const handleNavigateInbox = event => handleNavigate(event, '/inbox');
   const handleLogout = event => handleNavigate(event, '/logout');
 
+  if (!Object.keys(currentUser).length) return null;
+
   return (
     <Container isOpen={isOpen} ref={selector} {...props}>
       <AuthorSection>
-        <AvatarWithMargin avatarUrl={user.profilePictureUrl} size={24} />
-        <Name>{user.fullName}</Name>
+        <AvatarWithMargin avatarUrl={currentUser.profilePictureUrl} size={24} />
+        <Name>{currentUser.fullName}</Name>
       </AuthorSection>
       <MenuOptionList>
         <MenuOption onClick={handleNavigateInbox}>Inbox</MenuOption>

@@ -39,7 +39,7 @@ const WorkspacesList = () => {
   // workspaces and recent items in the sidebar
   const { loading, data } = useQuery(workspacesQuery, {
     variables: {
-      id: userId,
+      userId,
       queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
     },
   });

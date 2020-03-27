@@ -1,37 +1,24 @@
-import React, { useContext } from 'react';
-import { useQuery } from '@apollo/react-hooks';
-import styled from '@emotion/styled';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import resourceMembersQuery from 'graphql/queries/resourceMembers';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
-
-import LoadingIndicator from 'components/shared/LoadingIndicator';
 import ParticipantRow from './ParticipantRow';
 
-const StyledLoadingIndicator = styled(LoadingIndicator)({
-  margin: '20px 0',
-});
+const ParticipantsList = ({ participants, handleRemove, ...props }) => (
+  <div {...props}>
+    {participants.map(p => (
+      <ParticipantRow
+        key={p.user.id}
+        accessType={p.accessType}
+        user={p.user}
+        handleRemove={handleRemove}
+      />
+    ))}
+  </div>
+);
 
-const ParticipantsList = () => {
-  const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
-
-  const resourceType = documentId ? 'documents' : 'discussions';
-  const id = documentId || discussionId;
-
-  const { loading, data } = useQuery(resourceMembersQuery, {
-    variables: { id, resourceType },
-    fetchPolicy: 'cache-and-network',
-  });
-
-  if (loading) return <StyledLoadingIndicator color="borderGrey" />;
-
-  const { resourceMembers } = data;
-  const { members } = resourceMembers;
-
-  return (members || []).map(p => (
-    <ParticipantRow key={p.user.id} accessType={p.accessType} user={p.user} />
-  ));
+ParticipantsList.propTypes = {
+  participants: PropTypes.array.isRequired,
+  handleRemove: PropTypes.func.isRequired,
 };
 
 export default ParticipantsList;

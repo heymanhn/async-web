@@ -10,7 +10,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   flexDirection: 'row',
   alignItems: 'center',
 
-  background: colors.altBlue,
+  background: colors.blue,
   borderRadius: '5px',
   color: colors.white,
   height: '34px',

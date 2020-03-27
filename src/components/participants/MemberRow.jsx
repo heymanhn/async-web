@@ -44,7 +44,7 @@ const Email = styled.div(({ isMember, theme: { colors } }) => ({
 }));
 
 const MemberRow = ({
-  handleAddMember,
+  handleAddSelection,
   index,
   isMember,
   isSelected,
@@ -66,7 +66,7 @@ const MemberRow = ({
   }, [isSelected]);
 
   const handleClick = () => {
-    return isMember ? null : handleAddMember(member);
+    return isMember ? null : handleAddSelection(member);
   };
 
   const { email, fullName, profilePictureUrl } = member;
@@ -99,7 +99,7 @@ const MemberRow = ({
 };
 
 MemberRow.propTypes = {
-  handleAddMember: PropTypes.func.isRequired,
+  handleAddSelection: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
   isMember: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool.isRequired,
