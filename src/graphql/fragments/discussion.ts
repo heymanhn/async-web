@@ -10,7 +10,6 @@ export default gql`
     author @type(name: "User") {
       ...UserObject
     }
-    workspaces
     createdAt
     updatedAt
     status @type(name: "DiscussionStatus") {

@@ -13,7 +13,7 @@ const Container = styled.div({
 });
 
 const IconContainer = styled.div({
-  marginRight: '10px',
+  width: '30px',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({

@@ -10,6 +10,7 @@ import { titleize } from 'utils/helpers';
 const Container = styled.div({
   display: 'flex',
   alignItems: 'center',
+  marginLeft: '-5px',
 });
 
 const TitleContainer = styled.div(({ theme: { colors } }) => ({
@@ -37,7 +38,7 @@ const Separator = styled.div(({ theme: { colors } }) => ({
   color: colors.grey5,
   fontSize: '20px',
   marginTop: '-4px',
-  paddingLeft: '3px',
+  paddingLeft: '5px',
   paddingRight: '3px',
 }));
 

@@ -8,8 +8,7 @@ import { WorkspaceContext } from 'utils/contexts';
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.grey0,
   fontSize: '14px',
-  letterSpacing: '-0.006em',
-  marginTop: '-2px',
+  marginTop: '-4px',
 }));
 
 const WorkspaceTitle = props => {

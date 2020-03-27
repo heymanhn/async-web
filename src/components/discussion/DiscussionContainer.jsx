@@ -10,8 +10,8 @@ import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
+import NavigationBar from 'components/navigation/NavigationBar';
 import NotFound from 'components/navigation/NotFound';
-import HeaderBar from 'components/navigation/HeaderBar';
 import TopicComposer from './TopicComposer';
 import DiscussionMessage from './DiscussionMessage';
 import DiscussionThread from './DiscussionThread';
@@ -98,7 +98,8 @@ const DiscussionContainer = ({ discussionId }) => {
   return (
     <DiscussionContext.Provider value={value}>
       <OuterContainer>
-        <HeaderBar />
+        {/* <HeaderBar /> */}
+        <NavigationBar />
         <ContentContainer ref={discussionRef}>
           <TopicComposer
             initialTopic={text}
