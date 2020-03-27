@@ -27,7 +27,7 @@ const ContentContainer = styled.div(({ theme: { discussionViewport } }) => ({
   justifyContent: 'center',
 
   // Vertically center the page when content doesn't fit full height
-  minHeight: 'calc(100vh - 54px)', // Header bar is 54px tall
+  minHeight: 'calc(100vh - 60px)', // Navigation bar is 60px tall
   margin: '0 auto',
   paddingBottom: '80px',
   width: discussionViewport,
@@ -98,7 +98,6 @@ const DiscussionContainer = ({ discussionId }) => {
   return (
     <DiscussionContext.Provider value={value}>
       <OuterContainer>
-        {/* <HeaderBar /> */}
         <NavigationBar />
         <ContentContainer ref={discussionRef}>
           <TopicComposer
