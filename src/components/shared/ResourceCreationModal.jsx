@@ -47,6 +47,14 @@ const Contents = styled.div({
   paddingBottom: '20px',
 });
 
+const StyledInput = styled(InputWithIcon)({
+  marginBottom: '20px',
+});
+
+const StyledParticipantsList = styled(ParticipantsList)({
+  margin: '20px 25px 30px',
+});
+
 const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
   const currentUser = useCurrentUser();
 
@@ -99,7 +107,7 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
           handleHideDropdown={handleHideDropdown}
           handleCloseModal={handleClose}
         />
-        <ParticipantsList
+        <StyledParticipantsList
           participants={participants}
           handleRemove={handleRemove}
         />

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import ParticipantRow from './ParticipantRow';
 
-const ParticipantsList = ({ participants, handleRemove }) => (
-  <>
+const ParticipantsList = ({ participants, handleRemove, ...props }) => (
+  <div {...props}>
     {participants.map(p => (
       <ParticipantRow
         key={p.user.id}
@@ -13,7 +13,7 @@ const ParticipantsList = ({ participants, handleRemove }) => (
         handleRemove={handleRemove}
       />
     ))}
-  </>
+  </div>
 );
 
 ParticipantsList.propTypes = {
