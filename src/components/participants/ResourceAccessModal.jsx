@@ -6,6 +6,8 @@ import styled from '@emotion/styled';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import addMemberMutation from 'graphql/mutations/addMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
+import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
+import removeMemberMutation from 'graphql/mutations/removeMember';
 import { getLocalAppState } from 'utils/auth';
 import { DiscussionContext, DocumentContext } from 'utils/contexts';
 
@@ -59,6 +61,19 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
   const [addMember] = useMutation(addMemberMutation);
   const [localAddMember] = useMutation(localAddMemberMutation);
 
+  const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
+    variables: {
+      resourceType,
+      id: resourceId,
+    },
+  });
+  const [removeMember] = useMutation(removeMemberMutation, {
+    variables: {
+      resourceType,
+      id: resourceId,
+    },
+  });
+
   // Prefetch the data so that the input field loads at the same time as the
   // participants list
   const { organizationId: id } = getLocalAppState();
@@ -99,6 +114,11 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
     });
   };
 
+  const handleRemove = userId => {
+    removeMember({ variables: { userId } });
+    localRemoveMember({ variables: { userId } });
+  };
+
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen}>
       <Header onClick={handleHideDropdown}>
@@ -114,7 +134,10 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
           handleHideDropdown={handleHideDropdown}
           handleCloseModal={handleClose}
         />
-        <ParticipantsList participants={participants} />
+        <ParticipantsList
+          participants={participants}
+          handleRemove={handleRemove}
+        />
       </Contents>
     </StyledModal>
   );

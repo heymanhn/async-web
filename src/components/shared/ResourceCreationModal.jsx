@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import { titleize } from 'utils/helpers';
+import useCurrentUser from 'utils/hooks/useCurrentUser';
 
 import Modal from 'components/shared/Modal';
 import InputWithIcon from 'components/shared/InputWithIcon';
@@ -47,6 +48,8 @@ const Contents = styled.div({
 });
 
 const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
+  const currentUser = useCurrentUser();
+
   // Putting the state here so that clicking anywhere on the modal
   // dismisses the dropdown
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -54,6 +57,12 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
   const handleHideDropdown = () => setIsDropdownVisible(false);
 
   const [title, setTitle] = useState('');
+  const [participants, setParticipants] = useState([
+    {
+      user: currentUser,
+      accessType: 'owner',
+    },
+  ]);
 
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen}>

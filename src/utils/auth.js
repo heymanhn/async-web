@@ -10,14 +10,13 @@ const getUser = () => {
   return {};
 };
 
-const setUser = (user) => {
+const setUser = user => {
   window.localStorage.currentUser = JSON.stringify(user);
 };
 
 export const getLocalUser = () => isBrowser && getUser();
-export const setLocalUser = ({ userId, userToken }) => (
-  isBrowser ? setUser({ userId, userToken }) : false
-);
+export const setLocalUser = ({ userId, userToken }) =>
+  isBrowser ? setUser({ userId, userToken }) : false;
 export const clearLocalUser = () => {
   if (!isBrowser) return Promise.reject(new Error('Not allowed'));
 
@@ -42,7 +41,7 @@ export const getAuthHeader = () => {
   return `Basic ${authString}`;
 };
 
-export const matchCurrentUserId = (id) => {
+export const matchCurrentUserId = id => {
   if (!isBrowser) return false;
 
   const { userId } = getUser();
@@ -59,7 +58,7 @@ const getAppState = () => {
   return {};
 };
 
-const setAppState = (appState) => {
+const setAppState = appState => {
   window.localStorage.appState = JSON.stringify(appState);
 };
 

@@ -1,11 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { useMutation } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
-
-import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
-import removeMemberMutation from 'graphql/mutations/removeMember';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -46,44 +41,21 @@ const Name = styled.div(({ theme: { colors } }) => ({
 const RemoveButton = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   cursor: 'pointer',
-  fontSize: '13px',
-  letterSpacing: '-0.0025em',
+  fontSize: '14px',
+  letterSpacing: '-0.006em',
 
   ':hover': {
     color: colors.blue,
   },
 }));
 
-const ParticipantRow = ({ accessType, user }) => {
-  const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
-  const resourceType = documentId ? 'documents' : 'discussions';
-  const resourceId = documentId || discussionId;
-
+const ParticipantRow = ({ accessType, user, handleRemove }) => {
   const { fullName, id, profilePictureUrl } = user;
 
-  const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
-    variables: {
-      resourceType,
-      id: resourceId,
-      userId: id,
-    },
-  });
-  const [removeMember] = useMutation(removeMemberMutation, {
-    variables: {
-      resourceType,
-      id: resourceId,
-      userId: id,
-    },
-  });
-
-  const handleRemoveMember = () => {
-    removeMember();
-    localRemoveMember();
-  };
+  const handleRemoveWrapper = () => handleRemove(id);
 
   const removeParticipantButton = (
-    <RemoveButton onClick={handleRemoveMember}>remove</RemoveButton>
+    <RemoveButton onClick={handleRemoveWrapper}>remove</RemoveButton>
   );
 
   return (
@@ -109,6 +81,7 @@ const ParticipantRow = ({ accessType, user }) => {
 ParticipantRow.propTypes = {
   accessType: PropTypes.string.isRequired,
   user: PropTypes.object.isRequired,
+  handleRemove: PropTypes.func.isRequired,
 };
 
 export default ParticipantRow;
