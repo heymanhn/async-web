@@ -67,7 +67,8 @@ const ResourceTitle = props => {
   const { title: workspaceTitle } = workspaceData
     ? workspaceData.workspace
     : {};
-  const resourceTitle = title || topic.text;
+  const { text } = topic || {};
+  const resourceTitle = title || text;
 
   const renderWorkspaceTitle = () => (
     <TitleContainer onClick={() => navigate(`/workspaces/${workspaces[0]}`)}>
