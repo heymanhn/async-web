@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { navigate } from '@reach/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
 import { titleize } from 'utils/helpers';
 import useCurrentUser from 'utils/hooks/useCurrentUser';
+import useWorkspaceMutations from 'utils/hooks/useWorkspaceMutations';
 
 import Modal from 'components/shared/Modal';
 import InputWithIcon from 'components/shared/InputWithIcon';
@@ -66,6 +68,11 @@ const CreateButton = styled(Button)({
 
 const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
   const currentUser = useCurrentUser();
+  const {
+    handleCreate,
+    handleAddMember,
+    isSubmitting,
+  } = useWorkspaceMutations();
 
   // Putting the state here so that clicking anywhere on the modal
   // dismisses the dropdown
@@ -100,7 +107,20 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
     ]);
   };
 
-  const handleCreate = () => {};
+  const handleCreateWorkspace = async () => {
+    const { workspaceId } = await handleCreate(title);
+
+    if (workspaceId) {
+      participants
+        .filter(p => p.user.id !== currentUser.id)
+        .forEach(p => handleAddMember(workspaceId, p.user.id));
+
+      navigate(`/workspaces/${workspaceId}`);
+      handleClose();
+    } else {
+      throw new Error('Unable to create workspace');
+    }
+  };
 
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen}>
@@ -130,8 +150,9 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
           handleRemove={handleRemove}
         />
         <CreateButton
-          onClick={handleCreate}
+          onClick={handleCreateWorkspace}
           isDisabled={!title}
+          loading={isSubmitting}
           title="Create"
         />
       </Contents>

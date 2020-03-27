@@ -4,7 +4,7 @@ export default gql`
   mutation AddMember($resourceType: String!, $id: String!, $input: Object!) {
     addMember(resourceType: $resourceType, id: $id, input: $input)
       @rest(
-        type: "Success"
+        type: "AddResourceMember"
         path: "/{args.resourceType}/{args.id}/access"
         method: "POST"
       ) {

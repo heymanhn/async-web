@@ -1,68 +1,52 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 
+import workspaceQuery from 'graphql/queries/workspace';
+import workspacesQuery from 'graphql/queries/workspaces';
+import createWorkspaceMtn from 'graphql/mutations/createWorkspace';
 import updateWorkspaceMtn from 'graphql/mutations/updateWorkspace';
+import addMemberMutation from 'graphql/mutations/addMember';
+import { DEFAULT_ACCESS_TYPE, WORKSPACES_QUERY_SIZE } from 'utils/constants';
 import { WorkspaceContext } from 'utils/contexts';
-// import { getLocalUser } from 'utils/auth';
+import { getLocalUser } from 'utils/auth';
 import { track } from 'utils/analytics';
+import { snakedQueryParams } from 'utils/queryParams';
 
 const useWorkspaceMutations = () => {
   const { workspaceId } = useContext(WorkspaceContext);
-  // const [isSubmitting, setIsSubmitting] = useState(false);
-  // const { userId } = getLocalUser();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { userId: currentUserId } = getLocalUser();
 
+  const [createWorkspace] = useMutation(createWorkspaceMtn);
   const [updateWorkspace] = useMutation(updateWorkspaceMtn);
+  const [addMember] = useMutation(addMemberMutation);
 
-  // const handleCreate = async () => {
-  //   setIsSubmitting(true);
+  const handleCreate = async title => {
+    setIsSubmitting(true);
 
-  //   const { data } = await createDocument({
-  //     variables: { input: {} },
-  //     refetchQueries: [
-  //       {
-  //         query: inboxQuery,
-  //         variables: { userId, queryParams: { type: 'all' } },
-  //       },
-  //       {
-  //         query: inboxQuery,
-  //         variables: { userId, queryParams: { type: 'document' } },
-  //       },
-  //     ],
-  //   });
+    const { data } = await createWorkspace({
+      variables: { input: { title } },
+      refetchQueries: [
+        {
+          query: workspacesQuery,
+          variables: {
+            userId: currentUserId,
+            queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
+          },
+        },
+      ],
+    });
 
-  //   if (data.createDocument) {
-  //     const { id: newDocumentId } = data.createDocument;
-  //     track('New document created', { documentId: newDocumentId });
+    if (data.createWorkspace) {
+      const { id: newWorkspaceId } = data.createWorkspace;
+      track('New workspace created', { workspaceId: newWorkspaceId });
 
-  //     setIsSubmitting(false);
-  //     return Promise.resolve({ documentId: newDocumentId });
-  //   }
+      setIsSubmitting(false);
+      return Promise.resolve({ workspaceId: newWorkspaceId });
+    }
 
-  //   return Promise.reject(new Error('Failed to create new document'));
-  // };
-
-  // const handleUpdate = async () => {
-  //   const { children } = editor;
-  //   const { data } = await updateDocument({
-  //     variables: {
-  //       documentId,
-  //       input: {
-  //         body: {
-  //           formatter: 'slatejs',
-  //           text: toPlainText(children),
-  //           payload: JSON.stringify(children),
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   if (data.updateDocument) {
-  //     afterUpdate();
-  //     return Promise.resolve();
-  //   }
-
-  //   return Promise.reject(new Error('Failed to update document'));
-  // };
+    return Promise.reject(new Error('Failed to create new workspace'));
+  };
 
   const handleUpdateTitle = async title => {
     const { data } = await updateWorkspace({
@@ -78,21 +62,35 @@ const useWorkspaceMutations = () => {
     return Promise.reject(new Error('Failed to update workspace title'));
   };
 
-  // const handleDelete = async () => {
-  //   const { data } = await deleteDocument();
+  const handleAddMember = async (wsId, userId) => {
+    const { data } = await addMember({
+      variables: {
+        resourceType: 'workspaces',
+        id: workspaceId || wsId,
+        input: {
+          userId,
+          accessType: DEFAULT_ACCESS_TYPE,
+        },
+      },
+      refetchQueries: [
+        {
+          query: workspaceQuery,
+          variables: { id: workspaceId || wsId },
+        },
+      ],
+    });
 
-  //   if (data.deleteDocument) {
-  //     afterDelete();
-  //     return Promise.resolve();
-  //   }
+    if (data.addMember) return Promise.resolve();
 
-  //   return Promise.reject(new Error('Failed to delete document'));
-  // };
+    return Promise.reject(new Error('Failed to add member to workspace'));
+  };
 
   return {
-    // isSubmitting,
+    isSubmitting,
 
+    handleCreate,
     handleUpdateTitle,
+    handleAddMember,
   };
 };
 
