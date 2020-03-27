@@ -93,10 +93,12 @@ const DocumentContainer = ({
     firstMsgDiscussionId,
     deletedDiscussionId,
     inlineDiscussionTopic,
+    viewMode,
 
     setFirstMsgDiscussionId,
     setDeletedDiscussionId,
     setForceUpdate,
+    setViewMode,
     resetInlineTopic,
     handleShowModal,
     handleCloseModal,
@@ -104,7 +106,6 @@ const DocumentContainer = ({
 
   return (
     <DocumentContext.Provider value={value}>
-      {/* <HeaderBar setViewMode={setViewMode} viewMode={viewMode} /> */}
       <NavigationBar />
       {viewMode === 'content' && <Document />}
       {viewMode === 'discussions' && <DiscussionsList />}

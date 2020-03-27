@@ -5,6 +5,7 @@ import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
 import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
 
 import CommandCenter from 'components/commandCenter/CommandCenter';
+import DocumentViewMode from 'components/document/DocumentViewMode';
 import ResourceInfo from 'components/navigation/ResourceInfo';
 import NotificationsBell from 'components/notifications/NotificationsBell';
 import ResourceAccessContainer from 'components/participants/ResourceAccessContainer';
@@ -40,6 +41,7 @@ const RightSection = styled.div({
 
 const NavigationBar = props => {
   const resource = useDisambiguatedResource();
+  const { resourceType } = resource;
 
   // For the Resource Access modal. Storing state here so that the context can
   // be shared with the Command Center as well as the modal
@@ -59,9 +61,10 @@ const NavigationBar = props => {
       <Container {...props}>
         <LeftSection>
           <ResourceInfo />
-          {/* <ResourceAccessContainer /> */}
+          {resourceType === 'document' && <DocumentViewMode />}
         </LeftSection>
         <RightSection>
+          {/* <ResourceAccessContainer /> */}
           <NotificationsBell />
           {/* <CommandCenter /> */}
         </RightSection>
