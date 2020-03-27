@@ -83,7 +83,7 @@ const useWorkspaceMutations = () => {
     });
 
     setIsSubmitting(false);
-    if (data.addMember) {return Promise.resolve();
+    if (data.addMember) return Promise.resolve();
 
     return Promise.reject(new Error('Failed to add member to workspace'));
   };
