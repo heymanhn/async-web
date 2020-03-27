@@ -67,7 +67,9 @@ const NavigationBar = props => {
           {/* TODO (HN): enable for workspaces once implemented */}
           {resourceType !== 'workspace' && <ResourceAccessContainer />}
           <NotificationsBell />
-          {/* <CommandCenter /> */}
+
+          {/* TODO (HN): enable for workspaces once implemented */}
+          {resourceType !== 'workspace' && <CommandCenter />}
         </RightSection>
       </Container>
     </NavigationContext.Provider>
