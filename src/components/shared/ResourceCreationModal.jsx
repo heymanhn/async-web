@@ -10,6 +10,7 @@ import useCurrentUser from 'utils/hooks/useCurrentUser';
 import Modal from 'components/shared/Modal';
 import InputWithIcon from 'components/shared/InputWithIcon';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
+import Button from 'components/shared/Button';
 import ParticipantsList from 'components/participants/ParticipantsList';
 
 const ICON_FOR_RESOURCE_TYPE = {
@@ -44,6 +45,8 @@ const CloseIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const Contents = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
   paddingBottom: '20px',
 });
 
@@ -52,7 +55,13 @@ const StyledInput = styled(InputWithIcon)({
 });
 
 const StyledParticipantsList = styled(ParticipantsList)({
-  margin: '20px 25px 30px',
+  margin: '0 25px 30px',
+});
+
+const CreateButton = styled(Button)({
+  alignSelf: 'flex-end',
+  marginRight: '25px',
+  padding: '4px 20px 6px',
 });
 
 const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
@@ -68,12 +77,13 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
 
   // Keep track of the list of participants locally first. Then, add them to the
   // workspace after it's created.
-  const [participants, setParticipants] = useState([
-    {
-      user: currentUser,
-      accessType: 'owner',
-    },
-  ]);
+  const owner = { user: currentUser, accessType: 'owner' };
+  const [participants, setParticipants] = useState(
+    currentUser.id ? [owner] : []
+  );
+
+  // In case current user isn't available immediately from the query
+  if (!participants.length && currentUser) setParticipants([owner]);
 
   const handleAdd = user => {
     setParticipants([
@@ -82,7 +92,15 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
     ]);
   };
 
-  const handleRemove = () => {};
+  const handleRemove = userId => {
+    const index = participants.findIndex(p => p.user.id === userId);
+    setParticipants([
+      ...participants.slice(0, index),
+      ...participants.slice(index + 1),
+    ]);
+  };
+
+  const handleCreate = () => {};
 
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen}>
@@ -111,7 +129,11 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
           participants={participants}
           handleRemove={handleRemove}
         />
-        {/* Create Button */}
+        <CreateButton
+          onClick={handleCreate}
+          isDisabled={!title}
+          title="Create"
+        />
       </Contents>
     </StyledModal>
   );

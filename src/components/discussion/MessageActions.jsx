@@ -32,7 +32,7 @@ const ButtonsContainer = styled.div({
 const StyledButton = styled(Button)({
   height: '32px',
   marginLeft: '10px',
-  padding: '4px 25px',
+  padding: '4px 25px 5px',
 });
 
 const MessageActions = ({ handleSubmit, isSubmitting }) => {

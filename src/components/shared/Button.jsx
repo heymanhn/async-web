@@ -12,7 +12,7 @@ const Container = styled.div(({ isDisabled }) => ({
   fontWeight: 500,
   fontSize: '14px',
   letterSpacing: '-0.006em',
-  padding: '9px 25px 10px',
+  padding: '7px 20px 8px',
   userSelect: 'none',
 
   opacity: isDisabled ? 0.5 : 1,
@@ -22,15 +22,17 @@ const StyledSpinner = styled(Spinner)(({ title }) => ({
   margin: `0 ${Math.floor((title.length * 5) / 2)}px`,
 }));
 
-const BlueContainer = styled(Container)(({ theme: { colors } }) => ({
-  backgroundColor: colors.blue,
-  color: colors.white,
+const BlueContainer = styled(Container)(
+  ({ isDisabled, theme: { colors } }) => ({
+    backgroundColor: isDisabled ? colors.grey7 : colors.blue,
+    color: isDisabled ? colors.grey4 : colors.white,
 
-  [StyledSpinner]: {
-    border: `.08em solid ${colors.white}`,
-    borderRightColor: 'transparent',
-  },
-}));
+    [StyledSpinner]: {
+      border: `.08em solid ${colors.white}`,
+      borderRightColor: 'transparent',
+    },
+  })
+);
 
 const LightContainer = styled(Container)(({ theme: { colors } }) => ({
   border: `1px solid ${colors.blue}`,
