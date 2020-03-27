@@ -63,6 +63,8 @@ const useWorkspaceMutations = () => {
   };
 
   const handleAddMember = async (wsId, userId) => {
+    setIsSubmitting(true);
+
     const { data } = await addMember({
       variables: {
         resourceType: 'workspaces',
@@ -80,7 +82,8 @@ const useWorkspaceMutations = () => {
       ],
     });
 
-    if (data.addMember) return Promise.resolve();
+    setIsSubmitting(false);
+    if (data.addMember) {return Promise.resolve();
 
     return Promise.reject(new Error('Failed to add member to workspace'));
   };
