@@ -64,7 +64,8 @@ const NavigationBar = props => {
           {resourceType === 'document' && <DocumentViewMode />}
         </LeftSection>
         <RightSection>
-          {/* <ResourceAccessContainer /> */}
+          {/* TODO (HN): enable for workspaces once implemented */}
+          {resourceType !== 'workspace' && <ResourceAccessContainer />}
           <NotificationsBell />
           {/* <CommandCenter /> */}
         </RightSection>
