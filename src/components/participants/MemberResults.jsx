@@ -19,7 +19,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
 }));
 
 const MemberResults = ({
-  handleAddMember,
+  handleAddSelection,
   members,
   results,
   selectedIndex,
@@ -30,7 +30,7 @@ const MemberResults = ({
       {results.map((result, i) => (
         <MemberRow
           key={result.id}
-          handleAddMember={handleAddMember}
+          handleAddSelection={handleAddSelection}
           index={i}
           isMember={!!members.find(({ id }) => id === result.id)}
           isSelected={selectedIndex === i}
@@ -42,7 +42,7 @@ const MemberResults = ({
   ) : null;
 
 MemberResults.propTypes = {
-  handleAddMember: PropTypes.func.isRequired,
+  handleAddSelection: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   members: PropTypes.array.isRequired,
   selectedIndex: PropTypes.number.isRequired,

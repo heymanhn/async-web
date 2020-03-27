@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
+import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
 import { titleize } from 'utils/helpers';
 import useCurrentUser from 'utils/hooks/useCurrentUser';
 
 import Modal from 'components/shared/Modal';
 import InputWithIcon from 'components/shared/InputWithIcon';
+import OrganizationSearch from 'components/shared/OrganizationSearch';
 import ParticipantsList from 'components/participants/ParticipantsList';
-
-// import OrganizationMemberSearch from './OrganizationMemberSearch';
 
 const ICON_FOR_RESOURCE_TYPE = {
   workspace: 'layer-group',
@@ -57,12 +57,24 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
   const handleHideDropdown = () => setIsDropdownVisible(false);
 
   const [title, setTitle] = useState('');
+
+  // Keep track of the list of participants locally first. Then, add them to the
+  // workspace after it's created.
   const [participants, setParticipants] = useState([
     {
       user: currentUser,
       accessType: 'owner',
     },
   ]);
+
+  const handleAdd = user => {
+    setParticipants([
+      ...participants,
+      { user, accessType: DEFAULT_ACCESS_TYPE },
+    ]);
+  };
+
+  const handleRemove = () => {};
 
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen}>
@@ -77,8 +89,20 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
           value={title}
           setValue={setTitle}
         />
-        {/* // People picker // participants list // Create Button */}
-        <ParticipantsList />
+        <OrganizationSearch
+          isModalOpen={isOpen}
+          isDropdownVisible={isDropdownVisible}
+          currentMembers={participants.map(p => p.user)}
+          handleAdd={handleAdd}
+          handleShowDropdown={handleShowDropdown}
+          handleHideDropdown={handleHideDropdown}
+          handleCloseModal={handleClose}
+        />
+        <ParticipantsList
+          participants={participants}
+          handleRemove={handleRemove}
+        />
+        {/* Create Button */}
       </Contents>
     </StyledModal>
   );

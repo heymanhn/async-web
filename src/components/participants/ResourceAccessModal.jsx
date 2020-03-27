@@ -9,14 +9,13 @@ import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
 import removeMemberMutation from 'graphql/mutations/removeMember';
 import { getLocalAppState } from 'utils/auth';
+import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
 import { DiscussionContext, DocumentContext } from 'utils/contexts';
 
 import Modal from 'components/shared/Modal';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
 import ParticipantsList from './ParticipantsList';
-
-const DEFAULT_ACCESS_TYPE = 'collaborator';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
@@ -92,7 +91,7 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
   const { members } = data.resourceMembers;
   const participants = members || [];
 
-  const handleAddMember = user => {
+  const handleAdd = user => {
     addMember({
       variables: {
         resourceType,
@@ -129,7 +128,7 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
           isModalOpen={isOpen}
           isDropdownVisible={isDropdownVisible}
           currentMembers={participants.map(p => p.user)}
-          handleAddMember={handleAddMember}
+          handleAdd={handleAdd}
           handleShowDropdown={handleShowDropdown}
           handleHideDropdown={handleHideDropdown}
           handleCloseModal={handleClose}

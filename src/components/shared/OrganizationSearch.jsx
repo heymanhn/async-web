@@ -24,7 +24,7 @@ const OrganizationSearch = ({
   isDropdownVisible,
   currentMembers,
 
-  handleAddMember,
+  handleAdd,
   handleShowDropdown,
   handleHideDropdown,
   handleCloseModal,
@@ -71,7 +71,7 @@ const OrganizationSearch = ({
   const handleAddSelection = user => {
     if (currentMembers.find(({ id: pid }) => pid === user.id)) return;
 
-    handleAddMember(user);
+    handleAdd(user);
     setSearchQuery('');
     setSelectedIndex(0);
   };
@@ -149,7 +149,7 @@ OrganizationSearch.propTypes = {
   isDropdownVisible: PropTypes.bool.isRequired,
   currentMembers: PropTypes.array.isRequired,
 
-  handleAddMember: PropTypes.func.isRequired,
+  handleAdd: PropTypes.func.isRequired,
   handleShowDropdown: PropTypes.func.isRequired,
   handleHideDropdown: PropTypes.func.isRequired,
   handleCloseModal: PropTypes.func.isRequired,
