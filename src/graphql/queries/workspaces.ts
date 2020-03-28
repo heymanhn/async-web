@@ -13,6 +13,7 @@ export default gql`
         workspace @type(name: "Workspace") {
           ...WorkspaceObject
         }
+        badgeCount
       }
       totalHits
       pageToken
