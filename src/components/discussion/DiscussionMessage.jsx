@@ -124,7 +124,7 @@ const DiscussionMessage = ({
 
 DiscussionMessage.propTypes = {
   index: PropTypes.number,
-  isUnread: PropTypes.bool.isRequired,
+  isUnread: PropTypes.bool,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
   disableAutoFocus: PropTypes.bool,
@@ -134,6 +134,7 @@ DiscussionMessage.propTypes = {
 
 DiscussionMessage.defaultProps = {
   index: null,
+  isUnread: false,
   mode: 'display',
   message: {},
   disableAutoFocus: false,

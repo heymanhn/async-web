@@ -3,12 +3,11 @@ import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
-import workspacesQuery from 'graphql/queries/workspaces';
-import { WORKSPACES_QUERY_SIZE } from 'utils/constants';
+import resourcesQuery from 'graphql/queries/resources';
+import { RESOURCES_QUERY_SIZE } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
 import { snakedQueryParams } from 'utils/queryParams';
 
-import CreateWorkspaceButton from './CreateWorkspaceButton';
 import ResourceRow from './ResourceRow';
 
 const Container = styled.div({
@@ -29,42 +28,44 @@ const Heading = styled.div(({ theme: { colors } }) => ({
   fontWeight: 500,
 }));
 
-const WorkspacesList = () => {
+const RecentResourcesList = () => {
   const { selectedResourceId } = useContext(NavigationContext);
   const { userId } = getLocalUser();
 
   // TODO (HN): Use paginated resource when we figure out how to paginate
   // workspaces and recent items in the sidebar
-  const { loading, data } = useQuery(workspacesQuery, {
+  const { loading, data } = useQuery(resourcesQuery, {
     variables: {
       userId,
-      queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
+      queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
     },
   });
 
-  if (loading || !data.workspaces) return null;
+  if (loading || !data.resources) return null;
 
-  const { items } = data.workspaces;
-  const workspaces = (items || []).map(i => i.workspace);
-
+  const { items } = data.resources;
   const isResourceSelected = id => id === selectedResourceId;
 
   return (
     <Container>
       <HeadingSection>
-        <Heading>WORKSPACES</Heading>
-        <CreateWorkspaceButton />
+        <Heading>RECENT</Heading>
       </HeadingSection>
-      {workspaces.map(w => (
-        <ResourceRow
-          key={w.id}
-          resourceType="workspace"
-          resource={w}
-          isSelected={isResourceSelected(w.id)}
-        />
-      ))}
+      {items.map(item => {
+        const { document, discussion } = item;
+        const resource = document || discussion;
+        const resourceType = document ? 'document' : 'discussion';
+        return (
+          <ResourceRow
+            key={resource.id}
+            resourceType={resourceType}
+            resource={resource}
+            isSelected={isResourceSelected(resource.id)}
+          />
+        );
+      })}
     </Container>
   );
 };
 
-export default WorkspacesList;
+export default RecentResourcesList;

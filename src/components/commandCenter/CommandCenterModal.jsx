@@ -152,8 +152,6 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
 };
 
 CommandCenterModal.propTypes = {
-  source: PropTypes.oneOf(['inbox', 'workspace', 'document', 'discussion'])
-    .isRequired,
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
 };

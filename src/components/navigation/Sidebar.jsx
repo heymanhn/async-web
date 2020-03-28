@@ -3,8 +3,9 @@ import styled from '@emotion/styled';
 
 import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
 
-import OrganizationSettings from 'components/navigation/OrganizationSettings';
+import OrganizationSettings from './OrganizationSettings';
 import WorkspacesList from './WorkspacesList';
+import RecentResourcesList from './RecentResourcesList';
 
 const Container = styled.div(({ theme: { colors, sidebarWidth } }) => ({
   display: 'flex',
@@ -38,6 +39,7 @@ const Sidebar = () => {
       <Container>
         <StyledOrganizationSettings />
         <WorkspacesList />
+        <RecentResourcesList />
       </Container>
     </NavigationContext.Provider>
   );

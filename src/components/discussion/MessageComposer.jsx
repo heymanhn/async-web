@@ -30,12 +30,12 @@ const Container = styled.div(({ mode }) => ({
   minHeight: mode === 'compose' ? '160px' : 'initial',
 }));
 
-const MessageEditable = styled(Editable)(({ isModal }) => ({
+const MessageEditable = styled(Editable)(({ ismodal }) => ({
   fontSize: '16px',
   fontWeight: 400,
   letterSpacing: '-0.011em',
   lineHeight: '26px',
-  marginTop: isModal ? '0px' : '15px',
+  marginTop: ismodal === 'true' ? '0px' : '15px',
 }));
 
 const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
@@ -84,7 +84,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
       <Slate editor={messageEditor} key={readOnly} {...contentProps}>
         <MessageEditable
           autoFocus={autoFocus}
-          isModal={isModal}
+          ismodal={isModal.toString()}
           readOnly={readOnly}
           {...coreEditorProps}
         />
