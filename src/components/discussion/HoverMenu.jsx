@@ -10,7 +10,7 @@ const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   flexDirection: 'row',
   alignItems: 'center',
 
-  background: colors.bgGrey,
+  background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   cursor: 'pointer',

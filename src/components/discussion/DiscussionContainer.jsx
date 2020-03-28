@@ -18,7 +18,7 @@ import DiscussionThread from './DiscussionThread';
 import AddReplyBox from './AddReplyBox';
 
 const OuterContainer = styled.div(({ theme: { colors } }) => ({
-  background: colors.bgGrey,
+  background: colors.white,
 }));
 
 const ContentContainer = styled.div(({ theme: { discussionViewport } }) => ({

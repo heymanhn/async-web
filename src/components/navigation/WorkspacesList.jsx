@@ -8,7 +8,6 @@ import { WORKSPACES_QUERY_SIZE } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
 import { snakedQueryParams } from 'utils/queryParams';
 
-import NotFound from 'components/navigation/NotFound';
 import CreateWorkspaceButton from './CreateWorkspaceButton';
 import ResourceRow from './ResourceRow';
 
@@ -44,8 +43,7 @@ const WorkspacesList = () => {
     },
   });
 
-  if (loading) return null;
-  if (!data.workspaces) return <NotFound />;
+  if (loading || !data.workspaces) return null;
 
   const { items } = data.workspaces;
   const workspaces = (items || []).map(i => i.workspace);

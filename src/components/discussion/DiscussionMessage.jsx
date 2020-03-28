@@ -16,17 +16,33 @@ import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 import DraftSavedIndicator from './DraftSavedIndicator';
 
-const Container = styled.div(({ mode, theme: { colors } }) => ({
+const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   cursor: 'default',
-  padding: mode === 'edit' ? '20px 30px 15px !important' : '20px 30px 15px',
 }));
 
-const HeaderSection = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
+const HeaderSection = styled.div(
+  ({ theme: { colors } }) => ({
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    background: colors.bgGrey,
+    borderTopLeftRadius: '5px',
+    borderTopRightRadius: '5px',
+    padding: '15px 30px',
+  }),
+  ({ isModal, isUnread, theme: { colors } }) => {
+    if (!isModal) return {};
+    return {
+      background: isUnread ? colors.unreadBlue : colors.white,
+      borderRadius: '0px',
+    };
+  }
+);
+
+const StyledMessageComposer = styled(MessageComposer)({
+  padding: '0px 30px 15px',
 });
 
 const StyledHoverMenu = styled(HoverMenu)({
@@ -34,8 +50,13 @@ const StyledHoverMenu = styled(HoverMenu)({
   right: '0px',
 });
 
+const StyledMessageReactions = styled(MessageReactions)({
+  padding: '0 30px 20px',
+});
+
 const DiscussionMessage = ({
   index, // Used only by <DiscussionThread /> to see which message is selected
+  isUnread,
   mode: initialMode,
   message,
   disableAutoFocus,
@@ -43,7 +64,7 @@ const DiscussionMessage = ({
   handleCancel,
   ...props
 }) => {
-  const { draft, modalRef } = useContext(DiscussionContext);
+  const { draft, isModal } = useContext(DiscussionContext);
 
   const [mode, setMode] = useState(initialMode);
   const { hover, ...hoverProps } = useHover(mode === 'display');
@@ -53,17 +74,17 @@ const DiscussionMessage = ({
   const author = message.author || currentUser || (draft && draft.author);
   const isAuthor = currentUser.id === author.id;
 
-  function loadInitialContent() {
+  const loadInitialContent = () => {
     if (mode !== 'compose') return body.payload;
 
     return draft ? draft.body.payload : null;
-  }
+  };
 
-  function handleCancelWrapper() {
+  const handleCancelWrapper = () => {
     if (mode === 'edit') setMode('display');
 
     handleCancel();
-  }
+  };
 
   const value = {
     ...DEFAULT_MESSAGE_CONTEXT,
@@ -76,14 +97,9 @@ const DiscussionMessage = ({
   };
 
   return (
-    <Container
-      mode={mode}
-      isModal={!!modalRef.current}
-      {...hoverProps}
-      {...props}
-    >
+    <Container isModal={isModal} {...hoverProps} {...props}>
       <MessageContext.Provider value={value}>
-        <HeaderSection>
+        <HeaderSection isModal={isModal} isUnread={isUnread}>
           <AuthorDetails
             author={author}
             createdAt={createdAt}
@@ -96,11 +112,11 @@ const DiscussionMessage = ({
             {mode === 'compose' && <DraftSavedIndicator />}
           </div>
         </HeaderSection>
-        <MessageComposer
+        <StyledMessageComposer
           initialMessage={loadInitialContent()}
           autoFocus={mode !== 'display' && !disableAutoFocus}
         />
-        {mode === 'display' && <MessageReactions />}
+        {mode === 'display' && <StyledMessageReactions />}
       </MessageContext.Provider>
     </Container>
   );
@@ -108,6 +124,7 @@ const DiscussionMessage = ({
 
 DiscussionMessage.propTypes = {
   index: PropTypes.number,
+  isUnread: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
   disableAutoFocus: PropTypes.bool,

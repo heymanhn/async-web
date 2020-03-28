@@ -20,7 +20,7 @@ const Container = styled.div(
     justifyContent: 'space-between',
     alignItems: 'center',
 
-    background: colors.white,
+    background: colors.bgGrey,
     border: `1px solid ${colors.borderGrey}`,
     borderRadius: '5px',
     boxShadow: `0px 0px 3px ${colors.grey7}`,
