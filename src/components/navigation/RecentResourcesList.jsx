@@ -52,7 +52,7 @@ const RecentResourcesList = () => {
         <Heading>RECENT</Heading>
       </HeadingSection>
       {items.map(item => {
-        const { document, discussion } = item;
+        const { document, discussion, badgeCount } = item;
         const resource = document || discussion;
         const resourceType = document ? 'document' : 'discussion';
         return (
@@ -60,6 +60,7 @@ const RecentResourcesList = () => {
             key={resource.id}
             resourceType={resourceType}
             resource={resource}
+            badgeCount={badgeCount}
             isSelected={isResourceSelected(resource.id)}
           />
         );

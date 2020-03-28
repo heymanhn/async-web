@@ -45,7 +45,6 @@ const WorkspacesList = () => {
   if (loading || !data.workspaces) return null;
 
   const { items } = data.workspaces;
-  const workspaces = (items || []).map(i => i.workspace);
 
   const isResourceSelected = id => id === selectedResourceId;
 
@@ -55,12 +54,13 @@ const WorkspacesList = () => {
         <Heading>WORKSPACES</Heading>
         <CreateWorkspaceButton />
       </HeadingSection>
-      {workspaces.map(w => (
+      {items.map(i => (
         <ResourceRow
-          key={w.id}
+          key={i.workspace.id}
           resourceType="workspace"
-          resource={w}
-          isSelected={isResourceSelected(w.id)}
+          resource={i.workspace}
+          badgeCount={i.badgeCount}
+          isSelected={isResourceSelected(i.workspace.id)}
         />
       ))}
     </Container>

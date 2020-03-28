@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import { titleize } from 'utils/helpers';
+import UnreadIndicator from 'components/shared/UnreadIndicator';
 
 const ICONS = {
   discussion: 'comments-alt',
@@ -45,14 +46,27 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const ResourceRow = ({ isSelected, resourceType, resource, ...props }) => {
+const StyledIndicator = styled(UnreadIndicator)({
+  marginRight: '5px',
+  marginTop: '8px',
+});
+
+const ResourceRow = ({
+  isSelected,
+  resourceType,
+  resource,
+  badgeCount,
+  ...props
+}) => {
   const { id, title, topic } = resource;
   const resourceTitle = title || (topic && topic.text);
+  const isUnread = badgeCount > 0;
 
   // TODO: Read/unread state, once backend gives enough info
   return (
     <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
-      <Container isSelected={isSelected} {...props}>
+      <Container isSelected={isSelected} isUnread={isUnread} {...props}>
+        {isUnread && <StyledIndicator diameter={6} />}
         {resourceType !== 'workspace' && (
           <IconContainer>
             <StyledIcon icon={ICONS[resourceType]} />
@@ -71,6 +85,7 @@ ResourceRow.propTypes = {
   resourceType: PropTypes.oneOf(['workspace', 'document', 'discussion'])
     .isRequired,
   resource: PropTypes.object.isRequired,
+  badgeCount: PropTypes.number.isRequired,
 };
 
 export default ResourceRow;
