@@ -12,6 +12,7 @@ export const DISCUSSION_ACCESS_EVENT = 'access_discussion';
 export const DOCUMENT_EDIT_EVENT = 'edit_document';
 export const DISCUSSION_EDIT_EVENT = 'edit_discussion';
 export const DISCUSSION_RESOLVE_EVENT = 'resolve_discussion';
+export const BADGE_COUNT_EVENT = 'badge_count';
 
 export const VIEW_MODES = [
   {
