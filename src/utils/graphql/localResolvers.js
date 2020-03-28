@@ -1,3 +1,7 @@
+import { WORKSPACES_QUERY_SIZE, RESOURCES_QUERY_SIZE } from 'utils/constants';
+import { getLocalUser } from 'utils/auth';
+import { snakedQueryParams } from 'utils/queryParams';
+
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
@@ -5,8 +9,8 @@ import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 import inboxQuery from 'graphql/queries/inbox';
-
-import { getLocalUser } from 'utils/auth';
+import workspacesQuery from 'graphql/queries/workspaces';
+import resourcesQuery from 'graphql/queries/resources';
 
 const addDraftToDiscussion = (_root, { discussionId, draft }, { client }) => {
   const data = client.readQuery({
@@ -293,7 +297,7 @@ const removeFromWorkspace = (_root, { resource }, { client }) => {
   return null;
 };
 
-const updateBadgeCount = (_root, { userId, notification }, { client }) => {
+const updateNotifications = (_root, { userId, notification }, { client }) => {
   const data = client.readQuery({
     query: notificationsQuery,
     variables: { id: userId },
@@ -394,6 +398,92 @@ const deleteDiscussionFromDocument = (
   });
 
   return null;
+};
+
+const updateBadgeCount = (
+  _root,
+  { resourceType, resourceId, incrementBy },
+  { client }
+) => {
+  const { userId } = getLocalUser();
+
+  if (resourceType === 'workspace_id') {
+    const {
+      workspaces: { pageToken, items, __typename },
+    } = client.readQuery({
+      query: workspacesQuery,
+      variables: {
+        userId,
+        queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
+      },
+    });
+
+    const index = items.findIndex(i => i.workspace.id === resourceId);
+    const workspaceItem = items[index];
+    const updatedWorkspaceItem = {
+      ...workspaceItem,
+      badgeCount: workspaceItem.badgeCount + incrementBy,
+    };
+
+    client.writeQuery({
+      query: workspacesQuery,
+      variables: {
+        userId,
+        queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
+      },
+      data: {
+        workspaces: {
+          pageToken,
+          items: [
+            ...items.slice(0, index),
+            updatedWorkspaceItem,
+            ...items.slice(index + 1),
+          ],
+          __typename,
+        },
+      },
+    });
+  } else {
+    const {
+      workspaces: { pageToken, items, __typename },
+    } = client.readQuery({
+      query: resourcesQuery,
+      variables: {
+        userId,
+        queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
+      },
+    });
+
+    const index = items.findIndex(item => {
+      const { document, discussion } = item;
+      const resource = document || discussion;
+      return resource.id === resourceId;
+    });
+    const resourceItem = items[index];
+    const updatedResourceItem = {
+      ...resourceItem,
+      badgeCount: resourceItem.badgeCount + incrementBy,
+    };
+
+    client.writeQuery({
+      query: resourcesQuery,
+      variables: {
+        userId,
+        queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
+      },
+      data: {
+        workspaces: {
+          pageToken,
+          items: [
+            ...items.slice(0, index),
+            updatedResourceItem,
+            ...items.slice(index + 1),
+          ],
+          __typename,
+        },
+      },
+    });
+  }
 };
 
 const markDiscussionAsRead = (_root, { discussionId }, { client }) => {
@@ -498,6 +588,7 @@ const localResolvers = {
     removeMember,
     addToWorkspace,
     removeFromWorkspace,
+    updateNotifications,
     updateBadgeCount,
     deleteMessageFromDiscussion,
     deleteDiscussionFromDocument,
