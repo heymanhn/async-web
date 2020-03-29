@@ -5,6 +5,8 @@ import styled from '@emotion/styled';
 
 import workspaceQuery from 'graphql/queries/workspace';
 import { DEFAULT_WORKSPACE_CONTEXT, WorkspaceContext } from 'utils/contexts';
+import { matchCurrentUserId } from 'utils/auth';
+import useViewedReaction from 'utils/hooks/useViewedReaction';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import NavigationBar from 'components/navigation/NavigationBar';
@@ -28,6 +30,7 @@ const InnerContainer = styled.div(
 const WorkspaceContainer = ({ workspaceId }) => {
   useUpdateSelectedResource(workspaceId);
   const [viewMode, setViewMode] = useState('all');
+  const { markAsRead } = useViewedReaction();
 
   const { loading, data } = useQuery(workspaceQuery, {
     variables: { workspaceId },
@@ -36,7 +39,21 @@ const WorkspaceContainer = ({ workspaceId }) => {
   if (loading) return null;
   if (!data.workspace) return <NotFound />;
 
-  const { title } = data.workspace;
+  const { id, title, reactions } = data.workspace;
+
+  const hasCurrentUserViewed = () => {
+    return !!(reactions || []).find(
+      r => r.code === 'viewed' && matchCurrentUserId(r.author.id)
+    );
+  };
+
+  if (!hasCurrentUserViewed()) {
+    markAsRead({
+      isUnread: true,
+      resourceType: 'workspace',
+      resourceId: id,
+    });
+  }
 
   const value = {
     ...DEFAULT_WORKSPACE_CONTEXT,
