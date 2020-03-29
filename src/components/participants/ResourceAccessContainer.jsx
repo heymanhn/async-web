@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
@@ -60,7 +61,7 @@ const ResourceAccessContainer = () => {
 
   // TODO (HN): Include number of workspaces in the count later
   const { data } = useQuery(resourceMembersQuery, {
-    variables: { resourceType, resourceId },
+    variables: { resourceType: Pluralize(resourceType), resourceId },
     fetchPolicy: 'cache-and-network',
   });
 

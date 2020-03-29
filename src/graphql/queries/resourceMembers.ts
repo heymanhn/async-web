@@ -6,7 +6,7 @@ export default gql`
     resourceMembers(resourceType: $resourceType, resourceId: $resourceId)
       @rest(
         type: "ResourceMembers"
-        path: "/{args.resourceType}s/{args.resourceId}/members"
+        path: "/{args.resourceType}/{args.resourceId}/members"
         method: "GET"
       ) {
       members @type(name: "[Member]") {

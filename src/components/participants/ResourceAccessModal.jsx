@@ -1,15 +1,16 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/react-hooks';
+import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import addMemberMutation from 'graphql/mutations/addMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
 import removeMemberMutation from 'graphql/mutations/removeMember';
-
 import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
+import { titleize } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
@@ -23,9 +24,8 @@ const StyledModal = styled(Modal)({
 });
 
 const Header = styled.div(({ theme: { colors } }) => ({
-  borderBottom: `1px solid ${colors.borderGrey}`,
-  color: colors.grey4,
-  fontSize: '16px',
+  color: colors.grey1,
+  fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '-0.011em',
   padding: '15px 25px',
@@ -33,10 +33,11 @@ const Header = styled.div(({ theme: { colors } }) => ({
 
 const ResourceTitle = styled.span({
   fontWeight: 600,
+  marginLeft: '4px',
 });
 
 const Contents = styled.div({
-  padding: '20px 25px 25px',
+  padding: '0 25px 25px',
 });
 
 const StyledOrganizationSearch = styled(OrganizationSearch)({
@@ -48,6 +49,7 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   const {
     resource: { resourceType, resourceId, resourceQuery, createVariables },
   } = useContext(NavigationContext);
+  const resourceMembersType = Pluralize(resourceType);
 
   // Putting the state here so that clicking anywhere on the modal
   // dismisses the dropdown
@@ -60,13 +62,13 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
 
   const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
     variables: {
-      resourceType,
+      resourceType: resourceMembersType,
       id: resourceId,
     },
   });
   const [removeMember] = useMutation(removeMemberMutation, {
     variables: {
-      resourceType,
+      resourceType: resourceMembersType,
       id: resourceId,
     },
   });
@@ -77,12 +79,12 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   if (!data || !data[resourceType]) return null;
   const { title, topic } = data[resourceType];
   const { text } = topic || {};
-  const resourceTitle = title || text;
+  const resourceTitle = title || text || `Untitled ${titleize(resourceType)}`;
 
   const handleAdd = user => {
     addMember({
       variables: {
-        resourceType,
+        resourceType: resourceMembersType,
         resourceId,
         input: {
           userId: user.id,
@@ -93,7 +95,7 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
 
     localAddMember({
       variables: {
-        resourceType,
+        resourceType: resourceMembersType,
         resourceId,
         user,
         accessType: DEFAULT_ACCESS_TYPE,
@@ -109,7 +111,8 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen}>
       <Header onClick={handleHideDropdown}>
-        {`Share ${(<ResourceTitle>{resourceTitle}</ResourceTitle>)}`}
+        Share
+        <ResourceTitle>{resourceTitle}</ResourceTitle>
       </Header>
       <Contents onClick={handleHideDropdown}>
         <StyledOrganizationSearch
