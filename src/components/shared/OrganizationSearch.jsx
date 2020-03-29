@@ -37,7 +37,7 @@ const OrganizationSearch = ({
   const { organizationId: id } = getLocalAppState();
 
   const { loading, data } = useQuery(resourceMembersQuery, {
-    variables: { resourceType: 'organizations', id },
+    variables: { resourceType: 'organizations', resourceId: id },
   });
 
   if (loading || !data.resourceMembers) return null;

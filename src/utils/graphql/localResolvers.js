@@ -188,12 +188,12 @@ const addPendingMessagesToDiscussion = (
 
 const addMember = (
   _root,
-  { resourceType, id, user, accessType },
+  { resourceType, resourceId, user, accessType },
   { client }
 ) => {
   const data = client.readQuery({
     query: resourceMembersQuery,
-    variables: { resourceType, id },
+    variables: { resourceType, resourceId },
   });
   if (!data) return null;
 
@@ -208,7 +208,7 @@ const addMember = (
 
   client.writeQuery({
     query: resourceMembersQuery,
-    variables: { resourceType, id },
+    variables: { resourceType, resourceId },
     data: {
       resourceMembers: {
         members: [...members, newMember],
@@ -220,10 +220,14 @@ const addMember = (
   return null;
 };
 
-const removeMember = (_root, { resourceType, id, userId }, { client }) => {
+const removeMember = (
+  _root,
+  { resourceType, resourceId, userId },
+  { client }
+) => {
   const data = client.readQuery({
     query: resourceMembersQuery,
-    variables: { resourceType, id },
+    variables: { resourceType, resourceId },
   });
   if (!data) return null;
 
@@ -235,7 +239,7 @@ const removeMember = (_root, { resourceType, id, userId }, { client }) => {
 
   client.writeQuery({
     query: resourceMembersQuery,
-    variables: { resourceType, id },
+    variables: { resourceType, resourceId },
     data: {
       resourceMembers: {
         members: [...members.slice(0, index), ...members.slice(index + 1)],

@@ -3,14 +3,13 @@ import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
-import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import addMemberMutation from 'graphql/mutations/addMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
 import removeMemberMutation from 'graphql/mutations/removeMember';
-import { getLocalAppState } from 'utils/auth';
+
 import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
-import { DiscussionContext, DocumentContext } from 'utils/contexts';
+import { NavigationContext } from 'utils/contexts';
 
 import Modal from 'components/shared/Modal';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
@@ -25,11 +24,16 @@ const StyledModal = styled(Modal)({
 
 const Header = styled.div(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
+  color: colors.grey4,
   fontSize: '16px',
   fontWeight: 500,
   letterSpacing: '-0.011em',
   padding: '15px 25px',
 }));
+
+const ResourceTitle = styled.span({
+  fontWeight: 600,
+});
 
 const Contents = styled.div({
   padding: '20px 25px 25px',
@@ -40,11 +44,10 @@ const StyledOrganizationSearch = styled(OrganizationSearch)({
   marginRight: '-25px',
 });
 
-const ResourceAccessModal = ({ handleClose, isOpen }) => {
-  const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
-  const resourceType = documentId ? 'documents' : 'discussions';
-  const resourceId = documentId || discussionId;
+const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
+  const {
+    resource: { resourceType, resourceId, resourceQuery, createVariables },
+  } = useContext(NavigationContext);
 
   // Putting the state here so that clicking anywhere on the modal
   // dismisses the dropdown
@@ -68,28 +71,19 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
     },
   });
 
-  // Prefetch the data so that the input field loads at the same time as the
-  // participants list
-  const { organizationId: id } = getLocalAppState();
-  useQuery(resourceMembersQuery, {
-    variables: { resourceType: 'organizations', id },
+  const { data } = useQuery(resourceQuery, {
+    variables: createVariables(resourceId),
   });
-
-  const { loading, data } = useQuery(resourceMembersQuery, {
-    variables: { resourceType, id: resourceId },
-    fetchPolicy: 'cache-and-network',
-  });
-
-  if (loading || !data || !data.resourceMembers) return null;
-
-  const { members } = data.resourceMembers;
-  const participants = members || [];
+  if (!data || !data[resourceType]) return null;
+  const { title, topic } = data[resourceType];
+  const { text } = topic || {};
+  const resourceTitle = title || text;
 
   const handleAdd = user => {
     addMember({
       variables: {
         resourceType,
-        id: resourceId,
+        resourceId,
         input: {
           userId: user.id,
           accessType: DEFAULT_ACCESS_TYPE,
@@ -100,7 +94,7 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
     localAddMember({
       variables: {
         resourceType,
-        id: resourceId,
+        resourceId,
         user,
         accessType: DEFAULT_ACCESS_TYPE,
       },
@@ -115,7 +109,7 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen}>
       <Header onClick={handleHideDropdown}>
-        {`Share this ${documentId ? 'Document' : 'Discussion'}`}
+        {`Share ${(<ResourceTitle>{resourceTitle}</ResourceTitle>)}`}
       </Header>
       <Contents onClick={handleHideDropdown}>
         <StyledOrganizationSearch
@@ -140,6 +134,7 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
 ResourceAccessModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  participants: PropTypes.array.isRequired,
 };
 
 export default ResourceAccessModal;

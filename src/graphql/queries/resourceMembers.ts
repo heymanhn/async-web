@@ -2,11 +2,11 @@ import gql from 'graphql-tag';
 import user from 'graphql/fragments/user';
 
 export default gql`
-  query ResourceMembers($resourceType: String!, $id: String!) {
-    resourceMembers(resourceType: $resourceType, id: $id)
+  query ResourceMembers($resourceType: String!, $resourceId: String!) {
+    resourceMembers(resourceType: $resourceType, resourceId: $resourceId)
       @rest(
         type: "ResourceMembers"
-        path: "/{args.resourceType}/{args.id}/members"
+        path: "/{args.resourceType}s/{args.resourceId}/members"
         method: "GET"
       ) {
       members @type(name: "[Member]") {

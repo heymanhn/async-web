@@ -12,7 +12,7 @@ const useResourceDetails = (type, resource) => {
   const { id } = resource;
 
   const { loading, data } = useQuery(resourceMembersQuery, {
-    variables: { id, resourceType: Pluralize(type) },
+    variables: { resourceType: Pluralize(type), resourceId: id },
   });
 
   if (loading) return null;
