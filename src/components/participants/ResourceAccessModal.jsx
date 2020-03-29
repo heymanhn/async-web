@@ -63,13 +63,13 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
     variables: {
       resourceType: resourceMembersType,
-      id: resourceId,
+      resourceId,
     },
   });
   const [removeMember] = useMutation(removeMemberMutation, {
     variables: {
       resourceType: resourceMembersType,
-      id: resourceId,
+      resourceId,
     },
   });
 

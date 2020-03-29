@@ -3,9 +3,13 @@ import gql from 'graphql-tag';
 export default gql`
   mutation RemoveMember(
     $resourceType: String!
-    $id: String!
+    $resourceId: String!
     $userId: String!
   ) {
-    removeMember(resourceType: $resourceType, id: $id, userId: $userId) @client
+    removeMember(
+      resourceType: $resourceType
+      resourceId: $resourceId
+      userId: $userId
+    ) @client
   }
 `;
