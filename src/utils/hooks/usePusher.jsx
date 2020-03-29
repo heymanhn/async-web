@@ -6,6 +6,7 @@ import camelcaseKeys from 'camelcase-keys';
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import addNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
 import updateNotificationMutation from 'graphql/mutations/local/updateNotifications';
+import updateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
 import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
 
 import { getLocalUser } from 'utils/auth';
@@ -45,7 +46,7 @@ const usePusher = () => {
       const { resourceType, resourceId, incrementBy } = camelData;
 
       client.mutate({
-        mutation: updateNotificationMutation,
+        mutation: updateBadgeCountMutation,
         variables: { resourceType, resourceId, incrementBy },
       });
     };

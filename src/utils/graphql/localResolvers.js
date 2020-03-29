@@ -363,7 +363,7 @@ const updateBadgeCount = (
 
   if (resourceType === 'workspace_id') {
     const {
-      workspaces: { pageToken, items, __typename },
+      workspaces: { pageToken, items, totalHits, __typename },
     } = client.readQuery({
       query: workspacesQuery,
       variables: {
@@ -394,12 +394,13 @@ const updateBadgeCount = (
             ...items.slice(index + 1),
           ],
           __typename,
+          totalHits,
         },
       },
     });
   } else {
     const {
-      workspaces: { pageToken, items, __typename },
+      resources: { pageToken, items, totalHits, __typename },
     } = client.readQuery({
       query: resourcesQuery,
       variables: {
@@ -426,7 +427,7 @@ const updateBadgeCount = (
         queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
       },
       data: {
-        workspaces: {
+        resources: {
           pageToken,
           items: [
             ...items.slice(0, index),
@@ -434,6 +435,7 @@ const updateBadgeCount = (
             ...items.slice(index + 1),
           ],
           __typename,
+          totalHits,
         },
       },
     });
