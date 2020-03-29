@@ -407,7 +407,7 @@ const updateBadgeCount = (
 ) => {
   const { userId } = getLocalUser();
 
-  if (resourceType === 'workspace_id') {
+  if (resourceType === 'workspace') {
     const {
       workspaces: { pageToken, items, totalHits, __typename },
     } = client.readQuery({
@@ -419,6 +419,8 @@ const updateBadgeCount = (
     });
 
     const index = items.findIndex(i => i.workspace.id === resourceId);
+    if (index < 0) return;
+
     const workspaceItem = items[index];
     const updatedWorkspaceItem = {
       ...workspaceItem,
@@ -458,8 +460,11 @@ const updateBadgeCount = (
     const index = items.findIndex(item => {
       const { document, discussion } = item;
       const resource = document || discussion;
+
       return resource.id === resourceId;
     });
+    if (index < 0) return;
+
     const resourceItem = items[index];
     const updatedResourceItem = {
       ...resourceItem,

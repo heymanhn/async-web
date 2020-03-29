@@ -1,8 +1,10 @@
 import { useApolloClient } from '@apollo/react-hooks';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
+import updateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
 import markDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';
 import notificationsQuery from 'graphql/queries/notifications';
+import discussionQuery from 'graphql/queries/discussion';
 import documentQuery from 'graphql/queries/document';
 import { getLocalUser } from 'utils/auth';
 
@@ -42,6 +44,7 @@ const useViewedReaction = () => {
       // in the meeting space page
       update: () => {
         if (!isUnread) return;
+        const incrementBy = -1;
 
         if (resourceType === 'discussion') {
           client.mutate({
@@ -49,6 +52,28 @@ const useViewedReaction = () => {
             variables: {
               discussionId: resourceId,
             },
+          });
+
+          // check if it's an inline discussion
+          const data = client.readQuery({
+            query: discussionQuery,
+            variables: { discussionId: resourceId },
+          });
+          if (!data.discussion) return;
+          const { documentId } = data.discussion;
+
+          client.mutate({
+            mutation: updateBadgeCountMutation,
+            variables: {
+              resourceType,
+              resourceId: documentId || resourceId,
+              incrementBy,
+            },
+          });
+        } else {
+          client.mutate({
+            mutation: updateBadgeCountMutation,
+            variables: { resourceType, resourceId, incrementBy },
           });
         }
       },
