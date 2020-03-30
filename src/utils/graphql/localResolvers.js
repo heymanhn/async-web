@@ -193,12 +193,12 @@ const addPendingMessagesToDiscussion = (
 
 const addMember = (
   _root,
-  { resourceType, id, user, accessType },
+  { resourceType, resourceId, user, accessType },
   { client }
 ) => {
   const data = client.readQuery({
     query: resourceMembersQuery,
-    variables: { resourceType, id },
+    variables: { resourceType, resourceId },
   });
   if (!data) return null;
 
@@ -213,7 +213,7 @@ const addMember = (
 
   client.writeQuery({
     query: resourceMembersQuery,
-    variables: { resourceType, id },
+    variables: { resourceType, resourceId },
     data: {
       resourceMembers: {
         members: [...members, newMember],
@@ -225,10 +225,14 @@ const addMember = (
   return null;
 };
 
-const removeMember = (_root, { resourceType, id, userId }, { client }) => {
+const removeMember = (
+  _root,
+  { resourceType, resourceId, userId },
+  { client }
+) => {
   const data = client.readQuery({
     query: resourceMembersQuery,
-    variables: { resourceType, id },
+    variables: { resourceType, resourceId },
   });
   if (!data) return null;
 
@@ -240,13 +244,55 @@ const removeMember = (_root, { resourceType, id, userId }, { client }) => {
 
   client.writeQuery({
     query: resourceMembersQuery,
-    variables: { resourceType, id },
+    variables: { resourceType, resourceId },
     data: {
       resourceMembers: {
         members: [...members.slice(0, index), ...members.slice(index + 1)],
         __typename,
       },
     },
+  });
+
+  return null;
+};
+
+const addToWorkspace = (_root, { resource, workspaceId }, { client }) => {
+  const { resourceType, resourceId, resourceQuery, createVariables } = resource;
+  const data = client.readQuery({
+    query: resourceQuery,
+    variables: createVariables(resourceId),
+  });
+  if (!data) return null;
+
+  const newResource = { ...data[resourceType], workspaces: [workspaceId] };
+  const newData = {};
+  newData[resourceType] = newResource;
+
+  client.writeQuery({
+    query: resourceQuery,
+    variables: createVariables(resourceId),
+    data: newData,
+  });
+
+  return null;
+};
+
+const removeFromWorkspace = (_root, { resource }, { client }) => {
+  const { resourceType, resourceId, resourceQuery, createVariables } = resource;
+  const data = client.readQuery({
+    query: resourceQuery,
+    variables: createVariables(resourceId),
+  });
+  if (!data) return null;
+
+  const newResource = { ...data[resourceType], workspaces: null };
+  const newData = {};
+  newData[resourceType] = newResource;
+
+  client.writeQuery({
+    query: resourceQuery,
+    variables: createVariables(resourceId),
+    data: newData,
   });
 
   return null;
@@ -610,6 +656,8 @@ const localResolvers = {
     addPendingMessagesToDiscussion,
     addMember,
     removeMember,
+    addToWorkspace,
+    removeFromWorkspace,
     updateNotifications,
     updateBadgeCount,
     deleteMessageFromDiscussion,

@@ -27,12 +27,14 @@ const StyledAvatar = styled(Avatar)({
 
 const Label = styled.div(({ theme: { colors } }) => ({
   color: colors.grey0,
+  cursor: 'default',
   fontSize: '14px',
   letterSpacing: '-0.006em',
 }));
 
 const Name = styled.div(({ theme: { colors } }) => ({
   color: colors.grey0,
+  cursor: 'default',
   fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '-0.006em',
