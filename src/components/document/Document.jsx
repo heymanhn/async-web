@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
+import useMountEffect from 'utils/hooks/useMountEffect';
 import { DocumentContext } from 'utils/contexts';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 
@@ -28,6 +29,16 @@ const Document = () => {
 
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
 
+  useMountEffect(() => {
+    return () => {
+      markAsRead({
+        isUnread: true,
+        resourceType: 'document',
+        resourceId: documentId,
+      });
+    };
+  });
+
   const { loading, error, data } = useQuery(documentQuery, {
     variables: { documentId },
   });
@@ -37,12 +48,6 @@ const Document = () => {
 
   const { body, title, updatedAt } = data.document;
   const { payload: content } = body || {};
-
-  markAsRead({
-    isUnread: true,
-    resourceType: 'document',
-    resourceId: documentId,
-  });
 
   // Initialize the state here
   if (!updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
