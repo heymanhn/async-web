@@ -5,7 +5,7 @@ export default gql`
     addToWorkspace(workspaceId: $workspaceId, input: $input)
       @rest(
         type: "AddToWorkspace"
-        path: "/workspaces/{args.workspaceId}/resource"
+        path: "/workspaces/{args.workspaceId}/resources"
         method: "POST"
       ) {
       success

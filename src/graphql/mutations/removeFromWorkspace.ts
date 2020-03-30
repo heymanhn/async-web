@@ -5,7 +5,7 @@ export default gql`
     removeFromWorkspace(workspaceId: $workspaceId, queryParams: $queryParams)
       @rest(
         type: "RemoveFromWorkspace"
-        path: "/workspaces/{args.workspaceId}/resource?{args.queryParams}"
+        path: "/workspaces/{args.workspaceId}/resources?{args.queryParams}"
         method: "DELETE"
       ) {
       success
