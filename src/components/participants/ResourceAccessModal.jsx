@@ -15,6 +15,7 @@ import { titleize } from 'utils/helpers';
 import Modal from 'components/shared/Modal';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
 import ParticipantsList from './ParticipantsList';
+import WorkspaceRow from './WorkspaceRow';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
@@ -77,9 +78,10 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
     variables: createVariables(resourceId),
   });
   if (!data || !data[resourceType]) return null;
-  const { title, topic } = data[resourceType];
+  const { title, topic, workspaces } = data[resourceType];
   const { text } = topic || {};
   const resourceTitle = title || text || `Untitled ${titleize(resourceType)}`;
+  const currentWorkspaceId = workspaces ? workspaces[0] : null;
 
   const handleAdd = user => {
     addMember({
@@ -103,9 +105,14 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
     });
   };
 
-  const handleRemove = userId => {
-    removeMember({ variables: { userId } });
-    localRemoveMember({ variables: { userId } });
+  const handleRemove = (type, id) => {
+    if (type === 'participant') {
+      removeMember({ variables: { userId: id } });
+      localRemoveMember({ variables: { userId: id } });
+    }
+    if (type === 'workspace') {
+      // TODO
+    }
   };
 
   return (
@@ -129,6 +136,9 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
           participants={participants}
           handleRemove={handleRemove}
         />
+        {currentWorkspaceId && (
+          <WorkspaceRow workspaceId={currentWorkspaceId} />
+        )}
       </Contents>
     </StyledModal>
   );

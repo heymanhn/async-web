@@ -27,12 +27,14 @@ const StyledAvatar = styled(Avatar)({
 
 const Label = styled.div(({ theme: { colors } }) => ({
   color: colors.grey0,
+  cursor: 'default',
   fontSize: '14px',
   letterSpacing: '-0.006em',
 }));
 
 const Name = styled.div(({ theme: { colors } }) => ({
   color: colors.grey0,
+  cursor: 'default',
   fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '-0.006em',
@@ -52,7 +54,7 @@ const RemoveButton = styled.div(({ theme: { colors } }) => ({
 const ParticipantRow = ({ accessType, user, handleRemove }) => {
   const { fullName, id, profilePictureUrl } = user;
 
-  const handleRemoveWrapper = () => handleRemove(id);
+  const handleRemoveWrapper = () => handleRemove('participant', id);
 
   const removeParticipantButton = (
     <RemoveButton onClick={handleRemoveWrapper}>remove</RemoveButton>

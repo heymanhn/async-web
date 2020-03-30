@@ -105,7 +105,7 @@ const OrganizationSearch = ({
   const handleAddSelection = obj => {
     const { type, id: objId } = obj;
     if (currentMembers.find(({ id: pid }) => pid === objId)) return;
-    // TODO: If the resource is already part of the workspace, return
+    if (currentWorkspaceId === objId) return;
 
     if (type === 'member') handleAdd(obj);
     // TODO: if (type === 'workspace') handleAddWorkspace(obj);
