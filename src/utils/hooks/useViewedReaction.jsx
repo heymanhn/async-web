@@ -81,8 +81,8 @@ const useViewedReaction = () => {
         client.mutate({
           mutation: updateBadgeCountMutation,
           variables: {
-            resourceType,
-            resourceId: notificationResourceId,
+            resourceType: workspaceId ? 'workspace' : resourceType,
+            resourceId: workspaceId || notificationResourceId,
             incrementBy,
           },
         });

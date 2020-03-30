@@ -598,13 +598,13 @@ const markWorkspaceResourceAsReadByTab = (
   { workspaceId, resourceType, resourceId },
   client
 ) => {
-  const {
-    workspaceResources: { items, pageToken, __typename },
-  } = client.readQuery({
+  const data = client.readQuery({
     query: workspaceResourcesQuery,
     variables: { workspaceId, queryParams: { type } },
   });
+  if (!data.workspaceResources) return;
 
+  const { items, pageToken, __typename } = data.workspaceResources;
   const index = items.findIndex(item => {
     const resource = item[resourceType];
     return resource && resource.id === resourceId;
