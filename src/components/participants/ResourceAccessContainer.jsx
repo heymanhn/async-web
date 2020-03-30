@@ -59,7 +59,6 @@ const ResourceAccessContainer = () => {
     },
   });
 
-  // TODO (HN): Include number of workspaces in the count later
   const { data } = useQuery(resourceMembersQuery, {
     variables: { resourceType: Pluralize(resourceType), resourceId },
     fetchPolicy: 'cache-and-network',
