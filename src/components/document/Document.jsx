@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
 import { DocumentContext } from 'utils/contexts';
-import { matchCurrentUserId } from 'utils/auth';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 
 import NotFound from 'components/navigation/NotFound';
