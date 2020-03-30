@@ -1,38 +1,49 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/react-hooks';
+import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
-import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import addMemberMutation from 'graphql/mutations/addMember';
+import removeMemberMutation from 'graphql/mutations/removeMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
-import removeMemberMutation from 'graphql/mutations/removeMember';
-import { getLocalAppState } from 'utils/auth';
+import addToWorkspaceMtn from 'graphql/mutations/addToWorkspace';
+import removeFromWorkspaceMtn from 'graphql/mutations/removeFromWorkspace';
+import localAddToWorkspaceMtn from 'graphql/mutations/local/addToWorkspace';
+import localRemoveFromWorkspaceMtn from 'graphql/mutations/local/removeFromWorkspace';
 import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
-import { DiscussionContext, DocumentContext } from 'utils/contexts';
+import { NavigationContext } from 'utils/contexts';
+import { titleize } from 'utils/helpers';
+import { snakedQueryParams } from 'utils/queryParams';
 
 import Modal from 'components/shared/Modal';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
 import ParticipantsList from './ParticipantsList';
+import WorkspaceRow from './WorkspaceRow';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
 
   margin: `${window.innerHeight * 0.2}px auto`,
-  width: '450px',
+  width: '400px',
 });
 
 const Header = styled.div(({ theme: { colors } }) => ({
-  borderBottom: `1px solid ${colors.borderGrey}`,
-  fontSize: '16px',
+  color: colors.grey1,
+  fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '-0.011em',
   padding: '15px 25px',
 }));
 
+const ResourceTitle = styled.span({
+  fontWeight: 600,
+  marginLeft: '4px',
+});
+
 const Contents = styled.div({
-  padding: '20px 25px 25px',
+  padding: '0 25px 25px',
 });
 
 const StyledOrganizationSearch = styled(OrganizationSearch)({
@@ -40,11 +51,10 @@ const StyledOrganizationSearch = styled(OrganizationSearch)({
   marginRight: '-25px',
 });
 
-const ResourceAccessModal = ({ handleClose, isOpen }) => {
-  const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
-  const resourceType = documentId ? 'documents' : 'discussions';
-  const resourceId = documentId || discussionId;
+const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
+  const { resource } = useContext(NavigationContext);
+  const { resourceType, resourceId, resourceQuery, createVariables } = resource;
+  const resourceMembersType = Pluralize(resourceType);
 
   // Putting the state here so that clicking anywhere on the modal
   // dismisses the dropdown
@@ -55,41 +65,47 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
   const [addMember] = useMutation(addMemberMutation);
   const [localAddMember] = useMutation(localAddMemberMutation);
 
-  const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
-    variables: {
-      resourceType,
-      id: resourceId,
-    },
-  });
   const [removeMember] = useMutation(removeMemberMutation, {
     variables: {
-      resourceType,
-      id: resourceId,
+      resourceType: resourceMembersType,
+      resourceId,
+    },
+  });
+  const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
+    variables: {
+      resourceType: resourceMembersType,
+      resourceId,
     },
   });
 
-  // Prefetch the data so that the input field loads at the same time as the
-  // participants list
-  const { organizationId: id } = getLocalAppState();
-  useQuery(resourceMembersQuery, {
-    variables: { resourceType: 'organizations', id },
+  const [addToWorkspace] = useMutation(addToWorkspaceMtn, {
+    variables: { input: { resourceType, resourceId } },
+  });
+  const [localAddToWorkspace] = useMutation(localAddToWorkspaceMtn, {
+    variables: { resource },
   });
 
-  const { loading, data } = useQuery(resourceMembersQuery, {
-    variables: { resourceType, id: resourceId },
-    fetchPolicy: 'cache-and-network',
+  const [removeFromWorkspace] = useMutation(removeFromWorkspaceMtn, {
+    variables: { queryParams: snakedQueryParams({ resourceType, resourceId }) },
+  });
+  const [localRemoveFromWorkspace] = useMutation(localRemoveFromWorkspaceMtn, {
+    variables: { resource },
   });
 
-  if (loading || !data || !data.resourceMembers) return null;
+  const { data } = useQuery(resourceQuery, {
+    variables: createVariables(resourceId),
+  });
+  if (!data || !data[resourceType]) return null;
+  const { title, topic, workspaces } = data[resourceType];
+  const { text } = topic || {};
+  const resourceTitle = title || text || `Untitled ${titleize(resourceType)}`;
+  const currentWorkspaceId = workspaces ? workspaces[0] : null;
 
-  const { members } = data.resourceMembers;
-  const participants = members || [];
-
-  const handleAdd = user => {
+  const handleAddMember = user => {
     addMember({
       variables: {
-        resourceType,
-        id: resourceId,
+        resourceType: resourceMembersType,
+        resourceId,
         input: {
           userId: user.id,
           accessType: DEFAULT_ACCESS_TYPE,
@@ -99,23 +115,34 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
 
     localAddMember({
       variables: {
-        resourceType,
-        id: resourceId,
+        resourceType: resourceMembersType,
+        resourceId,
         user,
         accessType: DEFAULT_ACCESS_TYPE,
       },
     });
   };
 
-  const handleRemove = userId => {
+  const handleRemoveMember = userId => {
     removeMember({ variables: { userId } });
     localRemoveMember({ variables: { userId } });
+  };
+
+  const handleAddToWorkspace = workspaceId => {
+    addToWorkspace({ variables: { workspaceId } });
+    localAddToWorkspace({ variables: { workspaceId } });
+  };
+
+  const handleRemoveFromWorkspace = workspaceId => {
+    removeFromWorkspace({ variables: { workspaceId } });
+    localRemoveFromWorkspace();
   };
 
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen}>
       <Header onClick={handleHideDropdown}>
-        {`Share this ${documentId ? 'Document' : 'Discussion'}`}
+        Share
+        <ResourceTitle>{resourceTitle}</ResourceTitle>
       </Header>
       <Contents onClick={handleHideDropdown}>
         <StyledOrganizationSearch
@@ -123,15 +150,22 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
           isModalOpen={isOpen}
           isDropdownVisible={isDropdownVisible}
           currentMembers={participants.map(p => p.user)}
-          handleAdd={handleAdd}
+          handleAddMember={handleAddMember}
+          handleAddToWorkspace={handleAddToWorkspace}
           handleShowDropdown={handleShowDropdown}
           handleHideDropdown={handleHideDropdown}
           handleCloseModal={handleClose}
         />
         <ParticipantsList
           participants={participants}
-          handleRemove={handleRemove}
+          handleRemove={handleRemoveMember}
         />
+        {currentWorkspaceId && (
+          <WorkspaceRow
+            workspaceId={currentWorkspaceId}
+            handleRemove={handleRemoveFromWorkspace}
+          />
+        )}
       </Contents>
     </StyledModal>
   );
@@ -140,6 +174,7 @@ const ResourceAccessModal = ({ handleClose, isOpen }) => {
 ResourceAccessModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  participants: PropTypes.array.isRequired,
 };
 
 export default ResourceAccessModal;

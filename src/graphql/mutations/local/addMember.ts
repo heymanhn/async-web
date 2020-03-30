@@ -3,13 +3,13 @@ import gql from 'graphql-tag';
 export default gql`
   mutation AddMember(
     $resourceType: string!
-    $id: String!
+    $resourceId: String!
     $user: Object!
     $accessType: String!
   ) {
     addMember(
       resourceType: $resourceType
-      id: $id
+      resourceId: $resourceId
       user: $user
       accessType: $accessType
     ) @client

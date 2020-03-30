@@ -1,6 +1,7 @@
 /* eslint import/prefer-default-export: 0 */
 export const WORKSPACES_QUERY_SIZE = 25;
 export const RESOURCES_QUERY_SIZE = 10;
+export const ORG_WORKSPACES_QUERY_SIZE = 100;
 
 // Resource access types
 export const DEFAULT_ACCESS_TYPE = 'collaborator';
