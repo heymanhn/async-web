@@ -60,7 +60,7 @@ const RecentResourcesList = () => {
             key={resource.id}
             resourceType={resourceType}
             resource={resource}
-            badgeCount={badgeCount}
+            isUnread={badgeCount > 0}
             isSelected={isResourceSelected(resource.id)}
           />
         );

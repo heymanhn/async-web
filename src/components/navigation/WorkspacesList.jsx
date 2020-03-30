@@ -59,7 +59,7 @@ const WorkspacesList = () => {
           key={i.workspace.id}
           resourceType="workspace"
           resource={i.workspace}
-          badgeCount={i.badgeCount}
+          isUnread={i.badgeCount > 0}
           isSelected={isResourceSelected(i.workspace.id)}
         />
       ))}

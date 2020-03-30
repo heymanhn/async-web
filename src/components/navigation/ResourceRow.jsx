@@ -16,6 +16,7 @@ const ICONS = {
 
 const Container = styled.div(({ isSelected, isUnread, theme: { colors } }) => ({
   display: 'flex',
+  alignItems: 'center',
 
   background: isSelected ? colors.grey7 : 'none',
   color: colors.grey1,
@@ -48,19 +49,17 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 
 const StyledIndicator = styled(UnreadIndicator)({
   marginRight: '5px',
-  marginTop: '8px',
 });
 
 const ResourceRow = ({
   isSelected,
   resourceType,
   resource,
-  badgeCount,
+  isUnread,
   ...props
 }) => {
   const { id, title, topic } = resource;
   const resourceTitle = title || (topic && topic.text);
-  const isUnread = badgeCount > 0;
 
   // TODO: Read/unread state, once backend gives enough info
   return (
@@ -85,7 +84,7 @@ ResourceRow.propTypes = {
   resourceType: PropTypes.oneOf(['workspace', 'document', 'discussion'])
     .isRequired,
   resource: PropTypes.object.isRequired,
-  badgeCount: PropTypes.number.isRequired,
+  isUnread: PropTypes.bool.isRequired,
 };
 
 export default ResourceRow;

@@ -602,7 +602,7 @@ const markWorkspaceResourceAsReadByTab = (
     query: workspaceResourcesQuery,
     variables: { workspaceId, queryParams: { type } },
   });
-  if (!data.workspaceResources) return;
+  if (!data || !data.workspaceResources) return;
 
   const { items, pageToken, __typename } = data.workspaceResources;
   const index = items.findIndex(item => {

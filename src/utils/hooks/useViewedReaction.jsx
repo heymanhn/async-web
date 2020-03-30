@@ -1,13 +1,13 @@
 import { useApolloClient } from '@apollo/react-hooks';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
-import updateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
+import localUpdateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
 import markDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';
 import notificationsQuery from 'graphql/queries/notifications';
 import discussionQuery from 'graphql/queries/discussion';
 import documentQuery from 'graphql/queries/document';
 import { getLocalUser } from 'utils/auth';
-import markWorkspaceResourceAsRead from 'graphql/mutations/local/markWorkspaceResourceAsRead';
+import localMarkWorkspaceResourceAsRead from 'graphql/mutations/local/markWorkspaceResourceAsRead';
 
 const useViewedReaction = () => {
   const client = useApolloClient();
@@ -47,7 +47,6 @@ const useViewedReaction = () => {
         if (!isUnread) return;
         let notificationResourceId = resourceId;
         let workspaceId;
-        const incrementBy = -1;
 
         if (resourceType === 'discussion') {
           const data = client.readQuery({
@@ -79,17 +78,17 @@ const useViewedReaction = () => {
         }
 
         client.mutate({
-          mutation: updateBadgeCountMutation,
+          mutation: localUpdateBadgeCountMutation,
           variables: {
             resourceType: workspaceId ? 'workspace' : resourceType,
             resourceId: workspaceId || notificationResourceId,
-            incrementBy,
+            incrementBy: -1,
           },
         });
 
         if (workspaceId) {
           client.mutate({
-            mutation: markWorkspaceResourceAsRead,
+            mutation: localMarkWorkspaceResourceAsRead,
             variables: {
               workspaceId,
               resourceType,
