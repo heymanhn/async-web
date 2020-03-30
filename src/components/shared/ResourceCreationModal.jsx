@@ -93,14 +93,14 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
   // In case current user isn't available immediately from the query
   if (!participants.length && currentUser) setParticipants([owner]);
 
-  const handleAdd = user => {
+  const handleAddMemberWrapper = user => {
     setParticipants([
       ...participants,
       { user, accessType: DEFAULT_ACCESS_TYPE },
     ]);
   };
 
-  const handleRemove = userId => {
+  const handleRemoveMember = userId => {
     const index = participants.findIndex(p => p.user.id === userId);
     setParticipants([
       ...participants.slice(0, index),
@@ -147,7 +147,7 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
             isModalOpen={isOpen}
             isDropdownVisible={isDropdownVisible}
             currentMembers={participants.map(p => p.user)}
-            handleAdd={handleAdd}
+            handleAddMember={handleAddMemberWrapper}
             handleShowDropdown={handleShowDropdown}
             handleHideDropdown={handleHideDropdown}
             handleCloseModal={handleClose}
@@ -155,7 +155,7 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
         </NavigationContext.Provider>
         <StyledParticipantsList
           participants={participants}
-          handleRemove={handleRemove}
+          handleRemove={handleRemoveMember}
         />
         <CreateButton
           onClick={handleCreateWorkspace}

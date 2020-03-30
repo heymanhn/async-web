@@ -28,7 +28,8 @@ const OrganizationSearch = ({
   currentMembers,
   autoFocus,
 
-  handleAdd,
+  handleAddMember,
+  handleAddToWorkspace,
   handleShowDropdown,
   handleHideDropdown,
   handleCloseModal,
@@ -70,7 +71,7 @@ const OrganizationSearch = ({
   if (resourceData && resourceData[resourceType]) {
     const { workspaces } = resourceData[resourceType];
     // Assuming that a resource can only be part of one workspace for now
-    [currentWorkspaceId] = workspaces;
+    [currentWorkspaceId] = workspaces || [];
   }
 
   const memberSearch = () => {
@@ -107,8 +108,8 @@ const OrganizationSearch = ({
     if (currentMembers.find(({ id: pid }) => pid === objId)) return;
     if (currentWorkspaceId === objId) return;
 
-    if (type === 'member') handleAdd(obj);
-    // TODO: if (type === 'workspace') handleAddWorkspace(obj);
+    if (type === 'member') handleAddMember(obj);
+    if (type === 'workspace') handleAddToWorkspace(objId);
     setSearchQuery('');
     setSelectedIndex(0);
   };
@@ -188,7 +189,8 @@ OrganizationSearch.propTypes = {
   currentMembers: PropTypes.array.isRequired,
   autoFocus: PropTypes.bool,
 
-  handleAdd: PropTypes.func.isRequired,
+  handleAddMember: PropTypes.func.isRequired,
+  handleAddToWorkspace: PropTypes.func.isRequired,
   handleShowDropdown: PropTypes.func.isRequired,
   handleHideDropdown: PropTypes.func.isRequired,
   handleCloseModal: PropTypes.func.isRequired,

@@ -5,12 +5,15 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import addMemberMutation from 'graphql/mutations/addMember';
+import removeMemberMutation from 'graphql/mutations/removeMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
-import removeMemberMutation from 'graphql/mutations/removeMember';
+import addResourceToWorkspaceMtn from 'graphql/mutations/addResourceToWorkspace';
+import removeResFromWorkspaceMtn from 'graphql/mutations/removeResourceFromWorkspace';
 import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
+import { snakedQueryParams } from 'utils/queryParams';
 
 import Modal from 'components/shared/Modal';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
@@ -74,6 +77,13 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
     },
   });
 
+  const [addResourceToWorkspace] = useMutation(addResourceToWorkspaceMtn, {
+    variables: { input: { resourceType, resourceId } },
+  });
+  const [removeResourceFromWorkspace] = useMutation(removeResFromWorkspaceMtn, {
+    variables: { queryParams: snakedQueryParams({ resourceType, resourceId }) },
+  });
+
   const { data } = useQuery(resourceQuery, {
     variables: createVariables(resourceId),
   });
@@ -83,7 +93,7 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   const resourceTitle = title || text || `Untitled ${titleize(resourceType)}`;
   const currentWorkspaceId = workspaces ? workspaces[0] : null;
 
-  const handleAdd = user => {
+  const handleAddMember = user => {
     addMember({
       variables: {
         resourceType: resourceMembersType,
@@ -105,14 +115,19 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
     });
   };
 
-  const handleRemove = (type, id) => {
-    if (type === 'participant') {
-      removeMember({ variables: { userId: id } });
-      localRemoveMember({ variables: { userId: id } });
-    }
-    if (type === 'workspace') {
-      // TODO
-    }
+  const handleRemoveMember = userId => {
+    removeMember({ variables: { userId } });
+    localRemoveMember({ variables: { userId } });
+  };
+
+  const handleAddToWorkspace = workspaceId => {
+    addResourceToWorkspace({ variables: { workspaceId } });
+    // TODO: Local mutation
+  };
+
+  const handleRemoveFromWorkspace = workspaceId => {
+    removeResourceFromWorkspace({ variables: { workspaceId } });
+    // TODO: Local mutation
   };
 
   return (
@@ -127,17 +142,21 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
           isModalOpen={isOpen}
           isDropdownVisible={isDropdownVisible}
           currentMembers={participants.map(p => p.user)}
-          handleAdd={handleAdd}
+          handleAddMember={handleAddMember}
+          handleAddToWorkspace={handleAddToWorkspace}
           handleShowDropdown={handleShowDropdown}
           handleHideDropdown={handleHideDropdown}
           handleCloseModal={handleClose}
         />
         <ParticipantsList
           participants={participants}
-          handleRemove={handleRemove}
+          handleRemove={handleRemoveMember}
         />
         {currentWorkspaceId && (
-          <WorkspaceRow workspaceId={currentWorkspaceId} />
+          <WorkspaceRow
+            workspaceId={currentWorkspaceId}
+            handleRemove={handleRemoveFromWorkspace}
+          />
         )}
       </Contents>
     </StyledModal>

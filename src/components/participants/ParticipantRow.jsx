@@ -54,7 +54,7 @@ const RemoveButton = styled.div(({ theme: { colors } }) => ({
 const ParticipantRow = ({ accessType, user, handleRemove }) => {
   const { fullName, id, profilePictureUrl } = user;
 
-  const handleRemoveWrapper = () => handleRemove('participant', id);
+  const handleRemoveWrapper = () => handleRemove(id);
 
   const removeParticipantButton = (
     <RemoveButton onClick={handleRemoveWrapper}>remove</RemoveButton>
