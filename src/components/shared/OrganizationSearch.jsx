@@ -106,7 +106,7 @@ const OrganizationSearch = ({
   const handleAddSelection = obj => {
     const { type, id: objId } = obj;
     if (currentMembers.find(({ id: pid }) => pid === objId)) return;
-    if (currentWorkspaceId === objId) return;
+    if (currentWorkspaceId) return;
 
     if (type === 'member') handleAddMember(obj);
     if (type === 'workspace') handleAddToWorkspace(objId);

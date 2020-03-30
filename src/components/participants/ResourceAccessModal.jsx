@@ -11,6 +11,7 @@ import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
 import addToWorkspaceMtn from 'graphql/mutations/addToWorkspace';
 import removeFromWorkspaceMtn from 'graphql/mutations/removeFromWorkspace';
 import localAddToWorkspaceMtn from 'graphql/mutations/local/addToWorkspace';
+import localRemoveFromWorkspaceMtn from 'graphql/mutations/local/removeFromWorkspace';
 import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
@@ -87,6 +88,9 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   const [removeFromWorkspace] = useMutation(removeFromWorkspaceMtn, {
     variables: { queryParams: snakedQueryParams({ resourceType, resourceId }) },
   });
+  const [localRemoveFromWorkspace] = useMutation(localRemoveFromWorkspaceMtn, {
+    variables: { resource },
+  });
 
   const { data } = useQuery(resourceQuery, {
     variables: createVariables(resourceId),
@@ -127,12 +131,11 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   const handleAddToWorkspace = workspaceId => {
     addToWorkspace({ variables: { workspaceId } });
     localAddToWorkspace({ variables: { workspaceId } });
-    // TODO: Local mutation
   };
 
   const handleRemoveFromWorkspace = workspaceId => {
     removeFromWorkspace({ variables: { workspaceId } });
-    // TODO: Local mutation
+    localRemoveFromWorkspace();
   };
 
   return (
