@@ -418,7 +418,7 @@ const updateWorkspaceBadgeCount = (userId, resourceId, incrementBy, client) => {
   const workspaceItem = items[index];
   const updatedWorkspaceItem = {
     ...workspaceItem,
-    badgeCount: workspaceItem.badgeCount + incrementBy,
+    badgeCount: Math.max(workspaceItem.badgeCount + incrementBy, 0),
   };
 
   client.writeQuery({
@@ -464,7 +464,7 @@ const updateResourceBadgeCount = (userId, resourceId, incrementBy, client) => {
   const resourceItem = items[index];
   const updatedResourceItem = {
     ...resourceItem,
-    badgeCount: resourceItem.badgeCount + incrementBy,
+    badgeCount: Math.max(resourceItem.badgeCount + incrementBy, 0),
   };
 
   client.writeQuery({

@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import localUpdateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
-import markDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';
+import localMarkDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';
 import notificationsQuery from 'graphql/queries/notifications';
 import discussionQuery from 'graphql/queries/discussion';
 import documentQuery from 'graphql/queries/document';
@@ -48,6 +48,7 @@ const useViewedReaction = () => {
         let notificationResourceId = resourceId;
         let workspaceId;
 
+        // TODO: think of a better to handle multiple local mututations.
         if (resourceType === 'discussion') {
           const data = client.readQuery({
             query: discussionQuery,
@@ -61,7 +62,7 @@ const useViewedReaction = () => {
           workspaceId = workspaces ? workspaces[0] : undefined;
 
           client.mutate({
-            mutation: markDiscussionAsReadMutation,
+            mutation: localMarkDiscussionAsReadMutation,
             variables: {
               discussionId: resourceId,
             },
@@ -77,6 +78,7 @@ const useViewedReaction = () => {
           workspaceId = workspaces ? workspaces[0] : undefined;
         }
 
+        // Update the sidebar ResourceRow badgeCount
         client.mutate({
           mutation: localUpdateBadgeCountMutation,
           variables: {
@@ -86,6 +88,7 @@ const useViewedReaction = () => {
           },
         });
 
+        // If this resource is part of a workspace, mark the state as Read
         if (workspaceId) {
           client.mutate({
             mutation: localMarkWorkspaceResourceAsRead,
