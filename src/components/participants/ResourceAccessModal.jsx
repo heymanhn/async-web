@@ -10,6 +10,7 @@ import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
 import addToWorkspaceMtn from 'graphql/mutations/addToWorkspace';
 import removeFromWorkspaceMtn from 'graphql/mutations/removeFromWorkspace';
+import localAddToWorkspaceMtn from 'graphql/mutations/local/addToWorkspace';
 import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
@@ -50,9 +51,8 @@ const StyledOrganizationSearch = styled(OrganizationSearch)({
 });
 
 const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
-  const {
-    resource: { resourceType, resourceId, resourceQuery, createVariables },
-  } = useContext(NavigationContext);
+  const { resource } = useContext(NavigationContext);
+  const { resourceType, resourceId, resourceQuery, createVariables } = resource;
   const resourceMembersType = Pluralize(resourceType);
 
   // Putting the state here so that clicking anywhere on the modal
@@ -80,7 +80,9 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   const [addToWorkspace] = useMutation(addToWorkspaceMtn, {
     variables: { input: { resourceType, resourceId } },
   });
-  const [localAddToWorkspace] = useMutation(localAddToWorkspaceMtn);
+  const [localAddToWorkspace] = useMutation(localAddToWorkspaceMtn, {
+    variables: { resource },
+  });
 
   const [removeFromWorkspace] = useMutation(removeFromWorkspaceMtn, {
     variables: { queryParams: snakedQueryParams({ resourceType, resourceId }) },
@@ -124,7 +126,7 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
 
   const handleAddToWorkspace = workspaceId => {
     addToWorkspace({ variables: { workspaceId } });
-    localAddToWorkspace({});
+    localAddToWorkspace({ variables: { workspaceId } });
     // TODO: Local mutation
   };
 

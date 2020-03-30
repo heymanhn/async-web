@@ -251,6 +251,27 @@ const removeMember = (
   return null;
 };
 
+const addToWorkspace = (_root, { resource, workspaceId }, { client }) => {
+  const { resourceType, resourceId, resourceQuery, createVariables } = resource;
+  const data = client.readQuery({
+    query: resourceQuery,
+    variables: createVariables(resourceId),
+  });
+  if (!data) return null;
+
+  const newResource = { ...data[resourceType], workspaces: [workspaceId] };
+  const newData = {};
+  newData[resourceType] = newResource;
+
+  client.writeQuery({
+    query: resourceQuery,
+    variables: createVariables(resourceId),
+    data: newData,
+  });
+
+  return null;
+};
+
 const updateBadgeCount = (_root, { userId, notification }, { client }) => {
   const data = client.readQuery({
     query: notificationsQuery,
@@ -454,6 +475,7 @@ const localResolvers = {
     addPendingMessagesToDiscussion,
     addMember,
     removeMember,
+    addToWorkspace,
     updateBadgeCount,
     deleteMessageFromDiscussion,
     deleteDiscussionFromDocument,
