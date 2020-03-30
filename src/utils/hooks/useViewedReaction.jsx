@@ -58,7 +58,7 @@ const useViewedReaction = () => {
 
           // check if it's an inline discussion
           const { documentId, workspaces } = data.discussion;
-          notificationResourceId = documentId;
+          if (documentId) notificationResourceId = documentId;
           workspaceId = workspaces ? workspaces[0] : undefined;
 
           client.mutate({
