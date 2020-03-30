@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import MemberRow from './MemberRow';
+import ResultRow from './ResultRow';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   position: 'absolute',
@@ -18,35 +18,53 @@ const Container = styled.div(({ theme: { colors } }) => ({
   width: '100%',
 }));
 
-const MemberResults = ({
+const SearchResults = ({
   handleAddSelection,
-  members,
+  currentMembers,
+  currentWorkspaceId,
   results,
   selectedIndex,
   updateSelectedIndex,
-}) =>
-  results.length ? (
+}) => {
+  if (!results.length) return null;
+
+  const disabledCheck = result => {
+    const { type } = result;
+    if (type === 'member')
+      return !!currentMembers.find(({ id }) => id === result.id);
+    if (type === 'workspace') return currentWorkspaceId === result.id;
+
+    return false;
+  };
+
+  return (
     <Container onClick={e => e.stopPropagation()}>
       {results.map((result, i) => (
-        <MemberRow
+        <ResultRow
           key={result.id}
           handleAddSelection={handleAddSelection}
           index={i}
-          isMember={!!members.find(({ id }) => id === result.id)}
+          isDisabled={disabledCheck(result)}
           isSelected={selectedIndex === i}
-          member={result}
+          result={result}
           updateSelectedIndex={updateSelectedIndex}
         />
       ))}
     </Container>
-  ) : null;
+  );
+};
 
-MemberResults.propTypes = {
+SearchResults.propTypes = {
   handleAddSelection: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
-  members: PropTypes.array.isRequired,
+  currentMembers: PropTypes.array.isRequired,
+  currentWorkspaceId: PropTypes.string,
   selectedIndex: PropTypes.number.isRequired,
   updateSelectedIndex: PropTypes.func.isRequired,
 };
 
-export default MemberResults;
+SearchResults.defaultProps = {
+  currentWorkspaceId: null,
+};
+
+export default SearchResults;

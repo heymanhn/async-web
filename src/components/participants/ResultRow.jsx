@@ -4,24 +4,26 @@ import styled from '@emotion/styled';
 
 import Avatar from 'components/shared/Avatar';
 
-const Container = styled.div(({ isMember, isSelected, theme: { colors } }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  background: isSelected ? colors.grey7 : 'none',
-  cursor: isMember ? 'default' : 'pointer',
-  margin: '7px 0',
-  padding: '3px 15px',
-  userSelect: 'none',
+const Container = styled.div(
+  ({ isDisabled, isSelected, theme: { colors } }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    background: isSelected ? colors.grey7 : 'none',
+    cursor: isDisabled ? 'default' : 'pointer',
+    margin: '7px 0',
+    padding: '3px 15px',
+    userSelect: 'none',
 
-  ':hover': {
-    background: colors.grey7,
-  },
-}));
+    ':hover': {
+      background: colors.grey7,
+    },
+  })
+);
 
-const StyledAvatar = styled(Avatar)(({ isMember }) => ({
+const StyledAvatar = styled(Avatar)(({ isDisabled }) => ({
   flexShrink: 0,
   marginRight: '12px',
-  opacity: isMember ? 0.5 : 1,
+  opacity: isDisabled ? 0.5 : 1,
 }));
 
 const Details = styled.div({
@@ -29,8 +31,8 @@ const Details = styled.div({
   letterSpacing: '-0.006em',
 });
 
-const Name = styled.div(({ isMember, theme: { colors } }) =>
-  isMember
+const Name = styled.div(({ isDisabled, theme: { colors } }) =>
+  isDisabled
     ? {
         color: colors.grey4,
       }
@@ -39,26 +41,26 @@ const Name = styled.div(({ isMember, theme: { colors } }) =>
       }
 );
 
-const Email = styled.div(({ isMember, theme: { colors } }) => ({
-  color: isMember ? colors.grey4 : colors.grey2,
+const Email = styled.div(({ isDisabled, theme: { colors } }) => ({
+  color: isDisabled ? colors.grey4 : colors.grey2,
 }));
 
-const MemberRow = ({
+const ResultRow = ({
   handleAddSelection,
   index,
-  isMember,
+  isDisabled,
   isSelected,
-  member,
+  result,
   updateSelectedIndex,
   ...props
 }) => {
-  const memberRef = useRef(null);
+  const resultRef = useRef(null);
 
   useEffect(() => {
     if (isSelected) {
       // the options argument is not supported in IE:
       // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
-      memberRef.current.scrollIntoView({
+      resultRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       });
@@ -66,45 +68,47 @@ const MemberRow = ({
   }, [isSelected]);
 
   const handleClick = () => {
-    return isMember ? null : handleAddSelection(member);
+    return isDisabled ? null : handleAddSelection(result);
   };
 
-  const { email, fullName, profilePictureUrl } = member;
+  const { email, fullName, profilePictureUrl } = result;
+
+  // TODO (HN): Render the workspace as well.
 
   return (
     <Container
-      isMember={isMember}
+      isDisabled={isDisabled}
       isSelected={isSelected}
       onClick={handleClick}
       onMouseOver={() => updateSelectedIndex(index)}
       onFocus={() => updateSelectedIndex(index)}
-      ref={memberRef}
+      ref={resultRef}
       {...props}
     >
       <StyledAvatar
         alt={fullName}
         avatarUrl={profilePictureUrl}
-        isMember={isMember}
+        isDisabled={isDisabled}
         size={32}
         title={fullName}
       />
       <Details>
-        <Name isMember={isMember}>
-          {`${fullName}${isMember ? ' (joined)' : ''}`}
+        <Name isDisabled={isDisabled}>
+          {`${fullName}${isDisabled ? ' (joined)' : ''}`}
         </Name>
-        <Email isMember={isMember}>{email}</Email>
+        <Email isDisabled={isDisabled}>{email}</Email>
       </Details>
     </Container>
   );
 };
 
-MemberRow.propTypes = {
+ResultRow.propTypes = {
   handleAddSelection: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  isMember: PropTypes.bool.isRequired,
+  isDisabled: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool.isRequired,
-  member: PropTypes.object.isRequired,
+  result: PropTypes.object.isRequired,
   updateSelectedIndex: PropTypes.func.isRequired,
 };
 
-export default MemberRow;
+export default ResultRow;

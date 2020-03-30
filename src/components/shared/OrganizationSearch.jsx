@@ -1,18 +1,21 @@
 /*
  * Also searches for workspaces in the organization, when needed
  */
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import { isHotkey } from 'is-hotkey';
 import styled from '@emotion/styled';
 
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
+import orgWorkspacesQuery from 'graphql/queries/orgWorkspaces';
 import { getLocalAppState } from 'utils/auth';
+import { ORG_WORKSPACES_QUERY_SIZE } from 'utils/constants';
+import { NavigationContext } from 'utils/contexts';
 import { mod } from 'utils/helpers';
 
 import InputWithIcon from 'components/shared/InputWithIcon';
-import MemberResults from 'components/participants/MemberResults';
+import SearchResults from 'components/participants/SearchResults';
 
 const Container = styled.div({
   position: 'relative',
@@ -31,6 +34,9 @@ const OrganizationSearch = ({
   handleCloseModal,
   ...props
 }) => {
+  const {
+    resource: { resourceType, resourceId, resourceQuery, createVariables },
+  } = useContext(NavigationContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -40,21 +46,53 @@ const OrganizationSearch = ({
     variables: { resourceType: 'organizations', resourceId: id },
   });
 
+  const { data: workspacesData } = useQuery(orgWorkspacesQuery, {
+    variables: { queryParams: { size: ORG_WORKSPACES_QUERY_SIZE } },
+    skip: resourceType === 'workspace',
+  });
+
+  const { data: resourceData } = useQuery(resourceQuery, {
+    variables: createVariables(resourceId),
+    skip: resourceType === 'workspace',
+  });
+
   if (loading || !data.resourceMembers) return null;
   const { members } = data.resourceMembers;
   const orgMembers = (members || []).map(m => m.user);
 
+  let orgWorkspaces = [];
+  if (workspacesData && workspacesData.orgWorkspaces) {
+    const { items } = workspacesData.orgWorkspaces;
+    orgWorkspaces = (items || []).map(i => i.workspace);
+  }
+
+  let currentWorkspaceId = null;
+  if (resourceData && resourceData[resourceType]) {
+    const { workspaces } = resourceData[resourceType];
+    // Assuming that a resource can only be part of one workspace for now
+    [currentWorkspaceId] = workspaces;
+  }
+
   const memberSearch = () => {
     if (!searchQuery) return [];
+    const sanitizedQuery = searchQuery.toLowerCase();
 
-    return orgMembers.filter(({ email, fullName }) => {
-      const sanitizedQuery = searchQuery.toLowerCase();
+    return orgMembers
+      .filter(
+        ({ email, fullName }) =>
+          email.toLowerCase().includes(sanitizedQuery) ||
+          fullName.toLowerCase().includes(sanitizedQuery)
+      )
+      .map(m => ({ ...m, type: 'member' }));
+  };
 
-      return (
-        email.toLowerCase().includes(sanitizedQuery) ||
-        fullName.toLowerCase().includes(sanitizedQuery)
-      );
-    });
+  const workspaceSearch = () => {
+    if (!searchQuery) return [];
+    const sanitizedQuery = searchQuery.toLowerCase();
+
+    return orgWorkspaces
+      .filter(({ title }) => title.toLowerCase().includes(sanitizedQuery))
+      .map(m => ({ ...m, type: 'workspace' }));
   };
 
   const handleChange = value => {
@@ -64,15 +102,18 @@ const OrganizationSearch = ({
     handleShowDropdown();
   };
 
-  const handleAddSelection = user => {
-    if (currentMembers.find(({ id: pid }) => pid === user.id)) return;
+  const handleAddSelection = obj => {
+    const { type, id: objId } = obj;
+    if (currentMembers.find(({ id: pid }) => pid === objId)) return;
+    // TODO: If the resource is already part of the workspace, return
 
-    handleAdd(user);
+    if (type === 'member') handleAdd(obj);
+    // TODO: if (type === 'workspace') handleAddWorkspace(obj);
     setSearchQuery('');
     setSelectedIndex(0);
   };
 
-  const results = memberSearch();
+  const results = [...memberSearch(), ...workspaceSearch()];
 
   // What this means: at most three presses of the Escape key to close modal
   const handleCancel = () => {
@@ -126,9 +167,10 @@ const OrganizationSearch = ({
         setValue={handleChange}
       />
       {isDropdownVisible ? (
-        <MemberResults
+        <SearchResults
           handleAddSelection={handleAddSelection}
-          members={currentMembers}
+          currentMembers={currentMembers}
+          currentWorkspaceId={currentWorkspaceId}
           results={results}
           selectedIndex={selectedIndex}
           updateSelectedIndex={updateSelectedIndex}

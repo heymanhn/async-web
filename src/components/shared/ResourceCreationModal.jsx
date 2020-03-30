@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
+import { DEFAULT_NAVIGATION_CONTEXT, NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
 import useCurrentUser from 'utils/hooks/useCurrentUser';
 import useWorkspaceMutations from 'utils/hooks/useWorkspaceMutations';
@@ -122,6 +123,11 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
     }
   };
 
+  const value = {
+    ...DEFAULT_NAVIGATION_CONTEXT,
+    resource: { resourceType },
+  };
+
   return (
     <StyledModal handleClose={handleClose} isOpen={isOpen}>
       <Header onClick={handleHideDropdown}>
@@ -136,15 +142,17 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
           setValue={setTitle}
           autoFocus
         />
-        <OrganizationSearch
-          isModalOpen={isOpen}
-          isDropdownVisible={isDropdownVisible}
-          currentMembers={participants.map(p => p.user)}
-          handleAdd={handleAdd}
-          handleShowDropdown={handleShowDropdown}
-          handleHideDropdown={handleHideDropdown}
-          handleCloseModal={handleClose}
-        />
+        <NavigationContext.Provider value={value}>
+          <OrganizationSearch
+            isModalOpen={isOpen}
+            isDropdownVisible={isDropdownVisible}
+            currentMembers={participants.map(p => p.user)}
+            handleAdd={handleAdd}
+            handleShowDropdown={handleShowDropdown}
+            handleHideDropdown={handleHideDropdown}
+            handleCloseModal={handleClose}
+          />
+        </NavigationContext.Provider>
         <StyledParticipantsList
           participants={participants}
           handleRemove={handleRemove}
