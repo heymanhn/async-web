@@ -1,3 +1,7 @@
+import { WORKSPACES_QUERY_SIZE, RESOURCES_QUERY_SIZE } from 'utils/constants';
+import { getLocalUser } from 'utils/auth';
+import { snakedQueryParams } from 'utils/queryParams';
+
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
@@ -5,8 +9,9 @@ import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 import inboxQuery from 'graphql/queries/inbox';
-
-import { getLocalUser } from 'utils/auth';
+import workspacesQuery from 'graphql/queries/workspaces';
+import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
+import resourcesQuery from 'graphql/queries/resources';
 
 const addDraftToDiscussion = (_root, { discussionId, draft }, { client }) => {
   const data = client.readQuery({
@@ -293,7 +298,7 @@ const removeFromWorkspace = (_root, { resource }, { client }) => {
   return null;
 };
 
-const updateBadgeCount = (_root, { userId, notification }, { client }) => {
+const updateNotifications = (_root, { userId, notification }, { client }) => {
   const data = client.readQuery({
     query: notificationsQuery,
     variables: { id: userId },
@@ -396,6 +401,107 @@ const deleteDiscussionFromDocument = (
   return null;
 };
 
+const updateWorkspaceBadgeCount = (userId, resourceId, incrementBy, client) => {
+  const {
+    workspaces: { pageToken, items, totalHits, __typename },
+  } = client.readQuery({
+    query: workspacesQuery,
+    variables: {
+      userId,
+      queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
+    },
+  });
+
+  const index = items.findIndex(i => i.workspace.id === resourceId);
+  if (index < 0) return;
+
+  const workspaceItem = items[index];
+  const updatedWorkspaceItem = {
+    ...workspaceItem,
+    badgeCount: Math.max(workspaceItem.badgeCount + incrementBy, 0),
+  };
+
+  client.writeQuery({
+    query: workspacesQuery,
+    variables: {
+      userId,
+      queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
+    },
+    data: {
+      workspaces: {
+        pageToken,
+        items: [
+          ...items.slice(0, index),
+          updatedWorkspaceItem,
+          ...items.slice(index + 1),
+        ],
+        __typename,
+        totalHits,
+      },
+    },
+  });
+};
+
+const updateResourceBadgeCount = (userId, resourceId, incrementBy, client) => {
+  const {
+    resources: { pageToken, items, totalHits, __typename },
+  } = client.readQuery({
+    query: resourcesQuery,
+    variables: {
+      userId,
+      queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
+    },
+  });
+
+  const index = items.findIndex(item => {
+    const { document, discussion } = item;
+    const resource = document || discussion;
+
+    return resource.id === resourceId;
+  });
+  if (index < 0) return;
+
+  const resourceItem = items[index];
+  const updatedResourceItem = {
+    ...resourceItem,
+    badgeCount: Math.max(resourceItem.badgeCount + incrementBy, 0),
+  };
+
+  client.writeQuery({
+    query: resourcesQuery,
+    variables: {
+      userId,
+      queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
+    },
+    data: {
+      resources: {
+        pageToken,
+        items: [
+          ...items.slice(0, index),
+          updatedResourceItem,
+          ...items.slice(index + 1),
+        ],
+        __typename,
+        totalHits,
+      },
+    },
+  });
+};
+
+const updateBadgeCount = (
+  _root,
+  { resourceType, resourceId, incrementBy },
+  { client }
+) => {
+  const { userId } = getLocalUser();
+
+  if (resourceType === 'workspace') {
+    updateWorkspaceBadgeCount(userId, resourceId, incrementBy, client);
+  } else {
+    updateResourceBadgeCount(userId, resourceId, incrementBy, client);
+  }
+};
+
 const markDiscussionAsRead = (_root, { discussionId }, { client }) => {
   const data = client.readQuery({
     query: discussionMessagesQuery,
@@ -487,6 +593,60 @@ const deleteResourceFromInbox = (_root, props, { client }) => {
   return null;
 };
 
+const markWorkspaceResourceAsReadByTab = (
+  type,
+  { workspaceId, resourceType, resourceId },
+  client
+) => {
+  const data = client.readQuery({
+    query: workspaceResourcesQuery,
+    variables: { workspaceId, queryParams: { type } },
+  });
+  if (!data || !data.workspaceResources) return;
+
+  const { items, pageToken, __typename } = data.workspaceResources;
+  const index = items.findIndex(item => {
+    const resource = item[resourceType];
+    return resource && resource.id === resourceId;
+  });
+
+  if (index < 0) return;
+  const resourceItem = items[index];
+  const { lastUpdate } = resourceItem;
+  const readResourceItem = {
+    ...resourceItem,
+    lastUpdate: {
+      ...lastUpdate,
+      readAt: Date.now(),
+    },
+  };
+
+  client.writeQuery({
+    query: workspaceResourcesQuery,
+    variables: { workspaceId, queryParams: { type } },
+    data: {
+      workspaceResources: {
+        items: [
+          ...items.slice(0, index),
+          readResourceItem,
+          ...items.slice(index + 1),
+        ],
+        pageToken,
+        __typename,
+      },
+    },
+  });
+};
+
+const markWorkspaceResourceAsRead = (_root, props, { client }) => {
+  const { resourceType } = props;
+  ['all', resourceType].forEach(type =>
+    markWorkspaceResourceAsReadByTab(type, props, client)
+  );
+
+  return null;
+};
+
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
@@ -498,10 +658,12 @@ const localResolvers = {
     removeMember,
     addToWorkspace,
     removeFromWorkspace,
+    updateNotifications,
     updateBadgeCount,
     deleteMessageFromDiscussion,
     deleteDiscussionFromDocument,
     markDiscussionAsRead,
+    markWorkspaceResourceAsRead,
     deleteResourceFromInbox,
   },
 };

@@ -5,7 +5,8 @@ import camelcaseKeys from 'camelcase-keys';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
 import addNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
-import updateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
+import localUpdateNotificationsMutation from 'graphql/mutations/local/updateNotifications';
+import localUpdateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
 import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
 
 import { getLocalUser } from 'utils/auth';
@@ -14,6 +15,7 @@ import {
   NEW_MESSAGE_EVENT,
   DOCUMENT_ACCESS_EVENT,
   DISCUSSION_ACCESS_EVENT,
+  BADGE_COUNT_EVENT,
 } from 'utils/constants';
 
 const {
@@ -41,10 +43,20 @@ const usePusher = () => {
 
     const handleBadgeCount = pusherData => {
       const camelData = camelcaseKeys(pusherData, { deep: true });
+      const { resourceType, resourceId, incrementBy } = camelData;
+
+      client.mutate({
+        mutation: localUpdateBadgeCountMutation,
+        variables: { resourceType, resourceId, incrementBy },
+      });
+    };
+
+    const handleNewNotification = pusherData => {
+      const camelData = camelcaseKeys(pusherData, { deep: true });
       const { notification } = camelData;
 
       client.mutate({
-        mutation: updateBadgeCountMutation,
+        mutation: localUpdateNotificationsMutation,
         variables: { userId, notification },
       });
     };
@@ -56,7 +68,7 @@ const usePusher = () => {
 
       if (notification) {
         client.mutate({
-          mutation: updateBadgeCountMutation,
+          mutation: localUpdateNotificationsMutation,
           variables: { userId, notification },
         });
       }
@@ -77,14 +89,16 @@ const usePusher = () => {
       }
     };
 
+    channel.bind(BADGE_COUNT_EVENT, handleBadgeCount);
     channel.bind(NEW_MESSAGE_EVENT, handleNewMessage);
-    channel.bind(DOCUMENT_ACCESS_EVENT, handleBadgeCount);
-    channel.bind(DISCUSSION_ACCESS_EVENT, handleBadgeCount);
+    channel.bind(DOCUMENT_ACCESS_EVENT, handleNewNotification);
+    channel.bind(DISCUSSION_ACCESS_EVENT, handleNewNotification);
 
     return () => {
+      channel.unbind(BADGE_COUNT_EVENT, handleBadgeCount);
       channel.unbind(NEW_MESSAGE_EVENT, handleNewMessage);
-      channel.unbind(DOCUMENT_ACCESS_EVENT, handleBadgeCount);
-      channel.unbind(DISCUSSION_ACCESS_EVENT, handleBadgeCount);
+      channel.unbind(DOCUMENT_ACCESS_EVENT, handleNewNotification);
+      channel.unbind(DISCUSSION_ACCESS_EVENT, handleNewNotification);
     };
   }, [isLoggedInData, client]);
 };

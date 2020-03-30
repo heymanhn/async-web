@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
 import { DocumentContext } from 'utils/contexts';
-import { matchCurrentUserId } from 'utils/auth';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
 
 import NotFound from 'components/navigation/NotFound';
@@ -36,22 +35,14 @@ const Document = () => {
   if (loading) return null;
   if (error || !data.document) return <NotFound />;
 
-  const { body, title, updatedAt, reactions } = data.document;
+  const { body, title, updatedAt } = data.document;
   const { payload: content } = body || {};
 
-  const hasCurrentUserViewed = () => {
-    return !!(reactions || []).find(
-      r => r.code === 'viewed' && matchCurrentUserId(r.author.id)
-    );
-  };
-
-  if (!hasCurrentUserViewed()) {
-    markAsRead({
-      isUnread: true,
-      resourceType: 'document',
-      resourceId: documentId,
-    });
-  }
+  markAsRead({
+    isUnread: true,
+    resourceType: 'document',
+    resourceId: documentId,
+  });
 
   // Initialize the state here
   if (!updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
