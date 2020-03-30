@@ -8,8 +8,8 @@ import addMemberMutation from 'graphql/mutations/addMember';
 import removeMemberMutation from 'graphql/mutations/removeMember';
 import localAddMemberMutation from 'graphql/mutations/local/addMember';
 import localRemoveMemberMutation from 'graphql/mutations/local/removeMember';
-import addResourceToWorkspaceMtn from 'graphql/mutations/addResourceToWorkspace';
-import removeResFromWorkspaceMtn from 'graphql/mutations/removeResourceFromWorkspace';
+import addToWorkspaceMtn from 'graphql/mutations/addToWorkspace';
+import removeFromWorkspaceMtn from 'graphql/mutations/removeFromWorkspace';
 import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
@@ -64,23 +64,25 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   const [addMember] = useMutation(addMemberMutation);
   const [localAddMember] = useMutation(localAddMemberMutation);
 
-  const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
-    variables: {
-      resourceType: resourceMembersType,
-      resourceId,
-    },
-  });
   const [removeMember] = useMutation(removeMemberMutation, {
     variables: {
       resourceType: resourceMembersType,
       resourceId,
     },
   });
+  const [localRemoveMember] = useMutation(localRemoveMemberMutation, {
+    variables: {
+      resourceType: resourceMembersType,
+      resourceId,
+    },
+  });
 
-  const [addResourceToWorkspace] = useMutation(addResourceToWorkspaceMtn, {
+  const [addToWorkspace] = useMutation(addToWorkspaceMtn, {
     variables: { input: { resourceType, resourceId } },
   });
-  const [removeResourceFromWorkspace] = useMutation(removeResFromWorkspaceMtn, {
+  const [localAddToWorkspace] = useMutation(localAddToWorkspaceMtn);
+
+  const [removeFromWorkspace] = useMutation(removeFromWorkspaceMtn, {
     variables: { queryParams: snakedQueryParams({ resourceType, resourceId }) },
   });
 
@@ -121,12 +123,13 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   };
 
   const handleAddToWorkspace = workspaceId => {
-    addResourceToWorkspace({ variables: { workspaceId } });
+    addToWorkspace({ variables: { workspaceId } });
+    localAddToWorkspace({});
     // TODO: Local mutation
   };
 
   const handleRemoveFromWorkspace = workspaceId => {
-    removeResourceFromWorkspace({ variables: { workspaceId } });
+    removeFromWorkspace({ variables: { workspaceId } });
     // TODO: Local mutation
   };
 
