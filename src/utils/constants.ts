@@ -49,3 +49,10 @@ export const RELATIVE_TIME_STRINGS = {
   y: '1yr',
   yy: '%dyrs',
 };
+
+// Default icons for each main resource
+export const RESOURCE_ICONS = {
+  document: 'file-alt',
+  discussion: 'comments-alt',
+  workspace: 'layer-group',
+};

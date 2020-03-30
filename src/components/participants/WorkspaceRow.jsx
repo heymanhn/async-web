@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import workspaceQuery from 'graphql/queries/workspace';
+import { RESOURCE_ICONS } from 'utils/constants';
 
 const Container = styled.div({
   display: 'flex',
@@ -66,7 +67,7 @@ const WorkspaceRow = ({ workspaceId, handleRemove }) => {
     <Container>
       <Details>
         <IconContainer>
-          <StyledIcon icon="layer-group" />
+          <StyledIcon icon={RESOURCE_ICONS.workspace} />
         </IconContainer>
         <Title>{title}</Title>
       </Details>

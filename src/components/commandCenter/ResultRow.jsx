@@ -5,14 +5,13 @@ import styled from '@emotion/styled';
 import CommandRow from './CommandRow';
 import SearchRow from './SearchRow';
 
-const Container = styled.div(({ type, isSelected, theme: { colors } }) => ({
+const Container = styled.div(({ isSelected, theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
 
   background: isSelected ? colors.grey7 : colors.bgGrey,
   cursor: 'pointer',
-  height: type === 'command' ? '54px' : '70px',
-  padding: '0 30px',
+  padding: '15px 30px',
   userSelect: 'none',
 
   ':last-of-type': {
@@ -32,12 +31,7 @@ const ResultRow = ({ data, isSelected, handleClose, ...props }) => {
 
   const Row = type === 'command' ? CommandRow : SearchRow;
   return (
-    <Container
-      type={type}
-      isSelected={isSelected}
-      onClick={handleClick}
-      {...props}
-    >
+    <Container isSelected={isSelected} onClick={handleClick} {...props}>
       <Row data={data} />
     </Container>
   );

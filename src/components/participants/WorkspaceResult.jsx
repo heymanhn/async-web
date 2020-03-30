@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
+import { RESOURCE_ICONS } from 'utils/constants';
+
 const IconContainer = styled.div({
   display: 'flex',
   alignItems: 'center',
@@ -42,7 +44,10 @@ const WorkspaceResult = ({ result, isDisabled }) => {
   return (
     <>
       <IconContainer>
-        <StyledIcon icon="layer-group" isdisabled={isDisabled.toString()} />
+        <StyledIcon
+          icon={RESOURCE_ICONS.workspace}
+          isdisabled={isDisabled.toString()}
+        />
       </IconContainer>
       <Details>
         <Title isDisabled={isDisabled}>{title}</Title>

@@ -4,7 +4,7 @@ import { navigate } from '@reach/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
+import { DEFAULT_ACCESS_TYPE, RESOURCE_ICONS } from 'utils/constants';
 import { DEFAULT_NAVIGATION_CONTEXT, NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
 import useCurrentUser from 'utils/hooks/useCurrentUser';
@@ -15,11 +15,6 @@ import InputWithIcon from 'components/shared/InputWithIcon';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
 import Button from 'components/shared/Button';
 import ParticipantsList from 'components/participants/ParticipantsList';
-
-const ICON_FOR_RESOURCE_TYPE = {
-  workspace: 'layer-group',
-  discussion: 'comments-alt',
-};
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
@@ -136,7 +131,7 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
       </Header>
       <Contents onClick={handleHideDropdown}>
         <StyledInput
-          icon={ICON_FOR_RESOURCE_TYPE[resourceType]}
+          icon={RESOURCE_ICONS[resourceType]}
           placeholder="Give it a name"
           value={title}
           setValue={setTitle}

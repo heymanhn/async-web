@@ -13,9 +13,10 @@ const useResourceDetails = (type, resource) => {
 
   const { loading, data } = useQuery(resourceMembersQuery, {
     variables: { resourceType: Pluralize(type), resourceId: id },
+    skip: type === 'workspace',
   });
 
-  if (loading) return null;
+  if (loading || type === 'workspace') return null;
 
   const { resourceMembers } = data;
   const { members } = resourceMembers;

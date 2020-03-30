@@ -4,6 +4,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import Pluralize from 'pluralize';
 
 import searchQuery from 'graphql/queries/search';
+import { RESOURCE_ICONS } from 'utils/constants';
 
 import useCommandLibrary from './useCommandLibrary';
 
@@ -30,15 +31,16 @@ const useCommandCenterSearch = source => {
    * Assumes that a search result must have either a document or discussion
    */
   const formatResult = item => {
-    const { document, discussion } = item;
-    const resource = document || discussion;
+    const resourceType = Object.keys(item).filter(
+      k => ['document', 'discussion', 'workspace'].includes(k) && item[k]
+    )[0];
+    const resource = item[resourceType];
     const { id, title, topic } = resource;
-    const resourceType = document ? 'document' : 'discussion';
 
     return {
-      type: `${resourceType}Result`,
-      title: title || (topic && topic.text),
-      icon: resourceType === 'document' ? 'file-alt' : 'comments-alt',
+      type: resourceType,
+      title: title || (topic && topic.text), // discussion topics are different
+      icon: RESOURCE_ICONS[resourceType],
       resource,
 
       // figure out target=_blank later
