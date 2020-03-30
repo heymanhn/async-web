@@ -20,7 +20,7 @@ const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
 
   margin: `${window.innerHeight * 0.2}px auto`,
-  width: '450px',
+  width: '400px',
 });
 
 const Header = styled.div(({ theme: { colors } }) => ({

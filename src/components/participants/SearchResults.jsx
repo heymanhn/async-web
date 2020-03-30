@@ -7,6 +7,7 @@ import ResultRow from './ResultRow';
 const Container = styled.div(({ theme: { colors } }) => ({
   position: 'absolute',
   top: '41px',
+  left: '-10px',
 
   backgroundColor: colors.white,
   border: `1px solid ${colors.borderGrey}`,
@@ -15,7 +16,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   height: 'auto',
   maxHeight: '240px', // Equivalent to 4 results
   overflow: 'auto',
-  width: '100%',
+  width: '420px',
 }));
 
 const SearchResults = ({
@@ -32,7 +33,7 @@ const SearchResults = ({
     const { type } = result;
     if (type === 'member')
       return !!currentMembers.find(({ id }) => id === result.id);
-    if (type === 'workspace') return currentWorkspaceId === result.id;
+    if (type === 'workspace') return !!currentWorkspaceId;
 
     return false;
   };
