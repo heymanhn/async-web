@@ -44,7 +44,7 @@ const MemberCount = styled.div({
 
 const ResourceAccessContainer = () => {
   const {
-    resource: { resourceType, resourceId },
+    resource: { resourceType, resourceId, resourceQuery, createVariables },
     isResourceAccessModalOpen,
     setIsResourceAccessModalOpen,
   } = useContext(NavigationContext);
@@ -65,9 +65,20 @@ const ResourceAccessContainer = () => {
     fetchPolicy: 'cache-and-network',
   });
 
+  const { data: resourceData } = useQuery(resourceQuery, {
+    variables: createVariables(resourceId),
+    skip: resourceType === 'workspace',
+  });
+
   if (!data || !data.resourceMembers) return null;
   const { members } = data.resourceMembers;
   const participants = members || [];
+  let participantCount = participants.length;
+
+  if (resourceData && resourceData[resourceType]) {
+    const { workspaces } = resourceData[resourceType];
+    if (workspaces) participantCount += 1;
+  }
 
   return (
     <>
@@ -75,7 +86,7 @@ const ResourceAccessContainer = () => {
         <ButtonText>Share</ButtonText>
         <MemberCountDisplay>
           <MemberIcon icon="user" />
-          <MemberCount>{participants.length}</MemberCount>
+          <MemberCount>{participantCount}</MemberCount>
         </MemberCountDisplay>
       </ShareButton>
       <ResourceAccessModal
