@@ -400,6 +400,93 @@ const deleteDiscussionFromDocument = (
   return null;
 };
 
+const updateWorkspaceBadgeCount = (userId, resourceId, incrementBy, client) => {
+  const {
+    workspaces: { pageToken, items, totalHits, __typename },
+  } = client.readQuery({
+    query: workspacesQuery,
+    variables: {
+      userId,
+      queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
+    },
+  });
+
+  const index = items.findIndex(i => i.workspace.id === resourceId);
+  if (index < 0) return;
+
+  const workspaceItem = items[index];
+  const updatedWorkspaceItem = {
+    ...workspaceItem,
+    badgeCount: workspaceItem.badgeCount + incrementBy,
+  };
+
+  client.writeQuery({
+    query: workspacesQuery,
+    variables: {
+      userId,
+      queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
+    },
+    data: {
+      workspaces: {
+        pageToken,
+        items: [
+          ...items.slice(0, index),
+          updatedWorkspaceItem,
+          ...items.slice(index + 1),
+        ],
+        __typename,
+        totalHits,
+      },
+    },
+  });
+};
+
+const updateResourceBadgeCount = (userId, resourceId, incrementBy, client) => {
+  const {
+    resources: { pageToken, items, totalHits, __typename },
+  } = client.readQuery({
+    query: resourcesQuery,
+    variables: {
+      userId,
+      queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
+    },
+  });
+
+  const index = items.findIndex(item => {
+    const { document, discussion } = item;
+    const resource = document || discussion;
+
+    return resource.id === resourceId;
+  });
+  if (index < 0) return;
+
+  const resourceItem = items[index];
+  const updatedResourceItem = {
+    ...resourceItem,
+    badgeCount: resourceItem.badgeCount + incrementBy,
+  };
+
+  client.writeQuery({
+    query: resourcesQuery,
+    variables: {
+      userId,
+      queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
+    },
+    data: {
+      resources: {
+        pageToken,
+        items: [
+          ...items.slice(0, index),
+          updatedResourceItem,
+          ...items.slice(index + 1),
+        ],
+        __typename,
+        totalHits,
+      },
+    },
+  });
+};
+
 const updateBadgeCount = (
   _root,
   { resourceType, resourceId, incrementBy },
@@ -408,88 +495,9 @@ const updateBadgeCount = (
   const { userId } = getLocalUser();
 
   if (resourceType === 'workspace') {
-    const {
-      workspaces: { pageToken, items, totalHits, __typename },
-    } = client.readQuery({
-      query: workspacesQuery,
-      variables: {
-        userId,
-        queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
-      },
-    });
-
-    const index = items.findIndex(i => i.workspace.id === resourceId);
-    if (index < 0) return;
-
-    const workspaceItem = items[index];
-    const updatedWorkspaceItem = {
-      ...workspaceItem,
-      badgeCount: workspaceItem.badgeCount + incrementBy,
-    };
-
-    client.writeQuery({
-      query: workspacesQuery,
-      variables: {
-        userId,
-        queryParams: snakedQueryParams({ size: WORKSPACES_QUERY_SIZE }),
-      },
-      data: {
-        workspaces: {
-          pageToken,
-          items: [
-            ...items.slice(0, index),
-            updatedWorkspaceItem,
-            ...items.slice(index + 1),
-          ],
-          __typename,
-          totalHits,
-        },
-      },
-    });
+    updateWorkspaceBadgeCount(userId, resourceId, incrementBy, client);
   } else {
-    const {
-      resources: { pageToken, items, totalHits, __typename },
-    } = client.readQuery({
-      query: resourcesQuery,
-      variables: {
-        userId,
-        queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
-      },
-    });
-
-    const index = items.findIndex(item => {
-      const { document, discussion } = item;
-      const resource = document || discussion;
-
-      return resource.id === resourceId;
-    });
-    if (index < 0) return;
-
-    const resourceItem = items[index];
-    const updatedResourceItem = {
-      ...resourceItem,
-      badgeCount: resourceItem.badgeCount + incrementBy,
-    };
-
-    client.writeQuery({
-      query: resourcesQuery,
-      variables: {
-        userId,
-        queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
-      },
-      data: {
-        resources: {
-          pageToken,
-          items: [
-            ...items.slice(0, index),
-            updatedResourceItem,
-            ...items.slice(index + 1),
-          ],
-          __typename,
-          totalHits,
-        },
-      },
-    });
+    updateResourceBadgeCount(userId, resourceId, incrementBy, client);
   }
 };
 

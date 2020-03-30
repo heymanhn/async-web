@@ -39,7 +39,7 @@ const WorkspaceContainer = ({ workspaceId }) => {
   if (loading) return null;
   if (!data.workspace) return <NotFound />;
 
-  const { id, title, reactions } = data.workspace;
+  const { title, reactions } = data.workspace;
 
   const hasCurrentUserViewed = () => {
     return !!(reactions || []).find(
@@ -51,7 +51,7 @@ const WorkspaceContainer = ({ workspaceId }) => {
     markAsRead({
       isUnread: true,
       resourceType: 'workspace',
-      resourceId: id,
+      resourceId: workspaceId,
     });
   }
 
