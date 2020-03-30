@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import Avatar from 'components/shared/Avatar';
+import MemberResult from './MemberResult';
+import WorkspaceResult from './WorkspaceResult';
 
 const Container = styled.div(
   ({ isDisabled, isSelected, theme: { colors } }) => ({
@@ -11,7 +12,7 @@ const Container = styled.div(
     background: isSelected ? colors.grey7 : 'none',
     cursor: isDisabled ? 'default' : 'pointer',
     margin: '7px 0',
-    padding: '3px 15px',
+    padding: '3px 25px',
     userSelect: 'none',
 
     ':hover': {
@@ -19,31 +20,6 @@ const Container = styled.div(
     },
   })
 );
-
-const StyledAvatar = styled(Avatar)(({ isDisabled }) => ({
-  flexShrink: 0,
-  marginRight: '12px',
-  opacity: isDisabled ? 0.5 : 1,
-}));
-
-const Details = styled.div({
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
-});
-
-const Name = styled.div(({ isDisabled, theme: { colors } }) =>
-  isDisabled
-    ? {
-        color: colors.grey4,
-      }
-    : {
-        fontWeight: 600,
-      }
-);
-
-const Email = styled.div(({ isDisabled, theme: { colors } }) => ({
-  color: isDisabled ? colors.grey4 : colors.grey2,
-}));
 
 const ResultRow = ({
   handleAddSelection,
@@ -71,9 +47,8 @@ const ResultRow = ({
     return isDisabled ? null : handleAddSelection(result);
   };
 
-  const { email, fullName, profilePictureUrl } = result;
-
-  // TODO (HN): Render the workspace as well.
+  const { type } = result;
+  const RowType = type === 'workspace' ? WorkspaceResult : MemberResult;
 
   return (
     <Container
@@ -85,19 +60,7 @@ const ResultRow = ({
       ref={resultRef}
       {...props}
     >
-      <StyledAvatar
-        alt={fullName}
-        avatarUrl={profilePictureUrl}
-        isDisabled={isDisabled}
-        size={32}
-        title={fullName}
-      />
-      <Details>
-        <Name isDisabled={isDisabled}>
-          {`${fullName}${isDisabled ? ' (joined)' : ''}`}
-        </Name>
-        <Email isDisabled={isDisabled}>{email}</Email>
-      </Details>
+      <RowType result={result} isDisabled={isDisabled} />
     </Container>
   );
 };
