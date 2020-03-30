@@ -7,6 +7,7 @@ import notificationsQuery from 'graphql/queries/notifications';
 import discussionQuery from 'graphql/queries/discussion';
 import documentQuery from 'graphql/queries/document';
 import { getLocalUser } from 'utils/auth';
+import markWorkspaceResourceAsRead from 'graphql/mutations/local/markWorkspaceResourceAsRead';
 
 const useViewedReaction = () => {
   const client = useApolloClient();
@@ -44,36 +45,56 @@ const useViewedReaction = () => {
       // in the meeting space page
       update: () => {
         if (!isUnread) return;
+        let notificationResourceId = resourceId;
+        let workspaceId;
         const incrementBy = -1;
 
         if (resourceType === 'discussion') {
+          const data = client.readQuery({
+            query: discussionQuery,
+            variables: { discussionId: resourceId },
+          });
+          if (!data.discussion) return;
+
+          // check if it's an inline discussion
+          const { documentId, workspaces } = data.discussion;
+          notificationResourceId = documentId;
+          workspaceId = workspaces ? workspaces[0] : undefined;
+
           client.mutate({
             mutation: markDiscussionAsReadMutation,
             variables: {
               discussionId: resourceId,
             },
           });
-
-          // check if it's an inline discussion
+        } else if (resourceType === 'document') {
           const data = client.readQuery({
-            query: discussionQuery,
-            variables: { discussionId: resourceId },
+            query: documentQuery,
+            variables: { documentId: resourceId },
           });
-          if (!data.discussion) return;
-          const { documentId } = data.discussion;
+          if (!data.document) return;
 
+          const { workspaces } = data.document;
+          workspaceId = workspaces ? workspaces[0] : undefined;
+        }
+
+        client.mutate({
+          mutation: updateBadgeCountMutation,
+          variables: {
+            resourceType,
+            resourceId: notificationResourceId,
+            incrementBy,
+          },
+        });
+
+        if (workspaceId) {
           client.mutate({
-            mutation: updateBadgeCountMutation,
+            mutation: markWorkspaceResourceAsRead,
             variables: {
+              workspaceId,
               resourceType,
-              resourceId: documentId || resourceId,
-              incrementBy,
+              resourceId: notificationResourceId,
             },
-          });
-        } else {
-          client.mutate({
-            mutation: updateBadgeCountMutation,
-            variables: { resourceType, resourceId, incrementBy },
           });
         }
       },
