@@ -10,6 +10,7 @@ import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import notificationsQuery from 'graphql/queries/notifications';
 import inboxQuery from 'graphql/queries/inbox';
 import workspacesQuery from 'graphql/queries/workspaces';
+import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
 import resourcesQuery from 'graphql/queries/resources';
 
 const addDraftToDiscussion = (_root, { discussionId, draft }, { client }) => {
@@ -592,6 +593,60 @@ const deleteResourceFromInbox = (_root, props, { client }) => {
   return null;
 };
 
+const markWorkspaceResourceAsReadByTab = (
+  type,
+  { workspaceId, resourceType, resourceId },
+  client
+) => {
+  const {
+    workspaceResources: { items, pageToken, __typename },
+  } = client.readQuery({
+    query: workspaceResourcesQuery,
+    variables: { workspaceId, queryParams: { type } },
+  });
+
+  const index = items.findIndex(item => {
+    const resource = item[resourceType];
+    return resource && resource.id === resourceId;
+  });
+
+  if (index < 0) return;
+  const resourceItem = items[index];
+  const { lastUpdate } = resourceItem;
+  const readResourceItem = {
+    ...resourceItem,
+    lastUpdate: {
+      ...lastUpdate,
+      readAt: Date.now(),
+    },
+  };
+
+  client.writeQuery({
+    query: workspaceResourcesQuery,
+    variables: { workspaceId, queryParams: { type } },
+    data: {
+      workspaceResources: {
+        items: [
+          ...items.slice(0, index),
+          readResourceItem,
+          ...items.slice(index + 1),
+        ],
+        pageToken,
+        __typename,
+      },
+    },
+  });
+};
+
+const markWorkspaceResourceAsRead = (_root, props, { client }) => {
+  const { resourceType } = props;
+  ['all', resourceType].forEach(type =>
+    markWorkspaceResourceAsReadByTab(type, props, client)
+  );
+
+  return null;
+};
+
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
@@ -608,6 +663,7 @@ const localResolvers = {
     deleteMessageFromDiscussion,
     deleteDiscussionFromDocument,
     markDiscussionAsRead,
+    markWorkspaceResourceAsRead,
     deleteResourceFromInbox,
   },
 };
