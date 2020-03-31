@@ -15,7 +15,7 @@ import { NavigationContext } from 'utils/contexts';
 import { mod } from 'utils/helpers';
 
 import InputWithIcon from 'components/shared/InputWithIcon';
-import SearchResults from 'components/participants/SearchResults';
+import SearchResults from './SearchResults';
 
 const Container = styled.div({
   position: 'relative',

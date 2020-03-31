@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { NavigationContext } from 'utils/contexts';
 import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
-import ResourceCreationModal from 'components/shared/ResourceCreationModal';
+import ResourceCreationModal from 'components/resources/ResourceCreationModal';
 import CommandCenterModal from './CommandCenterModal';
 
 const COMMAND_CENTER_HOTKEY = 'cmd+k';

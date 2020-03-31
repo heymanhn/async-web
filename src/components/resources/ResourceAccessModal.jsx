@@ -18,7 +18,7 @@ import { titleize } from 'utils/helpers';
 import { snakedQueryParams } from 'utils/queryParams';
 
 import Modal from 'components/shared/Modal';
-import OrganizationSearch from 'components/shared/OrganizationSearch';
+import OrganizationSearch from './OrganizationSearch';
 import ParticipantsList from './ParticipantsList';
 import WorkspaceRow from './WorkspaceRow';
 

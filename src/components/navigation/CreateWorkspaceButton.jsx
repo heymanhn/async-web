@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { NavigationContext } from 'utils/contexts';
 
-import ResourceCreationModal from 'components/shared/ResourceCreationModal';
+import ResourceCreationModal from 'components/resources/ResourceCreationModal';
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey3,

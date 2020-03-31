@@ -11,9 +11,9 @@ import useWorkspaceMutations from 'utils/hooks/useWorkspaceMutations';
 
 import Modal from 'components/shared/Modal';
 import InputWithIcon from 'components/shared/InputWithIcon';
-import OrganizationSearch from 'components/shared/OrganizationSearch';
 import Button from 'components/shared/Button';
-import ParticipantsList from 'components/participants/ParticipantsList';
+import OrganizationSearch from './OrganizationSearch';
+import ParticipantsList from './ParticipantsList';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
