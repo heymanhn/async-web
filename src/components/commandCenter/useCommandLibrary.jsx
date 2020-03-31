@@ -123,7 +123,7 @@ const useCommandLibrary = (source, setSource, title) => {
 
   const privateDocumentCommand = {
     type: 'command',
-    Avatar: (
+    avatar: (
       <StyledAvatar
         avatarUrl={currentUser.profilePictureUrl}
         title={currentUser.fullName}

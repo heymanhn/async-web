@@ -23,13 +23,17 @@ const Title = styled.div({
 });
 
 const CommandRow = ({ data }) => {
-  const { icon, fontSize, title } = data;
+  const { icon, avatar, fontSize, title } = data;
+
+  const renderIcon = () => (
+    <IconContainer>
+      <StyledIcon icon={icon} fontSize={fontSize} />
+    </IconContainer>
+  );
 
   return (
     <>
-      <IconContainer>
-        <StyledIcon icon={icon} fontSize={fontSize} />
-      </IconContainer>
+      {avatar || renderIcon()}
       <Title>{title}</Title>
     </>
   );
