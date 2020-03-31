@@ -12,6 +12,7 @@ import useCommandCenterTitle from './useCommandCenterTitle';
 import useCommandCenterSearch from './useCommandCenterSearch';
 import ResultRow from './ResultRow';
 
+const DEFAULT_PLACEHOLDER = 'Type a command or search';
 const UP_KEY = 'up';
 const DOWN_KEY = 'down';
 const ENTER_KEY = 'enter';
@@ -70,6 +71,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   } = useContext(NavigationContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [source, setSource] = useState(resourceType);
+  const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
   const title = useCommandCenterTitle();
   const { queryString, setQueryString, results } = useCommandCenterSearch(
     source,
@@ -98,6 +100,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const handleClearInput = () => {
     setSelectedIndex(0);
     setQueryString('');
+    setPlaceholder(DEFAULT_PLACEHOLDER);
   };
 
   const handleCloseWrapper = () => {
@@ -123,7 +126,12 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
     if (isHotkey(ENTER_KEY, event)) {
       const result = results[selectedIndex];
       result.action();
-      return result.keepOpen ? handleClearInput() : handleCloseWrapper();
+      if (result.keepOpen) {
+        handleClearInput();
+        setPlaceholder(result.title);
+      } else {
+        handleCloseWrapper();
+      }
     }
 
     return null;
@@ -143,7 +151,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
           onChange={handleChange}
           onClick={e => e.stopPropagation()}
           onKeyDown={handleKeyDown}
-          placeholder="Type a command or search"
+          placeholder={placeholder}
           spellCheck="false"
           type="text"
           value={queryString}

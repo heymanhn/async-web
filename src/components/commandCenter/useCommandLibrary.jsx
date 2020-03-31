@@ -8,7 +8,13 @@ import { NavigationContext, DocumentContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
-const Title = styled.span({
+const Title = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey0,
+  fontSize: '14px',
+  fontWeight: 500,
+}));
+
+const WorkspaceTitle = styled.span({
   fontWeight: 600,
   marginLeft: '4px',
 });
@@ -110,11 +116,12 @@ const useCommandLibrary = (source, setSource, title) => {
     type: 'command',
     icon: 'layer-group',
     fontSize: '16px',
-    title: (
-      <span>
+    title: `Share with ${title}`,
+    titleComponent: (
+      <Title>
         Share with
-        <Title>{title}</Title>
-      </span>
+        <WorkspaceTitle>{title}</WorkspaceTitle>
+      </Title>
     ),
     // TODO: create document, add workspace to it, then open it.
     action: () => {},
@@ -140,11 +147,12 @@ const useCommandLibrary = (source, setSource, title) => {
     type: 'command',
     icon: 'layer-group',
     fontSize: '16px',
-    title: (
-      <span>
+    title: `Discuss in ${title}`,
+    titleComponent: (
+      <Title>
         Discuss in
-        <Title>{title}</Title>
-      </span>
+        <WorkspaceTitle>{title}</WorkspaceTitle>
+      </Title>
     ),
     // TODO: Create discussion, add workspace to it, then open it.
     action: () => {},

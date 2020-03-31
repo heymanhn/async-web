@@ -15,15 +15,16 @@ const StyledIcon = styled(FontAwesomeIcon)(
   })
 );
 
-const Title = styled.div({
+const Title = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey0,
   fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '-0.006em',
   marginTop: '-2px',
-});
+}));
 
 const CommandRow = ({ data }) => {
-  const { icon, avatar, fontSize, title } = data;
+  const { icon, avatar, fontSize, title, titleComponent } = data;
 
   const renderIcon = () => (
     <IconContainer>
@@ -34,7 +35,7 @@ const CommandRow = ({ data }) => {
   return (
     <>
       {avatar || renderIcon()}
-      <Title>{title}</Title>
+      {titleComponent || <Title>{title}</Title>}
     </>
   );
 };
