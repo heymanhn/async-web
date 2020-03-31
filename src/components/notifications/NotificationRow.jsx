@@ -63,7 +63,7 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
     payloadCamelJSON[camelCase(key)] = payloadJSON[key];
   });
   const { title, snippet } = payloadCamelJSON;
-  const { documentId, discussionId } = payloadCamelJSON;
+  const { documentId, discussionId, workspaceId } = payloadCamelJSON;
 
   const context = () => {
     let output;
@@ -72,7 +72,7 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
         output = `${author.fullName} replied to`;
         break;
       }
-      case 'edit_discussion': {
+      case 'resolve_discussion': {
         output = `${author.fullName} resolved`;
         break;
       }
@@ -94,7 +94,14 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
     return `/discussions/${discussionId}`;
   };
 
+  const workspaceURL = () => {
+    return `/workspaces/${workspaceId}`;
+  };
+
   const notificationURL = () => {
+    if (type === 'new_workspace' || type === 'access_workspace')
+      return workspaceURL();
+
     return documentId ? documentURL() : discussionURL();
   };
 
