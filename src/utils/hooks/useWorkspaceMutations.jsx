@@ -68,7 +68,7 @@ const useWorkspaceMutations = () => {
     const { data } = await addMember({
       variables: {
         resourceType: 'workspaces',
-        id: workspaceId || wsId,
+        resourceId: workspaceId || wsId,
         input: {
           userId,
           accessType: DEFAULT_ACCESS_TYPE,
@@ -77,7 +77,7 @@ const useWorkspaceMutations = () => {
       refetchQueries: [
         {
           query: workspaceQuery,
-          variables: { id: workspaceId || wsId },
+          variables: { workspaceId: workspaceId || wsId },
         },
       ],
     });
