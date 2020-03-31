@@ -93,6 +93,12 @@ const useCommandLibrary = source => {
       invitePeopleCommand,
       goToInboxCommand,
     ],
+    workspace: [
+      newDiscussionCommand,
+      newDocumentCommand,
+      invitePeopleCommand,
+      goToInboxCommand,
+    ],
   };
 
   return commands[source];

@@ -66,22 +66,22 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
 const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
   const {
-    resource: { resourceType: source },
+    resource: { resourceType },
   } = useContext(NavigationContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const title = useCommandCenterTitle(source);
+  const title = useCommandCenterTitle();
   const { queryString, setQueryString, results } = useCommandCenterSearch(
-    source
+    resourceType
   );
 
   useEffect(() => {
     if (isOpen) {
       // Customize sources later
-      track('Command Center launched', { source });
+      track('Command Center launched', { source: resourceType });
 
       if (inputRef.current) inputRef.current.focus();
     }
-  }, [isOpen, source]);
+  }, [isOpen, resourceType]);
 
   const handleChange = event => {
     const currentQuery = event.target.value;

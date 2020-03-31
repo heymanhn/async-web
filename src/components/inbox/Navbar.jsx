@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 
+import inboxQuery from 'graphql/queries/inbox';
 import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
 import NotificationsBell from 'components/notifications/NotificationsBell';
 import CommandCenter from 'components/commandCenter/CommandCenter';
@@ -47,7 +48,13 @@ const NavBar = () => {
     ...DEFAULT_NAVIGATION_CONTEXT,
     isInviteModalOpen,
     setIsInviteModalOpen,
-    resource: { resourceType: 'inbox' },
+    resource: {
+      resourceType: 'inbox',
+      // Everything below here is only stubbed to not make the command center
+      // crash. Will improve later
+      resourceQuery: inboxQuery,
+      createVariables: () => {},
+    },
   };
 
   return (

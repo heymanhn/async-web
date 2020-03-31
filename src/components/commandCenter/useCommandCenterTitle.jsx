@@ -1,40 +1,27 @@
 import { useContext } from 'react';
 
-import documentQuery from 'graphql/queries/document';
-import discussionQuery from 'graphql/queries/discussion';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { NavigationContext } from 'utils/contexts';
+import { titleize } from 'utils/helpers';
 import { useQuery } from '@apollo/react-hooks';
 
-const useCommandCenterTitle = source => {
-  const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
+const useCommandCenterTitle = () => {
+  const {
+    resource: { resourceType, resourceId, resourceQuery, createVariables },
+  } = useContext(NavigationContext);
 
-  const { data: documentData } = useQuery(documentQuery, {
-    variables: { documentId },
-    skip: !documentId,
+  const { data } = useQuery(resourceQuery, {
+    variables: createVariables(resourceId),
+    skip: !resourceId,
   });
 
-  const { data: discussionData } = useQuery(discussionQuery, {
-    variables: { discussionId },
-    skip: !discussionId,
-  });
-
-  switch (source) {
-    case 'document':
-      if (!documentData || !documentData.document) return null;
-      return documentData.document.title || 'Untitled Document';
-
-    case 'discussion':
-      if (!discussionData || !discussionData.discussion) return null;
-      return (
-        (discussionData.discussion.topic &&
-          discussionData.discussion.topic.text) ||
-        'Untitled Discussion'
-      );
-
-    default:
-      return source[0].toUpperCase() + source.slice(1);
+  if (data && data[resourceType]) {
+    const { title, topic } = data[resourceType];
+    return (
+      title || (topic && topic.text) || `Untitled ${titleize(resourceType)}`
+    );
   }
+
+  return titleize(resourceType);
 };
 
 export default useCommandCenterTitle;
