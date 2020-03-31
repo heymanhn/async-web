@@ -4,7 +4,11 @@ import styled from '@emotion/styled';
 
 import useCurrentUser from 'utils/hooks/useCurrentUser';
 import useResourceCreator from 'utils/hooks/useResourceCreator';
-import { NavigationContext, DocumentContext } from 'utils/contexts';
+import {
+  NavigationContext,
+  DocumentContext,
+  WorkspaceContext,
+} from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -30,12 +34,17 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     setResourceCreationModalMode,
   } = useContext(NavigationContext);
   const { documentId } = useContext(DocumentContext);
+  const { workspaceId } = useContext(WorkspaceContext);
+
   const { handleCreateResource: handleCreateDocument } = useResourceCreator(
-    'documents'
+    'document'
   );
   const { handleCreateResource: handleCreateDiscussion } = useResourceCreator(
-    'discussions'
+    'discussion'
   );
+  const handleCreateWorkspaceDocument = () => handleCreateDocument(workspaceId);
+  const handleCreateWorkspaceDisc = () => handleCreateDiscussion(workspaceId);
+
   const currentUser = useCurrentUser();
 
   const newDocumentCommand = {
@@ -123,8 +132,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
         <WorkspaceTitle>{title}</WorkspaceTitle>
       </Title>
     ),
-    // TODO: create document, add workspace to it, then open it.
-    action: () => {},
+    action: handleCreateWorkspaceDocument,
     shortcut: 'S',
   };
 
@@ -154,8 +162,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
         <WorkspaceTitle>{title}</WorkspaceTitle>
       </Title>
     ),
-    // TODO: Create discussion, add workspace to it, then open it.
-    action: () => {},
+    action: handleCreateWorkspaceDisc,
     shortcut: 'D',
   };
 

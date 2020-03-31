@@ -33,9 +33,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const NewDocumentButton = () => {
-  const { handleCreateResource, isSubmitting } = useResourceCreator(
-    'documents'
-  );
+  const { handleCreateResource, isSubmitting } = useResourceCreator('document');
 
   return (
     <Container onClick={handleCreateResource}>
