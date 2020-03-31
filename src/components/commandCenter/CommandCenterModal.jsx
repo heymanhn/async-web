@@ -69,19 +69,25 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
     resource: { resourceType },
   } = useContext(NavigationContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [source, setSource] = useState(resourceType);
   const title = useCommandCenterTitle();
   const { queryString, setQueryString, results } = useCommandCenterSearch(
-    resourceType
+    source,
+    setSource,
+    title
   );
 
   useEffect(() => {
     if (isOpen) {
       // Customize sources later
-      track('Command Center launched', { source: resourceType });
+      track('Command Center launched', { source });
 
       if (inputRef.current) inputRef.current.focus();
+      if (!source) setSource(resourceType);
+    } else {
+      setSource(null);
     }
-  }, [isOpen, resourceType]);
+  }, [isOpen, source, resourceType]);
 
   const handleChange = event => {
     const currentQuery = event.target.value;
@@ -89,10 +95,14 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
     setQueryString(currentQuery);
   };
 
-  const handleCloseWrapper = () => {
-    handleClose();
+  const handleClearInput = () => {
     setSelectedIndex(0);
     setQueryString('');
+  };
+
+  const handleCloseWrapper = () => {
+    handleClose();
+    handleClearInput();
   };
 
   const handleKeyDown = event => {
@@ -111,8 +121,9 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
     }
 
     if (isHotkey(ENTER_KEY, event)) {
-      results[selectedIndex].action();
-      handleCloseWrapper();
+      const result = results[selectedIndex];
+      result.action();
+      return result.keepOpen ? handleClearInput() : handleCloseWrapper();
     }
 
     return null;
