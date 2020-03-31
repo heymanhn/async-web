@@ -604,7 +604,7 @@ const markWorkspaceResourceAsReadByTab = (
   });
   if (!data || !data.workspaceResources) return;
 
-  const { items, pageToken, __typename } = data.workspaceResources;
+  const { items, pageToken, totalHits, __typename } = data.workspaceResources;
   const index = items.findIndex(item => {
     const resource = item[resourceType];
     return resource && resource.id === resourceId;
@@ -632,6 +632,7 @@ const markWorkspaceResourceAsReadByTab = (
           ...items.slice(index + 1),
         ],
         pageToken,
+        totalHits,
         __typename,
       },
     },
