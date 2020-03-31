@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
+
+import { NavigationContext } from 'utils/contexts';
 
 import ResourceCreationModal from 'components/shared/ResourceCreationModal';
 
@@ -17,18 +19,13 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const CreateWorkspaceButton = () => {
-  const [isModalOpen, setModalVisibility] = useState(false);
-  const launchModal = () => setModalVisibility(true);
-  const closeModal = () => setModalVisibility(false);
+  const { setResourceCreationModalMode } = useContext(NavigationContext);
+  const launchModal = () => setResourceCreationModalMode('workspace');
 
   return (
     <>
       <StyledIcon icon={['far', 'plus-circle']} onClick={launchModal} />
-      <ResourceCreationModal
-        resourceType="workspace"
-        isOpen={isModalOpen}
-        handleClose={closeModal}
-      />
+      <ResourceCreationModal />
     </>
   );
 };

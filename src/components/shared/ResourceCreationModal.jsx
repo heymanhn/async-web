@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useState } from 'react';
 import { navigate } from '@reach/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import { DEFAULT_ACCESS_TYPE } from 'utils/constants';
-import { DEFAULT_NAVIGATION_CONTEXT, NavigationContext } from 'utils/contexts';
+import { DEFAULT_ACCESS_TYPE, RESOURCE_ICONS } from 'utils/constants';
+import { NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
 import useCurrentUser from 'utils/hooks/useCurrentUser';
 import useWorkspaceMutations from 'utils/hooks/useWorkspaceMutations';
@@ -15,11 +14,6 @@ import InputWithIcon from 'components/shared/InputWithIcon';
 import OrganizationSearch from 'components/shared/OrganizationSearch';
 import Button from 'components/shared/Button';
 import ParticipantsList from 'components/participants/ParticipantsList';
-
-const ICON_FOR_RESOURCE_TYPE = {
-  workspace: 'layer-group',
-  discussion: 'comments-alt',
-};
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
@@ -67,7 +61,14 @@ const CreateButton = styled(Button)({
   padding: '4px 20px 6px',
 });
 
-const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
+const ResourceCreationModal = props => {
+  const navigationContext = useContext(NavigationContext);
+  const {
+    resourceCreationModalMode: resourceType,
+    setResourceCreationModalMode,
+  } = navigationContext;
+  const isOpen = !!resourceType;
+
   const currentUser = useCurrentUser();
   const {
     handleCreate,
@@ -83,12 +84,15 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
 
   const [title, setTitle] = useState('');
 
-  // Keep track of the list of participants locally first. Then, add them to the
-  // workspace after it's created.
+  // Keep track of the list of participants and the parent workspace
+  // locally first. Then, add them to the resource after it's created.
   const owner = { user: currentUser, accessType: 'owner' };
   const [participants, setParticipants] = useState(
     currentUser.id ? [owner] : []
   );
+  const [parentWorkspaceId, setParentWorkspaceId] = useState(null);
+
+  if (!resourceType) return null;
 
   // In case current user isn't available immediately from the query
   if (!participants.length && currentUser) setParticipants([owner]);
@@ -108,6 +112,9 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
     ]);
   };
 
+  const handleClose = () => setResourceCreationModalMode(null);
+
+  // TODO: Extend this for creating discussions too.
   const handleCreateWorkspace = async () => {
     const { workspaceId } = await handleCreate(title);
 
@@ -124,19 +131,19 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
   };
 
   const value = {
-    ...DEFAULT_NAVIGATION_CONTEXT,
+    ...navigationContext,
     resource: { resourceType },
   };
 
   return (
-    <StyledModal handleClose={handleClose} isOpen={isOpen}>
+    <StyledModal handleClose={handleClose} isOpen={isOpen} {...props}>
       <Header onClick={handleHideDropdown}>
         <Title>{`New ${titleize(resourceType)}`}</Title>
         <CloseIcon icon={['far', 'times']} onClick={handleClose} />
       </Header>
       <Contents onClick={handleHideDropdown}>
         <StyledInput
-          icon={ICON_FOR_RESOURCE_TYPE[resourceType]}
+          icon={RESOURCE_ICONS[resourceType]}
           placeholder="Give it a name"
           value={title}
           setValue={setTitle}
@@ -148,6 +155,8 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
             isDropdownVisible={isDropdownVisible}
             currentMembers={participants.map(p => p.user)}
             handleAddMember={handleAddMemberWrapper}
+            handleAddToWorkspace={setParentWorkspaceId}
+            parentWorkspaceId={parentWorkspaceId}
             handleShowDropdown={handleShowDropdown}
             handleHideDropdown={handleHideDropdown}
             handleCloseModal={handleClose}
@@ -166,12 +175,6 @@ const ResourceCreationModal = ({ resourceType, handleClose, isOpen }) => {
       </Contents>
     </StyledModal>
   );
-};
-
-ResourceCreationModal.propTypes = {
-  resourceType: PropTypes.oneOf(['workspace', 'discussion']).isRequired,
-  handleClose: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
 };
 
 export default ResourceCreationModal;

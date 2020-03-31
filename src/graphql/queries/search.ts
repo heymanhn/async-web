@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 
 import document from 'graphql/fragments/document';
 import discussion from 'graphql/fragments/discussion';
+import workspace from 'graphql/fragments/workspace';
 
 export default gql`
   query Search($queryString: String!) {
@@ -22,10 +23,14 @@ export default gql`
           tags
           messageCount
         }
+        workspace @type(name: "Workspace") {
+          ...WorkspaceObject
+        }
         searchScore
       }
     }
   }
   ${document}
   ${discussion}
+  ${workspace}
 `;

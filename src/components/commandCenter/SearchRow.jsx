@@ -6,12 +6,17 @@ import styled from '@emotion/styled';
 import useResourceDetails from 'utils/hooks/useResourceDetails';
 
 const IconContainer = styled.div({
-  marginTop: '-20px',
   width: '32px',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)({
   fontSize: '16px',
+});
+
+const RowContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-start',
 });
 
 const Title = styled.div({
@@ -23,20 +28,19 @@ const Title = styled.div({
 
 const SearchRow = ({ data }) => {
   const { type, icon, title, resource } = data;
-  const [resourceType] = type.match(/document|discussion/);
 
-  const ResourceDetails = useResourceDetails(resourceType, resource);
-  if (!ResourceDetails) return null;
+  const ResourceDetails = useResourceDetails(type, resource);
+  if (type !== 'workspace' && !ResourceDetails) return null;
 
   return (
     <>
       <IconContainer>
         <StyledIcon icon={icon} />
       </IconContainer>
-      <div>
+      <RowContainer>
         <Title>{title}</Title>
-        <ResourceDetails />
-      </div>
+        {type !== 'workspace' && <ResourceDetails />}
+      </RowContainer>
     </>
   );
 };

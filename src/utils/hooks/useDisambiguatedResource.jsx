@@ -8,22 +8,23 @@ import {
   DocumentContext,
   WorkspaceContext,
 } from 'utils/contexts';
+import { RESOURCE_ICONS } from 'utils/constants';
 
 const resourceProps = {
   workspace: {
     resourceQuery: workspaceQuery,
     createVariables: v => ({ workspaceId: v }),
-    icon: 'layer-group',
+    icon: RESOURCE_ICONS.workspace,
   },
   document: {
     resourceQuery: documentQuery,
     createVariables: v => ({ documentId: v }),
-    icon: 'file-alt',
+    icon: RESOURCE_ICONS.document,
   },
   discussion: {
     resourceQuery: discussionQuery,
     createVariables: v => ({ discussionId: v }),
-    icon: 'comments-alt',
+    icon: RESOURCE_ICONS.discussion,
   },
 };
 

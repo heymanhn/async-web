@@ -27,6 +27,7 @@ const OrganizationSearch = ({
   isDropdownVisible,
   currentMembers,
   autoFocus,
+  parentWorkspaceId,
 
   handleAddMember,
   handleAddToWorkspace,
@@ -36,7 +37,7 @@ const OrganizationSearch = ({
   ...props
 }) => {
   const {
-    resource: { resourceType, resourceId, resourceQuery, createVariables },
+    resource: { resourceType },
   } = useContext(NavigationContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -52,11 +53,6 @@ const OrganizationSearch = ({
     skip: resourceType === 'workspace',
   });
 
-  const { data: resourceData } = useQuery(resourceQuery, {
-    variables: createVariables(resourceId),
-    skip: resourceType === 'workspace',
-  });
-
   if (loading || !data.resourceMembers) return null;
   const { members } = data.resourceMembers;
   const orgMembers = (members || []).map(m => m.user);
@@ -65,13 +61,6 @@ const OrganizationSearch = ({
   if (workspacesData && workspacesData.orgWorkspaces) {
     const { items } = workspacesData.orgWorkspaces;
     orgWorkspaces = (items || []).map(i => i.workspace);
-  }
-
-  let currentWorkspaceId = null;
-  if (resourceData && resourceData[resourceType]) {
-    const { workspaces } = resourceData[resourceType];
-    // Assuming that a resource can only be part of one workspace for now
-    [currentWorkspaceId] = workspaces || [];
   }
 
   const memberSearch = () => {
@@ -106,7 +95,7 @@ const OrganizationSearch = ({
   const handleAddSelection = obj => {
     const { type, id: objId } = obj;
     if (currentMembers.find(({ id: pid }) => pid === objId)) return;
-    if (currentWorkspaceId) return;
+    if (parentWorkspaceId) return;
 
     if (type === 'member') handleAddMember(obj);
     if (type === 'workspace') handleAddToWorkspace(objId);
@@ -171,7 +160,7 @@ const OrganizationSearch = ({
         <SearchResults
           handleAddSelection={handleAddSelection}
           currentMembers={currentMembers}
-          currentWorkspaceId={currentWorkspaceId}
+          parentWorkspaceId={parentWorkspaceId}
           results={results}
           selectedIndex={selectedIndex}
           updateSelectedIndex={updateSelectedIndex}
@@ -184,13 +173,14 @@ const OrganizationSearch = ({
 };
 
 OrganizationSearch.propTypes = {
+  autoFocus: PropTypes.bool,
   isModalOpen: PropTypes.bool.isRequired,
   isDropdownVisible: PropTypes.bool.isRequired,
   currentMembers: PropTypes.array.isRequired,
-  autoFocus: PropTypes.bool,
+  parentWorkspaceId: PropTypes.string,
 
   handleAddMember: PropTypes.func.isRequired,
-  handleAddToWorkspace: PropTypes.func.isRequired,
+  handleAddToWorkspace: PropTypes.func,
   handleShowDropdown: PropTypes.func.isRequired,
   handleHideDropdown: PropTypes.func.isRequired,
   handleCloseModal: PropTypes.func.isRequired,
@@ -198,6 +188,8 @@ OrganizationSearch.propTypes = {
 
 OrganizationSearch.defaultProps = {
   autoFocus: false,
+  parentWorkspaceId: null,
+  handleAddToWorkspace: () => {},
 };
 
 export default OrganizationSearch;
