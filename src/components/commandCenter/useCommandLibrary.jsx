@@ -1,22 +1,51 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { navigate } from '@reach/router';
+import styled from '@emotion/styled';
 
+import useCurrentUser from 'utils/hooks/useCurrentUser';
 import useResourceCreator from 'utils/hooks/useResourceCreator';
-import { NavigationContext, DocumentContext } from 'utils/contexts';
+import {
+  NavigationContext,
+  DocumentContext,
+  WorkspaceContext,
+} from 'utils/contexts';
 
-const useCommandLibrary = source => {
+import Avatar from 'components/shared/Avatar';
+
+const Title = styled.span(({ theme: { colors } }) => ({
+  color: colors.grey0,
+  fontSize: '14px',
+  fontWeight: 500,
+}));
+
+const WorkspaceTitle = styled.span({
+  fontWeight: 600,
+  marginLeft: '4px',
+});
+
+const StyledAvatar = styled(Avatar)({
+  marginRight: '12px',
+});
+
+const useCommandLibrary = ({ source, setSource, title }) => {
   const {
     setIsResourceAccessModalOpen,
     setIsInviteModalOpen,
     setResourceCreationModalMode,
   } = useContext(NavigationContext);
   const { documentId } = useContext(DocumentContext);
+  const { workspaceId } = useContext(WorkspaceContext);
+
   const { handleCreateResource: handleCreateDocument } = useResourceCreator(
-    'documents'
+    'document'
   );
   const { handleCreateResource: handleCreateDiscussion } = useResourceCreator(
-    'discussions'
+    'discussion'
   );
+  const handleCreateWorkspaceDocument = () => handleCreateDocument(workspaceId);
+  const handleCreateWorkspaceDisc = () => handleCreateDiscussion(workspaceId);
+
+  const currentUser = useCurrentUser();
 
   const newDocumentCommand = {
     type: 'command',
@@ -24,6 +53,23 @@ const useCommandLibrary = source => {
     title: 'New document',
     action: handleCreateDocument,
     shortcut: 'N',
+  };
+
+  const newWorkspaceDocumentCommand = {
+    type: 'command',
+    icon: ['fal', 'plus-circle'],
+    title: 'New document... ',
+    action: () => setSource('workspaceDocument'),
+    shortcut: 'N',
+    keepOpen: true,
+  };
+
+  const newDiscussionCommand = {
+    type: 'command',
+    icon: ['fal', 'plus-circle'],
+    title: 'New discussion',
+    action: handleCreateDiscussion,
+    shortcut: 'D',
   };
 
   const newDocumentDiscussionCommand = {
@@ -34,12 +80,13 @@ const useCommandLibrary = source => {
     shortcut: 'D',
   };
 
-  const newDiscussionCommand = {
+  const newWorkspaceDiscussionCommand = {
     type: 'command',
     icon: ['fal', 'plus-circle'],
-    title: 'New discussion',
-    action: handleCreateDiscussion,
+    title: 'New discussion... ',
+    action: () => setSource('workspaceDiscussion'),
     shortcut: 'D',
+    keepOpen: true,
   };
 
   const newWorkspaceCommand = {
@@ -74,6 +121,61 @@ const useCommandLibrary = source => {
     shortcut: 'I',
   };
 
+  const shareDocumentCommand = {
+    type: 'command',
+    icon: 'layer-group',
+    fontSize: '16px',
+    title: `Share with ${title}`,
+    titleComponent: (
+      <Title>
+        Share with
+        <WorkspaceTitle>{title}</WorkspaceTitle>
+      </Title>
+    ),
+    action: handleCreateWorkspaceDocument,
+    shortcut: 'S',
+  };
+
+  const privateDocumentCommand = {
+    type: 'command',
+    avatar: (
+      <StyledAvatar
+        avatarUrl={currentUser.profilePictureUrl}
+        title={currentUser.fullName}
+        alt={currentUser.fullName}
+        size={20}
+      />
+    ),
+    title: 'For myself only',
+    action: handleCreateDocument,
+    shortcut: 'M',
+  };
+
+  const shareDiscussionCommand = {
+    type: 'command',
+    icon: 'layer-group',
+    fontSize: '16px',
+    title: `Discuss in ${title}`,
+    titleComponent: (
+      <Title>
+        Discuss in
+        <WorkspaceTitle>{title}</WorkspaceTitle>
+      </Title>
+    ),
+    action: handleCreateWorkspaceDisc,
+    shortcut: 'D',
+  };
+
+  const customAudienceDiscussionCommand = {
+    type: 'command',
+    icon: 'users',
+    fontSize: '16px',
+    title: 'Start with custom audience',
+    // TODO: Launch resource creation modal for the discussion
+    action: () => {},
+    shortcut: 'C',
+  };
+
   const commands = {
     inbox: [
       newDocumentCommand,
@@ -84,24 +186,32 @@ const useCommandLibrary = source => {
     document: [
       newDocumentCommand,
       newDocumentDiscussionCommand,
+      newWorkspaceCommand,
       invitePeopleCommand,
       goToInboxCommand,
     ],
     discussion: [
       newDiscussionCommand,
       newDocumentCommand,
+      newWorkspaceCommand,
       invitePeopleCommand,
       goToInboxCommand,
     ],
     workspace: [
-      newDiscussionCommand,
-      newDocumentCommand,
+      newWorkspaceDiscussionCommand,
+      newWorkspaceDocumentCommand,
+      newWorkspaceCommand,
       invitePeopleCommand,
       goToInboxCommand,
     ],
+    workspaceDocument: [shareDocumentCommand, privateDocumentCommand],
+    workspaceDiscussion: [
+      shareDiscussionCommand,
+      customAudienceDiscussionCommand,
+    ],
   };
 
-  return commands[source];
+  return source ? commands[source] : [];
 };
 
 export default useCommandLibrary;

@@ -35,7 +35,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 
 const NewDiscussionButton = () => {
   const { handleCreateResource, isSubmitting } = useResourceCreator(
-    'discussions'
+    'discussion'
   );
 
   return (
