@@ -109,6 +109,7 @@ const useCommandLibrary = (source, setSource, title) => {
   const shareDocumentCommand = {
     type: 'command',
     icon: 'layer-group',
+    fontSize: '16px',
     title: (
       <span>
         Share with
@@ -138,6 +139,7 @@ const useCommandLibrary = (source, setSource, title) => {
   const shareDiscussionCommand = {
     type: 'command',
     icon: 'layer-group',
+    fontSize: '16px',
     title: (
       <span>
         Discuss in
@@ -152,6 +154,7 @@ const useCommandLibrary = (source, setSource, title) => {
   const customAudienceDiscussionCommand = {
     type: 'command',
     icon: 'users',
+    fontSize: '16px',
     title: 'Start with custom audience',
     // TODO: Launch resource creation modal for the discussion
     action: () => {},

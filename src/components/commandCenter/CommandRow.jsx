@@ -3,10 +3,17 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-const StyledIcon = styled(FontAwesomeIcon)({
-  fontSize: '20px',
-  marginRight: '12px',
+const IconContainer = styled.div({
+  display: 'flex',
+  width: '32px',
 });
+
+const StyledIcon = styled(FontAwesomeIcon)(
+  ({ fontSize, theme: { colors } }) => ({
+    color: colors.grey1,
+    fontSize: fontSize || '20px',
+  })
+);
 
 const Title = styled.div({
   fontSize: '14px',
@@ -16,11 +23,13 @@ const Title = styled.div({
 });
 
 const CommandRow = ({ data }) => {
-  const { icon, title } = data;
+  const { icon, fontSize, title } = data;
 
   return (
     <>
-      <StyledIcon icon={icon} />
+      <IconContainer>
+        <StyledIcon icon={icon} fontSize={fontSize} />
+      </IconContainer>
       <Title>{title}</Title>
     </>
   );
