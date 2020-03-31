@@ -23,7 +23,7 @@ const StyledAvatar = styled(Avatar)({
   marginRight: '12px',
 });
 
-const useCommandLibrary = (source, setSource, title) => {
+const useCommandLibrary = ({ source, setSource, title }) => {
   const {
     setIsResourceAccessModalOpen,
     setIsInviteModalOpen,

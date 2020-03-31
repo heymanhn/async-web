@@ -8,10 +8,13 @@ import { RESOURCE_ICONS } from 'utils/constants';
 
 import useCommandLibrary from './useCommandLibrary';
 
-const useCommandCenterSearch = (...props) => {
-  const [newSource] = props;
+const useCommandCenterSearch = ({
+  source: newSource,
+  isSearchDisabled,
+  ...props
+}) => {
   const client = useApolloClient();
-  const commands = useCommandLibrary(...props);
+  const commands = useCommandLibrary({ source: newSource, ...props });
   const [queryString, setQueryString] = useState('');
   const [prevQueryString, setPrevQueryString] = useState(queryString);
   const [results, setResults] = useState(commands);
@@ -73,7 +76,7 @@ const useCommandCenterSearch = (...props) => {
   const getResults = async () => {
     let newResults = filterCommands();
 
-    if (queryString.length > 1) {
+    if (queryString.length > 1 && !isSearchDisabled) {
       const searchResults = await executeSearch();
       newResults = [...newResults, ...searchResults];
     }

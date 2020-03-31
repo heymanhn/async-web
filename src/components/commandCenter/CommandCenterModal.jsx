@@ -73,11 +73,12 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const [source, setSource] = useState(resourceType);
   const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
   const title = useCommandCenterTitle();
-  const { queryString, setQueryString, results } = useCommandCenterSearch(
+  const { queryString, setQueryString, results } = useCommandCenterSearch({
     source,
     setSource,
-    title
-  );
+    title,
+    isSearchDisabled: resourceType !== source,
+  });
 
   useEffect(() => {
     if (isOpen) {
