@@ -5,6 +5,7 @@ export const DEFAULT_WORKSPACE_CONTEXT = {
   viewMode: null,
 
   setViewMode: () => {},
+  setForceUpdate: () => {},
 };
 export const WorkspaceContext = createContext(DEFAULT_WORKSPACE_CONTEXT);
 

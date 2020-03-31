@@ -29,22 +29,34 @@ const resourceProps = {
 };
 
 const useDisambiguatedResource = () => {
-  const { workspaceId } = useContext(WorkspaceContext);
-  const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
+  const { workspaceId, setForceUpdate: setForceUpdateWorkspace } = useContext(
+    WorkspaceContext
+  );
+  const { documentId, setForceUpdate: setForceUpdateDocument } = useContext(
+    DocumentContext
+  );
+  const { discussionId, setForceUpdate: setForceUpdateDiscussion } = useContext(
+    DiscussionContext
+  );
 
   let resourceType;
+  let setForceUpdate;
+
   if (workspaceId) {
     resourceType = 'workspace';
+    setForceUpdate = setForceUpdateWorkspace;
   } else if (documentId) {
     resourceType = 'document';
+    setForceUpdate = setForceUpdateDocument;
   } else {
     resourceType = 'discussion';
+    setForceUpdate = setForceUpdateDiscussion;
   }
 
   return {
     resourceType,
     resourceId: workspaceId || documentId || discussionId,
+    setForceUpdate,
     ...resourceProps[resourceType],
   };
 };

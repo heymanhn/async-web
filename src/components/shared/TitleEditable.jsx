@@ -4,13 +4,14 @@
  *
  * Tracking issue: https://github.com/ianstormtaylor/slate/pull/3506
  */
-import React, { useContext, useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
 
+import { titleize } from 'utils/helpers';
 import useAutoSave from 'utils/hooks/useAutoSave';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
 
 const Container = styled.div({
   display: 'flex',
@@ -42,18 +43,12 @@ const TitleEditable = ({
   handleUpdateTitle,
   ...props
 }) => {
-  const { documentId, setForceUpdate: setForceUpdateDocument } = useContext(
-    DocumentContext
-  );
-  const { discussionId, setForceUpdate: setForceUpdateDiscussion } = useContext(
-    DiscussionContext
-  );
-  const setForceUpdate = documentId
-    ? setForceUpdateDocument
-    : setForceUpdateDiscussion;
+  const resource = useDisambiguatedResource();
+  const { resourceType, setForceUpdate } = resource;
+
   const titleRef = useRef(null);
+
   const [title, setTitle] = useState(initialTitle);
-  const [resourceId, setResourceId] = useState(documentId || discussionId);
   const [showPlaceholder, setShowPlaceholder] = useState(!title);
   const [elementHeight, setElementHeight] = useState(null);
 
@@ -61,13 +56,9 @@ const TitleEditable = ({
   const [DOMTitle, setDOMTitle] = useState(initialTitle);
 
   useEffect(() => {
-    const newResourceId = documentId || discussionId;
-    if (resourceId !== newResourceId) {
-      setResourceId(newResourceId);
-      setTitle(initialTitle);
-      setDOMTitle(initialTitle);
-    }
-  }, [initialTitle, documentId, discussionId, resourceId]);
+    setTitle(initialTitle);
+    setDOMTitle(initialTitle);
+  }, [initialTitle]);
 
   const handleUpdate = () => {
     const { current } = titleRef || {};
@@ -150,7 +141,7 @@ const TitleEditable = ({
       />
       {showPlaceholder && (
         <Placeholder onClick={handleSelectTitle}>
-          {`Untitled ${documentId ? 'Document' : 'Discussion'}`}
+          {`Untitled ${titleize(resourceType)}`}
         </Placeholder>
       )}
     </Container>

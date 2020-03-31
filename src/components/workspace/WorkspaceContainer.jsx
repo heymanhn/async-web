@@ -30,6 +30,7 @@ const InnerContainer = styled.div(
 const WorkspaceContainer = ({ workspaceId }) => {
   useUpdateSelectedResource(workspaceId);
   const [viewMode, setViewMode] = useState('all');
+  const [forceUpdate, setForceUpdate] = useState(false);
   const { markAsRead } = useViewedReaction();
 
   const { loading, data } = useQuery(workspaceQuery, {
@@ -55,11 +56,14 @@ const WorkspaceContainer = ({ workspaceId }) => {
     });
   }
 
+  if (forceUpdate) setForceUpdate(false);
+
   const value = {
     ...DEFAULT_WORKSPACE_CONTEXT,
     workspaceId,
     viewMode,
     setViewMode,
+    setForceUpdate,
   };
 
   return (
