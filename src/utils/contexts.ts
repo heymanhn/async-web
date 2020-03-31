@@ -59,9 +59,11 @@ export const DEFAULT_NAVIGATION_CONTEXT = {
   selectedResourceId: null, // used by the sidebar
   isResourceAccessModalOpen: false,
   isInviteModalOpen: false,
+  resourceCreationModalMode: null,
 
   setSelectedResourceId: () => {},
   setIsResourceAccessModalOpen: () => {},
   setIsInviteModalOpen: () => {},
+  setResourceCreationModalMode: () => {},
 };
 export const NavigationContext = createContext(DEFAULT_NAVIGATION_CONTEXT);

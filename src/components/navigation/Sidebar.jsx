@@ -27,11 +27,16 @@ const StyledOrganizationSettings = styled(OrganizationSettings)({
 
 const Sidebar = () => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [resourceCreationModalMode, setResourceCreationModalMode] = useState(
+    null
+  );
 
   const value = {
     ...DEFAULT_NAVIGATION_CONTEXT,
     isInviteModalOpen,
+    resourceCreationModalMode,
     setIsInviteModalOpen,
+    setResourceCreationModalMode,
   };
 
   return (

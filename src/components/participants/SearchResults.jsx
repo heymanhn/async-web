@@ -22,7 +22,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
 const SearchResults = ({
   handleAddSelection,
   currentMembers,
-  currentWorkspaceId,
+  parentWorkspaceId,
   results,
   selectedIndex,
   updateSelectedIndex,
@@ -33,7 +33,7 @@ const SearchResults = ({
     const { type } = result;
     if (type === 'member')
       return !!currentMembers.find(({ id }) => id === result.id);
-    if (type === 'workspace') return !!currentWorkspaceId;
+    if (type === 'workspace') return !!parentWorkspaceId;
 
     return false;
   };
@@ -59,13 +59,13 @@ SearchResults.propTypes = {
   handleAddSelection: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   currentMembers: PropTypes.array.isRequired,
-  currentWorkspaceId: PropTypes.string,
+  parentWorkspaceId: PropTypes.string,
   selectedIndex: PropTypes.number.isRequired,
   updateSelectedIndex: PropTypes.func.isRequired,
 };
 
 SearchResults.defaultProps = {
-  currentWorkspaceId: null,
+  parentWorkspaceId: null,
 };
 
 export default SearchResults;

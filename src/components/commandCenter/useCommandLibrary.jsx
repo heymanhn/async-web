@@ -5,9 +5,11 @@ import useResourceCreator from 'utils/hooks/useResourceCreator';
 import { NavigationContext, DocumentContext } from 'utils/contexts';
 
 const useCommandLibrary = source => {
-  const { setIsResourceAccessModalOpen, setIsInviteModalOpen } = useContext(
-    NavigationContext
-  );
+  const {
+    setIsResourceAccessModalOpen,
+    setIsInviteModalOpen,
+    setResourceCreationModalMode,
+  } = useContext(NavigationContext);
   const { documentId } = useContext(DocumentContext);
   const { handleCreateResource: handleCreateDocument } = useResourceCreator(
     'documents'
@@ -40,6 +42,14 @@ const useCommandLibrary = source => {
     shortcut: 'D',
   };
 
+  const newWorkspaceCommand = {
+    type: 'command',
+    icon: ['fal', 'plus-circle'],
+    title: 'New workspace',
+    action: () => setResourceCreationModalMode('workspace'),
+    shortcut: 'W',
+  };
+
   const invitePeopleCommand = {
     type: 'command',
     icon: ['fal', 'user-circle'],
@@ -65,7 +75,12 @@ const useCommandLibrary = source => {
   };
 
   const commands = {
-    inbox: [newDocumentCommand, newDiscussionCommand, inviteTeamCommand],
+    inbox: [
+      newDocumentCommand,
+      newDiscussionCommand,
+      newWorkspaceCommand,
+      inviteTeamCommand,
+    ],
     document: [
       newDocumentCommand,
       newDocumentDiscussionCommand,

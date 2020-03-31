@@ -96,10 +96,11 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
     variables: createVariables(resourceId),
   });
   if (!data || !data[resourceType]) return null;
+
   const { title, topic, workspaces } = data[resourceType];
   const { text } = topic || {};
   const resourceTitle = title || text || `Untitled ${titleize(resourceType)}`;
-  const currentWorkspaceId = workspaces ? workspaces[0] : null;
+  const parentWorkspaceId = workspaces ? workspaces[0] : null;
 
   const handleAddMember = user => {
     addMember({
@@ -150,6 +151,7 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
           isModalOpen={isOpen}
           isDropdownVisible={isDropdownVisible}
           currentMembers={participants.map(p => p.user)}
+          parentWorkspaceId={parentWorkspaceId}
           handleAddMember={handleAddMember}
           handleAddToWorkspace={handleAddToWorkspace}
           handleShowDropdown={handleShowDropdown}
@@ -160,9 +162,9 @@ const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
           participants={participants}
           handleRemove={handleRemoveMember}
         />
-        {currentWorkspaceId && (
+        {parentWorkspaceId && (
           <WorkspaceRow
-            workspaceId={currentWorkspaceId}
+            workspaceId={parentWorkspaceId}
             handleRemove={handleRemoveFromWorkspace}
           />
         )}
