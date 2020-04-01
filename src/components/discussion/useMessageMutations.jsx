@@ -41,8 +41,8 @@ const useMessageMutations = ({ message = null } = {}) => {
 
     let messageDiscussionId = discussionId;
     if (!messageDiscussionId) {
-      const { discussionId: newDiscussionId } = await handleCreateDiscussion();
-      messageDiscussionId = newDiscussionId;
+      const { id } = await handleCreateDiscussion();
+      messageDiscussionId = id;
     }
 
     const refetchQueries = [

@@ -59,16 +59,16 @@ const useDiscussionMutations = () => {
     });
 
     if (data.createDiscussion) {
-      const { id: newDiscussionId } = data.createDiscussion;
+      const { id } = data.createDiscussion;
       track('New discussion created', {
         documentId,
-        discussionId: newDiscussionId,
+        discussionId: id,
       });
 
-      afterCreate(newDiscussionId);
+      afterCreate(id);
       setIsSubmitting(false);
 
-      return Promise.resolve({ discussionId: newDiscussionId });
+      return Promise.resolve({ id });
     }
 
     return Promise.reject(new Error('Failed to create discussion'));

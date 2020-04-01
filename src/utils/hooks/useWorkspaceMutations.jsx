@@ -38,11 +38,11 @@ const useWorkspaceMutations = () => {
     });
 
     if (data.createWorkspace) {
-      const { id: newWorkspaceId } = data.createWorkspace;
-      track('New workspace created', { workspaceId: newWorkspaceId });
+      const { id } = data.createWorkspace;
+      track('New workspace created', { workspaceId: id });
 
       setIsSubmitting(false);
-      return Promise.resolve({ workspaceId: newWorkspaceId });
+      return Promise.resolve({ id });
     }
 
     return Promise.reject(new Error('Failed to create new workspace'));
