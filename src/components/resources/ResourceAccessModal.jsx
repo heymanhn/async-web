@@ -53,7 +53,7 @@ const StyledOrganizationSearch = styled(OrganizationSearch)({
 
 const ResourceAccessModal = ({ handleClose, isOpen, participants }) => {
   const { resource } = useContext(NavigationContext);
-  const { resourceType, resourceId, resourceQuery, createVariables } = resource;
+  const { resourceType, resourceQuery, variables } = resource;
   const resourceMembersType = Pluralize(resourceType);
 
   // Putting the state here so that clicking anywhere on the modal

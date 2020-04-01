@@ -44,7 +44,7 @@ const Separator = styled.div(({ theme: { colors } }) => ({
 
 const ResourceTitle = props => {
   const {
-    resource: { resourceType, resourceId, resourceQuery, createVariables },
+    resource: { resourceType, resourceQuery, variables },
   } = useContext(NavigationContext);
 
   const [getWorkspace, { loading, data: workspaceData }] = useLazyQuery(
@@ -52,7 +52,7 @@ const ResourceTitle = props => {
   );
 
   const { data: resourceData } = useQuery(resourceQuery, {
-    variables: createVariables(resourceId),
+    variables,
   });
 
   // All these dances to ensure we render only when everything is fetched

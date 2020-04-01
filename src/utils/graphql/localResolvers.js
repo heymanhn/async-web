@@ -257,10 +257,10 @@ const removeMember = (
 };
 
 const addToWorkspace = (_root, { resource, workspaceId }, { client }) => {
-  const { resourceType, resourceId, resourceQuery, createVariables } = resource;
+  const { resourceType, resourceId, resourceQuery, variables } = resource;
   const data = client.readQuery({
     query: resourceQuery,
-    variables: createVariables(resourceId),
+    variables,
   });
   if (!data) return null;
 
@@ -270,7 +270,7 @@ const addToWorkspace = (_root, { resource, workspaceId }, { client }) => {
 
   client.writeQuery({
     query: resourceQuery,
-    variables: createVariables(resourceId),
+    variables,
     data: newData,
   });
 
@@ -278,10 +278,10 @@ const addToWorkspace = (_root, { resource, workspaceId }, { client }) => {
 };
 
 const removeFromWorkspace = (_root, { resource }, { client }) => {
-  const { resourceType, resourceId, resourceQuery, createVariables } = resource;
+  const { resourceType, resourceQuery, variables } = resource;
   const data = client.readQuery({
     query: resourceQuery,
-    variables: createVariables(resourceId),
+    variables,
   });
   if (!data) return null;
 
@@ -291,7 +291,7 @@ const removeFromWorkspace = (_root, { resource }, { client }) => {
 
   client.writeQuery({
     query: resourceQuery,
-    variables: createVariables(resourceId),
+    variables,
     data: newData,
   });
 

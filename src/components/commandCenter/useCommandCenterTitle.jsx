@@ -6,11 +6,11 @@ import { useQuery } from '@apollo/react-hooks';
 
 const useCommandCenterTitle = () => {
   const {
-    resource: { resourceType, resourceId, resourceQuery, createVariables },
+    resource: { resourceType, resourceId, resourceQuery, variables },
   } = useContext(NavigationContext);
 
   const { data } = useQuery(resourceQuery, {
-    variables: createVariables(resourceId),
+    variables,
     skip: !resourceId,
   });
 
