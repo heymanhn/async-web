@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useQuery } from 'react';
 import PropTypes from 'prop-types';
 
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
+import documentQuery from 'graphql/queries/document';
 
+import NotFound from 'components/navigation/NotFound';
 import DiscussionModal from 'components/discussion/DiscussionModal';
 import NavigationBar from 'components/navigation/NavigationBar';
 import Document from './Document';
@@ -49,6 +51,21 @@ const DocumentContainer = ({
       isModalOpen: !!initialDiscussionId,
     }));
   }, [initialDiscussionId]);
+
+  const { loading, error, data } = useQuery(documentQuery, {
+    variables: { documentId },
+  });
+
+  if (loading) return null;
+  if (error || !data.document) return <NotFound />;
+
+  const isUnread = () => {
+    const { tags } = data.document;
+    const safeTags = tags || [];
+    return (
+      safeTags.includes('new_discussions') || safeTags.includes('new_document')
+    );
+  };
 
   const handleShowModal = (discussionId, selection, content) => {
     const newState = {
@@ -107,7 +124,7 @@ const DocumentContainer = ({
   return (
     <DocumentContext.Provider value={value}>
       <NavigationBar />
-      {viewMode === 'content' && <Document />}
+      {viewMode === 'content' && <Document isUnread={isUnread()} />}
       {viewMode === 'discussions' && <DiscussionsList />}
 
       {isModalOpen && (
