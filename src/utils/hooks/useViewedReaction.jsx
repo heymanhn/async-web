@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import createReactionMutation from 'graphql/mutations/createReaction';
 import localUpdateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
 import localMarkDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';
-import notificationsQuery from 'graphql/queries/notifications';
+import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import discussionQuery from 'graphql/queries/discussion';
 import documentQuery from 'graphql/queries/document';
 import { getLocalUser } from 'utils/auth';
@@ -16,8 +16,8 @@ const useViewedReaction = () => {
     const { userId } = getLocalUser();
     let refetchQueries = [
       {
-        query: notificationsQuery,
-        variables: { id: userId, queryParams: {} },
+        query: resourceNotificationsQuery,
+        variables: { resourceType: 'users', resourceId: userId },
       },
     ];
 

@@ -1,7 +1,15 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation UpdateNotifications($userId: String!, $notification: Object!) {
-    updateNotifications(userId: $userId, notification: $notification) @client
+  mutation UpdateNotifications(
+    $resourceType: String!
+    $resourceId: String!
+    $notification: Object!
+  ) {
+    updateNotifications(
+      resourceType: $resourceType
+      resourceId: $resourceId
+      notification: $notification
+    ) @client
   }
 `;

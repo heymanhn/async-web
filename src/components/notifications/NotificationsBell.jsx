@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import styled from '@emotion/styled';
+import React, { useContext, useState, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Pluralize from 'pluralize';
+import styled from '@emotion/styled';
 
+import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import { getLocalUser } from 'utils/auth';
-import notificationsQuery from 'graphql/queries/notifications';
+import { NavigationContext } from 'utils/contexts';
 
 import NotificationsDropdown from './NotificationsDropdown';
 
@@ -36,17 +38,24 @@ const UnreadBadge = styled.div(({ theme: { colors } }) => ({
 }));
 
 const NotificationsBell = () => {
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const iconRef = useRef(null);
   const { userId } = getLocalUser();
+  const { resource } = useContext(NavigationContext);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
-  const { loading, data } = useQuery(notificationsQuery, {
-    variables: { id: userId },
+  let { resourceType, resourceId } = resource || {};
+  if (!resource) {
+    resourceType = 'user';
+    resourceId = userId;
+  }
+
+  const { data } = useQuery(resourceNotificationsQuery, {
+    variables: { resourceType: Pluralize(resourceType), resourceId },
   });
 
-  if (loading || !data.userNotifications) return null;
+  if (!data || !data.resourceNotifications) return null;
 
-  const { notifications } = data.userNotifications;
+  const { notifications } = data.resourceNotifications;
   const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
 
   function findIconWidth() {
@@ -60,6 +69,7 @@ const NotificationsBell = () => {
 
   // The notification rows need to wait until the dropdown is closed before
   // it performs a navigate, that's what the callback method is for
+  // TODO (HN): this isn't true. You can close the dropdown before the navigate.
   function handleCloseDropdown(callback = () => {}) {
     setIsDropdownVisible(false);
     callback();

@@ -57,7 +57,7 @@ const usePusher = () => {
 
       client.mutate({
         mutation: localUpdateNotificationsMutation,
-        variables: { userId, notification },
+        variables: { resourceType: 'users', resourceId: userId, notification },
       });
     };
 
@@ -69,7 +69,11 @@ const usePusher = () => {
       if (notification) {
         client.mutate({
           mutation: localUpdateNotificationsMutation,
-          variables: { userId, notification },
+          variables: {
+            resourceType: 'users',
+            resourceId: userId,
+            notification,
+          },
         });
       }
 
