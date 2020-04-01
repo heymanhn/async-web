@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import LoadingIndicator from 'components/shared/LoadingIndicator';
 import useResourceCreator from 'utils/hooks/useResourceCreator';
+import { WorkspaceContext } from 'utils/contexts';
+
+import LoadingIndicator from 'components/shared/LoadingIndicator';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -33,10 +35,11 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const NewDocumentButton = () => {
+  const { workspaceId: parentWorkspaceId } = useContext(WorkspaceContext);
   const { handleCreateResource, isSubmitting } = useResourceCreator('document');
 
   return (
-    <Container onClick={handleCreateResource}>
+    <Container onClick={() => handleCreateResource({ parentWorkspaceId })}>
       {isSubmitting ? (
         <LoadingIndicator color="grey4" size="18" />
       ) : (

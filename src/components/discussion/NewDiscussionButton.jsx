@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import useResourceCreator from 'utils/hooks/useResourceCreator';
+import { WorkspaceContext } from 'utils/contexts';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 
@@ -34,12 +35,13 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const NewDiscussionButton = () => {
+  const { workspaceId: parentWorkspaceId } = useContext(WorkspaceContext);
   const { handleCreateResource, isSubmitting } = useResourceCreator(
     'discussion'
   );
 
   return (
-    <Container onClick={handleCreateResource}>
+    <Container onClick={() => handleCreateResource({ parentWorkspaceId })}>
       {isSubmitting ? (
         <LoadingIndicator color="grey4" size="18" />
       ) : (
