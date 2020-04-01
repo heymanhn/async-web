@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
@@ -22,7 +23,7 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
   padding: '0 30px',
 }));
 
-const Document = () => {
+const Document = ({ isUnread }) => {
   const documentContext = useContext(DocumentContext);
   const { documentId } = documentContext;
   const { markAsRead } = useViewedReaction();
@@ -32,7 +33,7 @@ const Document = () => {
   useMountEffect(() => {
     return () => {
       markAsRead({
-        isUnread: true,
+        isUnread,
         resourceType: 'document',
         resourceId: documentId,
       });
@@ -71,6 +72,10 @@ const Document = () => {
       )}
     </Container>
   );
+};
+
+Document.propTypes = {
+  isUnread: PropTypes.bool.isRequired,
 };
 
 export default Document;
