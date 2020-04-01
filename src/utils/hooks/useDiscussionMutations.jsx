@@ -26,11 +26,16 @@ const useDiscussionMutations = () => {
   const { documentId } = useContext(DocumentContext);
   const { context, afterCreate } = useContext(DiscussionContext);
 
-  const handleCreate = async () => {
+  const handleCreate = async title => {
     setIsSubmitting(true);
 
     const input = documentId ? { documentId } : {};
-    if (context) {
+    if (title) {
+      input.topic = {
+        formatter: 'slatejs',
+        text: title,
+      };
+    } else if (context) {
       input.topic = {
         formatter: 'slatejs',
         text: toPlainText(context),
