@@ -109,6 +109,18 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
     handleClearInput();
   };
 
+  const handleAction = result => {
+    const { action, keepOpen, title: resultTitle } = result;
+    action();
+
+    if (keepOpen) {
+      handleClearInput();
+      setPlaceholder(resultTitle);
+    } else {
+      handleCloseWrapper();
+    }
+  };
+
   const handleKeyDown = event => {
     if (isHotkey(ESCAPE_KEY, event)) {
       return queryString ? setQueryString('') : handleCloseWrapper();
@@ -126,13 +138,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
 
     if (isHotkey(ENTER_KEY, event)) {
       const result = results[selectedIndex];
-      result.action();
-      if (result.keepOpen) {
-        handleClearInput();
-        setPlaceholder(result.title);
-      } else {
-        handleCloseWrapper();
-      }
+      return handleAction(result);
     }
 
     return null;
@@ -164,7 +170,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
           data={r}
           isSelected={selectedIndex === i}
           onMouseMove={() => setSelectedIndex(i)}
-          handleClose={handleCloseWrapper}
+          handleAction={handleAction}
         />
       ))}
     </StyledModal>

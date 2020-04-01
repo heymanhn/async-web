@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { NavigationContext } from 'utils/contexts';
 
-import ResourceCreationModal from 'components/shared/ResourceCreationModal';
+import ResourceCreationModal from 'components/resources/ResourceCreationModal';
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey3,
@@ -19,13 +19,16 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 }));
 
 const CreateWorkspaceButton = () => {
-  const { setResourceCreationModalMode } = useContext(NavigationContext);
+  const {
+    resourceCreationModalMode,
+    setResourceCreationModalMode,
+  } = useContext(NavigationContext);
   const launchModal = () => setResourceCreationModalMode('workspace');
 
   return (
     <>
       <StyledIcon icon={['far', 'plus-circle']} onClick={launchModal} />
-      <ResourceCreationModal />
+      {resourceCreationModalMode && <ResourceCreationModal />}
     </>
   );
 };

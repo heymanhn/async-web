@@ -54,7 +54,7 @@ const RemoveButton = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const WorkspaceRow = ({ workspaceId, handleRemove }) => {
+const WorkspaceRow = ({ workspaceId, handleRemove, ...props }) => {
   const { data } = useQuery(workspaceQuery, { variables: { workspaceId } });
 
   if (!data || !data.workspace) return null;
@@ -64,7 +64,7 @@ const WorkspaceRow = ({ workspaceId, handleRemove }) => {
   const handleRemoveWrapper = () => handleRemove(workspaceId);
 
   return (
-    <Container>
+    <Container {...props}>
       <Details>
         <IconContainer>
           <StyledIcon icon={RESOURCE_ICONS.workspace} />

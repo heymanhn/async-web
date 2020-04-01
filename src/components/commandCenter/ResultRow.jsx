@@ -20,13 +20,12 @@ const Container = styled.div(({ isSelected, theme: { colors } }) => ({
   },
 }));
 
-const ResultRow = ({ data, isSelected, handleClose, ...props }) => {
-  const { type, action } = data;
+const ResultRow = ({ data, isSelected, handleAction, ...props }) => {
+  const { type } = data;
 
   const handleClick = event => {
     event.preventDefault();
-    action();
-    handleClose();
+    handleAction(data);
   };
 
   const Row = type === 'command' ? CommandRow : SearchRow;
@@ -40,7 +39,7 @@ const ResultRow = ({ data, isSelected, handleClose, ...props }) => {
 ResultRow.propTypes = {
   data: PropTypes.object.isRequired,
   isSelected: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
+  handleAction: PropTypes.func.isRequired,
 };
 
 export default ResultRow;

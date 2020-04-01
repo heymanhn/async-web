@@ -1,32 +1,11 @@
 import { useContext } from 'react';
 
-import workspaceQuery from 'graphql/queries/workspace';
-import documentQuery from 'graphql/queries/document';
-import discussionQuery from 'graphql/queries/discussion';
 import {
   DiscussionContext,
   DocumentContext,
   WorkspaceContext,
 } from 'utils/contexts';
-import { RESOURCE_ICONS } from 'utils/constants';
-
-const resourceProps = {
-  workspace: {
-    resourceQuery: workspaceQuery,
-    createVariables: v => ({ workspaceId: v }),
-    icon: RESOURCE_ICONS.workspace,
-  },
-  document: {
-    resourceQuery: documentQuery,
-    createVariables: v => ({ documentId: v }),
-    icon: RESOURCE_ICONS.document,
-  },
-  discussion: {
-    resourceQuery: discussionQuery,
-    createVariables: v => ({ discussionId: v }),
-    icon: RESOURCE_ICONS.discussion,
-  },
-};
+import buildResource from 'utils/resourceHelpers';
 
 const useDisambiguatedResource = () => {
   const { workspaceId, setForceUpdate: setForceUpdateWorkspace } = useContext(
@@ -39,6 +18,7 @@ const useDisambiguatedResource = () => {
     DiscussionContext
   );
 
+  const resourceId = workspaceId || documentId || discussionId;
   let resourceType;
   let setForceUpdate;
 
@@ -54,10 +34,8 @@ const useDisambiguatedResource = () => {
   }
 
   return {
-    resourceType,
-    resourceId: workspaceId || documentId || discussionId,
+    ...buildResource(resourceType, resourceId),
     setForceUpdate,
-    ...resourceProps[resourceType],
   };
 };
 

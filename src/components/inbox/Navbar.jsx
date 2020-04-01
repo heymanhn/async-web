@@ -50,10 +50,7 @@ const NavBar = () => {
     setIsInviteModalOpen,
     resource: {
       resourceType: 'inbox',
-      // Everything below here is only stubbed to not make the command center
-      // crash. Will improve later
       resourceQuery: inboxQuery,
-      createVariables: () => {},
     },
   };
 

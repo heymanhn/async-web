@@ -8,7 +8,7 @@ import CommandCenter from 'components/commandCenter/CommandCenter';
 import DocumentViewMode from 'components/document/DocumentViewMode';
 import ResourceInfo from 'components/navigation/ResourceInfo';
 import NotificationsBell from 'components/notifications/NotificationsBell';
-import ResourceAccessContainer from 'components/participants/ResourceAccessContainer';
+import ResourceAccessContainer from 'components/resources/ResourceAccessContainer';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',

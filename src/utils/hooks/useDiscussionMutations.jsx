@@ -26,11 +26,16 @@ const useDiscussionMutations = () => {
   const { documentId } = useContext(DocumentContext);
   const { context, afterCreate } = useContext(DiscussionContext);
 
-  const handleCreate = async () => {
+  const handleCreate = async title => {
     setIsSubmitting(true);
 
     const input = documentId ? { documentId } : {};
-    if (context) {
+    if (title) {
+      input.topic = {
+        formatter: 'slatejs',
+        text: title,
+      };
+    } else if (context) {
       input.topic = {
         formatter: 'slatejs',
         text: toPlainText(context),
@@ -59,16 +64,16 @@ const useDiscussionMutations = () => {
     });
 
     if (data.createDiscussion) {
-      const { id: newDiscussionId } = data.createDiscussion;
+      const { id } = data.createDiscussion;
       track('New discussion created', {
         documentId,
-        discussionId: newDiscussionId,
+        discussionId: id,
       });
 
-      afterCreate(newDiscussionId);
+      afterCreate(id);
       setIsSubmitting(false);
 
-      return Promise.resolve({ discussionId: newDiscussionId });
+      return Promise.resolve({ id });
     }
 
     return Promise.reject(new Error('Failed to create discussion'));

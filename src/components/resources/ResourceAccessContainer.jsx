@@ -44,7 +44,7 @@ const MemberCount = styled.div({
 
 const ResourceAccessContainer = () => {
   const {
-    resource: { resourceType, resourceId, resourceQuery, createVariables },
+    resource: { resourceType, resourceId, resourceQuery, variables },
     isResourceAccessModalOpen,
     setIsResourceAccessModalOpen,
   } = useContext(NavigationContext);
@@ -65,7 +65,7 @@ const ResourceAccessContainer = () => {
   });
 
   const { data: resourceData } = useQuery(resourceQuery, {
-    variables: createVariables(resourceId),
+    variables,
     skip: resourceType === 'workspace',
   });
 

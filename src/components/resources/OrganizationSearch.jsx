@@ -15,7 +15,7 @@ import { NavigationContext } from 'utils/contexts';
 import { mod } from 'utils/helpers';
 
 import InputWithIcon from 'components/shared/InputWithIcon';
-import SearchResults from 'components/participants/SearchResults';
+import SearchResults from './SearchResults';
 
 const Container = styled.div({
   position: 'relative',
@@ -95,10 +95,12 @@ const OrganizationSearch = ({
   const handleAddSelection = obj => {
     const { type, id: objId } = obj;
     if (currentMembers.find(({ id: pid }) => pid === objId)) return;
-    if (parentWorkspaceId) return;
 
     if (type === 'member') handleAddMember(obj);
-    if (type === 'workspace') handleAddToWorkspace(objId);
+    if (type === 'workspace') {
+      if (parentWorkspaceId) return;
+      handleAddToWorkspace(objId);
+    }
     setSearchQuery('');
     setSelectedIndex(0);
   };

@@ -35,8 +35,8 @@ const useDraftMutations = (editor = null) => {
 
     let draftDiscussionId = discussionId;
     if (!draftDiscussionId) {
-      const { discussionId: did } = await handleCreateDiscussion();
-      draftDiscussionId = did;
+      const { id } = await handleCreateDiscussion();
+      draftDiscussionId = id;
     }
 
     const { data } = await createMessageDraft({

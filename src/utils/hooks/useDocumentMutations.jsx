@@ -40,11 +40,11 @@ const useDocumentMutations = (editor = null) => {
     });
 
     if (data.createDocument) {
-      const { id: newDocumentId } = data.createDocument;
-      track('New document created', { documentId: newDocumentId });
+      const { id } = data.createDocument;
+      track('New document created', { documentId: id });
 
       setIsSubmitting(false);
-      return Promise.resolve({ documentId: newDocumentId });
+      return Promise.resolve({ id });
     }
 
     return Promise.reject(new Error('Failed to create new document'));

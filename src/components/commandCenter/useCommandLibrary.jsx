@@ -42,8 +42,6 @@ const useCommandLibrary = ({ source, setSource, title }) => {
   const { handleCreateResource: handleCreateDiscussion } = useResourceCreator(
     'discussion'
   );
-  const handleCreateWorkspaceDocument = () => handleCreateDocument(workspaceId);
-  const handleCreateWorkspaceDisc = () => handleCreateDiscussion(workspaceId);
 
   const currentUser = useCurrentUser();
 
@@ -132,7 +130,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
         <WorkspaceTitle>{title}</WorkspaceTitle>
       </Title>
     ),
-    action: handleCreateWorkspaceDocument,
+    action: () => handleCreateDocument({ parentWorkspaceId: workspaceId }),
     shortcut: 'S',
   };
 
@@ -162,7 +160,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
         <WorkspaceTitle>{title}</WorkspaceTitle>
       </Title>
     ),
-    action: handleCreateWorkspaceDisc,
+    action: () => handleCreateDiscussion({ parentWorkspaceId: workspaceId }),
     shortcut: 'D',
   };
 
@@ -171,8 +169,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     icon: 'users',
     fontSize: '16px',
     title: 'Start with custom audience',
-    // TODO: Launch resource creation modal for the discussion
-    action: () => {},
+    action: () => setResourceCreationModalMode('discussion'),
     shortcut: 'C',
   };
 

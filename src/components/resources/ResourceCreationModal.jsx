@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { navigate } from '@reach/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
@@ -7,13 +6,14 @@ import { DEFAULT_ACCESS_TYPE, RESOURCE_ICONS } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
 import useCurrentUser from 'utils/hooks/useCurrentUser';
-import useWorkspaceMutations from 'utils/hooks/useWorkspaceMutations';
+import useResourceCreator from 'utils/hooks/useResourceCreator';
 
 import Modal from 'components/shared/Modal';
 import InputWithIcon from 'components/shared/InputWithIcon';
-import OrganizationSearch from 'components/shared/OrganizationSearch';
 import Button from 'components/shared/Button';
-import ParticipantsList from 'components/participants/ParticipantsList';
+import OrganizationSearch from './OrganizationSearch';
+import ParticipantsList from './ParticipantsList';
+import WorkspaceRow from './WorkspaceRow';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
@@ -44,20 +44,22 @@ const CloseIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 const Contents = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  paddingBottom: '20px',
+  padding: '0 25px 25px',
+});
+
+const StyledOrganizationSearch = styled(OrganizationSearch)({
+  marginLeft: '-25px',
+  marginRight: '-25px',
 });
 
 const StyledInput = styled(InputWithIcon)({
-  marginBottom: '20px',
-});
-
-const StyledParticipantsList = styled(ParticipantsList)({
-  margin: '0 25px 30px',
+  margin: '0 -25px 20px',
+  width: 'auto',
 });
 
 const CreateButton = styled(Button)({
   alignSelf: 'flex-end',
-  marginRight: '25px',
+  marginTop: '30px',
   padding: '4px 20px 6px',
 });
 
@@ -67,14 +69,11 @@ const ResourceCreationModal = props => {
     resourceCreationModalMode: resourceType,
     setResourceCreationModalMode,
   } = navigationContext;
-  const isOpen = !!resourceType;
-
+  const { handleCreateResource, isSubmitting } = useResourceCreator(
+    resourceType
+  );
   const currentUser = useCurrentUser();
-  const {
-    handleCreate,
-    handleAddMember,
-    isSubmitting,
-  } = useWorkspaceMutations();
+  const isOpen = !!resourceType;
 
   // Putting the state here so that clicking anywhere on the modal
   // dismisses the dropdown
@@ -114,20 +113,14 @@ const ResourceCreationModal = props => {
 
   const handleClose = () => setResourceCreationModalMode(null);
 
-  // TODO: Extend this for creating discussions too.
-  const handleCreateWorkspace = async () => {
-    const { workspaceId } = await handleCreate(title);
+  const handleCreate = async () => {
+    await handleCreateResource({
+      title,
+      parentWorkspaceId,
+      newMembers: participants,
+    });
 
-    if (workspaceId) {
-      participants
-        .filter(p => p.user.id !== currentUser.id)
-        .forEach(p => handleAddMember(workspaceId, p.user.id));
-
-      navigate(`/workspaces/${workspaceId}`);
-      handleClose();
-    } else {
-      throw new Error('Unable to create workspace');
-    }
+    handleClose();
   };
 
   const value = {
@@ -150,7 +143,7 @@ const ResourceCreationModal = props => {
           autoFocus
         />
         <NavigationContext.Provider value={value}>
-          <OrganizationSearch
+          <StyledOrganizationSearch
             isModalOpen={isOpen}
             isDropdownVisible={isDropdownVisible}
             currentMembers={participants.map(p => p.user)}
@@ -162,12 +155,18 @@ const ResourceCreationModal = props => {
             handleCloseModal={handleClose}
           />
         </NavigationContext.Provider>
-        <StyledParticipantsList
+        <ParticipantsList
           participants={participants}
           handleRemove={handleRemoveMember}
         />
+        {parentWorkspaceId && (
+          <WorkspaceRow
+            workspaceId={parentWorkspaceId}
+            handleRemove={() => setParentWorkspaceId(null)}
+          />
+        )}
         <CreateButton
-          onClick={handleCreateWorkspace}
+          onClick={handleCreate}
           isDisabled={!title}
           loading={isSubmitting}
           title="Create"
