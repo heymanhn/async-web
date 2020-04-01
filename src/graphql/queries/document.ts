@@ -12,9 +12,7 @@ export default gql`
       ) {
       ...DocumentObject
       discussionCount
-      reactions @type(name: "Reaction") {
-        ...ReactionObject
-      }
+      tags
       workspaces
     }
   }
