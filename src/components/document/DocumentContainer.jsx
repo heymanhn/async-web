@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useQuery } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useQuery } from '@apollo/react-hooks';
 
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
