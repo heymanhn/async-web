@@ -257,7 +257,7 @@ const removeMember = (
 };
 
 const addToWorkspace = (_root, { resource, workspaceId }, { client }) => {
-  const { resourceType, resourceId, resourceQuery, variables } = resource;
+  const { resourceType, resourceQuery, variables } = resource;
   const data = client.readQuery({
     query: resourceQuery,
     variables,

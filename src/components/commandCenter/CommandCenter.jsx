@@ -40,7 +40,7 @@ const CommandCenter = props => {
         handleClose={() => setIsModalOpen(false)}
         {...props}
       />
-      <ResourceCreationModal />
+      {resourceCreationModalMode && <ResourceCreationModal />}
     </NavigationContext.Provider>
   );
 };

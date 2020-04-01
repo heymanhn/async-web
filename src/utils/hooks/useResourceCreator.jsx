@@ -19,7 +19,7 @@ const MUTATION_HOOKS = {
 const useResourceCreator = resourceType => {
   const { handleAddMember } = useResourceAccessMutations(resourceType);
   const useResourceMutations = MUTATION_HOOKS[resourceType];
-  const { handleCreate, isSubmitting } = useResourceMutations;
+  const { handleCreate, isSubmitting } = useResourceMutations();
 
   const [addToWorkspace] = useMutation(addToWorkspaceMtn);
 

@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { navigate } from '@reach/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
@@ -68,7 +67,6 @@ const ResourceCreationModal = props => {
     resourceCreationModalMode: resourceType,
     setResourceCreationModalMode,
   } = navigationContext;
-
   const { handleCreateResource, isSubmitting } = useResourceCreator(
     resourceType
   );
