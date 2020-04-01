@@ -130,7 +130,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
         <WorkspaceTitle>{title}</WorkspaceTitle>
       </Title>
     ),
-    action: () => handleCreateDocument(workspaceId),
+    action: () => handleCreateDocument({ parentWorkspaceId: workspaceId }),
     shortcut: 'S',
   };
 
@@ -160,7 +160,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
         <WorkspaceTitle>{title}</WorkspaceTitle>
       </Title>
     ),
-    action: () => handleCreateDiscussion(workspaceId),
+    action: () => handleCreateDiscussion({ parentWorkspaceId: workspaceId }),
     shortcut: 'D',
   };
 

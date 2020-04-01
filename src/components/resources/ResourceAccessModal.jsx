@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
-import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import { NavigationContext } from 'utils/contexts';
