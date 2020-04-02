@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import { NavigationContext } from 'utils/contexts';
 
+import UnreadIndicator from 'components/shared/UnreadIndicator';
 import NotificationsDropdown from './NotificationsDropdown';
 
 const DROPDOWN_WIDTH = 400;
@@ -35,14 +36,11 @@ const StyledIcon = styled(FontAwesomeIcon)(({ isopen, theme: { colors } }) => ({
   },
 }));
 
-const UnreadBadge = styled.div(({ theme: { colors } }) => ({
-  background: colors.blue,
-  borderRadius: '10px',
-  marginTop: '-12px',
-  marginLeft: '-10px',
-  width: '12px',
-  height: '12px',
-}));
+const StyledUnreadIndicator = styled(UnreadIndicator)({
+  position: 'absolute',
+  marginTop: '-10px',
+  marginLeft: '10px',
+});
 
 const StyledNotificationsDropdown = styled(NotificationsDropdown)({
   position: 'fixed',
@@ -106,7 +104,9 @@ const NotificationsBell = () => {
     <Container>
       <IconContainer onClick={handleShowDropdown} ref={iconRef}>
         <StyledIcon isopen={isDropdownVisible.toString()} icon="bell" />
-        {unreadNotifications.length ? <UnreadBadge /> : undefined}
+        {unreadNotifications.length > 0 && (
+          <StyledUnreadIndicator diameter={7} />
+        )}
       </IconContainer>
       {notifications && (
         <StyledNotificationsDropdown
