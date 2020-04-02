@@ -87,10 +87,16 @@ const NotificationRow = ({ handleClose, notification }) => {
   const { title, snippet } = payloadCamelJSON;
   const { documentId, discussionId, workspaceId } = payloadCamelJSON;
 
+  const isInlineDiscussion = () => {
+    return documentId && discussionId;
+  };
+
   const documentURL = () => {
-    return type === 'new_message'
-      ? `/documents/${documentId}/discussions/${discussionId}`
-      : `/documents/${documentId}`;
+    return `/documents/${documentId}`;
+  };
+
+  const inlineDiscussionURL = () => {
+    return `/documents/${documentId}/discussions/${discussionId}`;
   };
 
   const discussionURL = () => {
@@ -101,28 +107,52 @@ const NotificationRow = ({ handleClose, notification }) => {
     return `/workspaces/${workspaceId}`;
   };
 
-  const notificationURL = () => {
-    if (type === 'new_workspace' || type === 'access_workspace')
-      return workspaceURL();
+  const metaInfo = () => {
+    let url;
+    let context;
+    switch (type) {
+      case 'new_workspace':
+      case 'access_workspace':
+        url = workspaceURL();
+        context = ' invited you to workspace: ';
+        break;
+      case 'new_workspace_resource':
+        url = documentId ? documentURL() : discussionURL();
+        context = ' added workspace resource: ';
+        break;
+      case 'new_document':
+      case 'access_document':
+        url = documentURL();
+        context = ' invited you to collaborate on document: ';
+        break;
+      case 'new_discussion':
+      case 'access_discussion':
+        url = isInlineDiscussion ? inlineDiscussionURL() : discussionURL();
+        context = ' invited you to join the discussion: ';
+        break;
+      case 'resolve_discussion':
+        url = isInlineDiscussion ? inlineDiscussionURL() : discussionURL();
+        context = ' resolved the discussion: ';
+        break;
+      case 'new_message':
+        url = isInlineDiscussion ? inlineDiscussionURL() : discussionURL();
+        context = isInlineDiscussion
+          ? ' replied to a discussion in document: '
+          : ' replied to a discussion: ';
+        break;
+      default:
+        url = '/inbox';
+    }
 
-    return documentId ? documentURL() : discussionURL();
+    return { url, context };
   };
+
+  const { url: notificationUrl, context: notificationContext } = metaInfo();
 
   const handleClick = event => {
     event.stopPropagation();
-    navigate(notificationURL());
+    navigate(notificationUrl);
     handleClose();
-  };
-
-  const renderContext = () => {
-    switch (type) {
-      case 'new_message':
-        return ' replied to ';
-      case 'resolve_discussion':
-        return 'resolved ';
-      default:
-        return ' invited you to collaborate on ';
-    }
   };
 
   return (
@@ -137,7 +167,7 @@ const NotificationRow = ({ handleClose, notification }) => {
         <TitleContainer>
           <Title>
             <Bold>{fullName}</Bold>
-            <span>{renderContext()}</span>
+            <span>{notificationContext}</span>
             <Bold>{title}</Bold>
           </Title>
           <TimestampContainer>
