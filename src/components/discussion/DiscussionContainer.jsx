@@ -45,7 +45,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
   })
 );
 
-const DiscussionContainer = ({ discussionId }) => {
+const DiscussionContainer = ({ discussionId, location }) => {
   useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
   const [isComposing, setIsComposing] = useState(false);
@@ -108,6 +108,7 @@ const DiscussionContainer = ({ discussionId }) => {
             <DiscussionThread
               isUnread={isUnread()}
               isComposingFirstMsg={!messageCount}
+              shouldRefetch={location.state.isUnread}
             />
           )}
           {isComposing ? (
@@ -131,6 +132,7 @@ const DiscussionContainer = ({ discussionId }) => {
 
 DiscussionContainer.propTypes = {
   discussionId: PropTypes.string.isRequired,
+  location: PropTypes.object.isRequired,
 };
 
 export default DiscussionContainer;

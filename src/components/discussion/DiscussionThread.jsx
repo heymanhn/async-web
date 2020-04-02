@@ -44,7 +44,12 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
   }
 );
 
-const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
+const DiscussionThread = ({
+  isComposingFirstMsg,
+  isUnread,
+  shouldRefetch,
+  ...props
+}) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
   const { discussionId, isModal } = useContext(DiscussionContext);
@@ -68,7 +73,7 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
   });
 
   const { data: localData } = useQuery(localStateQuery);
-  const { loading, data } = usePaginatedResource(
+  const { loading, data, refetch } = usePaginatedResource(
     discussionRef,
     {
       query: discussionMessagesQuery,
@@ -85,6 +90,8 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
 
   const { items } = data;
   const messages = (items || []).map(i => i.message);
+
+  if (shouldRefetch) refetch();
 
   if (localData) {
     const { pendingMessages } = localData;
@@ -140,6 +147,7 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
 DiscussionThread.propTypes = {
   isComposingFirstMsg: PropTypes.bool.isRequired,
   isUnread: PropTypes.bool.isRequired,
+  shouldRefetch: PropTypes.bool.isRequired,
 };
 
 export default DiscussionThread;

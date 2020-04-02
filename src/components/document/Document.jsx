@@ -23,7 +23,7 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
   padding: '0 30px',
 }));
 
-const Document = ({ isUnread }) => {
+const Document = ({ isUnread, shouldRefetch }) => {
   const documentContext = useContext(DocumentContext);
   const { documentId } = documentContext;
   const { markAsRead } = useViewedReaction();
@@ -40,12 +40,13 @@ const Document = ({ isUnread }) => {
     };
   });
 
-  const { loading, error, data } = useQuery(documentQuery, {
+  const { loading, error, data, refetch } = useQuery(documentQuery, {
     variables: { documentId },
   });
 
   if (loading) return null;
   if (error || !data.document) return <NotFound />;
+  if (shouldRefetch) refetch();
 
   const { body, title, updatedAt } = data.document;
   const { payload: content } = body || {};
@@ -76,6 +77,7 @@ const Document = ({ isUnread }) => {
 
 Document.propTypes = {
   isUnread: PropTypes.bool.isRequired,
+  shouldRefetch: PropTypes.bool.isRequired,
 };
 
 export default Document;

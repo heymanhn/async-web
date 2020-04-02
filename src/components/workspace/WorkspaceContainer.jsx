@@ -27,7 +27,7 @@ const InnerContainer = styled.div(
   })
 );
 
-const WorkspaceContainer = ({ workspaceId }) => {
+const WorkspaceContainer = ({ workspaceId, location }) => {
   useUpdateSelectedResource(workspaceId);
   const [viewMode, setViewMode] = useState('all');
   const [forceUpdate, setForceUpdate] = useState(false);
@@ -72,7 +72,7 @@ const WorkspaceContainer = ({ workspaceId }) => {
         <NavigationBar />
         <InnerContainer>
           <TitleComposer initialTitle={title} />
-          <ResourcesList />
+          <ResourcesList shouldRefetch={location.state.isUnread} />
         </InnerContainer>
       </Container>
     </WorkspaceContext.Provider>
@@ -81,6 +81,7 @@ const WorkspaceContainer = ({ workspaceId }) => {
 
 WorkspaceContainer.propTypes = {
   workspaceId: PropTypes.string.isRequired,
+  location: PropTypes.object.isRequired,
 };
 
 export default WorkspaceContainer;

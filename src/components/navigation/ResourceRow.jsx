@@ -63,7 +63,7 @@ const ResourceRow = ({
 
   // TODO: Read/unread state, once backend gives enough info
   return (
-    <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
+    <StyledLink to={`/${Pluralize(resourceType)}/${id}`} state={{ isUnread }}>
       <Container isSelected={isSelected} isUnread={isUnread} {...props}>
         {isUnread && <StyledIndicator diameter={6} />}
         {resourceType !== 'workspace' && (

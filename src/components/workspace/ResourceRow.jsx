@@ -106,7 +106,7 @@ const ResourceRow = ({ item, ...props }) => {
   const isUnread = readAt === -1;
 
   return (
-    <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
+    <StyledLink to={`/${Pluralize(resourceType)}/${id}`} state={{ isUnread }}>
       <Container {...hoverProps} {...props}>
         <IconContainer>
           <StyledIcon

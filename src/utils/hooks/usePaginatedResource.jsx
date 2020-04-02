@@ -58,7 +58,7 @@ const usePaginatedResource = (
       );
   });
 
-  const { loading, data, fetchMore } = useQuery(query, props);
+  const { loading, data, fetchMore, refetch } = useQuery(query, props);
   if (loading || !data || !data[key]) return { loading, data: null };
 
   const { pageToken } = data[key];
@@ -102,7 +102,7 @@ const usePaginatedResource = (
     fetchMoreItems();
   }
 
-  return { loading, data: data[key] };
+  return { loading, data: data[key], refetch };
 };
 
 export default usePaginatedResource;

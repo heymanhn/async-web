@@ -1,4 +1,5 @@
 import React, { useContext, useRef } from 'react';
+import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
@@ -29,7 +30,7 @@ const ButtonsContainer = styled.div({
   display: 'flex',
 });
 
-const ResourcesList = () => {
+const ResourcesList = ({ shouldRefetch }) => {
   const listRef = useRef(null);
   const { workspaceId, viewMode } = useContext(WorkspaceContext);
 
@@ -41,7 +42,7 @@ const ResourcesList = () => {
 
   usePrefetchQueries(buildQueryDetails());
 
-  const { loading, data } = usePaginatedResource(listRef, {
+  const { loading, data, refetch } = usePaginatedResource(listRef, {
     query: workspaceResourcesQuery,
     key: 'workspaceResources',
     variables: { workspaceId, queryParams: { type: viewMode } },
@@ -49,6 +50,7 @@ const ResourcesList = () => {
 
   if (loading) return <StyledLoadingIndicator color="borderGrey" />;
   if (!data) return <NotFound />;
+  if (shouldRefetch) refetch();
 
   const { items } = data;
 
@@ -76,6 +78,10 @@ const ResourcesList = () => {
   );
 
   return <div>{items ? renderResourceList() : renderWelcomeMessage()}</div>;
+};
+
+ResourcesList.propTypes = {
+  shouldRefetch: PropTypes.bool.isRequired,
 };
 
 export default ResourcesList;

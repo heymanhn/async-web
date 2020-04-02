@@ -173,6 +173,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
           <DiscussionThread
             isComposingFirstMsg={isComposingFirstMsg}
             isUnread={isUnread()}
+            shouldRefetch={isUnread()}
           />
         )}
         {readyToCompose ? (

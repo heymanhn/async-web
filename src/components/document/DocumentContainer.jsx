@@ -16,6 +16,7 @@ const DocumentContainer = ({
   documentId,
   discussionId: initialDiscussionId,
   viewMode: initialViewMode,
+  location,
 }) => {
   useUpdateSelectedResource(documentId);
 
@@ -125,7 +126,12 @@ const DocumentContainer = ({
   return (
     <DocumentContext.Provider value={value}>
       <NavigationBar />
-      {viewMode === 'content' && <Document isUnread={isUnread()} />}
+      {viewMode === 'content' && (
+        <Document
+          isUnread={isUnread()}
+          shouldRefetch={location.state.isUnread}
+        />
+      )}
       {viewMode === 'discussions' && <DiscussionsList />}
 
       {isModalOpen && (
@@ -139,6 +145,7 @@ DocumentContainer.propTypes = {
   documentId: PropTypes.string.isRequired,
   discussionId: PropTypes.string,
   viewMode: PropTypes.oneOf(['content', 'discussions']),
+  location: PropTypes.object.isRequired,
 };
 
 DocumentContainer.defaultProps = {
