@@ -9,6 +9,8 @@ import { NavigationContext } from 'utils/contexts';
 
 import NotificationsDropdown from './NotificationsDropdown';
 
+const DROPDOWN_WIDTH = 400;
+
 const Container = styled.div({
   display: 'flex',
   alignItems: 'center',
@@ -73,7 +75,9 @@ const NotificationsBell = () => {
 
     const newCoords = {
       top: `${offsetTop + offsetHeight + 15}px`,
-      left: `${offsetLeft + 240 + offsetWidth + 10 - 350}px`, // 240px sidebar width, 10px extra buffer
+
+      // 240px sidebar width, 10px extra buffer
+      left: `${offsetLeft + 240 + offsetWidth + 10 - DROPDOWN_WIDTH}px`,
     };
 
     if (coords.top === newCoords.top && coords.left === newCoords.left) return;
@@ -109,6 +113,7 @@ const NotificationsBell = () => {
           coords={coords}
           isOpen={isDropdownVisible}
           handleClose={handleCloseDropdown}
+          width={DROPDOWN_WIDTH}
         />
       )}
     </Container>

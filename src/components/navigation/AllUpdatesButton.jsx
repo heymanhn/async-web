@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 
 import NotificationsDropdown from 'components/notifications/NotificationsDropdown';
 
+const DROPDOWN_WIDTH = 400;
+
 const Container = styled.div({
   display: 'flex',
 });
@@ -82,6 +84,7 @@ const AllUpdatesButton = () => {
         coords={coords}
         isOpen={isDropdownVisible}
         handleClose={handleCloseDropdown}
+        width={DROPDOWN_WIDTH}
       />
     </Container>
   );

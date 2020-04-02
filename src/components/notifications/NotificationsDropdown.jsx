@@ -12,21 +12,23 @@ import { NavigationContext } from 'utils/contexts';
 
 import NotificationRow from './NotificationRow';
 
-const Container = styled.div(({ coords, isOpen, theme: { colors } }) => ({
-  display: isOpen ? 'block' : 'none',
-  position: 'absolute',
-  top: coords.top,
-  left: coords.left,
-  overflow: 'scroll',
+const Container = styled.div(
+  ({ coords, isOpen, width, theme: { colors } }) => ({
+    display: isOpen ? 'block' : 'none',
+    position: 'absolute',
+    top: coords.top,
+    left: coords.left,
+    overflow: 'scroll',
 
-  background: colors.bgGrey,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-  maxHeight: `${window.innerHeight - 80}px`,
-  width: '350px',
-  zIndex: 1000,
-}));
+    background: colors.bgGrey,
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
+    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+    maxHeight: `${window.innerHeight - 80}px`,
+    width: `${width}px`,
+    zIndex: 1000,
+  })
+);
 
 const TitleSection = styled.div(({ theme: { colors } }) => ({
   cursor: 'default',
