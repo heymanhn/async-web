@@ -22,6 +22,7 @@ const useContentState = ({
   resourceType,
   resourceId: initialResourceId,
   initialContent,
+  isRemoteChangeRef,
 } = {}) => {
   const [resourceId, setResourceId] = useState(initialResourceId);
   const [content, setContent] = useState(
@@ -68,12 +69,14 @@ const useContentState = ({
   const handleChange = value => {
     setContent(value);
 
-    if (resourceType !== 'document' || !editor) return;
+    if (resourceType !== 'document' || !editor || isRemoteChangeRef.current)
+      return;
 
     const operations = editor.operations.filter(
       o => o && o.type !== 'set_selection'
     );
     // .map(o => ({ ...o, data: { source: localEditorId.current } }));
+    isRemoteChangeRef.current = false; /* eslint no-param-reassign: 0 */
     setPendingOperations(old => [...old, ...operations]);
   };
 

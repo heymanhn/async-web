@@ -1,9 +1,11 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
+import Pusher from 'pusher-js';
+import camelcaseKeys from 'camelcase-keys';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
@@ -25,6 +27,12 @@ import withSectionBreak from 'components/editor/withSectionBreak';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import withImages from 'components/editor/withImages';
 
+const {
+  REACT_APP_ASYNC_API_URL,
+  REACT_APP_PUSHER_APP_KEY,
+  REACT_APP_PUSHER_APP_CLUSTER,
+} = process.env;
+
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
   lineHeight: '26px',
@@ -33,6 +41,7 @@ const DocumentEditable = styled(Editable)({
 });
 
 const DocumentComposer = ({ initialContent, ...props }) => {
+  const isRemoteChangeRef = useRef(false);
   const {
     documentId,
     modalDiscussionId,
@@ -44,6 +53,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     resetInlineTopic,
   } = useContext(DocumentContext);
   const { selection } = inlineDiscussionTopic || {};
+  const { userId } = getLocalUser();
 
   const baseEditor = useMemo(
     () =>
@@ -75,19 +85,48 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     resourceType: 'document',
     resourceId: documentId,
     initialContent,
+    isRemoteChangeRef,
   });
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
 
   useAutoSave({ content, handleSave: handleUpdate });
 
+  // TODO (HN): DRY up this code later
+  useEffect(() => {
+    const pusher = new Pusher(REACT_APP_PUSHER_APP_KEY, {
+      authEndpoint: `${REACT_APP_ASYNC_API_URL}/pusher/auth`,
+      cluster: REACT_APP_PUSHER_APP_CLUSTER,
+      useTLS: true,
+    });
+
+    const channelName = `private-channel-${userId}`;
+    const channel = pusher.subscribe(channelName);
+
+    const handleNewOperations = data => {
+      const camelData = camelcaseKeys(data, { deep: true });
+      const { documentId: targetDocumentId, operations } = camelData;
+
+      if (documentId === targetDocumentId) {
+        isRemoteChangeRef.current = true;
+        Editor.withoutNormalizing(contentEditor, () => {
+          operations.forEach(op => contentEditor.apply(op));
+        });
+      }
+    };
+
+    channel.bind('client-new-document-operations', handleNewOperations);
+
+    return () => {
+      channel.unbind('client-new-document-operations', handleNewOperations);
+    };
+  }, [documentId, userId, contentEditor]);
+
   // Implicit state indicating we are ready to create the inline annotation
   if (modalDiscussionId && selection) {
-    const { userId: authorId } = getLocalUser();
-
     Editor.wrapInlineAnnotation(contentEditor, selection, {
       discussionId: modalDiscussionId,
-      authorId,
+      authorId: userId,
       isInitialDraft: true, // Toggled to false once first message is created
     });
     resetInlineTopic();
