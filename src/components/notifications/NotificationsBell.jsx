@@ -66,6 +66,22 @@ const NotificationsBell = () => {
   const { notifications } = data.resourceNotifications;
   const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
 
+  const calculatePosition = () => {
+    if (!isDropdownVisible || !iconRef.current) return {};
+
+    const {
+      offsetHeight,
+      offsetLeft,
+      offsetTop,
+      offsetWidth,
+    } = iconRef.current;
+
+    return {
+      top: `${offsetTop + offsetHeight + 15}px`,
+      left: `${offsetLeft + 240 + offsetWidth + 10 - 350}px`, // 240px sidebar width, 10px extra buffer
+    };
+  };
+
   return (
     <Container>
       <IconContainer onClick={handleShowDropdown} ref={iconRef}>
@@ -74,6 +90,7 @@ const NotificationsBell = () => {
       </IconContainer>
       {notifications && (
         <StyledNotificationsDropdown
+          coords={calculatePosition()}
           isOpen={isDropdownVisible}
           handleClose={handleCloseDropdown}
         />

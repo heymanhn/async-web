@@ -1,4 +1,5 @@
 import React, { useContext, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import Pluralize from 'pluralize';
@@ -11,9 +12,11 @@ import { NavigationContext } from 'utils/contexts';
 
 import NotificationRow from './NotificationRow';
 
-const Container = styled.div(({ isOpen, theme: { colors } }) => ({
+const Container = styled.div(({ coords, isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
   position: 'absolute',
+  top: coords.top,
+  left: coords.left,
   overflow: 'scroll',
 
   background: colors.bgGrey,
@@ -37,7 +40,7 @@ const Title = styled.div({
   fontWeight: 500,
 });
 
-const NotificationsDropdown = ({ isOpen, handleClose, ...props }) => {
+const NotificationsDropdown = ({ coords, isOpen, handleClose, ...props }) => {
   const selector = useRef();
   const { resource } = useContext(NavigationContext);
 
@@ -64,9 +67,10 @@ const NotificationsDropdown = ({ isOpen, handleClose, ...props }) => {
   if (!notifications) return null;
 
   const title = resourceType === 'user' ? 'All Updates' : 'Notifications';
+  const root = window.document.getElementById('root');
 
-  return (
-    <Container isOpen={isOpen} ref={selector} {...props}>
+  return ReactDOM.createPortal(
+    <Container isOpen={isOpen} coords={coords} ref={selector} {...props}>
       <TitleSection>
         <Title>{title}</Title>
       </TitleSection>
@@ -77,11 +81,13 @@ const NotificationsDropdown = ({ isOpen, handleClose, ...props }) => {
           handleClose={handleClose}
         />
       ))}
-    </Container>
+    </Container>,
+    root
   );
 };
 
 NotificationsDropdown.propTypes = {
+  coords: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
 };
