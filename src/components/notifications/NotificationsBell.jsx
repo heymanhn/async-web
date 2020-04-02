@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Pluralize from 'pluralize';
@@ -57,6 +57,38 @@ const NotificationsBell = () => {
   const handleShowDropdown = () => setIsDropdownVisible(true);
   const handleCloseDropdown = () => setIsDropdownVisible(false);
 
+  const [coords, setCoords] = useState({});
+  const calculatePosition = () => {
+    if (!isDropdownVisible || !iconRef.current) {
+      if (Object.keys(coords).length) setCoords({});
+      return;
+    }
+
+    const {
+      offsetHeight,
+      offsetLeft,
+      offsetTop,
+      offsetWidth,
+    } = iconRef.current;
+
+    const newCoords = {
+      top: `${offsetTop + offsetHeight + 15}px`,
+      left: `${offsetLeft + 240 + offsetWidth + 10 - 350}px`, // 240px sidebar width, 10px extra buffer
+    };
+
+    if (coords.top === newCoords.top && coords.left === newCoords.left) return;
+    setCoords(newCoords);
+  };
+
+  useEffect(() => {
+    calculatePosition();
+
+    window.addEventListener('resize', calculatePosition);
+    return () => {
+      window.removeEventListener('resize', calculatePosition);
+    };
+  });
+
   const { data } = useQuery(resourceNotificationsQuery, {
     variables: { resourceType: Pluralize(resourceType), resourceId },
   });
@@ -66,22 +98,6 @@ const NotificationsBell = () => {
   const { notifications } = data.resourceNotifications;
   const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
 
-  const calculatePosition = () => {
-    if (!isDropdownVisible || !iconRef.current) return {};
-
-    const {
-      offsetHeight,
-      offsetLeft,
-      offsetTop,
-      offsetWidth,
-    } = iconRef.current;
-
-    return {
-      top: `${offsetTop + offsetHeight + 15}px`,
-      left: `${offsetLeft + 240 + offsetWidth + 10 - 350}px`, // 240px sidebar width, 10px extra buffer
-    };
-  };
-
   return (
     <Container>
       <IconContainer onClick={handleShowDropdown} ref={iconRef}>
@@ -90,7 +106,7 @@ const NotificationsBell = () => {
       </IconContainer>
       {notifications && (
         <StyledNotificationsDropdown
-          coords={calculatePosition()}
+          coords={coords}
           isOpen={isDropdownVisible}
           handleClose={handleCloseDropdown}
         />

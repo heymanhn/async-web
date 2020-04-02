@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
@@ -43,16 +43,32 @@ const AllUpdatesButton = () => {
   const handleShowDropdown = () => setIsDropdownVisible(true);
   const handleCloseDropdown = () => setIsDropdownVisible(false);
 
+  const [coords, setCoords] = useState({});
   const calculatePosition = () => {
-    if (!isDropdownVisible || !buttonRef.current) return {};
+    if (!isDropdownVisible || !buttonRef.current) {
+      if (Object.keys(coords).length) setCoords({});
+      return;
+    }
 
     const { offsetLeft, offsetTop, offsetWidth } = buttonRef.current;
 
-    return {
+    const newCoords = {
       top: `${offsetTop - 5}px`,
       left: `${offsetLeft + offsetWidth - 5}px`,
     };
+
+    if (coords.top === newCoords.top && coords.left === newCoords.left) return;
+    setCoords(newCoords);
   };
+
+  useEffect(() => {
+    calculatePosition();
+
+    window.addEventListener('resize', calculatePosition);
+    return () => {
+      window.removeEventListener('resize', calculatePosition);
+    };
+  });
 
   return (
     <Container>
@@ -63,7 +79,7 @@ const AllUpdatesButton = () => {
         <Label>All Updates</Label>
       </ButtonContainer>
       <StyledNotificationsDropdown
-        coords={calculatePosition()}
+        coords={coords}
         isOpen={isDropdownVisible}
         handleClose={handleCloseDropdown}
       />
