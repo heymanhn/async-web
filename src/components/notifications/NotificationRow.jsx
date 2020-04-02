@@ -11,7 +11,7 @@ import Avatar from 'components/shared/Avatar';
 const Container = styled.div(({ isUnread, theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
-  background: isUnread ? colors.lightestBlue : colors.bgGrey,
+  background: isUnread ? colors.white : colors.bgGrey,
   borderBottom: `1px solid ${colors.borderGrey}`,
   cursor: 'pointer',
   padding: '15px 15px 12px',
@@ -21,7 +21,7 @@ const Container = styled.div(({ isUnread, theme: { colors } }) => ({
   },
 
   ':hover': {
-    background: isUnread ? colors.hoverBlue : colors.grey7,
+    background: colors.white,
   },
 }));
 
@@ -55,7 +55,7 @@ const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   fontSize: '12px',
 }));
 
-const NotificationRow = ({ handleCloseDropdown, notification }) => {
+const NotificationRow = ({ handleClose, notification }) => {
   const { author, updatedAt, readAt, payload, type } = notification;
   const payloadJSON = JSON.parse(payload);
   const payloadCamelJSON = {};
@@ -105,13 +105,14 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
     return documentId ? documentURL() : discussionURL();
   };
 
-  function closeDropdownAndNavigate(event) {
+  const handleClick = event => {
     event.stopPropagation();
-    handleCloseDropdown(() => navigate(notificationURL()));
-  }
+    navigate(notificationURL());
+    handleClose();
+  };
 
   return (
-    <Container isUnread={readAt < 0} onClick={closeDropdownAndNavigate}>
+    <Container isUnread={readAt < 0} onClick={handleClick}>
       <StyledAvatar
         avatarUrl={author.profilePictureUrl}
         title={author.fullName}
@@ -137,7 +138,7 @@ const NotificationRow = ({ handleCloseDropdown, notification }) => {
 };
 
 NotificationRow.propTypes = {
-  handleCloseDropdown: PropTypes.func.isRequired,
+  handleClose: PropTypes.func.isRequired,
   notification: PropTypes.object.isRequired,
 };
 

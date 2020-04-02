@@ -5,12 +5,17 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
-import { getLocalUser } from 'utils/auth';
 import { NavigationContext } from 'utils/contexts';
 
 import NotificationsDropdown from './NotificationsDropdown';
 
 const Container = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+});
+
+const IconContainer = styled.div({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -19,8 +24,8 @@ const Container = styled.div({
   margin: '0 15px',
 });
 
-const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey2,
+const StyledIcon = styled(FontAwesomeIcon)(({ isopen, theme: { colors } }) => ({
+  color: isopen === 'true' ? colors.grey1 : colors.grey2,
   fontSize: '20px',
 
   ':hover': {
@@ -37,17 +42,20 @@ const UnreadBadge = styled.div(({ theme: { colors } }) => ({
   height: '12px',
 }));
 
+const StyledNotificationsDropdown = styled(NotificationsDropdown)({
+  position: 'fixed',
+  top: '52px',
+  right: '30px',
+});
+
 const NotificationsBell = () => {
   const iconRef = useRef(null);
-  const { userId } = getLocalUser();
-  const { resource } = useContext(NavigationContext);
+  const {
+    resource: { resourceType, resourceId },
+  } = useContext(NavigationContext);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-
-  let { resourceType, resourceId } = resource || {};
-  if (!resource) {
-    resourceType = 'user';
-    resourceId = userId;
-  }
+  const handleShowDropdown = () => setIsDropdownVisible(true);
+  const handleCloseDropdown = () => setIsDropdownVisible(false);
 
   const { data } = useQuery(resourceNotificationsQuery, {
     variables: { resourceType: Pluralize(resourceType), resourceId },
@@ -58,38 +66,19 @@ const NotificationsBell = () => {
   const { notifications } = data.resourceNotifications;
   const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
 
-  function findIconWidth() {
-    const icon = iconRef.current;
-    return icon ? icon.offsetWidth : null;
-  }
-
-  function handleShowDropdown() {
-    setIsDropdownVisible(true);
-  }
-
-  // The notification rows need to wait until the dropdown is closed before
-  // it performs a navigate, that's what the callback method is for
-  // TODO (HN): this isn't true. You can close the dropdown before the navigate.
-  function handleCloseDropdown(callback = () => {}) {
-    setIsDropdownVisible(false);
-    callback();
-  }
-
   return (
-    <>
-      <Container onClick={handleShowDropdown} ref={iconRef}>
-        <StyledIcon icon="bell" />
+    <Container>
+      <IconContainer onClick={handleShowDropdown} ref={iconRef}>
+        <StyledIcon isopen={isDropdownVisible.toString()} icon="bell" />
         {unreadNotifications.length ? <UnreadBadge /> : undefined}
-      </Container>
+      </IconContainer>
       {notifications && (
-        <NotificationsDropdown
+        <StyledNotificationsDropdown
           isOpen={isDropdownVisible}
-          notifications={notifications}
-          iconWidth={findIconWidth()}
-          handleCloseDropdown={handleCloseDropdown}
+          handleClose={handleCloseDropdown}
         />
       )}
-    </>
+    </Container>
   );
 };
 

@@ -1,98 +1,89 @@
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useQuery } from '@apollo/react-hooks';
+import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
+import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import useClickOutside from 'utils/hooks/useClickOutside';
+import { getLocalUser } from 'utils/auth';
+import { NavigationContext } from 'utils/contexts';
+
 import NotificationRow from './NotificationRow';
 
-const Container = styled.div(({ iconWidth, isOpen, theme: { colors } }) => ({
+const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: isOpen ? 'block' : 'none',
-  alignSelf: 'flex-start',
   position: 'absolute',
   overflow: 'scroll',
 
-  background: colors.white,
+  background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
-  boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.05)',
-  marginLeft: iconWidth ? `${-350 + iconWidth}px` : '0',
-  marginTop: '10px',
+  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
   maxHeight: `${window.innerHeight - 80}px`,
   width: '350px',
   zIndex: 1000,
 }));
 
 const TitleSection = styled.div(({ theme: { colors } }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-
-  background: colors.white,
+  cursor: 'default',
+  color: colors.grey0,
   borderBottom: `1px solid ${colors.borderGrey}`,
-  padding: '15px',
-  position: 'sticky',
-  top: '0px',
+  padding: '15px 20px',
 }));
 
-const Title = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey3,
+const Title = styled.div({
   fontSize: '14px',
   fontWeight: 500,
-}));
+});
 
-const UnreadCountBadge = styled.div(({ theme: { colors } }) => ({
-  background: colors.blue,
-  borderRadius: '5px',
-  color: colors.white,
-  fontSize: '14px',
-  fontWeight: 500,
-  marginLeft: '8px',
-  padding: '0px 8px',
-}));
-
-const NotificationsDropdown = ({
-  iconWidth,
-  isOpen,
-  notifications,
-  handleCloseDropdown,
-}) => {
+const NotificationsDropdown = ({ isOpen, handleClose, ...props }) => {
   const selector = useRef();
+  const { resource } = useContext(NavigationContext);
 
-  function handleClickOutside() {
-    if (!isOpen) return;
-    handleCloseDropdown();
+  const { userId } = getLocalUser();
+  let { resourceType, resourceId } = resource || {};
+  if (!resource) {
+    resourceType = 'user';
+    resourceId = userId;
   }
 
-  useClickOutside({ handleClickOutside, isOpen, ref: selector });
+  useClickOutside({
+    handleClickOutside: () => isOpen && handleClose(),
+    isOpen,
+    ref: selector,
+  });
+
+  const { data } = useQuery(resourceNotificationsQuery, {
+    variables: { resourceType: Pluralize(resourceType), resourceId },
+  });
+
+  if (!data || !data.resourceNotifications) return null;
+
+  const { notifications } = data.resourceNotifications;
+  if (!notifications) return null;
+
+  const title = resourceType === 'user' ? 'All Updates' : 'Notifications';
 
   return (
-    <Container iconWidth={iconWidth} isOpen={isOpen} ref={selector}>
+    <Container isOpen={isOpen} ref={selector} {...props}>
       <TitleSection>
-        <Title>NOTIFICATIONS</Title>
-        <UnreadCountBadge>{notifications.length}</UnreadCountBadge>
+        <Title>{title}</Title>
       </TitleSection>
-      {notifications &&
-        notifications.map(n => (
-          <NotificationRow
-            key={n.updatedAt}
-            notification={n}
-            handleCloseDropdown={handleCloseDropdown}
-          />
-        ))}
+      {notifications.map(n => (
+        <NotificationRow
+          key={n.updatedAt}
+          notification={n}
+          handleClose={handleClose}
+        />
+      ))}
     </Container>
   );
 };
 
 NotificationsDropdown.propTypes = {
-  iconWidth: PropTypes.number,
   isOpen: PropTypes.bool.isRequired,
-  notifications: PropTypes.array,
-  handleCloseDropdown: PropTypes.func.isRequired,
-};
-
-NotificationsDropdown.defaultProps = {
-  iconWidth: null,
-  notifications: null,
+  handleClose: PropTypes.func.isRequired,
 };
 
 export default NotificationsDropdown;
