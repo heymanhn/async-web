@@ -7,7 +7,7 @@ import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
-import notificationsQuery from 'graphql/queries/notifications';
+import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import inboxQuery from 'graphql/queries/inbox';
 import workspacesQuery from 'graphql/queries/workspaces';
 import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
@@ -298,16 +298,20 @@ const removeFromWorkspace = (_root, { resource }, { client }) => {
   return null;
 };
 
-const updateNotifications = (_root, { userId, notification }, { client }) => {
+const updateNotifications = (
+  _root,
+  { resourceType, resourceId, notification },
+  { client }
+) => {
   const data = client.readQuery({
-    query: notificationsQuery,
-    variables: { id: userId },
+    query: resourceNotificationsQuery,
+    variables: { resourceType, resourceId },
   });
 
   if (!data) return null;
 
-  const { userNotifications } = data;
-  const { notifications, __typename } = userNotifications;
+  const { resourceNotifications } = data;
+  const { notifications, __typename } = resourceNotifications;
   const safeNotifications = notifications || [notification];
   const index = safeNotifications.findIndex(
     n => n.objectId === notification.objectId
@@ -331,10 +335,10 @@ const updateNotifications = (_root, { userId, notification }, { client }) => {
         ];
 
   client.writeQuery({
-    query: notificationsQuery,
-    variables: { id: userId },
+    query: resourceNotificationsQuery,
+    variables: { resourceType, resourceId },
     data: {
-      userNotifications: {
+      resourceNotifications: {
         notifications: notificationsData,
         __typename,
       },

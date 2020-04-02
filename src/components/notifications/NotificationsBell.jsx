@@ -1,14 +1,24 @@
-import React, { useState, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import styled from '@emotion/styled';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Pluralize from 'pluralize';
+import styled from '@emotion/styled';
 
-import { getLocalUser } from 'utils/auth';
-import notificationsQuery from 'graphql/queries/notifications';
+import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
+import { NavigationContext } from 'utils/contexts';
 
+import UnreadIndicator from 'components/shared/UnreadIndicator';
 import NotificationsDropdown from './NotificationsDropdown';
 
+const DROPDOWN_WIDTH = 400;
+
 const Container = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+});
+
+const IconContainer = styled.div({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -17,8 +27,8 @@ const Container = styled.div({
   margin: '0 15px',
 });
 
-const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey2,
+const StyledIcon = styled(FontAwesomeIcon)(({ isopen, theme: { colors } }) => ({
+  color: isopen === 'true' ? colors.grey1 : colors.grey2,
   fontSize: '20px',
 
   ':hover': {
@@ -26,60 +36,87 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   },
 }));
 
-const UnreadBadge = styled.div(({ theme: { colors } }) => ({
-  background: colors.blue,
-  borderRadius: '10px',
-  marginTop: '-12px',
-  marginLeft: '-10px',
-  width: '12px',
-  height: '12px',
-}));
+const StyledUnreadIndicator = styled(UnreadIndicator)({
+  position: 'absolute',
+  marginTop: '-10px',
+  marginLeft: '10px',
+});
+
+const StyledNotificationsDropdown = styled(NotificationsDropdown)({
+  position: 'fixed',
+  top: '52px',
+  right: '30px',
+});
 
 const NotificationsBell = () => {
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const iconRef = useRef(null);
-  const { userId } = getLocalUser();
+  const {
+    resource: { resourceType, resourceId },
+  } = useContext(NavigationContext);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const handleShowDropdown = () => setIsDropdownVisible(true);
+  const handleCloseDropdown = () => setIsDropdownVisible(false);
 
-  const { loading, data } = useQuery(notificationsQuery, {
-    variables: { id: userId },
+  const [coords, setCoords] = useState({});
+  const calculatePosition = () => {
+    if (!isDropdownVisible || !iconRef.current) {
+      if (Object.keys(coords).length) setCoords({});
+      return;
+    }
+
+    const {
+      offsetHeight,
+      offsetLeft,
+      offsetTop,
+      offsetWidth,
+    } = iconRef.current;
+
+    const newCoords = {
+      top: `${offsetTop + offsetHeight + 15}px`,
+
+      // 240px sidebar width, 10px extra buffer
+      left: `${offsetLeft + 240 + offsetWidth + 10 - DROPDOWN_WIDTH}px`,
+    };
+
+    if (coords.top === newCoords.top && coords.left === newCoords.left) return;
+    setCoords(newCoords);
+  };
+
+  useEffect(() => {
+    calculatePosition();
+
+    window.addEventListener('resize', calculatePosition);
+    return () => {
+      window.removeEventListener('resize', calculatePosition);
+    };
   });
 
-  if (loading || !data.userNotifications) return null;
+  const { data } = useQuery(resourceNotificationsQuery, {
+    variables: { resourceType: Pluralize(resourceType), resourceId },
+  });
 
-  const { notifications } = data.userNotifications;
+  if (!data || !data.resourceNotifications) return null;
+
+  const { notifications } = data.resourceNotifications;
   const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
 
-  function findIconWidth() {
-    const icon = iconRef.current;
-    return icon ? icon.offsetWidth : null;
-  }
-
-  function handleShowDropdown() {
-    setIsDropdownVisible(true);
-  }
-
-  // The notification rows need to wait until the dropdown is closed before
-  // it performs a navigate, that's what the callback method is for
-  function handleCloseDropdown(callback = () => {}) {
-    setIsDropdownVisible(false);
-    callback();
-  }
-
   return (
-    <>
-      <Container onClick={handleShowDropdown} ref={iconRef}>
-        <StyledIcon icon="bell" />
-        {unreadNotifications.length ? <UnreadBadge /> : undefined}
-      </Container>
+    <Container>
+      <IconContainer onClick={handleShowDropdown} ref={iconRef}>
+        <StyledIcon isopen={isDropdownVisible.toString()} icon="bell" />
+        {unreadNotifications.length > 0 && (
+          <StyledUnreadIndicator diameter={7} />
+        )}
+      </IconContainer>
       {notifications && (
-        <NotificationsDropdown
+        <StyledNotificationsDropdown
+          coords={coords}
           isOpen={isDropdownVisible}
-          notifications={notifications}
-          iconWidth={findIconWidth()}
-          handleCloseDropdown={handleCloseDropdown}
+          handleClose={handleCloseDropdown}
+          width={DROPDOWN_WIDTH}
         />
       )}
-    </>
+    </Container>
   );
 };
 

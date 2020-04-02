@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
 
 import OrganizationSettings from './OrganizationSettings';
+import AllUpdatesButton from './AllUpdatesButton';
 import WorkspacesList from './WorkspacesList';
 import RecentResourcesList from './RecentResourcesList';
 
@@ -43,6 +44,7 @@ const Sidebar = () => {
     <NavigationContext.Provider value={value}>
       <Container>
         <StyledOrganizationSettings />
+        <AllUpdatesButton />
         <WorkspacesList />
         <RecentResourcesList />
       </Container>

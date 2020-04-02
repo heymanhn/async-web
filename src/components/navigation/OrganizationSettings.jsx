@@ -16,6 +16,10 @@ const Display = styled.div({
   alignItems: 'center',
 });
 
+const AvatarContainer = styled.div({
+  width: '40px',
+});
+
 const OrganizationAvatar = styled(Avatar)({
   cursor: 'pointer',
 });
@@ -26,7 +30,6 @@ const OrganizationTitle = styled.div(({ theme: { colors } }) => ({
   fontSize: '14px',
   fontWeight: 500,
   letterSpacing: '-0.006em',
-  paddingLeft: '15px',
 }));
 
 const OrganizationSettings = props => {
@@ -47,12 +50,14 @@ const OrganizationSettings = props => {
   return (
     <Container {...props}>
       <Display>
-        <OrganizationAvatar
-          avatarUrl={logo}
-          size={24}
-          square
-          onClick={openDropdown}
-        />
+        <AvatarContainer>
+          <OrganizationAvatar
+            avatarUrl={logo}
+            size={24}
+            square
+            onClick={openDropdown}
+          />
+        </AvatarContainer>
         <OrganizationTitle onClick={openDropdown}>{title}</OrganizationTitle>
       </Display>
       <DropdownMenu

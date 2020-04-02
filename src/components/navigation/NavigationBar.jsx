@@ -65,7 +65,7 @@ const NavigationBar = props => {
         </LeftSection>
         <RightSection>
           <ResourceAccessContainer />
-          <NotificationsBell />
+          {resourceType !== 'discussion' && <NotificationsBell />}
           <CommandCenter />
         </RightSection>
       </Container>
