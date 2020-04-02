@@ -68,6 +68,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
   ]);
 
   const { content: message, ...contentProps } = useContentState({
+    resourceType: 'discussion',
     resourceId: discussionId,
     initialContent: initialMessage,
   });
