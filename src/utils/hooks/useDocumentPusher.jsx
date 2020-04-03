@@ -20,7 +20,6 @@ const useDocumentPusher = editor => {
    * Why use refs? As an escape hatch from having to pass boolean state variables
    * to the useEffect hook :-)
    */
-  const isProcessing = useRef(false);
   const pusherReadyRef = useRef(false);
 
   const { channelId } = useContext(DocumentContext);
@@ -37,11 +36,9 @@ const useDocumentPusher = editor => {
       const camelData = camelcaseKeys(data, { deep: true });
       const { operations } = camelData;
 
-      isProcessing.current = true;
       Editor.withoutNormalizing(editor, () => {
-        operations.forEach(op => editor.apply(op));
+        operations.forEach(op => editor.apply({ ...op, isRemote: true }));
       });
-      isProcessing.current = false;
     };
 
     channel.bind(NEW_DOCUMENT_OPERATION_EVENT, receiveOperations);
@@ -54,7 +51,7 @@ const useDocumentPusher = editor => {
   }, [channel, editor]);
 
   const sendOperations = () => {
-    if (!pusherReadyRef.current || isProcessing.current) return;
+    if (!pusherReadyRef.current) return;
 
     const now = Date.now();
     const interval = now - lastSend;
@@ -73,7 +70,7 @@ const useDocumentPusher = editor => {
   // Any users of this hook need to invoke this function during editor onChange()
   return () => {
     const operations = editor.operations.filter(
-      o => o && o.type !== 'set_selection'
+      o => o && !o.isRemote && o.type !== 'set_selection'
     );
 
     if (operations.length) setPendingOperations(old => [...old, ...operations]);
