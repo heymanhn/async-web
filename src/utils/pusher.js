@@ -8,7 +8,7 @@ const {
   REACT_APP_PUSHER_APP_CLUSTER,
 } = process.env;
 
-const initPusher = () => {
+const initPusher = resourceId => {
   const { userId } = getLocalUser();
 
   const pusher = new Pusher(REACT_APP_PUSHER_APP_KEY, {
@@ -17,7 +17,7 @@ const initPusher = () => {
     useTLS: true,
   });
 
-  const channelName = `private-channel-${userId}`;
+  const channelName = `private-channel-${resourceId || userId}`;
   const channel = pusher.subscribe(channelName);
 
   return { pusher, channel };

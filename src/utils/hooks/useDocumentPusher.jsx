@@ -18,7 +18,7 @@ const useDocumentPusher = ({ documentId, editor }) => {
   const readyRef = useRef(false);
 
   const [pendingOperations, setPendingOperations] = useState([]);
-  const channel = useMemo(() => initPusher().channel, []);
+  const channel = useMemo(() => initPusher(documentId).channel, [documentId]);
 
   useEffect(() => {
     const handleReadyState = () => {
