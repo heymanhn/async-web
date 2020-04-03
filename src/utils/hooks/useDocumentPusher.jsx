@@ -20,10 +20,10 @@ const useDocumentPusher = editor => {
    * Why use refs? As an escape hatch from having to pass boolean state variables
    * to the useEffect hook :-)
    */
-  const processingRemoteOps = useRef(false);
+  const isProcessing = useRef(false);
   const pusherReadyRef = useRef(false);
 
-  const { documentId, channelId } = useContext(DocumentContext);
+  const { channelId } = useContext(DocumentContext);
   const [pendingOperations, setPendingOperations] = useState([]);
   const [lastSend, setLastSend] = useState(null);
   const channel = useMemo(() => initPusher(channelId).channel, [channelId]);
@@ -35,14 +35,13 @@ const useDocumentPusher = editor => {
 
     const receiveOperations = data => {
       const camelData = camelcaseKeys(data, { deep: true });
-      const { documentId: targetDocumentId, operations } = camelData;
+      const { operations } = camelData;
 
-      if (documentId === targetDocumentId) {
-        processingRemoteOps.current = true;
-        Editor.withoutNormalizing(editor, () => {
-          operations.forEach(op => editor.apply(op));
-        });
-      }
+      isProcessing.current = true;
+      Editor.withoutNormalizing(editor, () => {
+        operations.forEach(op => editor.apply(op));
+      });
+      isProcessing.current = false;
     };
 
     channel.bind(NEW_DOCUMENT_OPERATION_EVENT, receiveOperations);
@@ -52,10 +51,10 @@ const useDocumentPusher = editor => {
       channel.unbind(NEW_DOCUMENT_OPERATION_EVENT, receiveOperations);
       channel.unbind(PUSHER_SUBSCRIPTION_SUCCESS_EVENT, handleReadyState);
     };
-  }, [channel, documentId, editor]);
+  }, [channel, editor]);
 
   const sendOperations = () => {
-    if (!pusherReadyRef.current || processingRemoteOps.current) return;
+    if (!pusherReadyRef.current || isProcessing.current) return;
 
     const now = Date.now();
     const interval = now - lastSend;
@@ -64,7 +63,6 @@ const useDocumentPusher = editor => {
     setLastSend(now);
     const triggered = channel.trigger(NEW_DOCUMENT_OPERATION_EVENT, {
       operations: pendingOperations,
-      documentId,
     });
 
     if (triggered) setPendingOperations([]);
