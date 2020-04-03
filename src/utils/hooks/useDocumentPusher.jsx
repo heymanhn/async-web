@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { HistoryEditor } from 'slate-history';
 import camelcaseKeys from 'camelcase-keys';
 
 import {
@@ -36,8 +37,10 @@ const useDocumentPusher = editor => {
       const camelData = camelcaseKeys(data, { deep: true });
       const { operations } = camelData;
 
-      Editor.withoutNormalizing(editor, () => {
-        operations.forEach(op => editor.apply({ ...op, isRemote: true }));
+      HistoryEditor.withoutSaving(editor, () => {
+        Editor.withoutNormalizing(editor, () => {
+          operations.forEach(op => editor.apply({ ...op, isRemote: true }));
+        });
       });
     };
 
