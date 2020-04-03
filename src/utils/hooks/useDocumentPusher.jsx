@@ -1,17 +1,15 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { HistoryEditor } from 'slate-history';
-import camelcaseKeys from 'camelcase-keys';
 
 import {
   PUSHER_SUBSCRIPTION_SUCCESS_EVENT,
   NEW_DOCUMENT_OPERATION_EVENT,
+  MINIMUM_PUSHER_SEND_INTERVAL,
 } from 'utils/constants';
 import { DocumentContext } from 'utils/contexts';
 import initPusher from 'utils/pusher';
 
 import Editor from 'components/editor/Editor';
-
-const MINIMUM_SEND_INTERVAL = 500;
 
 /*
  * Flushes any pending operations via Pusher on every tick of the event loop.
@@ -57,7 +55,7 @@ const useDocumentPusher = editor => {
 
     const now = Date.now();
     const interval = now - lastSend;
-    if (lastSend && interval < MINIMUM_SEND_INTERVAL) return;
+    if (lastSend && interval < MINIMUM_PUSHER_SEND_INTERVAL) return;
 
     setLastSend(now);
     const triggered = channel.trigger(NEW_DOCUMENT_OPERATION_EVENT, {

@@ -6,7 +6,8 @@ export const ORG_WORKSPACES_QUERY_SIZE = 100;
 // Resource access types
 export const DEFAULT_ACCESS_TYPE = 'collaborator';
 
-// Pusher/notification events
+// Pusher
+export const MINIMUM_PUSHER_SEND_INTERVAL = 500; // milliseconds
 export const PUSHER_SUBSCRIPTION_SUCCESS_EVENT =
   'pusher:subscription_succeeded';
 export const NEW_MESSAGE_EVENT = 'new_message';
