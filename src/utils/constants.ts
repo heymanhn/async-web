@@ -16,7 +16,7 @@ export const DOCUMENT_EDIT_EVENT = 'edit_document';
 export const DISCUSSION_EDIT_EVENT = 'edit_discussion';
 export const DISCUSSION_RESOLVE_EVENT = 'resolve_discussion';
 export const BADGE_COUNT_EVENT = 'badge_count';
-export const NEW_DOCUMENT_OPERATION_EVENT = 'client-new-document-operations';
+export const NEW_DOCUMENT_OPERATION_EVENT = 'client-new_document_operation';
 
 export const VIEW_MODES = [
   {
