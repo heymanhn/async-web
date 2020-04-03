@@ -17,13 +17,10 @@ const MINIMUM_SEND_INTERVAL = 500;
  */
 const useDocumentPusher = editor => {
   /*
-   * So that we don't re-send an operation we just received via Pusher.
-   *
    * Why use refs? As an escape hatch from having to pass boolean state variables
    * to the useEffect hook :-)
    */
   const processingRemoteOps = useRef(false);
-
   const pusherReadyRef = useRef(false);
 
   const { documentId, channelId } = useContext(DocumentContext);
