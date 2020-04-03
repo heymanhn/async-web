@@ -26,16 +26,16 @@ import {
 } from './utils';
 
 /*
- * Default element, which is a paragraph block with better styling
+ * Default element
  */
 
-const ParagraphInline = styled.span(({ theme: { colors } }) => ({
+const DefaultInline = styled.span(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '16px',
   letterSpacing: '-0.011em',
 }));
 
-const ParagraphBlock = styled.div(({ theme: { colors } }) => ({
+const DefaultBlock = styled.div(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '16px',
   letterSpacing: '-0.011em',
@@ -43,10 +43,10 @@ const ParagraphBlock = styled.div(({ theme: { colors } }) => ({
   marginBottom: '20px',
 }));
 
-export const ParagraphElement = ({ attributes, children, element }) => {
+export const DefaultElement = ({ attributes, children, element }) => {
   const Element = INLINE_TYPES.includes(element.type)
-    ? ParagraphInline
-    : ParagraphBlock;
+    ? DefaultInline
+    : DefaultBlock;
 
   return <Element {...attributes}>{children}</Element>;
 };
