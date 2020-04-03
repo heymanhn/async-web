@@ -16,9 +16,15 @@ const MINIMUM_SEND_INTERVAL = 500;
  * Flushes any pending operations via Pusher on every tick of the event loop.
  */
 const useDocumentPusher = editor => {
-  // Helps distinguish remote vs. local editor operations
-  const remoteRef = useRef(false);
-  const readyRef = useRef(false);
+  /*
+   * So that we don't re-send an operation we just received via Pusher.
+   *
+   * Why use refs? As an escape hatch from having to pass boolean state variables
+   * to the useEffect hook :-)
+   */
+  const processingRemoteOps = useRef(false);
+
+  const pusherReadyRef = useRef(false);
 
   const { documentId, channelId } = useContext(DocumentContext);
   const [pendingOperations, setPendingOperations] = useState([]);
@@ -27,7 +33,7 @@ const useDocumentPusher = editor => {
 
   useEffect(() => {
     const handleReadyState = () => {
-      readyRef.current = true;
+      pusherReadyRef.current = true;
     };
 
     const receiveOperations = data => {
@@ -35,7 +41,7 @@ const useDocumentPusher = editor => {
       const { documentId: targetDocumentId, operations } = camelData;
 
       if (documentId === targetDocumentId) {
-        remoteRef.current = true;
+        processingRemoteOps.current = true;
         Editor.withoutNormalizing(editor, () => {
           operations.forEach(op => editor.apply(op));
         });
@@ -52,7 +58,7 @@ const useDocumentPusher = editor => {
   }, [channel, documentId, editor]);
 
   const sendOperations = () => {
-    if (!readyRef.current || remoteRef.current) return;
+    if (!pusherReadyRef.current || processingRemoteOps.current) return;
 
     const now = Date.now();
     const interval = now - lastSend;
