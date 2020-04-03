@@ -46,6 +46,8 @@ const TitleEditable = ({
   const resource = useDisambiguatedResource();
   const { resourceType, setForceUpdate } = resource;
 
+  // These refs are needed so that handleUpdate(), which may be called inside a
+  // setTimeout(), will have the up-to-date values.
   const titleRef = useRef(null);
   const initialTitleRef = useRef(initialTitle);
   initialTitleRef.current = initialTitle;
