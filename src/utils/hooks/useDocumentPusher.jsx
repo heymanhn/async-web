@@ -49,7 +49,7 @@ const useDocumentPusher = editor => {
   }, [channel, documentId, editor]);
 
   const sendOperations = () => {
-    if (!readyRef.current || !pendingOperations.length) return;
+    if (!readyRef.current || remoteRef.current) return;
 
     const triggered = channel.trigger(NEW_DOCUMENT_OPERATION_EVENT, {
       operations: pendingOperations,
@@ -63,11 +63,6 @@ const useDocumentPusher = editor => {
 
   // Any users of this hook need to invoke this function during editor onChange()
   return () => {
-    if (remoteRef.current) {
-      remoteRef.current = false;
-      return;
-    }
-
     const operations = editor.operations.filter(
       o => o && o.type !== 'set_selection'
     );
