@@ -31,7 +31,7 @@ const useContentState = ({
 
     // For spreading into input elements, such as <Slate /> provider components
     value: content,
-    onChange: v => setContent(v),
+    onChange: c => setContent(c),
   };
 };
 
