@@ -11,7 +11,7 @@ import { DocumentContext } from 'utils/contexts';
 import useContentState from 'utils/hooks/useContentState';
 import useAutoSave from 'utils/hooks/useAutoSave';
 import useDocumentMutations from 'utils/hooks/useDocumentMutations';
-import useDocumentPusher from 'utils/hooks/useDocumentPusher';
+import useDocumentOperationsPusher from 'utils/hooks/useDocumentOperationsPusher';
 
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import Editor from 'components/editor/Editor';
@@ -79,7 +79,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   });
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
-  const handleNewOperations = useDocumentPusher(contentEditor);
+  const handleNewOperations = useDocumentOperationsPusher(contentEditor);
 
   useAutoSave({ content, handleSave: handleUpdate });
 

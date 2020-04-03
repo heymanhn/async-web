@@ -24,6 +24,7 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   handleShowModal: () => {},
   handleCloseModal: () => {},
   afterUpdate: () => {},
+  afterUpdateTitle: () => {},
   afterDelete: () => {},
   setForceUpdate: () => {},
   setViewMode: () => {},

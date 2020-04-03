@@ -47,6 +47,8 @@ const TitleEditable = ({
   const { resourceType, setForceUpdate } = resource;
 
   const titleRef = useRef(null);
+  const initialTitleRef = useRef(initialTitle);
+  initialTitleRef.current = initialTitle;
 
   const [title, setTitle] = useState(initialTitle);
   const [showPlaceholder, setShowPlaceholder] = useState(!title);
@@ -64,7 +66,10 @@ const TitleEditable = ({
     const { current } = titleRef || {};
     if (!current) return null;
 
-    return handleUpdateTitle(current.innerText);
+    const newTitle = current.innerText;
+    if (newTitle === initialTitleRef.current) return null;
+
+    return handleUpdateTitle(newTitle);
   };
 
   useAutoSave({
