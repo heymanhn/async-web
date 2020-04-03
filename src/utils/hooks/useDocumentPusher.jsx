@@ -34,8 +34,7 @@ const useDocumentPusher = editor => {
     };
 
     const receiveOperations = data => {
-      const camelData = camelcaseKeys(data, { deep: true });
-      const { operations } = camelData;
+      const { operations } = data;
 
       HistoryEditor.withoutSaving(editor, () => {
         Editor.withoutNormalizing(editor, () => {
