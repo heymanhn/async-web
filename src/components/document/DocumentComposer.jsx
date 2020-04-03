@@ -11,6 +11,7 @@ import { DocumentContext } from 'utils/contexts';
 import useContentState from 'utils/hooks/useContentState';
 import useAutoSave from 'utils/hooks/useAutoSave';
 import useDocumentMutations from 'utils/hooks/useDocumentMutations';
+import useDocumentPusher from 'utils/hooks/useDocumentPusher';
 
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import Editor from 'components/editor/Editor';
@@ -44,6 +45,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     resetInlineTopic,
   } = useContext(DocumentContext);
   const { selection } = inlineDiscussionTopic || {};
+  const { userId } = getLocalUser();
 
   const baseEditor = useMemo(
     () =>
@@ -70,22 +72,27 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     documentId,
   ]);
 
-  const { content, ...contentProps } = useContentState({
+  const { content, onChange, ...contentProps } = useContentState({
+    editor: contentEditor,
     resourceId: documentId,
     initialContent,
   });
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
+  const handleNewOperations = useDocumentPusher(contentEditor);
 
   useAutoSave({ content, handleSave: handleUpdate });
 
+  const onChangeWrapper = value => {
+    onChange(value);
+    handleNewOperations();
+  };
+
   // Implicit state indicating we are ready to create the inline annotation
   if (modalDiscussionId && selection) {
-    const { userId: authorId } = getLocalUser();
-
     Editor.wrapInlineAnnotation(contentEditor, selection, {
       discussionId: modalDiscussionId,
-      authorId,
+      authorId: userId,
       isInitialDraft: true, // Toggled to false once first message is created
     });
     resetInlineTopic();
@@ -104,7 +111,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   }
 
   return (
-    <Slate editor={contentEditor} {...contentProps}>
+    <Slate editor={contentEditor} onChange={onChangeWrapper} {...contentProps}>
       <DocumentEditable {...props} {...coreEditorProps} />
       <DocumentToolbar content={content} />
       <DefaultPlaceholder />

@@ -59,9 +59,9 @@ const DocumentContainer = ({
 
   if (loading) return null;
   if (error || !data.document) return <NotFound />;
+  const { channelId, tags } = data.document;
 
   const isUnread = () => {
-    const { tags } = data.document;
     const safeTags = tags || [];
     return (
       safeTags.includes('new_discussions') || safeTags.includes('new_document')
@@ -112,6 +112,7 @@ const DocumentContainer = ({
     deletedDiscussionId,
     inlineDiscussionTopic,
     viewMode,
+    channelId,
 
     setFirstMsgDiscussionId,
     setDeletedDiscussionId,

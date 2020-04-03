@@ -16,6 +16,7 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   deletedDiscussionId: null,
   inlineDiscussionTopic: null,
   viewMode: null,
+  channelId: null,
 
   setFirstMsgDiscussionId: () => {},
   setDeletedDiscussionId: () => {},

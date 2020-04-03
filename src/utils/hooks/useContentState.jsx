@@ -1,13 +1,17 @@
-import { useEffect, useState } from 'react';
-
-import { DEFAULT_ELEMENT } from 'components/editor/utils';
-
 /*
  * Manages the state for a Slate composer component.
  *
  * Updates the state value if the initial content has changed.
  */
-const useContentState = ({ resourceId: initialResourceId, initialContent }) => {
+
+import { useEffect, useState } from 'react';
+
+import { DEFAULT_ELEMENT } from 'components/editor/utils';
+
+const useContentState = ({
+  resourceId: initialResourceId,
+  initialContent,
+} = {}) => {
   const [resourceId, setResourceId] = useState(initialResourceId);
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT()
