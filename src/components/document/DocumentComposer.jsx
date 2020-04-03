@@ -80,10 +80,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   });
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
-  const handleNewOperations = useDocumentPusher({
-    documentId,
-    editor: contentEditor,
-  });
+  const handleNewOperations = useDocumentPusher(contentEditor);
 
   useAutoSave({ content, handleSave: handleUpdate });
 

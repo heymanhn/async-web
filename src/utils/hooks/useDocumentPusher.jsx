@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import camelcaseKeys from 'camelcase-keys';
 
 import {
   PUSHER_SUBSCRIPTION_SUCCESS_EVENT,
   NEW_DOCUMENT_OPERATION_EVENT,
 } from 'utils/constants';
+import { DocumentContext } from 'utils/contexts';
 import initPusher from 'utils/pusher';
 
 import Editor from 'components/editor/Editor';
@@ -12,13 +13,14 @@ import Editor from 'components/editor/Editor';
 /*
  * Flushes any pending operations via Pusher on every tick of the event loop.
  */
-const useDocumentPusher = ({ documentId, editor }) => {
+const useDocumentPusher = editor => {
   // Helps distinguish remote vs. local editor operations
   const remoteRef = useRef(false);
   const readyRef = useRef(false);
 
+  const { documentId, channelId } = useContext(DocumentContext);
   const [pendingOperations, setPendingOperations] = useState([]);
-  const channel = useMemo(() => initPusher(documentId).channel, [documentId]);
+  const channel = useMemo(() => initPusher(channelId).channel, [channelId]);
 
   useEffect(() => {
     const handleReadyState = () => {

@@ -11,6 +11,7 @@ export default gql`
         method: "GET"
       ) {
       ...DocumentObject
+      channelId
       discussionCount
       tags
       workspaces
