@@ -12,7 +12,9 @@ import { track } from 'utils/analytics';
 import { toPlainText } from 'components/editor/utils';
 
 const useDocumentMutations = (editor = null) => {
-  const { documentId, afterUpdate, afterDelete } = useContext(DocumentContext);
+  const { documentId, afterUpdate, afterUpdateTitle, afterDelete } = useContext(
+    DocumentContext
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
 
@@ -80,7 +82,7 @@ const useDocumentMutations = (editor = null) => {
 
     if (data.updateDocument) {
       track('Document title updated', { documentId });
-      afterUpdate();
+      afterUpdateTitle(title);
       return Promise.resolve();
     }
 

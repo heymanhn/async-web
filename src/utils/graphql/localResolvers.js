@@ -5,6 +5,7 @@ import { snakedQueryParams } from 'utils/queryParams';
 import localStateQuery from 'graphql/queries/localState';
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
+import documentQuery from 'graphql/queries/document';
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import resourceMembersQuery from 'graphql/queries/resourceMembers';
 import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
@@ -588,15 +589,6 @@ const deleteFromInboxQuery = (type, { resourceType, resourceId }, client) => {
   });
 };
 
-const deleteResourceFromInbox = (_root, props, { client }) => {
-  const { resourceType } = props;
-  ['all', resourceType].forEach(type =>
-    deleteFromInboxQuery(type, props, client)
-  );
-
-  return null;
-};
-
 const markWorkspaceResourceAsReadByTab = (
   type,
   { workspaceId, resourceType, resourceId },
@@ -652,6 +644,37 @@ const markWorkspaceResourceAsRead = (_root, props, { client }) => {
   return null;
 };
 
+const deleteResourceFromInbox = (_root, props, { client }) => {
+  const { resourceType } = props;
+  ['all', resourceType].forEach(type =>
+    deleteFromInboxQuery(type, props, client)
+  );
+
+  return null;
+};
+
+const updateDocumentTitle = (_root, { documentId, title }, { client }) => {
+  const data = client.readQuery({
+    query: documentQuery,
+    variables: { documentId },
+  });
+
+  if (!data) return null;
+
+  client.writeQuery({
+    query: documentQuery,
+    variables: { documentId },
+    data: {
+      document: {
+        ...data.document,
+        title,
+      },
+    },
+  });
+
+  return null;
+};
+
 const localResolvers = {
   Mutation: {
     addDraftToDiscussion,
@@ -670,6 +693,7 @@ const localResolvers = {
     markDiscussionAsRead,
     markWorkspaceResourceAsRead,
     deleteResourceFromInbox,
+    updateDocumentTitle,
   },
 };
 

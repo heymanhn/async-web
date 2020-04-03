@@ -4,9 +4,10 @@ import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
+import useDocumentTitlePusher from 'utils/hooks/useDocumentTitlePusher';
 import useMountEffect from 'utils/hooks/useMountEffect';
-import { DocumentContext } from 'utils/contexts';
 import useViewedReaction from 'utils/hooks/useViewedReaction';
+import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import LastUpdatedIndicator from './LastUpdatedIndicator';
@@ -27,7 +28,7 @@ const Document = ({ isUnread }) => {
   const documentContext = useContext(DocumentContext);
   const { documentId } = documentContext;
   const { markAsRead } = useViewedReaction();
-
+  const handleNewTitle = useDocumentTitlePusher();
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
 
   useMountEffect(() => {
@@ -54,11 +55,17 @@ const Document = ({ isUnread }) => {
   if (!updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
   const setUpdatedTimestampToNow = () => setUpdatedTimestamp(Date.now());
 
+  const afterUpdateTitle = newTitle => {
+    setUpdatedTimestampToNow();
+    handleNewTitle(newTitle);
+  };
+
   // Extend the Document Context. We want to keep the updatedTimestamp defined
   // here instead of in the parent component.
   const value = {
     ...documentContext,
     afterUpdate: setUpdatedTimestampToNow,
+    afterUpdateTitle,
   };
 
   return (

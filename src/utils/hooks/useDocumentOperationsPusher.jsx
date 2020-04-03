@@ -11,10 +11,7 @@ import initPusher from 'utils/pusher';
 
 import Editor from 'components/editor/Editor';
 
-/*
- * Flushes any pending operations via Pusher on every tick of the event loop.
- */
-const useDocumentPusher = editor => {
+const useDocumentOperationsPusher = editor => {
   /*
    * Why use refs? As an escape hatch from having to pass boolean state variables
    * to the useEffect hook :-)
@@ -31,7 +28,7 @@ const useDocumentPusher = editor => {
       pusherReadyRef.current = true;
     };
 
-    const receiveOperations = data => {
+    const processOperations = data => {
       const { operations } = data;
 
       HistoryEditor.withoutSaving(editor, () => {
@@ -41,12 +38,12 @@ const useDocumentPusher = editor => {
       });
     };
 
-    channel.bind(NEW_DOCUMENT_OPERATION_EVENT, receiveOperations);
     channel.bind(PUSHER_SUBSCRIPTION_SUCCESS_EVENT, handleReadyState);
+    channel.bind(NEW_DOCUMENT_OPERATION_EVENT, processOperations);
 
     return () => {
-      channel.unbind(NEW_DOCUMENT_OPERATION_EVENT, receiveOperations);
       channel.unbind(PUSHER_SUBSCRIPTION_SUCCESS_EVENT, handleReadyState);
+      channel.unbind(NEW_DOCUMENT_OPERATION_EVENT, processOperations);
     };
   }, [channel, editor]);
 
@@ -77,4 +74,4 @@ const useDocumentPusher = editor => {
   };
 };
 
-export default useDocumentPusher;
+export default useDocumentOperationsPusher;
