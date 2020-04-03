@@ -18,6 +18,7 @@ const InlineDiscussionButton = ({ content, ...props }) => {
   const handleClick = () => {
     const { selection } = editor;
 
+    // Keeps the focus on the document for the deselection to occur properly
     setTimeout(() => handleShowModal(null, selection, content), 0);
 
     Transforms.deselect(editor);
