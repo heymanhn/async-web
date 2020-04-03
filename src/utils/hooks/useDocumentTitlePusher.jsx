@@ -11,10 +11,6 @@ import { DocumentContext } from 'utils/contexts';
 import initPusher from 'utils/pusher';
 
 const useDocumentTitlePusher = () => {
-  /*
-   * Why use refs? As an escape hatch from having to pass boolean state variables
-   * to the useEffect hook :-)
-   */
   const pusherReadyRef = useRef(false);
 
   const { documentId, channelId } = useContext(DocumentContext);
@@ -22,7 +18,6 @@ const useDocumentTitlePusher = () => {
   const [localUpdateDocumentTitle] = useMutation(localUpdateDocumentTitleMtn, {
     variables: { documentId },
   });
-  // const updateDocumentTitleCb = useCallback()
 
   useEffect(() => {
     const handleReadyState = () => {
