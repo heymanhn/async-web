@@ -10,6 +10,8 @@ import initPusher from 'utils/pusher';
 
 import Editor from 'components/editor/Editor';
 
+const MINIMUM_SEND_INTERVAL = 500;
+
 /*
  * Flushes any pending operations via Pusher on every tick of the event loop.
  */
@@ -20,6 +22,7 @@ const useDocumentPusher = editor => {
 
   const { documentId, channelId } = useContext(DocumentContext);
   const [pendingOperations, setPendingOperations] = useState([]);
+  const [lastSend, setLastSend] = useState(null);
   const channel = useMemo(() => initPusher(channelId).channel, [channelId]);
 
   useEffect(() => {
@@ -51,6 +54,11 @@ const useDocumentPusher = editor => {
   const sendOperations = () => {
     if (!readyRef.current || remoteRef.current) return;
 
+    const now = Date.now();
+    const interval = now - lastSend;
+    if (lastSend && interval < MINIMUM_SEND_INTERVAL) return;
+
+    setLastSend(now);
     const triggered = channel.trigger(NEW_DOCUMENT_OPERATION_EVENT, {
       operations: pendingOperations,
       documentId,
