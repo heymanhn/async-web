@@ -74,7 +74,6 @@ const DocumentComposer = ({ initialContent, ...props }) => {
 
   const { content, onChange, ...contentProps } = useContentState({
     editor: contentEditor,
-    resourceType: 'document',
     resourceId: documentId,
     initialContent,
   });
