@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
-import Pusher from 'pusher-js';
-import camelcaseKeys from 'camelcase-keys';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
@@ -13,6 +11,7 @@ import { DocumentContext } from 'utils/contexts';
 import useContentState from 'utils/hooks/useContentState';
 import useAutoSave from 'utils/hooks/useAutoSave';
 import useDocumentMutations from 'utils/hooks/useDocumentMutations';
+import useDocumentPusher from 'utils/hooks/useDocumentPusher';
 
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import Editor from 'components/editor/Editor';
@@ -27,12 +26,6 @@ import withSectionBreak from 'components/editor/withSectionBreak';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import withImages from 'components/editor/withImages';
 
-const {
-  REACT_APP_ASYNC_API_URL,
-  REACT_APP_PUSHER_APP_KEY,
-  REACT_APP_PUSHER_APP_CLUSTER,
-} = process.env;
-
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
   lineHeight: '26px',
@@ -41,7 +34,6 @@ const DocumentEditable = styled(Editable)({
 });
 
 const DocumentComposer = ({ initialContent, ...props }) => {
-  const isRemoteChangeRef = useRef(false);
   const {
     documentId,
     modalDiscussionId,
@@ -80,47 +72,25 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     documentId,
   ]);
 
-  const { content, ...contentProps } = useContentState({
+  const { content, onChange, ...contentProps } = useContentState({
     editor: contentEditor,
     resourceType: 'document',
     resourceId: documentId,
     initialContent,
-    isRemoteChangeRef,
   });
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
+  const handleNewOperations = useDocumentPusher({
+    documentId,
+    editor: contentEditor,
+  });
 
   useAutoSave({ content, handleSave: handleUpdate });
 
-  // TODO (HN): DRY up this code later
-  useEffect(() => {
-    const pusher = new Pusher(REACT_APP_PUSHER_APP_KEY, {
-      authEndpoint: `${REACT_APP_ASYNC_API_URL}/pusher/auth`,
-      cluster: REACT_APP_PUSHER_APP_CLUSTER,
-      useTLS: true,
-    });
-
-    const channelName = `private-channel-${userId}`;
-    const channel = pusher.subscribe(channelName);
-
-    const handleNewOperations = data => {
-      const camelData = camelcaseKeys(data, { deep: true });
-      const { documentId: targetDocumentId, operations } = camelData;
-
-      if (documentId === targetDocumentId) {
-        isRemoteChangeRef.current = true;
-        Editor.withoutNormalizing(contentEditor, () => {
-          operations.forEach(op => contentEditor.apply(op));
-        });
-      }
-    };
-
-    channel.bind('client-new-document-operations', handleNewOperations);
-
-    return () => {
-      channel.unbind('client-new-document-operations', handleNewOperations);
-    };
-  }, [documentId, userId, contentEditor]);
+  const onChangeWrapper = value => {
+    onChange(value);
+    handleNewOperations();
+  };
 
   // Implicit state indicating we are ready to create the inline annotation
   if (modalDiscussionId && selection) {
@@ -145,7 +115,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   }
 
   return (
-    <Slate editor={contentEditor} {...contentProps}>
+    <Slate editor={contentEditor} onChange={onChangeWrapper} {...contentProps}>
       <DocumentEditable {...props} {...coreEditorProps} />
       <DocumentToolbar content={content} />
       <DefaultPlaceholder />

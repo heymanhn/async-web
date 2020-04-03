@@ -7,6 +7,8 @@ export const ORG_WORKSPACES_QUERY_SIZE = 100;
 export const DEFAULT_ACCESS_TYPE = 'collaborator';
 
 // Pusher/notification events
+export const PUSHER_SUBSCRIPTION_SUCCESS_EVENT =
+  'pusher:subscription_succeeded';
 export const NEW_MESSAGE_EVENT = 'new_message';
 export const DOCUMENT_ACCESS_EVENT = 'access_document';
 export const DISCUSSION_ACCESS_EVENT = 'access_discussion';
@@ -14,6 +16,7 @@ export const DOCUMENT_EDIT_EVENT = 'edit_document';
 export const DISCUSSION_EDIT_EVENT = 'edit_discussion';
 export const DISCUSSION_RESOLVE_EVENT = 'resolve_discussion';
 export const BADGE_COUNT_EVENT = 'badge_count';
+export const NEW_DOCUMENT_OPERATION_EVENT = 'client-new-document-operations';
 
 export const VIEW_MODES = [
   {

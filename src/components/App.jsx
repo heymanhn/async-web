@@ -22,7 +22,7 @@ import { RELATIVE_TIME_STRINGS } from 'utils/constants';
 import fileSerializer from 'utils/graphql/fileSerializer';
 import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
-import usePusher from 'utils/hooks/usePusher';
+import useAppPusher from 'utils/hooks/useAppPusher';
 import iconSet from 'styles/iconSet';
 
 import Layout from 'components/Layout';
@@ -114,7 +114,7 @@ moment.updateLocale('en', {
 moment.relativeTimeThreshold('d', 361);
 
 const App = () => {
-  usePusher();
+  useAppPusher();
 
   return (
     <Layout>
