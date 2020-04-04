@@ -37,7 +37,6 @@ const Title = styled.span({
   fontSize: '16px',
   fontWeight: 500,
   position: 'relative',
-  letterSpacing: '-0.011em',
 });
 
 const NavBar = () => {

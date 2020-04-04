@@ -21,7 +21,6 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 const WelcomeMessage = styled.div(({ theme: { colors } }) => ({
   color: colors.grey1,
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginBottom: '20px',
 }));
 

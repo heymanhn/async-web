@@ -21,7 +21,6 @@ const Icon = styled(FontAwesomeIcon)(({ theme: { accentColor } }) => ({
 
 const Details = styled.div({
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   lineHeight: '26px',
 });
 

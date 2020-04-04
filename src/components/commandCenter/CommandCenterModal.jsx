@@ -55,7 +55,6 @@ const SearchInput = styled.input(({ theme: { colors } }) => ({
   fontWeight: 400,
   outline: 'none',
   margin: '20px 0',
-  letterSpacing: '-0.011em',
   width: '100%',
 
   '::placeholder': {

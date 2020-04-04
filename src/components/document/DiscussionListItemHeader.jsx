@@ -18,7 +18,6 @@ const Container = styled.div(({ theme: { colors } }) => ({
   borderTopRightRadius: '5px',
   fontSize: '16px',
   fontWeight: 500,
-  letterSpacing: '-0.011em',
   padding: '0 30px',
   height: '56px',
 }));

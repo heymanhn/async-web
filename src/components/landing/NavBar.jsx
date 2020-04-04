@@ -30,7 +30,6 @@ const Title = styled.span(({ theme: { textColors } }) => ({
   color: textColors.sub,
   fontSize: '16px',
   fontWeight: 500,
-  letterSpacing: '-0.011em',
 }));
 
 const SignInLink = styled(Link)(({ theme: { textColors } }) => ({

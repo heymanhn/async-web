@@ -20,7 +20,6 @@ const Container = styled.div(({ theme: { colors } }) => ({
 const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
   fontSize: '16px',
   fontWeight: 400,
-  letterSpacing: '-0.011em',
   lineHeight: '26px',
   padding: '10px 30px 25px',
 

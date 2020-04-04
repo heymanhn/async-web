@@ -29,7 +29,6 @@ import withImages from 'components/editor/withImages';
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
   lineHeight: '26px',
-  letterSpacing: '-0.011em',
   marginBottom: '80px',
 });
 

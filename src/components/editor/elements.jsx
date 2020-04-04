@@ -34,7 +34,6 @@ const DefaultInline = styled.span({});
 const DefaultBlock = styled.div(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
 }));
@@ -73,7 +72,6 @@ const SmallFont = styled.h3(({ theme: { colors } }) => ({
   fontSize: '16px',
   fontWeight: 600,
   lineHeight: '22px',
-  letterSpacing: '-0.011em',
   margin: '12px 0px -10px',
 }));
 
@@ -95,28 +93,24 @@ const SmallFontElement = ({ attributes, children }) => (
 
 const BulletedList = styled.ul({
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
 });
 
 const NumberedList = styled.ol({
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
 });
 
 const ListItem = styled.li({
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginBottom: '5px',
   width: '100%',
 });
 
 const Checklist = styled.ul({
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
   paddingLeft: '16px',

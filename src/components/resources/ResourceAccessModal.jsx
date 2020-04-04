@@ -23,7 +23,6 @@ const Header = styled.div(({ theme: { colors } }) => ({
   color: colors.grey1,
   fontSize: '14px',
   fontWeight: 500,
-  letterSpacing: '-0.011em',
   padding: '15px 25px',
 }));
 
