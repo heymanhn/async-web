@@ -36,6 +36,7 @@ const DocumentEditable = styled(Editable)({
 const DocumentComposer = ({ initialContent, ...props }) => {
   const {
     documentId,
+    isModalOpen,
     modalDiscussionId,
     deletedDiscussionId,
     firstMsgDiscussionId,
@@ -44,8 +45,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     setFirstMsgDiscussionId,
     resetInlineTopic,
   } = useContext(DocumentContext);
-  const { selection } = inlineDiscussionTopic || {};
-  const { userId } = getLocalUser();
+  const { contextHighlightId } = inlineDiscussionTopic || {};
 
   const baseEditor = useMemo(
     () =>
@@ -88,13 +88,22 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     handleNewOperations();
   };
 
+  // Implicit state indicating the inline discussion modal has closed and
+  // we should unwrap the placeholder context highlight
+  if (!isModalOpen && contextHighlightId) {
+    Editor.removeContextHighlight(contentEditor, contextHighlightId);
+    resetInlineTopic();
+  }
+
   // Implicit state indicating we are ready to create the inline annotation
-  if (modalDiscussionId && selection) {
-    Editor.wrapInlineAnnotation(contentEditor, selection, {
-      discussionId: modalDiscussionId,
-      authorId: userId,
-      isInitialDraft: true, // Toggled to false once first message is created
-    });
+  if (modalDiscussionId && contextHighlightId) {
+    // TODO (HN): set the context highlight as an inline annotation instead
+
+    // Editor.wrapInlineAnnotation(contentEditor, selection, {
+    //   discussionId: modalDiscussionId,
+    //   authorId: userId,
+    //   isInitialDraft: true, // Toggled to false once first message is created
+    // });
     resetInlineTopic();
   }
 
@@ -113,7 +122,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   return (
     <Slate editor={contentEditor} onChange={onChangeWrapper} {...contentProps}>
       <DocumentEditable {...props} {...coreEditorProps} />
-      <DocumentToolbar content={content} />
+      <DocumentToolbar />
       <DefaultPlaceholder />
       <CompositionMenuButton />
     </Slate>

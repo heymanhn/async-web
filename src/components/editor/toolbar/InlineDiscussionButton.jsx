@@ -1,27 +1,26 @@
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 import { Transforms, Range } from 'slate';
 import { useSlate } from 'slate-react';
 
 import { DocumentContext } from 'utils/contexts';
 import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
-import ToolbarButton from 'components/editor/toolbar/ToolbarButton';
-import ButtonIcon from 'components/editor/toolbar/ButtonIcon';
+import Editor from 'components/editor/Editor';
+import ToolbarButton from './ToolbarButton';
+import ButtonIcon from './ButtonIcon';
 
 const INLINE_DISCUSSION_HOTKEY = 'cmd+opt+m';
 
-const InlineDiscussionButton = ({ content, ...props }) => {
+const InlineDiscussionButton = props => {
   const editor = useSlate();
   const { handleShowModal } = useContext(DocumentContext);
 
   const handleClick = () => {
-    const { selection } = editor;
+    const id = Date.now();
 
-    // Keeps the focus on the document for the deselection to occur properly
-    setTimeout(() => handleShowModal(null, selection, content), 0);
-
+    Editor.wrapContextHighlight(editor, { id });
     Transforms.deselect(editor);
+    handleShowModal(null, id, editor.children);
   };
 
   const { selection } = editor;
@@ -33,10 +32,6 @@ const InlineDiscussionButton = ({ content, ...props }) => {
       <ButtonIcon icon="comment-plus" isActive={false} />
     </ToolbarButton>
   );
-};
-
-InlineDiscussionButton.propTypes = {
-  content: PropTypes.array.isRequired,
 };
 
 export default InlineDiscussionButton;

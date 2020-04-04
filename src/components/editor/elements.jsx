@@ -29,11 +29,7 @@ import {
  * Default element
  */
 
-const DefaultInline = styled.span(({ theme: { colors } }) => ({
-  color: colors.contentText,
-  fontSize: '16px',
-  letterSpacing: '-0.011em',
-}));
+const DefaultInline = styled.span({});
 
 const DefaultBlock = styled.div(({ theme: { colors } }) => ({
   color: colors.contentText,
