@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 import camelcaseKeys from 'camelcase-keys';
+import Pluralize from 'pluralize';
 
 import addNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
 import localUpdateNotificationsMutation from 'graphql/mutations/local/updateNotifications';
@@ -41,10 +42,23 @@ const useAppPusher = () => {
     const handleNewNotification = pusherData => {
       const camelData = camelcaseKeys(pusherData, { deep: true });
       const { notification } = camelData;
+      const { documentId, workspaceId } = notification;
 
-      client.mutate({
-        mutation: localUpdateNotificationsMutation,
-        variables: { resourceType: 'users', resourceId: userId, notification },
+      [
+        { resourceType: 'user', resourceId: userId },
+        { resourceType: 'workspace', resourceId: workspaceId },
+        { resourceType: 'document', resourceId: documentId },
+      ].forEach(item => {
+        if (item.resourceId) {
+          client.mutate({
+            mutation: localUpdateNotificationsMutation,
+            variables: {
+              resourceType: Pluralize(item.resourceType),
+              resourceId: item.resourceId,
+              notification,
+            },
+          });
+        }
       });
     };
 
@@ -54,14 +68,7 @@ const useAppPusher = () => {
       const { discussionId } = message;
 
       if (notification) {
-        client.mutate({
-          mutation: localUpdateNotificationsMutation,
-          variables: {
-            resourceType: 'users',
-            resourceId: userId,
-            notification,
-          },
-        });
+        handleNewNotification(pusherData);
       }
 
       if (isDiscussionOpen(discussionId)) {

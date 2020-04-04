@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/react-hooks';
+import Pluralize from 'pluralize';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import localUpdateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
@@ -12,24 +13,64 @@ import localMarkWorkspaceResourceAsRead from 'graphql/mutations/local/markWorksp
 const useViewedReaction = () => {
   const client = useApolloClient();
 
+  const getParentResourceId = (resourceType, resourceId) => {
+    let discussion;
+    let document;
+    if (resourceType === 'discussion') {
+      const data = client.readQuery({
+        query: discussionQuery,
+        variables: { discussionId: resourceId },
+      });
+      discussion = data && data.discussion;
+    } else if (resourceType === 'document') {
+      const data = client.readQuery({
+        query: documentQuery,
+        variables: { documentId: resourceId },
+      });
+      document = data && data.document;
+    }
+
+    const resource = discussion || document;
+    if (!resource) return {};
+    const { workspaces } = resource;
+    const documentId =
+      (document && document.id) || (discussion && discussion.documentId);
+    const workspaceId = workspaces ? workspaces[0] : undefined;
+
+    return { documentId, workspaceId };
+  };
+
   function markAsRead({ isUnread, resourceType, resourceId } = {}) {
     const { userId } = getLocalUser();
+    const { documentId, workspaceId } = getParentResourceId(
+      resourceType,
+      resourceId
+    );
+
     let refetchQueries = [
       {
         query: resourceNotificationsQuery,
         variables: { resourceType: 'users', resourceId: userId },
       },
     ];
+    [
+      { resourceType: 'workspace', resourceId: workspaceId },
+      { resourceType: 'document', resourceId: documentId },
+    ].forEach(item => {
+      if (item.resourceId) {
+        refetchQueries = [
+          ...refetchQueries,
+          {
+            query: resourceNotificationsQuery,
+            variables: {
+              resourceType: Pluralize(item.resourceType),
+              resourceId: item.resourceId,
+            },
+          },
+        ];
+      }
+    });
 
-    if (resourceType === 'document') {
-      refetchQueries = [
-        ...refetchQueries,
-        {
-          query: documentQuery,
-          variables: { documentId: resourceId },
-        },
-      ];
-    }
     client.mutate({
       mutation: createReactionMutation,
       variables: {
@@ -46,20 +87,10 @@ const useViewedReaction = () => {
       update: () => {
         if (!isUnread) return;
         let notificationResourceId = resourceId;
-        let workspaceId;
 
-        // TODO: think of a better to handle multiple local mututations.
         if (resourceType === 'discussion') {
-          const data = client.readQuery({
-            query: discussionQuery,
-            variables: { discussionId: resourceId },
-          });
-          if (!data.discussion) return;
-
-          // check if it's an inline discussion
-          const { documentId, workspaces } = data.discussion;
+          // TODO: think of a better to handle multiple local mututations.
           if (documentId) notificationResourceId = documentId;
-          workspaceId = workspaces ? workspaces[0] : undefined;
 
           client.mutate({
             mutation: localMarkDiscussionAsReadMutation,
@@ -67,15 +98,6 @@ const useViewedReaction = () => {
               discussionId: resourceId,
             },
           });
-        } else if (resourceType === 'document') {
-          const data = client.readQuery({
-            query: documentQuery,
-            variables: { documentId: resourceId },
-          });
-          if (!data.document) return;
-
-          const { workspaces } = data.document;
-          workspaceId = workspaces ? workspaces[0] : undefined;
         }
 
         // Update the sidebar ResourceRow badgeCount
