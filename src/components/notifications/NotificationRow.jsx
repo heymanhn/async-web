@@ -87,25 +87,11 @@ const NotificationRow = ({ handleClose, notification }) => {
   const { title, snippet } = payloadCamelJSON;
   const { documentId, discussionId, workspaceId } = payloadCamelJSON;
 
-  const isInlineDiscussion = () => {
-    return documentId && discussionId;
-  };
-
-  const documentURL = () => {
-    return `/documents/${documentId}`;
-  };
-
-  const inlineDiscussionURL = () => {
-    return `/documents/${documentId}/discussions/${discussionId}`;
-  };
-
-  const discussionURL = () => {
-    return `/discussions/${discussionId}`;
-  };
-
-  const workspaceURL = () => {
-    return `/workspaces/${workspaceId}`;
-  };
+  const isInlineDiscussion = documentId && discussionId;
+  const documentURL = `/documents/${documentId}`;
+  const inlineDiscussionURL = `/documents/${documentId}/discussions/${discussionId}`;
+  const discussionURL = `/discussions/${discussionId}`;
+  const workspaceURL = `/workspaces/${workspaceId}`;
 
   const metaInfo = () => {
     let url;
@@ -113,29 +99,29 @@ const NotificationRow = ({ handleClose, notification }) => {
     switch (type) {
       case 'new_workspace':
       case 'access_workspace':
-        url = workspaceURL();
+        url = workspaceURL;
         context = ' invited you to workspace: ';
         break;
       case 'new_workspace_resource':
-        url = documentId ? documentURL() : discussionURL();
+        url = documentId ? documentURL : discussionURL;
         context = ' added workspace resource: ';
         break;
       case 'new_document':
       case 'access_document':
-        url = documentURL();
+        url = documentURL;
         context = ' invited you to collaborate on document: ';
         break;
       case 'new_discussion':
       case 'access_discussion':
-        url = isInlineDiscussion ? inlineDiscussionURL() : discussionURL();
+        url = isInlineDiscussion ? inlineDiscussionURL : discussionURL;
         context = ' invited you to join the discussion: ';
         break;
       case 'resolve_discussion':
-        url = isInlineDiscussion ? inlineDiscussionURL() : discussionURL();
+        url = isInlineDiscussion ? inlineDiscussionURL : discussionURL;
         context = ' resolved the discussion: ';
         break;
       case 'new_message':
-        url = isInlineDiscussion ? inlineDiscussionURL() : discussionURL();
+        url = isInlineDiscussion ? inlineDiscussionURL : discussionURL;
         context = isInlineDiscussion
           ? ' replied to a discussion in document: '
           : ' replied to a discussion: ';

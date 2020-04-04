@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 
 import inboxQuery from 'graphql/queries/inbox';
 import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
-import NotificationsBell from 'components/notifications/NotificationsBell';
 import CommandCenter from 'components/commandCenter/CommandCenter';
 
 const Container = styled.div({
@@ -61,7 +60,6 @@ const NavBar = () => {
           <Title>Inbox</Title>
         </MenuSection>
         <NavigationSection>
-          <NotificationsBell />
           <CommandCenter />
         </NavigationSection>
       </Container>
