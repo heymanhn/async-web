@@ -68,18 +68,14 @@ const DocumentContainer = ({
     );
   };
 
-  const handleShowModal = (discussionId, contextHighlightId, content) => {
+  const handleShowModal = (discussionId, content) => {
     const newState = {
       modalDiscussionId: discussionId,
       isModalOpen: true,
     };
 
     // For creating inline discussion context later on
-    if (contextHighlightId && content)
-      newState.inlineDiscussionTopic = {
-        contextHighlightId,
-        content,
-      };
+    if (content) newState.inlineDiscussionTopic = content;
 
     setState(oldState => ({ ...oldState, ...newState }));
   };

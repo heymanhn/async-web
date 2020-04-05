@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useApolloClient, useMutation } from '@apollo/react-hooks';
 
 import discussionQuery from 'graphql/queries/discussion';
@@ -9,11 +9,12 @@ import localDeleteDraftFromDiscMtn from 'graphql/mutations/local/deleteDraftFrom
 import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
 import { DiscussionContext } from 'utils/contexts';
 
-import { toPlainText } from 'components/editor/utils';
+import { DEFAULT_ELEMENT, toPlainText } from 'components/editor/utils';
 
 const useDraftMutations = (editor = null) => {
   const client = useApolloClient();
   const { discussionId, afterCreateDraft } = useContext(DiscussionContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleCreate: handleCreateDiscussion,
     handleDelete: handleDeleteDiscussion,
@@ -31,7 +32,10 @@ const useDraftMutations = (editor = null) => {
   });
 
   const handleSaveDraft = async () => {
-    const { children } = editor;
+    setIsSubmitting(true);
+
+    const { children } = editor || {};
+    const content = children || DEFAULT_ELEMENT();
 
     let draftDiscussionId = discussionId;
     if (!draftDiscussionId) {
@@ -45,8 +49,8 @@ const useDraftMutations = (editor = null) => {
         input: {
           body: {
             formatter: 'slatejs',
-            text: toPlainText(children),
-            payload: JSON.stringify(children),
+            text: toPlainText(content),
+            payload: JSON.stringify(content),
           },
         },
       },
@@ -62,7 +66,8 @@ const useDraftMutations = (editor = null) => {
 
       afterCreateDraft(draftDiscussionId);
 
-      return Promise.resolve();
+      setIsSubmitting(false);
+      return Promise.resolve({ discussionId: draftDiscussionId });
     }
 
     return Promise.reject(new Error('Failed to save message draft'));
@@ -96,6 +101,7 @@ const useDraftMutations = (editor = null) => {
   return {
     handleSaveDraft,
     handleDeleteDraft,
+    isSubmitting,
   };
 };
 

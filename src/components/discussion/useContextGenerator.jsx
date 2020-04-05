@@ -7,42 +7,28 @@ import Editor from 'components/editor/Editor';
 import { CONTEXT_HIGHLIGHT, BUFFER_LENGTH } from 'components/editor/utils';
 
 const useContextGenerator = editor => {
-  const {
-    inlineDiscussionTopic: { contextHighlightId, content },
-  } = useContext(DocumentContext);
+  const { inlineDiscussionTopic: content, modalDiscussionId } = useContext(
+    DocumentContext
+  );
 
-  // const extractContents = () => {
-  //   const {
-  //     selection,
-  //     content: documentContent,
-  //   } = inlineDiscussionTopic;
+  const extractContents = id => {
+    // Needed to avoid editor focus issues relating to shallow references.
+    const deepNewContents = JSON.parse(JSON.stringify(content));
+    Transforms.insertNodes(editor, deepNewContents);
 
-  //   const [start, end] = Range.edges(selection);
-  //   const endRange = end.path[0] + 1;
-  //   const newContents = [...documentContent].slice(start.path[0], endRange);
-
-  //   // Need to adjust the selection point paths based on the clipped contents
-  //   const newSelection = {
-  //     anchor: {
-  //       ...start,
-  //       path: [0, ...start.path.slice(1)],
-  //     },
-  //     focus: {
-  //       ...end,
-  //       path: [newContents.length - 1, ...end.path.slice(1)],
-  //     },
-  //   };
-  //   return [newContents, newSelection];
-  // };
+    // Convert inline annotation into a context highlight
+    Editor.updateInlineAnnotation(editor, modalDiscussionId, {
+      type: CONTEXT_HIGHLIGHT,
+      id,
+      discussionId: undefined,
+      isInitialDraft: undefined,
+    });
+  };
 
   // Assumes that a highlight has been made
   // Only truncates from each end if there is too much content after the selection
-  const deleteSurroundingText = () => {
-    const [, path] = Editor.findNodeByTypeAndId(
-      editor,
-      CONTEXT_HIGHLIGHT,
-      contextHighlightId
-    );
+  const deleteSurroundingText = id => {
+    const [, path] = Editor.findNodeByTypeAndId(editor, CONTEXT_HIGHLIGHT, id);
 
     // Delete the end first so that the selection paths don't change
     const endSelection = {
@@ -81,14 +67,9 @@ const useContextGenerator = editor => {
   };
 
   return () => {
-    // const [newContents, newSelection] = extractContents();
-
-    // Needed to avoid editor focus issues relating to shallow references.
-    const deepNewContents = JSON.parse(JSON.stringify(content));
-
-    Transforms.insertNodes(editor, deepNewContents);
-
-    // deleteSurroundingText();
+    const id = Date.now();
+    extractContents(id);
+    deleteSurroundingText(id);
   };
 };
 

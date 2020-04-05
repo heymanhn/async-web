@@ -6,7 +6,6 @@ import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
-import { getLocalUser } from 'utils/auth';
 import { DocumentContext } from 'utils/contexts';
 import useContentState from 'utils/hooks/useContentState';
 import useAutoSave from 'utils/hooks/useAutoSave';
@@ -98,11 +97,6 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   if (modalDiscussionId && contextHighlightId) {
     // TODO (HN): set the context highlight as an inline annotation instead
 
-    // Editor.wrapInlineAnnotation(contentEditor, selection, {
-    //   discussionId: modalDiscussionId,
-    //   authorId: userId,
-    //   isInitialDraft: true, // Toggled to false once first message is created
-    // });
     resetInlineTopic();
   }
 
