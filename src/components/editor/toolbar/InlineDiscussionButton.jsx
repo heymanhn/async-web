@@ -30,8 +30,18 @@ const InlineDiscussionButton = props => {
       isInitialDraft: true, // Toggled to false once first message is created
     });
 
+    // Remove all the top-level nodes outside of the current selection
+    // before handing it into the modal
+    const { children, selection } = editor;
+    const [start, end] = Range.edges(selection);
+    const endRange = end.path[0] + 1;
+    const newContents = JSON.parse(JSON.stringify(children)).slice(
+      start.path[0],
+      endRange
+    );
+
     Transforms.deselect(editor);
-    handleShowModal(discussionId, editor.children);
+    handleShowModal(discussionId, newContents);
   };
 
   const { selection } = editor;

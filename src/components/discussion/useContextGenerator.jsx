@@ -11,7 +11,7 @@ const useContextGenerator = editor => {
     DocumentContext
   );
 
-  const extractContents = id => {
+  const loadContents = id => {
     // Needed to avoid editor focus issues relating to shallow references.
     const deepNewContents = JSON.parse(JSON.stringify(content));
     Transforms.insertNodes(editor, deepNewContents);
@@ -68,7 +68,7 @@ const useContextGenerator = editor => {
 
   return () => {
     const id = Date.now();
-    extractContents(id);
+    loadContents(id);
     deleteSurroundingText(id);
   };
 };
