@@ -4,7 +4,7 @@
  *
  * Tracking issue: https://github.com/ianstormtaylor/slate/pull/3506
  */
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
@@ -60,12 +60,15 @@ const TitleEditable = ({
 
   // Workaround to prevent DOM from updating
   const [DOMTitle, setDOMTitle] = useState(initialTitle);
+  const setHeadingTitleCb = useCallback(() => {
+    setHeadingTitle(initialTitle);
+  }, [setHeadingTitle, initialTitle]);
 
   useEffect(() => {
     setTitle(initialTitle);
     setDOMTitle(initialTitle);
-    setHeadingTitle(initialTitle);
-  }, [initialTitle]);
+    setHeadingTitleCb(initialTitle);
+  }, [initialTitle, setHeadingTitleCb]);
 
   const handleUpdate = () => {
     const { current } = titleRef || {};
