@@ -34,16 +34,11 @@ const DocumentEditable = styled(Editable)({
 const DocumentComposer = ({ initialContent, ...props }) => {
   const {
     documentId,
-    isModalOpen,
-    modalDiscussionId,
     deletedDiscussionId,
     firstMsgDiscussionId,
-    inlineDiscussionTopic,
     setDeletedDiscussionId,
     setFirstMsgDiscussionId,
-    resetInlineTopic,
   } = useContext(DocumentContext);
-  const { contextHighlightId } = inlineDiscussionTopic || {};
 
   const baseEditor = useMemo(
     () =>
@@ -85,20 +80,6 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     onChange(value);
     handleNewOperations();
   };
-
-  // Implicit state indicating the inline discussion modal has closed and
-  // we should unwrap the placeholder context highlight
-  if (!isModalOpen && contextHighlightId) {
-    Editor.removeContextHighlight(contentEditor, contextHighlightId);
-    resetInlineTopic();
-  }
-
-  // Implicit state indicating we are ready to create the inline annotation
-  if (modalDiscussionId && contextHighlightId) {
-    // TODO (HN): set the context highlight as an inline annotation instead
-
-    resetInlineTopic();
-  }
 
   if (firstMsgDiscussionId) {
     Editor.updateInlineAnnotation(contentEditor, firstMsgDiscussionId, {

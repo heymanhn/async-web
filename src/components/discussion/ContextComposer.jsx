@@ -35,7 +35,7 @@ const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
 }));
 
 const ContextComposer = props => {
-  const { context, setContext } = useContext(DiscussionContext);
+  const { context } = useContext(DiscussionContext);
 
   const contextEditor = useMemo(
     () =>
@@ -53,8 +53,6 @@ const ContextComposer = props => {
   useMountEffect(() => {
     if (!context) generateContext();
   });
-
-  if (!context && content.length) setContext(content);
 
   return (
     <Container {...props}>

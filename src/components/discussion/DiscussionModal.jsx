@@ -58,12 +58,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   const stopComposing = () => setIsComposing(false);
 
   useMountEffect(() => {
-    const title = modalDiscussionId ? 'Discussion' : 'New discussion';
-    const properties = {};
-    if (modalDiscussionId) properties.discussionId = modalDiscussionId;
-    if (documentId) properties.documentId = documentId;
-
-    track(`${title} viewed`, properties);
+    track('Discussion viewed', { discussionId: modalDiscussionId, documentId });
   });
 
   useEffect(() => {
@@ -88,7 +83,6 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
 
   const { data } = useQuery(discussionQuery, {
     variables: { discussionId: modalDiscussionId },
-    skip: !modalDiscussionId,
   });
 
   let draft;
