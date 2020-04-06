@@ -23,6 +23,7 @@ import fileSerializer from 'utils/graphql/fileSerializer';
 import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
 import useAppPusher from 'utils/hooks/useAppPusher';
+import useFaviconIcon from 'utils/hooks/useFaviconIcon';
 import iconSet from 'styles/iconSet';
 
 import Layout from 'components/Layout';
@@ -115,6 +116,7 @@ moment.relativeTimeThreshold('d', 361);
 
 const App = () => {
   useAppPusher();
+  useFaviconIcon();
 
   return (
     <Layout>
