@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/react-hooks';
-import Pluralize from 'pluralize';
 
 import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import { getLocalUser } from 'utils/auth';
@@ -9,7 +8,7 @@ const useFaviconIcon = () => {
   const { userId } = getLocalUser();
 
   const { data } = useQuery(resourceNotificationsQuery, {
-    variables: { resourceType: Pluralize('user'), resourceId: userId },
+    variables: { resourceType: 'users', resourceId: userId },
   });
 
   if (!data || !data.resourceNotifications) return null;
@@ -18,12 +17,12 @@ const useFaviconIcon = () => {
 
   const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
   if (unreadNotifications.length > 0) {
-    favicon.href = 'favicon-new.png';
+    favicon.href = '/favicon-new.png';
   } else {
-    favicon.href = 'favicon.png';
+    favicon.href = '/favicon.png';
   }
 
-  return favicon.href;
+  return null;
 };
 
 export default useFaviconIcon;
