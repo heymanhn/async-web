@@ -12,6 +12,7 @@ import styled from '@emotion/styled';
 import { titleize } from 'utils/helpers';
 import useAutoSave from 'utils/hooks/useAutoSave';
 import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
+import useHeadTags from 'utils/hooks/useHeadTags';
 
 const Container = styled.div({
   display: 'flex',
@@ -45,6 +46,7 @@ const TitleEditable = ({
 }) => {
   const resource = useDisambiguatedResource();
   const { resourceType, setForceUpdate } = resource;
+  const { setHeadingTitle } = useHeadTags();
 
   // These refs are needed so that handleUpdate(), which may be called inside a
   // setTimeout(), will have the up-to-date values.
@@ -62,6 +64,7 @@ const TitleEditable = ({
   useEffect(() => {
     setTitle(initialTitle);
     setDOMTitle(initialTitle);
+    setHeadingTitle(initialTitle);
   }, [initialTitle]);
 
   const handleUpdate = () => {
