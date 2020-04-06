@@ -11,21 +11,25 @@ import InlineDiscussionPreview from './InlineDiscussionPreview';
 const HIDE_PREVIEW_WAIT_INTERVAL = 200;
 const SHOW_PREVIEW_WAIT_INTERVAL = 800;
 
-// TODO (HN): Not my brightest code moment. :\
 const Highlight = styled.span(
-  ({ isHover, isInitialDraft, theme: { colors } }) => ({
-    background: isHover
-      ? isInitialDraft
-        ? colors.blue
-        : colors.highlightYellow
-      : 'none',
-    borderBottom: isHover
-      ? 'none'
-      : `2px solid ${isInitialDraft ? colors.blue : colors.highlightYellow}`,
+  {
     cursor: 'pointer',
-    opacity: isHover ? 0.9 : 1,
     padding: '2px 0px',
-  })
+  },
+  ({ isHover, isInitialDraft, theme: { colors } }) => {
+    if (!isHover)
+      return {
+        borderBottom: `2px solid ${
+          isInitialDraft ? colors.blue : colors.highlightYellow
+        }`,
+        opacity: 1,
+      };
+
+    return {
+      background: isInitialDraft ? colors.blue : colors.highlightYellow,
+      opacity: 0.9,
+    };
+  }
 );
 
 const InlineDiscussionElement = ({ attributes, children, element }) => {
