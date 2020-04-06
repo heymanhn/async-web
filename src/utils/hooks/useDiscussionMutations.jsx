@@ -79,6 +79,31 @@ const useDiscussionMutations = () => {
     return Promise.reject(new Error('Failed to create discussion'));
   };
 
+  // Only used for inline discussions
+  const handleUpdateContext = async newContext => {
+    const { data } = await updateDiscussion({
+      variables: {
+        discussionId,
+        input: {
+          topic: {
+            formatter: 'slatejs',
+            text: toPlainText(newContext),
+            payload: JSON.stringify(newContext),
+          },
+        },
+      },
+    });
+
+    if (data.updateDiscussion) {
+      track('Inline discussion context updated', { discussionId });
+      return Promise.resolve();
+    }
+
+    return Promise.reject(
+      new Error('Failed to update inline discussion context')
+    );
+  };
+
   // Only used for adhoc discussion topics
   const handleUpdateTopic = async text => {
     const { data } = await updateDiscussion({
@@ -122,6 +147,7 @@ const useDiscussionMutations = () => {
 
   return {
     handleCreate,
+    handleUpdateContext,
     handleUpdateTopic,
     handleDelete,
 

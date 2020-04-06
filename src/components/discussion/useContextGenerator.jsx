@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Transforms } from 'slate';
 
 import { DocumentContext } from 'utils/contexts';
+import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
 
 import Editor from 'components/editor/Editor';
 import { CONTEXT_HIGHLIGHT, BUFFER_LENGTH } from 'components/editor/utils';
@@ -10,6 +11,7 @@ const useContextGenerator = editor => {
   const { inlineDiscussionTopic: content, modalDiscussionId } = useContext(
     DocumentContext
   );
+  const { handleUpdateContext } = useDiscussionMutations();
 
   const loadContents = id => {
     // Needed to avoid editor focus issues relating to shallow references.
@@ -70,6 +72,8 @@ const useContextGenerator = editor => {
     const id = Date.now();
     loadContents(id);
     deleteSurroundingText(id);
+
+    handleUpdateContext(editor.children);
   };
 };
 
