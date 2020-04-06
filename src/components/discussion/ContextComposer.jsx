@@ -35,7 +35,7 @@ const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
 }));
 
 const ContextComposer = props => {
-  const { context } = useContext(DiscussionContext);
+  const { topic } = useContext(DiscussionContext);
 
   const contextEditor = useMemo(
     () =>
@@ -48,10 +48,12 @@ const ContextComposer = props => {
     []
   );
   const editorProps = useContextEditorProps();
-  const [content, setContent] = useState(context || []);
+  const [content, setContent] = useState(
+    topic ? JSON.parse(topic.payload) : []
+  );
   const generateContext = useContextGenerator(contextEditor);
   useMountEffect(() => {
-    if (!context) generateContext();
+    if (!topic) generateContext();
   });
 
   return (

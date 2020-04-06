@@ -52,8 +52,6 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     handleShowModal,
   } = useContext(DocumentContext);
   const [isComposing, setIsComposing] = useState(!modalDiscussionId);
-  const [context, setContext] = useState(null);
-
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
 
@@ -85,16 +83,9 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
     variables: { discussionId: modalDiscussionId },
   });
 
-  let draft;
-  let messageCount;
-  if (data && data.discussion) {
-    const { discussion } = data;
-    ({ draft, messageCount } = discussion);
+  if (!data || !data.discussion) return null;
 
-    const { topic } = discussion;
-    if (!context && topic) setContext(JSON.parse(topic.payload));
-  }
-
+  const { draft, messageCount, topic } = data.discussion;
   if (draft && !isComposing) startComposing();
 
   const handleCancelCompose = () => {
@@ -135,12 +126,11 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
   const value = {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId: modalDiscussionId,
-    context,
+    topic,
     draft,
     modalRef,
     isModal: true,
 
-    setContext,
     afterCreate: id => handleShowModal(id),
     afterDelete,
   };
@@ -151,7 +141,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
    * 2. General discussion. There won't be a topic to create context for.
    * 3. Subsequent messages to a discussion. Also won't be a topic present.
    */
-  const readyToCompose = isComposing && (!inlineDiscussionTopic || context);
+  const readyToCompose = isComposing && (!inlineDiscussionTopic || topic);
   const isComposingFirstMsg = isComposing && !messageCount;
 
   return (
@@ -162,7 +152,7 @@ const DiscussionModal = ({ isOpen, handleClose, ...props }) => {
       {...props}
     >
       <DiscussionContext.Provider value={value}>
-        {(inlineDiscussionTopic || context) && <StyledContextComposer />}
+        {(inlineDiscussionTopic || topic) && <StyledContextComposer />}
         {modalDiscussionId && (
           <DiscussionThread
             isComposingFirstMsg={isComposingFirstMsg}
