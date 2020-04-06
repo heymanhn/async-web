@@ -16,17 +16,20 @@ const Highlight = styled.span(
     cursor: 'pointer',
     padding: '2px 0px',
   },
-  ({ isHover, isInitialDraft, theme: { colors } }) => {
+  ({ isHover, isInitialDraft, isAuthor, theme: { colors } }) => {
+    const getHighlightColor = () => {
+      if (!isInitialDraft) return colors.highlightYellow;
+      return isAuthor ? colors.blue : colors.grey6;
+    };
+
     if (!isHover)
       return {
-        borderBottom: `2px solid ${
-          isInitialDraft ? colors.blue : colors.highlightYellow
-        }`,
+        borderBottom: `2px solid ${getHighlightColor()}`,
         opacity: 1,
       };
 
     return {
-      background: isInitialDraft ? colors.blue : colors.highlightYellow,
+      background: getHighlightColor(),
       opacity: 0.9,
     };
   }
@@ -82,14 +85,12 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
 
   const { userId } = getLocalUser();
   const isAuthor = userId === authorId;
-  if (isInitialDraft && !isAuthor) {
-    return <span>{children}</span>;
-  }
 
   return (
     <span ref={ref} {...highlightHoverProps}>
       <Highlight
         isHover={isHighlightHover || isPreviewHover}
+        isAuthor={isAuthor}
         isInitialDraft={isInitialDraft}
         {...attributes}
       >
