@@ -124,7 +124,7 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef }) => {
     const { offsetHeight, offsetTop } = parentRef.current;
     return {
       top: `${offsetTop + offsetHeight}px`,
-      left: 0,
+      left: '120px', // Adjusting for half of the sidebar width
     };
   };
 
