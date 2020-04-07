@@ -2,7 +2,7 @@ const useHeadTags = () => {
   const setHeadingTitle = title => {
     const suffix = 'Roval';
 
-    document.title = `${title} - ${suffix}`;
+    document.title = `${title || 'Untitled'} - ${suffix}`;
   };
 
   return { setHeadingTitle };

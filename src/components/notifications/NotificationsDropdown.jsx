@@ -1,10 +1,10 @@
 import React, { useContext, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { useQuery } from '@apollo/react-hooks';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
+import usePaginatedResource from 'utils/hooks/usePaginatedResource';
 import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import useClickOutside from 'utils/hooks/useClickOutside';
 import { getLocalUser } from 'utils/auth';
@@ -15,7 +15,7 @@ import NotificationRow from './NotificationRow';
 const Container = styled.div(
   ({ coords, isOpen, width, theme: { colors } }) => ({
     display: isOpen ? 'block' : 'none',
-    position: 'absolute',
+    position: 'fixed',
     top: coords.top,
     left: coords.left,
     overflow: 'scroll',
@@ -43,7 +43,7 @@ const Title = styled.div({
 });
 
 const NotificationsDropdown = ({ coords, isOpen, handleClose, ...props }) => {
-  const selector = useRef();
+  const dropdownRef = useRef();
   const { resource } = useContext(NavigationContext);
 
   const { userId } = getLocalUser();
@@ -56,27 +56,37 @@ const NotificationsDropdown = ({ coords, isOpen, handleClose, ...props }) => {
   useClickOutside({
     handleClickOutside: () => isOpen && handleClose(),
     isOpen,
-    ref: selector,
+    ref: dropdownRef,
   });
 
-  const { data } = useQuery(resourceNotificationsQuery, {
-    variables: { resourceType: Pluralize(resourceType), resourceId },
-  });
+  const { loading, data } = usePaginatedResource(
+    dropdownRef,
+    {
+      query: resourceNotificationsQuery,
+      key: 'resourceNotifications',
+      variables: {
+        resourceType: Pluralize(resourceType),
+        resourceId,
+        queryParams: {},
+      },
+    },
+    undefined,
+    dropdownRef
+  );
 
-  if (!data || !data.resourceNotifications) return null;
-
-  const { notifications } = data.resourceNotifications;
-  if (!notifications) return null;
+  if (loading || !data) return null;
+  const { items } = data;
+  if (!items) return null;
 
   const title = resourceType === 'user' ? 'All Updates' : 'Notifications';
   const root = window.document.getElementById('root');
 
   return ReactDOM.createPortal(
-    <Container isOpen={isOpen} coords={coords} ref={selector} {...props}>
+    <Container isOpen={isOpen} coords={coords} ref={dropdownRef} {...props}>
       <TitleSection>
         <Title>{title}</Title>
       </TitleSection>
-      {notifications.map(n => (
+      {items.map(n => (
         <NotificationRow
           key={n.updatedAt}
           notification={n}

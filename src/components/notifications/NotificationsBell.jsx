@@ -92,13 +92,17 @@ const NotificationsBell = () => {
   });
 
   const { data } = useQuery(resourceNotificationsQuery, {
-    variables: { resourceType: Pluralize(resourceType), resourceId },
+    variables: {
+      resourceType: Pluralize(resourceType),
+      resourceId,
+      queryParams: {},
+    },
   });
 
   if (!data || !data.resourceNotifications) return null;
 
-  const { notifications } = data.resourceNotifications;
-  const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
+  const { items } = data.resourceNotifications;
+  const unreadNotifications = (items || []).filter(n => n.readAt < 0);
 
   return (
     <Container>
@@ -108,7 +112,7 @@ const NotificationsBell = () => {
           <StyledUnreadIndicator diameter={7} />
         )}
       </IconContainer>
-      {notifications && (
+      {items && (
         <StyledNotificationsDropdown
           coords={coords}
           isOpen={isDropdownVisible}

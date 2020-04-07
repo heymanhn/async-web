@@ -12,10 +12,10 @@ const useFaviconIcon = () => {
   });
 
   if (!data || !data.resourceNotifications) return null;
-  const { notifications } = data.resourceNotifications;
-  if (!notifications) return null;
+  const { items } = data.resourceNotifications;
+  if (!items) return null;
 
-  const unreadNotifications = (notifications || []).filter(n => n.readAt < 0);
+  const unreadNotifications = (items || []).filter(n => n.readAt < 0);
   if (unreadNotifications.length > 0) {
     favicon.href = '/favicon-new.png';
   } else {

@@ -312,8 +312,8 @@ const updateNotifications = (
   if (!data) return null;
 
   const { resourceNotifications } = data;
-  const { notifications, __typename } = resourceNotifications;
-  const safeNotifications = notifications || [notification];
+  const { items, __typename } = resourceNotifications;
+  const safeNotifications = items || [notification];
   const index = safeNotifications.findIndex(
     n => n.objectId === notification.objectId
   );

@@ -47,7 +47,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
 const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
-  const { discussionId, isModal } = useContext(DiscussionContext);
+  const { discussionId, isModal, modalRef } = useContext(DiscussionContext);
   const [pendingMessageCount, setPendingMessageCount] = useState(0);
   const [addPendingMessages] = useMutation(localAddPendingMessages, {
     variables: { discussionId },
@@ -75,7 +75,8 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
       key: 'messages',
       variables: { discussionId, queryParams: {} },
     },
-    isModal ? undefined : 300
+    isModal ? undefined : 300,
+    modalRef
   );
 
   // Workaround to make sure two copies of the first message aren't rendered
