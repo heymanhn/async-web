@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 
 import { snakedQueryParams } from 'utils/queryParams';
 import { debounce } from 'utils/helpers';
-import { DiscussionContext } from 'utils/contexts';
 
 const DEBOUNCE_INTERVAL = 500;
 const DISTANCE_FROM_BOTTOM = 200;
@@ -17,13 +16,16 @@ const DISTANCE_FROM_BOTTOM = 200;
  *
  * Now this is essentially a wrapper on Apollo's useQuery, bundled with
  * custom fetchMore() logic
+ *
+ * - ref is the reference to the container that holds the paginated results.
+ * - gap is the custom distance from the bottom. It's not used when results are in a modal.
  */
 const usePaginatedResource = (
   ref,
   { query, key, ...props },
-  gap = DISTANCE_FROM_BOTTOM
+  gap = DISTANCE_FROM_BOTTOM,
+  modalRef = {}
 ) => {
-  const { modalRef } = useContext(DiscussionContext);
   const [shouldFetch, setShouldFetch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
