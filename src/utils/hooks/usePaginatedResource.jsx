@@ -18,7 +18,8 @@ const DISTANCE_FROM_BOTTOM = 200;
  * custom fetchMore() logic
  *
  * - ref is the reference to the container that holds the paginated results.
- * - gap is the custom distance from the bottom. It's not used when results are in a modal.
+ * - optional: gap, is the custom distance from the bottom. It's not used when results are in a modal.
+ * - optional: modalRef, is the reference to a modal when the results are in a modal.
  */
 const usePaginatedResource = (
   ref,
