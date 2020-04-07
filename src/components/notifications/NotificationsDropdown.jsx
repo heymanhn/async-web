@@ -24,13 +24,17 @@ const Container = styled.div(
     border: `1px solid ${colors.borderGrey}`,
     borderRadius: '5px',
     boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-    maxHeight: `${window.innerHeight - 80}px`,
+    maxHeight: `${window.innerHeight - 120}px`,
     width: `${width}px`,
     zIndex: 1000,
   })
 );
 
 const TitleSection = styled.div(({ theme: { colors } }) => ({
+  position: 'sticky',
+  top: 0,
+
+  background: colors.bgGrey,
   cursor: 'default',
   color: colors.grey0,
   borderBottom: `1px solid ${colors.borderGrey}`,
