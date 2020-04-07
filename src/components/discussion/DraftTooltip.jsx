@@ -2,6 +2,7 @@ import React, { useContext, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
@@ -31,14 +32,36 @@ const Container = styled.div(
   })
 );
 
-const AvatarWithMargin = styled(Avatar)({
+const AvatarContainer = styled.div({
   flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   marginRight: '10px',
 });
+
+const LockIconContainer = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: colors.grey2,
+  width: '15px',
+  height: '15px',
+  borderRadius: '50%',
+  position: 'relative',
+  top: '12px',
+  marginLeft: '-10px',
+}));
+
+const LockIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
+  color: colors.white,
+  fontSize: '8px',
+}));
 
 const Message = styled.div(({ theme: { colors } }) => ({
   color: colors.grey0,
   fontSize: '14px',
+  userSelect: 'none',
 }));
 
 const DraftTooltip = ({ discussionId, isOpen, parentRef }) => {
@@ -88,7 +111,15 @@ const DraftTooltip = ({ discussionId, isOpen, parentRef }) => {
       onClick={handleClick}
       styles={calculateTooltipPosition()}
     >
-      <AvatarWithMargin avatarUrl={profilePictureUrl} size={32} />
+      <AvatarContainer>
+        <Avatar avatarUrl={profilePictureUrl} size={32} />
+        {!isAuthor && (
+          <LockIconContainer>
+            <LockIcon icon="lock" />
+          </LockIconContainer>
+        )}
+      </AvatarContainer>
+
       <Message>
         {isAuthor ? 'Continue draft' : `${firstName} is writing a draft`}
       </Message>
