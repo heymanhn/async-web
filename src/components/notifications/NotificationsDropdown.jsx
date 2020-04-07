@@ -15,7 +15,7 @@ import NotificationRow from './NotificationRow';
 const Container = styled.div(
   ({ coords, isOpen, width, theme: { colors } }) => ({
     display: isOpen ? 'block' : 'none',
-    position: 'absolute',
+    position: 'fixed',
     top: coords.top,
     left: coords.left,
     overflow: 'scroll',
@@ -29,8 +29,6 @@ const Container = styled.div(
     zIndex: 1000,
   })
 );
-
-const Results = styled.div({});
 
 const TitleSection = styled.div(({ theme: { colors } }) => ({
   cursor: 'default',
@@ -46,7 +44,6 @@ const Title = styled.div({
 
 const NotificationsDropdown = ({ coords, isOpen, handleClose, ...props }) => {
   const dropdownRef = useRef();
-  const resultsRef = useRef(null);
   const { resource } = useContext(NavigationContext);
 
   const { userId } = getLocalUser();
@@ -63,20 +60,23 @@ const NotificationsDropdown = ({ coords, isOpen, handleClose, ...props }) => {
   });
 
   const { loading, data } = usePaginatedResource(
-    resultsRef,
+    dropdownRef,
     {
       query: resourceNotificationsQuery,
       key: 'resourceNotifications',
-      variables: { resourceType: Pluralize(resourceType), resourceId },
+      variables: {
+        resourceType: Pluralize(resourceType),
+        resourceId,
+        queryParams: {},
+      },
     },
-    80,
+    undefined,
     dropdownRef
   );
 
   if (loading || !data) return null;
-
-  const { notifications } = data;
-  if (!notifications) return null;
+  const { items } = data;
+  if (!items) return null;
 
   const title = resourceType === 'user' ? 'All Updates' : 'Notifications';
   const root = window.document.getElementById('root');
@@ -86,15 +86,13 @@ const NotificationsDropdown = ({ coords, isOpen, handleClose, ...props }) => {
       <TitleSection>
         <Title>{title}</Title>
       </TitleSection>
-      <Results ref={resultsRef}>
-        {notifications.map(n => (
-          <NotificationRow
-            key={n.updatedAt}
-            notification={n}
-            handleClose={handleClose}
-          />
-        ))}
-      </Results>
+      {items.map(n => (
+        <NotificationRow
+          key={n.updatedAt}
+          notification={n}
+          handleClose={handleClose}
+        />
+      ))}
     </Container>,
     root
   );
