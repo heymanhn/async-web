@@ -53,7 +53,6 @@ const Title = styled.span(({ hover, isUnread, theme: { colors } }) => ({
   color: hover ? colors.blue : colors.mainText,
   fontSize: '16px',
   fontWeight: isUnread ? 600 : 400,
-  letterSpacing: '-0.011em',
   marginBottom: '2px',
 }));
 

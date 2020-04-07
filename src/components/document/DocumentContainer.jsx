@@ -68,18 +68,14 @@ const DocumentContainer = ({
     );
   };
 
-  const handleShowModal = (discussionId, selection, content) => {
+  const handleShowModal = (discussionId, content) => {
     const newState = {
       modalDiscussionId: discussionId,
       isModalOpen: true,
     };
 
     // For creating inline discussion context later on
-    if (selection && content)
-      newState.inlineDiscussionTopic = {
-        selection,
-        content,
-      };
+    if (content) newState.inlineDiscussionTopic = content;
 
     setState(oldState => ({ ...oldState, ...newState }));
   };
@@ -88,7 +84,6 @@ const DocumentContainer = ({
     setState(oldState => ({
       ...oldState,
       modalDiscussionId: null,
-      inlineDiscussionTopic: null,
       isModalOpen: false,
     }));
   };
@@ -107,6 +102,7 @@ const DocumentContainer = ({
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
     documentId,
+    isModalOpen,
     modalDiscussionId,
     firstMsgDiscussionId,
     deletedDiscussionId,

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  ParagraphElement,
+  DefaultElement,
   formattingElements,
   listElements,
   wrappedBlockElements,
@@ -24,7 +24,7 @@ const Element = props => {
     ...inlineDiscussionElements,
   };
 
-  const ElementToRender = elements[type] || ParagraphElement;
+  const ElementToRender = elements[type] || DefaultElement;
   return <ElementToRender {...props} />;
 };
 

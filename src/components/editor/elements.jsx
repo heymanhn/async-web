@@ -26,27 +26,22 @@ import {
 } from './utils';
 
 /*
- * Default element, which is a paragraph block with better styling
+ * Default element
  */
 
-const ParagraphInline = styled.span(({ theme: { colors } }) => ({
-  color: colors.contentText,
-  fontSize: '16px',
-  letterSpacing: '-0.011em',
-}));
+const DefaultInline = styled.span({});
 
-const ParagraphBlock = styled.div(({ theme: { colors } }) => ({
+const DefaultBlock = styled.div(({ theme: { colors } }) => ({
   color: colors.contentText,
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
 }));
 
-export const ParagraphElement = ({ attributes, children, element }) => {
+export const DefaultElement = ({ attributes, children, element }) => {
   const Element = INLINE_TYPES.includes(element.type)
-    ? ParagraphInline
-    : ParagraphBlock;
+    ? DefaultInline
+    : DefaultBlock;
 
   return <Element {...attributes}>{children}</Element>;
 };
@@ -77,7 +72,6 @@ const SmallFont = styled.h3(({ theme: { colors } }) => ({
   fontSize: '16px',
   fontWeight: 600,
   lineHeight: '22px',
-  letterSpacing: '-0.011em',
   margin: '12px 0px -10px',
 }));
 
@@ -99,28 +93,24 @@ const SmallFontElement = ({ attributes, children }) => (
 
 const BulletedList = styled.ul({
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
 });
 
 const NumberedList = styled.ol({
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
 });
 
 const ListItem = styled.li({
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginBottom: '5px',
   width: '100%',
 });
 
 const Checklist = styled.ul({
   fontSize: '16px',
-  letterSpacing: '-0.011em',
   marginTop: '12px',
   marginBottom: '20px',
   paddingLeft: '16px',

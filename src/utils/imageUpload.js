@@ -1,6 +1,7 @@
 import uploadFileMutation from 'graphql/mutations/uploadFile';
 
 import Editor from 'components/editor/Editor';
+import { IMAGE } from 'components/editor/utils';
 
 const uploadImage = async (editor, resourceId, image) => {
   // Using a global variable until I find a better way
@@ -17,7 +18,7 @@ const uploadImage = async (editor, resourceId, image) => {
     return Editor.updateImage(editor, id, { src: url });
   }
 
-  return Editor.removeImage(editor, id);
+  return Editor.removeNodeByTypeAndId(editor, IMAGE, id);
 };
 
 export default uploadImage;

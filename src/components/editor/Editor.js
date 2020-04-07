@@ -17,6 +17,7 @@ import {
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
+  CONTEXT_HIGHLIGHT,
   INLINE_DISCUSSION_ANNOTATION,
   INLINE_DISCUSSION_SOURCE,
   HYPERLINK,
@@ -133,10 +134,10 @@ const isEmptyNodeInWrappedBlock = editor =>
   isWrappedBlock(editor) &&
   (isEmptyParagraph(editor) || isEmptyListItem(editor));
 
-const findNodeByType = (editor, type) => {
+const findNodeByTypeAndId = (editor, type, id) => {
   return SlateEditor.nodes(editor, {
     at: documentSelection(editor),
-    match: n => n.type === type,
+    match: n => n.type === type && n.id === id,
   }).next().value;
 };
 
@@ -146,6 +147,21 @@ const findNodeByType = (editor, type) => {
 
 const insertDefaultElement = editor => {
   Transforms.insertNodes(editor, DEFAULT_ELEMENT());
+};
+
+const removeNodeByTypeAndId = (editor, type, id) => {
+  Transforms.removeNodes(editor, {
+    at: documentSelection(editor),
+    match: n => n.type === type && n.id === id,
+  });
+};
+
+const unwrapNodeByTypeAndId = (editor, type, id) => {
+  Transforms.unwrapNodes(editor, {
+    at: documentSelection(editor),
+    match: n => n.type === type && n.id === id,
+    split: true,
+  });
 };
 
 const toggleBlock = (editor, type, source) => {
@@ -206,10 +222,9 @@ const removeAllMarks = editor => {
 };
 
 const wrapInline = (editor, type, range, source, props = {}) => {
-  const options = {};
+  const options = { split: true };
   if (range) {
     options.at = range;
-    options.split = true;
   }
 
   Transforms.wrapNodes(editor, { type, ...props }, options);
@@ -233,6 +248,14 @@ const clearBlock = editor => {
 const replaceBlock = (editor, type, source) => {
   clearBlock(editor);
   return toggleBlock(editor, type, source);
+};
+
+const wrapContextHighlight = (editor, props) => {
+  wrapInline(editor, CONTEXT_HIGHLIGHT, null, INLINE_DISCUSSION_SOURCE, props);
+};
+
+const removeContextHighlight = (editor, id) => {
+  unwrapNodeByTypeAndId(editor, CONTEXT_HIGHLIGHT, id);
 };
 
 const wrapInlineAnnotation = (editor, selection, data) => {
@@ -310,13 +333,6 @@ const updateImage = (editor, id, data) => {
   });
 };
 
-const removeImage = (editor, id) => {
-  Transforms.removeNodes(editor, {
-    at: documentSelection(editor),
-    match: n => n.type === IMAGE && n.id === id,
-  });
-};
-
 const Editor = {
   ...SlateEditor,
 
@@ -338,10 +354,12 @@ const Editor = {
   getParentBlock,
   getCurrentNode,
   getCurrentText,
-  findNodeByType,
+  findNodeByTypeAndId,
 
   // Transforms
   insertDefaultElement,
+  removeNodeByTypeAndId,
+  unwrapNodeByTypeAndId,
   toggleBlock,
   toggleMark,
   removeAllMarks,
@@ -349,6 +367,8 @@ const Editor = {
   insertVoid,
   clearBlock,
   replaceBlock,
+  wrapContextHighlight,
+  removeContextHighlight,
   wrapInlineAnnotation,
   updateInlineAnnotation,
   removeInlineAnnotation,
@@ -356,7 +376,6 @@ const Editor = {
   unwrapLink,
   insertImage,
   updateImage,
-  removeImage,
 };
 
 export default Editor;

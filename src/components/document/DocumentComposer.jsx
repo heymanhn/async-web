@@ -6,7 +6,6 @@ import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
-import { getLocalUser } from 'utils/auth';
 import { DocumentContext } from 'utils/contexts';
 import useContentState from 'utils/hooks/useContentState';
 import useAutoSave from 'utils/hooks/useAutoSave';
@@ -29,23 +28,17 @@ import withImages from 'components/editor/withImages';
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
   lineHeight: '26px',
-  letterSpacing: '-0.011em',
   marginBottom: '80px',
 });
 
 const DocumentComposer = ({ initialContent, ...props }) => {
   const {
     documentId,
-    modalDiscussionId,
     deletedDiscussionId,
     firstMsgDiscussionId,
-    inlineDiscussionTopic,
     setDeletedDiscussionId,
     setFirstMsgDiscussionId,
-    resetInlineTopic,
   } = useContext(DocumentContext);
-  const { selection } = inlineDiscussionTopic || {};
-  const { userId } = getLocalUser();
 
   const baseEditor = useMemo(
     () =>
@@ -88,16 +81,6 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     handleNewOperations();
   };
 
-  // Implicit state indicating we are ready to create the inline annotation
-  if (modalDiscussionId && selection) {
-    Editor.wrapInlineAnnotation(contentEditor, selection, {
-      discussionId: modalDiscussionId,
-      authorId: userId,
-      isInitialDraft: true, // Toggled to false once first message is created
-    });
-    resetInlineTopic();
-  }
-
   if (firstMsgDiscussionId) {
     Editor.updateInlineAnnotation(contentEditor, firstMsgDiscussionId, {
       isInitialDraft: false,
@@ -113,7 +96,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   return (
     <Slate editor={contentEditor} onChange={onChangeWrapper} {...contentProps}>
       <DocumentEditable {...props} {...coreEditorProps} />
-      <DocumentToolbar content={content} />
+      <DocumentToolbar />
       <DefaultPlaceholder />
       <CompositionMenuButton />
     </Slate>

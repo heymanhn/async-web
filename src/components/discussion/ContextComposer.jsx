@@ -20,7 +20,6 @@ const Container = styled.div(({ theme: { colors } }) => ({
 const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
   fontSize: '16px',
   fontWeight: 400,
-  letterSpacing: '-0.011em',
   lineHeight: '26px',
   padding: '10px 30px 25px',
 
@@ -36,7 +35,7 @@ const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
 }));
 
 const ContextComposer = props => {
-  const { context, setContext } = useContext(DiscussionContext);
+  const { topic } = useContext(DiscussionContext);
 
   const contextEditor = useMemo(
     () =>
@@ -49,13 +48,13 @@ const ContextComposer = props => {
     []
   );
   const editorProps = useContextEditorProps();
-  const [content, setContent] = useState(context || []);
+  const [content, setContent] = useState(
+    topic ? JSON.parse(topic.payload) : []
+  );
   const generateContext = useContextGenerator(contextEditor);
   useMountEffect(() => {
-    if (!context) generateContext();
+    if (!topic) generateContext();
   });
-
-  if (!context && content.length) setContext(content);
 
   return (
     <Container {...props}>

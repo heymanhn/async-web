@@ -33,7 +33,6 @@ const StyledInput = styled.input(({ theme: { colors } }) => ({
   color: colors.grey0,
   fontSize: '16px',
   fontWeight: 500,
-  letterSpacing: '-0.011em',
   outline: 'none',
 
   '::placeholder': {

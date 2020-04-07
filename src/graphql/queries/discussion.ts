@@ -13,6 +13,11 @@ export default gql`
       ) {
       ...DiscussionObject
       ...MessageContext
+      draft @type(name: "MessageDraft") {
+        body @type(name: "Body") {
+          ...BodyObject
+        }
+      }
       tags
       messageCount
       workspaces

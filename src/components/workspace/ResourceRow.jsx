@@ -34,7 +34,6 @@ const Title = styled.span(({ hover, isUnread, theme: { colors } }) => ({
   color: hover ? colors.blue : colors.grey0,
   fontSize: '16px',
   fontWeight: isUnread ? 600 : 400,
-  letterSpacing: '-0.011em',
 }));
 
 const IconContainer = styled.div({

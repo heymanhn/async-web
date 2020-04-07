@@ -31,7 +31,6 @@ const Title = styled.span(({ theme: { textColors } }) => ({
   color: textColors.main,
   fontSize: '16px',
   fontWeight: 600,
-  letterSpacing: '-0.011em',
   marginBottom: '5px',
 }));
 

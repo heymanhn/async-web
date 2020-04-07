@@ -33,7 +33,6 @@ const Container = styled.div(({ mode }) => ({
 const MessageEditable = styled(Editable)(({ ismodal }) => ({
   fontSize: '16px',
   fontWeight: 400,
-  letterSpacing: '-0.011em',
   lineHeight: '26px',
   marginTop: ismodal === 'true' ? '0px' : '15px',
 }));
