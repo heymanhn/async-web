@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { getLocalUser } from 'utils/auth';
 import useHover from 'utils/hooks/useHover';
 
+import DraftTooltip from './DraftTooltip';
 import InlineDiscussionPreview from './InlineDiscussionPreview';
 
 const HIDE_PREVIEW_WAIT_INTERVAL = 200;
@@ -86,6 +87,7 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
   const { userId } = getLocalUser();
   const isAuthor = userId === authorId;
 
+  const Tooltip = isInitialDraft ? DraftTooltip : InlineDiscussionPreview;
   return (
     <span ref={ref} {...highlightHoverProps}>
       <Highlight
@@ -97,7 +99,7 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
         {children}
       </Highlight>
       {discussionId && (
-        <InlineDiscussionPreview
+        <Tooltip
           parentRef={ref}
           discussionId={discussionId}
           isOpen={isPreviewHover}
