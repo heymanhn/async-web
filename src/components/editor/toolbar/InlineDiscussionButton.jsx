@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Transforms, Range } from 'slate';
 import { useSlate } from 'slate-react';
+import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
 import { DocumentContext } from 'utils/contexts';
@@ -13,6 +14,10 @@ import ToolbarButton from './ToolbarButton';
 import ButtonIcon from './ButtonIcon';
 
 const INLINE_DISCUSSION_HOTKEY = 'cmd+opt+m';
+
+const StyledLoadingIndicator = styled(LoadingIndicator)({
+  margin: '5px 10px',
+});
 
 const InlineDiscussionButton = props => {
   const editor = useSlate();
@@ -50,7 +55,7 @@ const InlineDiscussionButton = props => {
 
   return (
     <ToolbarButton handleClick={handleClick} {...props}>
-      {isSubmitting && <LoadingIndicator color="bgGrey" size="16" />}
+      {isSubmitting && <StyledLoadingIndicator color="bgGrey" size="16" />}
       {!isSubmitting && <ButtonIcon icon="comment-plus" isActive={false} />}
     </ToolbarButton>
   );
