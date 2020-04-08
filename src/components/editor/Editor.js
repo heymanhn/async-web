@@ -28,10 +28,7 @@ import {
  * Queries
  */
 
-const documentSelection = editor => ({
-  anchor: SlateEditor.start(editor, []),
-  focus: SlateEditor.end(editor, []),
-});
+const documentSelection = editor => SlateEditor.range(editor, []);
 
 const isElementActive = (editor, type, range) => {
   const [match] = SlateEditor.nodes(editor, {
@@ -263,11 +260,17 @@ const removeContextHighlight = (editor, id) => {
  * To avoid normalization issues, this function wraps each root node separately.
  * This ensures that inline annotation elements are always children of one of
  * these root block nodes.
+ *
+ * NOTE: Assumes that there are at most 3 layers of nesting in the
+ * document structure. E.g: Document > Block > Block > Text/Inline
  */
 const wrapInlineAnnotation = (editor, data) => {
   const wrapAnnotation = (edt, range) => {
     const { selection } = editor;
     const [start, end] = Range.edges(selection);
+
+    if (!Range.intersection(range, selection)) return;
+
     const at = range;
     if (Range.includes(at, start)) at.anchor = start;
     if (Range.includes(at, end)) at.focus = end;
@@ -292,10 +295,7 @@ const wrapInlineAnnotation = (editor, data) => {
   roots.forEach(([rootNode, rootPath]) => {
     const { type } = rootNode;
     const isWrapped = WRAPPED_TYPES.includes(type);
-    const rootRange = {
-      anchor: SlateEditor.start(editor, rootPath),
-      focus: SlateEditor.end(editor, rootPath),
-    };
+    const rootRange = SlateEditor.range(editor, rootPath);
 
     if (!isWrapped) {
       wrapAnnotation(editor, rootRange);
@@ -308,11 +308,7 @@ const wrapInlineAnnotation = (editor, data) => {
         })
       );
       children.forEach(([, childPath]) => {
-        const childRange = {
-          anchor: SlateEditor.start(editor, childPath),
-          focus: SlateEditor.end(editor, childPath),
-        };
-        wrapAnnotation(editor, childRange);
+        wrapAnnotation(editor, SlateEditor.range(editor, childPath));
       });
     }
   });
