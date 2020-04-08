@@ -2,7 +2,7 @@
  * Majority of these plugins borrowed from the Slate examples:
  * https://github.com/ianstormtaylor/slate/blob/master/site/examples/richtext.js
  */
-import { Editor as SlateEditor, Range, Transforms } from 'slate';
+import { Editor as SlateEditor, Point, Range, Transforms } from 'slate';
 
 import { track } from 'utils/analytics';
 
@@ -256,6 +256,34 @@ const removeContextHighlight = (editor, id) => {
   unwrapNodeByTypeAndId(editor, CONTEXT_HIGHLIGHT, id);
 };
 
+const wrapInlineAnnotation = (editor, data, range) => {
+  const { selection } = editor;
+  const [startSelection, endSelection] = Range.edges(selection);
+  const [startRange, endRange] = Range.edges(range);
+
+  // Edge cases - Don't wrap if:
+  // 1. Selection ends before first character of block
+  // 2. Selection starts after last character of block
+  if (
+    !Range.intersection(range, selection) ||
+    Point.equals(endRange, startSelection) ||
+    Point.equals(startRange, endSelection)
+  )
+    return;
+
+  // This is where we select a smaller range of the node if needed
+  const at = range;
+  if (Range.includes(at, startSelection)) at.anchor = startSelection;
+  if (Range.includes(at, endSelection)) at.focus = endSelection;
+
+  wrapInline(
+    editor,
+    INLINE_DISCUSSION_ANNOTATION,
+    at,
+    INLINE_DISCUSSION_SOURCE,
+    data
+  );
+};
 /*
  * To avoid normalization issues, this function wraps each root node separately.
  * This ensures that inline annotation elements are always children of one of
@@ -264,26 +292,7 @@ const removeContextHighlight = (editor, id) => {
  * NOTE: Assumes that there are at most 3 layers of nesting in the
  * document structure. E.g: Document > Block > Block > Text/Inline
  */
-const wrapInlineAnnotation = (editor, data) => {
-  const wrapAnnotation = range => {
-    const { selection } = editor;
-    const [start, end] = Range.edges(selection);
-
-    if (!Range.intersection(range, selection)) return;
-
-    const at = range;
-    if (Range.includes(at, start)) at.anchor = start;
-    if (Range.includes(at, end)) at.focus = end;
-
-    wrapInline(
-      editor,
-      INLINE_DISCUSSION_ANNOTATION,
-      at,
-      INLINE_DISCUSSION_SOURCE,
-      data
-    );
-  };
-
+const createInlineAnnotation = (editor, data) => {
   const roots = Array.from(
     SlateEditor.nodes(editor, {
       match: n => SlateEditor.isBlock(editor, n),
@@ -298,7 +307,7 @@ const wrapInlineAnnotation = (editor, data) => {
     const rootRange = SlateEditor.range(editor, rootPath);
 
     if (!isWrapped) {
-      wrapAnnotation(rootRange);
+      wrapInlineAnnotation(editor, data, rootRange);
     } else {
       const children = Array.from(
         SlateEditor.nodes(editor, {
@@ -308,7 +317,8 @@ const wrapInlineAnnotation = (editor, data) => {
         })
       );
       children.forEach(([, childPath]) => {
-        wrapAnnotation(SlateEditor.range(editor, childPath));
+        const childRange = SlateEditor.range(editor, childPath);
+        wrapInlineAnnotation(editor, data, childRange);
       });
     }
   });
@@ -415,7 +425,7 @@ const Editor = {
   replaceBlock,
   wrapContextHighlight,
   removeContextHighlight,
-  wrapInlineAnnotation,
+  createInlineAnnotation,
   updateInlineAnnotation,
   removeInlineAnnotation,
   wrapLink,
