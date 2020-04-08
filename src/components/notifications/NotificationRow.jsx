@@ -6,6 +6,7 @@ import Truncate from 'react-truncate';
 import camelCase from 'camelcase';
 import styled from '@emotion/styled';
 
+import { getLocalUser } from 'utils/auth';
 import Avatar from 'components/shared/Avatar';
 import UnreadIndicator from 'components/shared/UnreadIndicator';
 
@@ -76,7 +77,10 @@ const SnippetText = styled.div(({ theme: { colors } }) => ({
 
 const NotificationRow = ({ handleClose, notification }) => {
   const { author, updatedAt, readAt, payload, type } = notification;
-  const { fullName, profilePictureUrl } = author;
+  const { id, fullName, profilePictureUrl } = author;
+  const { userId } = getLocalUser();
+  const isAuthor = userId === id;
+
   const isUnread = readAt < 0;
 
   const payloadJSON = JSON.parse(payload);
@@ -152,7 +156,7 @@ const NotificationRow = ({ handleClose, notification }) => {
       <Details>
         <TitleContainer>
           <Title>
-            <Bold>{fullName}</Bold>
+            <Bold>{isAuthor ? 'You' : fullName}</Bold>
             <span>{notificationContext}</span>
             <Bold>{title}</Bold>
           </Title>
