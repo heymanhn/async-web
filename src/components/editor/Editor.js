@@ -265,24 +265,21 @@ const removeContextHighlight = (editor, id) => {
  * these root block nodes.
  */
 const wrapInlineAnnotation = (editor, data) => {
-  const wrapAnnotation = (edt, location) =>
+  const wrapAnnotation = (edt, range) => {
+    const { selection } = editor;
+    const [start, end] = Range.edges(selection);
+    const at = range;
+    if (Range.includes(at, start)) at.anchor = start;
+    if (Range.includes(at, end)) at.focus = end;
+
     wrapInline(
       edt,
       INLINE_DISCUSSION_ANNOTATION,
-      location,
+      at,
       INLINE_DISCUSSION_SOURCE,
       data
     );
-
-  // const [start, end] = Range.edges(editor.selection);
-
-  // const match = n => SlateEditor.isInline(editor, n) || Text.isText(n);
-  // Transforms.splitNodes(editor, { at: end });
-  // Transforms.splitNodes(editor, { at: start });
-
-  // const { anchor, focus } = editor.selection;
-  // const [startNum] = anchor.path;
-  // const [endNum] = focus.path;
+  };
 
   const roots = Array.from(
     SlateEditor.nodes(editor, {
@@ -319,17 +316,6 @@ const wrapInlineAnnotation = (editor, data) => {
       });
     }
   });
-
-  // const [parent] = SlateEditor.parent(editor, editor.selection);
-  // const prev = SlateEditor.previous(editor);
-  // const next = SlateEditor.next(editor);
-
-  // Transforms.unwrapNodes(editor);
-  // wrapAnnotation(editor);
-  // Transforms.wrapNodes(editor, { children: [] });
-
-  // if (next) Transforms.mergeNodes(editor, { at: next[1] });
-  // if (prev) Transforms.mergeNodes(editor);
 
   return null;
 };
