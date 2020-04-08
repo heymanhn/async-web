@@ -47,8 +47,9 @@ const isMarkActive = (editor, type) => {
   return marks ? marks[type] === true : false;
 };
 
-const isWrappedBlock = editor => {
+const isWrappedBlock = (editor, at) => {
   const [match] = SlateEditor.nodes(editor, {
+    at,
     match: n => WRAPPED_TYPES.includes(n.type),
   });
 
@@ -221,10 +222,10 @@ const removeAllMarks = editor => {
   markTypes.forEach(type => SlateEditor.removeMark(editor, type));
 };
 
-const wrapInline = (editor, type, range, source, props = {}) => {
+const wrapInline = (editor, type, location, source, props = {}) => {
   const options = { split: true };
-  if (range) {
-    options.at = range;
+  if (location) {
+    options.at = location;
   }
 
   Transforms.wrapNodes(editor, { type, ...props }, options);
@@ -258,14 +259,79 @@ const removeContextHighlight = (editor, id) => {
   unwrapNodeByTypeAndId(editor, CONTEXT_HIGHLIGHT, id);
 };
 
-const wrapInlineAnnotation = (editor, selection, data) => {
-  wrapInline(
-    editor,
-    INLINE_DISCUSSION_ANNOTATION,
-    selection,
-    INLINE_DISCUSSION_SOURCE,
-    data
+/*
+ * To avoid normalization issues, this function wraps each root node separately.
+ * This ensures that inline annotation elements are always children of one of
+ * these root block nodes.
+ */
+const wrapInlineAnnotation = (editor, data) => {
+  const wrapAnnotation = (edt, location) =>
+    wrapInline(
+      edt,
+      INLINE_DISCUSSION_ANNOTATION,
+      location,
+      INLINE_DISCUSSION_SOURCE,
+      data
+    );
+
+  // const [start, end] = Range.edges(editor.selection);
+
+  // const match = n => SlateEditor.isInline(editor, n) || Text.isText(n);
+  // Transforms.splitNodes(editor, { at: end });
+  // Transforms.splitNodes(editor, { at: start });
+
+  // const { anchor, focus } = editor.selection;
+  // const [startNum] = anchor.path;
+  // const [endNum] = focus.path;
+
+  const roots = Array.from(
+    SlateEditor.nodes(editor, {
+      match: n => SlateEditor.isBlock(editor, n),
+      mode: 'highest',
+      voids: true,
+    })
   );
+
+  roots.forEach(([rootNode, rootPath]) => {
+    const { type } = rootNode;
+    const isWrapped = WRAPPED_TYPES.includes(type);
+    const rootRange = {
+      anchor: SlateEditor.start(editor, rootPath),
+      focus: SlateEditor.end(editor, rootPath),
+    };
+
+    if (!isWrapped) {
+      wrapAnnotation(editor, rootRange);
+    } else {
+      const children = Array.from(
+        SlateEditor.nodes(editor, {
+          at: rootRange,
+          match: n => SlateEditor.isBlock(editor, n),
+          mode: 'lowest',
+        })
+      );
+      children.forEach(([, childPath]) => {
+        const childRange = {
+          anchor: SlateEditor.start(editor, childPath),
+          focus: SlateEditor.end(editor, childPath),
+        };
+        wrapAnnotation(editor, childRange);
+      });
+    }
+  });
+
+  // const [parent] = SlateEditor.parent(editor, editor.selection);
+  // const prev = SlateEditor.previous(editor);
+  // const next = SlateEditor.next(editor);
+
+  // Transforms.unwrapNodes(editor);
+  // wrapAnnotation(editor);
+  // Transforms.wrapNodes(editor, { children: [] });
+
+  // if (next) Transforms.mergeNodes(editor, { at: next[1] });
+  // if (prev) Transforms.mergeNodes(editor);
+
+  return null;
 };
 
 const updateInlineAnnotation = (editor, discussionId, data) => {

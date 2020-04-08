@@ -29,7 +29,7 @@ const InlineDiscussionButton = props => {
     // Create an empty draft discussion
     const { discussionId } = await handleSaveDraft();
 
-    Editor.wrapInlineAnnotation(editor, null, {
+    Editor.wrapInlineAnnotation(editor, {
       discussionId,
       authorId: userId,
       isInitialDraft: true, // Toggled to false once first message is created
