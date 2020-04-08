@@ -2,7 +2,7 @@
  * Majority of these plugins borrowed from the Slate examples:
  * https://github.com/ianstormtaylor/slate/blob/master/site/examples/richtext.js
  */
-import { Editor as SlateEditor, Range, Transforms } from 'slate';
+import { Editor as SlateEditor, Point, Range, Transforms } from 'slate';
 
 import { track } from 'utils/analytics';
 
@@ -28,10 +28,7 @@ import {
  * Queries
  */
 
-const documentSelection = editor => ({
-  anchor: SlateEditor.start(editor, []),
-  focus: SlateEditor.end(editor, []),
-});
+const documentSelection = editor => SlateEditor.range(editor, []);
 
 const isElementActive = (editor, type, range) => {
   const [match] = SlateEditor.nodes(editor, {
@@ -47,8 +44,9 @@ const isMarkActive = (editor, type) => {
   return marks ? marks[type] === true : false;
 };
 
-const isWrappedBlock = editor => {
+const isWrappedBlock = (editor, at) => {
   const [match] = SlateEditor.nodes(editor, {
+    at,
     match: n => WRAPPED_TYPES.includes(n.type),
   });
 
@@ -221,10 +219,10 @@ const removeAllMarks = editor => {
   markTypes.forEach(type => SlateEditor.removeMark(editor, type));
 };
 
-const wrapInline = (editor, type, range, source, props = {}) => {
+const wrapInline = (editor, type, location, source, props = {}) => {
   const options = { split: true };
-  if (range) {
-    options.at = range;
+  if (location) {
+    options.at = location;
   }
 
   Transforms.wrapNodes(editor, { type, ...props }, options);
@@ -258,14 +256,72 @@ const removeContextHighlight = (editor, id) => {
   unwrapNodeByTypeAndId(editor, CONTEXT_HIGHLIGHT, id);
 };
 
-const wrapInlineAnnotation = (editor, selection, data) => {
+const wrapInlineAnnotation = (editor, data, range) => {
+  const { selection } = editor;
+  const [startSelection, endSelection] = Range.edges(selection);
+  const [startRange, endRange] = Range.edges(range);
+
+  // Edge cases - Don't wrap if:
+  // 1. Selection ends before first character of block
+  // 2. Selection starts after last character of block
+  if (
+    !Range.intersection(range, selection) ||
+    Point.equals(endRange, startSelection) ||
+    Point.equals(startRange, endSelection)
+  )
+    return;
+
+  // This is where we select a smaller range of the node if needed
+  const at = range;
+  if (Range.includes(at, startSelection)) at.anchor = startSelection;
+  if (Range.includes(at, endSelection)) at.focus = endSelection;
+
   wrapInline(
     editor,
     INLINE_DISCUSSION_ANNOTATION,
-    selection,
+    at,
     INLINE_DISCUSSION_SOURCE,
     data
   );
+};
+/*
+ * To avoid normalization issues, this function wraps each root node separately.
+ * This ensures that inline annotation elements are always children of one of
+ * these root block nodes.
+ *
+ * NOTE: Assumes that there are at most 3 layers of nesting in the
+ * document structure. E.g: Document > Block > Block > Text/Inline
+ */
+const createInlineAnnotation = (editor, data) => {
+  const roots = Array.from(
+    SlateEditor.nodes(editor, {
+      match: n => SlateEditor.isBlock(editor, n),
+      mode: 'highest',
+      voids: true,
+    })
+  );
+
+  roots.forEach(([rootNode, rootPath]) => {
+    const { type } = rootNode;
+    const isWrapped = WRAPPED_TYPES.includes(type);
+    const rootRange = SlateEditor.range(editor, rootPath);
+
+    if (!isWrapped) {
+      wrapInlineAnnotation(editor, data, rootRange);
+    } else {
+      const children = Array.from(
+        SlateEditor.nodes(editor, {
+          at: rootRange,
+          match: n => SlateEditor.isBlock(editor, n),
+          mode: 'lowest',
+        })
+      );
+      children.forEach(([, childPath]) => {
+        const childRange = SlateEditor.range(editor, childPath);
+        wrapInlineAnnotation(editor, data, childRange);
+      });
+    }
+  });
 };
 
 const updateInlineAnnotation = (editor, discussionId, data) => {
@@ -369,7 +425,7 @@ const Editor = {
   replaceBlock,
   wrapContextHighlight,
   removeContextHighlight,
-  wrapInlineAnnotation,
+  createInlineAnnotation,
   updateInlineAnnotation,
   removeInlineAnnotation,
   wrapLink,
