@@ -54,7 +54,7 @@ const WorkspacesList = () => {
         <Heading>WORKSPACES</Heading>
         <CreateWorkspaceButton />
       </HeadingSection>
-      {items.map(i => (
+      {(items || []).map(i => (
         <ResourceRow
           key={i.workspace.id}
           resourceType="workspace"

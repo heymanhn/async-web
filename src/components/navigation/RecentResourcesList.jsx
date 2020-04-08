@@ -51,7 +51,7 @@ const RecentResourcesList = () => {
       <HeadingSection>
         <Heading>RECENT</Heading>
       </HeadingSection>
-      {items.map(item => {
+      {(items || []).map(item => {
         const { document, discussion, badgeCount } = item;
         const resource = document || discussion;
         const resourceType = document ? 'document' : 'discussion';
