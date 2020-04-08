@@ -265,7 +265,7 @@ const removeContextHighlight = (editor, id) => {
  * document structure. E.g: Document > Block > Block > Text/Inline
  */
 const wrapInlineAnnotation = (editor, data) => {
-  const wrapAnnotation = (edt, range) => {
+  const wrapAnnotation = range => {
     const { selection } = editor;
     const [start, end] = Range.edges(selection);
 
@@ -276,7 +276,7 @@ const wrapInlineAnnotation = (editor, data) => {
     if (Range.includes(at, end)) at.focus = end;
 
     wrapInline(
-      edt,
+      editor,
       INLINE_DISCUSSION_ANNOTATION,
       at,
       INLINE_DISCUSSION_SOURCE,
@@ -298,7 +298,7 @@ const wrapInlineAnnotation = (editor, data) => {
     const rootRange = SlateEditor.range(editor, rootPath);
 
     if (!isWrapped) {
-      wrapAnnotation(editor, rootRange);
+      wrapAnnotation(rootRange);
     } else {
       const children = Array.from(
         SlateEditor.nodes(editor, {
@@ -308,12 +308,10 @@ const wrapInlineAnnotation = (editor, data) => {
         })
       );
       children.forEach(([, childPath]) => {
-        wrapAnnotation(editor, SlateEditor.range(editor, childPath));
+        wrapAnnotation(SlateEditor.range(editor, childPath));
       });
     }
   });
-
-  return null;
 };
 
 const updateInlineAnnotation = (editor, discussionId, data) => {
