@@ -8,24 +8,25 @@ const useNetworkObserver = () => {
   lastTimeRef.current = Date.now();
 
   useEffect(() => {
+    const handleRefetch = () => {
+      client.reFetchObservableQueries();
+    };
+
     // Inspired by: https://blog.alexmaccaw.com/javascript-wake-event
     const interval = setInterval(() => {
       const currentTime = Date.now();
-      if (currentTime > lastTimeRef.current + TIMEOUT + 2000)
-        console.log('wake up!!');
+      if (currentTime > lastTimeRef.current + TIMEOUT + 2000) {
+        handleRefetch();
+      }
 
       lastTimeRef.current = currentTime;
     }, TIMEOUT);
 
-    const handleOnline = () => {
-      console.log('Back online!');
-    };
-
-    window.addEventListener('online', handleOnline);
+    window.addEventListener('online', handleRefetch);
 
     return () => {
       clearInterval(interval);
-      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('online', handleRefetch);
     };
   }, [client]);
 };
