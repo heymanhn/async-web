@@ -74,7 +74,7 @@ const LargeGraphic = ({
 LargeGraphic.propTypes = {
   icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  description: PropTypes.string,
   image: PropTypes.string.isRequired,
   features: PropTypes.array,
 };
@@ -82,6 +82,7 @@ LargeGraphic.propTypes = {
 LargeGraphic.defaultProps = {
   icon: null,
   features: [],
+  description: '',
 };
 
 export default LargeGraphic;

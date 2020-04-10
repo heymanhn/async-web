@@ -115,6 +115,10 @@ const NotificationRow = ({ handleClose, notification }) => {
         url = documentURL;
         context = ' invited you to collaborate on document: ';
         break;
+      case 'edit_document':
+        url = documentURL;
+        context = ' made edits to: ';
+        break;
       case 'new_discussion':
       case 'access_discussion':
         url = isInlineDiscussion ? inlineDiscussionURL : discussionURL;

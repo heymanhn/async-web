@@ -44,7 +44,7 @@ const Description = styled.span(({ theme: { textColors } }) => ({
 const GridItem = ({ icon, title, description, ...props }) => {
   return (
     <Container {...props}>
-      <Icon icon={icon} />
+      {icon && <Icon icon={icon} />}
       <Title>{title}</Title>
       <Description>{description}</Description>
     </Container>
@@ -52,9 +52,13 @@ const GridItem = ({ icon, title, description, ...props }) => {
 };
 
 GridItem.propTypes = {
-  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
+  icon: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
+};
+
+GridItem.defaultProps = {
+  icon: null,
 };
 
 export default GridItem;
