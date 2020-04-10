@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
@@ -31,6 +31,7 @@ const ButtonsContainer = styled.div({
 const ResourcesList = () => {
   const listRef = useRef(null);
   const { workspaceId, viewMode } = useContext(WorkspaceContext);
+  const [hasItems, setHasItems] = useState(false);
 
   const buildQueryDetails = () =>
     VIEW_MODES.map(vm => vm.mode).map(vm => ({
@@ -39,6 +40,10 @@ const ResourcesList = () => {
     }));
 
   usePrefetchQueries(buildQueryDetails());
+
+  useEffect(() => {
+    setHasItems(false);
+  }, [workspaceId]);
 
   const { loading, data } = usePaginatedResource(listRef, {
     query: workspaceResourcesQuery,
@@ -49,7 +54,8 @@ const ResourcesList = () => {
   if (loading) return <StyledLoadingIndicator color="borderGrey" />;
   if (!data) return <NotFound />;
 
-  const { items } = data;
+  const items = data.items || [];
+  if (items.length && !hasItems) setHasItems(true);
 
   const renderWelcomeMessage = () => (
     <div>
@@ -67,14 +73,14 @@ const ResourcesList = () => {
   const renderResourceList = () => (
     <div ref={listRef}>
       <ResourceFilters />
-      {items.map(item => {
+      {(items || []).map(item => {
         const object = item.document || item.discussion;
         return <ResourceRow key={object.id} item={item} />;
       })}
     </div>
   );
 
-  return <div>{items ? renderResourceList() : renderWelcomeMessage()}</div>;
+  return <div>{hasItems ? renderResourceList() : renderWelcomeMessage()}</div>;
 };
 
 export default ResourcesList;
