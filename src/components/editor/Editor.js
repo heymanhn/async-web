@@ -53,6 +53,15 @@ const isWrappedBlock = (editor, at) => {
   return !!match;
 };
 
+const isInListBlock = (editor, at) => {
+  const [match] = SlateEditor.nodes(editor, {
+    at,
+    match: n => LIST_TYPES.includes(n.type),
+  });
+
+  return !!match;
+};
+
 const getParentBlock = editor => {
   return SlateEditor.above(editor, {
     match: n => SlateEditor.isBlock(editor, n),
@@ -398,6 +407,7 @@ const Editor = {
   isElementActive,
   isMarkActive,
   isWrappedBlock,
+  isInListBlock,
   isEmptyContent,
   isEmptyElement,
   isEmptyParagraph,

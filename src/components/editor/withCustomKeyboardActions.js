@@ -21,13 +21,13 @@ const handleExitWrappedBlock = editor => {
   Editor.removeAllMarks(editor);
 };
 
-const isBeginningOfWrappedBlock = editor => {
+const isBeginningOfListItem = editor => {
   const { selection } = editor;
   return (
     selection &&
     Range.isCollapsed(selection) &&
-    Editor.isWrappedBlock(editor) &&
-    Editor.isAtBeginning(editor)
+    Editor.isAtBeginning(editor) &&
+    Editor.isInListBlock(editor)
   );
 };
 
@@ -41,7 +41,7 @@ const withCustomKeyboardActions = oldEditor => {
 
   editor.deleteBackward = unit => {
     if (unit === 'character') {
-      if (isBeginningOfWrappedBlock(editor)) {
+      if (isBeginningOfListItem(editor)) {
         return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
       }
 
