@@ -8,7 +8,7 @@ const useFaviconIcon = () => {
   const { userId } = getLocalUser();
 
   const { data } = useQuery(resourceNotificationsQuery, {
-    variables: { resourceType: 'users', resourceId: userId },
+    variables: { resourceType: 'users', resourceId: userId, queryParams: {} },
   });
 
   if (!data || !data.resourceNotifications) return null;

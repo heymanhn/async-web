@@ -1,4 +1,11 @@
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { HistoryEditor } from 'slate-history';
 
 import {
@@ -11,7 +18,7 @@ import initPusher from 'utils/pusher';
 
 import Editor from 'components/editor/Editor';
 
-const useDocumentOperationsPusher = editor => {
+const useDocumentOperationsPusher = (editor, setLastTouchedToNow) => {
   /*
    * Why use refs? As an escape hatch from having to pass boolean state variables
    * to the useEffect hook :-)
@@ -22,6 +29,7 @@ const useDocumentOperationsPusher = editor => {
   const [pendingOperations, setPendingOperations] = useState([]);
   const [lastSend, setLastSend] = useState(null);
   const channel = useMemo(() => initPusher(channelId).channel, [channelId]);
+  const setLastTouchedToNowCb = useCallback(setLastTouchedToNow, []);
 
   useEffect(() => {
     const handleReadyState = () => {
@@ -36,6 +44,9 @@ const useDocumentOperationsPusher = editor => {
           operations.forEach(op => editor.apply({ ...op, isRemote: true }));
         });
       });
+
+      // Edits by other users should be considered touching the document
+      setLastTouchedToNowCb();
     };
 
     channel.bind(PUSHER_SUBSCRIPTION_SUCCESS_EVENT, handleReadyState);
@@ -45,7 +56,7 @@ const useDocumentOperationsPusher = editor => {
       channel.unbind(PUSHER_SUBSCRIPTION_SUCCESS_EVENT, handleReadyState);
       channel.unbind(NEW_DOCUMENT_OPERATION_EVENT, processOperations);
     };
-  }, [channel, editor]);
+  }, [channel, editor, setLastTouchedToNowCb]);
 
   const sendOperations = () => {
     if (!pusherReadyRef.current) return;

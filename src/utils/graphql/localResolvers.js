@@ -306,7 +306,7 @@ const updateNotifications = (
 ) => {
   const data = client.readQuery({
     query: resourceNotificationsQuery,
-    variables: { resourceType, resourceId },
+    variables: { resourceType, resourceId, queryParams: {} },
   });
 
   if (!data) return null;
@@ -337,7 +337,7 @@ const updateNotifications = (
 
   client.writeQuery({
     query: resourceNotificationsQuery,
-    variables: { resourceType, resourceId },
+    variables: { resourceType, resourceId, queryParams: {} },
     data: {
       resourceNotifications: {
         notifications: notificationsData,

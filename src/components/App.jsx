@@ -24,6 +24,7 @@ import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
 import useAppPusher from 'utils/hooks/useAppPusher';
 import useFaviconIcon from 'utils/hooks/useFaviconIcon';
+import useNetworkObserver from 'utils/hooks/useNetworkObserver';
 import iconSet from 'styles/iconSet';
 
 import Layout from 'components/Layout';
@@ -115,6 +116,7 @@ moment.updateLocale('en', {
 moment.relativeTimeThreshold('d', 361);
 
 const App = () => {
+  useNetworkObserver();
   useAppPusher();
   useFaviconIcon();
 

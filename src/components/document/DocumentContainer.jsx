@@ -53,11 +53,12 @@ const DocumentContainer = ({
     }));
   }, [initialDiscussionId]);
 
-  const { loading, error, data } = useQuery(documentQuery, {
+  const { error, data } = useQuery(documentQuery, {
     variables: { documentId },
+    fetchPolicy: 'cache-and-network',
   });
 
-  if (loading) return null;
+  if (!data) return null;
   if (error || !data.document) return <NotFound />;
   const { channelId, tags } = data.document;
 
