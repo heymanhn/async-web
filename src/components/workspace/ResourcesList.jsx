@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
@@ -41,10 +41,6 @@ const ResourcesList = () => {
 
   usePrefetchQueries(buildQueryDetails());
 
-  useEffect(() => {
-    setHasItems(false);
-  }, [workspaceId]);
-
   const { loading, data } = usePaginatedResource(listRef, {
     query: workspaceResourcesQuery,
     key: 'workspaceResources',
@@ -55,7 +51,9 @@ const ResourcesList = () => {
   if (!data) return <NotFound />;
 
   const items = data.items || [];
-  if (items.length && !hasItems) setHasItems(true);
+  if (viewMode === 'all' && !!items.length !== hasItems) {
+    setHasItems(!!items.length);
+  }
 
   const renderWelcomeMessage = () => (
     <div>

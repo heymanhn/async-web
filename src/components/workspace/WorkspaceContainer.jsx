@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
@@ -32,6 +32,10 @@ const WorkspaceContainer = ({ workspaceId }) => {
   const [viewMode, setViewMode] = useState('all');
   const [forceUpdate, setForceUpdate] = useState(false);
   const { markAsRead } = useViewedReaction();
+
+  useEffect(() => {
+    setViewMode('all');
+  }, [workspaceId]);
 
   const { loading, data } = useQuery(workspaceQuery, {
     variables: { workspaceId },
