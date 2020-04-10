@@ -4,7 +4,7 @@
  *
  * Tracking issue: https://github.com/ianstormtaylor/slate/pull/3506
  */
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
@@ -12,7 +12,6 @@ import styled from '@emotion/styled';
 import { titleize } from 'utils/helpers';
 import useAutoSave from 'utils/hooks/useAutoSave';
 import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
-import useHeadTags from 'utils/hooks/useHeadTags';
 
 const Container = styled.div({
   display: 'flex',
@@ -46,7 +45,6 @@ const TitleEditable = ({
 }) => {
   const resource = useDisambiguatedResource();
   const { resourceType, setForceUpdate } = resource;
-  const { setHeadingTitle } = useHeadTags();
 
   // These refs are needed so that handleUpdate(), which may be called inside a
   // setTimeout(), will have the up-to-date values.
@@ -60,15 +58,13 @@ const TitleEditable = ({
 
   // Workaround to prevent DOM from updating
   const [DOMTitle, setDOMTitle] = useState(initialTitle);
-  const setHeadingTitleCb = useCallback(() => {
-    setHeadingTitle(initialTitle);
-  }, [setHeadingTitle, initialTitle]);
 
   useEffect(() => {
     setTitle(initialTitle);
-    setDOMTitle(initialTitle);
-    setHeadingTitleCb(initialTitle);
-  }, [initialTitle, setHeadingTitleCb]);
+    const { current } = titleRef || {};
+    if (current && current.innerText !== initialTitle)
+      setDOMTitle(initialTitle);
+  }, [initialTitle]);
 
   const handleUpdate = () => {
     const { current } = titleRef || {};
@@ -107,6 +103,8 @@ const TitleEditable = ({
     if (current) current.focus();
   };
 
+  // Because this is an uncontrolled input component, we need to manually tell
+  // the DOM to update once the height of the component changes
   const handleForceUpdate = () => {
     const { current } = titleRef || {};
     if (current) {
@@ -139,6 +137,8 @@ const TitleEditable = ({
     setTitle(current.innerText);
     setTimeout(handleForceUpdate, 0);
   };
+
+  document.title = `${title || 'Untitled'} - Roval`;
 
   return (
     <Container>
