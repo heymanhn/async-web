@@ -9,6 +9,7 @@ const useFaviconIcon = () => {
 
   const { data } = useQuery(resourceNotificationsQuery, {
     variables: { resourceType: 'users', resourceId: userId, queryParams: {} },
+    skip: !userId,
   });
 
   if (!data || !data.resourceNotifications) return null;
