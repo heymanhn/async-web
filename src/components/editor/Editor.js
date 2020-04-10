@@ -386,6 +386,7 @@ const updateImage = (editor, id, data) => {
   Transforms.setNodes(editor, data, {
     at: documentSelection(editor),
     match: n => n.type === IMAGE && n.id === id,
+    hanging: true,
   });
 };
 
