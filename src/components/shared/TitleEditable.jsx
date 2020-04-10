@@ -60,11 +60,13 @@ const TitleEditable = ({
   const [DOMTitle, setDOMTitle] = useState(initialTitle);
 
   useEffect(() => {
+    document.title = `${initialTitle ||
+      `Untitled ${titleize(resourceType)}`} - Roval`;
     setTitle(initialTitle);
     const { current } = titleRef || {};
     if (current && current.innerText !== initialTitle)
       setDOMTitle(initialTitle);
-  }, [initialTitle]);
+  }, [initialTitle, resourceType]);
 
   const handleUpdate = () => {
     const { current } = titleRef || {};
@@ -137,8 +139,6 @@ const TitleEditable = ({
     setTitle(current.innerText);
     setTimeout(handleForceUpdate, 0);
   };
-
-  document.title = `${title || 'Untitled'} - Roval`;
 
   return (
     <Container>
