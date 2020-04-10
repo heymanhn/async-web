@@ -18,7 +18,7 @@ const useContentState = ({
 } = {}) => {
   // Using a ref to avoid triggering the hooks when the lastTouched
   // state value changes.
-  const [lastTouched, setLastTouched] = useState(null);
+  const [lastTouched, setLastTouched] = useState(Date.now());
   const lastTouchedRef = useRef(lastTouched);
   lastTouchedRef.current = lastTouched;
   const setLastTouchedToNow = () => {
@@ -29,7 +29,9 @@ const useContentState = ({
   };
 
   const [resourceId, setResourceId] = useState(initialResourceId);
-  const [content, setContent] = useState(DEFAULT_ELEMENT());
+  const [content, setContent] = useState(
+    initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT()
+  );
 
   useEffect(() => {
     const resourceChanged = resourceId && resourceId !== initialResourceId;
