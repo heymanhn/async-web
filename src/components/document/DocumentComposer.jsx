@@ -65,14 +65,22 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     documentId,
   ]);
 
-  const { content, onChange, ...contentProps } = useContentState({
+  const {
+    content,
+    onChange,
+    setLastTouchedToNow,
+    ...contentProps
+  } = useContentState({
     editor: contentEditor,
     resourceId: documentId,
     initialContent,
   });
   const { handleUpdate } = useDocumentMutations(contentEditor);
   const coreEditorProps = useCoreEditorProps(contentEditor);
-  const handleNewOperations = useDocumentOperationsPusher(contentEditor);
+  const handleNewOperations = useDocumentOperationsPusher(
+    contentEditor,
+    setLastTouchedToNow
+  );
 
   useAutoSave({ content, handleSave: handleUpdate });
 

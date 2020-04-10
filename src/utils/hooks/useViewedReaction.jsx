@@ -50,7 +50,11 @@ const useViewedReaction = () => {
     let refetchQueries = [
       {
         query: resourceNotificationsQuery,
-        variables: { resourceType: 'users', resourceId: userId },
+        variables: {
+          resourceType: 'users',
+          resourceId: userId,
+          queryParams: {},
+        },
       },
     ];
     [
@@ -65,6 +69,7 @@ const useViewedReaction = () => {
             variables: {
               resourceType: Pluralize(item.resourceType),
               resourceId: item.resourceId,
+              queryParams: {},
             },
           },
         ];
