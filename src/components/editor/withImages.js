@@ -63,11 +63,12 @@ const withImages = (oldEditor, resourceId) => {
       }
 
       if (isBeginningOfBlock(editor)) {
-        const [, path] = Editor.previous(editor, {
+        const prev = Editor.previous(editor, {
           match: n => Editor.isBlock(editor, n),
         });
 
-        if (Editor.isElementActive(editor, IMAGE, path))
+        const [, path] = prev || [];
+        if (path && Editor.isElementActive(editor, IMAGE, path))
           return Transforms.removeNodes(editor);
       }
     }
