@@ -158,7 +158,9 @@ const CodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
 }));
 
 const CodeBlockElement = ({ attributes, children }) => (
-  <CodeBlock {...attributes}>{children}</CodeBlock>
+  <CodeBlock {...attributes} spellCheck={false}>
+    {children}
+  </CodeBlock>
 );
 
 /*
