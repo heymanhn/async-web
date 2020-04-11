@@ -13,7 +13,6 @@ import {
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
-  SECTION_BREAK,
   CODE_HIGHLIGHT,
   NUMBERED_LIST,
 } from './utils';
@@ -119,7 +118,7 @@ const MARKDOWN_SHORTCUTS = [
     trigger: '-',
     before: /^(--)$/,
     when: editor => !Editor.isWrappedBlock(editor),
-    change: editor => Editor.insertVoid(editor, SECTION_BREAK),
+    change: editor => Editor.insertSectionBreak(editor),
   },
 ];
 
