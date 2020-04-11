@@ -22,6 +22,7 @@ import {
   INLINE_DISCUSSION_SOURCE,
   HYPERLINK,
   IMAGE,
+  SECTION_BREAK,
 } from './utils';
 
 /*
@@ -239,10 +240,16 @@ const wrapInline = (editor, type, location, source, props = {}) => {
   track('Inline element inserted to content', { source, type });
 };
 
-const insertVoid = (editor, type, data = {}) => {
-  const text = { text: '' };
-  Transforms.setNodes(editor, { type, ...data, children: [text] });
-  insertDefaultElement(editor);
+const insertSectionBreak = editor => {
+  Transforms.setNodes(editor, {
+    type: SECTION_BREAK,
+    children: [{ text: '' }],
+  });
+
+  // Make sure we have a node to move the selection to
+  if (!SlateEditor.next(editor)) insertDefaultElement(editor);
+
+  return Transforms.move(editor);
 };
 
 const clearBlock = editor => {
@@ -431,7 +438,7 @@ const Editor = {
   toggleMark,
   removeAllMarks,
   wrapInline,
-  insertVoid,
+  insertSectionBreak,
   clearBlock,
   replaceBlock,
   wrapContextHighlight,

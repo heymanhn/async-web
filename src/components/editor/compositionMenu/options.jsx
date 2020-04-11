@@ -11,7 +11,6 @@ import {
   CHECKLIST,
   CODE_BLOCK,
   BLOCK_QUOTE,
-  SECTION_BREAK,
   TEXT_OPTION_TITLE,
   LARGE_TITLE_OPTION_TITLE,
   MEDIUM_TITLE_OPTION_TITLE,
@@ -171,7 +170,7 @@ export const SectionBreakOption = props => {
   const editor = useSlate();
   const handleSectionBreakOption = () => {
     Editor.clearBlock(editor);
-    return Editor.insertVoid(editor, SECTION_BREAK);
+    return Editor.insertSectionBreak(editor);
   };
 
   return (
