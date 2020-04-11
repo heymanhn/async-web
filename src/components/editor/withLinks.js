@@ -4,23 +4,6 @@ import { Transforms } from 'slate';
 import { HYPERLINK } from './utils';
 import Editor from './Editor';
 
-const HTTP = 'http://';
-const HTTPS = 'https://';
-const FTP = 'ftp://';
-const MAILTO = 'mailto:';
-
-const appendProtocol = text => {
-  if (
-    text.startsWith(HTTP) ||
-    text.startsWith(HTTPS) ||
-    text.startsWith(FTP) ||
-    text.startsWith(MAILTO)
-  )
-    return text;
-
-  return `${HTTP}${text}`;
-};
-
 const withLinks = oldEditor => {
   const editor = oldEditor;
   const { insertData, insertText, isInline } = editor;
@@ -31,24 +14,22 @@ const withLinks = oldEditor => {
 
   editor.insertText = text => {
     if (text) {
-      const modText = appendProtocol(text);
-      if (isUrl(modText)) return Editor.wrapLink(editor, modText);
+      if (isUrl(text)) return Editor.wrapLink(editor, text);
     }
 
     if (text === ' ') {
       const line = Editor.getCurrentText(editor);
       const words = line.split(' ');
       const previousWord = words[words.length - 1];
-      const modWord = appendProtocol(previousWord);
 
-      if (isUrl(modWord)) {
+      if (isUrl(previousWord)) {
         Transforms.move(editor, {
           edge: 'anchor',
           unit: 'offset',
           distance: previousWord.length,
           reverse: true,
         });
-        Editor.wrapLink(editor, modWord);
+        Editor.wrapLink(editor, previousWord);
       }
 
       Transforms.collapse(editor, { edge: 'focus' });
@@ -58,7 +39,7 @@ const withLinks = oldEditor => {
   };
 
   editor.insertData = data => {
-    const text = appendProtocol(data.getData('text/plain'));
+    const text = data.getData('text/plain');
 
     if (text && isUrl(text)) {
       Editor.wrapLink(editor, text);
