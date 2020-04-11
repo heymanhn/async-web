@@ -184,18 +184,23 @@ const BlockQuoteElement = ({ attributes, children }) => (
  * Section break
  */
 
+const SectionBreakContainer = styled.div({
+  padding: '12px 0 20px',
+});
+
 const SectionBreak = styled.div(({ theme: { colors } }) => ({
   borderRadius: '20px',
   borderTop: `2px solid ${colors.borderGrey}`,
-  margin: '2em auto',
+  cursor: 'default',
+  margin: '0 auto',
   width: '120px',
 }));
 
 const SectionBreakElement = ({ attributes, children }) => (
-  <div {...attributes}>
+  <SectionBreakContainer {...attributes} contentEditable={false}>
     <SectionBreak />
     {children}
-  </div>
+  </SectionBreakContainer>
 );
 
 /*
