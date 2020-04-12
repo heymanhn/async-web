@@ -67,6 +67,15 @@ const isInListBlock = (editor, at) => {
   return !!match;
 };
 
+const isNumberedList = (editor, at) => {
+  const [match] = Editor.nodes(editor, {
+    at,
+    match: n => n.type === NUMBERED_LIST,
+  });
+
+  return !!match;
+};
+
 const getParentBlock = editor => {
   return Editor.above(editor, {
     match: n => Editor.isBlock(editor, n),
@@ -422,6 +431,7 @@ const NewEditor = {
   isMarkActive,
   isWrappedBlock,
   isInListBlock,
+  isNumberedList,
   isEmptyContent,
   isEmptyElement,
   isEmptyParagraph,

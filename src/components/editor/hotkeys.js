@@ -90,7 +90,11 @@ const exitCodeHighlight = (editor, event) => {
 };
 
 const nestedListHotkeys = (editor, event) => {
-  if (Editor.isInListBlock(editor) && Editor.isAtBeginning(editor)) {
+  if (
+    Editor.isInListBlock(editor) &&
+    !Editor.isNumberedList(editor) &&
+    Editor.isAtBeginning(editor)
+  ) {
     if (isHotkey(INDENT_LIST_ITEM_HOTKEY, event)) {
       event.preventDefault();
       Editor.indentListItem(editor);
