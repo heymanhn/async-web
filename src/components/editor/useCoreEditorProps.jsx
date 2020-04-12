@@ -5,6 +5,7 @@ import {
   blockHotkeys,
   softBreak,
   exitCodeHighlight,
+  nestedListHotkeys,
 } from './hotkeys';
 import Leaf from './Leaf';
 import Element from './Element';
@@ -20,6 +21,7 @@ const useCoreEditorProps = (editor, { readOnly } = {}) => {
     blockHotkeys(editor, event);
     softBreak(editor, event);
     exitCodeHighlight(editor, event);
+    nestedListHotkeys(editor, event);
   };
 
   return {

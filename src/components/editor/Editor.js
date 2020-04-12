@@ -69,15 +69,6 @@ const getParentBlock = editor => {
   });
 };
 
-const getCurrentNode = editor => {
-  const { selection } = editor;
-  if (!selection || Range.isExpanded(selection))
-    throw new Error('Selection is invalid');
-
-  const node = Editor.node(editor, selection);
-  return node;
-};
-
 const getCurrentText = editor => {
   const { selection } = editor;
   const [, path] = Editor.node(editor, selection);
@@ -407,13 +398,24 @@ const updateImage = (editor, id, data) => {
 };
 
 const indentListItem = editor => {
+  const { selection } = editor;
+  const [node] = Editor.parent(editor, selection, { edge: 'start' });
+  const { depth } = node;
+
   Transforms.setNodes(editor, {
-    type: SECTION_BREAK,
-    children: [{ text: '' }],
+    depth: depth ? depth + 1 : 1,
   });
 };
 
-const outdentListItem = editor => {};
+const outdentListItem = editor => {
+  const { selection } = editor;
+  const [node] = Editor.parent(editor, selection, { edge: 'start' });
+  const { depth } = node;
+
+  Transforms.setNodes(editor, {
+    depth: depth === 1 ? undefined : depth - 1,
+  });
+};
 
 const NewEditor = {
   ...Editor,
@@ -435,7 +437,6 @@ const NewEditor = {
   isAtEnd,
   isEmptyNodeInWrappedBlock,
   getParentBlock,
-  getCurrentNode,
   getCurrentText,
   findNodeByTypeAndId,
 
@@ -459,6 +460,8 @@ const NewEditor = {
   unwrapLink,
   insertImage,
   updateImage,
+  indentListItem,
+  outdentListItem,
 };
 
 export default NewEditor;

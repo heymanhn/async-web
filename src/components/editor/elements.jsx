@@ -14,6 +14,7 @@ import {
   NUMBERED_LIST,
   LIST_ITEM,
   CHECKLIST_ITEM,
+  LIST_ITEM_INDENT_WIDTH,
   CHECKLIST,
   CODE_BLOCK,
   BLOCK_QUOTE,
@@ -103,11 +104,12 @@ const NumberedList = styled.ol({
   marginBottom: '20px',
 });
 
-const ListItem = styled.li({
+const ListItem = styled.li(({ depth }) => ({
   fontSize: '16px',
   marginBottom: '5px',
+  marginLeft: depth ? `${depth * LIST_ITEM_INDENT_WIDTH}px` : 0,
   width: '100%',
-});
+}));
 
 const Checklist = styled.ul({
   fontSize: '16px',
@@ -128,8 +130,10 @@ const ChecklistElement = ({ attributes, children }) => (
   <Checklist {...attributes}>{children}</Checklist>
 );
 
-const ListItemElement = ({ attributes, children }) => (
-  <ListItem {...attributes}>{children}</ListItem>
+const ListItemElement = ({ attributes, children, element }) => (
+  <ListItem {...attributes} depth={element.depth}>
+    {children}
+  </ListItem>
 );
 
 /*

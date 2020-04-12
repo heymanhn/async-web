@@ -5,13 +5,16 @@ import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-const Container = styled.li({
+import { LIST_ITEM_INDENT_WIDTH } from './utils';
+
+const Container = styled.li(({ depth }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'baseline',
   marginBottom: '5px',
+  marginLeft: depth ? `${depth * LIST_ITEM_INDENT_WIDTH}px` : 0,
   width: '100%',
-});
+}));
 
 const IconContainer = styled.div(({ isReadOnly }) => ({
   display: 'flex',
@@ -39,11 +42,11 @@ const Contents = styled.div(({ isChecked, theme: { colors } }) => ({
 
 const ChecklistItem = ({ attributes, children, element }) => {
   const editor = useSlate();
-  const { isChecked } = element;
+  const { isChecked, depth } = element;
   const icon = isChecked ? 'check-square' : ['far', 'square'];
   const isReadOnly = ReactEditor.isReadOnly(editor);
 
-  async function handleClick(event) {
+  const handleClick = async event => {
     event.preventDefault();
     if (isReadOnly) return;
 
@@ -52,14 +55,14 @@ const ChecklistItem = ({ attributes, children, element }) => {
       { isChecked: !isChecked },
       { at: ReactEditor.findPath(editor, element) }
     );
-  }
+  };
 
-  function handleMouseDown(event) {
+  const handleMouseDown = event => {
     event.preventDefault();
-  }
+  };
 
   return (
-    <Container {...attributes}>
+    <Container {...attributes} depth={depth}>
       <IconContainer
         isReadOnly={isReadOnly}
         onClick={handleClick}
