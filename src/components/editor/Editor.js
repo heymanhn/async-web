@@ -306,39 +306,19 @@ const wrapInlineAnnotation = (editor, data, range) => {
  * To avoid normalization issues, this function wraps each root node separately.
  * This ensures that inline annotation elements are always children of one of
  * these root block nodes.
- *
- * NOTE: Assumes that there are at most 3 layers of nesting in the
- * document structure. E.g: Document > Block > Block > Text/Inline
  */
 const createInlineAnnotation = (editor, data) => {
-  const roots = Array.from(
+  const leaves = Array.from(
     Editor.nodes(editor, {
       match: n => Editor.isBlock(editor, n),
-      mode: 'highest',
+      mode: 'lowest',
       voids: true,
     })
   );
 
-  roots.forEach(([rootNode, rootPath]) => {
-    const { type } = rootNode;
-    const isWrapped = WRAPPED_TYPES.includes(type);
-    const rootRange = Editor.range(editor, rootPath);
-
-    if (!isWrapped) {
-      wrapInlineAnnotation(editor, data, rootRange);
-    } else {
-      const children = Array.from(
-        Editor.nodes(editor, {
-          at: rootRange,
-          match: n => Editor.isBlock(editor, n),
-          mode: 'lowest',
-        })
-      );
-      children.forEach(([, childPath]) => {
-        const childRange = Editor.range(editor, childPath);
-        wrapInlineAnnotation(editor, data, childRange);
-      });
-    }
+  leaves.forEach(([, leafPath]) => {
+    const leafRange = Editor.range(editor, leafPath);
+    wrapInlineAnnotation(editor, data, leafRange);
   });
 };
 
