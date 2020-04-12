@@ -18,7 +18,9 @@ export const ITALIC = 'italic';
 export const UNDERLINE = 'underline';
 export const CODE_HIGHLIGHT = 'code-highlight';
 
-export const LIST_ITEM = 'list-item';
+export const LIST_ITEM = 'list-item'; // Backwards compatibility
+export const BULLETED_LIST_ITEM = 'bulleted-list-item';
+export const NUMBERED_LIST_ITEM = 'numbered-list-item';
 export const CHECKLIST_ITEM = 'checklist-item';
 export const NUMBERED_LIST = 'numbered-list';
 export const BULLETED_LIST = 'bulleted-list';

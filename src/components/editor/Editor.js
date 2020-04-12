@@ -11,8 +11,11 @@ import {
   DEFAULT_ELEMENT_TYPE,
   LIST_TYPES,
   WRAPPED_TYPES,
+  NUMBERED_LIST,
   CHECKLIST,
   LIST_ITEM,
+  BULLETED_LIST_ITEM,
+  NUMBERED_LIST_ITEM,
   CHECKLIST_ITEM,
   MAX_LIST_ITEM_DEPTH,
   LARGE_FONT,
@@ -92,7 +95,10 @@ const isEmptyElement = (editor, type) => {
 const isEmptyParagraph = editor => isEmptyElement(editor, DEFAULT_ELEMENT_TYPE);
 
 const isEmptyListItem = editor =>
-  isEmptyElement(editor, LIST_ITEM) || isEmptyElement(editor, CHECKLIST_ITEM);
+  isEmptyElement(editor, LIST_ITEM) ||
+  isEmptyElement(editor, BULLETED_LIST_ITEM) ||
+  isEmptyElement(editor, NUMBERED_LIST_ITEM) ||
+  isEmptyElement(editor, CHECKLIST_ITEM);
 
 // Paragraph node, not wrapped by anything
 const isDefaultBlock = editor =>
@@ -184,9 +190,13 @@ const toggleBlock = (editor, type, source) => {
   // Special treatment for lists: set leaf nodes to list item or checklist item
   if (isList) {
     const isChecklist = type === CHECKLIST;
-    const listItemType = isChecklist ? CHECKLIST_ITEM : LIST_ITEM;
+    let listItemType = BULLETED_LIST_ITEM;
+    if (isChecklist) listItemType = CHECKLIST_ITEM;
+    if (type === NUMBERED_LIST) listItemType = NUMBERED_LIST_ITEM;
+
     const payload = {
       type: isActive ? DEFAULT_ELEMENT_TYPE : listItemType,
+      depth: 0,
     };
     if (isChecklist) payload.isChecked = false;
 
