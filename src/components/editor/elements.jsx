@@ -13,7 +13,10 @@ import {
   BULLETED_LIST,
   NUMBERED_LIST,
   LIST_ITEM,
+  BULLETED_LIST_ITEM,
+  NUMBERED_LIST_ITEM,
   CHECKLIST_ITEM,
+  LIST_ITEM_INDENT_WIDTH,
   CHECKLIST,
   CODE_BLOCK,
   BLOCK_QUOTE,
@@ -103,11 +106,29 @@ const NumberedList = styled.ol({
   marginBottom: '20px',
 });
 
-const ListItem = styled.li({
+// Backwards compatibility
+const ListItem = styled.li(({ depth }) => ({
   fontSize: '16px',
   marginBottom: '5px',
+  marginLeft: depth ? `${depth * LIST_ITEM_INDENT_WIDTH}px` : 0,
   width: '100%',
-});
+}));
+
+const BulletedListItem = styled.li(({ depth = 0 }) => ({
+  fontSize: '16px',
+  listStyleType: depth % 2 === 0 ? 'disc' : 'circle',
+  marginBottom: '5px',
+  marginLeft: depth ? `${depth * LIST_ITEM_INDENT_WIDTH}px` : 0,
+  width: '100%',
+}));
+
+const NumberedListItem = styled.li(({ depth = 0 }) => ({
+  fontSize: '16px',
+  listStyleType: depth % 2 === 0 ? 'decimal' : 'lower-alpha',
+  marginBottom: '5px',
+  marginLeft: depth ? `${depth * LIST_ITEM_INDENT_WIDTH}px` : 0,
+  width: '100%',
+}));
 
 const Checklist = styled.ul({
   fontSize: '16px',
@@ -128,8 +149,22 @@ const ChecklistElement = ({ attributes, children }) => (
   <Checklist {...attributes}>{children}</Checklist>
 );
 
-const ListItemElement = ({ attributes, children }) => (
-  <ListItem {...attributes}>{children}</ListItem>
+const ListItemElement = ({ attributes, children, element }) => (
+  <ListItem {...attributes} depth={element.depth}>
+    {children}
+  </ListItem>
+);
+
+const BulletedListItemElement = ({ attributes, children, element }) => (
+  <BulletedListItem {...attributes} depth={element.depth}>
+    {children}
+  </BulletedListItem>
+);
+
+const NumberedListItemElement = ({ attributes, children, element }) => (
+  <NumberedListItem {...attributes} depth={element.depth}>
+    {children}
+  </NumberedListItem>
 );
 
 /*
@@ -250,6 +285,8 @@ listElements[BULLETED_LIST] = BulletedListElement;
 listElements[NUMBERED_LIST] = NumberedListElement;
 listElements[CHECKLIST] = ChecklistElement;
 listElements[LIST_ITEM] = ListItemElement;
+listElements[BULLETED_LIST_ITEM] = BulletedListItemElement;
+listElements[NUMBERED_LIST_ITEM] = NumberedListItemElement;
 listElements[CHECKLIST_ITEM] = ChecklistItemElement;
 
 export const wrappedBlockElements = {};

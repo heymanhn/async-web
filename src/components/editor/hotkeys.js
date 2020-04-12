@@ -39,6 +39,9 @@ const BLOCK_HOTKEYS = {
 const SOFT_BREAK_HOTKEY = 'shift+enter';
 const RIGHT_ARROW_HOTKEY = 'right';
 
+const INDENT_LIST_ITEM_HOTKEY = 'tab';
+const OUTDENT_LIST_ITEM_HOTKEY = 'shift+tab';
+
 const markHotkeys = (editor, event) => {
   Object.keys(MARK_HOTKEYS).forEach(hotkey => {
     if (isHotkey(hotkey, event)) {
@@ -86,4 +89,28 @@ const exitCodeHighlight = (editor, event) => {
   }
 };
 
-export { markHotkeys, blockHotkeys, softBreak, exitCodeHighlight };
+const nestedListHotkeys = (editor, event) => {
+  if (
+    Editor.isInListBlock(editor) &&
+    !Editor.isNumberedList(editor) &&
+    Editor.isAtBeginning(editor)
+  ) {
+    if (isHotkey(INDENT_LIST_ITEM_HOTKEY, event)) {
+      event.preventDefault();
+      Editor.indentListItem(editor);
+    }
+
+    if (isHotkey(OUTDENT_LIST_ITEM_HOTKEY, event)) {
+      event.preventDefault();
+      Editor.outdentListItem(editor);
+    }
+  }
+};
+
+export {
+  markHotkeys,
+  blockHotkeys,
+  softBreak,
+  exitCodeHighlight,
+  nestedListHotkeys,
+};
