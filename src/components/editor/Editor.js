@@ -14,6 +14,7 @@ import {
   CHECKLIST,
   LIST_ITEM,
   CHECKLIST_ITEM,
+  MAX_LIST_ITEM_DEPTH,
   LARGE_FONT,
   MEDIUM_FONT,
   SMALL_FONT,
@@ -402,8 +403,13 @@ const indentListItem = editor => {
   const [node] = Editor.parent(editor, selection, { edge: 'start' });
   const { depth } = node;
 
+  const nextDepth = () => {
+    if (!depth) return 1;
+    return depth === MAX_LIST_ITEM_DEPTH ? depth : depth + 1;
+  };
+
   Transforms.setNodes(editor, {
-    depth: depth ? depth + 1 : 1,
+    depth: nextDepth(),
   });
 };
 

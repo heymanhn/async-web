@@ -23,7 +23,8 @@ export const CHECKLIST_ITEM = 'checklist-item';
 export const NUMBERED_LIST = 'numbered-list';
 export const BULLETED_LIST = 'bulleted-list';
 export const CHECKLIST = 'checklist';
-export const LIST_ITEM_INDENT_WIDTH = 20;
+export const LIST_ITEM_INDENT_WIDTH = 25;
+export const MAX_LIST_ITEM_DEPTH = 7;
 export const LIST_TYPES = [NUMBERED_LIST, BULLETED_LIST, CHECKLIST];
 
 export const CODE_BLOCK = 'code-block';
