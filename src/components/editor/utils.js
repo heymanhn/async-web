@@ -28,6 +28,12 @@ export const CHECKLIST = 'checklist';
 export const LIST_ITEM_INDENT_WIDTH = 25;
 export const MAX_LIST_ITEM_DEPTH = 7;
 export const LIST_TYPES = [NUMBERED_LIST, BULLETED_LIST, CHECKLIST];
+export const LIST_ITEM_TYPES = [
+  LIST_ITEM,
+  BULLETED_LIST_ITEM,
+  NUMBERED_LIST_ITEM,
+  CHECKLIST_ITEM,
+];
 
 export const CODE_BLOCK = 'code-block';
 export const BLOCK_QUOTE = 'block-quote';

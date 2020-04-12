@@ -76,9 +76,10 @@ const isNumberedList = (editor, at) => {
   return !!match;
 };
 
-const getParentBlock = editor => {
+const getParentBlock = (editor, mode = 'lowest') => {
   return Editor.above(editor, {
     match: n => Editor.isBlock(editor, n),
+    mode,
   });
 };
 
@@ -422,6 +423,18 @@ const outdentListItem = editor => {
   });
 };
 
+// Merges the current list block with the next one, assuming that they are of
+// the same type
+const mergeWithNextList = editor => {
+  // Make sure selection is at the next list first, since mergeNodes()
+  // merges with the previous block node
+  Transforms.move(editor);
+
+  const [, path] = getParentBlock(editor, 'highest');
+  Transforms.mergeNodes(editor, { at: path });
+  Transforms.move(editor, { reverse: true });
+};
+
 const NewEditor = {
   ...Editor,
 
@@ -468,6 +481,7 @@ const NewEditor = {
   updateImage,
   indentListItem,
   outdentListItem,
+  mergeWithNextList,
 };
 
 export default NewEditor;

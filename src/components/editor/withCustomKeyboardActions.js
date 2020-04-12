@@ -1,6 +1,6 @@
 import { Range, Transforms } from 'slate';
 
-import { DEFAULT_ELEMENT_TYPE, CODE_HIGHLIGHT } from './utils';
+import { DEFAULT_ELEMENT_TYPE, CODE_HIGHLIGHT, LIST_ITEM_TYPES } from './utils';
 import Editor from './Editor';
 
 const handleExitHeadingBlock = (editor, insertBreak) => {
@@ -31,6 +31,26 @@ const isBeginningOfListItem = editor => {
   );
 };
 
+const isBetweenListItems = editor => {
+  const next = Editor.next(editor, {
+    match: n => Editor.isBlock(editor, n),
+    mode: 'lowest',
+  });
+
+  const previous = Editor.previous(editor, {
+    match: n => Editor.isBlock(editor, n),
+    mode: 'lowest',
+  });
+
+  if (!next || !previous) return false;
+
+  const [nextNode] = next;
+  const [prevNode] = previous;
+  return (
+    LIST_ITEM_TYPES.includes(nextNode.type) && nextNode.type === prevNode.type
+  );
+};
+
 const isEmptyCodeHighlight = editor =>
   Editor.isMarkActive(editor, CODE_HIGHLIGHT) &&
   Editor.getCurrentText(editor) === '';
@@ -43,6 +63,11 @@ const withCustomKeyboardActions = oldEditor => {
     if (unit === 'character') {
       if (isBeginningOfListItem(editor)) {
         return Editor.toggleBlock(editor, DEFAULT_ELEMENT_TYPE);
+      }
+
+      if (Editor.isEmptyParagraph(editor) && isBetweenListItems(editor)) {
+        deleteBackward(unit);
+        return Editor.mergeWithNextList(editor);
       }
 
       if (isEmptyCodeHighlight(editor)) {
