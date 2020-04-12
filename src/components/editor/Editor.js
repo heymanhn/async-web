@@ -2,7 +2,7 @@
  * Majority of these plugins borrowed from the Slate examples:
  * https://github.com/ianstormtaylor/slate/blob/master/site/examples/richtext.js
  */
-import { Editor as SlateEditor, Point, Range, Transforms } from 'slate';
+import { Editor, Point, Range, Transforms } from 'slate';
 
 import { track } from 'utils/analytics';
 
@@ -29,10 +29,10 @@ import {
  * Queries
  */
 
-const documentSelection = editor => SlateEditor.range(editor, []);
+const documentSelection = editor => Editor.range(editor, []);
 
 const isElementActive = (editor, type, range) => {
-  const [match] = SlateEditor.nodes(editor, {
+  const [match] = Editor.nodes(editor, {
     at: range || undefined,
     match: n => n.type === type,
   });
@@ -41,12 +41,12 @@ const isElementActive = (editor, type, range) => {
 };
 
 const isMarkActive = (editor, type) => {
-  const marks = SlateEditor.marks(editor);
+  const marks = Editor.marks(editor);
   return marks ? marks[type] === true : false;
 };
 
 const isWrappedBlock = (editor, at) => {
-  const [match] = SlateEditor.nodes(editor, {
+  const [match] = Editor.nodes(editor, {
     at,
     match: n => WRAPPED_TYPES.includes(n.type),
   });
@@ -55,7 +55,7 @@ const isWrappedBlock = (editor, at) => {
 };
 
 const isInListBlock = (editor, at) => {
-  const [match] = SlateEditor.nodes(editor, {
+  const [match] = Editor.nodes(editor, {
     at,
     match: n => LIST_TYPES.includes(n.type),
   });
@@ -64,8 +64,8 @@ const isInListBlock = (editor, at) => {
 };
 
 const getParentBlock = editor => {
-  return SlateEditor.above(editor, {
-    match: n => SlateEditor.isBlock(editor, n),
+  return Editor.above(editor, {
+    match: n => Editor.isBlock(editor, n),
   });
 };
 
@@ -74,19 +74,19 @@ const getCurrentNode = editor => {
   if (!selection || Range.isExpanded(selection))
     throw new Error('Selection is invalid');
 
-  const node = SlateEditor.node(editor, selection);
+  const node = Editor.node(editor, selection);
   return node;
 };
 
 const getCurrentText = editor => {
   const { selection } = editor;
-  const [, path] = SlateEditor.node(editor, selection);
-  return SlateEditor.string(editor, path);
+  const [, path] = Editor.node(editor, selection);
+  return Editor.string(editor, path);
 };
 
 const isEmptyContent = editor => {
   const { children } = editor;
-  return children.length === 1 && SlateEditor.isEmpty(editor, children[0]);
+  return children.length === 1 && Editor.isEmpty(editor, children[0]);
 };
 
 const isEmptyElement = (editor, type) => {
@@ -94,7 +94,7 @@ const isEmptyElement = (editor, type) => {
   if (!selection || Range.isExpanded(selection)) return false;
 
   const [block] = getParentBlock(editor);
-  return block.type === type && SlateEditor.isEmpty(editor, block);
+  return block.type === type && Editor.isEmpty(editor, block);
 };
 
 const isEmptyParagraph = editor => isEmptyElement(editor, DEFAULT_ELEMENT_TYPE);
@@ -120,8 +120,8 @@ const isSlashCommand = editor => {
   if (!selection || Range.isExpanded(selection)) return false;
 
   const { anchor } = selection;
-  const [, path] = SlateEditor.node(editor, selection);
-  const contents = SlateEditor.string(editor, path);
+  const [, path] = Editor.node(editor, selection);
+  const contents = Editor.string(editor, path);
   return isDefaultBlock(editor) && contents === '/' && anchor.offset === 1;
 };
 
@@ -134,16 +134,16 @@ const isAtEdge = (editor, callback) => {
   return callback(editor, anchor, path);
 };
 
-const isAtBeginning = editor => isAtEdge(editor, SlateEditor.isStart);
+const isAtBeginning = editor => isAtEdge(editor, Editor.isStart);
 
-const isAtEnd = editor => isAtEdge(editor, SlateEditor.isEnd);
+const isAtEnd = editor => isAtEdge(editor, Editor.isEnd);
 
 const isEmptyNodeInWrappedBlock = editor =>
   isWrappedBlock(editor) &&
   (isEmptyParagraph(editor) || isEmptyListItem(editor));
 
 const findNodeByTypeAndId = (editor, type, id) => {
-  return SlateEditor.nodes(editor, {
+  return Editor.nodes(editor, {
     at: documentSelection(editor),
     match: n => n.type === type && n.id === id,
   }).next().value;
@@ -215,18 +215,18 @@ const toggleMark = (editor, type, source) => {
   const isActive = isMarkActive(editor, type);
 
   if (isActive) {
-    SlateEditor.removeMark(editor, type);
+    Editor.removeMark(editor, type);
   } else {
-    SlateEditor.addMark(editor, type, true);
+    Editor.addMark(editor, type, true);
     track('Mark added to content', { type, source });
   }
 };
 
 const removeAllMarks = editor => {
-  const marks = SlateEditor.marks(editor);
+  const marks = Editor.marks(editor);
   const markTypes = Object.keys(marks);
 
-  markTypes.forEach(type => SlateEditor.removeMark(editor, type));
+  markTypes.forEach(type => Editor.removeMark(editor, type));
 };
 
 const wrapInline = (editor, type, location, source, props = {}) => {
@@ -247,7 +247,7 @@ const insertSectionBreak = editor => {
   });
 
   // Make sure we have a node to move the selection to
-  if (!SlateEditor.next(editor)) insertDefaultElement(editor);
+  if (!Editor.next(editor)) insertDefaultElement(editor);
 
   return Transforms.move(editor);
 };
@@ -255,8 +255,8 @@ const insertSectionBreak = editor => {
 const clearBlock = editor => {
   const [block] = getParentBlock(editor);
 
-  if (!SlateEditor.isEmpty(editor, block))
-    SlateEditor.deleteBackward(editor, { unit: 'block' });
+  if (!Editor.isEmpty(editor, block))
+    Editor.deleteBackward(editor, { unit: 'block' });
 };
 
 const replaceBlock = (editor, type, source) => {
@@ -310,8 +310,8 @@ const wrapInlineAnnotation = (editor, data, range) => {
  */
 const createInlineAnnotation = (editor, data) => {
   const roots = Array.from(
-    SlateEditor.nodes(editor, {
-      match: n => SlateEditor.isBlock(editor, n),
+    Editor.nodes(editor, {
+      match: n => Editor.isBlock(editor, n),
       mode: 'highest',
       voids: true,
     })
@@ -320,20 +320,20 @@ const createInlineAnnotation = (editor, data) => {
   roots.forEach(([rootNode, rootPath]) => {
     const { type } = rootNode;
     const isWrapped = WRAPPED_TYPES.includes(type);
-    const rootRange = SlateEditor.range(editor, rootPath);
+    const rootRange = Editor.range(editor, rootPath);
 
     if (!isWrapped) {
       wrapInlineAnnotation(editor, data, rootRange);
     } else {
       const children = Array.from(
-        SlateEditor.nodes(editor, {
+        Editor.nodes(editor, {
           at: rootRange,
-          match: n => SlateEditor.isBlock(editor, n),
+          match: n => Editor.isBlock(editor, n),
           mode: 'lowest',
         })
       );
       children.forEach(([, childPath]) => {
-        const childRange = SlateEditor.range(editor, childPath);
+        const childRange = Editor.range(editor, childPath);
         wrapInlineAnnotation(editor, data, childRange);
       });
     }
@@ -406,8 +406,17 @@ const updateImage = (editor, id, data) => {
   });
 };
 
-const Editor = {
-  ...SlateEditor,
+const indentListItem = editor => {
+  Transforms.setNodes(editor, {
+    type: SECTION_BREAK,
+    children: [{ text: '' }],
+  });
+};
+
+const outdentListItem = editor => {};
+
+const NewEditor = {
+  ...Editor,
 
   // Queries (no transforms)
   documentSelection,
@@ -452,4 +461,4 @@ const Editor = {
   updateImage,
 };
 
-export default Editor;
+export default NewEditor;
