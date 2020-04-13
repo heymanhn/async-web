@@ -79,20 +79,18 @@ const DiscussionListItem = ({ discussionId }) => {
     draft,
     documentId,
   } = data.discussion;
-  const { payload } = topic || {};
-  const context = payload ? JSON.parse(payload) : undefined;
   const { items } = data2.messages;
   const messages = (items || []).map(i => i.message);
   if (!messages.length) return null;
 
   const firstMessage = messages[0];
   const avatarUrls = messages.map(m => m.author.profilePictureUrl);
-  const moreReplyCount = messageCount - (context ? 1 : 2);
+  const moreReplyCount = messageCount - (topic ? 1 : 2);
 
   const value = {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
-    context,
+    topic,
     draft,
     afterDelete: () =>
       localDeleteDiscussion({ variables: { documentId, discussionId } }),
@@ -102,7 +100,7 @@ const DiscussionListItem = ({ discussionId }) => {
     <DiscussionContext.Provider value={value}>
       <Container>
         <DiscussionListItemHeader discussion={data.discussion} />
-        {context && <StyledContextComposer />}
+        {topic && <StyledContextComposer />}
         <StyledDiscussionMessage
           isLast={lastMessage.id === firstMessage.id}
           message={firstMessage}
