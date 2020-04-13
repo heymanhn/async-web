@@ -46,13 +46,12 @@ const WorkspaceContainer = ({ workspaceId }) => {
 
   const { title, reactions } = data.workspace;
 
-  const hasCurrentUserViewed = () => {
-    return !!(reactions || []).find(
-      r => r.code === 'viewed' && matchCurrentUserId(r.author.id)
-    );
-  };
-
-  if (!hasCurrentUserViewed()) {
+  // Only marking a workspace as read once, as a way of marking the
+  // "You're invited to collaborate on this workspace" notification as read
+  const hasFirstView = !!(reactions || []).find(
+    r => r.code === 'viewed' && matchCurrentUserId(r.author.id)
+  );
+  if (!hasFirstView) {
     markAsRead({
       isUnread: true,
       resourceType: 'workspace',
