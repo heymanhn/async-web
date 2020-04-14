@@ -21,14 +21,14 @@ const moduleList = [
     content: {
       title: 'Discuss ideas and build knowledge together',
       description:
-        'Teams use Roval to drive better decisions and build productive, inclusive, and transparent communication culture.',
+        'Write, discuss, and make decisions at scale – all in one tool',
     },
   },
   {
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      title: 'Write, discuss, and make decisions, all in one place.',
+      title: 'Write, discuss, and stay organized – in one tool',
       image: writeDiscuss,
     },
   },
@@ -37,7 +37,7 @@ const moduleList = [
     side: 'left',
     content: {
       icon: 'comments-alt',
-      title: 'Contribute asynchronously',
+      title: 'Boost productivity with asynchronous workplace',
       description:
         'Follow a discussion from start to finish and communicate asynchronously without missing a beat.',
       image: contributeAsync,
@@ -46,7 +46,7 @@ const moduleList = [
           icon: 'arrow-circle-right',
           title: 'Stop scheduling meetings',
           description:
-            'Roval makes it easy to provide feedback and follow discussions asynchronously.',
+            'Start self-documented meetings. Roval makes it easy to provide feedback and follow progress asynchronously.',
           lineBreak: true,
         },
         {
@@ -102,7 +102,7 @@ const moduleList = [
       icon: 'terminal',
       title: 'Meet your Command Center',
       description:
-        'Use ⌘ + K shortcut for everything. Perform any actions or search in seconds with the command center.',
+        'Use ⌘ + K shortcut for everything. Perform any actions or search your knowledge base in seconds with the command center.',
       image: cmdCenter,
     },
   },
@@ -136,7 +136,7 @@ const moduleList = [
           icon: ['fal', 'comment-lines'],
           title: 'Threaded',
           description:
-            'Discussions are organized into threads that stay on topic and in context',
+            'Discussions are organized into threads that stay on topic',
         },
         {
           icon: ['fal', 'file-search'],
@@ -151,7 +151,7 @@ const moduleList = [
     content: {
       title: 'Ready to give it a spin?',
       description:
-        'Roval is in private beta right now. But happy to give you some access if you’re interested. Let us know.',
+        'Roval is in private beta right now. Sign up for early access.',
     },
   },
 ];
