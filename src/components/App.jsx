@@ -13,6 +13,7 @@ import moment from 'moment';
 import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
+import localResolvers from 'graphql/resolvers/localResolvers';
 import {
   getAuthHeader,
   isLocalTokenPresent,
@@ -20,7 +21,6 @@ import {
 } from 'utils/auth';
 import { RELATIVE_TIME_STRINGS } from 'utils/constants';
 import fileSerializer from 'utils/graphql/fileSerializer';
-import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
 import useAppPusher from 'utils/hooks/useAppPusher';
 import useFaviconIcon from 'utils/hooks/useFaviconIcon';
