@@ -52,6 +52,7 @@ export const isResourceUnread = tags => {
     tags.includes('new_messages') ||
     tags.includes('new_discussions') ||
     tags.includes('new_document') ||
+    tags.includes('new_edits') ||
     tags.includes('new_discussion')
   );
 };
