@@ -159,6 +159,9 @@ const updateWorkspaceReactions = (resource, reaction, client) => {
 /*
  * Different treatment for a workspace; instead of updating the tags
  * for the workspace, add the viewed reaction to the reactions array
+ *
+ * Also, intentionally not updating the tags for the new messages, so that
+ * the new message UI on the discussion thread remains.
  */
 const markResourceAsRead = (_root, { resource, reaction }, { client }) => {
   const { resourceType } = resource;
