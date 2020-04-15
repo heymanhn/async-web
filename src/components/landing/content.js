@@ -28,7 +28,7 @@ const moduleList = [
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      title: 'Write, discuss, and stay organized – in one tool',
+      title: 'Write, discuss, and keep the knowledge in one place',
       image: writeDiscuss,
     },
   },

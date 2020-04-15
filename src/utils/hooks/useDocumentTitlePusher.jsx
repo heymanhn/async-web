@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 
 import localUpdateDocumentTitleMtn from 'graphql/mutations/local/updateDocumentTitle';
@@ -6,15 +6,18 @@ import localUpdateDocumentTitleMtn from 'graphql/mutations/local/updateDocumentT
 import {
   PUSHER_SUBSCRIPTION_SUCCESS_EVENT,
   NEW_DOCUMENT_TITLE_EVENT,
+  PUSHER_CHANNEL_PREFIX,
 } from 'utils/constants';
-import { DocumentContext } from 'utils/contexts';
-import initPusher from 'utils/pusher';
+import { AppContext, DocumentContext } from 'utils/contexts';
 
 const useDocumentTitlePusher = () => {
   const pusherReadyRef = useRef(false);
 
   const { documentId, channelId } = useContext(DocumentContext);
-  const channel = useMemo(() => initPusher(channelId).channel, [channelId]);
+  const { pusher } = useContext(AppContext);
+  const channelName = `${PUSHER_CHANNEL_PREFIX}-${channelId}`;
+  const channel = pusher.subscribe(channelName);
+
   const [localUpdateDocumentTitle] = useMutation(localUpdateDocumentTitleMtn, {
     variables: { documentId },
   });

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 import camelcaseKeys from 'camelcase-keys';
 import Pluralize from 'pluralize';
@@ -14,21 +14,23 @@ import {
   DOCUMENT_ACCESS_EVENT,
   DISCUSSION_ACCESS_EVENT,
   BADGE_COUNT_EVENT,
+  PUSHER_CHANNEL_PREFIX,
 } from 'utils/constants';
 import { isDiscussionOpen } from 'utils/helpers';
 import initPusher from 'utils/pusher';
 
 const useAppPusher = () => {
+  const { userId } = getLocalUser();
   const client = useApolloClient(); // Workaround for the exhaustive-deps warnings
-  const channel = useMemo(() => initPusher().channel, []);
+  const { pusher } = initPusher();
+  const channelName = `${PUSHER_CHANNEL_PREFIX}-${userId}`;
+  const channel = pusher.subscribe(channelName);
 
   /*
    * TODO (HN): Consider moving some of these event listeners into a more
    * specific component, instead of doing this all on the App level.
    */
   useEffect(() => {
-    const { userId } = getLocalUser();
-
     const handleBadgeCount = pusherData => {
       const camelData = camelcaseKeys(pusherData, { deep: true });
       const { resourceType, resourceId, incrementBy } = camelData;
@@ -98,7 +100,9 @@ const useAppPusher = () => {
       channel.unbind(DOCUMENT_ACCESS_EVENT, handleNewNotification);
       channel.unbind(DISCUSSION_ACCESS_EVENT, handleNewNotification);
     };
-  }, [channel, client]);
+  }, [channel, client, userId]);
+
+  return { pusher };
 };
 
 export default useAppPusher;
