@@ -67,11 +67,12 @@ const DiscussionContainer = ({ discussionId }) => {
 
   const { topic, draft, messageCount } = data.discussion;
   const { text } = topic || {};
+  const { tags } = data.discussion;
 
   if ((draft || !messageCount) && !isComposing) startComposing();
 
+  const readOnly = (tags || []).includes('viewer');
   const isUnread = () => {
-    const { tags } = data.discussion;
     const safeTags = tags || [];
     return (
       safeTags.includes('new_messages') || safeTags.includes('new_discussion')
@@ -91,6 +92,7 @@ const DiscussionContainer = ({ discussionId }) => {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     draft,
+    readOnly,
     afterDelete: returnToInbox,
     setForceUpdate,
   };

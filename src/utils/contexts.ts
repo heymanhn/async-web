@@ -17,6 +17,7 @@ export const WorkspaceContext = createContext(DEFAULT_WORKSPACE_CONTEXT);
 export const DEFAULT_DOCUMENT_CONTEXT = {
   documentId: null,
   isModalOpen: false,
+  readOnly: false,
   modalDiscussionId: null,
   firstMsgDiscussionId: null,
   deletedDiscussionId: null,
@@ -41,6 +42,7 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   discussionId: null,
   context: null,
   draft: null,
+  readOnly: false,
   modalRef: {},
   isModal: false,
 
