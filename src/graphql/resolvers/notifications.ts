@@ -52,9 +52,12 @@ const updateNotification = (
 };
 
 const markNotificationAsRead = (_root, { objectId }, { client }) => {
+  // Need to specify the fragment name if the fragment contains nested fragments
+  // https://github.com/apollographql/apollo-client/issues/2902
   const notification = client.readFragment({
     id: objectId,
     fragment: notificationFragment,
+    fragmentName: 'NotificationObject',
   });
 
   if (!notification) return null;
@@ -62,6 +65,7 @@ const markNotificationAsRead = (_root, { objectId }, { client }) => {
   client.writeFragment({
     id: objectId,
     fragment: notificationFragment,
+    fragmentName: 'NotificationObject',
     data: {
       ...notification,
       readAt: Date.now(),
