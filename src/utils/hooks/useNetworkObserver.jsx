@@ -9,9 +9,12 @@ const useNetworkObserver = () => {
 
   useEffect(() => {
     const handleRefetch = () => {
-      if (!navigator.onLine) return setTimeout(handleRefetch, TIMEOUT);
-
-      return client.reFetchObservableQueries();
+      try {
+        client.reFetchObservableQueries();
+      } catch (err) {
+        console.log('Failed to fetch. Retrying in 10 seconds...');
+        setTimeout(handleRefetch, TIMEOUT);
+      }
     };
 
     // Inspired by: https://blog.alexmaccaw.com/javascript-wake-event
