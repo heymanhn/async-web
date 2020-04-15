@@ -32,7 +32,7 @@ const Workspace = () => {
   });
 
   if (loading) return <StyledLoadingIndicator color="borderGrey" />;
-  if (!data.workspace) return <NotFound />;
+  if (!data || !data.workspace) return <NotFound />;
 
   const { title, reactions } = data.workspace;
 
