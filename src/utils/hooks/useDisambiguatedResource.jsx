@@ -17,15 +17,22 @@ const useDisambiguatedResource = () => {
   const { discussionId, setForceUpdate: setForceUpdateDiscussion } = useContext(
     DiscussionContext
   );
+  const isDocumentDiscussion = documentId && discussionId;
 
-  const resourceId = workspaceId || documentId || discussionId;
+  let resourceId;
   let resourceType;
   let setForceUpdate;
 
   if (workspaceId) {
+    resourceId = workspaceId;
     resourceType = 'workspace';
     setForceUpdate = setForceUpdateWorkspace;
+  } else if (isDocumentDiscussion) {
+    resourceId = discussionId;
+    resourceType = 'discussion';
+    setForceUpdate = setForceUpdateDiscussion;
   } else if (documentId) {
+    resourceId = documentId;
     resourceType = 'document';
     setForceUpdate = setForceUpdateDocument;
   } else {
