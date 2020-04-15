@@ -4,7 +4,7 @@
 import React from 'react';
 import { Router } from '@reach/router';
 import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { RestLink } from 'apollo-link-rest';
 import { ApolloLink, concat } from 'apollo-link';
@@ -64,13 +64,19 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-/*
- * Since we're initializing local state with direct writes to the cache, we need to pass
- * an empty resolvers object to Apollo Client upon instantiation. Reference:
- *
- * https://github.com/apollographql/apollo-client/pull/4499
- */
-const cache = new InMemoryCache();
+// Custom identifier for Notification entries as their object IDs are guaranteed
+// to be unique per user.
+// https://www.apollographql.com/docs/react/caching/cache-configuration/#custom-identifiers
+const cache = new InMemoryCache({
+  dataIdFromObject: object => {
+    switch (object.__typename) {
+      case 'Notification':
+        return object.objectId;
+      default:
+        return defaultDataIdFromObject(object);
+    }
+  },
+});
 
 // TODO: Monkey-patching in a fix for an open issue suggesting that
 // `readQuery` should return null or undefined if the query is not yet in the
