@@ -9,7 +9,9 @@ const useNetworkObserver = () => {
 
   useEffect(() => {
     const handleRefetch = () => {
-      client.reFetchObservableQueries();
+      if (!navigator.onLine) return setTimeout(handleRefetch, TIMEOUT);
+
+      return client.reFetchObservableQueries();
     };
 
     // Inspired by: https://blog.alexmaccaw.com/javascript-wake-event
