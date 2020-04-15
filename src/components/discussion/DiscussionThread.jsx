@@ -52,19 +52,11 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const [addPendingMessages] = useMutation(localAddPendingMessages, {
     variables: { discussionId },
   });
-
-  const { markAsRead } = useViewedReaction();
+  const markAsRead = useViewedReaction();
 
   useMountEffect(() => {
     client.writeData({ data: { pendingMessages: [] } });
-
-    return () => {
-      markAsRead({
-        isUnread,
-        resourceType: 'discussion',
-        resourceId: discussionId,
-      });
-    };
+    if (isUnread) markAsRead();
   });
 
   const { data: localData } = useQuery(localStateQuery);
@@ -96,12 +88,7 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
 
   const handleAddPendingMessages = () => {
     addPendingMessages();
-
-    markAsRead({
-      isUnread: false,
-      resourceType: 'discussion',
-      resourceId: discussionId,
-    });
+    markAsRead();
   };
 
   const firstNewMessageId = () => {

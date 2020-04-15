@@ -4,7 +4,7 @@
 import React from 'react';
 import { Router } from '@reach/router';
 import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { RestLink } from 'apollo-link-rest';
 import { ApolloLink, concat } from 'apollo-link';
@@ -13,6 +13,7 @@ import moment from 'moment';
 import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
+import localResolvers from 'graphql/resolvers/localResolvers';
 import {
   getAuthHeader,
   isLocalTokenPresent,
@@ -20,7 +21,6 @@ import {
 } from 'utils/auth';
 import { RELATIVE_TIME_STRINGS } from 'utils/constants';
 import fileSerializer from 'utils/graphql/fileSerializer';
-import localResolvers from 'utils/graphql/localResolvers';
 import getBreakpoint from 'utils/mediaQuery';
 import useAppPusher from 'utils/hooks/useAppPusher';
 import useFaviconIcon from 'utils/hooks/useFaviconIcon';
@@ -65,13 +65,19 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-/*
- * Since we're initializing local state with direct writes to the cache, we need to pass
- * an empty resolvers object to Apollo Client upon instantiation. Reference:
- *
- * https://github.com/apollographql/apollo-client/pull/4499
- */
-const cache = new InMemoryCache();
+// Custom identifier for Notification entries as their object IDs are guaranteed
+// to be unique per user.
+// https://www.apollographql.com/docs/react/caching/cache-configuration/#custom-identifiers
+const cache = new InMemoryCache({
+  dataIdFromObject: object => {
+    switch (object.__typename) {
+      case 'Notification':
+        return object.objectId;
+      default:
+        return defaultDataIdFromObject(object);
+    }
+  },
+});
 
 // TODO: Monkey-patching in a fix for an open issue suggesting that
 // `readQuery` should return null or undefined if the query is not yet in the

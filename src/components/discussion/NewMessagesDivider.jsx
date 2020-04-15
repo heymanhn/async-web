@@ -18,7 +18,7 @@ const Divider = styled.hr(({ theme: { colors } }) => ({
 }));
 
 const NewMessagesLabel = styled.div(({ theme: { colors } }) => ({
-  background: colors.bgGrey,
+  background: colors.white,
   color: colors.blue,
   fontSize: '16px',
   fontWeight: 500,

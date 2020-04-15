@@ -1,136 +1,98 @@
-import { useApolloClient } from '@apollo/react-hooks';
-import Pluralize from 'pluralize';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
-import localUpdateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
-import localMarkDiscussionAsReadMutation from 'graphql/mutations/local/markDiscussionAsRead';
-import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
-import discussionQuery from 'graphql/queries/discussion';
-import documentQuery from 'graphql/queries/document';
-import { getLocalUser } from 'utils/auth';
-import localMarkWorkspaceResourceAsRead from 'graphql/mutations/local/markWorkspaceResourceAsRead';
+import localUpdateBadgeCountMtn from 'graphql/mutations/local/updateBadgeCount';
+import localMarkResourceAsReadMtn from 'graphql/mutations/local/markResourceAsRead';
+import localMarkNotificationAsReadMtn from 'graphql/mutations/local/markNotificationAsRead';
+import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
 
 const useViewedReaction = () => {
-  const client = useApolloClient();
+  const resource = useDisambiguatedResource();
+  const { resourceType, resourceId, resourceQuery, variables } = resource;
 
-  const getParentResourceId = (resourceType, resourceId) => {
-    let discussion;
-    let document;
-    if (resourceType === 'discussion') {
-      const data = client.readQuery({
-        query: discussionQuery,
-        variables: { discussionId: resourceId },
-      });
-      discussion = data && data.discussion;
-    } else if (resourceType === 'document') {
-      const data = client.readQuery({
-        query: documentQuery,
-        variables: { documentId: resourceId },
-      });
-      document = data && data.document;
-    }
+  // Clever way to create a query function that returns a Promise ;-)
+  // https://github.com/apollographql/react-apollo/issues/3499#issuecomment-586039082
+  const { refetch: fetchResource } = useQuery(resourceQuery, {
+    variables,
+    skip: true,
+  });
 
-    const resource = discussion || document;
-    if (!resource) return {};
-    const { workspaces } = resource;
-    const documentId =
-      (document && document.id) || (discussion && discussion.documentId);
-    const workspaceId = workspaces ? workspaces[0] : undefined;
+  const [createReaction] = useMutation(createReactionMutation, {
+    variables: {
+      input: {
+        objectType: resourceType,
+        objectId: resourceId,
+        code: 'viewed',
+      },
+    },
+  });
+  const [localMarkResourceAsRead] = useMutation(localMarkResourceAsReadMtn, {
+    variables: { resource },
+  });
+  const [localMarkNotifAsRead] = useMutation(localMarkNotificationAsReadMtn, {
+    variables: { objectId: resourceId },
+  });
+  const [localUpdateBadgeCount] = useMutation(localUpdateBadgeCountMtn, {
+    variables: { incrementBy: -1 },
+  });
 
-    return { documentId, workspaceId };
+  const getParentIds = async () => {
+    const { data } = await fetchResource();
+
+    if (!data[resourceType])
+      return Promise.reject(new Error('Unable to fetch resource'));
+
+    const { documentId: parentDocumentId, workspaces } = data[resourceType];
+    const parentWorkspaceId = workspaces ? workspaces[0] : undefined;
+
+    return Promise.resolve({ parentDocumentId, parentWorkspaceId });
   };
 
-  function markAsRead({ isUnread, resourceType, resourceId } = {}) {
-    const { userId } = getLocalUser();
-    const { documentId, workspaceId } = getParentResourceId(
-      resourceType,
-      resourceId
+  // Updates the sidebar ResourceRow badgeCounts for:
+  // 1. the current resource
+  // 2. the parent workspace, if available
+  // 3. the parent document, if this is a document discussion
+  const decrementResourceBadgeCounts = async () => {
+    const { parentDocumentId, parentWorkspaceId } = await getParentIds();
+
+    localUpdateBadgeCount({ variables: { resourceType, resourceId } });
+
+    if (parentDocumentId) {
+      localUpdateBadgeCount({
+        variables: { resourceType: 'document', resourceId: parentDocumentId },
+      });
+    }
+
+    if (parentWorkspaceId) {
+      localUpdateBadgeCount({
+        variables: { resourceType: 'workspace', resourceId: parentWorkspaceId },
+      });
+    }
+
+    return Promise.resolve();
+  };
+
+  const markAsRead = async () => {
+    const { data } = await createReaction();
+
+    if (data.createReaction) {
+      const { createReaction: reaction } = data;
+
+      localMarkResourceAsRead({ variables: { reaction } });
+      decrementResourceBadgeCounts();
+
+      // Also marks the workspace resource as read, if it exists
+      localMarkNotifAsRead();
+
+      return Promise.resolve();
+    }
+
+    return Promise.reject(
+      new Error('Unable to create viewed reaction for resource')
     );
+  };
 
-    let refetchQueries = [
-      {
-        query: resourceNotificationsQuery,
-        variables: {
-          resourceType: 'users',
-          resourceId: userId,
-          queryParams: {},
-        },
-      },
-    ];
-    [
-      { resourceType: 'workspace', resourceId: workspaceId },
-      { resourceType: 'document', resourceId: documentId },
-    ].forEach(item => {
-      if (item.resourceId) {
-        refetchQueries = [
-          ...refetchQueries,
-          {
-            query: resourceNotificationsQuery,
-            variables: {
-              resourceType: Pluralize(item.resourceType),
-              resourceId: item.resourceId,
-              queryParams: {},
-            },
-          },
-        ];
-      }
-    });
-
-    client.mutate({
-      mutation: createReactionMutation,
-      variables: {
-        input: {
-          objectType: resourceType,
-          objectId: resourceId,
-          code: 'viewed',
-        },
-      },
-      refetchQueries,
-      // We're updating the cache directly instead of using refetchQueries since the conversations
-      // list might be paginated, and we don't want to lose the user's intended scroll position
-      // in the meeting space page
-      update: () => {
-        if (!isUnread) return;
-        let notificationResourceId = resourceId;
-
-        if (resourceType === 'discussion') {
-          // TODO: think of a better to handle multiple local mututations.
-          if (documentId) notificationResourceId = documentId;
-
-          client.mutate({
-            mutation: localMarkDiscussionAsReadMutation,
-            variables: {
-              discussionId: resourceId,
-            },
-          });
-        }
-
-        // Update the sidebar ResourceRow badgeCount
-        client.mutate({
-          mutation: localUpdateBadgeCountMutation,
-          variables: {
-            resourceType: workspaceId ? 'workspace' : resourceType,
-            resourceId: workspaceId || notificationResourceId,
-            incrementBy: -1,
-          },
-        });
-
-        // If this resource is part of a workspace, mark the state as Read
-        if (workspaceId) {
-          client.mutate({
-            mutation: localMarkWorkspaceResourceAsRead,
-            variables: {
-              workspaceId,
-              resourceType,
-              resourceId: notificationResourceId,
-            },
-          });
-        }
-      },
-    });
-  }
-
-  return { markAsRead };
+  return markAsRead;
 };
 
 export default useViewedReaction;
