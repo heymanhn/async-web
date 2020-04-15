@@ -64,9 +64,7 @@ const DocumentContainer = ({
 
   const isUnread = () => {
     const safeTags = tags || [];
-    return (
-      safeTags.includes('new_document') || safeTags.includes('new_updates')
-    );
+    return safeTags.includes('new_document') || safeTags.includes('new_edits');
   };
 
   const handleShowModal = (discussionId, content) => {

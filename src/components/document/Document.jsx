@@ -31,15 +31,9 @@ const Document = ({ isUnread }) => {
   const handleNewTitle = useDocumentTitlePusher();
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
 
-  // useMountEffect(() => {
-  //   return () => {
-  //     markAsRead({
-  //       isUnread,
-  //       resourceType: 'document',
-  //       resourceId: documentId,
-  //     });
-  //   };
-  // });
+  useMountEffect(() => {
+    if (isUnread) markAsRead();
+  });
 
   const { loading, error, data } = useQuery(documentQuery, {
     variables: { documentId },

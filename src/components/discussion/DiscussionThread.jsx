@@ -88,12 +88,7 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
 
   const handleAddPendingMessages = () => {
     addPendingMessages();
-
-    markAsRead({
-      isUnread: false,
-      resourceType: 'discussion',
-      resourceId: discussionId,
-    });
+    markAsRead();
   };
 
   const firstNewMessageId = () => {
