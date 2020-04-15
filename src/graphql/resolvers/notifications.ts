@@ -14,7 +14,7 @@ const updateNotification = (
   if (!data) return null;
 
   const { resourceNotifications } = data;
-  const { items, __typename } = resourceNotifications;
+  const { items, pageToken, __typename } = resourceNotifications;
   const safeNotifications = items || [notification];
   const index = safeNotifications.findIndex(
     n => n.objectId === notification.objectId
@@ -42,7 +42,8 @@ const updateNotification = (
     variables: { resourceType, resourceId, queryParams: {} },
     data: {
       resourceNotifications: {
-        notifications: notificationsData,
+        items: notificationsData,
+        pageToken,
         __typename,
       },
     },
