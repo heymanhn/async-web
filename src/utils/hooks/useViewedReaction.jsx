@@ -1,13 +1,9 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import Pluralize from 'pluralize';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import localUpdateBadgeCountMtn from 'graphql/mutations/local/updateBadgeCount';
 import localMarkResourceAsReadMtn from 'graphql/mutations/local/markResourceAsRead';
 import localMarkNotificationAsReadMtn from 'graphql/mutations/local/markNotificationAsRead';
-import discussionQuery from 'graphql/queries/discussion';
-import documentQuery from 'graphql/queries/document';
-
 import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
 
 const useViewedReaction = () => {
@@ -40,14 +36,7 @@ const useViewedReaction = () => {
     variables: { incrementBy: -1 },
   });
 
-  // const { userId } = getLocalUser();
-
-  // Updates the sidebar ResourceRow badgeCounts
-  // 1. If a discussion or document, decrement badge count for given resource in sidebar
-  // 2. If workspace, or if discussion/document has a parent workspace, decrement badge count
-  //    for the workspace in the sidebar
-  // 3. If inline discussion, decrement badge count for the parent document
-  const decrementResourceBadgeCounts = async () => {
+  const getParentIds = async () => {
     const { data } = await fetchResource();
 
     if (!data[resourceType])
@@ -56,12 +45,29 @@ const useViewedReaction = () => {
     const { documentId: parentDocumentId, workspaces } = data[resourceType];
     const parentWorkspaceId = workspaces ? workspaces[0] : undefined;
 
-    // localUpdateBadgeCount({
-    //   variables: {
-    //     resourceType: workspaceId ? 'workspace' : resourceType,
-    //     resourceId: workspaceId || notificationResourceId,
-    //   },
-    // });
+    return Promise.resolve({ parentDocumentId, parentWorkspaceId });
+  };
+
+  // Updates the sidebar ResourceRow badgeCounts for:
+  // 1. the current resource
+  // 2. the parent workspace, if available
+  // 3. the parent document, if this is a document discussion
+  const decrementResourceBadgeCounts = async () => {
+    const { parentDocumentId, parentWorkspaceId } = await getParentIds();
+
+    localUpdateBadgeCount({ variables: { resourceType, resourceId } });
+
+    if (parentDocumentId) {
+      localUpdateBadgeCount({
+        variables: { resourceType: 'document', resourceId: parentDocumentId },
+      });
+    }
+
+    if (parentWorkspaceId) {
+      localUpdateBadgeCount({
+        variables: { resourceType: 'workspace', resourceId: parentWorkspaceId },
+      });
+    }
 
     return Promise.resolve();
   };
@@ -75,7 +81,7 @@ const useViewedReaction = () => {
       localMarkResourceAsRead({ variables: { reaction } });
       decrementResourceBadgeCounts();
 
-      // This will also mark the workspace resource as read
+      // Also marks the workspace resource as read, if it exists
       localMarkNotifAsRead();
 
       return Promise.resolve();
