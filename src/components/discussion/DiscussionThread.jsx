@@ -56,7 +56,7 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
 
   useMountEffect(() => {
     client.writeData({ data: { pendingMessages: [] } });
-    markAsRead();
+    if (isUnread) markAsRead();
   });
 
   const { data: localData } = useQuery(localStateQuery);

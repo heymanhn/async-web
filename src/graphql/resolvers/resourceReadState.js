@@ -2,8 +2,6 @@ import { WORKSPACES_QUERY_SIZE, RESOURCES_QUERY_SIZE } from 'utils/constants';
 import { getLocalUser } from 'utils/auth';
 import { snakedQueryParams } from 'utils/queryParams';
 
-import discussionQuery from 'graphql/queries/discussion';
-import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import workspacesQuery from 'graphql/queries/workspaces';
 import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
@@ -164,55 +162,97 @@ const updateBadgeCount = (
   }
 };
 
-const markDiscussionAsRead = (_root, { discussionId }, { client }) => {
+const updateResourceTags = (resource, client) => {
+  const { resourceType, resourceQuery, variables } = resource;
   const data = client.readQuery({
-    query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
+    query: resourceQuery,
+    variables,
   });
 
-  const data2 = client.readQuery({
-    query: discussionQuery,
-    variables: { discussionId },
-  });
+  if (!data) return null;
 
-  if (!data || !data2) return null;
-  const { messages } = data;
-  const { items, pageToken } = messages;
-  const messagesWithTags = (items || []).map(i => i.message);
-  const updatedMessageItems = messagesWithTags.map(m => ({
-    __typename: items[0].__typename,
-    message: {
-      ...m,
-      tags: ['no_updates'],
-    },
-  }));
+  const cachedResource = data[resourceType];
+  const updatedData = {};
+  updatedData[resourceType] = {
+    ...cachedResource,
+    tags: ['no_updates'],
+  };
 
   client.writeQuery({
-    query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
-    data: {
-      messages: {
-        ...data.messages,
-        items: updatedMessageItems,
-        pageToken,
-      },
-    },
+    query: resourceQuery,
+    variables,
+    data: updatedData,
   });
 
-  const { discussion } = data2;
+  return null;
+};
 
+const updateWorkspaceReactions = (resource, reaction, client) => {
+  const { resourceQuery: workspaceQuery, variables } = resource;
+
+  const data = client.readQuery({
+    query: workspaceQuery,
+    variables,
+  });
+
+  if (!data) return null;
+
+  const { workspace, reactions } = data;
   client.writeQuery({
-    query: discussionQuery,
-    variables: { discussionId },
+    query: workspaceQuery,
+    variables,
     data: {
-      discussion: {
-        ...discussion,
-        tags: ['no_updates'],
+      workspace: {
+        ...workspace,
+        reactions: [...reactions, reaction],
       },
     },
   });
 
   return null;
+};
+
+/*
+ * Different treatment for a workspace; instead of updating the tags
+ * for the workspace, add the viewed reaction to the reactions array
+ */
+const markResourceAsRead = (_root, { resource, reaction }, { client }) => {
+  const { resourceType } = resource;
+  if (resourceType === 'workspace')
+    return updateWorkspaceReactions(resource, reaction, client);
+
+  return updateResourceTags(resource, client);
+
+  // TODO (HN): Check if we need this. We can ignore the messages query
+  // so that the new messages stay rendered as new messages.
+  //
+  // const data = client.readQuery({
+  //   query: discussionMessagesQuery,
+  //   variables: { discussionId, queryParams: {} },
+  // });
+  //
+  // const { messages } = data;
+  // const { items, pageToken } = messages;
+  // const messagesWithTags = (items || []).map(i => i.message);
+  // const updatedMessageItems = messagesWithTags.map(m => ({
+  //   __typename: items[0].__typename,
+  //   message: {
+  //     ...m,
+  //     tags: ['no_updates'],
+  //   },
+  // }));
+  //
+  // client.writeQuery({
+  //   query: discussionMessagesQuery,
+  //   variables: { discussionId, queryParams: {} },
+  //   data: {
+  //     messages: {
+  //       ...data.messages,
+  //       items: updatedMessageItems,
+  //       pageToken,
+  //     },
+  //   },
+  // });
 };
 
 const markWorkspaceResourceAsReadByTab = (
@@ -273,6 +313,6 @@ const markWorkspaceResourceAsRead = (_root, props, { client }) => {
 export default {
   updateNotifications,
   updateBadgeCount,
-  markDiscussionAsRead,
+  markResourceAsRead,
   markWorkspaceResourceAsRead,
 };

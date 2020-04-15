@@ -3,7 +3,7 @@ import Pluralize from 'pluralize';
 
 import createReactionMutation from 'graphql/mutations/createReaction';
 import localUpdateBadgeCountMtn from 'graphql/mutations/local/updateBadgeCount';
-import localMarkDiscussionAsReadMtn from 'graphql/mutations/local/markDiscussionAsRead';
+import localMarkResourceAsReadMtn from 'graphql/mutations/local/markResourceAsRead';
 import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import discussionQuery from 'graphql/queries/discussion';
 import documentQuery from 'graphql/queries/document';
@@ -13,12 +13,8 @@ import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
 
 const useViewedReaction = () => {
   const client = useApolloClient(); // TODO (HN): Check if this is still needed
-  const {
-    resourceType,
-    resourceId,
-    resourceQuery,
-    variables,
-  } = useDisambiguatedResource();
+  const resource = useDisambiguatedResource();
+  const { resourceType, resourceId, variables } = resource;
 
   const [createReaction] = useMutation(createReactionMutation, {
     variables: {
@@ -29,12 +25,9 @@ const useViewedReaction = () => {
       },
     },
   });
-  const [localMarkDiscussionAsRead] = useMutation(
-    localMarkDiscussionAsReadMtn,
-    {
-      variables,
-    }
-  );
+  const [localMarkResourceAsRead] = useMutation(localMarkResourceAsReadMtn, {
+    variables: { resource },
+  });
   const [localUpdateBadgeCount] = useMutation(localUpdateBadgeCountMtn, {
     variables: { incrementBy: -1 },
   });
@@ -103,20 +96,6 @@ const useViewedReaction = () => {
   //     }
   //   });
 
-  // Update local state for the resource (update tags to ["no_updates"] for discussion/document)
-  // -> Q: Do I need to update local state for a workspace too? Probably, if I want to avoid excessive sending of viewed reactions.
-  // -> If I do, I can capture the created reaction in POST /reactions response, then add it to the local cache.
-  const markLocalResourceAsRead = reaction => {
-    switch (resourceType) {
-      case 'discussion':
-        return localMarkDiscussionAsRead();
-      case 'workspace':
-        return console.log('TODO: Mark local workspace as read...');
-      default:
-        return null;
-    }
-  };
-
   // HN: See if this is needed
   const markWorkspaceResourceAsRead = () => {
     //     let notificationResourceId = resourceId;
@@ -142,6 +121,7 @@ const useViewedReaction = () => {
   // 1. If a discussion or document, decrement badge count for given resource in sidebar
   // 2. If workspace, or if discussion/document has a parent workspace, decrement badge count
   //    for the workspace in the sidebar
+  // 3. If inline discussion, decrement badge count for the parent document
   const decrementResourceBadgeCounts = () => {
     // localUpdateBadgeCount({
     //   variables: {
@@ -162,7 +142,7 @@ const useViewedReaction = () => {
     if (data.createReaction) {
       const { createReaction: reaction } = data;
 
-      markLocalResourceAsRead(reaction);
+      localMarkResourceAsRead({ variables: { reaction } });
       markWorkspaceResourceAsRead();
       decrementResourceBadgeCounts();
       markLocalNotificationsAsRead();
