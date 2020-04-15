@@ -8,12 +8,14 @@ const useNetworkObserver = () => {
   lastTimeRef.current = Date.now();
 
   useEffect(() => {
-    const handleRefetch = () => {
+    const handleRefetch = (waitInterval = TIMEOUT) => {
       try {
         client.reFetchObservableQueries();
       } catch (err) {
-        console.log('Failed to fetch. Retrying in 10 seconds...');
-        setTimeout(handleRefetch, TIMEOUT);
+        console.log(
+          `Failed to fetch. Retrying in ${waitInterval / 1000} seconds...`
+        );
+        setTimeout(() => handleRefetch(waitInterval * 2), waitInterval);
       }
     };
 
