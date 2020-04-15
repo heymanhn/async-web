@@ -36,6 +36,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     documentId,
     deletedDiscussionId,
     firstMsgDiscussionId,
+    readOnly,
     setDeletedDiscussionId,
     setFirstMsgDiscussionId,
   } = useContext(DocumentContext);
@@ -103,7 +104,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
 
   return (
     <Slate editor={contentEditor} onChange={onChangeWrapper} {...contentProps}>
-      <DocumentEditable {...props} {...coreEditorProps} />
+      <DocumentEditable readOnly={readOnly} {...props} {...coreEditorProps} />
       <DocumentToolbar />
       <DefaultPlaceholder />
       <CompositionMenuButton />

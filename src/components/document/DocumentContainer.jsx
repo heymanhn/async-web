@@ -61,6 +61,7 @@ const DocumentContainer = ({
   if (!data) return null;
   if (error || !data.document) return <NotFound />;
   const { channelId, tags } = data.document;
+  const readOnly = (tags || []).includes('viewer');
 
   const isUnread = () => {
     const safeTags = tags || [];
@@ -108,6 +109,7 @@ const DocumentContainer = ({
     inlineDiscussionTopic,
     viewMode,
     channelId,
+    readOnly,
 
     setFirstMsgDiscussionId,
     setDeletedDiscussionId,
