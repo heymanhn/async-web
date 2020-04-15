@@ -159,7 +159,6 @@ const useViewedReaction = () => {
   const markAsRead = async () => {
     const { data } = await createReaction();
 
-    // refetchQueries,
     if (data.createReaction) {
       const { createReaction: reaction } = data;
 
@@ -167,6 +166,8 @@ const useViewedReaction = () => {
       markWorkspaceResourceAsRead();
       decrementResourceBadgeCounts();
       markLocalNotificationsAsRead();
+
+      return Promise.resolve();
     }
 
     return Promise.reject(
