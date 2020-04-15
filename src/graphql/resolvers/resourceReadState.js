@@ -3,7 +3,6 @@ import { getLocalUser } from 'utils/auth';
 import { snakedQueryParams } from 'utils/queryParams';
 
 import workspacesQuery from 'graphql/queries/workspaces';
-import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
 import resourcesQuery from 'graphql/queries/resources';
 
 const updateWorkspaceBadgeCount = (userId, resourceId, incrementBy, client) => {
@@ -167,96 +166,9 @@ const markResourceAsRead = (_root, { resource, reaction }, { client }) => {
     return updateWorkspaceReactions(resource, reaction, client);
 
   return updateResourceTags(resource, client);
-
-  // TODO (HN): Check if we need this. We can ignore the messages query
-  // so that the new messages stay rendered as new messages.
-  //
-  // const data = client.readQuery({
-  //   query: discussionMessagesQuery,
-  //   variables: { discussionId, queryParams: {} },
-  // });
-  //
-  // const { messages } = data;
-  // const { items, pageToken } = messages;
-  // const messagesWithTags = (items || []).map(i => i.message);
-  // const updatedMessageItems = messagesWithTags.map(m => ({
-  //   __typename: items[0].__typename,
-  //   message: {
-  //     ...m,
-  //     tags: ['no_updates'],
-  //   },
-  // }));
-  //
-  // client.writeQuery({
-  //   query: discussionMessagesQuery,
-  //   variables: { discussionId, queryParams: {} },
-  //   data: {
-  //     messages: {
-  //       ...data.messages,
-  //       items: updatedMessageItems,
-  //       pageToken,
-  //     },
-  //   },
-  // });
-};
-
-const markWorkspaceResourceAsReadByTab = (
-  type,
-  { workspaceId, resourceType, resourceId },
-  client
-) => {
-  const data = client.readQuery({
-    query: workspaceResourcesQuery,
-    variables: { workspaceId, queryParams: { type } },
-  });
-  if (!data || !data.workspaceResources) return;
-
-  const { items, pageToken, totalHits, __typename } = data.workspaceResources;
-  const index = items.findIndex(item => {
-    const resource = item[resourceType];
-    return resource && resource.id === resourceId;
-  });
-
-  if (index < 0) return;
-  const resourceItem = items[index];
-  const { lastUpdate } = resourceItem;
-  const readResourceItem = {
-    ...resourceItem,
-    lastUpdate: {
-      ...lastUpdate,
-      readAt: Date.now(),
-    },
-  };
-
-  client.writeQuery({
-    query: workspaceResourcesQuery,
-    variables: { workspaceId, queryParams: { type } },
-    data: {
-      workspaceResources: {
-        items: [
-          ...items.slice(0, index),
-          readResourceItem,
-          ...items.slice(index + 1),
-        ],
-        pageToken,
-        totalHits,
-        __typename,
-      },
-    },
-  });
-};
-
-const markWorkspaceResourceAsRead = (_root, props, { client }) => {
-  const { resourceType } = props;
-  ['all', resourceType].forEach(type =>
-    markWorkspaceResourceAsReadByTab(type, props, client)
-  );
-
-  return null;
 };
 
 export default {
   updateBadgeCount,
   markResourceAsRead,
-  markWorkspaceResourceAsRead,
 };
