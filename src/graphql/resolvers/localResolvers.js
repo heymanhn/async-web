@@ -4,6 +4,7 @@ import documentResolvers from './document';
 import inboxResolvers from './inbox';
 import resourceAccessResolvers from './resourceAccess';
 import resourceReadStateResolvers from './resourceReadState';
+import notificationsResolvers from './notifications';
 
 const localResolvers = {
   Mutation: {
@@ -13,6 +14,7 @@ const localResolvers = {
     ...inboxResolvers,
     ...resourceAccessResolvers,
     ...resourceReadStateResolvers,
+    ...notificationsResolvers,
   },
 };
 

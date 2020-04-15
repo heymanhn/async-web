@@ -4,6 +4,7 @@ import Pluralize from 'pluralize';
 import createReactionMutation from 'graphql/mutations/createReaction';
 import localUpdateBadgeCountMtn from 'graphql/mutations/local/updateBadgeCount';
 import localMarkResourceAsReadMtn from 'graphql/mutations/local/markResourceAsRead';
+import localMarkNotificationAsReadMtn from 'graphql/mutations/local/markNotificationAsRead';
 import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import discussionQuery from 'graphql/queries/discussion';
 import documentQuery from 'graphql/queries/document';
@@ -14,7 +15,7 @@ import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
 const useViewedReaction = () => {
   const client = useApolloClient(); // TODO (HN): Check if this is still needed
   const resource = useDisambiguatedResource();
-  const { resourceType, resourceId, variables } = resource;
+  const { resourceType, resourceId } = resource;
 
   const [createReaction] = useMutation(createReactionMutation, {
     variables: {
@@ -27,6 +28,9 @@ const useViewedReaction = () => {
   });
   const [localMarkResourceAsRead] = useMutation(localMarkResourceAsReadMtn, {
     variables: { resource },
+  });
+  const [localMarkNotifAsRead] = useMutation(localMarkNotificationAsReadMtn, {
+    variables: { objectId: resourceId },
   });
   const [localUpdateBadgeCount] = useMutation(localUpdateBadgeCountMtn, {
     variables: { incrementBy: -1 },
@@ -132,10 +136,6 @@ const useViewedReaction = () => {
     return console.log('TODO: Decrement resource badge counts...');
   };
 
-  const markLocalNotificationsAsRead = () => {
-    return console.log('TODO: Mark local notifications as read...');
-  };
-
   const markAsRead = async () => {
     const { data } = await createReaction();
 
@@ -143,9 +143,9 @@ const useViewedReaction = () => {
       const { createReaction: reaction } = data;
 
       localMarkResourceAsRead({ variables: { reaction } });
+      localMarkNotifAsRead();
       markWorkspaceResourceAsRead();
       decrementResourceBadgeCounts();
-      markLocalNotificationsAsRead();
 
       return Promise.resolve();
     }

@@ -2,64 +2,9 @@ import { WORKSPACES_QUERY_SIZE, RESOURCES_QUERY_SIZE } from 'utils/constants';
 import { getLocalUser } from 'utils/auth';
 import { snakedQueryParams } from 'utils/queryParams';
 
-import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
 import workspacesQuery from 'graphql/queries/workspaces';
 import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
 import resourcesQuery from 'graphql/queries/resources';
-
-/*
- * Updates a notification object
- * TODO: use readFragment() / writeFragment()
- */
-const updateNotifications = (
-  _root,
-  { resourceType, resourceId, notification },
-  { client }
-) => {
-  const data = client.readQuery({
-    query: resourceNotificationsQuery,
-    variables: { resourceType, resourceId, queryParams: {} },
-  });
-
-  if (!data) return null;
-
-  const { resourceNotifications } = data;
-  const { items, __typename } = resourceNotifications;
-  const safeNotifications = items || [notification];
-  const index = safeNotifications.findIndex(
-    n => n.objectId === notification.objectId
-  );
-  const newNotification = {
-    __typename: safeNotifications[0].__typename,
-    ...notification,
-    author: {
-      __typename: safeNotifications[0].author.__typename,
-      ...notification.author,
-    },
-  };
-
-  const notificationsData =
-    index < 0
-      ? [newNotification, ...safeNotifications]
-      : [
-          newNotification,
-          ...safeNotifications.slice(0, index),
-          ...safeNotifications.slice(index + 1),
-        ];
-
-  client.writeQuery({
-    query: resourceNotificationsQuery,
-    variables: { resourceType, resourceId, queryParams: {} },
-    data: {
-      resourceNotifications: {
-        notifications: notificationsData,
-        __typename,
-      },
-    },
-  });
-
-  return null;
-};
 
 const updateWorkspaceBadgeCount = (userId, resourceId, incrementBy, client) => {
   const {
@@ -311,7 +256,6 @@ const markWorkspaceResourceAsRead = (_root, props, { client }) => {
 };
 
 export default {
-  updateNotifications,
   updateBadgeCount,
   markResourceAsRead,
   markWorkspaceResourceAsRead,

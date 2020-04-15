@@ -4,7 +4,7 @@ import camelcaseKeys from 'camelcase-keys';
 import Pluralize from 'pluralize';
 
 import addNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
-import localUpdateNotificationsMutation from 'graphql/mutations/local/updateNotifications';
+import localUpdateNotificationMutation from 'graphql/mutations/local/updateNotification';
 import localUpdateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
 import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
 import { getLocalUser } from 'utils/auth';
@@ -51,7 +51,7 @@ const useAppPusher = () => {
       ].forEach(item => {
         if (item.resourceId) {
           client.mutate({
-            mutation: localUpdateNotificationsMutation,
+            mutation: localUpdateNotificationMutation,
             variables: {
               resourceType: Pluralize(item.resourceType),
               resourceId: item.resourceId,
