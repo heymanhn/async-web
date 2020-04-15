@@ -36,6 +36,7 @@ const useDisambiguatedResource = () => {
     resourceType = 'document';
     setForceUpdate = setForceUpdateDocument;
   } else {
+    resourceId = discussionId;
     resourceType = 'discussion';
     setForceUpdate = setForceUpdateDiscussion;
   }
