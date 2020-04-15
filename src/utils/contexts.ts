@@ -1,5 +1,10 @@
 import { createContext } from 'react';
 
+export const DEFAULT_APP_CONTEXT = {
+  pusher: null,
+};
+export const AppContext = createContext(DEFAULT_APP_CONTEXT);
+
 export const DEFAULT_WORKSPACE_CONTEXT = {
   workspaceId: null,
   viewMode: null,

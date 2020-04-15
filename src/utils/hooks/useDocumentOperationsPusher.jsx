@@ -1,20 +1,13 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { HistoryEditor } from 'slate-history';
 
 import {
   PUSHER_SUBSCRIPTION_SUCCESS_EVENT,
   NEW_DOCUMENT_OPERATION_EVENT,
   MINIMUM_PUSHER_SEND_INTERVAL,
+  PUSHER_CHANNEL_PREFIX,
 } from 'utils/constants';
-import { DocumentContext } from 'utils/contexts';
-import initPusher from 'utils/pusher';
+import { AppContext, DocumentContext } from 'utils/contexts';
 
 import Editor from 'components/editor/Editor';
 
@@ -26,9 +19,11 @@ const useDocumentOperationsPusher = (editor, setLastTouchedToNow) => {
   const pusherReadyRef = useRef(false);
 
   const { channelId } = useContext(DocumentContext);
+  const { pusher } = useContext(AppContext);
   const [pendingOperations, setPendingOperations] = useState([]);
   const [lastSend, setLastSend] = useState(null);
-  const channel = useMemo(() => initPusher(channelId).channel, [channelId]);
+  const channelName = `${PUSHER_CHANNEL_PREFIX}-${channelId}`;
+  const channel = pusher.subscribe(channelName);
   const setLastTouchedToNowCb = useCallback(setLastTouchedToNow, []);
 
   useEffect(() => {

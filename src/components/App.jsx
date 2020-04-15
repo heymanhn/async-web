@@ -26,6 +26,7 @@ import useAppPusher from 'utils/hooks/useAppPusher';
 import useFaviconIcon from 'utils/hooks/useFaviconIcon';
 import useNetworkObserver from 'utils/hooks/useNetworkObserver';
 import iconSet from 'styles/iconSet';
+import { AppContext, DEFAULT_APP_CONTEXT } from 'utils/contexts';
 
 import Layout from 'components/Layout';
 import SidebarLayout from 'components/SidebarLayout';
@@ -117,50 +118,57 @@ moment.relativeTimeThreshold('d', 361);
 
 const App = () => {
   useNetworkObserver();
-  useAppPusher();
+  const { pusher } = useAppPusher();
   useFaviconIcon();
 
+  const value = {
+    ...DEFAULT_APP_CONTEXT,
+    pusher,
+  };
+
   return (
-    <Layout>
-      <SidebarLayout>
-        <Router>
-          <Home path="/" />
-          <SignUp path="/invites/:inviteCode" />
-          <CreateOrganization path="/organizations" />
-          <InviteTeam path="/organizations/:organizationId/invites" />
-          <Login path="/login" />
-          <DemoLogin path="/demo/login" />
-          <Logout path="/logout" />
-          {/* HN: Keeping the Inbox page around until we support a way for users
+    <AppContext.Provider value={value}>
+      <Layout>
+        <SidebarLayout>
+          <Router>
+            <Home path="/" />
+            <SignUp path="/invites/:inviteCode" />
+            <CreateOrganization path="/organizations" />
+            <InviteTeam path="/organizations/:organizationId/invites" />
+            <Login path="/login" />
+            <DemoLogin path="/demo/login" />
+            <Logout path="/logout" />
+            {/* HN: Keeping the Inbox page around until we support a way for users
                 to browse all their resources */}
-          <PrivateRoute path="/inbox" component={Inbox} />
+            <PrivateRoute path="/inbox" component={Inbox} />
 
-          <PrivateRoute
-            path="/workspaces/:workspaceId"
-            component={WorkspaceContainer}
-          />
-          <PrivateRoute
-            path="/documents/:documentId"
-            component={DocumentContainer}
-          />
-          <PrivateRoute
-            path="/documents/:documentId/discussions/:discussionId"
-            component={DocumentContainer}
-          />
-          <PrivateRoute
-            path="/documents/:documentId/discussions"
-            component={DocumentContainer}
-            viewMode="discussions"
-          />
-          <PrivateRoute
-            path="/discussions/:discussionId"
-            component={DiscussionContainer}
-          />
+            <PrivateRoute
+              path="/workspaces/:workspaceId"
+              component={WorkspaceContainer}
+            />
+            <PrivateRoute
+              path="/documents/:documentId"
+              component={DocumentContainer}
+            />
+            <PrivateRoute
+              path="/documents/:documentId/discussions/:discussionId"
+              component={DocumentContainer}
+            />
+            <PrivateRoute
+              path="/documents/:documentId/discussions"
+              component={DocumentContainer}
+              viewMode="discussions"
+            />
+            <PrivateRoute
+              path="/discussions/:discussionId"
+              component={DiscussionContainer}
+            />
 
-          <NotFound path="/notfound" default />
-        </Router>
-      </SidebarLayout>
-    </Layout>
+            <NotFound path="/notfound" default />
+          </Router>
+        </SidebarLayout>
+      </Layout>
+    </AppContext.Provider>
   );
 };
 
