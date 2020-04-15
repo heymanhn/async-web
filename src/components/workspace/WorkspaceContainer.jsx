@@ -31,7 +31,7 @@ const WorkspaceContainer = ({ workspaceId }) => {
   useUpdateSelectedResource(workspaceId);
   const [viewMode, setViewMode] = useState('all');
   const [forceUpdate, setForceUpdate] = useState(false);
-  const { markAsRead } = useViewedReaction();
+  const markAsRead = useViewedReaction();
 
   useEffect(() => {
     setViewMode('all');
@@ -51,13 +51,13 @@ const WorkspaceContainer = ({ workspaceId }) => {
   const hasFirstView = !!(reactions || []).find(
     r => r.code === 'viewed' && matchCurrentUserId(r.author.id)
   );
-  if (!hasFirstView) {
-    markAsRead({
-      isUnread: true,
-      resourceType: 'workspace',
-      resourceId: workspaceId,
-    });
-  }
+  // if (!hasFirstView) {
+  //   markAsRead({
+  //     isUnread: true,
+  //     resourceType: 'workspace',
+  //     resourceId: workspaceId,
+  //   });
+  // }
 
   if (forceUpdate) setForceUpdate(false);
 

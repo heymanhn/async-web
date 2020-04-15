@@ -27,19 +27,19 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
 const Document = ({ isUnread }) => {
   const documentContext = useContext(DocumentContext);
   const { documentId } = documentContext;
-  const { markAsRead } = useViewedReaction();
+  const markAsRead = useViewedReaction();
   const handleNewTitle = useDocumentTitlePusher();
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
 
-  useMountEffect(() => {
-    return () => {
-      markAsRead({
-        isUnread,
-        resourceType: 'document',
-        resourceId: documentId,
-      });
-    };
-  });
+  // useMountEffect(() => {
+  //   return () => {
+  //     markAsRead({
+  //       isUnread,
+  //       resourceType: 'document',
+  //       resourceId: documentId,
+  //     });
+  //   };
+  // });
 
   const { loading, error, data } = useQuery(documentQuery, {
     variables: { documentId },

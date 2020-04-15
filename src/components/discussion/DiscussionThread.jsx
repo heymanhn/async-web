@@ -53,18 +53,18 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
     variables: { discussionId },
   });
 
-  const { markAsRead } = useViewedReaction();
+  const markAsRead = useViewedReaction();
 
   useMountEffect(() => {
     client.writeData({ data: { pendingMessages: [] } });
 
-    return () => {
-      markAsRead({
-        isUnread,
-        resourceType: 'discussion',
-        resourceId: discussionId,
-      });
-    };
+    // return () => {
+    //   markAsRead({
+    //     isUnread,
+    //     resourceType: 'discussion',
+    //     resourceId: discussionId,
+    //   });
+    // };
   });
 
   const { data: localData } = useQuery(localStateQuery);
