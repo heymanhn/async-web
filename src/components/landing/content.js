@@ -39,7 +39,7 @@ const moduleList = [
     side: 'left',
     content: {
       icon: 'comments-alt',
-      title: 'Boost productivity with asynchronous discussions',
+      title: 'Boost productivity with asynchronous communication',
       description:
         'Follow a discussion from start to finish and communicate asynchronously without missing a beat.',
       image: contributeAsync,
