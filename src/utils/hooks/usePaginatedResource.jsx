@@ -25,7 +25,7 @@ const usePaginatedResource = (
   ref,
   { query, key, ...props },
   gap = DISTANCE_FROM_BOTTOM,
-  modalRef = {}
+  modalRef
 ) => {
   const [shouldFetch, setShouldFetch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -34,30 +34,24 @@ const usePaginatedResource = (
     const elem = ref.current;
     if (!elem) return;
 
-    const { current: modal } = modalRef;
+    const { current: modal } = modalRef || {};
     const scrollOffset = modal
-      ? modal.scrollHeight
+      ? modal.clientHeight + modal.scrollTop
       : window.innerHeight + window.scrollY;
 
-    const reachedBottom = scrollOffset >= elem.offsetHeight - gap;
-
+    const reachedBottom = scrollOffset >= elem.scrollHeight - gap;
     if (!reachedBottom || shouldFetch) return;
     setShouldFetch(true);
   };
 
   useEffect(() => {
-    const { current: modal } = modalRef;
-    const target = modal || window;
-    target.addEventListener(
-      'scroll',
-      debounce(handleScroll, DEBOUNCE_INTERVAL)
-    );
+    if (modalRef && !modalRef.current) return () => {};
 
-    return () =>
-      target.removeEventListener(
-        'scroll',
-        debounce(handleScroll, DEBOUNCE_INTERVAL)
-      );
+    const target = modalRef ? modalRef.current : window;
+    const debouncedScroll = debounce(handleScroll, DEBOUNCE_INTERVAL);
+    target.addEventListener('scroll', debouncedScroll);
+
+    return () => target.removeEventListener('scroll', debouncedScroll);
   });
 
   const { loading, data, fetchMore } = useQuery(query, props);
