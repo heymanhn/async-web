@@ -68,7 +68,7 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
       variables: { discussionId, queryParams: {} },
     },
     isModal ? undefined : 300,
-    modalRef
+    isModal ? modalRef : undefined
   );
 
   // Workaround to make sure two copies of the first message aren't rendered
