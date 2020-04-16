@@ -24,7 +24,7 @@ const Container = styled.div(
     border: `1px solid ${colors.borderGrey}`,
     borderRadius: '5px',
     boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-    maxHeight: `${window.innerHeight - 120}px`,
+    maxHeight: `${window.innerHeight - 200}px`,
     width: `${width}px`,
     zIndex: 1000,
   })

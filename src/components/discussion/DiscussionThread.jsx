@@ -67,7 +67,7 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
       key: 'messages',
       variables: { discussionId, queryParams: {} },
     },
-    isModal ? undefined : 300,
+    undefined,
     isModal ? modalRef : undefined
   );
 
