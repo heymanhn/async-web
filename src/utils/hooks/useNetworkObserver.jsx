@@ -1,5 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient, useQuery } from '@apollo/react-hooks';
+
+import currentUserQuery from 'graphql/queries/currentUser';
+import { getLocalUser } from 'utils/auth';
 
 const TIMEOUT = 10000;
 const useNetworkObserver = () => {
@@ -7,10 +10,17 @@ const useNetworkObserver = () => {
   const lastTimeRef = useRef(Date.now());
   lastTimeRef.current = Date.now();
 
+  const { userId } = getLocalUser();
+  const { refetch: getCurrentUser } = useQuery(currentUserQuery, {
+    variables: { userId },
+    skip: true,
+  });
+
   useEffect(() => {
-    const handleRefetch = (waitInterval = TIMEOUT) => {
+    const handleRefetch = async (waitInterval = TIMEOUT) => {
       try {
-        client.reFetchObservableQueries();
+        await getCurrentUser(); // Refetch one query to test the waters first
+        await client.reFetchObservableQueries();
       } catch (err) {
         console.log(
           `Failed to fetch. Retrying in ${waitInterval / 1000} seconds...`
@@ -35,7 +45,7 @@ const useNetworkObserver = () => {
       clearInterval(interval);
       window.removeEventListener('online', handleRefetch);
     };
-  }, [client]);
+  }, [client, getCurrentUser]);
 };
 
 export default useNetworkObserver;
