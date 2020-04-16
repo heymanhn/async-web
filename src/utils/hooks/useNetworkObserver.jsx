@@ -22,9 +22,6 @@ const useNetworkObserver = () => {
         await getCurrentUser(); // Refetch one query to test the waters first
         await client.reFetchObservableQueries();
       } catch (err) {
-        console.log(
-          `Failed to fetch. Retrying in ${waitInterval / 1000} seconds...`
-        );
         setTimeout(() => handleRefetch(waitInterval * 2), waitInterval);
       }
     };
