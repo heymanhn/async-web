@@ -2,6 +2,7 @@ import writeClearly from 'images/writeClearly.png';
 import writeDiscuss from 'images/writeDiscuss.png';
 import cmdCenter from 'images/cmdCenter.png';
 import contributeAsync from 'images/contributeAsync.png';
+import workspace from 'images/workspace.png';
 
 import {
   HEADLINE,
@@ -21,14 +22,15 @@ const moduleList = [
     content: {
       title: 'Discuss ideas and build knowledge together',
       description:
-        'Write, discuss, and make decisions at scale – all in one tool',
+        'Write, discuss, and share knowledge at scale – all in one tool',
     },
   },
   {
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      title: 'Write, discuss, and keep the knowledge in one place',
+      title: 'Write, discuss, and build knowledge in one place',
+      description: 'With one tool, everyone sees the whole picture.',
       image: writeDiscuss,
     },
   },
@@ -37,7 +39,7 @@ const moduleList = [
     side: 'left',
     content: {
       icon: 'comments-alt',
-      title: 'Boost productivity with asynchronous workplace',
+      title: 'Boost productivity with asynchronous discussions',
       description:
         'Follow a discussion from start to finish and communicate asynchronously without missing a beat.',
       image: contributeAsync,
@@ -46,7 +48,7 @@ const moduleList = [
           icon: 'arrow-circle-right',
           title: 'Stop scheduling meetings',
           description:
-            'Start self-documented meetings. Roval makes it easy to provide feedback and follow progress asynchronously.',
+            'Start self-documented meetings. Roval makes it easy to capture inputs and follow progress asynchronously.',
           lineBreak: true,
         },
         {
@@ -70,7 +72,7 @@ const moduleList = [
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      title: 'Write Clearly',
+      title: 'Write Clearly. Bring Clarity.',
       description: 'A powerful editor that makes your words stand out.',
       image: writeClearly,
     },
@@ -107,8 +109,17 @@ const moduleList = [
     },
   },
   {
-    type: REASONS,
+    type: LARGE_GRAPHIC,
     mode: 'dark',
+    content: {
+      title: 'Create a workspace for every team & project',
+      description:
+        "Get organized with workspaces: documents, discussions, team, or projects. With workspaces, the right people don't get left out and information stays at one place.",
+      image: workspace,
+    },
+  },
+  {
+    type: REASONS,
     content: {
       title: 'Why teams switch to Roval?',
       reasons: [
@@ -148,6 +159,7 @@ const moduleList = [
   },
   {
     type: EMAIL_CAPTURE,
+    mode: 'dark',
     content: {
       title: 'Ready to give it a spin?',
       description:
