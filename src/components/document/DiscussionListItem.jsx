@@ -72,14 +72,9 @@ const DiscussionListItem = ({ discussionId }) => {
   if (loading || loading2) return null;
   if (!data.discussion || !data2.messages) return <NotFound />;
 
-  const {
-    topic,
-    lastMessage,
-    messageCount,
-    draft,
-    documentId,
-  } = data.discussion;
+  const { topic, lastMessage, messageCount, draft, parent } = data.discussion;
   const { items } = data2.messages;
+  const { id: documentId } = parent;
   const messages = (items || []).map(i => i.message);
   if (!messages.length) return null;
 
