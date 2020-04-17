@@ -29,7 +29,9 @@ const useDiscussionMutations = () => {
   const handleCreate = async title => {
     setIsSubmitting(true);
 
-    const input = documentId ? { documentId } : {};
+    const input = documentId
+      ? { parent: { id: documentId, type: 'document' } }
+      : {};
     if (title) {
       input.topic = {
         formatter: 'slatejs',
