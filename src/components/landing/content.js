@@ -39,23 +39,23 @@ const moduleList = [
     side: 'left',
     content: {
       icon: 'comments-alt',
-      title: 'Boost productivity with asynchronous communication',
+      title: 'Stay focus, Stay connected',
       description:
-        'Follow a discussion from start to finish and communicate asynchronously without missing a beat.',
+        'No pressure to be always online. Follow a discussion from start to finish without missing a beat.',
       image: contributeAsync,
       features: [
         {
           icon: 'arrow-circle-right',
           title: 'Stop scheduling meetings',
           description:
-            'Start self-documented meetings. Roval makes it easy to capture inputs and follow progress asynchronously.',
+            'Start self-documented meetings. Discussions make it easy to capture inputs and follow progress on your schedule.',
           lineBreak: true,
         },
         {
           icon: 'arrow-circle-right',
-          title: 'Contribute on your schedule',
+          title: 'No pressure to respond immediately',
           description:
-            'No pressure to respond immediately. You can take a step back, think about what is being discussed, and follow up with a thoughtful response at a later time.',
+            'You can take a step back, think about what is being discussed, and follow up with a thoughtful response at a later time.',
           lineBreak: true,
         },
         {
