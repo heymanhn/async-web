@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { Redirect } from '@reach/router';
 
+import organizationQuery from 'graphql/queries/organization';
 import localStateQuery from 'graphql/queries/localState';
 import { getLocalAppState } from 'utils/auth';
 
@@ -11,8 +12,11 @@ const Home = () => {
   const { data: localStateData } = useQuery(localStateQuery);
   const { isLoggedIn, isOnboarding } = localStateData;
   const { organizationId } = getLocalAppState();
+  const { loading, data } = useQuery(organizationQuery, {
+    variables: { id: organizationId },
+  });
 
-  if (!localStateData) return null;
+  if (!localStateData || loading) return null;
   if (!isLoggedIn) return <LandingPage />;
 
   if (isOnboarding) {
@@ -22,7 +26,12 @@ const Home = () => {
     return <Redirect to={path} noThrow />;
   }
 
-  return <Redirect to="/inbox" noThrow />;
+  const { defaultWorkspaceId } = data.organization;
+  const redirectUrl = defaultWorkspaceId
+    ? `/workspaces/${defaultWorkspaceId}`
+    : '/inbox';
+
+  return <Redirect to={redirectUrl} noThrow />;
 };
 
 export default Home;
