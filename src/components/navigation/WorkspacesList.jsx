@@ -42,7 +42,7 @@ const WorkspacesList = () => {
     },
   });
 
-  if (loading || !data.workspaces) return null;
+  if (loading || !data || !data.workspaces) return null;
 
   const { items } = data.workspaces;
 

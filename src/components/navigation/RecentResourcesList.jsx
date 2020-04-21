@@ -41,7 +41,7 @@ const RecentResourcesList = () => {
     },
   });
 
-  if (loading || !data.resources) return null;
+  if (loading || !data || !data.resources) return null;
 
   const { items } = data.resources;
   const isResourceSelected = id => id === selectedResourceId;
