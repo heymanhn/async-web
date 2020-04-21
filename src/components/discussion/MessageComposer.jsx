@@ -16,6 +16,7 @@ import DisplayedMessageToolbar from 'components/editor/toolbar/DisplayedMessageT
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withLinks from 'components/editor/withLinks';
+import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withSectionBreak from 'components/editor/withSectionBreak';
 import withPasteShim from 'components/editor/withPasteShim';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
@@ -49,6 +50,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
         withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
+        withInlineDiscussions,
         withSectionBreak,
         withPasteShim,
         withHistory,

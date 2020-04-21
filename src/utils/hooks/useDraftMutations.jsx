@@ -31,13 +31,15 @@ const useDraftMutations = (editor = null) => {
     variables: { discussionId },
   });
 
-  const handleSaveDraft = async () => {
+  // TODO (DISCUSSION V2): clarify this logic when renaming inline discussions
+  // as threads
+  const handleSaveDraft = async ({ isThread } = {}) => {
     setIsSubmitting(true);
 
     const { children } = editor || {};
     const content = children || DEFAULT_ELEMENT();
 
-    let draftDiscussionId = discussionId;
+    let draftDiscussionId = isThread ? null : discussionId;
     if (!draftDiscussionId) {
       const { id } = await handleCreateDiscussion();
       draftDiscussionId = id;

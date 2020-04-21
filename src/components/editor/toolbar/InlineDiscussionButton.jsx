@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Transforms, Range } from 'slate';
-import { useSlate } from 'slate-react';
+import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
@@ -25,9 +25,22 @@ const InlineDiscussionButton = props => {
   const { handleSaveDraft, isSubmitting } = useDraftMutations();
   const { userId } = getLocalUser();
 
+  const makeDOMSelection = () => {
+    const domSelection = window.getSelection();
+    const domRange =
+      domSelection && domSelection.rangeCount > 0 && domSelection.getRangeAt(0);
+
+    if (!domRange) return;
+    const range = ReactEditor.toSlateRange(editor, domRange);
+    Transforms.select(editor, range);
+  };
+
   const handleClick = async () => {
     // Create an empty draft discussion
-    const { discussionId } = await handleSaveDraft();
+    const { discussionId } = await handleSaveDraft({ isThread: true });
+
+    // Special case for starting inline discussion from read-only message content
+    if (!editor.selection) makeDOMSelection();
 
     Editor.createInlineAnnotation(editor, {
       discussionId,
