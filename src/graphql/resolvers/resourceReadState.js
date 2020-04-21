@@ -141,7 +141,8 @@ const updateWorkspaceReactions = (resource, reaction, client) => {
 
   if (!data) return null;
 
-  const { workspace, reactions } = data;
+  const { workspace } = data;
+  const { reactions } = workspace;
   client.writeQuery({
     query: workspaceQuery,
     variables,

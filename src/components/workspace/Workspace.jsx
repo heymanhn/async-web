@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
@@ -25,6 +25,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 
 const Workspace = () => {
   const { workspaceId } = useContext(WorkspaceContext);
+  const [markedAsRead, setMarkedAsRead] = useState(false);
   const markAsRead = useViewedReaction();
 
   const { loading, data } = useQuery(workspaceQuery, {
@@ -41,7 +42,10 @@ const Workspace = () => {
   const hasFirstView = !!(reactions || []).find(
     r => r.code === 'viewed' && matchCurrentUserId(r.author.id)
   );
-  if (!hasFirstView) markAsRead();
+  if (!hasFirstView && !markedAsRead) {
+    markAsRead();
+    setMarkedAsRead(true);
+  }
 
   return (
     <Container>
