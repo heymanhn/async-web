@@ -65,11 +65,10 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
    * Workaround is to memoize the base editor instance, and extend it by calling
    * withImages() with the updated variables.
    */
-  const messageEditor = useMemo(() => {
-    const wrapWithImages = edt => withImages(edt, discussionId);
-
-    return compose(wrapWithImages)(baseEditor);
-  }, [baseEditor, discussionId]);
+  const messageEditor = useMemo(() => withImages(baseEditor, discussionId), [
+    baseEditor,
+    discussionId,
+  ]);
 
   const { content: message, ...contentProps } = useContentState({
     editor: messageEditor,
