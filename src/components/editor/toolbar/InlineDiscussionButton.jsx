@@ -39,12 +39,17 @@ const InlineDiscussionButton = ({ handleShowModal, ...props }) => {
     const { discussionId } = await handleSaveDraft({ isThread: true });
 
     // Special case for starting inline discussion from read-only message content
-    if (!editor.selection) makeDOMSelection();
+    let mode = 'document';
+    if (!editor.selection) {
+      mode = 'discussion';
+      makeDOMSelection();
+    }
 
     Editor.createInlineAnnotation(editor, {
       discussionId,
       authorId: userId,
       isInitialDraft: true, // Toggled to false once first message is created
+      mode,
     });
 
     // Remove all the top-level nodes outside of the current selection

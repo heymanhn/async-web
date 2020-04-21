@@ -40,7 +40,7 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
   const ref = useRef(null);
   const [isHighlightHover, setIsHighlightHover] = useState(false);
   const [isPreviewHover, setIsPreviewHover] = useState(false);
-  const { discussionId, isInitialDraft, authorId } = element;
+  const { discussionId, isInitialDraft, authorId, mode } = element;
 
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
   const isHighlightHoverRef = useRef(isHighlightHover);
@@ -103,6 +103,7 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
           parentRef={ref}
           discussionId={discussionId}
           isOpen={isPreviewHover}
+          mode={mode}
           {...previewHoverProps}
         />
       )}

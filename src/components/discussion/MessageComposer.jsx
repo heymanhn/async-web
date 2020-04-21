@@ -7,8 +7,10 @@ import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
 import { DiscussionContext, MessageContext } from 'utils/contexts';
+import useAnnotationMonitor from 'utils/hooks/useAnnotationMonitor';
 import useContentState from 'utils/hooks/useContentState';
 import useDrafts from 'utils/hooks/useDrafts';
+import useMessageMutations from 'utils/hooks/useMessageMutations';
 
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
@@ -22,7 +24,6 @@ import withPasteShim from 'components/editor/withPasteShim';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import withImages from 'components/editor/withImages';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
-import useMessageMutations from './useMessageMutations';
 import MessageActions from './MessageActions';
 
 const Container = styled.div(({ mode }) => ({
@@ -82,6 +83,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
 
   const coreEditorProps = useCoreEditorProps(messageEditor, { readOnly });
   useDrafts(message, messageEditor, isSubmitting);
+  useAnnotationMonitor(message, messageEditor, readOnly);
 
   return (
     <Container mode={mode} {...props}>

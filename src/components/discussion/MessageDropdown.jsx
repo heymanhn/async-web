@@ -6,9 +6,8 @@ import styled from '@emotion/styled';
 
 import useClickOutside from 'utils/hooks/useClickOutside';
 import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
+import useMessageMutations from 'utils/hooks/useMessageMutations';
 import { MessageContext } from 'utils/contexts';
-
-import useMessageMutations from './useMessageMutations';
 
 const Container = styled.div(
   ({ isOpen, isFirstMessage, theme: { colors } }) => ({

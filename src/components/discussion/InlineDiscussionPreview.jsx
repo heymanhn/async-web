@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
-import { DocumentContext } from 'utils/contexts';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -89,8 +89,10 @@ const NewReplyLabel = styled(MessageCountIndicator)(
   })
 );
 
-const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef }) => {
-  const { handleShowModal } = useContext(DocumentContext);
+const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef, mode }) => {
+  const { handleShowModal } = useContext(
+    mode === 'document' ? DocumentContext : DiscussionContext
+  );
   const { loading, error, data, client } = useQuery(discussionQuery, {
     variables: { discussionId },
   });
@@ -165,6 +167,7 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef }) => {
 InlineDiscussionPreview.propTypes = {
   discussionId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  mode: PropTypes.oneOf(['document', 'discussion']).isRequired,
 };
 
 export default InlineDiscussionPreview;

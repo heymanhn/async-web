@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import { getLocalUser } from 'utils/auth';
-import { DocumentContext } from 'utils/contexts';
+import { DocumentContext, DiscussionContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -64,9 +64,11 @@ const Message = styled.div(({ theme: { colors } }) => ({
   userSelect: 'none',
 }));
 
-const DraftTooltip = ({ discussionId, isOpen, parentRef }) => {
+const DraftTooltip = ({ discussionId, isOpen, parentRef, mode }) => {
   const tooltipRef = useRef(null);
-  const { handleShowModal } = useContext(DocumentContext);
+  const { handleShowModal } = useContext(
+    mode === 'document' ? DocumentContext : DiscussionContext
+  );
   const { userId } = getLocalUser();
   const { loading, error, data } = useQuery(discussionQuery, {
     variables: { discussionId },
@@ -131,6 +133,7 @@ const DraftTooltip = ({ discussionId, isOpen, parentRef }) => {
 DraftTooltip.propTypes = {
   discussionId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  mode: PropTypes.oneOf(['document', 'discussion']).isRequired,
 };
 
 export default DraftTooltip;
