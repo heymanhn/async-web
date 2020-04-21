@@ -25,7 +25,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 
 const Workspace = () => {
   const { workspaceId } = useContext(WorkspaceContext);
-  const [markedAsRead, setMarkedAsRead] = useState(false);
+  const [sentReaction, setSentReaction] = useState(false);
   const markAsRead = useViewedReaction();
 
   const { loading, data } = useQuery(workspaceQuery, {
@@ -42,9 +42,9 @@ const Workspace = () => {
   const hasFirstView = !!(reactions || []).find(
     r => r.code === 'viewed' && matchCurrentUserId(r.author.id)
   );
-  if (!hasFirstView && !markedAsRead) {
+  if (!hasFirstView && !sentReaction) {
     markAsRead();
-    setMarkedAsRead(true);
+    setSentReaction(true);
   }
 
   return (
