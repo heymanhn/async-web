@@ -7,31 +7,25 @@ import { getLocalUser } from 'utils/auth';
 const useFaviconIcon = () => {
   const { userId } = getLocalUser();
 
-  const { refetch: getNotifications } = useQuery(resourceNotificationsQuery, {
+  const { data } = useQuery(resourceNotificationsQuery, {
     variables: { resourceType: 'users', resourceId: userId, queryParams: {} },
-    skip: true,
+    skip: !userId,
   });
 
   useEffect(() => {
     const favicon = window.document.getElementById('favicon');
 
-    const handleFetch = async () => {
-      if (!userId) return;
-
-      const { data } = await getNotifications();
-      const { items } = data.resourceNotifications;
-      if (items) {
-        const unreadNotifications = (items || []).filter(n => n.readAt < 0);
-        if (unreadNotifications.length > 0) {
-          favicon.href = '/favicon-new.png';
-        } else {
-          favicon.href = '/favicon.png';
-        }
+    if (!userId || !data || !data.resourceNotifications) return;
+    const { items } = data.resourceNotifications;
+    if (items) {
+      const unreadNotifications = (items || []).filter(n => n.readAt < 0);
+      if (unreadNotifications.length > 0) {
+        favicon.href = '/favicon-new.png';
+      } else {
+        favicon.href = '/favicon.png';
       }
-    };
-
-    handleFetch();
-  }, [getNotifications, userId]);
+    }
+  }, [data, userId]);
 };
 
 export default useFaviconIcon;
