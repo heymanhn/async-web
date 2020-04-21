@@ -41,6 +41,8 @@ const HeaderSection = styled.div(
   }
 );
 
+// TODO (DISCUSSION V2): Add this padding to the text itself. This helps
+// with selection via cursor.
 const StyledMessageComposer = styled(MessageComposer)({
   padding: '0px 30px 15px',
 });

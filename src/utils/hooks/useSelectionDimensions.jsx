@@ -9,9 +9,11 @@
  * - DiscussionContext provided with a reference to the modal component, if
  *   a modal is currently displayed
  */
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
+import throttle from 'lodash/throttle';
 
+import { THROTTLE_INTERVAL } from 'utils/constants';
 import { DiscussionContext } from 'utils/contexts';
 
 import Editor from 'components/editor/Editor';
@@ -39,59 +41,81 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
         return element.getBoundingClientRect();
       }
 
+      case 'DOMSelection': {
+        const selection = window.getSelection();
+        const domRange = selection.getRangeAt(0);
+        return domRange.getBoundingClientRect();
+      }
+
       default: {
         const { selection } = editor;
-        const range = ReactEditor.toDOMRange(editor, selection);
-        return range.getBoundingClientRect();
+        const domRange = ReactEditor.toDOMRange(editor, selection);
+        return domRange.getBoundingClientRect();
       }
     }
   };
 
-  const calculateDimensions = () => {
-    const { selection } = editor;
-    if (!selection && source !== 'notFocused') return;
-    if (skip) return;
+  const calculateDimensions = useCallback(
+    throttle(() => {
+      const { selection } = editor;
+      const domSelection = window.getSelection();
 
-    const rect = rectForSource();
-    const { height, width } = rect;
+      if (!selection && !domSelection && source !== 'notFocused') return;
+      if (!domSelection.rangeCount) return;
+      if (skip) return;
 
-    // When a modal is visible, the window isn't scrolled, only the modal component.
-    const { current: modal } = modalRef;
-    const yOffset = modal ? modal.scrollTop : window.pageYOffset;
-    const xOffset = modal ? modal.scrollLeft : window.pageXOffset;
+      const rect = rectForSource();
+      const { height, width } = rect;
 
-    const coords = {
-      top: rect.top + yOffset,
-      left: rect.left + xOffset,
-    };
+      // When a modal is visible, the window isn't scrolled, only the modal component.
+      const { current: modal } = modalRef;
+      const yOffset = modal ? modal.scrollTop : window.pageYOffset;
+      const xOffset = modal ? modal.scrollLeft : window.pageXOffset;
 
-    const dimensions = {
-      height,
-      width,
-    };
+      const coords = {
+        top: rect.top + yOffset,
+        left: rect.left + xOffset,
+      };
 
-    const { coords: oldCoords, dimensions: oldDimensions } = data;
-    if (
-      oldCoords &&
-      oldDimensions &&
-      oldCoords.top === coords.top &&
-      oldCoords.left === coords.left &&
-      oldDimensions.height === dimensions.height &&
-      oldDimensions.width === dimensions.width
-    )
-      return;
+      const dimensions = {
+        height,
+        width,
+      };
 
-    setData({ coords, dimensions, rect });
-  };
+      const { coords: oldCoords, dimensions: oldDimensions } = data;
+      if (
+        oldCoords &&
+        oldDimensions &&
+        oldCoords.top === coords.top &&
+        oldCoords.left === coords.left &&
+        oldDimensions.height === dimensions.height &&
+        oldDimensions.width === dimensions.width
+      )
+        return;
+
+      setData({ coords, dimensions, rect });
+    }, THROTTLE_INTERVAL)
+  );
 
   useEffect(() => {
     calculateDimensions();
 
+    if (source === 'DOMSelection') {
+      window.document.addEventListener('selectionchange', calculateDimensions);
+    }
+
     window.addEventListener('resize', calculateDimensions);
     return () => {
+      if (source === 'DOMSelection') {
+        window.document.removeEventListener(
+          'selectionchange',
+          calculateDimensions
+        );
+      }
+
       window.removeEventListener('resize', calculateDimensions);
     };
-  });
+  }, [calculateDimensions, source]);
 
   return data;
 };

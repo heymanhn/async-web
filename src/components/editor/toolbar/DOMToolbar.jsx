@@ -1,9 +1,13 @@
-import React, { useRef } from 'react';
+/*
+ * This toolbar component is only for DOM text selections where Slate
+ * is not activated.
+ */
+
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Range } from 'slate';
-import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
+import { SHOW_TOOLBAR_DELAY } from 'utils/constants';
 import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
 
 const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
@@ -28,13 +32,35 @@ const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
   ...styles,
 }));
 
-const Toolbar = ({ children }) => {
+const DOMToolbar = ({ children }) => {
   const ref = useRef(null);
-  const editor = useSlate();
-  const { selection } = editor;
+  const selection = window.getSelection();
+  const [isOpen, setIsOpen] = useState(selection && !selection.isCollapsed);
+  const { coords, rect } = useSelectionDimensions({
+    source: 'DOMSelection',
+  });
 
-  const isOpen = selection && Range.isExpanded(selection);
-  const { coords, rect } = useSelectionDimensions({ skip: !isOpen });
+  const handleSelectionChange = useCallback(() => {
+    const isExpanded = !window.getSelection().isCollapsed;
+    if (isOpen !== isExpanded) {
+      const updateIsOpen = () => setIsOpen(isExpanded);
+
+      // Better visuals: let selection be stabilized before showing the toolbar
+      const interval = isOpen ? 0 : SHOW_TOOLBAR_DELAY;
+      setTimeout(updateIsOpen, interval);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    window.document.addEventListener('selectionchange', handleSelectionChange);
+
+    return () => {
+      window.document.removeEventListener(
+        'selectionchange',
+        handleSelectionChange
+      );
+    };
+  }, [handleSelectionChange]);
 
   // Figure out where the toolbar should be displayed based on the user's
   // text selection
@@ -58,8 +84,8 @@ const Toolbar = ({ children }) => {
   );
 };
 
-Toolbar.propTypes = {
+DOMToolbar.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default Toolbar;
+export default DOMToolbar;

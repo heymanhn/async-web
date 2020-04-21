@@ -12,6 +12,7 @@ import useDrafts from 'utils/hooks/useDrafts';
 
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
+import DisplayedMessageToolbar from 'components/editor/toolbar/DisplayedMessageToolbar';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withLinks from 'components/editor/withLinks';
@@ -57,14 +58,15 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
   );
 
   /* HN: Slate doesn't allow the editor instance to be re-created on subsequent
-   * renders, but we need to pass an updated resourceId into withImages().
+   * renders, but we need to pass component-specific data to some HOCs.
    * Workaround is to memoize the base editor instance, and extend it by calling
-   * withImages() with an updated discussionId when needed.
+   * withImages() with the updated variables.
    */
-  const messageEditor = useMemo(() => withImages(baseEditor, discussionId), [
-    baseEditor,
-    discussionId,
-  ]);
+  const messageEditor = useMemo(() => {
+    const wrapWithImages = edt => withImages(edt, discussionId);
+
+    return compose(wrapWithImages)(baseEditor);
+  }, [baseEditor, discussionId]);
 
   const { content: message, ...contentProps } = useContentState({
     editor: messageEditor,
@@ -88,7 +90,8 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
           readOnly={readOnly}
           {...coreEditorProps}
         />
-        <MessageToolbar />
+        {readOnly && <DisplayedMessageToolbar />}
+        {!readOnly && <MessageToolbar />}
         <DefaultPlaceholder />
         <CompositionMenuButton />
         {!readOnly && (

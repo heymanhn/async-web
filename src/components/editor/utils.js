@@ -86,6 +86,11 @@ export const CUT_PASTE_SOURCE = 'cutAndPaste';
 export const INLINE_DISCUSSION_SOURCE = 'inlineDiscussion';
 
 /*
+ * Slate operation types
+ */
+export const SET_SELECTION_OPERATION = 'set_selection';
+
+/*
  * Inline discussion logic
  */
 export const BUFFER_LENGTH = 200;
