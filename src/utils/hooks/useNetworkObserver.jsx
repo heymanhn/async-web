@@ -4,7 +4,7 @@ import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import currentUserQuery from 'graphql/queries/currentUser';
 import { getLocalUser } from 'utils/auth';
 
-const TIMEOUT = 10000;
+const TIMEOUT = 60000;
 const useNetworkObserver = () => {
   const client = useApolloClient();
   const lastTimeRef = useRef(Date.now());
