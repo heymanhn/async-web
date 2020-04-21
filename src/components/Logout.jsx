@@ -17,9 +17,8 @@ const Logout = () => {
     track('Logged out');
     reset();
 
-    client.clearStore().then(() => {
-      client.resetStore();
-    });
+    await client.clearStore();
+    client.resetStore();
   };
 
   if (data.isLoggedIn) {
