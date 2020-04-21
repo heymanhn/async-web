@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { NavigationContext } from 'utils/contexts';
 
@@ -7,10 +7,9 @@ const useUpdateSelectedResource = resourceId => {
     NavigationContext
   );
 
-  const setSelectedResourceIdCb = useCallback(setSelectedResourceId, []);
   useEffect(() => {
-    if (resourceId !== selectedResourceId) setSelectedResourceIdCb(resourceId);
-  }, [resourceId, selectedResourceId, setSelectedResourceIdCb]);
+    if (resourceId !== selectedResourceId) setSelectedResourceId(resourceId);
+  }, [resourceId, selectedResourceId, setSelectedResourceId]);
 };
 
 export default useUpdateSelectedResource;
