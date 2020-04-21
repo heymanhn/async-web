@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Transforms, Range } from 'slate';
 import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
-import { DocumentContext } from 'utils/contexts';
 import useDraftMutations from 'utils/hooks/useDraftMutations';
 import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
@@ -19,9 +19,8 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
   margin: '5px 10px',
 });
 
-const InlineDiscussionButton = props => {
+const InlineDiscussionButton = ({ handleShowModal, ...props }) => {
   const editor = useSlate();
-  const { handleShowModal } = useContext(DocumentContext);
   const { handleSaveDraft, isSubmitting } = useDraftMutations();
   const { userId } = getLocalUser();
 
@@ -72,6 +71,10 @@ const InlineDiscussionButton = props => {
       {!isSubmitting && <ButtonIcon icon="comment-plus" isActive={false} />}
     </ToolbarButton>
   );
+};
+
+InlineDiscussionButton.propTypes = {
+  handleShowModal: PropTypes.func.isRequired,
 };
 
 export default InlineDiscussionButton;

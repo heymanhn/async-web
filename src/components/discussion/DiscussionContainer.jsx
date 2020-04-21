@@ -16,6 +16,7 @@ import TopicComposer from './TopicComposer';
 import DiscussionMessage from './DiscussionMessage';
 import DiscussionThread from './DiscussionThread';
 import AddReplyBox from './AddReplyBox';
+import DiscussionModal from './DiscussionModal';
 
 const OuterContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -49,10 +50,25 @@ const DiscussionContainer = ({ discussionId }) => {
   useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
   const [isComposing, setIsComposing] = useState(false);
-  const [forceUpdate, setForceUpdate] = useState(false);
-
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
+  const [forceUpdate, setForceUpdate] = useState(false);
+
+  // TODO (DISCUSSION V2): DRY this up / clean up the identical state in
+  // DocumentContainer.
+  const [state, setState] = useState({
+    modalDiscussionId: null,
+    firstMsgDiscussionId: null,
+    deletedDiscussionId: null,
+    isModalOpen: false,
+    inlineDiscussionTopic: null,
+  });
+  const setFirstMsgDiscussionId = id =>
+    setState(old => ({ ...old, firstMsgDiscussionId: id }));
+  const setDeletedDiscussionId = id =>
+    setState(old => ({ ...old, deletedDiscussionId: id }));
+  const resetInlineTopic = () =>
+    setState(old => ({ ...old, inlineDiscussionTopic: null }));
 
   const { loading, data } = useQuery(discussionQuery, {
     variables: { discussionId },
@@ -86,6 +102,36 @@ const DiscussionContainer = ({ discussionId }) => {
     if (!messageCount) returnToInbox();
   };
 
+  // TODO (DISCUSSION V2): DRY this up with DocumentContainer implementation
+  const handleShowModal = (dId, content) => {
+    const newState = {
+      modalDiscussionId: dId,
+      isModalOpen: true,
+    };
+
+    // For creating inline discussion context later on
+    if (content) newState.inlineDiscussionTopic = content;
+
+    setState(oldState => ({ ...oldState, ...newState }));
+  };
+
+  // TODO (DISCUSSION V2): DRY this up with DocumentContainer implementation
+  const handleCloseModal = () => {
+    setState(oldState => ({
+      ...oldState,
+      modalDiscussionId: null,
+      isModalOpen: false,
+    }));
+  };
+
+  const {
+    modalDiscussionId,
+    firstMsgDiscussionId,
+    deletedDiscussionId,
+    inlineDiscussionTopic,
+    isModalOpen,
+  } = state;
+
   if (forceUpdate) setForceUpdate(false);
 
   const value = {
@@ -93,8 +139,18 @@ const DiscussionContainer = ({ discussionId }) => {
     discussionId,
     draft,
     readOnly,
+    isModalOpen,
+    modalDiscussionId,
+    firstMsgDiscussionId,
+    deletedDiscussionId,
+    inlineDiscussionTopic,
     afterDelete: returnToInbox,
     setForceUpdate,
+    setFirstMsgDiscussionId,
+    setDeletedDiscussionId,
+    resetInlineTopic,
+    handleShowModal,
+    handleCloseModal,
   };
 
   return (
@@ -126,6 +182,13 @@ const DiscussionContainer = ({ discussionId }) => {
             />
           )}
         </ContentContainer>
+        {isModalOpen && (
+          <DiscussionModal
+            isOpen={isModalOpen}
+            mode="discussion"
+            handleClose={handleCloseModal}
+          />
+        )}
       </OuterContainer>
     </DiscussionContext.Provider>
   );

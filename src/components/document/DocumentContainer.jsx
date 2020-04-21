@@ -127,7 +127,11 @@ const DocumentContainer = ({
       {viewMode === 'discussions' && <DiscussionsList />}
 
       {isModalOpen && (
-        <DiscussionModal isOpen={isModalOpen} handleClose={handleCloseModal} />
+        <DiscussionModal
+          isOpen={isModalOpen}
+          mode="document"
+          handleClose={handleCloseModal}
+        />
       )}
     </DocumentContext.Provider>
   );
