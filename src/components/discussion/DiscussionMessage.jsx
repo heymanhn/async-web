@@ -18,7 +18,6 @@ import DraftSavedIndicator from './DraftSavedIndicator';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
-  cursor: 'default',
 }));
 
 const HeaderSection = styled.div(
