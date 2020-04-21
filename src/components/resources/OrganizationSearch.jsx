@@ -49,7 +49,9 @@ const OrganizationSearch = ({
   });
 
   const { data: workspacesData } = useQuery(orgWorkspacesQuery, {
-    variables: { queryParams: { size: ORG_WORKSPACES_QUERY_SIZE } },
+    variables: {
+      queryParams: { size: ORG_WORKSPACES_QUERY_SIZE, q: searchQuery },
+    },
     skip: resourceType === 'workspace',
   });
 
