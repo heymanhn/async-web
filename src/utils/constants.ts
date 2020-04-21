@@ -7,7 +7,7 @@ export const ORG_WORKSPACES_QUERY_SIZE = 100;
 export const DEFAULT_ACCESS_TYPE = 'collaborator';
 
 // Pusher
-export const PUSHER_CHANNEL_PREFIX = 'private-channel-';
+export const PUSHER_CHANNEL_PREFIX = 'private-channel';
 export const MINIMUM_PUSHER_SEND_INTERVAL = 500; // milliseconds
 export const PUSHER_SUBSCRIPTION_SUCCESS_EVENT =
   'pusher:subscription_succeeded';
