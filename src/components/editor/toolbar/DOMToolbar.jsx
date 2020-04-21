@@ -5,6 +5,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { SHOW_TOOLBAR_DELAY } from 'utils/constants';
@@ -34,22 +35,44 @@ const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
 
 const DOMToolbar = ({ children }) => {
   const ref = useRef(null);
-  const selection = window.getSelection();
-  const [isOpen, setIsOpen] = useState(selection && !selection.isCollapsed);
+  const editor = useSlate();
+  const [isOpen, setIsOpen] = useState(false);
   const { coords, rect } = useSelectionDimensions({
     source: 'DOMSelection',
   });
 
   const handleSelectionChange = useCallback(() => {
-    const isExpanded = !window.getSelection().isCollapsed;
-    if (isOpen !== isExpanded) {
-      const updateIsOpen = () => setIsOpen(isExpanded);
+    const domSelection = window.getSelection();
+    const isExpanded = !domSelection.isCollapsed;
 
+    /* There can be multiple toolbar components in the DOM, for each message in
+     * a discussion thread. Only enable the correct toolbar.
+     *
+     * Borrowed profusely from slate-react's onDOMSelectionChange() implementation.
+     *
+     * TODO (DISCUSSION V2): Consider only having one toolbar for the entire
+     * discussion page. Not sure if this is a necessary optimization.
+     */
+    const isValidSelection = () => {
+      const domRange =
+        domSelection &&
+        domSelection.rangeCount > 0 &&
+        domSelection.getRangeAt(0);
+      if (!domRange) return false;
+
+      const { startContainer, endContainer } = domRange;
+      return (
+        ReactEditor.hasDOMNode(editor, startContainer) &&
+        ReactEditor.hasDOMNode(editor, endContainer)
+      );
+    };
+
+    if (isValidSelection() && isOpen !== isExpanded) {
       // Better visuals: let selection be stabilized before showing the toolbar
       const interval = isOpen ? 0 : SHOW_TOOLBAR_DELAY;
-      setTimeout(updateIsOpen, interval);
+      setTimeout(() => setIsOpen(isExpanded), interval);
     }
-  }, [isOpen]);
+  }, [isOpen, editor]);
 
   useEffect(() => {
     window.document.addEventListener('selectionchange', handleSelectionChange);
