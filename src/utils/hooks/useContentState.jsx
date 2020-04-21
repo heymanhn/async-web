@@ -52,6 +52,7 @@ const useContentState = ({
 
   return {
     content,
+    setContent,
     setLastTouchedToNow,
 
     // For spreading into input elements, such as <Slate /> provider components

@@ -111,7 +111,6 @@ const DiscussionContainer = ({ discussionId }) => {
 
     // For creating inline discussion context later on
     if (content) newState.inlineDiscussionTopic = content;
-
     setState(oldState => ({ ...oldState, ...newState }));
   };
 

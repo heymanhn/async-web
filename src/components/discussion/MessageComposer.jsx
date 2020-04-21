@@ -70,7 +70,11 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
     discussionId,
   ]);
 
-  const { content: message, ...contentProps } = useContentState({
+  const {
+    content: message,
+    setContent: setMessage,
+    ...contentProps
+  } = useContentState({
     editor: messageEditor,
     resourceId: discussionId,
     initialContent: initialMessage,
@@ -82,7 +86,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
 
   const coreEditorProps = useCoreEditorProps(messageEditor, { readOnly });
   useDrafts(message, messageEditor, isSubmitting);
-  useAnnotationMonitor(message, messageEditor, readOnly);
+  useAnnotationMonitor(message, setMessage, messageEditor, readOnly);
 
   return (
     <Container mode={mode} {...props}>
