@@ -20,6 +20,7 @@ import {
   isUserOnboarding,
 } from 'utils/auth';
 import { RELATIVE_TIME_STRINGS } from 'utils/constants';
+import initPusher from 'utils/pusher';
 import fileSerializer from 'utils/graphql/fileSerializer';
 import getBreakpoint from 'utils/mediaQuery';
 import useAppPusher from 'utils/hooks/useAppPusher';
@@ -97,6 +98,8 @@ const client = new ApolloClient({
   resolvers: localResolvers,
 });
 
+const { pusher: pusherClient } = initPusher();
+
 // Initialize the local graphql cache
 const generateDefaultData = () => ({
   isLoggedIn: isLocalTokenPresent(),
@@ -124,12 +127,12 @@ moment.relativeTimeThreshold('d', 361);
 
 const App = () => {
   useNetworkObserver();
-  const { pusher } = useAppPusher();
+  useAppPusher(pusherClient);
   useFaviconIcon();
 
   const value = {
     ...DEFAULT_APP_CONTEXT,
-    pusher,
+    pusher: pusherClient,
   };
 
   return (

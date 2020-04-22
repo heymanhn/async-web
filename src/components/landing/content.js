@@ -114,7 +114,7 @@ const moduleList = [
     content: {
       title: 'Create a workspace for every team & project',
       description:
-        "Get organized with workspaces: documents, discussions, team, or projects. With workspaces, the right people don't get left out and information stays at one place.",
+        "Get organized with workspaces: documents, discussions, or files. With workspaces, the right people don't get left out and information stays at one place.",
       image: workspace,
     },
   },

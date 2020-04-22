@@ -17,12 +17,10 @@ import {
   PUSHER_CHANNEL_PREFIX,
 } from 'utils/constants';
 import { isDiscussionOpen } from 'utils/helpers';
-import initPusher from 'utils/pusher';
 
-const useAppPusher = () => {
+const useAppPusher = pusher => {
   const { userId } = getLocalUser();
   const client = useApolloClient(); // Workaround for the exhaustive-deps warnings
-  const { pusher } = initPusher();
   const channelName = `${PUSHER_CHANNEL_PREFIX}-${userId}`;
   const channel = pusher.subscribe(channelName);
 
