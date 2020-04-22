@@ -52,6 +52,7 @@ const useDocumentMutations = (editor = null) => {
     return Promise.reject(new Error('Failed to create new document'));
   };
 
+  // TODO (DISCUSSION V2): Can I pass in the content here?
   const handleUpdate = async () => {
     const { children } = editor;
     const { data } = await updateDocument({

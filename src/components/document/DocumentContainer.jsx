@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 
+import documentQuery from 'graphql/queries/document';
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
 import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
+
+import useDocumentEditor from 'components/editor/hooks/useDocumentEditor';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
-import documentQuery from 'graphql/queries/document';
 
 import NotFound from 'components/navigation/NotFound';
 import DiscussionModal from 'components/discussion/DiscussionModal';
@@ -19,6 +21,7 @@ const DocumentContainer = ({
   viewMode: initialViewMode,
 }) => {
   useUpdateSelectedResource(documentId);
+  const editor = useDocumentEditor(documentId);
 
   // TODO (HN): Instead of all these different discussionId fields, suggest
   // implementing a state machine that transitions from
@@ -97,6 +100,7 @@ const DocumentContainer = ({
 
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
+    editor,
     documentId,
     isModalOpen,
     modalDiscussionId,

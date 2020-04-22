@@ -1,9 +1,7 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { compose } from 'recompose';
-import { createEditor } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
-import { withHistory } from 'slate-history';
+
+import { Slate, Editable } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { DocumentContext } from 'utils/contexts';
@@ -17,13 +15,6 @@ import Editor from 'components/editor/Editor';
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
-import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
-import withInlineDiscussions from 'components/editor/withInlineDiscussions';
-import withLinks from 'components/editor/withLinks';
-import withPasteShim from 'components/editor/withPasteShim';
-import withSectionBreak from 'components/editor/withSectionBreak';
-import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
-import withImages from 'components/editor/withImages';
 
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
@@ -34,6 +25,7 @@ const DocumentEditable = styled(Editable)({
 const DocumentComposer = ({ initialContent, ...props }) => {
   const {
     documentId,
+    editor,
     deletedDiscussionId,
     firstMsgDiscussionId,
     readOnly,
@@ -41,45 +33,22 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     setFirstMsgDiscussionId,
   } = useContext(DocumentContext);
 
-  const baseEditor = useMemo(
-    () =>
-      compose(
-        withCustomKeyboardActions,
-        withMarkdownShortcuts,
-        withLinks,
-        withInlineDiscussions,
-        withSectionBreak,
-        withPasteShim,
-        withHistory,
-        withReact
-      )(createEditor()),
-    []
-  );
-
-  /* HN: Slate doesn't allow the editor instance to be re-created on subsequent
-   * renders, but we need to pass an updated resourceId into withImages().
-   * Workaround is to memoize the base editor instance, and extend it by calling
-   * withImages() with an updated documentId when needed.
-   */
-  const contentEditor = useMemo(() => withImages(baseEditor, documentId), [
-    baseEditor,
-    documentId,
-  ]);
-
   const {
     content,
     onChange,
     setLastTouchedToNow,
     ...contentProps
   } = useContentState({
-    editor: contentEditor,
+    editor,
     resourceId: documentId,
     initialContent,
   });
-  const { handleUpdate } = useDocumentMutations(contentEditor);
-  const coreEditorProps = useCoreEditorProps(contentEditor);
+
+  // TODO (DISCUSSION V2): Why can't we just pass in the content?
+  const { handleUpdate } = useDocumentMutations(editor);
+  const coreEditorProps = useCoreEditorProps(editor);
   const handleNewOperations = useDocumentOperationsPusher(
-    contentEditor,
+    editor,
     setLastTouchedToNow
   );
 
@@ -93,7 +62,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   // TODO (DISCUSSION V2): This is copy-pasta'ed into MessageComposer for
   // dealing with updating inline discussions. Can this be DRY'ed up?
   if (firstMsgDiscussionId) {
-    Editor.updateInlineAnnotation(contentEditor, firstMsgDiscussionId, {
+    Editor.updateInlineAnnotation(editor, firstMsgDiscussionId, {
       isInitialDraft: false,
     });
     setFirstMsgDiscussionId(null);
@@ -102,12 +71,12 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   // TODO (DISCUSSION V2): This is copy-pasta'ed into MessageComposer for
   // dealing with updating inline discussions. Can this be DRY'ed up?
   if (deletedDiscussionId) {
-    Editor.removeInlineAnnotation(contentEditor, deletedDiscussionId);
+    Editor.removeInlineAnnotation(editor, deletedDiscussionId);
     setDeletedDiscussionId(null);
   }
 
   return (
-    <Slate editor={contentEditor} onChange={onChangeWrapper} {...contentProps}>
+    <Slate editor={editor} onChange={onChangeWrapper} {...contentProps}>
       <DocumentEditable readOnly={readOnly} {...props} {...coreEditorProps} />
       <DocumentToolbar />
       <DefaultPlaceholder />
