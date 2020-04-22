@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
+import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 import documentQuery from 'graphql/queries/document';
 
@@ -61,12 +62,7 @@ const DocumentContainer = ({
   if (!data) return null;
   if (error || !data.document) return <NotFound />;
   const { channelId, tags } = data.document;
-  const readOnly = (tags || []).includes('viewer');
-
-  const isUnread = () => {
-    const safeTags = tags || [];
-    return safeTags.includes('new_document') || safeTags.includes('new_edits');
-  };
+  const readOnly = isResourceReadOnly(tags);
 
   const handleShowModal = (discussionId, content) => {
     const newState = {
@@ -123,7 +119,7 @@ const DocumentContainer = ({
   return (
     <DocumentContext.Provider value={value}>
       <NavigationBar />
-      {viewMode === 'content' && <Document isUnread={isUnread()} />}
+      {viewMode === 'content' && <Document isUnread={isResourceUnread(tags)} />}
       {viewMode === 'discussions' && <DiscussionsList />}
 
       {isModalOpen && (

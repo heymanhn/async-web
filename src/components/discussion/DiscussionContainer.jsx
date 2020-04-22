@@ -8,6 +8,7 @@ import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
+import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import NavigationBar from 'components/navigation/NavigationBar';
@@ -87,14 +88,7 @@ const DiscussionContainer = ({ discussionId }) => {
 
   if ((draft || !messageCount) && !isComposing) startComposing();
 
-  const readOnly = (tags || []).includes('viewer');
-  const isUnread = () => {
-    const safeTags = tags || [];
-    return (
-      safeTags.includes('new_messages') || safeTags.includes('new_discussion')
-    );
-  };
-
+  const readOnly = isResourceReadOnly(tags);
   const returnToInbox = () => navigate('/inbox');
 
   const handleCancelCompose = () => {
@@ -163,7 +157,7 @@ const DiscussionContainer = ({ discussionId }) => {
           />
           {!!messageCount && (
             <DiscussionThread
-              isUnread={isUnread()}
+              isUnread={isResourceUnread(tags)}
               isComposingFirstMsg={!messageCount}
             />
           )}

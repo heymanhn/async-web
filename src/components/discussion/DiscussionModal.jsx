@@ -9,6 +9,7 @@ import discussionQuery from 'graphql/queries/discussion';
 import { DiscussionContext, DocumentContext } from 'utils/contexts';
 // import useMountEffect from 'utils/hooks/useMountEffect';
 import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
+import { isResourceUnread } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
 import ContextComposer from './ContextComposer';
@@ -83,22 +84,12 @@ const DiscussionModal = ({ isOpen, mode, handleClose, ...props }) => {
 
   if (!data || !data.discussion) return null;
 
-  const { draft, messageCount, topic } = data.discussion;
+  const { draft, messageCount, topic, tags } = data.discussion;
   if (draft && !isComposing) startComposing();
 
   const handleCancelCompose = () => {
     stopComposing();
     if (!modalDiscussionId) handleClose();
-  };
-
-  const isUnread = () => {
-    if (!data) return false;
-
-    const { tags } = data.discussion;
-    const safeTags = tags || [];
-    return (
-      safeTags.includes('new_messages') || safeTags.includes('new_discussion')
-    );
   };
 
   const handleCreateMessage = newDiscussionId => {
@@ -154,7 +145,7 @@ const DiscussionModal = ({ isOpen, mode, handleClose, ...props }) => {
         {modalDiscussionId && (
           <DiscussionThread
             isComposingFirstMsg={isComposingFirstMsg}
-            isUnread={isUnread()}
+            isUnread={isResourceUnread(tags)}
           />
         )}
         {readyToCompose ? (

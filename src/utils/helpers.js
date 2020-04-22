@@ -53,8 +53,13 @@ export const isResourceUnread = tags => {
     tags.includes('new_discussions') ||
     tags.includes('new_document') ||
     tags.includes('new_edits') ||
-    tags.includes('new_discussion')
+    tags.includes('new_discussion') ||
+    tags.includes('new_updates')
   );
+};
+
+export const isResourceReadOnly = tags => {
+  return tags.includes('viewer');
 };
 
 export const camelCaseObjString = str => {
