@@ -133,7 +133,11 @@ const DraftTooltip = ({ discussionId, isOpen, parentRef, mode }) => {
 DraftTooltip.propTypes = {
   discussionId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  mode: PropTypes.oneOf(['document', 'discussion']).isRequired,
+  mode: PropTypes.oneOf(['document', 'discussion']),
+};
+
+DraftTooltip.defaultProps = {
+  mode: 'document', // for backwards compatibility
 };
 
 export default DraftTooltip;

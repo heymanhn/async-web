@@ -167,7 +167,11 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef, mode }) => {
 InlineDiscussionPreview.propTypes = {
   discussionId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  mode: PropTypes.oneOf(['document', 'discussion']).isRequired,
+  mode: PropTypes.oneOf(['document', 'discussion']),
+};
+
+InlineDiscussionPreview.defaultProps = {
+  mode: 'document', // for backwards compatibility
 };
 
 export default InlineDiscussionPreview;
