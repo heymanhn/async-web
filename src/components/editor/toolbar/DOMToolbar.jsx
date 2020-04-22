@@ -67,11 +67,13 @@ const DOMToolbar = ({ children }) => {
       );
     };
 
-    if (isValidSelection() && isOpen !== isExpanded) {
-      // Better visuals: let selection be stabilized before showing the toolbar
-      const interval = isOpen ? 0 : SHOW_TOOLBAR_DELAY;
-      setTimeout(() => setIsOpen(isExpanded), interval);
-    }
+    if (isValidSelection()) {
+      if (isOpen !== isExpanded) {
+        // Better visuals: let selection be stabilized before showing the toolbar
+        const interval = isOpen ? 0 : SHOW_TOOLBAR_DELAY;
+        setTimeout(() => setIsOpen(isExpanded), interval);
+      }
+    } else if (isOpen) setIsOpen(false); // Prevent orphaned toolbars from remaining visible
   }, [isOpen, editor]);
 
   useEffect(() => {
