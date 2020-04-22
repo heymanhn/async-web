@@ -90,6 +90,8 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     handleNewOperations();
   };
 
+  // TODO (DISCUSSION V2): This is copy-pasta'ed into MessageComposer for
+  // dealing with updating inline discussions. Can this be DRY'ed up?
   if (firstMsgDiscussionId) {
     Editor.updateInlineAnnotation(contentEditor, firstMsgDiscussionId, {
       isInitialDraft: false,
@@ -97,6 +99,8 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     setFirstMsgDiscussionId(null);
   }
 
+  // TODO (DISCUSSION V2): This is copy-pasta'ed into MessageComposer for
+  // dealing with updating inline discussions. Can this be DRY'ed up?
   if (deletedDiscussionId) {
     Editor.removeInlineAnnotation(contentEditor, deletedDiscussionId);
     setDeletedDiscussionId(null);

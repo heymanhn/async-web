@@ -13,6 +13,7 @@ import useDrafts from 'utils/hooks/useDrafts';
 import useMessageMutations from 'utils/hooks/useMessageMutations';
 
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
+import Editor from 'components/editor/Editor';
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import DisplayedMessageToolbar from 'components/editor/toolbar/DisplayedMessageToolbar';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
@@ -41,7 +42,14 @@ const MessageEditable = styled(Editable)(({ ismodal }) => ({
 }));
 
 const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
-  const { discussionId, isModal } = useContext(DiscussionContext);
+  const {
+    discussionId,
+    isModal,
+    firstMsgDiscussionId,
+    deletedDiscussionId,
+    setFirstMsgDiscussionId,
+    setDeletedDiscussionId,
+  } = useContext(DiscussionContext);
   const { mode } = useContext(MessageContext);
   const readOnly = mode === 'display';
 
@@ -87,6 +95,22 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
   const coreEditorProps = useCoreEditorProps(messageEditor, { readOnly });
   useDrafts(message, messageEditor, isSubmitting);
   useAnnotationMonitor(message, setMessage, messageEditor, readOnly);
+
+  // TODO (DISCUSSION V2): This is copy-pasta'ed from DocumentComposer for
+  // dealing with updating inline discussions. Can this be DRY'ed up?
+  if (firstMsgDiscussionId) {
+    Editor.updateInlineAnnotation(messageEditor, firstMsgDiscussionId, {
+      isInitialDraft: false,
+    });
+    setFirstMsgDiscussionId(null);
+  }
+
+  // TODO (DISCUSSION V2): This is copy-pasta'ed from DocumentComposer for
+  // dealing with updating inline discussions. Can this be DRY'ed up?
+  if (deletedDiscussionId) {
+    Editor.removeInlineAnnotation(messageEditor, deletedDiscussionId);
+    setDeletedDiscussionId(null);
+  }
 
   return (
     <Container mode={mode} {...props}>
