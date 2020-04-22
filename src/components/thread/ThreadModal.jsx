@@ -13,10 +13,10 @@ import { isResourceUnread } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
 import Editor from 'components/editor/Editor';
+import DiscussionThread from 'components/discussion/DiscussionThread';
+import DiscussionMessage from 'components/discussion/DiscussionMessage';
+import AddReplyBox from 'components/discussion/AddReplyBox';
 import ContextComposer from './ContextComposer';
-import DiscussionThread from './DiscussionThread';
-import DiscussionMessage from './DiscussionMessage';
-import AddReplyBox from './AddReplyBox';
 
 const ESCAPE_HOTKEY = 'Escape';
 
@@ -39,7 +39,7 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
   })
 );
 
-const DiscussionModal = ({
+const ThreadModal = ({
   isOpen,
   mode,
   editor, // Reference to the editor that contains the content to be annotated
@@ -167,11 +167,11 @@ const DiscussionModal = ({
   );
 };
 
-DiscussionModal.propTypes = {
+ThreadModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(['document', 'discussion']).isRequired,
   editor: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
 };
 
-export default DiscussionModal;
+export default ThreadModal;

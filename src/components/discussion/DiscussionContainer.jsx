@@ -13,11 +13,11 @@ import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import NavigationBar from 'components/navigation/NavigationBar';
 import NotFound from 'components/navigation/NotFound';
+import ThreadModal from 'components/thread/ThreadModal';
 import TopicComposer from './TopicComposer';
 import DiscussionMessage from './DiscussionMessage';
 import DiscussionThread from './DiscussionThread';
 import AddReplyBox from './AddReplyBox';
-import DiscussionModal from './DiscussionModal';
 
 const OuterContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -176,7 +176,7 @@ const DiscussionContainer = ({ discussionId }) => {
           )}
         </ContentContainer>
         {isModalOpen && (
-          <DiscussionModal
+          <ThreadModal
             isOpen={isModalOpen}
             mode="discussion"
             handleClose={handleCloseModal}

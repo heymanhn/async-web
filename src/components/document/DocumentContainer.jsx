@@ -10,7 +10,7 @@ import useDocumentEditor from 'components/editor/hooks/useDocumentEditor';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import NotFound from 'components/navigation/NotFound';
-import DiscussionModal from 'components/discussion/DiscussionModal';
+import ThreadModal from 'components/thread/ThreadModal';
 import NavigationBar from 'components/navigation/NavigationBar';
 import Document from './Document';
 import DiscussionsList from './DiscussionsList';
@@ -115,7 +115,7 @@ const DocumentContainer = ({
       {viewMode === 'discussions' && <DiscussionsList />}
 
       {isModalOpen && (
-        <DiscussionModal
+        <ThreadModal
           isOpen={isModalOpen}
           mode="document"
           editor={editor}

@@ -11,7 +11,7 @@ import useContextEditorProps from 'components/editor/hooks/useContextEditorProps
 import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withLinks from 'components/editor/withLinks';
 import withSectionBreak from 'components/editor/withSectionBreak';
-import useContextGenerator from './useContextGenerator';
+import useContextGenerator from './hooks/useContextGenerator';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.grey7,

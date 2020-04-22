@@ -10,7 +10,7 @@ import localDeleteDiscussionMutation from 'graphql/mutations/local/deleteDiscuss
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 
 import DiscussionMessage from 'components/discussion/DiscussionMessage';
-import ContextComposer from 'components/discussion/ContextComposer';
+import ContextComposer from 'components/thread/ContextComposer';
 import AvatarList from 'components/shared/AvatarList';
 import NotFound from 'components/navigation/NotFound';
 import DiscussionListItemHeader from './DiscussionListItemHeader';
