@@ -11,7 +11,7 @@ import { track } from 'utils/analytics';
 
 import { toPlainText } from 'components/editor/utils';
 
-const useDocumentMutations = (editor = null) => {
+const useDocumentMutations = () => {
   const { documentId, afterUpdate, afterUpdateTitle, afterDelete } = useContext(
     DocumentContext
   );
@@ -52,17 +52,15 @@ const useDocumentMutations = (editor = null) => {
     return Promise.reject(new Error('Failed to create new document'));
   };
 
-  // TODO (DISCUSSION V2): Can I pass in the content here?
-  const handleUpdate = async () => {
-    const { children } = editor;
+  const handleUpdate = async ({ content }) => {
     const { data } = await updateDocument({
       variables: {
         documentId,
         input: {
           body: {
             formatter: 'slatejs',
-            text: toPlainText(children),
-            payload: JSON.stringify(children),
+            text: toPlainText(content),
+            payload: JSON.stringify(content),
           },
         },
       },

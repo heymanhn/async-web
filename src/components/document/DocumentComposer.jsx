@@ -44,8 +44,7 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     initialContent,
   });
 
-  // TODO (DISCUSSION V2): Why can't we just pass in the content?
-  const { handleUpdate } = useDocumentMutations(editor);
+  const { handleUpdate } = useDocumentMutations();
   const coreEditorProps = useCoreEditorProps(editor);
   const handleNewOperations = useDocumentOperationsPusher(
     editor,

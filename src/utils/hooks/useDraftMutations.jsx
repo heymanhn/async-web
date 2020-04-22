@@ -11,7 +11,7 @@ import { DiscussionContext } from 'utils/contexts';
 
 import { DEFAULT_ELEMENT, toPlainText } from 'components/editor/utils';
 
-const useDraftMutations = (editor = null) => {
+const useDraftMutations = () => {
   const client = useApolloClient();
   const { discussionId, afterCreateDraft } = useContext(DiscussionContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,11 +33,11 @@ const useDraftMutations = (editor = null) => {
 
   // TODO (DISCUSSION V2): clarify this logic when renaming inline discussions
   // as threads
-  const handleSaveDraft = async ({ isThread } = {}) => {
+  const handleSaveDraft = async ({
+    content = DEFAULT_ELEMENT(),
+    isThread,
+  } = {}) => {
     setIsSubmitting(true);
-
-    const { children } = editor || {};
-    const content = children || DEFAULT_ELEMENT();
 
     let draftDiscussionId = isThread ? null : discussionId;
     if (!draftDiscussionId) {
