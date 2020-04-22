@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { DiscussionContext } from 'utils/contexts';
 import useMountEffect from 'utils/hooks/useMountEffect';
 
-import useContextEditorProps from 'components/editor/useContextEditorProps';
+import useContextEditorProps from 'components/editor/hooks/useContextEditorProps';
 import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withLinks from 'components/editor/withLinks';
 import withSectionBreak from 'components/editor/withSectionBreak';

@@ -12,7 +12,7 @@ import useContentState from 'utils/hooks/useContentState';
 import useDrafts from 'utils/hooks/useDrafts';
 import useMessageMutations from 'utils/hooks/useMessageMutations';
 
-import useCoreEditorProps from 'components/editor/useCoreEditorProps';
+import useCoreEditorProps from 'components/editor/hooks/useCoreEditorProps';
 import Editor from 'components/editor/Editor';
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import DisplayedMessageToolbar from 'components/editor/toolbar/DisplayedMessageToolbar';

@@ -6,9 +6,9 @@ import {
   softBreak,
   exitCodeHighlight,
   nestedListHotkeys,
-} from './hotkeys';
-import Leaf from './Leaf';
-import Element from './Element';
+} from '../hotkeys';
+import Leaf from '../Leaf';
+import Element from '../Element';
 
 const useCoreEditorProps = (editor, { readOnly } = {}) => {
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);

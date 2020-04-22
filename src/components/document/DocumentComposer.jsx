@@ -12,7 +12,7 @@ import useDocumentOperationsPusher from 'utils/hooks/useDocumentOperationsPusher
 
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import Editor from 'components/editor/Editor';
-import useCoreEditorProps from 'components/editor/useCoreEditorProps';
+import useCoreEditorProps from 'components/editor/hooks/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 
