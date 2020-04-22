@@ -7,20 +7,24 @@ import { withHistory } from 'slate-history';
 import styled from '@emotion/styled';
 
 import { DiscussionContext, MessageContext } from 'utils/contexts';
+import useAnnotationMonitor from 'utils/hooks/useAnnotationMonitor';
 import useContentState from 'utils/hooks/useContentState';
 import useDrafts from 'utils/hooks/useDrafts';
+import useMessageMutations from 'utils/hooks/useMessageMutations';
 
 import useCoreEditorProps from 'components/editor/useCoreEditorProps';
+import Editor from 'components/editor/Editor';
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
+import DisplayedMessageToolbar from 'components/editor/toolbar/DisplayedMessageToolbar';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
 import withLinks from 'components/editor/withLinks';
+import withInlineDiscussions from 'components/editor/withInlineDiscussions';
 import withSectionBreak from 'components/editor/withSectionBreak';
 import withPasteShim from 'components/editor/withPasteShim';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import withImages from 'components/editor/withImages';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
-import useMessageMutations from './useMessageMutations';
 import MessageActions from './MessageActions';
 
 const Container = styled.div(({ mode }) => ({
@@ -38,7 +42,14 @@ const MessageEditable = styled(Editable)(({ ismodal }) => ({
 }));
 
 const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
-  const { discussionId, isModal } = useContext(DiscussionContext);
+  const {
+    discussionId,
+    isModal,
+    firstMsgDiscussionId,
+    deletedDiscussionId,
+    setFirstMsgDiscussionId,
+    setDeletedDiscussionId,
+  } = useContext(DiscussionContext);
   const { mode } = useContext(MessageContext);
   const readOnly = mode === 'display';
 
@@ -48,6 +59,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
         withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
+        withInlineDiscussions,
         withSectionBreak,
         withPasteShim,
         withHistory,
@@ -57,16 +69,20 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
   );
 
   /* HN: Slate doesn't allow the editor instance to be re-created on subsequent
-   * renders, but we need to pass an updated resourceId into withImages().
+   * renders, but we need to pass component-specific data to some HOCs.
    * Workaround is to memoize the base editor instance, and extend it by calling
-   * withImages() with an updated discussionId when needed.
+   * withImages() with the updated variables.
    */
   const messageEditor = useMemo(() => withImages(baseEditor, discussionId), [
     baseEditor,
     discussionId,
   ]);
 
-  const { content: message, ...contentProps } = useContentState({
+  const {
+    content: message,
+    setContent: setMessage,
+    ...contentProps
+  } = useContentState({
     editor: messageEditor,
     resourceId: discussionId,
     initialContent: initialMessage,
@@ -78,6 +94,23 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
 
   const coreEditorProps = useCoreEditorProps(messageEditor, { readOnly });
   useDrafts(message, messageEditor, isSubmitting);
+  useAnnotationMonitor(message, setMessage, messageEditor, readOnly);
+
+  // TODO (DISCUSSION V2): This is copy-pasta'ed from DocumentComposer for
+  // dealing with updating inline discussions. Can this be DRY'ed up?
+  if (firstMsgDiscussionId) {
+    Editor.updateInlineAnnotation(messageEditor, firstMsgDiscussionId, {
+      isInitialDraft: false,
+    });
+    setFirstMsgDiscussionId(null);
+  }
+
+  // TODO (DISCUSSION V2): This is copy-pasta'ed from DocumentComposer for
+  // dealing with updating inline discussions. Can this be DRY'ed up?
+  if (deletedDiscussionId) {
+    Editor.removeInlineAnnotation(messageEditor, deletedDiscussionId);
+    setDeletedDiscussionId(null);
+  }
 
   return (
     <Container mode={mode} {...props}>
@@ -88,7 +121,8 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
           readOnly={readOnly}
           {...coreEditorProps}
         />
-        <MessageToolbar />
+        {readOnly && <DisplayedMessageToolbar />}
+        {!readOnly && <MessageToolbar />}
         <DefaultPlaceholder />
         <CompositionMenuButton />
         {!readOnly && (

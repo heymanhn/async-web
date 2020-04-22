@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Transforms, Range } from 'slate';
-import { useSlate } from 'slate-react';
+import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
-import { DocumentContext } from 'utils/contexts';
 import useDraftMutations from 'utils/hooks/useDraftMutations';
 import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
@@ -19,20 +19,37 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
   margin: '5px 10px',
 });
 
-const InlineDiscussionButton = props => {
+const InlineDiscussionButton = ({ handleShowModal, ...props }) => {
   const editor = useSlate();
-  const { handleShowModal } = useContext(DocumentContext);
   const { handleSaveDraft, isSubmitting } = useDraftMutations();
   const { userId } = getLocalUser();
 
+  const makeDOMSelection = () => {
+    const domSelection = window.getSelection();
+    const domRange =
+      domSelection && domSelection.rangeCount > 0 && domSelection.getRangeAt(0);
+
+    if (!domRange) return;
+    const range = ReactEditor.toSlateRange(editor, domRange);
+    Transforms.select(editor, range);
+  };
+
   const handleClick = async () => {
     // Create an empty draft discussion
-    const { discussionId } = await handleSaveDraft();
+    const { discussionId } = await handleSaveDraft({ isThread: true });
+
+    // Special case for starting inline discussion from read-only message content
+    let mode = 'document';
+    if (!editor.selection) {
+      mode = 'discussion';
+      makeDOMSelection();
+    }
 
     Editor.createInlineAnnotation(editor, {
       discussionId,
       authorId: userId,
       isInitialDraft: true, // Toggled to false once first message is created
+      mode,
     });
 
     // Remove all the top-level nodes outside of the current selection
@@ -59,6 +76,10 @@ const InlineDiscussionButton = props => {
       {!isSubmitting && <ButtonIcon icon="comment-plus" isActive={false} />}
     </ToolbarButton>
   );
+};
+
+InlineDiscussionButton.propTypes = {
+  handleShowModal: PropTypes.func.isRequired,
 };
 
 export default InlineDiscussionButton;

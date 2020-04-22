@@ -18,7 +18,6 @@ import DraftSavedIndicator from './DraftSavedIndicator';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
-  cursor: 'default',
 }));
 
 const HeaderSection = styled.div(
@@ -41,6 +40,8 @@ const HeaderSection = styled.div(
   }
 );
 
+// TODO (DISCUSSION V2): Add this padding to the text itself. This helps
+// with selection via cursor.
 const StyledMessageComposer = styled(MessageComposer)({
   padding: '0px 30px 15px',
 });

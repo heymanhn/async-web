@@ -18,7 +18,7 @@ const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
   boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.25)',
   fontSize: '16px',
   height: '40px',
-  marginTop: '-6px',
+  marginTop: '0px',
   opacity: isOpen ? 1 : 0,
   padding: '0px 5px',
   position: 'absolute',

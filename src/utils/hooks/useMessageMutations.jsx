@@ -36,7 +36,7 @@ const useMessageMutations = ({ message = null } = {}) => {
   });
   const [localAddMessage] = useMutation(addNewMsgMutation);
 
-  async function handleCreate() {
+  const handleCreate = async () => {
     setIsSubmitting(true);
 
     let messageDiscussionId = discussionId;
@@ -88,9 +88,9 @@ const useMessageMutations = ({ message = null } = {}) => {
       });
       afterCreate(messageDiscussionId);
     }
-  }
+  };
 
-  async function handleUpdate() {
+  const handleUpdate = async () => {
     setIsSubmitting(true);
 
     const { data } = await updateMessage({
@@ -112,12 +112,12 @@ const useMessageMutations = ({ message = null } = {}) => {
       setMode('display');
       track('Message edited', { messageId, discussionId });
     }
-  }
+  };
 
-  function handleDelete() {
+  const handleDelete = async () => {
     deleteMessage();
     localDeleteMessage();
-  }
+  };
 
   return {
     handleCreate,
