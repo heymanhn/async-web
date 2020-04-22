@@ -11,7 +11,6 @@ import useDocumentMutations from 'utils/hooks/useDocumentMutations';
 import useDocumentOperationsPusher from 'utils/hooks/useDocumentOperationsPusher';
 
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
-import Editor from 'components/editor/Editor';
 import useCoreEditorProps from 'components/editor/hooks/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
@@ -23,15 +22,7 @@ const DocumentEditable = styled(Editable)({
 });
 
 const DocumentComposer = ({ initialContent, ...props }) => {
-  const {
-    documentId,
-    editor,
-    deletedDiscussionId,
-    firstMsgDiscussionId,
-    readOnly,
-    setDeletedDiscussionId,
-    setFirstMsgDiscussionId,
-  } = useContext(DocumentContext);
+  const { documentId, editor, readOnly } = useContext(DocumentContext);
 
   const {
     content,
@@ -57,22 +48,6 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     onChange(value);
     handleNewOperations();
   };
-
-  // TODO (DISCUSSION V2): This is copy-pasta'ed into MessageComposer for
-  // dealing with updating inline discussions. Can this be DRY'ed up?
-  if (firstMsgDiscussionId) {
-    Editor.updateInlineAnnotation(editor, firstMsgDiscussionId, {
-      isInitialDraft: false,
-    });
-    setFirstMsgDiscussionId(null);
-  }
-
-  // TODO (DISCUSSION V2): This is copy-pasta'ed into MessageComposer for
-  // dealing with updating inline discussions. Can this be DRY'ed up?
-  if (deletedDiscussionId) {
-    Editor.removeInlineAnnotation(editor, deletedDiscussionId);
-    setDeletedDiscussionId(null);
-  }
 
   return (
     <Slate editor={editor} onChange={onChangeWrapper} {...contentProps}>

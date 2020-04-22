@@ -29,18 +29,12 @@ const DocumentContainer = ({
   const [state, setState] = useState({
     viewMode: initialViewMode,
     modalDiscussionId: initialDiscussionId,
-    firstMsgDiscussionId: null,
-    deletedDiscussionId: null,
     isModalOpen: !!initialDiscussionId,
     inlineDiscussionTopic: null,
     forceUpdate: false,
   });
 
   const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
-  const setFirstMsgDiscussionId = id =>
-    setState(old => ({ ...old, firstMsgDiscussionId: id }));
-  const setDeletedDiscussionId = id =>
-    setState(old => ({ ...old, deletedDiscussionId: id }));
   const resetInlineTopic = () =>
     setState(old => ({ ...old, inlineDiscussionTopic: null }));
   const setForceUpdate = fu => setState(old => ({ ...old, forceUpdate: fu }));
@@ -89,8 +83,6 @@ const DocumentContainer = ({
 
   const {
     modalDiscussionId,
-    firstMsgDiscussionId,
-    deletedDiscussionId,
     inlineDiscussionTopic,
     isModalOpen,
     viewMode,
@@ -104,15 +96,11 @@ const DocumentContainer = ({
     documentId,
     isModalOpen,
     modalDiscussionId,
-    firstMsgDiscussionId,
-    deletedDiscussionId,
     inlineDiscussionTopic,
     viewMode,
     channelId,
     readOnly,
 
-    setFirstMsgDiscussionId,
-    setDeletedDiscussionId,
     setForceUpdate,
     setViewMode,
     resetInlineTopic,
@@ -130,6 +118,7 @@ const DocumentContainer = ({
         <DiscussionModal
           isOpen={isModalOpen}
           mode="document"
+          editor={editor}
           handleClose={handleCloseModal}
         />
       )}

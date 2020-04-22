@@ -20,8 +20,6 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   isModalOpen: false,
   readOnly: false,
   modalDiscussionId: null,
-  firstMsgDiscussionId: null,
-  deletedDiscussionId: null,
   inlineDiscussionTopic: null,
   viewMode: null,
   channelId: null,

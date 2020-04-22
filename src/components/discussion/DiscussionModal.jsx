@@ -12,6 +12,7 @@ import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 import { isResourceUnread } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
+import Editor from 'components/editor/Editor';
 import ContextComposer from './ContextComposer';
 import DiscussionThread from './DiscussionThread';
 import DiscussionMessage from './DiscussionMessage';
@@ -38,13 +39,17 @@ const StyledDiscussionMessage = styled(DiscussionMessage)(
   })
 );
 
-const DiscussionModal = ({ isOpen, mode, handleClose, ...props }) => {
+const DiscussionModal = ({
+  isOpen,
+  mode,
+  editor, // Reference to the editor that contains the content to be annotated
+  handleClose,
+  ...props
+}) => {
   const modalRef = useRef(null);
   const {
     modalDiscussionId,
     inlineDiscussionTopic,
-    setDeletedDiscussionId,
-    setFirstMsgDiscussionId,
     handleShowModal,
   } = useContext(mode === 'document' ? DocumentContext : DiscussionContext);
   const discContext = useContext(DiscussionContext);
@@ -95,20 +100,16 @@ const DiscussionModal = ({ isOpen, mode, handleClose, ...props }) => {
   const handleCreateMessage = newDiscussionId => {
     stopComposing();
 
-    /* The editor controller is in <DocumentComposer />. Setting the state
-     * propagates the message down to the composer to delete the inline discussion.
-     *
-     * Only need to set this once, when the first message in the discussion
-     * is created.
-     */
-    if (!messageCount) setFirstMsgDiscussionId(newDiscussionId);
+    // Only need to set this once, when the first message is created.
+    if (!messageCount) {
+      Editor.updateInlineAnnotation(editor, newDiscussionId, {
+        isInitialDraft: false,
+      });
+    }
   };
 
   const afterDelete = () => {
-    // The editor controller is in <DocumentComposer />. Setting the state
-    // propagates the message down to the composer to delete the inline discussion
-    setDeletedDiscussionId(modalDiscussionId);
-
+    Editor.removeInlineAnnotation(editor, modalDiscussionId);
     handleClose();
   };
 
@@ -169,6 +170,7 @@ const DiscussionModal = ({ isOpen, mode, handleClose, ...props }) => {
 DiscussionModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(['document', 'discussion']).isRequired,
+  editor: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
 };
 
