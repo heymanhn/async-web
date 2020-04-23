@@ -2,11 +2,11 @@ import { useContext } from 'react';
 import useAutoSave from 'utils/hooks/useAutoSave';
 import { MessageContext } from 'utils/contexts';
 
-import useDraftMutations from 'utils/hooks/useDraftMutations';
+import useMessageDraftMutations from './useMessageDraftMutations';
 
-const useDrafts = (message, editor, isSubmitting) => {
+const useDrafts = (message, isSubmitting) => {
   const { mode } = useContext(MessageContext);
-  const { handleSaveDraft } = useDraftMutations(editor);
+  const { handleSaveDraft } = useMessageDraftMutations();
 
   const isDisabled = mode !== 'compose' || isSubmitting;
   useAutoSave({ content: message, handleSave: handleSaveDraft, isDisabled });

@@ -5,11 +5,11 @@ import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { DiscussionContext, MessageContext } from 'utils/contexts';
-import useDraftMutations from 'utils/hooks/useDraftMutations';
 import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
 import Button from 'components/shared/Button';
 import Editor from 'components/editor/Editor';
+import useMessageDraftMutations from './hooks/useMessageDraftMutations';
 
 const SUBMIT_HOTKEY = 'cmd+enter';
 const ESCAPE_HOTKEY = 'Escape';
@@ -38,7 +38,7 @@ const StyledButton = styled(Button)({
 const MessageActions = ({ handleSubmit, isSubmitting }) => {
   const { draft } = useContext(DiscussionContext);
   const { mode, handleCancel } = useContext(MessageContext);
-  const { handleDeleteDraft } = useDraftMutations();
+  const { handleDeleteDraft } = useMessageDraftMutations();
   const editor = useSlate();
   const isEmptyContent = Editor.isEmptyContent(editor);
 

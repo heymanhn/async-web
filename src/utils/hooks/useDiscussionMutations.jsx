@@ -13,7 +13,10 @@ import { track } from 'utils/analytics';
 import { deserializeString, toPlainText } from 'components/editor/utils';
 
 const useDiscussionMutations = () => {
-  const { discussionId, afterDelete } = useContext(DiscussionContext);
+  const { documentId } = useContext(DocumentContext);
+  const { context, discussionId, afterCreate, afterDelete } = useContext(
+    DiscussionContext
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
 
@@ -22,9 +25,6 @@ const useDiscussionMutations = () => {
   const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
     variables: { discussionId },
   });
-
-  const { documentId } = useContext(DocumentContext);
-  const { context, afterCreate } = useContext(DiscussionContext);
 
   const handleCreate = async title => {
     setIsSubmitting(true);

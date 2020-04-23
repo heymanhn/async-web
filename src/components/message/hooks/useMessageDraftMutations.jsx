@@ -11,9 +11,9 @@ import { DiscussionContext } from 'utils/contexts';
 
 import { DEFAULT_ELEMENT, toPlainText } from 'components/editor/utils';
 
-const useDraftMutations = () => {
+const useMessageDraftMutations = () => {
   const client = useApolloClient();
-  const { discussionId, afterCreateDraft } = useContext(DiscussionContext);
+  const { discussionId } = useContext(DiscussionContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleCreate: handleCreateDiscussion,
@@ -66,8 +66,6 @@ const useDraftMutations = () => {
         },
       });
 
-      afterCreateDraft(draftDiscussionId);
-
       setIsSubmitting(false);
       return Promise.resolve({ discussionId: draftDiscussionId });
     }
@@ -107,4 +105,4 @@ const useDraftMutations = () => {
   };
 };
 
-export default useDraftMutations;
+export default useMessageDraftMutations;

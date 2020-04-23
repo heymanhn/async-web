@@ -14,8 +14,8 @@ import { isResourceUnread } from 'utils/helpers';
 import Modal from 'components/shared/Modal';
 import Editor from 'components/editor/Editor';
 import DiscussionThread from 'components/discussion/DiscussionThread';
-import DiscussionMessage from 'components/discussion/DiscussionMessage';
 import AddReplyBox from 'components/discussion/AddReplyBox';
+import Message from 'components/message/Message';
 import ContextComposer from './ContextComposer';
 
 const ESCAPE_HOTKEY = 'Escape';
@@ -30,14 +30,12 @@ const StyledContextComposer = styled(ContextComposer)({
   borderTopRightRadius: '5px',
 });
 
-const StyledDiscussionMessage = styled(DiscussionMessage)(
-  ({ theme: { colors } }) => ({
-    borderTop: `1px solid ${colors.borderGrey}`,
-    borderBottomLeftRadius: '5px',
-    borderBottomRightRadius: '5px',
-    paddingBottom: '25px',
-  })
-);
+const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
+  borderTop: `1px solid ${colors.borderGrey}`,
+  borderBottomLeftRadius: '5px',
+  borderBottomRightRadius: '5px',
+  paddingBottom: '25px',
+}));
 
 const ThreadModal = ({
   isOpen,
@@ -150,7 +148,7 @@ const ThreadModal = ({
           />
         )}
         {readyToCompose ? (
-          <StyledDiscussionMessage
+          <StyledMessage
             mode="compose"
             afterCreate={handleCreateMessage}
             handleCancel={handleCancelCompose}

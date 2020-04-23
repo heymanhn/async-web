@@ -14,8 +14,8 @@ import LoadingIndicator from 'components/shared/LoadingIndicator';
 import NavigationBar from 'components/navigation/NavigationBar';
 import NotFound from 'components/navigation/NotFound';
 import ThreadModal from 'components/thread/ThreadModal';
+import Message from 'components/message/Message';
 import TopicComposer from './TopicComposer';
-import DiscussionMessage from './DiscussionMessage';
 import DiscussionThread from './DiscussionThread';
 import AddReplyBox from './AddReplyBox';
 
@@ -39,13 +39,11 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
   marginTop: '30px',
 });
 
-const StyledDiscussionMessage = styled(DiscussionMessage)(
-  ({ theme: { colors } }) => ({
-    background: colors.white,
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-  })
-);
+const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
+  background: colors.white,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+}));
 
 const DiscussionContainer = ({ discussionId }) => {
   useUpdateSelectedResource(discussionId);
@@ -68,8 +66,6 @@ const DiscussionContainer = ({ discussionId }) => {
     setState(old => ({ ...old, firstMsgDiscussionId: id }));
   const setDeletedDiscussionId = id =>
     setState(old => ({ ...old, deletedDiscussionId: id }));
-  const resetInlineTopic = () =>
-    setState(old => ({ ...old, inlineDiscussionTopic: null }));
 
   const { loading, data } = useQuery(discussionQuery, {
     variables: { discussionId },
@@ -141,7 +137,6 @@ const DiscussionContainer = ({ discussionId }) => {
     setForceUpdate,
     setFirstMsgDiscussionId,
     setDeletedDiscussionId,
-    resetInlineTopic,
     handleShowModal,
     handleCloseModal,
   };
@@ -162,7 +157,7 @@ const DiscussionContainer = ({ discussionId }) => {
             />
           )}
           {isComposing ? (
-            <StyledDiscussionMessage
+            <StyledMessage
               mode="compose"
               disableAutoFocus={!messageCount}
               afterCreate={stopComposing}

@@ -5,6 +5,20 @@ export const DEFAULT_APP_CONTEXT = {
 };
 export const AppContext = createContext(DEFAULT_APP_CONTEXT);
 
+export const DEFAULT_NAVIGATION_CONTEXT = {
+  resource: null,
+  selectedResourceId: null, // used by the sidebar
+  isResourceAccessModalOpen: false,
+  isInviteModalOpen: false,
+  resourceCreationModalMode: null,
+
+  setSelectedResourceId: () => {},
+  setIsResourceAccessModalOpen: () => {},
+  setIsInviteModalOpen: () => {},
+  setResourceCreationModalMode: () => {},
+};
+export const NavigationContext = createContext(DEFAULT_NAVIGATION_CONTEXT);
+
 export const DEFAULT_WORKSPACE_CONTEXT = {
   workspaceId: null,
   viewMode: null,
@@ -26,7 +40,6 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
 
   setFirstMsgDiscussionId: () => {},
   setDeletedDiscussionId: () => {},
-  resetInlineTopic: () => {},
   handleShowModal: () => {},
   handleCloseModal: () => {},
   afterUpdate: () => {},
@@ -47,7 +60,6 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
 
   setContext: () => {},
   afterCreate: () => {},
-  afterCreateDraft: () => {},
   afterDelete: () => {},
   setForceUpdate: () => {},
 };
@@ -63,17 +75,3 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   handleCancel: () => {},
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);
-
-export const DEFAULT_NAVIGATION_CONTEXT = {
-  resource: null,
-  selectedResourceId: null, // used by the sidebar
-  isResourceAccessModalOpen: false,
-  isInviteModalOpen: false,
-  resourceCreationModalMode: null,
-
-  setSelectedResourceId: () => {},
-  setIsResourceAccessModalOpen: () => {},
-  setIsInviteModalOpen: () => {},
-  setResourceCreationModalMode: () => {},
-};
-export const NavigationContext = createContext(DEFAULT_NAVIGATION_CONTEXT);

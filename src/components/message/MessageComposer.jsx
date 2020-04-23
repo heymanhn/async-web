@@ -9,7 +9,6 @@ import styled from '@emotion/styled';
 import { DiscussionContext, MessageContext } from 'utils/contexts';
 import useAnnotationMonitor from 'utils/hooks/useAnnotationMonitor';
 import useContentState from 'utils/hooks/useContentState';
-import useDrafts from 'utils/hooks/useDrafts';
 import useMessageMutations from 'utils/hooks/useMessageMutations';
 
 import useCoreEditorProps from 'components/editor/hooks/useCoreEditorProps';
@@ -25,6 +24,8 @@ import withPasteShim from 'components/editor/withPasteShim';
 import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
 import withImages from 'components/editor/withImages';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
+
+import useMessageDrafts from './hooks/useMessageDrafts';
 import MessageActions from './MessageActions';
 
 const Container = styled.div(({ mode }) => ({
@@ -93,7 +94,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
   });
 
   const coreEditorProps = useCoreEditorProps(messageEditor, { readOnly });
-  useDrafts(message, messageEditor, isSubmitting);
+  useMessageDrafts(message, isSubmitting);
   useAnnotationMonitor(message, setMessage, messageEditor, readOnly);
 
   // TODO (DISCUSSION V2): This is copy-pasta'ed from DocumentComposer for

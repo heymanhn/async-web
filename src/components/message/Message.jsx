@@ -55,7 +55,7 @@ const StyledMessageReactions = styled(MessageReactions)({
   padding: '0 30px 20px',
 });
 
-const DiscussionMessage = ({
+const Message = ({
   index, // Used only by <DiscussionThread /> to see which message is selected
   isUnread,
   mode: initialMode,
@@ -123,7 +123,7 @@ const DiscussionMessage = ({
   );
 };
 
-DiscussionMessage.propTypes = {
+Message.propTypes = {
   index: PropTypes.number,
   isUnread: PropTypes.bool,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
@@ -133,7 +133,7 @@ DiscussionMessage.propTypes = {
   handleCancel: PropTypes.func,
 };
 
-DiscussionMessage.defaultProps = {
+Message.defaultProps = {
   index: null,
   isUnread: false,
   mode: 'display',
@@ -143,4 +143,4 @@ DiscussionMessage.defaultProps = {
   handleCancel: () => {},
 };
 
-export default DiscussionMessage;
+export default Message;

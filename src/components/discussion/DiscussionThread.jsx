@@ -12,7 +12,7 @@ import useMountEffect from 'utils/hooks/useMountEffect';
 import { DiscussionContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
-import DiscussionMessage from './DiscussionMessage';
+import Message from 'components/message/Message';
 import NewMessagesDivider from './NewMessagesDivider';
 import NewMessagesIndicator from './NewMessagesIndicator';
 
@@ -24,7 +24,7 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   maxWidth: discussionViewport,
 }));
 
-const StyledDiscussionMessage = styled(DiscussionMessage)(
+const StyledMessage = styled(Message)(
   ({ isUnread, theme: { colors } }) => ({
     backgroundColor: isUnread ? colors.unreadBlue : 'default',
     border: `1px solid ${colors.borderGrey}`,
@@ -113,7 +113,7 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
           {!isModal &&
             firstNewMessageId() === m.id &&
             m.id !== messages[0].id && <NewMessagesDivider />}
-          <StyledDiscussionMessage
+          <StyledMessage
             index={i}
             isModal={isModal}
             message={m}

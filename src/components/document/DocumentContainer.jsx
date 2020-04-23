@@ -23,9 +23,6 @@ const DocumentContainer = ({
   useUpdateSelectedResource(documentId);
   const editor = useDocumentEditor(documentId);
 
-  // TODO (HN): Instead of all these different discussionId fields, suggest
-  // implementing a state machine that transitions from
-  // new => first_message => deleted
   const [state, setState] = useState({
     viewMode: initialViewMode,
     modalDiscussionId: initialDiscussionId,
@@ -35,8 +32,6 @@ const DocumentContainer = ({
   });
 
   const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
-  const resetInlineTopic = () =>
-    setState(old => ({ ...old, inlineDiscussionTopic: null }));
   const setForceUpdate = fu => setState(old => ({ ...old, forceUpdate: fu }));
 
   useEffect(() => {
@@ -103,7 +98,6 @@ const DocumentContainer = ({
 
     setForceUpdate,
     setViewMode,
-    resetInlineTopic,
     handleShowModal,
     handleCloseModal,
   };

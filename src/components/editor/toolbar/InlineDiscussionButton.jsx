@@ -5,11 +5,11 @@ import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
-import useDraftMutations from 'utils/hooks/useDraftMutations';
 import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
 import Editor from 'components/editor/Editor';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
+import useMessageDraftMutations from 'components/message/hooks/useMessageDraftMutations';
 import ToolbarButton from './ToolbarButton';
 import ButtonIcon from './ButtonIcon';
 
@@ -21,7 +21,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 
 const InlineDiscussionButton = ({ handleShowModal, ...props }) => {
   const editor = useSlate();
-  const { handleSaveDraft, isSubmitting } = useDraftMutations();
+  const { handleSaveDraft, isSubmitting } = useMessageDraftMutations();
   const { userId } = getLocalUser();
 
   const makeDOMSelection = () => {
@@ -53,7 +53,7 @@ const InlineDiscussionButton = ({ handleShowModal, ...props }) => {
     });
 
     // Remove all the top-level nodes outside of the current selection
-    // before handing it into the modal
+    // before handing it into the modal as the content to generate context for
     const { children, selection } = editor;
     const [start, end] = Range.edges(selection);
     const endRange = end.path[0] + 1;

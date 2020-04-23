@@ -9,7 +9,7 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import localDeleteDiscussionMutation from 'graphql/mutations/local/deleteDiscussionFromDocument';
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 
-import DiscussionMessage from 'components/discussion/DiscussionMessage';
+import Message from 'components/message/Message';
 import ContextComposer from 'components/thread/ContextComposer';
 import AvatarList from 'components/shared/AvatarList';
 import NotFound from 'components/navigation/NotFound';
@@ -46,7 +46,7 @@ const StyledAvatarList = styled(AvatarList)({
   marginRight: '10px',
 });
 
-const StyledDiscussionMessage = styled(DiscussionMessage)(
+const StyledMessage = styled(Message)(
   {
     paddingBottom: '10px',
   },
@@ -96,7 +96,7 @@ const DiscussionListItem = ({ discussionId }) => {
       <Container>
         <DiscussionListItemHeader discussion={data.discussion} />
         {topic && <StyledContextComposer />}
-        <StyledDiscussionMessage
+        <StyledMessage
           isLast={lastMessage.id === firstMessage.id}
           message={firstMessage}
         />
@@ -107,7 +107,7 @@ const DiscussionListItem = ({ discussionId }) => {
           </MoreRepliesIndicator>
         )}
         {lastMessage && lastMessage.id !== firstMessage.id && (
-          <StyledDiscussionMessage isLast message={lastMessage} />
+          <StyledMessage isLast message={lastMessage} />
         )}
       </Container>
     </DiscussionContext.Provider>
