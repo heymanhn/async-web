@@ -15,19 +15,14 @@ import NavigationBar from 'components/navigation/NavigationBar';
 import Document from './Document';
 import DiscussionsList from './DiscussionsList';
 
-const DocumentContainer = ({
-  documentId,
-  discussionId: initialDiscussionId,
-  viewMode: initialViewMode,
-}) => {
+const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(documentId);
   const editor = useDocumentEditor(documentId);
 
   const [state, setState] = useState({
-    viewMode: initialViewMode,
-    modalDiscussionId: initialDiscussionId,
-    isModalOpen: !!initialDiscussionId,
-    inlineDiscussionTopic: null,
+    viewMode: 'content',
+    threadId: initialThreadId,
+    initialThreadContext: null,
     forceUpdate: false,
   });
 
@@ -35,16 +30,8 @@ const DocumentContainer = ({
   const setForceUpdate = fu => setState(old => ({ ...old, forceUpdate: fu }));
 
   useEffect(() => {
-    setState(old => ({ ...old, viewMode: initialViewMode }));
-  }, [initialViewMode]);
-
-  useEffect(() => {
-    setState(old => ({
-      ...old,
-      modalDiscussionId: initialDiscussionId,
-      isModalOpen: !!initialDiscussionId,
-    }));
-  }, [initialDiscussionId]);
+    setState(old => ({ ...old, threadId: initialThreadId }));
+  }, [initialThreadId]);
 
   const { error, data } = useQuery(documentQuery, {
     variables: { documentId },
@@ -56,50 +43,43 @@ const DocumentContainer = ({
   const { channelId, tags } = data.document;
   const readOnly = isResourceReadOnly(tags);
 
-  const handleShowModal = (discussionId, content) => {
-    const newState = {
-      modalDiscussionId: discussionId,
-      isModalOpen: true,
-    };
-
-    // For creating inline discussion context later on
-    if (content) newState.inlineDiscussionTopic = content;
-
-    setState(oldState => ({ ...oldState, ...newState }));
-  };
-
-  const handleCloseModal = () => {
+  const handleShowThread = ({
+    sourceEditor = null, // So that the thread can update/remove the annotation
+    threadId,
+    initialThreadContext = null,
+  }) => {
     setState(oldState => ({
       ...oldState,
-      modalDiscussionId: null,
-      isModalOpen: false,
+      threadId,
+      initialThreadContext,
     }));
   };
 
-  const {
-    modalDiscussionId,
-    inlineDiscussionTopic,
-    isModalOpen,
-    viewMode,
-    forceUpdate,
-  } = state;
+  const handleCloseThread = () => {
+    setState(oldState => ({
+      ...oldState,
+      threadId: null,
+      initialThreadContext: null,
+    }));
+  };
+
+  const { threadId, initialThreadContext, viewMode, forceUpdate } = state;
   if (forceUpdate) setForceUpdate(false);
 
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
     editor,
     documentId,
-    isModalOpen,
-    modalDiscussionId,
-    inlineDiscussionTopic,
+    threadId,
+    initialThreadContext,
     viewMode,
     channelId,
     readOnly,
 
     setForceUpdate,
     setViewMode,
-    handleShowModal,
-    handleCloseModal,
+    handleShowThread,
+    handleCloseThread,
   };
 
   return (
@@ -108,12 +88,12 @@ const DocumentContainer = ({
       {viewMode === 'content' && <Document isUnread={isResourceUnread(tags)} />}
       {viewMode === 'discussions' && <DiscussionsList />}
 
-      {isModalOpen && (
+      {threadId && (
         <ThreadModal
-          isOpen={isModalOpen}
+          isOpen={!!threadId}
           mode="document"
           editor={editor}
-          handleClose={handleCloseModal}
+          handleClose={handleCloseThread}
         />
       )}
     </DocumentContext.Provider>
@@ -122,13 +102,11 @@ const DocumentContainer = ({
 
 DocumentContainer.propTypes = {
   documentId: PropTypes.string.isRequired,
-  discussionId: PropTypes.string,
-  viewMode: PropTypes.oneOf(['content', 'discussions']),
+  threadId: PropTypes.string,
 };
 
 DocumentContainer.defaultProps = {
-  viewMode: 'content',
-  discussionId: null,
+  threadId: null,
 };
 
 export default DocumentContainer;

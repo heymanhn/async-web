@@ -10,10 +10,12 @@ import useAutoSave from 'utils/hooks/useAutoSave';
 import useDocumentMutations from 'utils/hooks/useDocumentMutations';
 import useDocumentOperationsPusher from 'utils/hooks/useDocumentOperationsPusher';
 
-import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import useCoreEditorProps from 'components/editor/hooks/useCoreEditorProps';
+import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
+
+import useDocumentEditor from './hooks/useDocumentEditor';
 
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
@@ -22,7 +24,8 @@ const DocumentEditable = styled(Editable)({
 });
 
 const DocumentComposer = ({ initialContent, ...props }) => {
-  const { documentId, editor, readOnly } = useContext(DocumentContext);
+  const { documentId, readOnly } = useContext(DocumentContext);
+  const editor = useDocumentEditor(documentId);
 
   const {
     content,

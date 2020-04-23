@@ -160,16 +160,15 @@ const App = () => {
               component={DocumentContainer}
             />
             <PrivateRoute
-              path="/documents/:documentId/discussions/:discussionId"
+              path="/documents/:documentId/threads/:threadId"
               component={DocumentContainer}
-            />
-            <PrivateRoute
-              path="/documents/:documentId/discussions"
-              component={DocumentContainer}
-              viewMode="discussions"
             />
             <PrivateRoute
               path="/discussions/:discussionId"
+              component={DiscussionContainer}
+            />
+            <PrivateRoute
+              path="/discussion/:discussionId/threads/:threadId"
               component={DiscussionContainer}
             />
 

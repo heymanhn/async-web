@@ -4,13 +4,13 @@ import { withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
 import { compose } from 'recompose';
 
-import withMarkdownShortcuts from '../withMarkdownShortcuts';
-import withInlineDiscussions from '../withInlineDiscussions';
-import withLinks from '../withLinks';
-import withPasteShim from '../withPasteShim';
-import withSectionBreak from '../withSectionBreak';
-import withCustomKeyboardActions from '../withCustomKeyboardActions';
-import withImages from '../withImages';
+import withCustomKeyboardActions from 'components/editor/plugins/withCustomKeyboardActions';
+import withImages from 'components/editor/plugins/withImages';
+import withThreads from 'components/editor/plugins/withThreads';
+import withLinks from 'components/editor/plugins/withLinks';
+import withMarkdownShortcuts from 'components/editor/plugins/withMarkdownShortcuts';
+import withPasteShim from 'components/editor/plugins/withPasteShim';
+import withSectionBreak from 'components/editor/plugins/withSectionBreak';
 
 const useDocumentEditor = documentId => {
   const baseEditor = useMemo(
@@ -19,7 +19,7 @@ const useDocumentEditor = documentId => {
         withCustomKeyboardActions,
         withMarkdownShortcuts,
         withLinks,
-        withInlineDiscussions,
+        withThreads,
         withSectionBreak,
         withPasteShim,
         withHistory,
