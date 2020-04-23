@@ -39,7 +39,7 @@ const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
 
 const ThreadModal = ({
   threadId,
-  initialThreadContext,
+  initialTopic,
   sourceEditor, // Reference to the editor that contains the content to be annotated
   handleClose,
   ...props
@@ -125,7 +125,7 @@ const ThreadModal = ({
    * 2. General discussion. There won't be a topic to create context for.
    * 3. Subsequent messages to a discussion. Also won't be a topic present.
    */
-  const readyToCompose = isComposing && (!initialThreadContext || topic);
+  const readyToCompose = isComposing && (!initialTopic || topic);
   const isComposingFirstMsg = isComposing && !messageCount;
 
   return (
@@ -136,8 +136,8 @@ const ThreadModal = ({
       {...props}
     >
       <DiscussionContext.Provider value={value}>
-        {(initialThreadContext || topic) && <StyledContextComposer />}
-        {initialThreadContext && (
+        {(initialTopic || topic) && <StyledContextComposer />}
+        {initialTopic && (
           <DiscussionThread
             isComposingFirstMsg={isComposingFirstMsg}
             isUnread={isResourceUnread(tags)}
@@ -163,14 +163,14 @@ const ThreadModal = ({
 
 ThreadModal.propTypes = {
   threadId: PropTypes.string.isRequired,
-  initialThreadContext: PropTypes.object,
+  initialTopic: PropTypes.object,
   mode: PropTypes.oneOf(['document', 'discussion']).isRequired,
   sourceEditor: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
 };
 
 ThreadModal.defaultProps = {
-  initialThreadContext: null,
+  initialTopic: null,
 };
 
 export default ThreadModal;

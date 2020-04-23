@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 const useThreadState = initialThreadId => {
   const [state, setState] = useState({
     threadId: initialThreadId,
-    initialThreadContext: null,
+    initialTopic: null,
     sourceEditor: null,
   });
 
@@ -20,13 +20,13 @@ const useThreadState = initialThreadId => {
 
   const handleShowThread = ({
     threadId,
-    initialThreadContext = null,
+    initialTopic = null,
     sourceEditor = null, // So that the thread can update/remove the annotation
   }) => {
     setState(oldState => ({
       ...oldState,
       threadId,
-      initialThreadContext,
+      initialTopic,
       sourceEditor,
     }));
   };
@@ -35,7 +35,7 @@ const useThreadState = initialThreadId => {
     setState(oldState => ({
       ...oldState,
       threadId: null,
-      initialThreadContext: null,
+      initialTopic: null,
       sourceEditor: null,
     }));
   };
