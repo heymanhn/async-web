@@ -9,7 +9,7 @@ import useCoreEditorProps from 'hooks/editor/useCoreEditorProps';
 import useMessageDrafts from 'hooks/message/useMessageDrafts';
 import useMessageEditor from 'hooks/message/useMessageEditor';
 import useMessageMutations from 'hooks/message/useMessageMutations';
-import { DiscussionContext, MessageContext } from 'utils/contexts';
+import { MessageContext } from 'utils/contexts';
 
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import ReadOnlyMessageToolbar from 'components/editor/toolbar/ReadOnlyMessageToolbar';
@@ -31,10 +31,15 @@ const MessageEditable = styled(Editable)(({ ismodal }) => ({
   marginTop: ismodal === 'true' ? '0px' : '15px',
 }));
 
-const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
-  const { discussionId, isModal } = useContext(DiscussionContext);
+const MessageComposer = ({
+  initialMessage,
+  isModal,
+  parentId,
+  autoFocus,
+  ...props
+}) => {
   const { mode } = useContext(MessageContext);
-  const editor = useMessageEditor(discussionId);
+  const editor = useMessageEditor(parentId);
   const readOnly = mode === 'display';
 
   const {
@@ -43,7 +48,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
     ...contentProps
   } = useContentState({
     editor,
-    resourceId: discussionId,
+    resourceId: parentId,
     initialContent: initialMessage,
   });
 
@@ -81,11 +86,14 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
 
 MessageComposer.propTypes = {
   initialMessage: PropTypes.string,
+  isModal: PropTypes.bool,
+  parentId: PropTypes.string.isRequired,
   autoFocus: PropTypes.bool,
 };
 
 MessageComposer.defaultProps = {
   initialMessage: '',
+  isModal: false,
   autoFocus: false,
 };
 

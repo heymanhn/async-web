@@ -13,9 +13,8 @@ import localAddPendingMessages from 'graphql/mutations/local/addPendingMessagesT
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
-import { DiscussionContext } from 'utils/contexts';
+import { ThreadContext } from 'utils/contexts';
 
-import NewMessagesDivider from 'components/discussion/NewMessagesDivider';
 import NewMessagesIndicator from 'components/discussion/NewMessagesIndicator';
 import NotFound from 'components/navigation/NotFound';
 import Message from 'components/message/Message';
@@ -40,10 +39,10 @@ const StyledMessage = styled(Message)(({ isUnread, theme: { colors } }) => ({
 const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
-  const { discussionId, isModal, modalRef } = useContext(DiscussionContext);
+  const { threadId, modalRef } = useContext(ThreadContext);
   const [pendingMessageCount, setPendingMessageCount] = useState(0);
   const [addPendingMessages] = useMutation(localAddPendingMessages, {
-    variables: { discussionId },
+    variables: { discussionId: threadId },
   });
   const markAsRead = useMarkResourceAsRead();
 
@@ -58,10 +57,10 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
     {
       query: discussionMessagesQuery,
       key: 'messages',
-      variables: { discussionId, queryParams: {} },
+      variables: { discussionId: threadId, queryParams: {} },
     },
     undefined,
-    isModal ? modalRef : undefined
+    modalRef
   );
 
   // Workaround to make sure two copies of the first message aren't rendered
@@ -84,13 +83,6 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
     markAsRead();
   };
 
-  const firstNewMessageId = () => {
-    const targetMessage = messages.find(
-      m => m.tags && m.tags.includes('new_message')
-    );
-
-    return targetMessage ? targetMessage.id : null;
-  };
   const isNewMessage = m => m.tags && m.tags.includes('new_message');
 
   return (
@@ -103,14 +95,12 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
       )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
-          {!isModal &&
-            firstNewMessageId() === m.id &&
-            m.id !== messages[0].id && <NewMessagesDivider />}
           <StyledMessage
             index={i}
-            isModal={isModal}
             message={m}
+            isModal
             isUnread={isNewMessage(m)}
+            parentId={threadId}
           />
         </React.Fragment>
       ))}

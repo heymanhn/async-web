@@ -1,3 +1,7 @@
+/*
+ * TODO: Figure out how much this component can be DRY'ed up with
+ * <ThreadMessages />
+ */
 import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useApolloClient, useQuery, useMutation } from '@apollo/react-hooks';
@@ -25,30 +29,18 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   maxWidth: discussionViewport,
 }));
 
-const StyledMessage = styled(Message)(
-  ({ isUnread, theme: { colors } }) => ({
-    backgroundColor: isUnread ? colors.unreadBlue : 'default',
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-    boxShadow: `0px 0px 3px ${colors.grey7}`,
-    marginBottom: '30px',
-  }),
-  ({ isModal, theme: { colors } }) => {
-    if (!isModal) return {};
-    return {
-      border: 'none',
-      borderTop: `1px solid ${colors.borderGrey}`,
-      borderRadius: 0,
-      boxShadow: 'none',
-      marginBottom: 0,
-    };
-  }
-);
+const StyledMessage = styled(Message)(({ isUnread, theme: { colors } }) => ({
+  backgroundColor: isUnread ? colors.unreadBlue : 'default',
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  boxShadow: `0px 0px 3px ${colors.grey7}`,
+  marginBottom: '30px',
+}));
 
 const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
-  const { discussionId, isModal, modalRef } = useContext(DiscussionContext);
+  const { discussionId } = useContext(DiscussionContext);
   const [pendingMessageCount, setPendingMessageCount] = useState(0);
   const [addPendingMessages] = useMutation(localAddPendingMessages, {
     variables: { discussionId },
@@ -61,16 +53,11 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   });
 
   const { data: localData } = useQuery(localStateQuery);
-  const { loading, data } = usePaginatedResource(
-    discussionRef,
-    {
-      query: discussionMessagesQuery,
-      key: 'messages',
-      variables: { discussionId, queryParams: {} },
-    },
-    undefined,
-    isModal ? modalRef : undefined
-  );
+  const { loading, data } = usePaginatedResource(discussionRef, {
+    query: discussionMessagesQuery,
+    key: 'messages',
+    variables: { discussionId, queryParams: {} },
+  });
 
   // Workaround to make sure two copies of the first message aren't rendered
   // on the modal at the same time
@@ -111,14 +98,14 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
       )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
-          {!isModal &&
-            firstNewMessageId() === m.id &&
-            m.id !== messages[0].id && <NewMessagesDivider />}
+          {firstNewMessageId() === m.id && m.id !== messages[0].id && (
+            <NewMessagesDivider />
+          )}
           <StyledMessage
             index={i}
-            isModal={isModal}
             message={m}
             isUnread={isNewMessage(m)}
+            parentId={discussionId}
           />
         </React.Fragment>
       ))}

@@ -45,11 +45,7 @@ export const DocumentContext = createContext(DEFAULT_DOCUMENT_CONTEXT);
 
 export const DEFAULT_DISCUSSION_CONTEXT = {
   discussionId: null,
-  context: null,
-  draft: null,
   readOnly: false,
-  modalRef: {},
-  isModal: false,
 
   handleShowThread: () => {},
   afterCreate: () => {},
@@ -60,6 +56,8 @@ export const DiscussionContext = createContext(DEFAULT_DISCUSSION_CONTEXT);
 
 export const DEFAULT_THREAD_CONTEXT = {
   threadId: null,
+  modalRef: {},
+  topic: null,
 };
 export const ThreadContext = createContext(DEFAULT_THREAD_CONTEXT);
 

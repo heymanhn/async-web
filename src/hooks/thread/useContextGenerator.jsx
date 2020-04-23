@@ -10,8 +10,8 @@ import Editor from 'components/editor/Editor';
 const useContextGenerator = editor => {
   // TODO (DISCUSSION V2): Avoid this dance. Be more explicit where to look
   // for the inline discussion topic
-  const { initialThreadContext: documentContent } = useContext(DocumentContext);
-  const { initialThreadContext: messageContent, discussionId } = useContext(
+  const { initialTopic: documentContent } = useContext(DocumentContext);
+  const { initialTopic: messageContent, discussionId } = useContext(
     DiscussionContext
   );
   const { handleUpdateContext } = useDiscussionMutations();

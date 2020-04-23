@@ -86,6 +86,7 @@ const useDiscussionMutations = () => {
   };
 
   // Only used for inline discussions
+  // TODO (DISCUSSION V2): Change to topic
   const handleUpdateContext = async newContext => {
     const { data } = await updateDiscussion({
       variables: {

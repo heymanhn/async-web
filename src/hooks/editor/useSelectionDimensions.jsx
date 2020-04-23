@@ -6,7 +6,7 @@
  * Requires:
  * - the hook to be instantiated in a component that is a child of the <Slate />
  *   provider component
- * - DiscussionContext provided with a reference to the modal component, if
+ * - ThreadContext provided with a reference to the modal component, if
  *   a modal is currently displayed
  */
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -14,12 +14,12 @@ import { ReactEditor, useSlate } from 'slate-react';
 import throttle from 'lodash/throttle';
 
 import { THROTTLE_INTERVAL } from 'utils/constants';
-import { DiscussionContext } from 'utils/contexts';
+import { ThreadContext } from 'utils/contexts';
 
 import Editor from 'components/editor/Editor';
 
 const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
-  const { modalRef } = useContext(DiscussionContext);
+  const { modalRef } = useContext(ThreadContext);
   const [data, setData] = useState({});
   const editor = useSlate();
 

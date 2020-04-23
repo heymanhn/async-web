@@ -107,14 +107,11 @@ const ThreadModal = ({
     handleClose();
   };
 
-  // TODO (DISCUSSION V2): This should be ThreadContext soon.
   const value = {
     ...DEFAULT_THREAD_CONTEXT,
     threadId,
     topic,
-    draft,
     modalRef,
-    isModal: true,
     afterDelete,
   };
 
@@ -145,6 +142,8 @@ const ThreadModal = ({
         {readyToCompose ? (
           <StyledMessage
             mode="compose"
+            draft={draft}
+            isModal // TODO (DISCUSSION V2): find better way to do this later
             afterCreate={handleCreateMessage}
             handleCancel={handleCancelCompose}
             {...props}

@@ -1,6 +1,6 @@
 /*
  * TODO (DISCUSSION V2): See if this can be re-combined with the AddReplyBox
- * for the thread.
+ * for the discussion.
  */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
@@ -23,9 +23,12 @@ const Container = styled.div(({ theme: { colors } }) => ({
   alignItems: 'center',
 
   background: colors.bgGrey,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  boxShadow: `0px 0px 3px ${colors.grey7}`,
+  border: 'none',
+  borderTop: `1px solid ${colors.borderGrey}`,
+  borderRadius: 0,
+  borderBottomLeftRadius: '5px',
+  borderBottomRightRadius: '5px',
+  boxShadow: 'none',
   cursor: 'pointer',
   padding: '20px 25px',
 }));
@@ -52,7 +55,7 @@ const IndicatorLabel = styled.div(({ isResolved, theme: { colors } }) => ({
 const ActionButton = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
-  background: colors.bgGrey,
+  background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   cursor: 'pointer',

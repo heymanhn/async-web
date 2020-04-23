@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
+import useThreadState from 'hooks/thread/useThreadState';
 import useUpdateSelectedResource from 'hooks/resources/useUpdateSelectedResource';
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
@@ -46,7 +47,7 @@ const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
   borderRadius: '5px',
 }));
 
-const DiscussionContainer = ({ discussionId }) => {
+const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
   const [isComposing, setIsComposing] = useState(false);
@@ -54,26 +55,12 @@ const DiscussionContainer = ({ discussionId }) => {
   const stopComposing = () => setIsComposing(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
-  // TODO (DISCUSSION V2): DRY this up / clean up the identical state in
-  // DocumentContainer.
-  const [state, setState] = useState({
-    modalDiscussionId: null,
-    firstMsgDiscussionId: null,
-    deletedDiscussionId: null,
-    isModalOpen: false,
-    inlineDiscussionTopic: null,
-  });
-  const setFirstMsgDiscussionId = id =>
-    setState(old => ({ ...old, firstMsgDiscussionId: id }));
-  const setDeletedDiscussionId = id =>
-    setState(old => ({ ...old, deletedDiscussionId: id }));
-
-  // const {
-  //   threadId,
-  //   handleShowThread,
-  //   handleCloseThread,
-  //   ...threadProps
-  // } = useThreadState(initialThreadId);
+  const {
+    threadId,
+    handleShowThread,
+    handleCloseThread,
+    ...threadProps
+  } = useThreadState(initialThreadId);
 
   const { loading, data } = useQuery(discussionQuery, {
     variables: { discussionId },
@@ -100,53 +87,15 @@ const DiscussionContainer = ({ discussionId }) => {
     if (!messageCount) returnToInbox();
   };
 
-  // TODO (DISCUSSION V2): DRY this up with DocumentContainer implementation
-  const handleShowThread = (dId, content) => {
-    const newState = {
-      modalDiscussionId: dId,
-      isModalOpen: true,
-    };
-
-    // For creating inline discussion context later on
-    if (content) newState.inlineDiscussionTopic = content;
-    setState(oldState => ({ ...oldState, ...newState }));
-  };
-
-  // TODO (DISCUSSION V2): DRY this up with DocumentContainer implementation
-  const handleCloseThread = () => {
-    setState(oldState => ({
-      ...oldState,
-      modalDiscussionId: null,
-      isModalOpen: false,
-    }));
-  };
-
-  const {
-    modalDiscussionId,
-    firstMsgDiscussionId,
-    deletedDiscussionId,
-    inlineDiscussionTopic,
-    isModalOpen,
-  } = state;
-
   if (forceUpdate) setForceUpdate(false);
 
   const value = {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
-    draft,
     readOnly,
-    isModalOpen,
-    modalDiscussionId,
-    firstMsgDiscussionId,
-    deletedDiscussionId,
-    inlineDiscussionTopic,
     afterDelete: returnToInbox,
     setForceUpdate,
-    setFirstMsgDiscussionId,
-    setDeletedDiscussionId,
     handleShowThread,
-    handleCloseThread,
   };
 
   return (
@@ -167,6 +116,7 @@ const DiscussionContainer = ({ discussionId }) => {
           {isComposing ? (
             <StyledMessage
               mode="compose"
+              draft={draft}
               disableAutoFocus={!messageCount}
               afterCreate={stopComposing}
               handleCancel={handleCancelCompose}
@@ -178,11 +128,11 @@ const DiscussionContainer = ({ discussionId }) => {
             />
           )}
         </ContentContainer>
-        {isModalOpen && (
+        {threadId && (
           <ThreadModal
-            isOpen={isModalOpen}
-            mode="discussion"
+            threadId={threadId}
             handleClose={handleCloseThread}
+            {...threadProps}
           />
         )}
       </OuterContainer>
@@ -192,6 +142,11 @@ const DiscussionContainer = ({ discussionId }) => {
 
 DiscussionContainer.propTypes = {
   discussionId: PropTypes.string.isRequired,
+  threadId: PropTypes.string,
+};
+
+DiscussionContainer.defaultProps = {
+  threadId: null,
 };
 
 export default DiscussionContainer;

@@ -1,14 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import useCurrentUser from 'hooks/shared/useCurrentUser';
 import useHover from 'hooks/shared/useHover';
-import {
-  MessageContext,
-  DiscussionContext,
-  DEFAULT_MESSAGE_CONTEXT,
-} from 'utils/contexts';
+import { MessageContext, DEFAULT_MESSAGE_CONTEXT } from 'utils/contexts';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 import MessageComposer from './MessageComposer';
@@ -55,18 +51,21 @@ const StyledMessageReactions = styled(MessageReactions)({
   padding: '0 30px 20px',
 });
 
+// TODO (DISCUSSION V2): The discussion UX redesign should standardize the
+// appearance of messages, whether in discussions or threads.
 const Message = ({
-  index, // Used only by <DiscussionMessages /> to see which message is selected
+  index,
+  isModal,
   isUnread,
+  draft,
   mode: initialMode,
   message,
+  parentId,
   disableAutoFocus,
   afterCreate,
   handleCancel,
   ...props
 }) => {
-  const { draft, isModal } = useContext(DiscussionContext);
-
   const [mode, setMode] = useState(initialMode);
   const { hover, ...hoverProps } = useHover(mode === 'display');
   const currentUser = useCurrentUser();
@@ -114,8 +113,10 @@ const Message = ({
           </div>
         </HeaderSection>
         <StyledMessageComposer
+          isModal={isModal}
           initialMessage={loadInitialContent()}
           autoFocus={mode !== 'display' && !disableAutoFocus}
+          parentId={parentId}
         />
         {mode === 'display' && <StyledMessageReactions />}
       </MessageContext.Provider>
@@ -124,17 +125,22 @@ const Message = ({
 };
 
 Message.propTypes = {
+  draft: PropTypes.object,
   index: PropTypes.number,
+  isModal: PropTypes.bool,
   isUnread: PropTypes.bool,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
+  parentId: PropTypes.string.isRequired,
   disableAutoFocus: PropTypes.bool,
   afterCreate: PropTypes.func,
   handleCancel: PropTypes.func,
 };
 
 Message.defaultProps = {
+  draft: null,
   index: null,
+  isModal: false,
   isUnread: false,
   mode: 'display',
   message: {},
