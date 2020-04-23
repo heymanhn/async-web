@@ -12,6 +12,7 @@ import {
   DocumentContext,
   DiscussionContext,
   ThreadContext,
+  MessageContext,
 } from 'utils/contexts';
 import { deserializeString, toPlainText } from 'utils/editor/constants';
 
@@ -21,6 +22,7 @@ const useDiscussionMutations = () => {
     DiscussionContext
   );
   const { topic } = useContext(ThreadContext);
+  const { messageId } = useContext(MessageContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
 
@@ -37,8 +39,8 @@ const useDiscussionMutations = () => {
 
     if (documentId) {
       input.parent = { id: documentId, type: 'document' };
-    } else if (discussionId) {
-      input.parent = { id: discussionId, type: 'discussion' };
+    } else if (messageId) {
+      input.parent = { id: messageId, type: 'message' };
     }
 
     if (title) {
