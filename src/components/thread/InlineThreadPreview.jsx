@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import Truncate from 'react-truncate';
+import { useSlate } from 'slate-react';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
@@ -90,6 +91,7 @@ const NewReplyLabel = styled(MessageCountIndicator)(
 );
 
 const ThreadPreview = ({ discussionId, isOpen, parentRef, mode }) => {
+  const editor = useSlate();
   const { handleShowThread } = useContext(
     mode === 'document' ? DocumentContext : DiscussionContext
   );
@@ -117,7 +119,7 @@ const ThreadPreview = ({ discussionId, isOpen, parentRef, mode }) => {
   const handleClick = event => {
     event.preventDefault();
     event.stopPropagation();
-    handleShowThread(discussionId);
+    handleShowThread({ threadId: discussionId, sourceEditor: editor });
   };
 
   const calculateTooltipPosition = () => {

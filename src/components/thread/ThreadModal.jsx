@@ -95,7 +95,7 @@ const ThreadModal = ({
     stopComposing();
 
     // Only need to set this once, when the first message is created.
-    if (!messageCount) {
+    if (!messageCount && sourceEditor) {
       Editor.updateInlineAnnotation(sourceEditor, newThreadId, {
         isInitialDraft: false,
       });
@@ -103,6 +103,8 @@ const ThreadModal = ({
   };
 
   const afterDelete = () => {
+    if (!sourceEditor) return;
+
     Editor.removeInlineAnnotation(sourceEditor, threadId);
     handleClose();
   };
@@ -162,13 +164,13 @@ const ThreadModal = ({
 ThreadModal.propTypes = {
   threadId: PropTypes.string.isRequired,
   initialTopic: PropTypes.object,
-  mode: PropTypes.oneOf(['document', 'discussion']).isRequired,
-  sourceEditor: PropTypes.object.isRequired,
+  sourceEditor: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
 };
 
 ThreadModal.defaultProps = {
   initialTopic: null,
+  sourceEditor: null,
 };
 
 export default ThreadModal;
