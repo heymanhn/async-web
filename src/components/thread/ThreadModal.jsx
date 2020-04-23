@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 // import { navigate } from '@reach/router';
@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 // import { track } from 'utils/analytics';
-import { DiscussionContext } from 'utils/contexts';
+import { DEFAULT_THREAD_CONTEXT, ThreadContext } from 'utils/contexts';
 // import useMountEffect from 'hooks/shared/useMountEffect';
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 import { isResourceUnread } from 'utils/helpers';
@@ -45,7 +45,6 @@ const ThreadModal = ({
   ...props
 }) => {
   const modalRef = useRef(null);
-  const discContext = useContext(DiscussionContext);
 
   // TODO (DISCUSSION V2): set isComposing to true once we know the user has
   // a draft in progress for the thread.
@@ -110,8 +109,8 @@ const ThreadModal = ({
 
   // TODO (DISCUSSION V2): This should be ThreadContext soon.
   const value = {
-    ...discContext,
-    discussionId: threadId,
+    ...DEFAULT_THREAD_CONTEXT,
+    threadId,
     topic,
     draft,
     modalRef,
@@ -135,7 +134,7 @@ const ThreadModal = ({
       isOpen={!!threadId}
       {...props}
     >
-      <DiscussionContext.Provider value={value}>
+      <ThreadContext.Provider value={value}>
         {(initialTopic || topic) && <StyledContextComposer />}
         {initialTopic && (
           <DiscussionThread
@@ -156,7 +155,7 @@ const ThreadModal = ({
             isComposing={isComposing}
           />
         )}
-      </DiscussionContext.Provider>
+      </ThreadContext.Provider>
     </StyledModal>
   );
 };

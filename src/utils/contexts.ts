@@ -30,7 +30,6 @@ export const WorkspaceContext = createContext(DEFAULT_WORKSPACE_CONTEXT);
 
 export const DEFAULT_DOCUMENT_CONTEXT = {
   documentId: null,
-  threadId: null,
   channelId: null,
   readOnly: false,
   viewMode: null,
@@ -52,12 +51,17 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   modalRef: {},
   isModal: false,
 
-  setContext: () => {},
+  handleShowThread: () => {},
   afterCreate: () => {},
   afterDelete: () => {},
   setForceUpdate: () => {},
 };
 export const DiscussionContext = createContext(DEFAULT_DISCUSSION_CONTEXT);
+
+export const DEFAULT_THREAD_CONTEXT = {
+  threadId: null,
+};
+export const ThreadContext = createContext(DEFAULT_THREAD_CONTEXT);
 
 export const DEFAULT_MESSAGE_CONTEXT = {
   messageId: null,
