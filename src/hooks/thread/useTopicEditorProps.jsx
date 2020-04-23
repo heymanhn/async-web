@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import Leaf from 'components/editor/Leaf';
 import ContextElement from 'components/editor/ContextElement';
 
-const useContextEditorProps = () => {
+const useTopicEditorProps = () => {
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
   const renderElement = useCallback(props => <ContextElement {...props} />, []);
 
@@ -13,4 +13,4 @@ const useContextEditorProps = () => {
   };
 };
 
-export default useContextEditorProps;
+export default useTopicEditorProps;

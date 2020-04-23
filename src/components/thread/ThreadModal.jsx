@@ -16,7 +16,7 @@ import Editor from 'components/editor/Editor';
 import AddReplyBox from 'components/discussion/AddReplyBox';
 import Message from 'components/message/Message';
 import ThreadMessages from './ThreadMessages';
-import ContextComposer from './ContextComposer';
+import TopicComposer from './TopicComposer';
 
 const ESCAPE_HOTKEY = 'Escape';
 
@@ -25,7 +25,7 @@ const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
   background: colors.bgGrey,
 }));
 
-const StyledContextComposer = styled(ContextComposer)({
+const StyledTopicComposer = styled(TopicComposer)({
   borderTopLeftRadius: '5px',
   borderTopRightRadius: '5px',
 });
@@ -134,7 +134,7 @@ const ThreadModal = ({
       {...props}
     >
       <ThreadContext.Provider value={value}>
-        {(initialTopic || topic) && <StyledContextComposer />}
+        {(initialTopic || topic) && <StyledTopicComposer />}
         {initialTopic && (
           <ThreadMessages
             isComposingFirstMsg={isComposingFirstMsg}

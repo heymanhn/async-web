@@ -10,7 +10,7 @@ import localDeleteDiscussionMutation from 'graphql/mutations/local/deleteDiscuss
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 
 import Message from 'components/message/Message';
-import ContextComposer from 'components/thread/ContextComposer';
+import TopicComposer from 'components/thread/TopicComposer';
 import AvatarList from 'components/shared/AvatarList';
 import NotFound from 'components/navigation/NotFound';
 import DiscussionListItemHeader from './DiscussionListItemHeader';
@@ -23,11 +23,9 @@ const Container = styled.div(({ theme: { colors } }) => ({
   margin: '40px 0',
 }));
 
-const StyledContextComposer = styled(ContextComposer)(
-  ({ theme: { colors } }) => ({
-    borderBottom: `1px solid ${colors.borderGrey}`,
-  })
-);
+const StyledTopicComposer = styled(TopicComposer)(({ theme: { colors } }) => ({
+  borderBottom: `1px solid ${colors.borderGrey}`,
+}));
 
 const MoreRepliesIndicator = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -95,7 +93,7 @@ const DiscussionListItem = ({ discussionId }) => {
     <DiscussionContext.Provider value={value}>
       <Container>
         <DiscussionListItemHeader discussion={data.discussion} />
-        {topic && <StyledContextComposer />}
+        {topic && <StyledTopicComposer />}
         <StyledMessage
           isLast={lastMessage.id === firstMessage.id}
           message={firstMessage}

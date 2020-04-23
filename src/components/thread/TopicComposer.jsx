@@ -4,19 +4,19 @@ import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
-import useContextEditorProps from 'hooks/thread/useContextEditorProps';
-import useContextGenerator from 'hooks/thread/useContextGenerator';
+import useTopicEditorProps from 'hooks/thread/useTopicEditorProps';
+import useTopicGenerator from 'hooks/thread/useTopicGenerator';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import withLinks from 'plugins/editor/withLinks';
 import withSectionBreak from 'plugins/editor/withSectionBreak';
 import withThreads from 'plugins/editor/withThreads';
-import { DiscussionContext } from 'utils/contexts';
+import { ThreadContext } from 'utils/contexts';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.grey7,
 }));
 
-const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
+const TopicEditable = styled(Editable)(({ theme: { colors } }) => ({
   fontSize: '16px',
   fontWeight: 400,
   lineHeight: '26px',
@@ -33,10 +33,10 @@ const ContextEditable = styled(Editable)(({ theme: { colors } }) => ({
   },
 }));
 
-const ContextComposer = props => {
-  const { topic } = useContext(DiscussionContext);
+const TopicComposer = props => {
+  const { topic } = useContext(ThreadContext);
 
-  const contextEditor = useMemo(
+  const editor = useMemo(
     () =>
       compose(
         withThreads,
@@ -46,26 +46,22 @@ const ContextComposer = props => {
       )(createEditor()),
     []
   );
-  const editorProps = useContextEditorProps();
+  const editorProps = useTopicEditorProps();
   const [content, setContent] = useState(
     topic ? JSON.parse(topic.payload) : []
   );
-  const generateContext = useContextGenerator(contextEditor);
+  const generateTopic = useTopicGenerator(editor);
   useMountEffect(() => {
-    if (!topic) generateContext();
+    if (!topic) generateTopic();
   });
 
   return (
     <Container {...props}>
-      <Slate
-        editor={contextEditor}
-        value={content}
-        onChange={v => setContent(v)}
-      >
-        <ContextEditable readOnly {...editorProps} />
+      <Slate editor={editor} value={content} onChange={v => setContent(v)}>
+        <TopicEditable readOnly {...editorProps} />
       </Slate>
     </Container>
   );
 };
 
-export default ContextComposer;
+export default TopicComposer;

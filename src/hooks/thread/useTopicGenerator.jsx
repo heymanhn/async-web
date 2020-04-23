@@ -7,7 +7,7 @@ import { CONTEXT_HIGHLIGHT, BUFFER_LENGTH } from 'utils/editor/constants';
 
 import Editor from 'components/editor/Editor';
 
-const useContextGenerator = editor => {
+const useTopicGenerator = editor => {
   // TODO (DISCUSSION V2): Avoid this dance. Be more explicit where to look
   // for the inline discussion topic
   const { initialTopic: documentContent } = useContext(DocumentContext);
@@ -81,4 +81,4 @@ const useContextGenerator = editor => {
   };
 };
 
-export default useContextGenerator;
+export default useTopicGenerator;
