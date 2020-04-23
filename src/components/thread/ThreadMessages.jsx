@@ -1,0 +1,126 @@
+/*
+ * TODO: Figure out how much this component can be DRY'ed up with
+ * <DiscussionMessages />
+ */
+import React, { useContext, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useApolloClient, useQuery, useMutation } from '@apollo/react-hooks';
+import styled from '@emotion/styled';
+
+import discussionMessagesQuery from 'graphql/queries/discussionMessages';
+import localStateQuery from 'graphql/queries/localState';
+import localAddPendingMessages from 'graphql/mutations/local/addPendingMessagesToDiscussion';
+import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
+import useMountEffect from 'hooks/shared/useMountEffect';
+import usePaginatedResource from 'hooks/resources/usePaginatedResource';
+import { DiscussionContext } from 'utils/contexts';
+
+import NewMessagesDivider from 'components/discussion/NewMessagesDivider';
+import NewMessagesIndicator from 'components/discussion/NewMessagesIndicator';
+import NotFound from 'components/navigation/NotFound';
+import Message from 'components/message/Message';
+
+const Container = styled.div(({ theme: { discussionViewport } }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+
+  maxWidth: discussionViewport,
+}));
+
+const StyledMessage = styled(Message)(({ isUnread, theme: { colors } }) => ({
+  backgroundColor: isUnread ? colors.unreadBlue : 'default',
+  border: 'none',
+  borderTop: `1px solid ${colors.borderGrey}`,
+  borderRadius: 0,
+  boxShadow: 'none',
+  marginBottom: 0,
+}));
+
+const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
+  const client = useApolloClient();
+  const discussionRef = useRef(null);
+  const { discussionId, isModal, modalRef } = useContext(DiscussionContext);
+  const [pendingMessageCount, setPendingMessageCount] = useState(0);
+  const [addPendingMessages] = useMutation(localAddPendingMessages, {
+    variables: { discussionId },
+  });
+  const markAsRead = useMarkResourceAsRead();
+
+  useMountEffect(() => {
+    client.writeData({ data: { pendingMessages: [] } });
+    if (isUnread) markAsRead();
+  });
+
+  const { data: localData } = useQuery(localStateQuery);
+  const { loading, data } = usePaginatedResource(
+    discussionRef,
+    {
+      query: discussionMessagesQuery,
+      key: 'messages',
+      variables: { discussionId, queryParams: {} },
+    },
+    undefined,
+    isModal ? modalRef : undefined
+  );
+
+  // Workaround to make sure two copies of the first message aren't rendered
+  // on the modal at the same time
+  if (loading || isComposingFirstMsg) return null;
+  if (!data) return <NotFound />;
+
+  const { items } = data;
+  const messages = (items || []).map(i => i.message);
+
+  if (localData) {
+    const { pendingMessages } = localData;
+    if (pendingMessages && pendingMessages.length !== pendingMessageCount) {
+      setPendingMessageCount(pendingMessages.length);
+    }
+  }
+
+  const handleAddPendingMessages = () => {
+    addPendingMessages();
+    markAsRead();
+  };
+
+  const firstNewMessageId = () => {
+    const targetMessage = messages.find(
+      m => m.tags && m.tags.includes('new_message')
+    );
+
+    return targetMessage ? targetMessage.id : null;
+  };
+  const isNewMessage = m => m.tags && m.tags.includes('new_message');
+
+  return (
+    <Container ref={discussionRef} {...props}>
+      {pendingMessageCount > 0 && (
+        <NewMessagesIndicator
+          count={pendingMessageCount}
+          onClick={handleAddPendingMessages}
+        />
+      )}
+      {messages.map((m, i) => (
+        <React.Fragment key={m.id}>
+          {!isModal &&
+            firstNewMessageId() === m.id &&
+            m.id !== messages[0].id && <NewMessagesDivider />}
+          <StyledMessage
+            index={i}
+            isModal={isModal}
+            message={m}
+            isUnread={isNewMessage(m)}
+          />
+        </React.Fragment>
+      ))}
+    </Container>
+  );
+};
+
+ThreadMessages.propTypes = {
+  isComposingFirstMsg: PropTypes.bool.isRequired,
+  isUnread: PropTypes.bool.isRequired,
+};
+
+export default ThreadMessages;

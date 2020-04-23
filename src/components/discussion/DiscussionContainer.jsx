@@ -17,7 +17,7 @@ import NotFound from 'components/navigation/NotFound';
 import ThreadModal from 'components/thread/ThreadModal';
 
 import AddReplyBox from './AddReplyBox';
-import DiscussionThread from './DiscussionThread';
+import DiscussionMessages from './DiscussionMessages';
 import TopicComposer from './TopicComposer';
 
 const OuterContainer = styled.div(({ theme: { colors } }) => ({
@@ -159,7 +159,7 @@ const DiscussionContainer = ({ discussionId }) => {
             autoFocus={!text && !messageCount}
           />
           {!!messageCount && (
-            <DiscussionThread
+            <DiscussionMessages
               isUnread={isResourceUnread(tags)}
               isComposingFirstMsg={!messageCount}
             />

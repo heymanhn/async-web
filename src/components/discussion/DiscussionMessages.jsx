@@ -45,7 +45,7 @@ const StyledMessage = styled(Message)(
   }
 );
 
-const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
+const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
   const { discussionId, isModal, modalRef } = useContext(DiscussionContext);
@@ -126,9 +126,9 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
   );
 };
 
-DiscussionThread.propTypes = {
+DiscussionMessages.propTypes = {
   isComposingFirstMsg: PropTypes.bool.isRequired,
   isUnread: PropTypes.bool.isRequired,
 };
 
-export default DiscussionThread;
+export default DiscussionMessages;

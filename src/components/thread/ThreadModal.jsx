@@ -13,9 +13,9 @@ import { isResourceUnread } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
 import Editor from 'components/editor/Editor';
-import DiscussionThread from 'components/discussion/DiscussionThread';
 import AddReplyBox from 'components/discussion/AddReplyBox';
 import Message from 'components/message/Message';
+import ThreadMessages from './ThreadMessages';
 import ContextComposer from './ContextComposer';
 
 const ESCAPE_HOTKEY = 'Escape';
@@ -137,7 +137,7 @@ const ThreadModal = ({
       <ThreadContext.Provider value={value}>
         {(initialTopic || topic) && <StyledContextComposer />}
         {initialTopic && (
-          <DiscussionThread
+          <ThreadMessages
             isComposingFirstMsg={isComposingFirstMsg}
             isUnread={isResourceUnread(tags)}
           />

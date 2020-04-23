@@ -56,7 +56,7 @@ const StyledMessageReactions = styled(MessageReactions)({
 });
 
 const Message = ({
-  index, // Used only by <DiscussionThread /> to see which message is selected
+  index, // Used only by <DiscussionMessages /> to see which message is selected
   isUnread,
   mode: initialMode,
   message,
