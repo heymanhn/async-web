@@ -11,7 +11,7 @@ import {
   listElements,
   wrappedBlockElements,
   voidElements,
-  discussionContextElements,
+  threadContextElements,
 } from './elements';
 
 const ContextElement = props => {
@@ -23,7 +23,7 @@ const ContextElement = props => {
     ...listElements,
     ...wrappedBlockElements,
     ...voidElements,
-    ...discussionContextElements,
+    ...threadContextElements,
   };
 
   const ElementToRender = elements[type] || DefaultElement;

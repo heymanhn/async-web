@@ -7,7 +7,7 @@ import { getLocalUser } from 'utils/auth';
 import useHover from 'hooks/shared/useHover';
 
 import DraftTooltip from './DraftTooltip';
-import InlineDiscussionPreview from './InlineDiscussionPreview';
+import InlineThreadPreview from './InlineThreadPreview';
 
 const HIDE_PREVIEW_WAIT_INTERVAL = 200;
 const SHOW_PREVIEW_WAIT_INTERVAL = 800;
@@ -36,7 +36,7 @@ const Highlight = styled.span(
   }
 );
 
-const InlineDiscussionElement = ({ attributes, children, element }) => {
+const InlineThreadElement = ({ attributes, children, element }) => {
   const ref = useRef(null);
   const [isHighlightHover, setIsHighlightHover] = useState(false);
   const [isPreviewHover, setIsPreviewHover] = useState(false);
@@ -87,7 +87,8 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
   const { userId } = getLocalUser();
   const isAuthor = userId === authorId;
 
-  const Tooltip = isInitialDraft ? DraftTooltip : InlineDiscussionPreview;
+  const Tooltip = isInitialDraft ? DraftTooltip : InlineThreadPreview;
+
   return (
     <span ref={ref} {...highlightHoverProps}>
       <Highlight
@@ -111,10 +112,10 @@ const InlineDiscussionElement = ({ attributes, children, element }) => {
   );
 };
 
-InlineDiscussionElement.propTypes = {
+InlineThreadElement.propTypes = {
   attributes: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired,
   element: PropTypes.object.isRequired,
 };
 
-export default InlineDiscussionElement;
+export default InlineThreadElement;

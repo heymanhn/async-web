@@ -8,7 +8,7 @@ import {
   wrappedBlockElements,
   voidElements,
   inlineElements,
-  inlineDiscussionElements,
+  inlineThreadElements,
 } from './elements';
 
 const Element = props => {
@@ -21,7 +21,7 @@ const Element = props => {
     ...wrappedBlockElements,
     ...voidElements,
     ...inlineElements,
-    ...inlineDiscussionElements,
+    ...inlineThreadElements,
   };
 
   const ElementToRender = elements[type] || DefaultElement;

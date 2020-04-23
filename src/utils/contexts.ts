@@ -30,18 +30,12 @@ export const WorkspaceContext = createContext(DEFAULT_WORKSPACE_CONTEXT);
 
 export const DEFAULT_DOCUMENT_CONTEXT = {
   documentId: null,
-  editor: null,
-  isModalOpen: false,
-  readOnly: false,
-  modalDiscussionId: null,
-  inlineDiscussionTopic: null,
-  viewMode: null,
+  threadId: null,
   channelId: null,
+  readOnly: false,
+  viewMode: null,
 
-  setFirstMsgDiscussionId: () => {},
-  setDeletedDiscussionId: () => {},
-  handleShowModal: () => {},
-  handleCloseModal: () => {},
+  handleShowThread: () => {},
   afterUpdate: () => {},
   afterUpdateTitle: () => {},
   afterDelete: () => {},

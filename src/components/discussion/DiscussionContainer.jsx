@@ -68,6 +68,13 @@ const DiscussionContainer = ({ discussionId }) => {
   const setDeletedDiscussionId = id =>
     setState(old => ({ ...old, deletedDiscussionId: id }));
 
+  // const {
+  //   threadId,
+  //   handleShowThread,
+  //   handleCloseThread,
+  //   ...threadProps
+  // } = useThreadState(initialThreadId);
+
   const { loading, data } = useQuery(discussionQuery, {
     variables: { discussionId },
   });
@@ -94,7 +101,7 @@ const DiscussionContainer = ({ discussionId }) => {
   };
 
   // TODO (DISCUSSION V2): DRY this up with DocumentContainer implementation
-  const handleShowModal = (dId, content) => {
+  const handleShowThread = (dId, content) => {
     const newState = {
       modalDiscussionId: dId,
       isModalOpen: true,
@@ -106,7 +113,7 @@ const DiscussionContainer = ({ discussionId }) => {
   };
 
   // TODO (DISCUSSION V2): DRY this up with DocumentContainer implementation
-  const handleCloseModal = () => {
+  const handleCloseThread = () => {
     setState(oldState => ({
       ...oldState,
       modalDiscussionId: null,
@@ -138,8 +145,8 @@ const DiscussionContainer = ({ discussionId }) => {
     setForceUpdate,
     setFirstMsgDiscussionId,
     setDeletedDiscussionId,
-    handleShowModal,
-    handleCloseModal,
+    handleShowThread,
+    handleCloseThread,
   };
 
   return (
@@ -175,7 +182,7 @@ const DiscussionContainer = ({ discussionId }) => {
           <ThreadModal
             isOpen={isModalOpen}
             mode="discussion"
-            handleClose={handleCloseModal}
+            handleClose={handleCloseThread}
           />
         )}
       </OuterContainer>

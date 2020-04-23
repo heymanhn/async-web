@@ -89,8 +89,8 @@ const NewReplyLabel = styled(MessageCountIndicator)(
   })
 );
 
-const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef, mode }) => {
-  const { handleShowModal } = useContext(
+const ThreadPreview = ({ discussionId, isOpen, parentRef, mode }) => {
+  const { handleShowThread } = useContext(
     mode === 'document' ? DocumentContext : DiscussionContext
   );
   const { loading, error, data, client } = useQuery(discussionQuery, {
@@ -117,7 +117,7 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef, mode }) => {
   const handleClick = event => {
     event.preventDefault();
     event.stopPropagation();
-    handleShowModal(discussionId);
+    handleShowThread(discussionId);
   };
 
   const calculateTooltipPosition = () => {
@@ -164,14 +164,14 @@ const InlineDiscussionPreview = ({ discussionId, isOpen, parentRef, mode }) => {
   );
 };
 
-InlineDiscussionPreview.propTypes = {
+ThreadPreview.propTypes = {
   discussionId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(['document', 'discussion']),
 };
 
-InlineDiscussionPreview.defaultProps = {
+ThreadPreview.defaultProps = {
   mode: 'document', // for backwards compatibility
 };
 
-export default InlineDiscussionPreview;
+export default ThreadPreview;

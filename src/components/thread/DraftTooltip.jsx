@@ -2,6 +2,7 @@ import React, { useContext, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
+import { useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
@@ -66,7 +67,8 @@ const Message = styled.div(({ theme: { colors } }) => ({
 
 const DraftTooltip = ({ discussionId, isOpen, parentRef, mode }) => {
   const tooltipRef = useRef(null);
-  const { handleShowModal } = useContext(
+  const editor = useSlate();
+  const { handleShowThread } = useContext(
     mode === 'document' ? DocumentContext : DiscussionContext
   );
   const { userId } = getLocalUser();
@@ -84,7 +86,8 @@ const DraftTooltip = ({ discussionId, isOpen, parentRef, mode }) => {
   const handleClick = event => {
     event.preventDefault();
     event.stopPropagation();
-    if (isAuthor) handleShowModal(discussionId);
+    if (isAuthor)
+      handleShowThread({ threadId: discussionId, sourceEditor: editor });
   };
 
   const calculateTooltipPosition = () => {

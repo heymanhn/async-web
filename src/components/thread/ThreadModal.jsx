@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 // import { track } from 'utils/analytics';
-import { DiscussionContext, DocumentContext } from 'utils/contexts';
+import { DiscussionContext } from 'utils/contexts';
 // import useMountEffect from 'hooks/shared/useMountEffect';
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 import { isResourceUnread } from 'utils/helpers';
@@ -38,20 +38,18 @@ const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
 }));
 
 const ThreadModal = ({
-  isOpen,
-  mode,
-  editor, // Reference to the editor that contains the content to be annotated
+  threadId,
+  initialThreadContext,
+  sourceEditor, // Reference to the editor that contains the content to be annotated
   handleClose,
   ...props
 }) => {
   const modalRef = useRef(null);
-  const {
-    modalDiscussionId,
-    inlineDiscussionTopic,
-    handleShowModal,
-  } = useContext(mode === 'document' ? DocumentContext : DiscussionContext);
   const discContext = useContext(DiscussionContext);
-  const [isComposing, setIsComposing] = useState(!modalDiscussionId);
+
+  // TODO (DISCUSSION V2): set isComposing to true once we know the user has
+  // a draft in progress for the thread.
+  const [isComposing, setIsComposing] = useState(false);
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
 
@@ -82,7 +80,7 @@ const ThreadModal = ({
   useKeyDownHandler([ESCAPE_HOTKEY, () => !isComposing && handleClose()]);
 
   const { data } = useQuery(discussionQuery, {
-    variables: { discussionId: modalDiscussionId },
+    variables: { discussionId: threadId },
   });
 
   if (!data || !data.discussion) return null;
@@ -92,34 +90,32 @@ const ThreadModal = ({
 
   const handleCancelCompose = () => {
     stopComposing();
-    if (!modalDiscussionId) handleClose();
   };
 
-  const handleCreateMessage = newDiscussionId => {
+  const handleCreateMessage = newThreadId => {
     stopComposing();
 
     // Only need to set this once, when the first message is created.
     if (!messageCount) {
-      Editor.updateInlineAnnotation(editor, newDiscussionId, {
+      Editor.updateInlineAnnotation(sourceEditor, newThreadId, {
         isInitialDraft: false,
       });
     }
   };
 
   const afterDelete = () => {
-    Editor.removeInlineAnnotation(editor, modalDiscussionId);
+    Editor.removeInlineAnnotation(sourceEditor, threadId);
     handleClose();
   };
 
+  // TODO (DISCUSSION V2): This should be ThreadContext soon.
   const value = {
     ...discContext,
-    discussionId: modalDiscussionId,
+    discussionId: threadId,
     topic,
     draft,
     modalRef,
     isModal: true,
-
-    afterCreate: id => handleShowModal(id),
     afterDelete,
   };
 
@@ -129,19 +125,19 @@ const ThreadModal = ({
    * 2. General discussion. There won't be a topic to create context for.
    * 3. Subsequent messages to a discussion. Also won't be a topic present.
    */
-  const readyToCompose = isComposing && (!inlineDiscussionTopic || topic);
+  const readyToCompose = isComposing && (!initialThreadContext || topic);
   const isComposingFirstMsg = isComposing && !messageCount;
 
   return (
     <StyledModal
       ref={modalRef}
       handleClose={handleClose}
-      isOpen={isOpen}
+      isOpen={!!threadId}
       {...props}
     >
       <DiscussionContext.Provider value={value}>
-        {(inlineDiscussionTopic || topic) && <StyledContextComposer />}
-        {modalDiscussionId && (
+        {(initialThreadContext || topic) && <StyledContextComposer />}
+        {initialThreadContext && (
           <DiscussionThread
             isComposingFirstMsg={isComposingFirstMsg}
             isUnread={isResourceUnread(tags)}
@@ -166,10 +162,15 @@ const ThreadModal = ({
 };
 
 ThreadModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
+  threadId: PropTypes.string.isRequired,
+  initialThreadContext: PropTypes.object,
   mode: PropTypes.oneOf(['document', 'discussion']).isRequired,
-  editor: PropTypes.object.isRequired,
+  sourceEditor: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
+};
+
+ThreadModal.defaultProps = {
+  initialThreadContext: null,
 };
 
 export default ThreadModal;

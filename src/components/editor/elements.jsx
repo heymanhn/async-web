@@ -20,11 +20,11 @@ import {
   IMAGE,
   HYPERLINK,
   CONTEXT_HIGHLIGHT,
-  INLINE_DISCUSSION_ANNOTATION,
+  INLINE_THREAD_ANNOTATION,
   INLINE_TYPES,
 } from 'utils/editor/constants';
 
-import InlineDiscussionElement from 'components/discussion/InlineDiscussionElement';
+import InlineThreadElement from 'components/thread/InlineThreadElement';
 import ChecklistItemElement from './ChecklistItem';
 import ImageElement from './ImageElement';
 
@@ -300,10 +300,8 @@ voidElements[IMAGE] = ImageElement;
 export const inlineElements = {};
 inlineElements[HYPERLINK] = LinkElement;
 
-export const discussionContextElements = {};
-discussionContextElements[CONTEXT_HIGHLIGHT] = ContextHighlightElement;
+export const threadContextElements = {};
+threadContextElements[CONTEXT_HIGHLIGHT] = ContextHighlightElement;
 
-export const inlineDiscussionElements = {};
-inlineDiscussionElements[
-  INLINE_DISCUSSION_ANNOTATION
-] = InlineDiscussionElement;
+export const inlineThreadElements = {};
+inlineThreadElements[INLINE_THREAD_ANNOTATION] = InlineThreadElement;

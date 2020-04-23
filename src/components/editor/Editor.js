@@ -21,7 +21,7 @@ import {
   MEDIUM_FONT,
   SMALL_FONT,
   CONTEXT_HIGHLIGHT,
-  INLINE_DISCUSSION_ANNOTATION,
+  INLINE_THREAD_ANNOTATION,
   INLINE_DISCUSSION_SOURCE,
   HYPERLINK,
   IMAGE,
@@ -305,7 +305,7 @@ const wrapInlineAnnotation = (editor, data, range) => {
 
   wrapInline(
     editor,
-    INLINE_DISCUSSION_ANNOTATION,
+    INLINE_THREAD_ANNOTATION,
     at,
     INLINE_DISCUSSION_SOURCE,
     data
@@ -335,8 +335,7 @@ const updateInlineAnnotation = (editor, discussionId, data) => {
   Transforms.setNodes(editor, data, {
     at: documentSelection(editor),
     match: n =>
-      n.type === INLINE_DISCUSSION_ANNOTATION &&
-      n.discussionId === discussionId,
+      n.type === INLINE_THREAD_ANNOTATION && n.discussionId === discussionId,
   });
 };
 
@@ -344,8 +343,7 @@ const removeInlineAnnotation = (editor, discussionId) => {
   Transforms.unwrapNodes(editor, {
     at: documentSelection(editor),
     match: n =>
-      n.type === INLINE_DISCUSSION_ANNOTATION &&
-      n.discussionId === discussionId,
+      n.type === INLINE_THREAD_ANNOTATION && n.discussionId === discussionId,
     split: true,
   });
 };

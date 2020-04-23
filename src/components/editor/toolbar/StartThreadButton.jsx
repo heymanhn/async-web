@@ -19,7 +19,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
   margin: '5px 10px',
 });
 
-const InlineDiscussionButton = ({ handleShowModal, ...props }) => {
+const StartThreadButton = ({ handleShowThread, ...props }) => {
   const editor = useSlate();
   const { handleSaveDraft, isSubmitting } = useMessageDraftMutations();
   const { userId } = getLocalUser();
@@ -39,6 +39,7 @@ const InlineDiscussionButton = ({ handleShowModal, ...props }) => {
     const { discussionId } = await handleSaveDraft({ isThread: true });
 
     // Special case for starting inline discussion from read-only message content
+    // TODO (DISCUSSION V2): Do this another way, instead of special casing like this.
     let mode = 'document';
     if (!editor.selection) {
       mode = 'discussion';
@@ -63,7 +64,11 @@ const InlineDiscussionButton = ({ handleShowModal, ...props }) => {
     );
 
     Transforms.deselect(editor);
-    handleShowModal(discussionId, newContents);
+    handleShowThread({
+      threadId: discussionId,
+      initialThreadContext: newContents,
+      sourceEditor: editor,
+    });
   };
 
   const { selection } = editor;
@@ -78,8 +83,8 @@ const InlineDiscussionButton = ({ handleShowModal, ...props }) => {
   );
 };
 
-InlineDiscussionButton.propTypes = {
-  handleShowModal: PropTypes.func.isRequired,
+StartThreadButton.propTypes = {
+  handleShowThread: PropTypes.func.isRequired,
 };
 
-export default InlineDiscussionButton;
+export default StartThreadButton;

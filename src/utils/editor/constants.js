@@ -48,12 +48,12 @@ export const SMALL_FONT = 'heading-three';
  */
 export const HYPERLINK = 'hyperlink';
 export const CONTEXT_HIGHLIGHT = 'highlight';
-export const INLINE_DISCUSSION_ANNOTATION = 'inline-discussion';
-export const INLINE_DISCUSSION_TYPES = [
+export const INLINE_THREAD_ANNOTATION = 'inline-discussion'; // backwards compatibility
+export const INLINE_THREAD_TYPES = [
   CONTEXT_HIGHLIGHT,
-  INLINE_DISCUSSION_ANNOTATION,
+  INLINE_THREAD_ANNOTATION,
 ];
-export const INLINE_TYPES = [HYPERLINK, ...INLINE_DISCUSSION_TYPES];
+export const INLINE_TYPES = [HYPERLINK, ...INLINE_THREAD_TYPES];
 
 /*
  * Void elements

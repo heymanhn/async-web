@@ -12,7 +12,7 @@ import useMessageMutations from 'hooks/message/useMessageMutations';
 import { DiscussionContext, MessageContext } from 'utils/contexts';
 
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
-import DisplayedMessageToolbar from 'components/editor/toolbar/DisplayedMessageToolbar';
+import ReadOnlyMessageToolbar from 'components/editor/toolbar/ReadOnlyMessageToolbar';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import MessageActions from './MessageActions';
@@ -64,7 +64,7 @@ const MessageComposer = ({ initialMessage, autoFocus, ...props }) => {
           readOnly={readOnly}
           {...coreEditorProps}
         />
-        {readOnly && <DisplayedMessageToolbar />}
+        {readOnly && <ReadOnlyMessageToolbar />}
         {!readOnly && <MessageToolbar />}
         <DefaultPlaceholder />
         <CompositionMenuButton />
