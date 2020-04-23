@@ -6,7 +6,6 @@ import documentQuery from 'graphql/queries/document';
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
 import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
 
-import useDocumentEditor from 'components/editor/hooks/useDocumentEditor';
 import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import NotFound from 'components/navigation/NotFound';
@@ -17,7 +16,6 @@ import DiscussionsList from './DiscussionsList';
 
 const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(documentId);
-  const editor = useDocumentEditor(documentId);
 
   const [state, setState] = useState({
     viewMode: 'content',

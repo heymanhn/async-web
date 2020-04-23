@@ -1,8 +1,8 @@
-import writeClearly from 'images/writeClearly.png';
-import writeDiscuss from 'images/writeDiscuss.png';
-import cmdCenter from 'images/cmdCenter.png';
-import contributeAsync from 'images/contributeAsync.png';
-import workspace from 'images/workspace.png';
+import writeClearly from 'assets/writeClearly.png';
+import writeDiscuss from 'assets/writeDiscuss.png';
+import cmdCenter from 'assets/cmdCenter.png';
+import contributeAsync from 'assets/contributeAsync.png';
+import workspace from 'assets/workspace.png';
 
 import {
   HEADLINE,

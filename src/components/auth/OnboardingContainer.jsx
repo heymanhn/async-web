@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import rovalLogo from 'images/logo.png';
+import rovalLogo from 'assets/logo.png';
 
 const OuterContainer = styled.div({
   display: 'flex',
