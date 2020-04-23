@@ -11,7 +11,7 @@ import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
 import useCurrentUser from 'hooks/shared/useCurrentUser';
 import useHover from 'hooks/shared/useHover';
-import { DiscussionContext } from 'utils/contexts';
+import { ThreadContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 import AvatarWithIcon from 'components/shared/AvatarWithIcon';
@@ -68,13 +68,13 @@ const ActionButton = styled.div(({ theme: { colors } }) => ({
 }));
 
 const AddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
-  const { discussionId } = useContext(DiscussionContext);
+  const { threadId } = useContext(ThreadContext);
   const { hover, ...hoverProps } = useHover(!isComposing);
   const currentUser = useCurrentUser();
 
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
   const { loading, data } = useQuery(discussionQuery, {
-    variables: { discussionId },
+    variables: { discussionId: threadId },
   });
 
   if (loading || !data.discussion) return null;
@@ -83,7 +83,7 @@ const AddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
   const updateDiscussionStatus = state => {
     updateDiscussion({
       variables: {
-        discussionId,
+        discussionId: threadId,
         input: { status: { state } },
       },
     });

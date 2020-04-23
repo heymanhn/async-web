@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
-import { DiscussionContext, MessageContext } from 'utils/contexts';
+import { MessageContext } from 'utils/contexts';
 
 import Button from 'components/shared/Button';
 import Editor from 'components/editor/Editor';
@@ -36,8 +36,7 @@ const StyledButton = styled(Button)({
 });
 
 const MessageActions = ({ handleSubmit, isSubmitting }) => {
-  const { draft } = useContext(DiscussionContext);
-  const { mode, handleCancel } = useContext(MessageContext);
+  const { draft, mode, handleCancel } = useContext(MessageContext);
   const { handleDeleteDraft } = useMessageDraftMutations();
   const editor = useSlate();
   const isEmptyContent = Editor.isEmptyContent(editor);

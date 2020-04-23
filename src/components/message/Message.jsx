@@ -89,7 +89,9 @@ const Message = ({
   const value = {
     ...DEFAULT_MESSAGE_CONTEXT,
     messageId,
+    parentId,
     mode,
+    draft,
     threadPosition: index,
     setMode,
     afterCreate,
@@ -116,7 +118,6 @@ const Message = ({
           isModal={isModal}
           initialMessage={loadInitialContent()}
           autoFocus={mode !== 'display' && !disableAutoFocus}
-          parentId={parentId}
         />
         {mode === 'display' && <StyledMessageReactions />}
       </MessageContext.Provider>

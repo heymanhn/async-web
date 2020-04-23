@@ -15,7 +15,7 @@ import createReactionMutation from 'graphql/mutations/createReaction';
 import deleteReactionMutation from 'graphql/mutations/deleteReaction';
 import messageQuery from 'graphql/queries/message';
 import { track } from 'utils/analytics';
-import { DiscussionContext, MessageContext } from 'utils/contexts';
+import { MessageContext } from 'utils/contexts';
 
 const reactionsReference = [
   {
@@ -51,8 +51,7 @@ const reactionsReference = [
 ];
 
 const useReactions = () => {
-  const { discussionId } = useContext(DiscussionContext);
-  const { messageId } = useContext(MessageContext);
+  const { messageId, parentId } = useContext(MessageContext);
   const [execAddReaction] = useMutation(createReactionMutation);
   const [execRemoveReaction] = useMutation(deleteReactionMutation);
 
@@ -68,7 +67,7 @@ const useReactions = () => {
       refetchQueries: [
         {
           query: messageQuery,
-          variables: { discussionId, messageId },
+          variables: { discussionId: parentId, messageId },
         },
       ],
     });
@@ -82,7 +81,7 @@ const useReactions = () => {
       refetchQueries: [
         {
           query: messageQuery,
-          variables: { discussionId, messageId },
+          variables: { discussionId: parentId, messageId },
         },
       ],
     });
@@ -91,7 +90,7 @@ const useReactions = () => {
   }
 
   const { data } = useQuery(messageQuery, {
-    variables: { discussionId, messageId },
+    variables: { discussionId: parentId, messageId },
   });
 
   let reactions = [];

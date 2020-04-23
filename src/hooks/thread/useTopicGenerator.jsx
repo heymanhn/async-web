@@ -2,29 +2,22 @@ import { useContext } from 'react';
 import { Transforms } from 'slate';
 
 import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
-import { DiscussionContext, DocumentContext } from 'utils/contexts';
+import { ThreadContext } from 'utils/contexts';
 import { CONTEXT_HIGHLIGHT, BUFFER_LENGTH } from 'utils/editor/constants';
 
 import Editor from 'components/editor/Editor';
 
 const useTopicGenerator = editor => {
-  // TODO (DISCUSSION V2): Avoid this dance. Be more explicit where to look
-  // for the inline discussion topic
-  const { initialTopic: documentContent } = useContext(DocumentContext);
-  const { initialTopic: messageContent, discussionId } = useContext(
-    DiscussionContext
-  );
+  const { threadId, initialTopic } = useContext(ThreadContext);
   const { handleUpdateContext } = useDiscussionMutations();
 
   const loadContents = id => {
     // Needed to avoid editor focus issues relating to shallow references.
-    const deepNewContents = JSON.parse(
-      JSON.stringify(documentContent || messageContent)
-    );
+    const deepNewContents = JSON.parse(JSON.stringify(initialTopic));
     Transforms.insertNodes(editor, deepNewContents);
 
     // Convert inline annotation into a context highlight
-    Editor.updateInlineAnnotation(editor, discussionId, {
+    Editor.updateInlineAnnotation(editor, threadId, {
       type: CONTEXT_HIGHLIGHT,
       id,
       discussionId: undefined,

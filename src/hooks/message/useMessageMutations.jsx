@@ -10,35 +10,35 @@ import localDeleteMessageMutation from 'graphql/mutations/local/deleteMessageFro
 import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
 import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
 import { track } from 'utils/analytics';
-import {
-  DocumentContext,
-  DiscussionContext,
-  MessageContext,
-} from 'utils/contexts';
+import { DocumentContext, MessageContext } from 'utils/contexts';
 import { toPlainText } from 'utils/editor/constants';
 
 const useMessageMutations = ({ message = null } = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { documentId } = useContext(DocumentContext);
-  const { discussionId } = useContext(DiscussionContext);
-  const { messageId, setMode, afterCreate } = useContext(MessageContext);
+  const { messageId, parentId, setMode, afterCreate } = useContext(
+    MessageContext
+  );
   const { handleCreate: handleCreateDiscussion } = useDiscussionMutations();
 
   const [createMessage] = useMutation(createMessageMutation);
   const [updateMessage] = useMutation(updateMessageMutation);
 
   const [deleteMessage] = useMutation(deleteMessageMutation, {
-    variables: { discussionId, messageId },
+    variables: { discussionId: parentId, messageId },
   });
   const [localDeleteMessage] = useMutation(localDeleteMessageMutation, {
-    variables: { discussionId, messageId },
+    variables: { discussionId: parentId, messageId },
   });
   const [localAddMessage] = useMutation(addNewMsgMutation);
 
   const handleCreate = async () => {
     setIsSubmitting(true);
 
-    let messageDiscussionId = discussionId;
+    // TODO (DISCUSSION V2): This shouldn't happen, now that all threads and
+    // discussions are created before the first message is created. See if
+    // we can delete this logic safely.
+    let messageDiscussionId = parentId;
     if (!messageDiscussionId) {
       const { id } = await handleCreateDiscussion();
       messageDiscussionId = id;
@@ -50,7 +50,7 @@ const useMessageMutations = ({ message = null } = {}) => {
         variables: { discussionId: messageDiscussionId },
       },
     ];
-    if (!discussionId) {
+    if (!parentId && documentId) {
       refetchQueries.push({
         query: documentDiscussionsQuery,
         variables: { id: documentId, queryParams: { order: 'desc' } },
@@ -94,7 +94,7 @@ const useMessageMutations = ({ message = null } = {}) => {
 
     const { data } = await updateMessage({
       variables: {
-        discussionId,
+        discussionId: parentId,
         messageId,
         input: {
           body: {
@@ -109,7 +109,7 @@ const useMessageMutations = ({ message = null } = {}) => {
     if (data.updateMessage) {
       setIsSubmitting(false);
       setMode('display');
-      track('Message edited', { messageId, discussionId });
+      track('Message edited', { messageId, discussionId: parentId });
     }
   };
 

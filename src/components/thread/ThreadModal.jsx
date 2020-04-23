@@ -13,7 +13,7 @@ import { isResourceUnread } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
 import Editor from 'components/editor/Editor';
-import AddReplyBox from 'components/discussion/AddReplyBox';
+import AddReplyBox from 'components/thread/AddReplyBox';
 import Message from 'components/message/Message';
 import ThreadMessages from './ThreadMessages';
 import TopicComposer from './TopicComposer';
@@ -112,6 +112,7 @@ const ThreadModal = ({
   const value = {
     ...DEFAULT_THREAD_CONTEXT,
     threadId,
+    initialTopic,
     topic,
     modalRef,
     afterDelete,
@@ -135,17 +136,16 @@ const ThreadModal = ({
     >
       <ThreadContext.Provider value={value}>
         {(initialTopic || topic) && <StyledTopicComposer />}
-        {initialTopic && (
-          <ThreadMessages
-            isComposingFirstMsg={isComposingFirstMsg}
-            isUnread={isResourceUnread(tags)}
-          />
-        )}
+        <ThreadMessages
+          isComposingFirstMsg={isComposingFirstMsg}
+          isUnread={isResourceUnread(tags)}
+        />
         {readyToCompose ? (
           <StyledMessage
             mode="compose"
             draft={draft}
             isModal // TODO (DISCUSSION V2): find better way to do this later
+            parentId={threadId}
             afterCreate={handleCreateMessage}
             handleCancel={handleCancelCompose}
             {...props}

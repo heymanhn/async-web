@@ -36,7 +36,9 @@ const StartThreadButton = ({ handleShowThread, ...props }) => {
 
   const handleClick = async () => {
     // Create an empty draft discussion
-    const { discussionId } = await handleSaveDraft({ isThread: true });
+    const { discussionId: threadId } = await handleSaveDraft({
+      isThread: true,
+    });
 
     // Special case for starting inline discussion from read-only message content
     // TODO (DISCUSSION V2): Do this another way, instead of special casing like this.
@@ -47,7 +49,7 @@ const StartThreadButton = ({ handleShowThread, ...props }) => {
     }
 
     Editor.createInlineAnnotation(editor, {
-      discussionId,
+      threadId,
       authorId: userId,
       isInitialDraft: true, // Toggled to false once first message is created
       mode,
@@ -65,7 +67,7 @@ const StartThreadButton = ({ handleShowThread, ...props }) => {
 
     Transforms.deselect(editor);
     handleShowThread({
-      threadId: discussionId,
+      threadId,
       initialThreadContext: newContents,
       sourceEditor: editor,
     });

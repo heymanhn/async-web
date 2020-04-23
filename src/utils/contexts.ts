@@ -56,14 +56,17 @@ export const DiscussionContext = createContext(DEFAULT_DISCUSSION_CONTEXT);
 
 export const DEFAULT_THREAD_CONTEXT = {
   threadId: null,
-  modalRef: {},
+  initialTopic: null,
   topic: null,
+  modalRef: {},
 };
 export const ThreadContext = createContext(DEFAULT_THREAD_CONTEXT);
 
 export const DEFAULT_MESSAGE_CONTEXT = {
   messageId: null,
+  parentId: null,
   mode: null,
+  draft: null,
   threadPosition: null,
 
   setMode: () => {},
