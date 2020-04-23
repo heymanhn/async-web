@@ -6,18 +6,19 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
+import useUpdateSelectedResource from 'hooks/resources/useUpdateSelectedResource';
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
-import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
+import Message from 'components/message/Message';
 import NavigationBar from 'components/navigation/NavigationBar';
 import NotFound from 'components/navigation/NotFound';
 import ThreadModal from 'components/thread/ThreadModal';
-import Message from 'components/message/Message';
-import TopicComposer from './TopicComposer';
-import DiscussionThread from './DiscussionThread';
+
 import AddReplyBox from './AddReplyBox';
+import DiscussionThread from './DiscussionThread';
+import TopicComposer from './TopicComposer';
 
 const OuterContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,

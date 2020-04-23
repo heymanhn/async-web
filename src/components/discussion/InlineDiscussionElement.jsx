@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
-import useHover from 'utils/hooks/useHover';
+import useHover from 'hooks/shared/useHover';
 
 import DraftTooltip from './DraftTooltip';
 import InlineDiscussionPreview from './InlineDiscussionPreview';

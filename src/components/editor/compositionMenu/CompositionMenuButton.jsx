@@ -4,7 +4,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
+import useSelectionDimensions from 'hooks/editor/useSelectionDimensions';
 
 import Editor from 'components/editor/Editor';
 import CompositionMenuPlaceholder from './CompositionMenuPlaceholder';

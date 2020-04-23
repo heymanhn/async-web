@@ -7,8 +7,8 @@ import styled from '@emotion/styled';
 import discussionQuery from 'graphql/queries/discussion';
 // import { track } from 'utils/analytics';
 import { DiscussionContext, DocumentContext } from 'utils/contexts';
-// import useMountEffect from 'utils/hooks/useMountEffect';
-import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
+// import useMountEffect from 'hooks/shared/useMountEffect';
+import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 import { isResourceUnread } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';

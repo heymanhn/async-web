@@ -4,7 +4,7 @@ import { Range } from 'slate';
 import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
-import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
+import useSelectionDimensions from 'hooks/editor/useSelectionDimensions';
 
 const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
   display: 'flex',

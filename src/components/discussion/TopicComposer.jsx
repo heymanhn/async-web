@@ -2,8 +2,9 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
+import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
 import { DiscussionContext } from 'utils/contexts';
+
 import TitleEditable from 'components/shared/TitleEditable';
 
 const StyledTitleEditable = styled(TitleEditable)({

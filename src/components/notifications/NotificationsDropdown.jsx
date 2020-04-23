@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
-import usePaginatedResource from 'utils/hooks/usePaginatedResource';
+import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import resourceNotificationsQuery from 'graphql/queries/resourceNotifications';
-import useClickOutside from 'utils/hooks/useClickOutside';
+import useClickOutside from 'hooks/shared/useClickOutside';
 import { getLocalUser } from 'utils/auth';
 import { NavigationContext } from 'utils/contexts';
 

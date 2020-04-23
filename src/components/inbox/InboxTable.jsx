@@ -4,9 +4,9 @@ import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
 import { compareOnProperty } from 'utils/helpers';
-import usePrefetchQueries from 'utils/hooks/usePrefetchQueries';
+import usePrefetchQueries from 'hooks/shared/usePrefetchQueries';
 import inboxQuery from 'graphql/queries/inbox';
-import usePaginatedResource from 'utils/hooks/usePaginatedResource';
+import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 
 import NotFound from 'components/navigation/NotFound';
 import LoadingIndicator from 'components/shared/LoadingIndicator';

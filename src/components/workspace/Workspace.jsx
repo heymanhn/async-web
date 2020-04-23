@@ -3,14 +3,15 @@ import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import workspaceQuery from 'graphql/queries/workspace';
+import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import { matchCurrentUserId } from 'utils/auth';
 import { WorkspaceContext } from 'utils/contexts';
-import useViewedReaction from 'utils/hooks/useViewedReaction';
 
-import NotFound from 'components/navigation/NotFound';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
-import TitleComposer from './TitleComposer';
+import NotFound from 'components/navigation/NotFound';
+
 import ResourcesList from './ResourcesList';
+import TitleComposer from './TitleComposer';
 
 const Container = styled.div(({ theme: { colors, workspaceViewport } }) => ({
   background: colors.white,
@@ -26,7 +27,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 const Workspace = () => {
   const { workspaceId } = useContext(WorkspaceContext);
   const [sentReaction, setSentReaction] = useState(false);
-  const markAsRead = useViewedReaction();
+  const markAsRead = useMarkResourceAsRead();
 
   const { loading, data } = useQuery(workspaceQuery, {
     variables: { workspaceId },

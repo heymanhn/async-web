@@ -5,7 +5,6 @@
 import { Editor, Point, Range, Transforms } from 'slate';
 
 import { track } from 'utils/analytics';
-
 import {
   DEFAULT_ELEMENT,
   DEFAULT_ELEMENT_TYPE,
@@ -27,7 +26,7 @@ import {
   HYPERLINK,
   IMAGE,
   SECTION_BREAK,
-} from './utils';
+} from 'utils/editor/constants';
 
 /*
  * Queries

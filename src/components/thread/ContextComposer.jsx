@@ -4,14 +4,13 @@ import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import styled from '@emotion/styled';
 
+import useContextEditorProps from 'hooks/thread/useContextEditorProps';
+import useContextGenerator from 'hooks/thread/useContextGenerator';
+import useMountEffect from 'hooks/shared/useMountEffect';
+import withLinks from 'plugins/editor/withLinks';
+import withSectionBreak from 'plugins/editor/withSectionBreak';
+import withThreads from 'plugins/editor/withThreads';
 import { DiscussionContext } from 'utils/contexts';
-import useMountEffect from 'utils/hooks/useMountEffect';
-
-import useContextEditorProps from 'components/editor/hooks/useContextEditorProps';
-import withInlineDiscussions from 'components/editor/withInlineDiscussions';
-import withLinks from 'components/editor/withLinks';
-import withSectionBreak from 'components/editor/withSectionBreak';
-import useContextGenerator from './hooks/useContextGenerator';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.grey7,
@@ -40,7 +39,7 @@ const ContextComposer = props => {
   const contextEditor = useMemo(
     () =>
       compose(
-        withInlineDiscussions,
+        withThreads,
         withLinks,
         withSectionBreak,
         withReact

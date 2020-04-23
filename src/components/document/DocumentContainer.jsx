@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 
 import documentQuery from 'graphql/queries/document';
+import useUpdateSelectedResource from 'hooks/resources/useUpdateSelectedResource';
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
 import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
-
-import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import NotFound from 'components/navigation/NotFound';
 import ThreadModal from 'components/thread/ThreadModal';
 import NavigationBar from 'components/navigation/NavigationBar';
-import Document from './Document';
+
 import DiscussionsList from './DiscussionsList';
+import Document from './Document';
 
 const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(documentId);
@@ -41,6 +41,7 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
   const { channelId, tags } = data.document;
   const readOnly = isResourceReadOnly(tags);
 
+  // TODO (DISCUSSION V2): Move this to a useThreadState hook.
   const handleShowThread = ({
     sourceEditor = null, // So that the thread can update/remove the annotation
     threadId,
@@ -66,7 +67,6 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
 
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
-    editor,
     documentId,
     threadId,
     initialThreadContext,
@@ -90,7 +90,7 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
         <ThreadModal
           isOpen={!!threadId}
           mode="document"
-          editor={editor}
+          editor={null} // TODO (DISCUSSION V2): Get this from useThreadState
           handleClose={handleCloseThread}
         />
       )}

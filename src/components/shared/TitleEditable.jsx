@@ -9,9 +9,9 @@ import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
 
+import useAutoSave from 'hooks/editor/useAutoSave';
+import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
 import { titleize } from 'utils/helpers';
-import useAutoSave from 'utils/hooks/useAutoSave';
-import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
 
 const Container = styled.div({
   display: 'flex',

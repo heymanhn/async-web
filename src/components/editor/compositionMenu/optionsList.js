@@ -9,7 +9,7 @@ import {
   BLOCK_QUOTE_OPTION_TITLE,
   SECTION_BREAK_OPTION_TITLE,
   IMAGE_OPTION_TITLE,
-} from '../utils';
+} from 'utils/editor/constants';
 
 import {
   TextOption,

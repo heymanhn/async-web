@@ -2,10 +2,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import InlineDiscussionElement from 'components/discussion/InlineDiscussionElement';
-import ImageElement from './ImageElement';
-
-import ChecklistItemElement from './ChecklistItem';
 import {
   LARGE_FONT,
   MEDIUM_FONT,
@@ -26,7 +22,11 @@ import {
   CONTEXT_HIGHLIGHT,
   INLINE_DISCUSSION_ANNOTATION,
   INLINE_TYPES,
-} from './utils';
+} from 'utils/editor/constants';
+
+import InlineDiscussionElement from 'components/discussion/InlineDiscussionElement';
+import ChecklistItemElement from './ChecklistItem';
+import ImageElement from './ImageElement';
 
 /*
  * Default element

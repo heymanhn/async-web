@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import useMediaQuery from 'utils/hooks/useMediaQuery';
+import useMediaQuery from 'hooks/shared/useMediaQuery';
 
 import GlobalStyles from 'components/style/GlobalStyles';
 import Theme from 'components/style/Theme';

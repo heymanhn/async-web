@@ -12,7 +12,7 @@ import {
   setLocalAppState,
   clearLocalAppState,
 } from 'utils/auth';
-import useMountEffect from 'utils/hooks/useMountEffect';
+import useMountEffect from 'hooks/shared/useMountEffect';
 import { group, identify, track } from 'utils/analytics';
 
 import Button from 'components/shared/Button';

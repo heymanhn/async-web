@@ -4,12 +4,12 @@ import { Transforms, Range } from 'slate';
 import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
+import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
+import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
 import { getLocalUser } from 'utils/auth';
-import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
 import Editor from 'components/editor/Editor';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
-import useMessageDraftMutations from 'components/message/hooks/useMessageDraftMutations';
 import ToolbarButton from './ToolbarButton';
 import ButtonIcon from './ButtonIcon';
 

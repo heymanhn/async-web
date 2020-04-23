@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import { matchCurrentUserId } from 'utils/auth';
-import useClickOutside from 'utils/hooks/useClickOutside';
-import useReactions from 'utils/hooks/useReactions';
+import useClickOutside from 'hooks/shared/useClickOutside';
+import useReactions from 'hooks/message/useReactions';
 
 import ReactionIcon from './ReactionIcon';
 

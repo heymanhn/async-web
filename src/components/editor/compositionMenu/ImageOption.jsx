@@ -2,11 +2,11 @@ import React, { useCallback, useContext } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useEditor } from 'slate-react';
 
-import uploadImage from 'utils/imageUpload';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { IMAGE_OPTION_TITLE } from 'utils/editor/constants';
+import uploadImage from 'utils/imageUpload';
 
-import { IMAGE_OPTION_TITLE } from '../utils';
-import Editor from '../Editor';
+import Editor from 'components/editor/Editor';
 import MenuOption from './MenuOption';
 import OptionIcon from './OptionIcon';
 

@@ -5,8 +5,8 @@ import styled from '@emotion/styled';
 import { DEFAULT_ACCESS_TYPE, RESOURCE_ICONS } from 'utils/constants';
 import { NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
-import useCurrentUser from 'utils/hooks/useCurrentUser';
-import useResourceCreator from 'utils/hooks/useResourceCreator';
+import useCurrentUser from 'hooks/shared/useCurrentUser';
+import useResourceCreator from 'hooks/resources/useResourceCreator';
 
 import Modal from 'components/shared/Modal';
 import InputWithIcon from 'components/shared/InputWithIcon';

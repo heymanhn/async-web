@@ -2,7 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import { BOLD, ITALIC, UNDERLINE, CODE_HIGHLIGHT } from './utils';
+import {
+  BOLD,
+  ITALIC,
+  UNDERLINE,
+  CODE_HIGHLIGHT,
+} from 'utils/editor/constants';
 
 const CodeHighlight = styled.code(({ theme: { codeFontStack, colors } }) => ({
   background: colors.grey7,

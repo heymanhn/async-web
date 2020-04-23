@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import useDocumentMutations from 'utils/hooks/useDocumentMutations';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
 import { DocumentContext } from 'utils/contexts';
 
 import TitleEditable from 'components/shared/TitleEditable';

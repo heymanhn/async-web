@@ -2,8 +2,8 @@ import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import useCurrentUser from 'utils/hooks/useCurrentUser';
-import useHover from 'utils/hooks/useHover';
+import useCurrentUser from 'hooks/shared/useCurrentUser';
+import useHover from 'hooks/shared/useHover';
 import {
   MessageContext,
   DiscussionContext,

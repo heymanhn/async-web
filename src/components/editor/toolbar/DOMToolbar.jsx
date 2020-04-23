@@ -9,7 +9,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import { SHOW_TOOLBAR_DELAY } from 'utils/constants';
-import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
+import useSelectionDimensions from 'hooks/editor/useSelectionDimensions';
 
 const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
   display: 'flex',

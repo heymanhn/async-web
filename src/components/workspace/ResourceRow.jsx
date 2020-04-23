@@ -6,7 +6,7 @@ import Pluralize from 'pluralize';
 import moment from 'moment';
 import styled from '@emotion/styled';
 
-import useHover from 'utils/hooks/useHover';
+import useHover from 'hooks/shared/useHover';
 // import { getLocalUser } from 'utils/auth';
 // import { isResourceUnread } from 'utils/helpers';
 

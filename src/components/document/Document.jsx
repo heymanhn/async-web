@@ -4,9 +4,9 @@ import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
-import useDocumentTitlePusher from 'utils/hooks/useDocumentTitlePusher';
-import useMountEffect from 'utils/hooks/useMountEffect';
-import useViewedReaction from 'utils/hooks/useViewedReaction';
+import useDocumentTitlePusher from 'hooks/document/useDocumentTitlePusher';
+import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
+import useMountEffect from 'hooks/shared/useMountEffect';
 import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
@@ -27,7 +27,7 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
 const Document = ({ isUnread }) => {
   const documentContext = useContext(DocumentContext);
   const { documentId } = documentContext;
-  const markAsRead = useViewedReaction();
+  const markAsRead = useMarkResourceAsRead();
   const handleNewTitle = useDocumentTitlePusher();
   const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
 

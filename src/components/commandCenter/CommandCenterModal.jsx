@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
 import styled from '@emotion/styled';
 
+import useCommandCenterSearch from 'hooks/commandCenter/useCommandCenterSearch';
+import useCommandCenterTitle from 'hooks/commandCenter/useCommandCenterTitle';
 import { track } from 'utils/analytics';
 import { NavigationContext } from 'utils/contexts';
 import { mod } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
-import useCommandCenterTitle from './useCommandCenterTitle';
-import useCommandCenterSearch from './useCommandCenterSearch';
+
 import ResultRow from './ResultRow';
 
 const DEFAULT_PLACEHOLDER = 'Type a command or search';

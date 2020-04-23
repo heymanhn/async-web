@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
+import useSelectionDimensions from 'hooks/editor/useSelectionDimensions';
 
 import ContentPlaceholder from 'components/editor/ContentPlaceholder';
 

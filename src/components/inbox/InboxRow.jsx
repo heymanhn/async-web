@@ -7,8 +7,8 @@ import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import localDeleteResourceFromInboxMtn from 'graphql/mutations/local/deleteResourceFromInbox';
-import useResourceDetails from 'utils/hooks/useResourceDetails';
-import useHover from 'utils/hooks/useHover';
+import useResourceDetails from 'hooks/resources/useResourceDetails';
+import useHover from 'hooks/shared/useHover';
 import { getLocalUser } from 'utils/auth';
 import { isResourceUnread } from 'utils/helpers';
 import {

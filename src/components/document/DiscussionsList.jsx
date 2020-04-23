@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
-import usePaginatedResource from 'utils/hooks/usePaginatedResource';
+import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import {
   DocumentContext,
   DiscussionContext,

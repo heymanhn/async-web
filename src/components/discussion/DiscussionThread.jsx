@@ -6,13 +6,14 @@ import styled from '@emotion/styled';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import localStateQuery from 'graphql/queries/localState';
 import localAddPendingMessages from 'graphql/mutations/local/addPendingMessagesToDiscussion';
-import usePaginatedResource from 'utils/hooks/usePaginatedResource';
-import useViewedReaction from 'utils/hooks/useViewedReaction';
-import useMountEffect from 'utils/hooks/useMountEffect';
+import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
+import useMountEffect from 'hooks/shared/useMountEffect';
+import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import { DiscussionContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import Message from 'components/message/Message';
+
 import NewMessagesDivider from './NewMessagesDivider';
 import NewMessagesIndicator from './NewMessagesIndicator';
 
@@ -52,7 +53,7 @@ const DiscussionThread = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const [addPendingMessages] = useMutation(localAddPendingMessages, {
     variables: { discussionId },
   });
-  const markAsRead = useViewedReaction();
+  const markAsRead = useMarkResourceAsRead();
 
   useMountEffect(() => {
     client.writeData({ data: { pendingMessages: [] } });

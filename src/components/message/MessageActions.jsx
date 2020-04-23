@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
+import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
+import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
 import { DiscussionContext, MessageContext } from 'utils/contexts';
-import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
 
 import Button from 'components/shared/Button';
 import Editor from 'components/editor/Editor';
-import useMessageDraftMutations from './hooks/useMessageDraftMutations';
 
 const SUBMIT_HOTKEY = 'cmd+enter';
 const ESCAPE_HOTKEY = 'Escape';

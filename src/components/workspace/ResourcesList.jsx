@@ -2,8 +2,8 @@ import React, { useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import workspaceResourcesQuery from 'graphql/queries/workspaceResources';
-import usePrefetchQueries from 'utils/hooks/usePrefetchQueries';
-import usePaginatedResource from 'utils/hooks/usePaginatedResource';
+import usePaginatedResource from 'hooks/resources/usePaginatedResource';
+import usePrefetchQueries from 'hooks/shared/usePrefetchQueries';
 import { VIEW_MODES } from 'utils/constants';
 import { WorkspaceContext } from 'utils/contexts';
 
@@ -11,6 +11,7 @@ import NotFound from 'components/navigation/NotFound';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import NewDocumentButton from 'components/document/NewDocumentButton';
 import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
+
 import ResourceFilters from './ResourceFilters';
 import ResourceRow from './ResourceRow';
 

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 
+import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
 import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
-import useDisambiguatedResource from 'utils/hooks/useDisambiguatedResource';
 
 import CommandCenter from 'components/commandCenter/CommandCenter';
 import DocumentViewMode from 'components/document/DocumentViewMode';
+import ResourceAccessContainer from 'components/resources/ResourceAccessContainer';
 import ResourceInfo from 'components/navigation/ResourceInfo';
 import NotificationsBell from 'components/notifications/NotificationsBell';
-import ResourceAccessContainer from 'components/resources/ResourceAccessContainer';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',

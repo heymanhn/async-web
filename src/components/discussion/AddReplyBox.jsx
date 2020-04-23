@@ -5,11 +5,11 @@ import styled from '@emotion/styled';
 
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
-import useCurrentUser from 'utils/hooks/useCurrentUser';
-import useHover from 'utils/hooks/useHover';
+import useCurrentUser from 'hooks/shared/useCurrentUser';
+import useHover from 'hooks/shared/useHover';
+import { DiscussionContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
-import { DiscussionContext } from 'utils/contexts';
 
 import AvatarWithIcon from './AvatarWithIcon';
 

@@ -4,8 +4,8 @@ import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import { NavigationContext } from 'utils/contexts';
-import useClickOutside from 'utils/hooks/useClickOutside';
-import useCurrentUser from 'utils/hooks/useCurrentUser';
+import useClickOutside from 'hooks/shared/useClickOutside';
+import useCurrentUser from 'hooks/shared/useCurrentUser';
 
 import Avatar from 'components/shared/Avatar';
 import InviteTeamModal from './InviteTeamModal';

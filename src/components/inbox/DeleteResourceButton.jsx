@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import useDocumentMutations from 'utils/hooks/useDocumentMutations';
-import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
+import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
 
 const resourceProperties = {
   document: {

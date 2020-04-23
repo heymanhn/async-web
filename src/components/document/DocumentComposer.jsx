@@ -4,18 +4,17 @@ import PropTypes from 'prop-types';
 import { Slate, Editable } from 'slate-react';
 import styled from '@emotion/styled';
 
+import useAutoSave from 'hooks/editor/useAutoSave';
+import useContentState from 'hooks/editor/useContentState';
+import useCoreEditorProps from 'hooks/editor/useCoreEditorProps';
+import useDocumentEditor from 'hooks/document/useDocumentEditor';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
+import useDocumentOperationsPusher from 'hooks/document/useDocumentOperationsPusher';
 import { DocumentContext } from 'utils/contexts';
-import useContentState from 'utils/hooks/useContentState';
-import useAutoSave from 'utils/hooks/useAutoSave';
-import useDocumentMutations from 'utils/hooks/useDocumentMutations';
-import useDocumentOperationsPusher from 'utils/hooks/useDocumentOperationsPusher';
 
-import useCoreEditorProps from 'components/editor/hooks/useCoreEditorProps';
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
-
-import useDocumentEditor from './hooks/useDocumentEditor';
 
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
