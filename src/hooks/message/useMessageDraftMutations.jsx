@@ -7,12 +7,12 @@ import deleteMessageDraftMutation from 'graphql/mutations/deleteMessageDraft';
 import localAddDraftToDiscussionMtn from 'graphql/mutations/local/addDraftToDiscussion';
 import localDeleteDraftFromDiscMtn from 'graphql/mutations/local/deleteDraftFromDiscussion';
 import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
-import { DiscussionContext } from 'utils/contexts';
+import { MessageContext } from 'utils/contexts';
 import { DEFAULT_ELEMENT, toPlainText } from 'utils/editor/constants';
 
 const useMessageDraftMutations = () => {
   const client = useApolloClient();
-  const { discussionId } = useContext(DiscussionContext);
+  const { parentId } = useContext(MessageContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleCreate: handleCreateDiscussion,
@@ -23,11 +23,11 @@ const useMessageDraftMutations = () => {
   const [localAddDraftToDiscussion] = useMutation(localAddDraftToDiscussionMtn);
 
   const [deleteMessageDraft] = useMutation(deleteMessageDraftMutation, {
-    variables: { discussionId },
+    variables: { discussionId: parentId },
   });
 
   const [localRemoveDraftFromDscn] = useMutation(localDeleteDraftFromDiscMtn, {
-    variables: { discussionId },
+    variables: { discussionId: parentId },
   });
 
   // TODO (DISCUSSION V2): clarify this logic when renaming inline discussions
@@ -38,7 +38,7 @@ const useMessageDraftMutations = () => {
   } = {}) => {
     setIsSubmitting(true);
 
-    let draftDiscussionId = isThread ? null : discussionId;
+    let draftDiscussionId = isThread ? null : parentId;
     if (!draftDiscussionId) {
       const { id } = await handleCreateDiscussion();
       draftDiscussionId = id;
@@ -77,7 +77,7 @@ const useMessageDraftMutations = () => {
       discussion: { messageCount },
     } = client.readQuery({
       query: discussionQuery,
-      variables: { discussionId },
+      variables: { discussionId: parentId },
     });
 
     // No need to delete the draft in this case. Just delete the

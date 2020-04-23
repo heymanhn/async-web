@@ -116,6 +116,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
           {isComposing ? (
             <StyledMessage
               mode="compose"
+              parentId={discussionId}
               draft={draft}
               disableAutoFocus={!messageCount}
               afterCreate={stopComposing}

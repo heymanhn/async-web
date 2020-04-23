@@ -8,14 +8,19 @@ import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import { track } from 'utils/analytics';
 import { getLocalUser } from 'utils/auth';
-import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import {
+  DocumentContext,
+  DiscussionContext,
+  ThreadContext,
+} from 'utils/contexts';
 import { deserializeString, toPlainText } from 'utils/editor/constants';
 
 const useDiscussionMutations = () => {
   const { documentId } = useContext(DocumentContext);
-  const { context, discussionId, afterCreate, afterDelete } = useContext(
+  const { discussionId, afterCreate, afterDelete } = useContext(
     DiscussionContext
   );
+  const { topic } = useContext(ThreadContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
 
@@ -37,15 +42,12 @@ const useDiscussionMutations = () => {
     }
 
     if (title) {
+      input.title = title;
+    } else if (topic) {
       input.topic = {
         formatter: 'slatejs',
-        text: title,
-      };
-    } else if (context) {
-      input.topic = {
-        formatter: 'slatejs',
-        text: toPlainText(context),
-        payload: JSON.stringify(context),
+        text: toPlainText(topic),
+        payload: JSON.stringify(topic),
       };
     }
 
