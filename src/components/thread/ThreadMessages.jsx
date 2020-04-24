@@ -27,14 +27,9 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   maxWidth: discussionViewport,
 }));
 
-const StyledMessage = styled(Message)(({ isUnread, theme: { colors } }) => ({
-  backgroundColor: isUnread ? colors.unreadBlue : 'default',
-  border: 'none',
-  borderTop: `1px solid ${colors.borderGrey}`,
-  borderRadius: 0,
-  boxShadow: 'none',
-  marginBottom: 0,
-}));
+const StyledMessage = styled(Message)({
+  marginBottom: '25px',
+});
 
 const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const client = useApolloClient();
@@ -83,7 +78,8 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
     markAsRead();
   };
 
-  const isNewMessage = m => m.tags && m.tags.includes('new_message');
+  // TODO (DISCUSSION V2): Evaluate if we still need this
+  // const isNewMessage = m => m.tags && m.tags.includes('new_message');
 
   return (
     <Container ref={discussionRef} {...props}>
@@ -95,13 +91,7 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
       )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
-          <StyledMessage
-            index={i}
-            message={m}
-            isModal
-            isUnread={isNewMessage(m)}
-            parentId={threadId}
-          />
+          <StyledMessage index={i} message={m} parentId={threadId} />
         </React.Fragment>
       ))}
     </Container>

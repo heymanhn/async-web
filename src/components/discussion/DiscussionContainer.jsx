@@ -25,17 +25,15 @@ const OuterContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
 }));
 
-const ContentContainer = styled.div(({ theme: { discussionViewport } }) => ({
+const ContentContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
+  justifyContent: 'flex-end',
 
   // Vertically center the page when content doesn't fit full height
   minHeight: 'calc(100vh - 60px)', // Navigation bar is 60px tall
-  margin: '0 auto',
-  paddingBottom: '80px',
-  width: discussionViewport,
-}));
+  paddingBottom: '60px',
+});
 
 const StyledLoadingIndicator = styled(LoadingIndicator)({
   marginTop: '30px',
@@ -44,7 +42,6 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
   background: colors.white,
   border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
 }));
 
 const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {

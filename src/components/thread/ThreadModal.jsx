@@ -144,7 +144,6 @@ const ThreadModal = ({
           <StyledMessage
             mode="compose"
             draft={draft}
-            isModal // TODO (DISCUSSION V2): find better way to do this later
             parentId={threadId}
             afterCreateMessage={afterCreateMessage}
             handleCancel={handleCancelCompose}

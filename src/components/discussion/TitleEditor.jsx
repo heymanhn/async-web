@@ -7,9 +7,14 @@ import { DiscussionContext } from 'utils/contexts';
 
 import TitleEditable from 'components/shared/TitleEditable';
 
-const StyledTitleEditable = styled(TitleEditable)({
-  marginBottom: '30px',
-});
+const StyledTitleEditable = styled(TitleEditable)(
+  ({ theme: { discussionViewport } }) => ({
+    fontSize: '24px',
+    margin: '0 auto',
+    padding: '0 30px',
+    width: discussionViewport,
+  })
+);
 
 const TitleEditor = ({ initialTitle, ...props }) => {
   const { handleUpdateDiscussionTitle } = useDiscussionMutations();

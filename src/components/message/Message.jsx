@@ -12,34 +12,22 @@ import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 import DraftSavedIndicator from './DraftSavedIndicator';
 
-const Container = styled.div(({ theme: { colors } }) => ({
-  background: colors.white,
+const Container = styled.div(({ hover, theme: { colors } }) => ({
+  background: hover ? colors.bgGrey : colors.white,
+  padding: '20px 0',
 }));
 
-const HeaderSection = styled.div(
-  ({ theme: { colors } }) => ({
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    background: colors.bgGrey,
-    borderTopLeftRadius: '5px',
-    borderTopRightRadius: '5px',
-    padding: '15px 30px',
-  }),
-  ({ isModal, isUnread, theme: { colors } }) => {
-    if (!isModal) return {};
-    return {
-      background: isUnread ? colors.unreadBlue : colors.white,
-      borderRadius: '0px',
-    };
-  }
-);
+const InnerContainer = styled.div(({ theme: { discussionViewport } }) => ({
+  margin: '0 auto',
+  padding: '0 30px',
+  width: discussionViewport,
+}));
 
-// TODO (DISCUSSION V2): Add this padding to the text itself. This helps
-// with selection via cursor.
-const StyledMessageEditor = styled(MessageEditor)({
-  padding: '0px 30px 15px',
+const HeaderSection = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 });
 
 const StyledHoverMenu = styled(HoverMenu)({
@@ -47,16 +35,10 @@ const StyledHoverMenu = styled(HoverMenu)({
   right: '0px',
 });
 
-const StyledMessageReactions = styled(MessageReactions)({
-  padding: '0 30px 20px',
-});
-
 // TODO (DISCUSSION V2): The discussion UX redesign should standardize the
 // appearance of messages, whether in discussions or threads.
 const Message = ({
   index,
-  isModal,
-  isUnread,
   draft,
   mode: initialMode,
   message,
@@ -99,27 +81,28 @@ const Message = ({
   };
 
   return (
-    <Container isModal={isModal} {...hoverProps} {...props}>
+    <Container hover={hover} {...hoverProps} {...props}>
       <MessageContext.Provider value={value}>
-        <HeaderSection isModal={isModal} isUnread={isUnread}>
-          <AuthorDetails
-            author={author}
-            createdAt={createdAt}
-            isEdited={createdAt !== updatedAt}
+        <InnerContainer>
+          <HeaderSection>
+            <AuthorDetails
+              author={author}
+              createdAt={createdAt}
+              isEdited={createdAt !== updatedAt}
+            />
+            <div>
+              {messageId && mode === 'display' && (
+                <StyledHoverMenu isAuthor={isAuthor} isOpen={hover} />
+              )}
+              {mode === 'compose' && <DraftSavedIndicator />}
+            </div>
+          </HeaderSection>
+          <MessageEditor
+            initialMessage={loadInitialContent()}
+            autoFocus={mode !== 'display' && !disableAutoFocus}
           />
-          <div>
-            {messageId && mode === 'display' && (
-              <StyledHoverMenu isAuthor={isAuthor} isOpen={hover} />
-            )}
-            {mode === 'compose' && <DraftSavedIndicator />}
-          </div>
-        </HeaderSection>
-        <StyledMessageEditor
-          isModal={isModal}
-          initialMessage={loadInitialContent()}
-          autoFocus={mode !== 'display' && !disableAutoFocus}
-        />
-        {mode === 'display' && <StyledMessageReactions />}
+          {mode === 'display' && <MessageReactions />}
+        </InnerContainer>
       </MessageContext.Provider>
     </Container>
   );
@@ -128,8 +111,6 @@ const Message = ({
 Message.propTypes = {
   draft: PropTypes.object,
   index: PropTypes.number,
-  isModal: PropTypes.bool,
-  isUnread: PropTypes.bool,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
   parentId: PropTypes.string.isRequired,
@@ -141,8 +122,6 @@ Message.propTypes = {
 Message.defaultProps = {
   draft: null,
   index: null,
-  isModal: false,
-  isUnread: false,
   mode: 'display',
   message: {},
   disableAutoFocus: false,
