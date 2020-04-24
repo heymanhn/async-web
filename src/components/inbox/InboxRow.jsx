@@ -104,9 +104,7 @@ const InboxRow = ({ item, ...props }) => {
   const ResourceDetails = useResourceDetails(resourceType, resource);
   if (!ResourceDetails) return null;
 
-  const { id, tags, title, topic, author, owner } = resource;
-  const safeTopic = topic || {};
-  const titleText = isDocument ? title : safeTopic.text;
+  const { id, tags, title, author, owner } = resource;
 
   const { userId } = getLocalUser();
   const { id: authorId } = author || owner;
@@ -138,7 +136,7 @@ const InboxRow = ({ item, ...props }) => {
           <DetailsContainer>
             <ItemDetails>
               <Title hover={hover} isUnread={isResourceUnread(tags)}>
-                {titleText || `Untitled ${resourceType}`}
+                {title || `Untitled ${resourceType}`}
               </Title>
               <ResourceDetails />
             </ItemDetails>
