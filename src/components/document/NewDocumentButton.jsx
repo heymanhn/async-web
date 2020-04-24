@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import useResourceCreator from 'utils/hooks/useResourceCreator';
+import useResourceCreator from 'hooks/resources/useResourceCreator';
 import { WorkspaceContext } from 'utils/contexts';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';

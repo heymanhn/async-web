@@ -1,29 +1,20 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { compose } from 'recompose';
-import { createEditor } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
-import { withHistory } from 'slate-history';
+
+import { Slate, Editable } from 'slate-react';
 import styled from '@emotion/styled';
 
+import useAutoSave from 'hooks/editor/useAutoSave';
+import useContentState from 'hooks/editor/useContentState';
+import useCoreEditorProps from 'hooks/editor/useCoreEditorProps';
+import useDocumentEditor from 'hooks/document/useDocumentEditor';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
+import useDocumentOperationsPusher from 'hooks/document/useDocumentOperationsPusher';
 import { DocumentContext } from 'utils/contexts';
-import useContentState from 'utils/hooks/useContentState';
-import useAutoSave from 'utils/hooks/useAutoSave';
-import useDocumentMutations from 'utils/hooks/useDocumentMutations';
-import useDocumentOperationsPusher from 'utils/hooks/useDocumentOperationsPusher';
 
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
-import Editor from 'components/editor/Editor';
-import useCoreEditorProps from 'components/editor/useCoreEditorProps';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
-import withMarkdownShortcuts from 'components/editor/withMarkdownShortcuts';
-import withInlineDiscussions from 'components/editor/withInlineDiscussions';
-import withLinks from 'components/editor/withLinks';
-import withPasteShim from 'components/editor/withPasteShim';
-import withSectionBreak from 'components/editor/withSectionBreak';
-import withCustomKeyboardActions from 'components/editor/withCustomKeyboardActions';
-import withImages from 'components/editor/withImages';
 
 const DocumentEditable = styled(Editable)({
   fontSize: '16px',
@@ -32,39 +23,8 @@ const DocumentEditable = styled(Editable)({
 });
 
 const DocumentComposer = ({ initialContent, ...props }) => {
-  const {
-    documentId,
-    deletedDiscussionId,
-    firstMsgDiscussionId,
-    readOnly,
-    setDeletedDiscussionId,
-    setFirstMsgDiscussionId,
-  } = useContext(DocumentContext);
-
-  const baseEditor = useMemo(
-    () =>
-      compose(
-        withCustomKeyboardActions,
-        withMarkdownShortcuts,
-        withLinks,
-        withInlineDiscussions,
-        withSectionBreak,
-        withPasteShim,
-        withHistory,
-        withReact
-      )(createEditor()),
-    []
-  );
-
-  /* HN: Slate doesn't allow the editor instance to be re-created on subsequent
-   * renders, but we need to pass an updated resourceId into withImages().
-   * Workaround is to memoize the base editor instance, and extend it by calling
-   * withImages() with an updated documentId when needed.
-   */
-  const contentEditor = useMemo(() => withImages(baseEditor, documentId), [
-    baseEditor,
-    documentId,
-  ]);
+  const { documentId, readOnly } = useContext(DocumentContext);
+  const editor = useDocumentEditor(documentId);
 
   const {
     content,
@@ -72,42 +32,27 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     setLastTouchedToNow,
     ...contentProps
   } = useContentState({
-    editor: contentEditor,
+    editor,
     resourceId: documentId,
     initialContent,
   });
-  const { handleUpdate } = useDocumentMutations(contentEditor);
-  const coreEditorProps = useCoreEditorProps(contentEditor);
+
+  const { handleUpdateDocument } = useDocumentMutations();
+  const coreEditorProps = useCoreEditorProps(editor);
   const handleNewOperations = useDocumentOperationsPusher(
-    contentEditor,
+    editor,
     setLastTouchedToNow
   );
 
-  useAutoSave({ content, handleSave: handleUpdate });
+  useAutoSave({ content, handleSave: handleUpdateDocument });
 
   const onChangeWrapper = value => {
     onChange(value);
     handleNewOperations();
   };
 
-  // TODO (DISCUSSION V2): This is copy-pasta'ed into MessageComposer for
-  // dealing with updating inline discussions. Can this be DRY'ed up?
-  if (firstMsgDiscussionId) {
-    Editor.updateInlineAnnotation(contentEditor, firstMsgDiscussionId, {
-      isInitialDraft: false,
-    });
-    setFirstMsgDiscussionId(null);
-  }
-
-  // TODO (DISCUSSION V2): This is copy-pasta'ed into MessageComposer for
-  // dealing with updating inline discussions. Can this be DRY'ed up?
-  if (deletedDiscussionId) {
-    Editor.removeInlineAnnotation(contentEditor, deletedDiscussionId);
-    setDeletedDiscussionId(null);
-  }
-
   return (
-    <Slate editor={contentEditor} onChange={onChangeWrapper} {...contentProps}>
+    <Slate editor={editor} onChange={onChangeWrapper} {...contentProps}>
       <DocumentEditable readOnly={readOnly} {...props} {...coreEditorProps} />
       <DocumentToolbar />
       <DefaultPlaceholder />

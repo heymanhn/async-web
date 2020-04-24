@@ -1,18 +1,18 @@
 import React, { useContext } from 'react';
 
-import useDocumentMutations from 'utils/hooks/useDocumentMutations';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
 import { DocumentContext } from 'utils/contexts';
 
 import TitleEditable from 'components/shared/TitleEditable';
 
 const TitleComposer = props => {
-  const { handleUpdateTitle } = useDocumentMutations();
+  const { handleUpdateDocumentTitle } = useDocumentMutations();
   const { readOnly } = useContext(DocumentContext);
 
   return (
     <TitleEditable
       readOnly={readOnly}
-      handleUpdateTitle={handleUpdateTitle}
+      handleUpdateTitle={handleUpdateDocumentTitle}
       {...props}
     />
   );

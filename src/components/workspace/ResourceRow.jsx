@@ -6,7 +6,7 @@ import Pluralize from 'pluralize';
 import moment from 'moment';
 import styled from '@emotion/styled';
 
-import useHover from 'utils/hooks/useHover';
+import useHover from 'hooks/shared/useHover';
 // import { getLocalUser } from 'utils/auth';
 // import { isResourceUnread } from 'utils/helpers';
 
@@ -98,9 +98,7 @@ const ResourceRow = ({ item, ...props }) => {
   const isDocument = resourceType === 'document';
   const resource = document || discussion;
 
-  const { id, title, topic } = resource;
-  const safeTopic = topic || {};
-  const titleText = isDocument ? title : safeTopic.text;
+  const { id, title } = resource;
   const { readAt, updatedAt } = lastUpdate;
   const isUnread = readAt === -1;
 
@@ -116,7 +114,7 @@ const ResourceRow = ({ item, ...props }) => {
         <DetailsContainer>
           <ItemDetails>
             <Title hover={hover} isUnread={isUnread}>
-              {titleText || `Untitled ${resourceType}`}
+              {title || `Untitled ${resourceType}`}
             </Title>
             <TimestampContainer>
               {isUnread && <StyledIndicator diameter={6} />}

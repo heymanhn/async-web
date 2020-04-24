@@ -6,18 +6,20 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
+import useThreadState from 'hooks/thread/useThreadState';
+import useUpdateSelectedResource from 'hooks/resources/useUpdateSelectedResource';
 import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
-import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
+import Message from 'components/message/Message';
 import NavigationBar from 'components/navigation/NavigationBar';
 import NotFound from 'components/navigation/NotFound';
-import TopicComposer from './TopicComposer';
-import DiscussionMessage from './DiscussionMessage';
-import DiscussionThread from './DiscussionThread';
+import ThreadModal from 'components/thread/ThreadModal';
+
 import AddReplyBox from './AddReplyBox';
-import DiscussionModal from './DiscussionModal';
+import DiscussionMessages from './DiscussionMessages';
+import TitleComposer from './TitleComposer';
 
 const OuterContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -39,15 +41,13 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
   marginTop: '30px',
 });
 
-const StyledDiscussionMessage = styled(DiscussionMessage)(
-  ({ theme: { colors } }) => ({
-    background: colors.white,
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-  })
-);
+const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
+  background: colors.white,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+}));
 
-const DiscussionContainer = ({ discussionId }) => {
+const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
   const [isComposing, setIsComposing] = useState(false);
@@ -55,21 +55,12 @@ const DiscussionContainer = ({ discussionId }) => {
   const stopComposing = () => setIsComposing(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
-  // TODO (DISCUSSION V2): DRY this up / clean up the identical state in
-  // DocumentContainer.
-  const [state, setState] = useState({
-    modalDiscussionId: null,
-    firstMsgDiscussionId: null,
-    deletedDiscussionId: null,
-    isModalOpen: false,
-    inlineDiscussionTopic: null,
-  });
-  const setFirstMsgDiscussionId = id =>
-    setState(old => ({ ...old, firstMsgDiscussionId: id }));
-  const setDeletedDiscussionId = id =>
-    setState(old => ({ ...old, deletedDiscussionId: id }));
-  const resetInlineTopic = () =>
-    setState(old => ({ ...old, inlineDiscussionTopic: null }));
+  const {
+    threadId,
+    handleShowThread,
+    handleCloseThread,
+    ...threadProps
+  } = useThreadState(initialThreadId);
 
   const { loading, data } = useQuery(discussionQuery, {
     variables: { discussionId },
@@ -82,68 +73,28 @@ const DiscussionContainer = ({ discussionId }) => {
   if (loading || loading2) return <StyledLoadingIndicator color="borderGrey" />;
   if (!data.discussion || !data2.messages) return <NotFound />;
 
-  const { topic, draft, messageCount } = data.discussion;
-  const { text } = topic || {};
+  const { title, draft, messageCount } = data.discussion;
   const { tags } = data.discussion;
 
   if ((draft || !messageCount) && !isComposing) startComposing();
 
   const readOnly = isResourceReadOnly(tags);
-  const returnToInbox = () => navigate('/inbox');
+  const returnToHome = () => navigate('/');
 
   const handleCancelCompose = () => {
     stopComposing();
-    if (!messageCount) returnToInbox();
+    if (!messageCount) returnToHome();
   };
-
-  // TODO (DISCUSSION V2): DRY this up with DocumentContainer implementation
-  const handleShowModal = (dId, content) => {
-    const newState = {
-      modalDiscussionId: dId,
-      isModalOpen: true,
-    };
-
-    // For creating inline discussion context later on
-    if (content) newState.inlineDiscussionTopic = content;
-    setState(oldState => ({ ...oldState, ...newState }));
-  };
-
-  // TODO (DISCUSSION V2): DRY this up with DocumentContainer implementation
-  const handleCloseModal = () => {
-    setState(oldState => ({
-      ...oldState,
-      modalDiscussionId: null,
-      isModalOpen: false,
-    }));
-  };
-
-  const {
-    modalDiscussionId,
-    firstMsgDiscussionId,
-    deletedDiscussionId,
-    inlineDiscussionTopic,
-    isModalOpen,
-  } = state;
 
   if (forceUpdate) setForceUpdate(false);
 
   const value = {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
-    draft,
     readOnly,
-    isModalOpen,
-    modalDiscussionId,
-    firstMsgDiscussionId,
-    deletedDiscussionId,
-    inlineDiscussionTopic,
-    afterDelete: returnToInbox,
+    afterDeleteDiscussion: returnToHome,
     setForceUpdate,
-    setFirstMsgDiscussionId,
-    setDeletedDiscussionId,
-    resetInlineTopic,
-    handleShowModal,
-    handleCloseModal,
+    handleShowThread,
   };
 
   return (
@@ -151,21 +102,23 @@ const DiscussionContainer = ({ discussionId }) => {
       <OuterContainer>
         <NavigationBar />
         <ContentContainer ref={discussionRef}>
-          <TopicComposer
-            initialTopic={text}
-            autoFocus={!text && !messageCount}
+          <TitleComposer
+            initialTitle={title}
+            autoFocus={!title && !messageCount}
           />
           {!!messageCount && (
-            <DiscussionThread
+            <DiscussionMessages
               isUnread={isResourceUnread(tags)}
               isComposingFirstMsg={!messageCount}
             />
           )}
           {isComposing ? (
-            <StyledDiscussionMessage
+            <StyledMessage
               mode="compose"
+              parentId={discussionId}
+              draft={draft}
               disableAutoFocus={!messageCount}
-              afterCreate={stopComposing}
+              afterCreateMessage={stopComposing}
               handleCancel={handleCancelCompose}
             />
           ) : (
@@ -175,11 +128,11 @@ const DiscussionContainer = ({ discussionId }) => {
             />
           )}
         </ContentContainer>
-        {isModalOpen && (
-          <DiscussionModal
-            isOpen={isModalOpen}
-            mode="discussion"
-            handleClose={handleCloseModal}
+        {threadId && (
+          <ThreadModal
+            threadId={threadId}
+            handleClose={handleCloseThread}
+            {...threadProps}
           />
         )}
       </OuterContainer>
@@ -189,6 +142,11 @@ const DiscussionContainer = ({ discussionId }) => {
 
 DiscussionContainer.propTypes = {
   discussionId: PropTypes.string.isRequired,
+  threadId: PropTypes.string,
+};
+
+DiscussionContainer.defaultProps = {
+  threadId: null,
 };
 
 export default DiscussionContainer;

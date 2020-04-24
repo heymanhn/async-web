@@ -2,10 +2,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import InlineDiscussionElement from 'components/discussion/InlineDiscussionElement';
-import ImageElement from './ImageElement';
-
-import ChecklistItemElement from './ChecklistItem';
 import {
   LARGE_FONT,
   MEDIUM_FONT,
@@ -24,9 +20,13 @@ import {
   IMAGE,
   HYPERLINK,
   CONTEXT_HIGHLIGHT,
-  INLINE_DISCUSSION_ANNOTATION,
+  INLINE_THREAD_ANNOTATION,
   INLINE_TYPES,
-} from './utils';
+} from 'utils/editor/constants';
+
+import InlineThreadElement from 'components/thread/InlineThreadElement';
+import ChecklistItemElement from './ChecklistItem';
+import ImageElement from './ImageElement';
 
 /*
  * Default element
@@ -300,10 +300,8 @@ voidElements[IMAGE] = ImageElement;
 export const inlineElements = {};
 inlineElements[HYPERLINK] = LinkElement;
 
-export const discussionContextElements = {};
-discussionContextElements[CONTEXT_HIGHLIGHT] = ContextHighlightElement;
+export const threadContextElements = {};
+threadContextElements[CONTEXT_HIGHLIGHT] = ContextHighlightElement;
 
-export const inlineDiscussionElements = {};
-inlineDiscussionElements[
-  INLINE_DISCUSSION_ANNOTATION
-] = InlineDiscussionElement;
+export const inlineThreadElements = {};
+inlineThreadElements[INLINE_THREAD_ANNOTATION] = InlineThreadElement;

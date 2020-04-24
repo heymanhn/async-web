@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import useDocumentMutations from 'utils/hooks/useDocumentMutations';
-import useDiscussionMutations from 'utils/hooks/useDiscussionMutations';
+import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
 
 const resourceProperties = {
   document: {
@@ -36,7 +36,8 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 
 const DeleteResourceButton = ({ resourceType, ...props }) => {
   const { useMutations } = resourceProperties[resourceType];
-  const { handleDelete } = useMutations();
+  const { handleDeleteDocument, handleDeleteDiscussion } = useMutations();
+  const handleDelete = handleDeleteDocument || handleDeleteDiscussion;
 
   const handleClick = event => {
     event.preventDefault();

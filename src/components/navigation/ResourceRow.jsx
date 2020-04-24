@@ -61,7 +61,6 @@ const ResourceRow = ({
   const { id, title, topic } = resource;
   const resourceTitle = title || (topic && topic.text);
 
-  // TODO: Read/unread state, once backend gives enough info
   return (
     <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
       <Container isSelected={isSelected} isUnread={isUnread} {...props}>

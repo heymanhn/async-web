@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
-import useClickOutside from 'utils/hooks/useClickOutside';
-import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
-import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
+import useClickOutside from 'hooks/shared/useClickOutside';
+import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
+import useSelectionDimensions from 'hooks/editor/useSelectionDimensions';
 import { mod } from 'utils/helpers';
 
 import Editor from 'components/editor/Editor';

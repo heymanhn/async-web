@@ -1,13 +1,15 @@
 import React from 'react';
 
-import useWorkspaceMutations from 'utils/hooks/useWorkspaceMutations';
+import useWorkspaceMutations from 'hooks/workspace/useWorkspaceMutations';
 
 import TitleEditable from 'components/shared/TitleEditable';
 
 const TitleComposer = props => {
-  const { handleUpdateTitle } = useWorkspaceMutations();
+  const { handleUpdateWorkspaceTitle } = useWorkspaceMutations();
 
-  return <TitleEditable handleUpdateTitle={handleUpdateTitle} {...props} />;
+  return (
+    <TitleEditable handleUpdateTitle={handleUpdateWorkspaceTitle} {...props} />
+  );
 };
 
 export default TitleComposer;

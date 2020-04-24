@@ -1,6 +1,5 @@
 /* eslint react/prop-types: 0 */
 /* eslint camelcase: 0 */
-
 import React from 'react';
 import { Router } from '@reach/router';
 import { ApolloClient } from 'apollo-client';
@@ -14,20 +13,20 @@ import camelCase from 'camelcase';
 import snake_case from 'snake-case';
 
 import localResolvers from 'graphql/resolvers/localResolvers';
+import useAppPusher from 'hooks/useAppPusher';
+import useFaviconIcon from 'hooks/useFaviconIcon';
+import useNetworkObserver from 'hooks/useNetworkObserver';
 import {
   getAuthHeader,
   isLocalTokenPresent,
   isUserOnboarding,
 } from 'utils/auth';
 import { RELATIVE_TIME_STRINGS } from 'utils/constants';
-import initPusher from 'utils/pusher';
+import { AppContext, DEFAULT_APP_CONTEXT } from 'utils/contexts';
 import fileSerializer from 'utils/graphql/fileSerializer';
 import getBreakpoint from 'utils/mediaQuery';
-import useAppPusher from 'utils/hooks/useAppPusher';
-import useFaviconIcon from 'utils/hooks/useFaviconIcon';
-import useNetworkObserver from 'utils/hooks/useNetworkObserver';
+import initPusher from 'utils/pusher';
 import iconSet from 'styles/iconSet';
-import { AppContext, DEFAULT_APP_CONTEXT } from 'utils/contexts';
 
 import Layout from 'components/Layout';
 import SidebarLayout from 'components/SidebarLayout';
@@ -43,7 +42,7 @@ import InviteTeam from 'components/auth/InviteTeam';
 import PrivateRoute from 'components/PrivateRoute';
 import WorkspaceContainer from 'components/workspace/WorkspaceContainer';
 import DocumentContainer from 'components/document/DocumentContainer';
-import DiscussionContainer from './discussion/DiscussionContainer';
+import DiscussionContainer from 'components/discussion/DiscussionContainer';
 
 const restLink = new RestLink({
   uri: process.env.REACT_APP_ASYNC_API_URL,
@@ -160,16 +159,15 @@ const App = () => {
               component={DocumentContainer}
             />
             <PrivateRoute
-              path="/documents/:documentId/discussions/:discussionId"
+              path="/documents/:documentId/threads/:threadId"
               component={DocumentContainer}
-            />
-            <PrivateRoute
-              path="/documents/:documentId/discussions"
-              component={DocumentContainer}
-              viewMode="discussions"
             />
             <PrivateRoute
               path="/discussions/:discussionId"
+              component={DiscussionContainer}
+            />
+            <PrivateRoute
+              path="/discussion/:discussionId/threads/:threadId"
               component={DiscussionContainer}
             />
 

@@ -21,7 +21,8 @@ import {
   BLOCK_QUOTE_OPTION_TITLE,
   SECTION_BREAK_OPTION_TITLE,
   COMPOSITION_MENU_SOURCE,
-} from 'components/editor/utils';
+} from 'utils/editor/constants';
+
 import Editor from '../Editor';
 import MenuOption from './MenuOption';
 import OptionIcon from './OptionIcon';

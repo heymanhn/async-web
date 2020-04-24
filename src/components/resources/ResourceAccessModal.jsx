@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
+import useResourceAccessMutations from 'hooks/resources/useResourceAccessMutations';
 import { NavigationContext } from 'utils/contexts';
-import useResourceAccessMutations from 'utils/hooks/useResourceAccessMutations';
 import { titleize } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
+
 import OrganizationSearch from './OrganizationSearch';
 import ParticipantsList from './ParticipantsList';
 import WorkspaceRow from './WorkspaceRow';

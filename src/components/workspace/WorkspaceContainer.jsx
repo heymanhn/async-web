@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import useUpdateSelectedResource from 'hooks/resources/useUpdateSelectedResource';
 import { DEFAULT_WORKSPACE_CONTEXT, WorkspaceContext } from 'utils/contexts';
-import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
 
 import NavigationBar from 'components/navigation/NavigationBar';
+
 import Workspace from './Workspace';
 
 const Container = styled.div(({ theme: { colors } }) => ({

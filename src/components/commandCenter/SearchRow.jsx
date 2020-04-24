@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import useResourceDetails from 'utils/hooks/useResourceDetails';
+import useResourceDetails from 'hooks/resources/useResourceDetails';
 
 const IconContainer = styled.div({
   width: '32px',

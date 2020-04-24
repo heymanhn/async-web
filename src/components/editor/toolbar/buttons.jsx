@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSlate } from 'slate-react';
 
-import Editor from '../Editor';
 import {
   BOLD,
   ITALIC,
@@ -12,7 +11,9 @@ import {
   MEDIUM_FONT,
   TOOLBAR_SOURCE,
   BULLETED_LIST,
-} from '../utils';
+} from 'utils/editor/constants';
+
+import Editor from 'components/editor/Editor';
 import ToolbarButton from './ToolbarButton';
 import ButtonIcon from './ButtonIcon';
 import HeadingIcon from './HeadingIcon';

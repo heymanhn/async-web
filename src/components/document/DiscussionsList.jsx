@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
-import usePaginatedResource from 'utils/hooks/usePaginatedResource';
+import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import {
   DocumentContext,
   DiscussionContext,
@@ -11,7 +11,7 @@ import {
 
 import NotFound from 'components/navigation/NotFound';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
-import DiscussionMessage from 'components/discussion/DiscussionMessage';
+import Message from 'components/message/Message';
 import DiscussionListItem from './DiscussionListItem';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
@@ -53,15 +53,13 @@ const Label = styled.div(({ theme: { colors } }) => ({
 }));
 
 // HN: There should be a way to DRY up these style declarations
-const StyledDiscussionMessage = styled(DiscussionMessage)(
-  ({ theme: { colors } }) => ({
-    background: colors.white,
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
-    margin: '40px 0',
-  })
-);
+const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
+  background: colors.white,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)',
+  margin: '40px 0',
+}));
 
 const DiscussionsList = () => {
   const listRef = useRef(null);
@@ -98,7 +96,7 @@ const DiscussionsList = () => {
   const value = {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
-    afterCreateDraft: id => setDiscussionId(id),
+    afterCreateDiscussion: id => setDiscussionId(id),
   };
 
   return (
@@ -111,9 +109,9 @@ const DiscussionsList = () => {
       </TitleSection>
       <DiscussionContext.Provider value={value}>
         {isComposing && (
-          <StyledDiscussionMessage
+          <StyledMessage
             mode="compose"
-            afterCreate={stopComposing}
+            afterCreateMessage={stopComposing}
             handleCancel={stopComposing}
           />
         )}

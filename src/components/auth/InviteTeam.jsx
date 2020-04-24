@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import createInvitesMutation from 'graphql/mutations/createInvites';
 import localStateQuery from 'graphql/queries/localState';
 import { setLocalAppState } from 'utils/auth';
-import useMountEffect from 'utils/hooks/useMountEffect';
+import useMountEffect from 'hooks/shared/useMountEffect';
 import { track } from 'utils/analytics';
 
 import Button from 'components/shared/Button';

@@ -5,7 +5,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import { LIST_ITEM_INDENT_WIDTH } from './utils';
+import { LIST_ITEM_INDENT_WIDTH } from 'utils/editor/constants';
 
 const Container = styled.li(({ depth }) => ({
   display: 'flex',

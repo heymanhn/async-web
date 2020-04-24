@@ -25,6 +25,7 @@ export default gql`
     topic @type(name: "Body") {
       ...BodyObject
     }
+    title
   }
   ${body}
   ${user}

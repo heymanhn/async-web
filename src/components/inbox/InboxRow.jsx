@@ -7,10 +7,10 @@ import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import localDeleteResourceFromInboxMtn from 'graphql/mutations/local/deleteResourceFromInbox';
-import useResourceDetails from 'utils/hooks/useResourceDetails';
-import useHover from 'utils/hooks/useHover';
+import useResourceDetails from 'hooks/resources/useResourceDetails';
+import useHover from 'hooks/shared/useHover';
 import { getLocalUser } from 'utils/auth';
-import { isResourceUnread } from 'utils/helpers';
+import { isResourceUnread, titleize } from 'utils/helpers';
 import {
   DEFAULT_DOCUMENT_CONTEXT,
   DEFAULT_DISCUSSION_CONTEXT,
@@ -104,15 +104,13 @@ const InboxRow = ({ item, ...props }) => {
   const ResourceDetails = useResourceDetails(resourceType, resource);
   if (!ResourceDetails) return null;
 
-  const { id, tags, title, topic, author, owner } = resource;
-  const safeTopic = topic || {};
-  const titleText = isDocument ? title : safeTopic.text;
+  const { id, tags, title, author, owner } = resource;
 
   const { userId } = getLocalUser();
   const { id: authorId } = author || owner;
   const isAuthor = userId === authorId;
 
-  const afterDelete = () => {
+  const afterDeleteResource = () => {
     deleteResourceFromInbox({
       variables: {
         resourceType,
@@ -122,11 +120,9 @@ const InboxRow = ({ item, ...props }) => {
   };
 
   const { ResourceContext, defaultContext } = contexts[resourceType];
-  const value = {
-    ...defaultContext,
-    afterDelete,
-  };
+  const value = { ...defaultContext };
   value[`${resourceType}Id`] = id;
+  value[`afterDelete${titleize(resourceType)}`] = afterDeleteResource;
 
   return (
     <ResourceContext.Provider value={value}>
@@ -138,7 +134,7 @@ const InboxRow = ({ item, ...props }) => {
           <DetailsContainer>
             <ItemDetails>
               <Title hover={hover} isUnread={isResourceUnread(tags)}>
-                {titleText || `Untitled ${resourceType}`}
+                {title || `Untitled ${resourceType}`}
               </Title>
               <ResourceDetails />
             </ItemDetails>

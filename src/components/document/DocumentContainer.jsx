@@ -1,58 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 
+import documentQuery from 'graphql/queries/document';
+import useThreadState from 'hooks/thread/useThreadState';
+import useUpdateSelectedResource from 'hooks/resources/useUpdateSelectedResource';
 import { DocumentContext, DEFAULT_DOCUMENT_CONTEXT } from 'utils/contexts';
 import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
-import useUpdateSelectedResource from 'utils/hooks/useUpdateSelectedResource';
-import documentQuery from 'graphql/queries/document';
 
 import NotFound from 'components/navigation/NotFound';
-import DiscussionModal from 'components/discussion/DiscussionModal';
+import ThreadModal from 'components/thread/ThreadModal';
 import NavigationBar from 'components/navigation/NavigationBar';
-import Document from './Document';
-import DiscussionsList from './DiscussionsList';
 
-const DocumentContainer = ({
-  documentId,
-  discussionId: initialDiscussionId,
-  viewMode: initialViewMode,
-}) => {
+import DiscussionsList from './DiscussionsList';
+import Document from './Document';
+
+const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(documentId);
 
-  // TODO (HN): Instead of all these different discussionId fields, suggest
-  // implementing a state machine that transitions from
-  // new => first_message => deleted
-  const [state, setState] = useState({
-    viewMode: initialViewMode,
-    modalDiscussionId: initialDiscussionId,
-    firstMsgDiscussionId: null,
-    deletedDiscussionId: null,
-    isModalOpen: !!initialDiscussionId,
-    inlineDiscussionTopic: null,
-    forceUpdate: false,
-  });
-
-  const setViewMode = vm => setState(old => ({ ...old, viewMode: vm }));
-  const setFirstMsgDiscussionId = id =>
-    setState(old => ({ ...old, firstMsgDiscussionId: id }));
-  const setDeletedDiscussionId = id =>
-    setState(old => ({ ...old, deletedDiscussionId: id }));
-  const resetInlineTopic = () =>
-    setState(old => ({ ...old, inlineDiscussionTopic: null }));
-  const setForceUpdate = fu => setState(old => ({ ...old, forceUpdate: fu }));
-
-  useEffect(() => {
-    setState(old => ({ ...old, viewMode: initialViewMode }));
-  }, [initialViewMode]);
-
-  useEffect(() => {
-    setState(old => ({
-      ...old,
-      modalDiscussionId: initialDiscussionId,
-      isModalOpen: !!initialDiscussionId,
-    }));
-  }, [initialDiscussionId]);
+  const [viewMode, setViewMode] = useState('content');
+  const [forceUpdate, setForceUpdate] = useState(false);
+  const {
+    threadId,
+    handleShowThread,
+    handleCloseThread,
+    ...threadProps
+  } = useThreadState(initialThreadId);
 
   const { error, data } = useQuery(documentQuery, {
     variables: { documentId },
@@ -60,60 +33,22 @@ const DocumentContainer = ({
   });
 
   if (!data) return null;
-  if (error || !data.document) return <NotFound />;
+  if (error || !data || !data.document) return <NotFound />;
+
   const { channelId, tags } = data.document;
   const readOnly = isResourceReadOnly(tags);
-
-  const handleShowModal = (discussionId, content) => {
-    const newState = {
-      modalDiscussionId: discussionId,
-      isModalOpen: true,
-    };
-
-    // For creating inline discussion context later on
-    if (content) newState.inlineDiscussionTopic = content;
-
-    setState(oldState => ({ ...oldState, ...newState }));
-  };
-
-  const handleCloseModal = () => {
-    setState(oldState => ({
-      ...oldState,
-      modalDiscussionId: null,
-      isModalOpen: false,
-    }));
-  };
-
-  const {
-    modalDiscussionId,
-    firstMsgDiscussionId,
-    deletedDiscussionId,
-    inlineDiscussionTopic,
-    isModalOpen,
-    viewMode,
-    forceUpdate,
-  } = state;
   if (forceUpdate) setForceUpdate(false);
 
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
     documentId,
-    isModalOpen,
-    modalDiscussionId,
-    firstMsgDiscussionId,
-    deletedDiscussionId,
-    inlineDiscussionTopic,
     viewMode,
     channelId,
     readOnly,
 
-    setFirstMsgDiscussionId,
-    setDeletedDiscussionId,
     setForceUpdate,
     setViewMode,
-    resetInlineTopic,
-    handleShowModal,
-    handleCloseModal,
+    handleShowThread,
   };
 
   return (
@@ -122,11 +57,11 @@ const DocumentContainer = ({
       {viewMode === 'content' && <Document isUnread={isResourceUnread(tags)} />}
       {viewMode === 'discussions' && <DiscussionsList />}
 
-      {isModalOpen && (
-        <DiscussionModal
-          isOpen={isModalOpen}
-          mode="document"
-          handleClose={handleCloseModal}
+      {threadId && (
+        <ThreadModal
+          threadId={threadId}
+          handleClose={handleCloseThread}
+          {...threadProps}
         />
       )}
     </DocumentContext.Provider>
@@ -135,13 +70,11 @@ const DocumentContainer = ({
 
 DocumentContainer.propTypes = {
   documentId: PropTypes.string.isRequired,
-  discussionId: PropTypes.string,
-  viewMode: PropTypes.oneOf(['content', 'discussions']),
+  threadId: PropTypes.string,
 };
 
 DocumentContainer.defaultProps = {
-  viewMode: 'content',
-  discussionId: null,
+  threadId: null,
 };
 
 export default DocumentContainer;

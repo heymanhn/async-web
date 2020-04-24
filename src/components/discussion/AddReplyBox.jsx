@@ -1,3 +1,7 @@
+/*
+ * TODO (DISCUSSION V2): See if this can be re-combined with the AddReplyBox
+ * for the thread.
+ */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/react-hooks';
@@ -5,41 +9,26 @@ import styled from '@emotion/styled';
 
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
-import useCurrentUser from 'utils/hooks/useCurrentUser';
-import useHover from 'utils/hooks/useHover';
-
-import Avatar from 'components/shared/Avatar';
+import useCurrentUser from 'hooks/shared/useCurrentUser';
+import useHover from 'hooks/shared/useHover';
 import { DiscussionContext } from 'utils/contexts';
 
-import AvatarWithIcon from './AvatarWithIcon';
+import Avatar from 'components/shared/Avatar';
+import AvatarWithIcon from 'components/shared/AvatarWithIcon';
 
-const Container = styled.div(
-  ({ theme: { colors } }) => ({
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+const Container = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 
-    background: colors.bgGrey,
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-    boxShadow: `0px 0px 3px ${colors.grey7}`,
-    cursor: 'pointer',
-    padding: '20px 25px',
-  }),
-  ({ isModal, theme: { colors } }) => {
-    if (!isModal) return {};
-    return {
-      background: colors.bgGrey,
-      border: 'none',
-      borderTop: `1px solid ${colors.borderGrey}`,
-      borderRadius: 0,
-      borderBottomLeftRadius: '5px',
-      borderBottomRightRadius: '5px',
-      boxShadow: 'none',
-    };
-  }
-);
+  background: colors.bgGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  boxShadow: `0px 0px 3px ${colors.grey7}`,
+  cursor: 'pointer',
+  padding: '20px 25px',
+}));
 
 const IndicatorContainer = styled.div(({ hover, isResolved }) => ({
   display: 'flex',
@@ -60,10 +49,10 @@ const IndicatorLabel = styled.div(({ isResolved, theme: { colors } }) => ({
   marginLeft: '5px',
 }));
 
-const ActionButton = styled.div(({ isModal, theme: { colors } }) => ({
+const ActionButton = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
-  background: isModal ? colors.white : colors.bgGrey,
+  background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   cursor: 'pointer',
@@ -76,7 +65,7 @@ const ActionButton = styled.div(({ isModal, theme: { colors } }) => ({
 }));
 
 const AddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
-  const { discussionId, isModal } = useContext(DiscussionContext);
+  const { discussionId } = useContext(DiscussionContext);
   const { hover, ...hoverProps } = useHover(!isComposing);
   const currentUser = useCurrentUser();
 
@@ -133,17 +122,14 @@ const AddReplyBox = ({ handleClickReply, isComposing, ...props }) => {
     const label = isResolved ? 'Re-open discussion' : 'Resolve discussion';
 
     return (
-      <ActionButton
-        isModal={isModal}
-        onClick={() => updateDiscussionStatus(newStatus)}
-      >
+      <ActionButton onClick={() => updateDiscussionStatus(newStatus)}>
         {label}
       </ActionButton>
     );
   };
 
   return (
-    <Container isModal={isModal} {...props} {...hoverProps}>
+    <Container {...props} {...hoverProps}>
       {renderIndicator()}
       {renderActionButton()}
     </Container>

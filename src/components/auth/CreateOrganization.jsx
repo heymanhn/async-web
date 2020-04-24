@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 
 import createOrganizationMutation from 'graphql/mutations/createOrganization';
 import { setLocalAppState } from 'utils/auth';
-import useMountEffect from 'utils/hooks/useMountEffect';
+import useMountEffect from 'hooks/shared/useMountEffect';
 import { group, track } from 'utils/analytics';
 
 import Button from 'components/shared/Button';

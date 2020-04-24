@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import { NavigationContext } from 'utils/contexts';
-import useKeyDownHandler from 'utils/hooks/useKeyDownHandler';
+import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 
 import ResourceCreationModal from 'components/resources/ResourceCreationModal';
 import CommandCenterModal from './CommandCenterModal';

@@ -2,7 +2,7 @@ import React from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
-import useSelectionDimensions from 'utils/hooks/useSelectionDimensions';
+import useSelectionDimensions from 'hooks/editor/useSelectionDimensions';
 
 import ContentPlaceholder from 'components/editor/ContentPlaceholder';
 import Editor from 'components/editor/Editor';

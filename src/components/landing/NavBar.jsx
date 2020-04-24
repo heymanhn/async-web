@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from '@reach/router';
 import styled from '@emotion/styled';
 
-import logo from 'images/grey-logo.png';
+import logo from 'assets/grey-logo.png';
 
 const Container = styled.div(({ theme: { bgColors } }) => ({
   display: 'flex',
