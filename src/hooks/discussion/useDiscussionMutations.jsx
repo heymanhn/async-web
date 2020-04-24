@@ -14,14 +14,20 @@ import {
   ThreadContext,
   MessageContext,
 } from 'utils/contexts';
-import { deserializeString, toPlainText } from 'utils/editor/constants';
+import { toPlainText } from 'utils/editor/constants';
 
+// TODO (DISCUSSION V2): To make this easier on us, better idea is to have
+// a separate useThreadMutations hook.
 const useDiscussionMutations = () => {
   const { documentId } = useContext(DocumentContext);
-  const { discussionId, afterCreate, afterDelete } = useContext(
-    DiscussionContext
+  const {
+    discussionId,
+    afterCreate,
+    afterDelete: afterDeleteDiscussion,
+  } = useContext(DiscussionContext);
+  const { threadId, topic, afterDelete: afterDeleteThread } = useContext(
+    ThreadContext
   );
-  const { topic } = useContext(ThreadContext);
   const { messageId } = useContext(MessageContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
@@ -29,7 +35,7 @@ const useDiscussionMutations = () => {
   const [createDiscussion] = useMutation(createDiscussionMutation);
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
   const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
-    variables: { discussionId },
+    variables: { discussionId: discussionId || threadId },
   });
 
   const handleCreate = async title => {
@@ -94,7 +100,7 @@ const useDiscussionMutations = () => {
   const handleUpdateContext = async newContext => {
     const { data } = await updateDiscussion({
       variables: {
-        discussionId,
+        discussionId: threadId,
         input: {
           topic: {
             formatter: 'slatejs',
@@ -116,16 +122,12 @@ const useDiscussionMutations = () => {
   };
 
   // Only used for adhoc discussion topics
-  const handleUpdateTopic = async text => {
+  const handleUpdateTopic = async title => {
     const { data } = await updateDiscussion({
       variables: {
         discussionId,
         input: {
-          topic: {
-            formatter: 'slatejs',
-            text,
-            payload: JSON.stringify(deserializeString(text)),
-          },
+          title,
         },
       },
     });
@@ -149,7 +151,9 @@ const useDiscussionMutations = () => {
     const { data } = await deleteDiscussion({ refetchQueries });
 
     if (data.deleteDiscussion) {
-      afterDelete();
+      // TODO (DISCUSSION V2): clean this up once we have two separate hooks.
+      afterDeleteDiscussion();
+      afterDeleteThread();
       return Promise.resolve();
     }
 

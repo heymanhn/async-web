@@ -49,7 +49,7 @@ const StartThreadButton = ({ handleShowThread, ...props }) => {
     }
 
     Editor.createInlineAnnotation(editor, {
-      threadId,
+      discussionId: threadId, // backwards compatibility
       authorId: userId,
       isInitialDraft: true, // Toggled to false once first message is created
       mode,
@@ -68,7 +68,7 @@ const StartThreadButton = ({ handleShowThread, ...props }) => {
     Transforms.deselect(editor);
     handleShowThread({
       threadId,
-      initialThreadContext: newContents,
+      initialTopic: newContents,
       sourceEditor: editor,
     });
   };

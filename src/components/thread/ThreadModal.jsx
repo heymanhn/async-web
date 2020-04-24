@@ -163,7 +163,7 @@ const ThreadModal = ({
 
 ThreadModal.propTypes = {
   threadId: PropTypes.string.isRequired,
-  initialTopic: PropTypes.object,
+  initialTopic: PropTypes.array,
   sourceEditor: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
 };

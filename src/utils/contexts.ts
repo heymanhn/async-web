@@ -59,6 +59,8 @@ export const DEFAULT_THREAD_CONTEXT = {
   initialTopic: null,
   topic: null,
   modalRef: {},
+
+  afterDelete: () => {},
 };
 export const ThreadContext = createContext(DEFAULT_THREAD_CONTEXT);
 
