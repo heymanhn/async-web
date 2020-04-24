@@ -95,7 +95,7 @@ const ThreadModal = ({
     stopComposing();
 
     // Only need to set this once, when the first message is created.
-    if (!messageCount && sourceEditor) {
+    if (sourceEditor) {
       Editor.updateInlineAnnotation(sourceEditor, newThreadId, {
         isInitialDraft: false,
       });

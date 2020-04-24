@@ -35,10 +35,11 @@ const useDiscussionMutations = () => {
   const [createDiscussion] = useMutation(createDiscussionMutation);
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
   const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
-    variables: { discussionId: discussionId || threadId },
+    // TODO (DISCUSSION V2): another reason why we need a useThreadMutations
+    variables: { discussionId: threadId || discussionId },
   });
 
-  const handleCreate = async title => {
+  const handleCreate = async ({ title }) => {
     setIsSubmitting(true);
 
     const input = {};
@@ -95,34 +96,31 @@ const useDiscussionMutations = () => {
     return Promise.reject(new Error('Failed to create discussion'));
   };
 
-  // Only used for inline discussions
-  // TODO (DISCUSSION V2): Change to topic
-  const handleUpdateContext = async newContext => {
+  // Only used for threads
+  const handleUpdateTopic = async newTopic => {
     const { data } = await updateDiscussion({
       variables: {
         discussionId: threadId,
         input: {
           topic: {
             formatter: 'slatejs',
-            text: toPlainText(newContext),
-            payload: JSON.stringify(newContext),
+            text: toPlainText(newTopic),
+            payload: JSON.stringify(newTopic),
           },
         },
       },
     });
 
     if (data.updateDiscussion) {
-      track('Inline discussion context updated', { discussionId });
+      track('Thread topic updated', { discussionId });
       return Promise.resolve();
     }
 
-    return Promise.reject(
-      new Error('Failed to update inline discussion context')
-    );
+    return Promise.reject(new Error('Failed to update thread topic'));
   };
 
   // Only used for adhoc discussion topics
-  const handleUpdateTopic = async title => {
+  const handleUpdateTitle = async title => {
     const { data } = await updateDiscussion({
       variables: {
         discussionId,
@@ -133,11 +131,11 @@ const useDiscussionMutations = () => {
     });
 
     if (data.updateDiscussion) {
-      track('Discussion topic updated', { discussionId });
+      track('Discussion title updated', { discussionId });
       return Promise.resolve();
     }
 
-    return Promise.reject(new Error('Failed to update discussion topic'));
+    return Promise.reject(new Error('Failed to update discussion title'));
   };
 
   const handleDelete = async () => {
@@ -162,8 +160,8 @@ const useDiscussionMutations = () => {
 
   return {
     handleCreate,
-    handleUpdateContext,
     handleUpdateTopic,
+    handleUpdateTitle,
     handleDelete,
 
     isSubmitting,

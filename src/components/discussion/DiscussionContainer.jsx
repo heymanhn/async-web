@@ -19,7 +19,7 @@ import ThreadModal from 'components/thread/ThreadModal';
 
 import AddReplyBox from './AddReplyBox';
 import DiscussionMessages from './DiscussionMessages';
-import TopicComposer from './TopicComposer';
+import TitleComposer from './TitleComposer';
 
 const OuterContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -73,8 +73,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   if (loading || loading2) return <StyledLoadingIndicator color="borderGrey" />;
   if (!data.discussion || !data2.messages) return <NotFound />;
 
-  const { topic, draft, messageCount } = data.discussion;
-  const { text } = topic || {};
+  const { title, draft, messageCount } = data.discussion;
   const { tags } = data.discussion;
 
   if ((draft || !messageCount) && !isComposing) startComposing();
@@ -103,9 +102,9 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
       <OuterContainer>
         <NavigationBar />
         <ContentContainer ref={discussionRef}>
-          <TopicComposer
-            initialTopic={text}
-            autoFocus={!text && !messageCount}
+          <TitleComposer
+            initialTitle={title}
+            autoFocus={!title && !messageCount}
           />
           {!!messageCount && (
             <DiscussionMessages

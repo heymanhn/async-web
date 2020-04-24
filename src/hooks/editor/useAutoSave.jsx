@@ -31,7 +31,9 @@ const useAutoSave = ({
     // know the content has changed, but we only proceed with the save if the
     // user hasn't changed the content for a given idle interval.
     const readyToSave = !isDisabledRef.current && newContent === oldContent;
-    if (readyToSave) handleSave({ content: JSON.parse(newContent) });
+    if (readyToSave) {
+      handleSave({ content: isJSON ? JSON.parse(newContent) : newContent });
+    }
 
     return setState(oldState => ({
       ...oldState,

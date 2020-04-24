@@ -9,7 +9,7 @@ import Editor from 'components/editor/Editor';
 
 const useTopicGenerator = editor => {
   const { threadId, initialTopic } = useContext(ThreadContext);
-  const { handleUpdateContext } = useDiscussionMutations();
+  const { handleUpdateTopic } = useDiscussionMutations();
 
   const loadContents = id => {
     // Needed to avoid editor focus issues relating to shallow references.
@@ -70,7 +70,7 @@ const useTopicGenerator = editor => {
     const id = Date.now();
     loadContents(id);
     deleteSurroundingText(id);
-    handleUpdateContext(editor.children);
+    handleUpdateTopic(editor.children);
   };
 };
 

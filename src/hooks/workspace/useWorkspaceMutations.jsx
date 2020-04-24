@@ -18,7 +18,7 @@ const useWorkspaceMutations = () => {
   const [createWorkspace] = useMutation(createWorkspaceMtn);
   const [updateWorkspace] = useMutation(updateWorkspaceMtn);
 
-  const handleCreate = async title => {
+  const handleCreate = async ({ title }) => {
     setIsSubmitting(true);
 
     const { data } = await createWorkspace({

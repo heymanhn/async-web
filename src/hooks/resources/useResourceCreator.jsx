@@ -52,7 +52,7 @@ const useResourceCreator = resourceType => {
     newMembers,
     openInNewTab,
   } = {}) => {
-    const { id: resourceId } = await handleCreate(title);
+    const { id: resourceId } = await handleCreate({ title });
 
     if (resourceId) {
       if (parentWorkspaceId)

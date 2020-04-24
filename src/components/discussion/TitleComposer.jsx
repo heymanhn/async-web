@@ -11,26 +11,26 @@ const StyledTitleEditable = styled(TitleEditable)({
   marginBottom: '30px',
 });
 
-const TopicComposer = ({ initialTopic, ...props }) => {
-  const { handleUpdateTopic } = useDiscussionMutations();
+const TitleComposer = ({ initialTitle, ...props }) => {
+  const { handleUpdateTitle } = useDiscussionMutations();
   const { readOnly } = useContext(DiscussionContext);
 
   return (
     <StyledTitleEditable
-      initialTitle={initialTopic}
+      initialTitle={initialTitle}
       readOnly={readOnly}
-      handleUpdateTitle={handleUpdateTopic}
+      handleUpdateTitle={handleUpdateTitle}
       {...props}
     />
   );
 };
 
-TopicComposer.propTypes = {
-  initialTopic: PropTypes.string,
+TitleComposer.propTypes = {
+  initialTitle: PropTypes.string,
 };
 
-TopicComposer.defaultProps = {
-  initialTopic: '',
+TitleComposer.defaultProps = {
+  initialTitle: '',
 };
 
-export default TopicComposer;
+export default TitleComposer;
