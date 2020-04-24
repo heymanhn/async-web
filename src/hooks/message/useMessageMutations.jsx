@@ -91,7 +91,7 @@ const useMessageMutations = ({ message = null } = {}) => {
     }
   };
 
-  const handleUpdateMessage = async () => {
+  const handleUpdateMessage = async ({ newMessage } = {}) => {
     setIsSubmitting(true);
 
     const { data } = await updateMessage({
@@ -101,8 +101,8 @@ const useMessageMutations = ({ message = null } = {}) => {
         input: {
           body: {
             formatter: 'slatejs',
-            text: toPlainText(message),
-            payload: JSON.stringify(message),
+            text: toPlainText(newMessage || message),
+            payload: JSON.stringify(newMessage || message),
           },
         },
       },

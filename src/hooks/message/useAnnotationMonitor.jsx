@@ -15,17 +15,16 @@ const useAnnotationMonitor = (content, setContent, editor, readOnly) => {
 
   if (!readOnly) return;
 
-  if (operations.length && children.length) {
-    console.log('children is: ' + JSON.stringify(children));
-    console.log('content is: ' + JSON.stringify(content));
+  if (
+    operations.length &&
+    children.length &&
+    JSON.stringify(children) !== JSON.stringify(content)
+  ) {
+    handleUpdateMessage();
 
-    if (JSON.stringify(children) !== JSON.stringify(content)) {
-      handleUpdateMessage();
-
-      // Since the message is in read-only mode, we need to update the
-      // content state as well with the changes.
-      setContent(children);
-    }
+    // Since the message is in read-only mode, we need to update the
+    // content state as well with the changes.
+    setContent(children);
   }
 };
 

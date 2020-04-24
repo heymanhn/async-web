@@ -7,7 +7,7 @@ import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import { track } from 'utils/analytics';
 import { getLocalUser } from 'utils/auth';
-import { DiscussionContext } from 'utils/contexts';
+import { DiscussionContext, ThreadContext } from 'utils/contexts';
 
 const useDiscussionMutations = () => {
   const {
@@ -15,6 +15,7 @@ const useDiscussionMutations = () => {
     afterCreateDiscussion,
     afterDeleteDiscussion,
   } = useContext(DiscussionContext);
+  const { afterDeleteThread } = useContext(ThreadContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
 
@@ -74,13 +75,19 @@ const useDiscussionMutations = () => {
   };
 
   // TODO (DISCUSSION V2): this also handles deleting threads, for now...
+  // DRY this up later.
   const handleDeleteDiscussion = async ({ parentId } = {}) => {
     const { data } = await deleteDiscussion({
       variables: { discussionId: parentId || discussionId },
     });
 
     if (data.deleteDiscussion) {
-      afterDeleteDiscussion();
+      if (!parentId) {
+        afterDeleteDiscussion();
+      } else {
+        afterDeleteThread();
+      }
+
       return Promise.resolve();
     }
 

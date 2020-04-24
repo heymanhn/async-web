@@ -7,8 +7,7 @@ import styled from '@emotion/styled';
 import useClickOutside from 'hooks/shared/useClickOutside';
 import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
 import useMessageMutations from 'hooks/message/useMessageMutations';
-import useThreadMutations from 'hooks/thread/useThreadMutations';
-import { DiscussionContext, MessageContext } from 'utils/contexts';
+import { MessageContext, ThreadContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
 
 const Container = styled.div(
@@ -67,15 +66,14 @@ const OptionName = styled.div(({ theme: { colors } }) => ({
 
 const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
   const selector = useRef();
-  const { threadPosition, setMode } = useContext(MessageContext);
+  const { parentId, threadPosition, setMode } = useContext(MessageContext);
   const isFirstMessage = !threadPosition;
 
-  // If there's no discussion ID, then there has to be a thread ID
-  const { discussionId } = useContext(DiscussionContext);
-  const parentResourceType = discussionId ? 'discussion' : 'thread';
+  // If there's no thread ID, then there has to be a discussion ID
+  const { threadId } = useContext(ThreadContext);
+  const parentResourceType = threadId ? 'thread' : 'discussion';
 
   const { handleDeleteDiscussion } = useDiscussionMutations();
-  const { handleDeleteThread } = useThreadMutations();
   const { handleDeleteMessage } = useMessageMutations();
 
   const handleClickOutside = () => {
@@ -89,23 +87,17 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
   const handleDeleteWrapper = event => {
     event.stopPropagation();
 
-    const handleDeleteParentResource = discussionId
-      ? handleDeleteDiscussion
-      : handleDeleteThread;
-
     const resource = isFirstMessage ? parentResourceType : 'message';
-    const handleDelete = isFirstMessage
-      ? handleDeleteParentResource
-      : handleDeleteMessage;
-
     const userChoice = window.confirm(
       `Are you sure you want to delete this ${resource}?`
     );
 
-    if (!userChoice) return;
+    if (!userChoice) return null;
 
     handleCloseDropdown();
-    handleDelete();
+    return isFirstMessage
+      ? handleDeleteDiscussion({ parentId })
+      : handleDeleteMessage();
   };
 
   const handleEdit = event => {

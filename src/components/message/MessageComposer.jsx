@@ -44,6 +44,7 @@ const MessageComposer = ({ initialMessage, isModal, autoFocus, ...props }) => {
     editor,
     resourceId: parentId,
     initialContent: initialMessage,
+    readOnly,
   });
 
   const {

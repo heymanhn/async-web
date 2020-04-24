@@ -5,7 +5,9 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import throttle from 'lodash/throttle';
 
+import useMessageMutations from 'hooks/message/useMessageMutations';
 import { DEFAULT_ELEMENT } from 'utils/editor/constants';
 
 const RECENT_TOUCH_INTERVAL = 10000;
@@ -15,7 +17,12 @@ const useContentState = ({
   editor,
   resourceId: initialResourceId,
   initialContent,
+  readOnly,
 } = {}) => {
+  // TODO (DISCUSSION V2): Find a better way to do this, so that useContentState
+  // doesn't make any assumptions about what resource this content is for.
+  const { handleUpdateMessage } = useMessageMutations();
+
   // Using a ref to avoid triggering the hooks when the lastTouched
   // state value changes.
   const [lastTouched, setLastTouched] = useState(Date.now());
@@ -57,7 +64,17 @@ const useContentState = ({
 
     // For spreading into input elements, such as <Slate /> provider components
     value: content,
-    onChange: c => setContent(c),
+    onChange: c => {
+      // TODO (DISCUSSION V2): Is there any better way to do this?
+      // Also, why does updating an annotation trigger onChange, but creating
+      // the annotation doesn't? I'm confused.
+      const throttledUpdateMessage = throttle(
+        () => handleUpdateMessage({ newMessage: c }),
+        1000
+      );
+      if (readOnly) throttledUpdateMessage();
+      setContent(c);
+    },
   };
 };
 
