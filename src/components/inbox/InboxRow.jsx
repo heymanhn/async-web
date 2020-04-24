@@ -10,7 +10,7 @@ import localDeleteResourceFromInboxMtn from 'graphql/mutations/local/deleteResou
 import useResourceDetails from 'hooks/resources/useResourceDetails';
 import useHover from 'hooks/shared/useHover';
 import { getLocalUser } from 'utils/auth';
-import { isResourceUnread } from 'utils/helpers';
+import { isResourceUnread, titleize } from 'utils/helpers';
 import {
   DEFAULT_DOCUMENT_CONTEXT,
   DEFAULT_DISCUSSION_CONTEXT,
@@ -110,7 +110,7 @@ const InboxRow = ({ item, ...props }) => {
   const { id: authorId } = author || owner;
   const isAuthor = userId === authorId;
 
-  const afterDelete = () => {
+  const afterDeleteResource = () => {
     deleteResourceFromInbox({
       variables: {
         resourceType,
@@ -120,11 +120,9 @@ const InboxRow = ({ item, ...props }) => {
   };
 
   const { ResourceContext, defaultContext } = contexts[resourceType];
-  const value = {
-    ...defaultContext,
-    afterDelete,
-  };
+  const value = { ...defaultContext };
   value[`${resourceType}Id`] = id;
+  value[`afterDelete${titleize(resourceType)}`] = afterDeleteResource;
 
   return (
     <ResourceContext.Provider value={value}>

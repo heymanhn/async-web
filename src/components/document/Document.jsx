@@ -49,7 +49,7 @@ const Document = ({ isUnread }) => {
   if (!updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
   const setUpdatedTimestampToNow = () => setUpdatedTimestamp(Date.now());
 
-  const afterUpdateTitle = newTitle => {
+  const afterUpdateDocumentTitle = newTitle => {
     setUpdatedTimestampToNow();
     handleNewTitle(newTitle);
   };
@@ -58,8 +58,8 @@ const Document = ({ isUnread }) => {
   // here instead of in the parent component.
   const value = {
     ...documentContext,
-    afterUpdate: setUpdatedTimestampToNow,
-    afterUpdateTitle,
+    afterUpdateDocument: setUpdatedTimestampToNow,
+    afterUpdateDocumentTitle,
   };
 
   return (

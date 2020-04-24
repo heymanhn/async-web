@@ -92,7 +92,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     readOnly,
-    afterDelete: returnToHome,
+    afterDeleteDiscussion: returnToHome,
     setForceUpdate,
     handleShowThread,
   };
@@ -118,7 +118,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
               parentId={discussionId}
               draft={draft}
               disableAutoFocus={!messageCount}
-              afterCreate={stopComposing}
+              afterCreateMessage={stopComposing}
               handleCancel={handleCancelCompose}
             />
           ) : (

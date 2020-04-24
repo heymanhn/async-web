@@ -11,9 +11,12 @@ import { DocumentContext } from 'utils/contexts';
 import { toPlainText } from 'utils/editor/constants';
 
 const useDocumentMutations = () => {
-  const { documentId, afterUpdate, afterUpdateTitle, afterDelete } = useContext(
-    DocumentContext
-  );
+  const {
+    documentId,
+    afterUpdateDocument,
+    afterUpdateDocumentTitle,
+    afterDeleteDocument,
+  } = useContext(DocumentContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
 
@@ -23,7 +26,7 @@ const useDocumentMutations = () => {
     variables: { documentId },
   });
 
-  const handleCreate = async () => {
+  const handleCreateDocument = async () => {
     setIsSubmitting(true);
 
     const { data } = await createDocument({
@@ -51,7 +54,7 @@ const useDocumentMutations = () => {
     return Promise.reject(new Error('Failed to create new document'));
   };
 
-  const handleUpdate = async ({ content }) => {
+  const handleUpdateDocument = async ({ content }) => {
     const { data } = await updateDocument({
       variables: {
         documentId,
@@ -66,32 +69,32 @@ const useDocumentMutations = () => {
     });
 
     if (data.updateDocument) {
-      afterUpdate();
+      afterUpdateDocument();
       return Promise.resolve();
     }
 
     return Promise.reject(new Error('Failed to update document'));
   };
 
-  const handleUpdateTitle = async title => {
+  const handleUpdateDocumentTitle = async title => {
     const { data } = await updateDocument({
       variables: { documentId, input: { title } },
     });
 
     if (data.updateDocument) {
       track('Document title updated', { documentId });
-      afterUpdateTitle(title);
+      afterUpdateDocumentTitle(title);
       return Promise.resolve();
     }
 
     return Promise.reject(new Error('Failed to update document title'));
   };
 
-  const handleDelete = async () => {
+  const handleDeleteDocument = async () => {
     const { data } = await deleteDocument();
 
     if (data.deleteDocument) {
-      afterDelete();
+      afterDeleteDocument();
       return Promise.resolve();
     }
 
@@ -101,10 +104,10 @@ const useDocumentMutations = () => {
   return {
     isSubmitting,
 
-    handleCreate,
-    handleUpdate,
-    handleUpdateTitle,
-    handleDelete,
+    handleCreateDocument,
+    handleUpdateDocument,
+    handleUpdateDocumentTitle,
+    handleDeleteDocument,
   };
 };
 

@@ -2,68 +2,35 @@ import { useContext, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 
 import inboxQuery from 'graphql/queries/inbox';
-import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import { track } from 'utils/analytics';
 import { getLocalUser } from 'utils/auth';
-import {
-  DocumentContext,
-  DiscussionContext,
-  ThreadContext,
-  MessageContext,
-} from 'utils/contexts';
-import { toPlainText } from 'utils/editor/constants';
+import { DiscussionContext } from 'utils/contexts';
 
-// TODO (DISCUSSION V2): To make this easier on us, better idea is to have
-// a separate useThreadMutations hook.
 const useDiscussionMutations = () => {
-  const { documentId } = useContext(DocumentContext);
   const {
     discussionId,
-    afterCreate,
-    afterDelete: afterDeleteDiscussion,
+    afterCreateDiscussion,
+    afterDeleteDiscussion,
   } = useContext(DiscussionContext);
-  const { threadId, topic, afterDelete: afterDeleteThread } = useContext(
-    ThreadContext
-  );
-  const { messageId } = useContext(MessageContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = getLocalUser();
 
   const [createDiscussion] = useMutation(createDiscussionMutation);
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
-  const [deleteDiscussion] = useMutation(deleteDiscussionMutation, {
-    // TODO (DISCUSSION V2): another reason why we need a useThreadMutations
-    variables: { discussionId: threadId || discussionId },
-  });
+  const [deleteDiscussion] = useMutation(deleteDiscussionMutation);
 
-  const handleCreate = async ({ title }) => {
+  const handleCreateDiscussion = async ({ title }) => {
     setIsSubmitting(true);
 
     const input = {};
+    if (title) input.title = title;
 
-    if (documentId) {
-      input.parent = { id: documentId, type: 'document' };
-    } else if (messageId) {
-      input.parent = { id: messageId, type: 'message' };
-    }
-
-    if (title) {
-      input.title = title;
-    } else if (topic) {
-      input.topic = {
-        formatter: 'slatejs',
-        text: toPlainText(topic),
-        payload: JSON.stringify(topic),
-      };
-    }
-
-    // Only refetch if an adhoc discussion is being created
-    const refetchQueries = [];
-    if (!documentId) {
-      refetchQueries.push(
+    const { data } = await createDiscussion({
+      variables: { input },
+      refetchQueries: [
         {
           query: inboxQuery,
           variables: { userId, queryParams: { type: 'all' } },
@@ -71,23 +38,15 @@ const useDiscussionMutations = () => {
         {
           query: inboxQuery,
           variables: { userId, queryParams: { type: 'discussion' } },
-        }
-      );
-    }
-
-    const { data } = await createDiscussion({
-      variables: { input },
-      refetchQueries,
+        },
+      ],
     });
 
     if (data.createDiscussion) {
       const { id } = data.createDiscussion;
-      track('New discussion created', {
-        documentId,
-        discussionId: id,
-      });
+      track('New discussion created', { discussionId: id });
 
-      afterCreate(id);
+      afterCreateDiscussion(id);
       setIsSubmitting(false);
 
       return Promise.resolve({ id });
@@ -96,31 +55,7 @@ const useDiscussionMutations = () => {
     return Promise.reject(new Error('Failed to create discussion'));
   };
 
-  // Only used for threads
-  const handleUpdateTopic = async newTopic => {
-    const { data } = await updateDiscussion({
-      variables: {
-        discussionId: threadId,
-        input: {
-          topic: {
-            formatter: 'slatejs',
-            text: toPlainText(newTopic),
-            payload: JSON.stringify(newTopic),
-          },
-        },
-      },
-    });
-
-    if (data.updateDiscussion) {
-      track('Thread topic updated', { discussionId });
-      return Promise.resolve();
-    }
-
-    return Promise.reject(new Error('Failed to update thread topic'));
-  };
-
-  // Only used for adhoc discussion topics
-  const handleUpdateTitle = async title => {
+  const handleUpdateDiscussionTitle = async title => {
     const { data } = await updateDiscussion({
       variables: {
         discussionId,
@@ -138,20 +73,14 @@ const useDiscussionMutations = () => {
     return Promise.reject(new Error('Failed to update discussion title'));
   };
 
-  const handleDelete = async () => {
-    const refetchQueries = [];
-    if (documentId) {
-      refetchQueries.push({
-        query: documentDiscussionsQuery,
-        variables: { id: documentId, queryParams: { order: 'desc' } },
-      });
-    }
-    const { data } = await deleteDiscussion({ refetchQueries });
+  // TODO (DISCUSSION V2): this also handles deleting threads, for now...
+  const handleDeleteDiscussion = async ({ parentId } = {}) => {
+    const { data } = await deleteDiscussion({
+      variables: { discussionId: parentId || discussionId },
+    });
 
     if (data.deleteDiscussion) {
-      // TODO (DISCUSSION V2): clean this up once we have two separate hooks.
       afterDeleteDiscussion();
-      afterDeleteThread();
       return Promise.resolve();
     }
 
@@ -159,10 +88,9 @@ const useDiscussionMutations = () => {
   };
 
   return {
-    handleCreate,
-    handleUpdateTopic,
-    handleUpdateTitle,
-    handleDelete,
+    handleCreateDiscussion,
+    handleUpdateDiscussionTitle,
+    handleDeleteDiscussion,
 
     isSubmitting,
   };

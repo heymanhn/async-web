@@ -12,14 +12,14 @@ const StyledTitleEditable = styled(TitleEditable)({
 });
 
 const TitleComposer = ({ initialTitle, ...props }) => {
-  const { handleUpdateTitle } = useDiscussionMutations();
+  const { handleUpdateDiscussionTitle } = useDiscussionMutations();
   const { readOnly } = useContext(DiscussionContext);
 
   return (
     <StyledTitleEditable
       initialTitle={initialTitle}
       readOnly={readOnly}
-      handleUpdateTitle={handleUpdateTitle}
+      handleUpdateTitle={handleUpdateDiscussionTitle}
       {...props}
     />
   );

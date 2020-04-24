@@ -37,7 +37,7 @@ const StyledButton = styled(Button)({
 
 const MessageActions = ({ handleSubmit, isSubmitting }) => {
   const { draft, mode, handleCancel } = useContext(MessageContext);
-  const { handleDeleteDraft } = useMessageDraftMutations();
+  const { handleDeleteMessageDraft } = useMessageDraftMutations();
   const editor = useSlate();
   const isEmptyContent = Editor.isEmptyContent(editor);
 
@@ -49,7 +49,7 @@ const MessageActions = ({ handleSubmit, isSubmitting }) => {
   const handleCancelWrapper = async event => {
     event.stopPropagation();
 
-    if (mode === 'compose' && draft) await handleDeleteDraft();
+    if (mode === 'compose' && draft) await handleDeleteMessageDraft();
 
     handleCancel();
   };

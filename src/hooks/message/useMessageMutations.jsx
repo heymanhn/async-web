@@ -16,10 +16,10 @@ import { toPlainText } from 'utils/editor/constants';
 const useMessageMutations = ({ message = null } = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { documentId } = useContext(DocumentContext);
-  const { messageId, parentId, setMode, afterCreate } = useContext(
+  const { messageId, parentId, setMode, afterCreateMessage } = useContext(
     MessageContext
   );
-  const { handleCreate: handleCreateDiscussion } = useDiscussionMutations();
+  const { handleCreateDiscussion } = useDiscussionMutations();
 
   const [createMessage] = useMutation(createMessageMutation);
   const [updateMessage] = useMutation(updateMessageMutation);
@@ -32,7 +32,7 @@ const useMessageMutations = ({ message = null } = {}) => {
   });
   const [localAddMessage] = useMutation(addNewMsgMutation);
 
-  const handleCreate = async () => {
+  const handleCreateMessage = async () => {
     setIsSubmitting(true);
 
     // TODO (DISCUSSION V2): This shouldn't happen, now that all threads and
@@ -80,16 +80,18 @@ const useMessageMutations = ({ message = null } = {}) => {
           message: data.createMessage,
         },
       });
+
       setIsSubmitting(false);
       track('New message posted', {
         messageId: id,
         discussionId: messageDiscussionId,
       });
-      afterCreate(messageDiscussionId);
+
+      afterCreateMessage(messageDiscussionId);
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdateMessage = async () => {
     setIsSubmitting(true);
 
     const { data } = await updateMessage({
@@ -113,15 +115,15 @@ const useMessageMutations = ({ message = null } = {}) => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDeleteMessage = async () => {
     deleteMessage();
     localDeleteMessage();
   };
 
   return {
-    handleCreate,
-    handleUpdate,
-    handleDelete,
+    handleCreateMessage,
+    handleUpdateMessage,
+    handleDeleteMessage,
 
     isSubmitting,
   };

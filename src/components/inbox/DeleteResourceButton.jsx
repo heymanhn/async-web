@@ -36,7 +36,8 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 
 const DeleteResourceButton = ({ resourceType, ...props }) => {
   const { useMutations } = resourceProperties[resourceType];
-  const { handleDelete } = useMutations();
+  const { handleDeleteDocument, handleDeleteDiscussion } = useMutations();
+  const handleDelete = handleDeleteDocument || handleDeleteDiscussion;
 
   const handleClick = event => {
     event.preventDefault();

@@ -46,9 +46,15 @@ const MessageComposer = ({ initialMessage, isModal, autoFocus, ...props }) => {
     initialContent: initialMessage,
   });
 
-  const { handleCreate, handleUpdate, isSubmitting } = useMessageMutations({
+  const {
+    handleCreateMessage,
+    handleUpdateMessage,
+    isSubmitting,
+  } = useMessageMutations({
     message,
   });
+  const handleSubmit =
+    mode === 'compose' ? handleCreateMessage : handleUpdateMessage;
 
   const coreEditorProps = useCoreEditorProps(editor, { readOnly });
   useMessageDrafts(message, isSubmitting);
@@ -69,7 +75,7 @@ const MessageComposer = ({ initialMessage, isModal, autoFocus, ...props }) => {
         <CompositionMenuButton />
         {!readOnly && (
           <MessageActions
-            handleSubmit={mode === 'compose' ? handleCreate : handleUpdate}
+            handleSubmit={handleSubmit}
             isSubmitting={isSubmitting}
           />
         )}

@@ -9,7 +9,7 @@ import useMessageMutations from 'hooks/message/useMessageMutations';
 
 const useAnnotationMonitor = (content, setContent, editor, readOnly) => {
   const { children, operations } = editor;
-  const { handleUpdate } = useMessageMutations({
+  const { handleUpdateMessage } = useMessageMutations({
     message: children,
   });
 
@@ -20,7 +20,7 @@ const useAnnotationMonitor = (content, setContent, editor, readOnly) => {
     console.log('content is: ' + JSON.stringify(content));
 
     if (JSON.stringify(children) !== JSON.stringify(content)) {
-      handleUpdate();
+      handleUpdateMessage();
 
       // Since the message is in read-only mode, we need to update the
       // content state as well with the changes.

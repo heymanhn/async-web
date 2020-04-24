@@ -35,9 +35,9 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   viewMode: null,
 
   handleShowThread: () => {},
-  afterUpdate: () => {},
-  afterUpdateTitle: () => {},
-  afterDelete: () => {},
+  afterUpdateDocument: () => {},
+  afterUpdateDocumentTitle: () => {},
+  afterDeleteDocument: () => {},
   setForceUpdate: () => {},
   setViewMode: () => {},
 };
@@ -48,8 +48,8 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   readOnly: false,
 
   handleShowThread: () => {},
-  afterCreate: () => {},
-  afterDelete: () => {},
+  afterCreateDiscussion: () => {},
+  afterDeleteDiscussion: () => {},
   setForceUpdate: () => {},
 };
 export const DiscussionContext = createContext(DEFAULT_DISCUSSION_CONTEXT);
@@ -60,7 +60,7 @@ export const DEFAULT_THREAD_CONTEXT = {
   topic: null,
   modalRef: {},
 
-  afterDelete: () => {},
+  afterDeleteThread: () => {},
 };
 export const ThreadContext = createContext(DEFAULT_THREAD_CONTEXT);
 
@@ -72,7 +72,7 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   threadPosition: null,
 
   setMode: () => {},
-  afterCreate: () => {},
+  afterCreateMessage: () => {},
   handleCancel: () => {},
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);

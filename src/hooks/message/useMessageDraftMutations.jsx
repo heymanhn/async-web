@@ -9,15 +9,14 @@ import localDeleteDraftFromDiscMtn from 'graphql/mutations/local/deleteDraftFrom
 import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
 import { MessageContext } from 'utils/contexts';
 import { DEFAULT_ELEMENT, toPlainText } from 'utils/editor/constants';
+import useThreadMutations from 'hooks/thread/useThreadMutations';
 
 const useMessageDraftMutations = () => {
   const client = useApolloClient();
   const { parentId } = useContext(MessageContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {
-    handleCreate: handleCreateDiscussion,
-    handleDelete: handleDeleteDiscussion,
-  } = useDiscussionMutations();
+  const { handleDeleteDiscussion } = useDiscussionMutations();
+  const { handleCreateThread } = useThreadMutations();
 
   const [createMessageDraft] = useMutation(createMessageDraftMutation);
   const [localAddDraftToDiscussion] = useMutation(localAddDraftToDiscussionMtn);
@@ -32,21 +31,21 @@ const useMessageDraftMutations = () => {
 
   // TODO (DISCUSSION V2): clarify this logic when renaming inline discussions
   // as threads
-  const handleSaveDraft = async ({
+  const handleSaveMessageDraft = async ({
     content = DEFAULT_ELEMENT(),
     isThread,
   } = {}) => {
     setIsSubmitting(true);
 
-    let draftDiscussionId = isThread ? null : parentId;
-    if (!draftDiscussionId) {
-      const { id } = await handleCreateDiscussion();
-      draftDiscussionId = id;
+    let draftParentId = parentId;
+    if (isThread) {
+      const { id } = await handleCreateThread();
+      draftParentId = id;
     }
 
     const { data } = await createMessageDraft({
       variables: {
-        discussionId: draftDiscussionId,
+        discussionId: draftParentId,
         input: {
           body: {
             formatter: 'slatejs',
@@ -60,19 +59,20 @@ const useMessageDraftMutations = () => {
     if (data.createMessageDraft) {
       localAddDraftToDiscussion({
         variables: {
-          discussionId: draftDiscussionId,
+          discussionId: draftParentId,
           draft: data.createMessageDraft,
         },
       });
 
       setIsSubmitting(false);
-      return Promise.resolve({ discussionId: draftDiscussionId });
+      return Promise.resolve({ discussionId: draftParentId });
     }
 
     return Promise.reject(new Error('Failed to save message draft'));
   };
 
-  const handleDeleteDraft = async () => {
+  const handleDeleteMessageDraft = async () => {
+    // Parent can be either a thread or a discussion
     const {
       discussion: { messageCount },
     } = client.readQuery({
@@ -81,9 +81,9 @@ const useMessageDraftMutations = () => {
     });
 
     // No need to delete the draft in this case. Just delete the
-    // discussion directly
+    // discussion or thread directly
     if (!messageCount) {
-      handleDeleteDiscussion();
+      handleDeleteDiscussion({ parentId });
       return Promise.resolve();
     }
 
@@ -98,8 +98,8 @@ const useMessageDraftMutations = () => {
   };
 
   return {
-    handleSaveDraft,
-    handleDeleteDraft,
+    handleSaveMessageDraft,
+    handleDeleteMessageDraft,
     isSubmitting,
   };
 };

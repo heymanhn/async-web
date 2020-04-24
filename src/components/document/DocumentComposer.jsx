@@ -37,14 +37,14 @@ const DocumentComposer = ({ initialContent, ...props }) => {
     initialContent,
   });
 
-  const { handleUpdate } = useDocumentMutations();
+  const { handleUpdateDocument } = useDocumentMutations();
   const coreEditorProps = useCoreEditorProps(editor);
   const handleNewOperations = useDocumentOperationsPusher(
     editor,
     setLastTouchedToNow
   );
 
-  useAutoSave({ content, handleSave: handleUpdate });
+  useAutoSave({ content, handleSave: handleUpdateDocument });
 
   const onChangeWrapper = value => {
     onChange(value);

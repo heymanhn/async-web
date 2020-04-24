@@ -96,7 +96,7 @@ const DiscussionsList = () => {
   const value = {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
-    afterCreate: id => setDiscussionId(id),
+    afterCreateDiscussion: id => setDiscussionId(id),
   };
 
   return (
@@ -111,7 +111,7 @@ const DiscussionsList = () => {
         {isComposing && (
           <StyledMessage
             mode="compose"
-            afterCreate={stopComposing}
+            afterCreateMessage={stopComposing}
             handleCancel={stopComposing}
           />
         )}

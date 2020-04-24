@@ -7,7 +7,9 @@ import styled from '@emotion/styled';
 import useClickOutside from 'hooks/shared/useClickOutside';
 import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
 import useMessageMutations from 'hooks/message/useMessageMutations';
-import { MessageContext } from 'utils/contexts';
+import useThreadMutations from 'hooks/thread/useThreadMutations';
+import { DiscussionContext, MessageContext } from 'utils/contexts';
+import { titleize } from 'utils/helpers';
 
 const Container = styled.div(
   ({ isOpen, isFirstMessage, theme: { colors } }) => ({
@@ -67,23 +69,33 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
   const selector = useRef();
   const { threadPosition, setMode } = useContext(MessageContext);
   const isFirstMessage = !threadPosition;
-  const { handleDelete: handleDeleteDiscussion } = useDiscussionMutations();
-  const { handleDelete: handleDeleteMessage } = useMessageMutations();
 
-  function handleClickOutside() {
+  // If there's no discussion ID, then there has to be a thread ID
+  const { discussionId } = useContext(DiscussionContext);
+  const parentResourceType = discussionId ? 'discussion' : 'thread';
+
+  const { handleDeleteDiscussion } = useDiscussionMutations();
+  const { handleDeleteThread } = useThreadMutations();
+  const { handleDeleteMessage } = useMessageMutations();
+
+  const handleClickOutside = () => {
     if (!isOpen) return;
     handleCloseDropdown();
-  }
+  };
   useClickOutside({ handleClickOutside, isOpen, ref: selector });
 
-  // If the user is deleting the first message of a discussion, ask if they
-  // want to delete the whole discussion.
-  function handleDeleteWrapper(event) {
+  // If the user is deleting the first message of a list of messages, ask if they
+  // want to delete the whole discussion/thread.
+  const handleDeleteWrapper = event => {
     event.stopPropagation();
 
-    const resource = isFirstMessage ? 'discussion' : 'message';
-    const handleDelete = isFirstMessage
+    const handleDeleteParentResource = discussionId
       ? handleDeleteDiscussion
+      : handleDeleteThread;
+
+    const resource = isFirstMessage ? parentResourceType : 'message';
+    const handleDelete = isFirstMessage
+      ? handleDeleteParentResource
       : handleDeleteMessage;
 
     const userChoice = window.confirm(
@@ -94,13 +106,13 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
 
     handleCloseDropdown();
     handleDelete();
-  }
+  };
 
-  function handleEdit(event) {
+  const handleEdit = event => {
     event.stopPropagation();
     handleCloseDropdown();
     setMode('edit');
-  }
+  };
 
   return (
     <Container
@@ -120,7 +132,7 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
           <StyledIcon icon="trash" />
         </IconContainer>
         <OptionName>
-          {isFirstMessage ? 'Delete Discussion' : 'Delete'}
+          {isFirstMessage ? `Delete ${titleize(parentResourceType)}` : 'Delete'}
         </OptionName>
       </DropdownOption>
     </Container>

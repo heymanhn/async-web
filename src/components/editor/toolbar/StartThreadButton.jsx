@@ -21,7 +21,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 
 const StartThreadButton = ({ handleShowThread, ...props }) => {
   const editor = useSlate();
-  const { handleSaveDraft, isSubmitting } = useMessageDraftMutations();
+  const { handleSaveMessageDraft, isSubmitting } = useMessageDraftMutations();
   const { userId } = getLocalUser();
 
   const makeDOMSelection = () => {
@@ -36,7 +36,7 @@ const StartThreadButton = ({ handleShowThread, ...props }) => {
 
   const handleClick = async () => {
     // Create an empty draft discussion
-    const { discussionId: threadId } = await handleSaveDraft({
+    const { discussionId: threadId } = await handleSaveMessageDraft({
       isThread: true,
     });
 

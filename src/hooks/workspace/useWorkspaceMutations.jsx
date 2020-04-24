@@ -18,7 +18,7 @@ const useWorkspaceMutations = () => {
   const [createWorkspace] = useMutation(createWorkspaceMtn);
   const [updateWorkspace] = useMutation(updateWorkspaceMtn);
 
-  const handleCreate = async ({ title }) => {
+  const handleCreateWorkspace = async ({ title }) => {
     setIsSubmitting(true);
 
     const { data } = await createWorkspace({
@@ -45,14 +45,13 @@ const useWorkspaceMutations = () => {
     return Promise.reject(new Error('Failed to create new workspace'));
   };
 
-  const handleUpdateTitle = async title => {
+  const handleUpdateWorkspaceTitle = async title => {
     const { data } = await updateWorkspace({
       variables: { workspaceId, input: { title } },
     });
 
     if (data.updateWorkspace) {
       track('Workspace title updated', { workspaceId });
-      // afterUpdate();
       return Promise.resolve();
     }
 
@@ -62,8 +61,8 @@ const useWorkspaceMutations = () => {
   return {
     isSubmitting,
 
-    handleCreate,
-    handleUpdateTitle,
+    handleCreateWorkspace,
+    handleUpdateWorkspaceTitle,
   };
 };
 

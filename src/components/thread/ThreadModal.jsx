@@ -91,7 +91,7 @@ const ThreadModal = ({
     stopComposing();
   };
 
-  const handleCreateMessage = newThreadId => {
+  const afterCreateMessage = newThreadId => {
     stopComposing();
 
     // Only need to set this once, when the first message is created.
@@ -102,7 +102,7 @@ const ThreadModal = ({
     }
   };
 
-  const afterDelete = () => {
+  const afterDeleteThread = () => {
     if (!sourceEditor) return;
 
     Editor.removeInlineAnnotation(sourceEditor, threadId);
@@ -115,7 +115,7 @@ const ThreadModal = ({
     initialTopic,
     topic,
     modalRef,
-    afterDelete,
+    afterDeleteThread,
   };
 
   /* Three conditions when ready to show the composer:
@@ -146,7 +146,7 @@ const ThreadModal = ({
             draft={draft}
             isModal // TODO (DISCUSSION V2): find better way to do this later
             parentId={threadId}
-            afterCreate={handleCreateMessage}
+            afterCreateMessage={afterCreateMessage}
             handleCancel={handleCancelCompose}
             {...props}
           />

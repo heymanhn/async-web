@@ -60,9 +60,9 @@ const Message = ({
   draft,
   mode: initialMode,
   message,
-  parentId,
+  parentId, // A message belongs to either a thread or a discussion
   disableAutoFocus,
-  afterCreate,
+  afterCreateMessage,
   handleCancel,
   ...props
 }) => {
@@ -94,7 +94,7 @@ const Message = ({
     draft,
     threadPosition: index,
     setMode,
-    afterCreate,
+    afterCreateMessage,
     handleCancel: handleCancelWrapper,
   };
 
@@ -134,7 +134,7 @@ Message.propTypes = {
   message: PropTypes.object,
   parentId: PropTypes.string.isRequired,
   disableAutoFocus: PropTypes.bool,
-  afterCreate: PropTypes.func,
+  afterCreateMessage: PropTypes.func,
   handleCancel: PropTypes.func,
 };
 
@@ -146,7 +146,7 @@ Message.defaultProps = {
   mode: 'display',
   message: {},
   disableAutoFocus: false,
-  afterCreate: () => {},
+  afterCreateMessage: () => {},
   handleCancel: () => {},
 };
 
