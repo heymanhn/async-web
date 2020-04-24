@@ -79,11 +79,11 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   if ((draft || !messageCount) && !isComposing) startComposing();
 
   const readOnly = isResourceReadOnly(tags);
-  const returnToInbox = () => navigate('/inbox');
+  const returnToHome = () => navigate('/');
 
   const handleCancelCompose = () => {
     stopComposing();
-    if (!messageCount) returnToInbox();
+    if (!messageCount) returnToHome();
   };
 
   if (forceUpdate) setForceUpdate(false);
@@ -92,7 +92,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     readOnly,
-    afterDelete: returnToInbox,
+    afterDelete: returnToHome,
     setForceUpdate,
     handleShowThread,
   };
