@@ -6,10 +6,14 @@ import { MessageContext } from 'utils/contexts';
 
 const useDrafts = (message, isSubmitting) => {
   const { mode } = useContext(MessageContext);
-  const { handleSaveDraft } = useMessageDraftMutations();
+  const { handleSaveMessageDraft } = useMessageDraftMutations();
 
   const isDisabled = mode !== 'compose' || isSubmitting;
-  useAutoSave({ content: message, handleSave: handleSaveDraft, isDisabled });
+  useAutoSave({
+    content: message,
+    handleSave: handleSaveMessageDraft,
+    isDisabled,
+  });
 };
 
 export default useDrafts;
