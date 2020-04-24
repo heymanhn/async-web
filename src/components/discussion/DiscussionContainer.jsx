@@ -19,7 +19,7 @@ import ThreadModal from 'components/thread/ThreadModal';
 
 import AddReplyBox from './AddReplyBox';
 import DiscussionMessages from './DiscussionMessages';
-import TitleComposer from './TitleComposer';
+import TitleEditor from './TitleEditor';
 
 const OuterContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -102,7 +102,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
       <OuterContainer>
         <NavigationBar />
         <ContentContainer ref={discussionRef}>
-          <TitleComposer
+          <TitleEditor
             initialTitle={title}
             autoFocus={!title && !messageCount}
           />

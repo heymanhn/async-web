@@ -22,7 +22,7 @@ const DocumentEditable = styled(Editable)({
   marginBottom: '80px',
 });
 
-const DocumentComposer = ({ initialContent, ...props }) => {
+const DocumentEditor = ({ initialContent, ...props }) => {
   const { documentId, readOnly } = useContext(DocumentContext);
   const editor = useDocumentEditor(documentId);
 
@@ -61,12 +61,12 @@ const DocumentComposer = ({ initialContent, ...props }) => {
   );
 };
 
-DocumentComposer.propTypes = {
+DocumentEditor.propTypes = {
   initialContent: PropTypes.string,
 };
 
-DocumentComposer.defaultProps = {
+DocumentEditor.defaultProps = {
   initialContent: '',
 };
 
-export default DocumentComposer;
+export default DocumentEditor;

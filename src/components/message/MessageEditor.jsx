@@ -31,7 +31,7 @@ const MessageEditable = styled(Editable)(({ ismodal }) => ({
   marginTop: ismodal === 'true' ? '0px' : '15px',
 }));
 
-const MessageComposer = ({ initialMessage, isModal, autoFocus, ...props }) => {
+const MessageEditor = ({ initialMessage, isModal, autoFocus, ...props }) => {
   const { mode, parentId } = useContext(MessageContext);
   const editor = useMessageEditor(parentId);
   const readOnly = mode === 'display';
@@ -85,16 +85,16 @@ const MessageComposer = ({ initialMessage, isModal, autoFocus, ...props }) => {
   );
 };
 
-MessageComposer.propTypes = {
+MessageEditor.propTypes = {
   initialMessage: PropTypes.string,
   isModal: PropTypes.bool,
   autoFocus: PropTypes.bool,
 };
 
-MessageComposer.defaultProps = {
+MessageEditor.defaultProps = {
   initialMessage: '',
   isModal: false,
   autoFocus: false,
 };
 
-export default MessageComposer;
+export default MessageEditor;

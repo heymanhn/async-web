@@ -5,7 +5,7 @@ import { DocumentContext } from 'utils/contexts';
 
 import TitleEditable from 'components/shared/TitleEditable';
 
-const TitleComposer = props => {
+const TitleEditor = props => {
   const { handleUpdateDocumentTitle } = useDocumentMutations();
   const { readOnly } = useContext(DocumentContext);
 
@@ -18,4 +18,4 @@ const TitleComposer = props => {
   );
 };
 
-export default TitleComposer;
+export default TitleEditor;

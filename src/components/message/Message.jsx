@@ -7,7 +7,7 @@ import useHover from 'hooks/shared/useHover';
 import { MessageContext, DEFAULT_MESSAGE_CONTEXT } from 'utils/contexts';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
-import MessageComposer from './MessageComposer';
+import MessageEditor from './MessageEditor';
 import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 import DraftSavedIndicator from './DraftSavedIndicator';
@@ -38,7 +38,7 @@ const HeaderSection = styled.div(
 
 // TODO (DISCUSSION V2): Add this padding to the text itself. This helps
 // with selection via cursor.
-const StyledMessageComposer = styled(MessageComposer)({
+const StyledMessageEditor = styled(MessageEditor)({
   padding: '0px 30px 15px',
 });
 
@@ -114,7 +114,7 @@ const Message = ({
             {mode === 'compose' && <DraftSavedIndicator />}
           </div>
         </HeaderSection>
-        <StyledMessageComposer
+        <StyledMessageEditor
           isModal={isModal}
           initialMessage={loadInitialContent()}
           autoFocus={mode !== 'display' && !disableAutoFocus}

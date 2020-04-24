@@ -11,7 +11,7 @@ const StyledTitleEditable = styled(TitleEditable)({
   marginBottom: '30px',
 });
 
-const TitleComposer = ({ initialTitle, ...props }) => {
+const TitleEditor = ({ initialTitle, ...props }) => {
   const { handleUpdateDiscussionTitle } = useDiscussionMutations();
   const { readOnly } = useContext(DiscussionContext);
 
@@ -25,12 +25,12 @@ const TitleComposer = ({ initialTitle, ...props }) => {
   );
 };
 
-TitleComposer.propTypes = {
+TitleEditor.propTypes = {
   initialTitle: PropTypes.string,
 };
 
-TitleComposer.defaultProps = {
+TitleEditor.defaultProps = {
   initialTitle: '',
 };
 
-export default TitleComposer;
+export default TitleEditor;
