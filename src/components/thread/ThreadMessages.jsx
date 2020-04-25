@@ -27,10 +27,6 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   maxWidth: discussionViewport,
 }));
 
-const StyledMessage = styled(Message)({
-  marginBottom: '25px',
-});
-
 const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
@@ -91,7 +87,7 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
       )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
-          <StyledMessage index={i} message={m} parentId={threadId} />
+          <Message index={i} message={m} parentId={threadId} />
         </React.Fragment>
       ))}
     </Container>
