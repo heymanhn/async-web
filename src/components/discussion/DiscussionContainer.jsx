@@ -99,10 +99,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
       <OuterContainer>
         <NavigationBar />
         <ContentContainer ref={discussionRef}>
-          <TitleEditor
-            initialTitle={title}
-            autoFocus={!title && !messageCount}
-          />
+          {!!messageCount && <TitleEditor initialTitle={title} />}
           {!!messageCount && (
             <DiscussionMessages
               isUnread={isResourceUnread(tags)}

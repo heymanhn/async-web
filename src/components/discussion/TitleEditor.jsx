@@ -16,17 +16,33 @@ const StyledTitleEditable = styled(TitleEditable)(
   })
 );
 
+const Divider = styled.div(({ theme: { discussionViewport } }) => ({
+  margin: '0 auto',
+  padding: '0 30px',
+  width: discussionViewport,
+}));
+
+const DividerLine = styled.div(({ theme: { colors } }) => ({
+  borderBottom: `1px solid ${colors.borderGrey}`,
+  width: '100%',
+}));
+
 const TitleEditor = ({ initialTitle, ...props }) => {
   const { handleUpdateDiscussionTitle } = useDiscussionMutations();
   const { readOnly } = useContext(DiscussionContext);
 
   return (
-    <StyledTitleEditable
-      initialTitle={initialTitle}
-      readOnly={readOnly}
-      handleUpdateTitle={handleUpdateDiscussionTitle}
-      {...props}
-    />
+    <>
+      <StyledTitleEditable
+        initialTitle={initialTitle}
+        readOnly={readOnly}
+        handleUpdateTitle={handleUpdateDiscussionTitle}
+        {...props}
+      />
+      <Divider>
+        <DividerLine />
+      </Divider>
+    </>
   );
 };
 
