@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import AddReactionButton from './AddReactionButton';
@@ -44,6 +45,11 @@ const MenuIcon = styled.div({
   marginTop: '-1px',
 });
 
+const StyledIcon = styled(FontAwesomeIcon)({
+  cursor: 'pointer',
+  fontSize: '16px',
+});
+
 const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
   const [isPickerOpen, setPickerState] = useState(false);
   const [isDropdownOpen, setDropdownState] = useState(false);
@@ -58,6 +64,10 @@ const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
           onPickerStateChange={setPickerState}
           placement="below"
         />
+      </ButtonContainer>
+      <VerticalDivider />
+      <ButtonContainer>
+        <StyledIcon icon={['far', 'comment-lines']} />
       </ButtonContainer>
       <VerticalDivider />
       {isAuthor && (
