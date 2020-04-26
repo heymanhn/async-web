@@ -103,9 +103,8 @@ const ThreadModal = ({
   };
 
   const afterDeleteThread = () => {
-    if (!sourceEditor) return;
+    if (sourceEditor) Editor.removeInlineAnnotation(sourceEditor, threadId);
 
-    Editor.removeInlineAnnotation(sourceEditor, threadId);
     handleClose();
   };
 
