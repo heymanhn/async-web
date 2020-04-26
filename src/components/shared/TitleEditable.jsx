@@ -13,10 +13,12 @@ import useAutoSave from 'hooks/editor/useAutoSave';
 import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
 import { titleize } from 'utils/helpers';
 
-const Container = styled.div({
+const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
   position: 'relative',
-});
+  margin: '0 auto',
+  width: discussionViewport,
+}));
 
 const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.mainText,
@@ -153,7 +155,7 @@ const TitleEditable = ({
         {...props}
       />
       {showPlaceholder && (
-        <Placeholder onClick={handleSelectTitle}>
+        <Placeholder onClick={handleSelectTitle} {...props}>
           {`Untitled ${titleize(resourceType)}`}
         </Placeholder>
       )}
