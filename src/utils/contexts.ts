@@ -76,3 +76,11 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   handleCancel: () => {},
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);
+
+// Used for calculating coordinates relative to the current text selection
+// in Editor content.
+export const DEFAULT_SELECTION_CONTEXT = {
+  containerRef: {},
+  scrollRef: {},
+};
+export const SelectionContext = createContext(DEFAULT_SELECTION_CONTEXT);
