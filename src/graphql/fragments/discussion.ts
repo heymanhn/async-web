@@ -9,6 +9,8 @@ export default gql`
     parent @type(name: "DiscussionParent") {
       id
       type
+      contentParentId
+      contentParentType
     }
     author @type(name: "User") {
       ...UserObject
