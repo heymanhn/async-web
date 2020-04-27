@@ -71,13 +71,20 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
       const { height, width } = rect;
 
       // When a modal is visible, the window isn't scrolled, only the modal component.
-      const { current: container } = containerRef || modalRef;
-      const yOffset = container
-        ? container.scrollTop - container.offsetTop
-        : window.pageYOffset;
-      const xOffset = container
-        ? container.scrollLeft - container.offsetLeft
-        : window.pageXOffset;
+      const { current: container } = containerRef;
+      const { current: modal } = modalRef;
+      let yOffset = window.pageYOffset;
+      let xOffset = window.pageXOffset;
+
+      if (container) {
+        yOffset = container.scrollTop - container.offsetTop;
+        xOffset = container.scrollLeft - container.offsetLeft;
+      }
+
+      if (modal) {
+        yOffset = modal.scrollTop;
+        xOffset = modal.scrollLeft;
+      }
 
       const coords = {
         top: rect.top + yOffset,
