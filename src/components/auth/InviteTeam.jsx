@@ -54,9 +54,6 @@ const InviteTeam = ({ organizationId }) => {
 
   const [createInvites] = useMutation(createInvitesMutation, {
     onCompleted: handleSkip,
-    onError: err => {
-      console.dir(err); // TODO: Error handling on the page
-    },
   });
 
   function handleCreateInvites() {

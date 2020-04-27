@@ -103,12 +103,10 @@ const SignUp = ({ inviteCode }) => {
         : '/organizations';
       navigate(returnPath);
     },
-    onError: async err => {
+    onError: async () => {
       await clearLocalUser();
       await clearLocalAppState();
       client.resetStore();
-
-      console.dir(err); // TODO: Error handling on the page
     },
   });
 

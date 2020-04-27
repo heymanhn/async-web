@@ -41,9 +41,6 @@ const OrganizationCreate = () => {
       group(organizationId);
       navigate(`/organizations/${organizationId}/invites`);
     },
-    onError: err => {
-      console.dir(err); // TODO: Error handling on the page
-    },
   });
 
   function handleKeyPress(event) {
