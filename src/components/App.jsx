@@ -167,7 +167,7 @@ const App = () => {
               component={DiscussionContainer}
             />
             <PrivateRoute
-              path="/discussion/:discussionId/threads/:threadId"
+              path="/discussions/:discussionId/threads/:threadId"
               component={DiscussionContainer}
             />
 

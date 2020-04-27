@@ -10,12 +10,18 @@ import { useMutation } from '@apollo/react-hooks';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import { track } from 'utils/analytics';
-import { DocumentContext, MessageContext, ThreadContext } from 'utils/contexts';
+import {
+  DiscussionContext,
+  DocumentContext,
+  MessageContext,
+  ThreadContext,
+} from 'utils/contexts';
 import { toPlainText } from 'utils/editor/constants';
 
 const useThreadMutations = () => {
   const { documentId } = useContext(DocumentContext);
   const { messageId } = useContext(MessageContext);
+  const { discussionId } = useContext(DiscussionContext);
   const { threadId, topic } = useContext(ThreadContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,9 +34,19 @@ const useThreadMutations = () => {
     const input = {};
 
     if (documentId) {
-      input.parent = { type: 'document', id: documentId };
+      input.parent = {
+        type: 'document',
+        id: documentId,
+        contentParentType: 'document',
+        contentParentId: documentId,
+      };
     } else if (messageId) {
-      input.parent = { type: 'message', id: messageId };
+      input.parent = {
+        type: 'discussion',
+        id: discussionId,
+        contentParentType: 'message',
+        contentParentId: messageId,
+      };
     }
 
     if (topic) {

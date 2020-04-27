@@ -89,13 +89,18 @@ const NotificationRow = ({ handleClose, notification }) => {
     payloadCamelJSON[camelCase(key)] = payloadJSON[key];
   });
   const { title, snippet } = payloadCamelJSON;
-  const { documentId, discussionId, workspaceId } = payloadCamelJSON;
+  const { documentId, discussionId, workspaceId, threadId } = payloadCamelJSON;
+  const isOldDocumentThread = documentId && discussionId;
+  const oldThreadId = discussionId;
+  const isThread = threadId || isOldDocumentThread;
 
-  const isInlineDiscussion = documentId && discussionId;
   const documentURL = `/documents/${documentId}`;
-  const inlineDiscussionURL = `/documents/${documentId}/discussions/${discussionId}`;
+  const discussionThreadURL = `/discussions/${discussionId}/threads/${threadId}`;
+  const documentThreadURL = `/documents/${documentId}/threads/${threadId ||
+    oldThreadId}`;
   const discussionURL = `/discussions/${discussionId}`;
   const workspaceURL = `/workspaces/${workspaceId}`;
+  const threadURL = documentId ? documentThreadURL : discussionThreadURL;
 
   const metaInfo = () => {
     let url;
@@ -121,18 +126,18 @@ const NotificationRow = ({ handleClose, notification }) => {
         break;
       case 'new_discussion':
       case 'access_discussion':
-        url = isInlineDiscussion ? inlineDiscussionURL : discussionURL;
+        url = threadId ? discussionThreadURL : discussionURL;
         context = ' invited you to join the discussion: ';
         break;
       case 'resolve_discussion':
-        url = isInlineDiscussion ? inlineDiscussionURL : discussionURL;
+        url = threadId ? discussionThreadURL : discussionURL;
         context = ' resolved the discussion: ';
         break;
       case 'new_message':
-        url = isInlineDiscussion ? inlineDiscussionURL : discussionURL;
-        context = isInlineDiscussion
-          ? ' replied to a discussion in document: '
-          : ' replied to a discussion: ';
+        url = isThread ? threadURL : discussionURL;
+        context = threadId
+          ? ' replied to thread: '
+          : ' replied to discussion: ';
         break;
       default:
         url = '/inbox';
