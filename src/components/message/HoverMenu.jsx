@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
+
+import { ThreadContext } from 'utils/contexts';
 
 import AddReactionButton from './AddReactionButton';
 import MessageDropdown from './MessageDropdown';
@@ -55,6 +57,8 @@ const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
   const [isDropdownOpen, setDropdownState] = useState(false);
   const showDropdown = () => setDropdownState(true);
   const closeDropdown = () => setDropdownState(false);
+  const { threadId } = useContext(ThreadContext);
+
   const shouldDisplay = isOpen || isPickerOpen || isDropdownOpen;
 
   return (
@@ -65,10 +69,14 @@ const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
           placement="below"
         />
       </ButtonContainer>
-      <VerticalDivider />
-      <ButtonContainer>
-        <StyledIcon icon={['far', 'comment-lines']} />
-      </ButtonContainer>
+      {!threadId && (
+        <>
+          <VerticalDivider />
+          <ButtonContainer>
+            <StyledIcon icon={['far', 'comment-lines']} />
+          </ButtonContainer>
+        </>
+      )}
       <VerticalDivider />
       {isAuthor && (
         <ButtonContainer onClick={showDropdown}>
