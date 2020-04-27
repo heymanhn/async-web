@@ -11,7 +11,7 @@ import LoadingIndicator from 'components/shared/LoadingIndicator';
 import NotFound from 'components/navigation/NotFound';
 
 import ResourcesList from './ResourcesList';
-import TitleComposer from './TitleComposer';
+import TitleEditor from './TitleEditor';
 
 const Container = styled.div(({ theme: { colors, workspaceViewport } }) => ({
   background: colors.white,
@@ -50,7 +50,7 @@ const Workspace = () => {
 
   return (
     <Container>
-      <TitleComposer initialTitle={title} />
+      <TitleEditor initialTitle={title} />
       <ResourcesList />
     </Container>
   );

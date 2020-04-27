@@ -56,7 +56,9 @@ const CompositionMenuButton = props => {
     ReactEditor.isFocused(editor) &&
     !isMenuOpen &&
     Editor.isEmptyParagraph(editor);
-  const { coords } = useSelectionDimensions({ skip: !showButton });
+  const { coords } = useSelectionDimensions({
+    skip: !showButton,
+  });
 
   // Don't let the button handle the event, so that it won't reset its visibility
   const handleMouseDown = event => event.preventDefault();

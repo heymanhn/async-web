@@ -14,12 +14,15 @@ import { ReactEditor, useSlate } from 'slate-react';
 import throttle from 'lodash/throttle';
 
 import { THROTTLE_INTERVAL } from 'utils/constants';
-import { ThreadContext } from 'utils/contexts';
+import { SelectionContext, ThreadContext } from 'utils/contexts';
 
 import Editor from 'components/editor/Editor';
 
 const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
+  // TODO (DISCUSSION V2): See if we can pass modalRef as containerRef in SelectionContext
   const { modalRef } = useContext(ThreadContext);
+
+  const { containerRef } = useContext(SelectionContext);
   const [data, setData] = useState({});
   const editor = useSlate();
 
@@ -68,9 +71,20 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
       const { height, width } = rect;
 
       // When a modal is visible, the window isn't scrolled, only the modal component.
+      const { current: container } = containerRef;
       const { current: modal } = modalRef;
-      const yOffset = modal ? modal.scrollTop : window.pageYOffset;
-      const xOffset = modal ? modal.scrollLeft : window.pageXOffset;
+      let yOffset = window.pageYOffset;
+      let xOffset = window.pageXOffset;
+
+      if (container) {
+        yOffset = container.scrollTop - container.offsetTop;
+        xOffset = container.scrollLeft - container.offsetLeft;
+      }
+
+      if (modal) {
+        yOffset = modal.scrollTop;
+        xOffset = modal.scrollLeft;
+      }
 
       const coords = {
         top: rect.top + yOffset,
@@ -105,6 +119,7 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
     }
 
     window.addEventListener('resize', calculateDimensions);
+
     return () => {
       if (source === 'DOMSelection') {
         window.document.removeEventListener(

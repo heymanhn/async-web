@@ -21,21 +21,11 @@ import Message from 'components/message/Message';
 import NewMessagesDivider from './NewMessagesDivider';
 import NewMessagesIndicator from './NewMessagesIndicator';
 
-const Container = styled.div(({ theme: { discussionViewport } }) => ({
+const Container = styled.div({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-
-  maxWidth: discussionViewport,
-}));
-
-const StyledMessage = styled(Message)(({ isUnread, theme: { colors } }) => ({
-  backgroundColor: isUnread ? colors.unreadBlue : 'default',
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  boxShadow: `0px 0px 3px ${colors.grey7}`,
-  marginBottom: '30px',
-}));
+});
 
 const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const client = useApolloClient();
@@ -86,7 +76,9 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
 
     return targetMessage ? targetMessage.id : null;
   };
-  const isNewMessage = m => m.tags && m.tags.includes('new_message');
+
+  // TODO (DISCUSSION V2): Evaluate if we still need this
+  // const isNewMessage = m => m.tags && m.tags.includes('new_message');
 
   return (
     <Container ref={discussionRef} {...props}>
@@ -101,12 +93,7 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
           {firstNewMessageId() === m.id && m.id !== messages[0].id && (
             <NewMessagesDivider />
           )}
-          <StyledMessage
-            index={i}
-            message={m}
-            isUnread={isNewMessage(m)}
-            parentId={discussionId}
-          />
+          <Message index={i} message={m} parentId={discussionId} />
         </React.Fragment>
       ))}
     </Container>

@@ -103,9 +103,8 @@ const ThreadModal = ({
   };
 
   const afterDeleteThread = () => {
-    if (!sourceEditor) return;
+    if (sourceEditor) Editor.removeInlineAnnotation(sourceEditor, threadId);
 
-    Editor.removeInlineAnnotation(sourceEditor, threadId);
     handleClose();
   };
 
@@ -144,7 +143,6 @@ const ThreadModal = ({
           <StyledMessage
             mode="compose"
             draft={draft}
-            isModal // TODO (DISCUSSION V2): find better way to do this later
             parentId={threadId}
             afterCreateMessage={afterCreateMessage}
             handleCancel={handleCancelCompose}

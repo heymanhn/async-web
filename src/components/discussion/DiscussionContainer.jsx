@@ -12,47 +12,34 @@ import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
 import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
-import Message from 'components/message/Message';
+import MessageComposer from 'components/message/MessageComposer';
 import NavigationBar from 'components/navigation/NavigationBar';
 import NotFound from 'components/navigation/NotFound';
 import ThreadModal from 'components/thread/ThreadModal';
 
-import AddReplyBox from './AddReplyBox';
 import DiscussionMessages from './DiscussionMessages';
-import TitleComposer from './TitleComposer';
+import TitleEditor from './TitleEditor';
 
 const OuterContainer = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
 }));
 
-const ContentContainer = styled.div(({ theme: { discussionViewport } }) => ({
+const ContentContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
+  justifyContent: 'flex-end',
 
   // Vertically center the page when content doesn't fit full height
   minHeight: 'calc(100vh - 60px)', // Navigation bar is 60px tall
-  margin: '0 auto',
-  paddingBottom: '80px',
-  width: discussionViewport,
-}));
+});
 
 const StyledLoadingIndicator = styled(LoadingIndicator)({
   marginTop: '30px',
 });
 
-const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
-  background: colors.white,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-}));
-
 const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
-  const [isComposing, setIsComposing] = useState(false);
-  const startComposing = () => setIsComposing(true);
-  const stopComposing = () => setIsComposing(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
   const {
@@ -75,16 +62,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
 
   const { title, draft, messageCount } = data.discussion;
   const { tags } = data.discussion;
-
-  if ((draft || !messageCount) && !isComposing) startComposing();
-
   const readOnly = isResourceReadOnly(tags);
-  const returnToHome = () => navigate('/');
-
-  const handleCancelCompose = () => {
-    stopComposing();
-    if (!messageCount) returnToHome();
-  };
 
   if (forceUpdate) setForceUpdate(false);
 
@@ -92,7 +70,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     readOnly,
-    afterDeleteDiscussion: returnToHome,
+    afterDeleteDiscussion: () => navigate('/'),
     setForceUpdate,
     handleShowThread,
   };
@@ -102,31 +80,20 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
       <OuterContainer>
         <NavigationBar />
         <ContentContainer ref={discussionRef}>
-          <TitleComposer
-            initialTitle={title}
-            autoFocus={!title && !messageCount}
-          />
+          {!!messageCount && <TitleEditor initialTitle={title} />}
           {!!messageCount && (
             <DiscussionMessages
               isUnread={isResourceUnread(tags)}
               isComposingFirstMsg={!messageCount}
             />
           )}
-          {isComposing ? (
-            <StyledMessage
-              mode="compose"
-              parentId={discussionId}
-              draft={draft}
-              disableAutoFocus={!messageCount}
-              afterCreateMessage={stopComposing}
-              handleCancel={handleCancelCompose}
-            />
-          ) : (
-            <AddReplyBox
-              handleClickReply={startComposing}
-              isComposing={isComposing}
-            />
-          )}
+          <MessageComposer
+            source="discussion"
+            parentId={discussionId}
+            draft={draft}
+            title={title}
+            messageCount={messageCount}
+          />
         </ContentContainer>
         {threadId && (
           <ThreadModal

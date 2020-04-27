@@ -7,21 +7,21 @@ const useHover = (
 ) => {
   const [hover, setHover] = useState(false);
 
-  function enableHover(event) {
+  const enableHover = event => {
     event.stopPropagation();
     if (allowHover) {
       setHover(true);
       handleHoverOn();
     }
-  }
+  };
 
-  function disableHover(event) {
+  const disableHover = event => {
     event.stopPropagation();
     if (allowHover) {
       setHover(false);
       handleHoverOff();
     }
-  }
+  };
 
   return {
     hover,

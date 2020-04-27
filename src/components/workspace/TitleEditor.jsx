@@ -4,7 +4,7 @@ import useWorkspaceMutations from 'hooks/workspace/useWorkspaceMutations';
 
 import TitleEditable from 'components/shared/TitleEditable';
 
-const TitleComposer = props => {
+const TitleEditor = props => {
   const { handleUpdateWorkspaceTitle } = useWorkspaceMutations();
 
   return (
@@ -12,4 +12,4 @@ const TitleComposer = props => {
   );
 };
 
-export default TitleComposer;
+export default TitleEditor;

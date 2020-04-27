@@ -11,8 +11,8 @@ import { DocumentContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
 import LastUpdatedIndicator from './LastUpdatedIndicator';
-import TitleComposer from './TitleComposer';
-import DocumentComposer from './DocumentComposer';
+import TitleEditor from './TitleEditor';
+import DocumentEditor from './DocumentEditor';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   display: 'flex',
@@ -65,8 +65,8 @@ const Document = ({ isUnread }) => {
   return (
     <Container>
       <DocumentContext.Provider value={value}>
-        <TitleComposer autoFocus={!title && !content} initialTitle={title} />
-        <DocumentComposer initialContent={content} />
+        <TitleEditor autoFocus={!title && !content} initialTitle={title} />
+        <DocumentEditor initialContent={content} />
       </DocumentContext.Provider>
       {updatedTimestamp && (
         <LastUpdatedIndicator timestamp={updatedTimestamp} />

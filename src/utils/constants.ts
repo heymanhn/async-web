@@ -39,6 +39,7 @@ export const VIEW_MODES = [
 // for Moment.JS
 // Includes custom formatting to replace months with weeks
 export const RELATIVE_TIME_STRINGS = {
+  past: unit => (unit === '1s' ? 'Just now' : `${unit} ago`),
   s: '1s',
   ss: '%ds',
   m: '1m',

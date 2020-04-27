@@ -1,100 +1,86 @@
-import React, { useContext } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Slate, Editable } from 'slate-react';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
-import useAnnotationMonitor from 'hooks/message/useAnnotationMonitor';
-import useContentState from 'hooks/editor/useContentState';
-import useCoreEditorProps from 'hooks/editor/useCoreEditorProps';
-import useMessageDrafts from 'hooks/message/useMessageDrafts';
-import useMessageEditor from 'hooks/message/useMessageEditor';
-import useMessageMutations from 'hooks/message/useMessageMutations';
-import { MessageContext } from 'utils/contexts';
+import { DEFAULT_SELECTION_CONTEXT, SelectionContext } from 'utils/contexts';
 
-import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
-import ReadOnlyMessageToolbar from 'components/editor/toolbar/ReadOnlyMessageToolbar';
-import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
-import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
-import MessageActions from './MessageActions';
+// TODO (DISCUSSION V2): Coming soon, will replace AddReplyBox
+// import DiscussionActions from 'components/discussion/DiscussionActions';
+import AddReplyBox from 'components/discussion/AddReplyBox';
+import TitleEditor from 'components/discussion/TitleEditor';
 
-const Container = styled.div(({ mode }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  minHeight: mode === 'compose' ? '160px' : 'initial',
+import Message from './Message';
+
+// Currently the composer will always be at the bottom of its parent container.
+const Container = styled.div(({ theme: { colors } }) => ({
+  position: 'sticky',
+  bottom: 0,
+
+  borderTop: `1px solid ${colors.borderGrey}`,
+  boxShadow: `0 0 0 3px ${colors.bgGrey}`,
+  maxHeight: '60vh',
+  overflow: 'auto',
+  width: '100%',
 }));
 
-const MessageEditable = styled(Editable)(({ ismodal }) => ({
-  fontSize: '16px',
-  fontWeight: 400,
-  lineHeight: '26px',
-  marginTop: ismodal === 'true' ? '0px' : '15px',
-}));
+// TODO (DISCUSSION V2): Distinguish between composer for discussion
+// and composer for thread
+const MessageComposer = ({ source, parentId, draft, title, messageCount }) => {
+  const containerRef = useRef(null);
+  const [isComposing, setIsComposing] = useState(false);
+  const startComposing = () => setIsComposing(true);
+  const stopComposing = () => setIsComposing(false);
+  const shouldDisplayTitle =
+    source === 'discussion' && !messageCount && isComposing;
 
-const MessageComposer = ({ initialMessage, isModal, autoFocus, ...props }) => {
-  const { mode, parentId } = useContext(MessageContext);
-  const editor = useMessageEditor(parentId);
-  const readOnly = mode === 'display';
+  const handleCancelCompose = () => {
+    stopComposing();
+    if (!messageCount) navigate('/');
+  };
 
-  const {
-    content: message,
-    setContent: setMessage,
-    ...contentProps
-  } = useContentState({
-    editor,
-    resourceId: parentId,
-    initialContent: initialMessage,
-    readOnly,
-  });
+  if ((draft || !messageCount) && !isComposing) startComposing();
 
-  const {
-    handleCreateMessage,
-    handleUpdateMessage,
-    isSubmitting,
-  } = useMessageMutations({
-    message,
-  });
-  const handleSubmit =
-    mode === 'compose' ? handleCreateMessage : handleUpdateMessage;
-
-  const coreEditorProps = useCoreEditorProps(editor, { readOnly });
-  useMessageDrafts(message, isSubmitting);
-  useAnnotationMonitor(message, setMessage, editor, readOnly);
+  const value = {
+    ...DEFAULT_SELECTION_CONTEXT,
+    containerRef,
+  };
 
   return (
-    <Container mode={mode} {...props}>
-      <Slate editor={editor} key={readOnly} {...contentProps}>
-        <MessageEditable
-          autoFocus={autoFocus}
-          ismodal={isModal.toString()}
-          readOnly={readOnly}
-          {...coreEditorProps}
-        />
-        {readOnly && <ReadOnlyMessageToolbar />}
-        {!readOnly && <MessageToolbar />}
-        <DefaultPlaceholder />
-        <CompositionMenuButton />
-        {!readOnly && (
-          <MessageActions
-            handleSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
+    <Container ref={containerRef}>
+      {shouldDisplayTitle && <TitleEditor initialTitle={title} />}
+      {isComposing ? (
+        <SelectionContext.Provider value={value}>
+          <Message
+            mode="compose"
+            parentId={parentId}
+            draft={draft}
+            disableAutoFocus={!messageCount}
+            afterCreateMessage={stopComposing}
+            handleCancel={handleCancelCompose}
           />
-        )}
-      </Slate>
+        </SelectionContext.Provider>
+      ) : (
+        <AddReplyBox
+          handleClickReply={startComposing}
+          isComposing={isComposing}
+        />
+      )}
     </Container>
   );
 };
 
 MessageComposer.propTypes = {
-  initialMessage: PropTypes.string,
-  isModal: PropTypes.bool,
-  autoFocus: PropTypes.bool,
+  source: PropTypes.string.isRequired,
+  parentId: PropTypes.string.isRequired,
+  draft: PropTypes.object,
+  title: PropTypes.string,
+  messageCount: PropTypes.number.isRequired,
 };
 
 MessageComposer.defaultProps = {
-  initialMessage: '',
-  isModal: false,
-  autoFocus: false,
+  draft: null,
+  title: '',
 };
 
 export default MessageComposer;
