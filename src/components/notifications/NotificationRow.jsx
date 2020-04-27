@@ -90,10 +90,14 @@ const NotificationRow = ({ handleClose, notification }) => {
   });
   const { title, snippet } = payloadCamelJSON;
   const { documentId, discussionId, workspaceId, threadId } = payloadCamelJSON;
+  const isOldDocumentThread = documentId && discussionId;
+  const oldThreadId = discussionId;
+  const isThread = threadId || isOldDocumentThread;
 
   const documentURL = `/documents/${documentId}`;
   const discussionThreadURL = `/discussions/${discussionId}/threads/${threadId}`;
-  const documentThreadURL = `/documents/${documentId}/threads/${threadId}`;
+  const documentThreadURL = `/documents/${documentId}/threads/${threadId ||
+    oldThreadId}`;
   const discussionURL = `/discussions/${discussionId}`;
   const workspaceURL = `/workspaces/${workspaceId}`;
   const threadURL = documentId ? documentThreadURL : discussionThreadURL;
@@ -130,7 +134,7 @@ const NotificationRow = ({ handleClose, notification }) => {
         context = ' resolved the discussion: ';
         break;
       case 'new_message':
-        url = threadId ? threadURL : discussionURL;
+        url = isThread ? threadURL : discussionURL;
         context = threadId
           ? ' replied to thread: '
           : ' replied to discussion: ';
