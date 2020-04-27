@@ -5,8 +5,9 @@ import styled from '@emotion/styled';
 
 import { DEFAULT_SELECTION_CONTEXT, SelectionContext } from 'utils/contexts';
 
-// import AddReplyBox from 'components/discussion/AddReplyBox';
-import DiscussionActions from 'components/discussion/DiscussionActions';
+// TODO (DISCUSSION V2): Coming soon, will replace AddReplyBox
+// import DiscussionActions from 'components/discussion/DiscussionActions';
+import AddReplyBox from 'components/discussion/AddReplyBox';
 import TitleEditor from 'components/discussion/TitleEditor';
 
 import Message from './Message';
@@ -60,17 +61,14 @@ const MessageComposer = ({ source, parentId, draft, title, messageCount }) => {
           />
         </SelectionContext.Provider>
       ) : (
-        <DiscussionActions />
+        <AddReplyBox
+          handleClickReply={startComposing}
+          isComposing={isComposing}
+        />
       )}
     </Container>
   );
 };
-
-/* <AddReplyBox
-    handleClickReply={startComposing}
-    isComposing={isComposing}
-   />
-*/
 
 MessageComposer.propTypes = {
   source: PropTypes.string.isRequired,

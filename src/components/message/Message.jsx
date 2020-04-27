@@ -14,7 +14,7 @@ import DraftSavedIndicator from './DraftSavedIndicator';
 
 const Container = styled.div(({ hover, theme: { colors } }) => ({
   background: hover ? colors.bgGrey : colors.white,
-  padding: '20px 0',
+  padding: '20px 0 0',
 }));
 
 const InnerContainer = styled.div(({ theme: { discussionViewport } }) => ({
