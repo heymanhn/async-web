@@ -77,8 +77,8 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
       let xOffset = window.pageXOffset;
 
       if (container) {
-        yOffset = container.scrollTop - container.offsetTop;
-        xOffset = container.scrollLeft - container.offsetLeft;
+        yOffset = -(window.innerHeight - container.offsetHeight);
+        xOffset = -container.offsetLeft;
       }
 
       if (modal) {
