@@ -7,6 +7,7 @@ import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 import {
   DEFAULT_SELECTION_CONTEXT,
   DiscussionContext,
+  MessageContext,
   ThreadContext,
   SelectionContext,
 } from 'utils/contexts';
@@ -72,6 +73,11 @@ const MessageComposer = ({
     containerRef: parentType === 'discussion' ? containerRef : {},
   };
 
+  const messageValue = {
+    draft,
+    parentId,
+  };
+
   return (
     <Container ref={containerRef} {...props}>
       <Divider />
@@ -89,11 +95,13 @@ const MessageComposer = ({
           />
         </SelectionContext.Provider>
       ) : (
-        <ActionsBar
-          handleClickReply={startComposing}
-          parentType={parentType}
-          parentId={parentId}
-        />
+        <MessageContext.Provider value={messageValue}>
+          <ActionsBar
+            handleClickReply={startComposing}
+            handleClickDiscard={stopComposing}
+            parentType={parentType}
+          />
+        </MessageContext.Provider>
       )}
     </Container>
   );

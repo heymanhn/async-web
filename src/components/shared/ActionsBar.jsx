@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
@@ -6,6 +6,8 @@ import styled from '@emotion/styled';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import discussionQuery from 'graphql/queries/discussion';
 import useCurrentUser from 'hooks/shared/useCurrentUser';
+import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
+import { MessageContext } from 'utils/contexts';
 
 import Avatar from 'components/shared/Avatar';
 import AvatarWithIcon from 'components/shared/AvatarWithIcon';
@@ -61,16 +63,24 @@ const ActionButton = styled.div(({ theme: { colors } }) => ({
   border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   cursor: 'pointer',
-  padding: '0 20px',
   height: '25px',
+  marginLeft: '8px',
+  padding: '0 20px',
 
   color: colors.grey3,
   fontSize: '12px',
   fontWeight: 500,
 }));
 
-const ActionsBar = ({ parentType, parentId, handleClickReply, ...props }) => {
+const ActionsBar = ({
+  parentType,
+  handleClickReply,
+  handleClickDiscard,
+  ...props
+}) => {
+  const { draft, parentId } = useContext(MessageContext);
   const currentUser = useCurrentUser();
+  const { handleDeleteMessageDraft } = useMessageDraftMutations();
 
   // Reminder: A thread is just a discussion with a different UI
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
@@ -88,6 +98,11 @@ const ActionsBar = ({ parentType, parentId, handleClickReply, ...props }) => {
         input: { status: { state } },
       },
     });
+  };
+
+  const handleClickDiscardWrapper = () => {
+    handleDeleteMessageDraft();
+    handleClickDiscard();
   };
 
   const { state, author } = status || {};
@@ -111,7 +126,14 @@ const ActionsBar = ({ parentType, parentId, handleClickReply, ...props }) => {
     ) : (
       <>
         <Label>Shift + R to </Label>
-        <ReplyButton onClick={handleClickReply}>Reply</ReplyButton>
+        <ReplyButton onClick={handleClickReply}>
+          {draft ? 'Continue Draft' : 'Reply'}
+        </ReplyButton>
+        {draft && (
+          <ActionButton onClick={handleClickDiscardWrapper}>
+            Discard
+          </ActionButton>
+        )}
       </>
     );
 
@@ -145,6 +167,7 @@ ActionsBar.propTypes = {
   parentType: PropTypes.oneOf(['discussion', 'thread']).isRequired,
   parentId: PropTypes.string.isRequired,
   handleClickReply: PropTypes.func.isRequired,
+  handleClickDiscard: PropTypes.func.isRequired,
 };
 
 export default ActionsBar;
