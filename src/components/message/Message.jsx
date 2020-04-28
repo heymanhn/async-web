@@ -13,7 +13,7 @@ import MessageReactions from './MessageReactions';
 import DraftSavedIndicator from './DraftSavedIndicator';
 
 const Container = styled.div(({ hover, theme: { colors } }) => ({
-  background: hover ? colors.bgGrey : colors.white,
+  background: hover ? colors.bgGrey : undefined,
   padding: '20px 0 0',
 }));
 

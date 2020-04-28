@@ -10,14 +10,12 @@ import useCurrentUser from 'hooks/shared/useCurrentUser';
 import Avatar from 'components/shared/Avatar';
 import AvatarWithIcon from 'components/shared/AvatarWithIcon';
 
-const Container = styled.div(({ theme: { colors, discussionViewport } }) => ({
+const Container = styled.div(({ theme: { discussionViewport } }) => ({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
 
-  background: colors.white,
-  cursor: 'pointer',
   height: '65px',
   margin: '0 auto',
   padding: '0 30px',
@@ -47,6 +45,7 @@ const ReplyButton = styled.div(({ theme: { colors } }) => ({
   background: colors.altBlue,
   borderRadius: '5px',
   color: colors.white,
+  cursor: 'pointer',
   fontSize: '12px',
   fontWeight: 500,
   height: '25px',

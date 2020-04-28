@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 // import { navigate } from '@reach/router';
@@ -8,34 +8,31 @@ import discussionQuery from 'graphql/queries/discussion';
 // import { track } from 'utils/analytics';
 import { DEFAULT_THREAD_CONTEXT, ThreadContext } from 'utils/contexts';
 // import useMountEffect from 'hooks/shared/useMountEffect';
-import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 import { isResourceUnread } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
 import Editor from 'components/editor/Editor';
-import AddReplyBox from 'components/thread/AddReplyBox';
-import Message from 'components/message/Message';
+import MessageComposer from 'components/message/MessageComposer';
 import ThreadMessages from './ThreadMessages';
 import TopicComposer from './TopicComposer';
 
-const ESCAPE_HOTKEY = 'Escape';
-
-const StyledModal = styled(Modal)(({ theme: { colors } }) => ({
+const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
-  background: colors.bgGrey,
-}));
+});
 
 const StyledTopicComposer = styled(TopicComposer)({
   borderTopLeftRadius: '5px',
   borderTopRightRadius: '5px',
 });
 
-const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
-  borderTop: `1px solid ${colors.borderGrey}`,
+// Render the 3px top border differently, since the box shadow trick
+// won't work here
+const StyledMessageComposer = styled(MessageComposer)({
+  position: 'unset',
+  overflow: 'initial',
   borderBottomLeftRadius: '5px',
   borderBottomRightRadius: '5px',
-  paddingBottom: '25px',
-}));
+});
 
 const ThreadModal = ({
   threadId,
@@ -45,12 +42,6 @@ const ThreadModal = ({
   ...props
 }) => {
   const modalRef = useRef(null);
-
-  // TODO (DISCUSSION V2): set isComposing to true once we know the user has
-  // a draft in progress for the thread.
-  const [isComposing, setIsComposing] = useState(false);
-  const startComposing = () => setIsComposing(true);
-  const stopComposing = () => setIsComposing(false);
 
   // TODO (DISCUSSION V2): Clean this up
   // useMountEffect(() => {
@@ -76,8 +67,6 @@ const ThreadModal = ({
   //   return () => navigate(baseUrl);
   // }, [documentId, discussionId, modalDiscussionId]);
 
-  useKeyDownHandler([ESCAPE_HOTKEY, () => !isComposing && handleClose()]);
-
   const { data } = useQuery(discussionQuery, {
     variables: { discussionId: threadId },
   });
@@ -85,15 +74,8 @@ const ThreadModal = ({
   if (!data || !data.discussion) return null;
 
   const { draft, messageCount, topic, tags } = data.discussion;
-  if (draft && !isComposing) startComposing();
-
-  const handleCancelCompose = () => {
-    stopComposing();
-  };
 
   const afterCreateMessage = newThreadId => {
-    stopComposing();
-
     // Only need to set this once, when the first message is created.
     if (!messageCount && sourceEditor) {
       Editor.updateInlineAnnotation(sourceEditor, newThreadId, {
@@ -123,8 +105,8 @@ const ThreadModal = ({
    * 2. General discussion. There won't be a topic to create context for.
    * 3. Subsequent messages to a discussion. Also won't be a topic present.
    */
-  const readyToCompose = isComposing && (!initialTopic || topic);
-  const isComposingFirstMsg = isComposing && !messageCount;
+  // const readyToCompose = isComposing && (!initialTopic || topic);
+  // const isComposingFirstMsg = isComposing && !messageCount;
 
   return (
     <StyledModal
@@ -136,24 +118,16 @@ const ThreadModal = ({
       <ThreadContext.Provider value={value}>
         {(initialTopic || topic) && <StyledTopicComposer />}
         <ThreadMessages
-          isComposingFirstMsg={isComposingFirstMsg}
+          // isComposingFirstMsg={isComposingFirstMsg}
           isUnread={isResourceUnread(tags)}
         />
-        {readyToCompose ? (
-          <StyledMessage
-            mode="compose"
-            draft={draft}
-            parentId={threadId}
-            afterCreateMessage={afterCreateMessage}
-            handleCancel={handleCancelCompose}
-            {...props}
-          />
-        ) : (
-          <AddReplyBox
-            handleClickReply={startComposing}
-            isComposing={isComposing}
-          />
-        )}
+        <StyledMessageComposer
+          parentType="thread"
+          parentId={threadId}
+          draft={draft}
+          messageCount={messageCount}
+          afterCreateMessage={afterCreateMessage}
+        />
       </ThreadContext.Provider>
     </StyledModal>
   );

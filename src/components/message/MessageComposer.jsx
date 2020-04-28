@@ -5,8 +5,6 @@ import styled from '@emotion/styled';
 
 import { DEFAULT_SELECTION_CONTEXT, SelectionContext } from 'utils/contexts';
 
-// TODO (DISCUSSION V2): Coming soon, will replace AddReplyBox
-// import DiscussionActions from 'components/discussion/DiscussionActions';
 import ActionsBar from 'components/shared/ActionsBar';
 import TitleEditor from 'components/discussion/TitleEditor';
 
@@ -17,21 +15,24 @@ const Container = styled.div(({ theme: { colors } }) => ({
   position: 'sticky',
   bottom: 0,
 
-  borderTop: `1px solid ${colors.borderGrey}`,
-  boxShadow: `0 0 0 3px ${colors.bgGrey}`,
+  borderTop: `3px solid ${colors.bgGrey}`,
   maxHeight: '60vh',
   overflow: 'auto',
   width: '100%',
 }));
 
-// TODO (DISCUSSION V2): Distinguish between composer for discussion
-// and composer for thread
+const Divider = styled.div(({ theme: { colors } }) => ({
+  borderTop: `1px solid ${colors.borderGrey}`,
+}));
+
 const MessageComposer = ({
   parentType,
   parentId,
   draft,
   title,
   messageCount,
+  afterCreateMessage,
+  ...props
 }) => {
   const containerRef = useRef(null);
   const [isComposing, setIsComposing] = useState(false);
@@ -40,6 +41,10 @@ const MessageComposer = ({
   const shouldDisplayTitle =
     parentType === 'discussion' && !messageCount && isComposing;
 
+  const afterCreateWrapper = data => {
+    stopComposing();
+    afterCreateMessage(data);
+  };
   const handleCancelCompose = () => {
     stopComposing();
     if (!messageCount) navigate('/');
@@ -49,11 +54,12 @@ const MessageComposer = ({
 
   const value = {
     ...DEFAULT_SELECTION_CONTEXT,
-    containerRef,
+    containerRef: parentType === 'discussion' ? containerRef : {},
   };
 
   return (
-    <Container ref={containerRef}>
+    <Container ref={containerRef} {...props}>
+      <Divider />
       {shouldDisplayTitle && <TitleEditor initialTitle={title} />}
       {isComposing ? (
         <SelectionContext.Provider value={value}>
@@ -62,7 +68,7 @@ const MessageComposer = ({
             parentId={parentId}
             draft={draft}
             disableAutoFocus={!messageCount}
-            afterCreateMessage={stopComposing}
+            afterCreateMessage={afterCreateWrapper}
             handleCancel={handleCancelCompose}
           />
         </SelectionContext.Provider>
@@ -83,11 +89,13 @@ MessageComposer.propTypes = {
   draft: PropTypes.object,
   title: PropTypes.string,
   messageCount: PropTypes.number.isRequired,
+  afterCreateMessage: PropTypes.func,
 };
 
 MessageComposer.defaultProps = {
   draft: null,
   title: '',
+  afterCreateMessage: () => {},
 };
 
 export default MessageComposer;
