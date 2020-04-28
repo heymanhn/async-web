@@ -14,6 +14,7 @@ const Home = () => {
   const { organizationId } = getLocalAppState();
   const { loading, data } = useQuery(organizationQuery, {
     variables: { id: organizationId },
+    skip: !isLoggedIn,
   });
 
   if (!localStateData || loading) return null;
