@@ -21,7 +21,7 @@ const Container = styled.div(({ mode }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  minHeight: mode === 'compose' ? '160px' : 'initial',
+  minHeight: mode === 'compose' ? '180px' : 'initial',
 }));
 
 const MessageEditable = styled(Editable)({

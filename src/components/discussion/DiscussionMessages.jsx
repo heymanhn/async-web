@@ -93,7 +93,12 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
           {firstNewMessageId() === m.id && m.id !== messages[0].id && (
             <NewMessagesDivider />
           )}
-          <Message index={i} message={m} parentId={discussionId} />
+          <Message
+            index={i}
+            message={m}
+            parentId={discussionId}
+            parentType="discussion"
+          />
         </React.Fragment>
       ))}
     </Container>
