@@ -95,7 +95,6 @@ const Message = ({
     parentType === 'discussion' ? DiscussionContext : ThreadContext
   );
   const [mode, setMode] = useState(initialMode);
-  const [selectedMessage, setSelectedMessage] = useState(null);
   const { hover, ...hoverProps } = useHover(mode === 'display');
   const currentUser = useCurrentUser();
 
@@ -132,12 +131,9 @@ const Message = ({
     parentId,
     mode,
     draft,
-    message,
-    selectedMessage,
     threadPosition: index,
     setMode,
     afterCreateMessage,
-    setSelectedMessage,
     afterUpdateMessage,
     handleCancel: handleCancelWrapper,
   };
