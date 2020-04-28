@@ -54,7 +54,10 @@ const MessageComposer = ({
   const shouldDisplayTitle =
     parentType === 'discussion' && !messageCount && isComposing;
 
-  useKeyDownHandler([REPLY_HOTKEY, () => !isComposing && startComposing()]);
+  useKeyDownHandler(
+    [REPLY_HOTKEY, () => !isComposing && startComposing()],
+    isComposing
+  );
 
   const afterCreateWrapper = data => {
     stopComposing();
