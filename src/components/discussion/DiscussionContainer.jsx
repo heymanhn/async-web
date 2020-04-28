@@ -88,7 +88,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
             />
           )}
           <MessageComposer
-            source="discussion"
+            parentType="discussion"
             parentId={discussionId}
             draft={draft}
             title={title}

@@ -7,7 +7,7 @@ import { DEFAULT_SELECTION_CONTEXT, SelectionContext } from 'utils/contexts';
 
 // TODO (DISCUSSION V2): Coming soon, will replace AddReplyBox
 // import DiscussionActions from 'components/discussion/DiscussionActions';
-import AddReplyBox from 'components/discussion/AddReplyBox';
+import ActionsBar from 'components/shared/ActionsBar';
 import TitleEditor from 'components/discussion/TitleEditor';
 
 import Message from './Message';
@@ -26,13 +26,19 @@ const Container = styled.div(({ theme: { colors } }) => ({
 
 // TODO (DISCUSSION V2): Distinguish between composer for discussion
 // and composer for thread
-const MessageComposer = ({ source, parentId, draft, title, messageCount }) => {
+const MessageComposer = ({
+  parentType,
+  parentId,
+  draft,
+  title,
+  messageCount,
+}) => {
   const containerRef = useRef(null);
   const [isComposing, setIsComposing] = useState(false);
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
   const shouldDisplayTitle =
-    source === 'discussion' && !messageCount && isComposing;
+    parentType === 'discussion' && !messageCount && isComposing;
 
   const handleCancelCompose = () => {
     stopComposing();
@@ -61,9 +67,10 @@ const MessageComposer = ({ source, parentId, draft, title, messageCount }) => {
           />
         </SelectionContext.Provider>
       ) : (
-        <AddReplyBox
+        <ActionsBar
           handleClickReply={startComposing}
-          isComposing={isComposing}
+          parentType={parentType}
+          parentId={parentId}
         />
       )}
     </Container>
@@ -71,7 +78,7 @@ const MessageComposer = ({ source, parentId, draft, title, messageCount }) => {
 };
 
 MessageComposer.propTypes = {
-  source: PropTypes.string.isRequired,
+  parentType: PropTypes.oneOf(['discussion', 'thread']).isRequired,
   parentId: PropTypes.string.isRequired,
   draft: PropTypes.object,
   title: PropTypes.string,
