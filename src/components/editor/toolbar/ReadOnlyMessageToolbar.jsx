@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { DiscussionContext, ThreadContext } from 'utils/contexts';
 
 import DOMToolbar from './DOMToolbar';
-import StartThreadButton from './StartThreadButton';
+import StartInlineThreadButton from './StartInlineThreadButton';
 
 const ReadOnlyMessageToolbar = props => {
   const { handleShowThread } = useContext(DiscussionContext);
@@ -13,7 +13,7 @@ const ReadOnlyMessageToolbar = props => {
 
   return (
     <DOMToolbar {...props}>
-      <StartThreadButton handleShowThread={handleShowThread} />
+      <StartInlineThreadButton handleShowThread={handleShowThread} />
     </DOMToolbar>
   );
 };
