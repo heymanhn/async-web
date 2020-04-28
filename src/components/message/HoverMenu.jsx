@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-import { ThreadContext } from 'utils/contexts';
+import { DiscussionContext, ThreadContext } from 'utils/contexts';
 
 import AddReactionButton from './AddReactionButton';
 import MessageDropdown from './MessageDropdown';
+import StartMessageThreadButton from './StartMessageThreadButton';
 
 const Container = styled.div(({ isOpen, theme: { colors } }) => ({
   display: 'flex',
@@ -47,17 +47,13 @@ const MenuIcon = styled.div({
   marginTop: '-1px',
 });
 
-const StyledIcon = styled(FontAwesomeIcon)({
-  cursor: 'pointer',
-  fontSize: '16px',
-});
-
 const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
   const [isPickerOpen, setPickerState] = useState(false);
   const [isDropdownOpen, setDropdownState] = useState(false);
   const showDropdown = () => setDropdownState(true);
   const closeDropdown = () => setDropdownState(false);
   const { threadId } = useContext(ThreadContext);
+  const { handleShowThread } = useContext(DiscussionContext);
 
   const shouldDisplay = isOpen || isPickerOpen || isDropdownOpen;
 
@@ -73,7 +69,7 @@ const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
         <>
           <VerticalDivider />
           <ButtonContainer>
-            <StyledIcon icon={['far', 'comment-lines']} />
+            <StartMessageThreadButton handleShowThread={handleShowThread} />
           </ButtonContainer>
         </>
       )}

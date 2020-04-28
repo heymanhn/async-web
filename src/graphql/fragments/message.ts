@@ -15,6 +15,7 @@ export default gql`
     createdAt
     updatedAt
     discussionId
+    threadId
   }
   ${body}
   ${user}

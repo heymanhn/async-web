@@ -19,7 +19,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
   margin: '5px 10px',
 });
 
-const StartThreadButton = ({ handleShowThread, ...props }) => {
+const StartInlineThreadButton = ({ handleShowThread, ...props }) => {
   const editor = useSlate();
   const { handleSaveMessageDraft, isSubmitting } = useMessageDraftMutations();
   const { userId } = getLocalUser();
@@ -85,8 +85,8 @@ const StartThreadButton = ({ handleShowThread, ...props }) => {
   );
 };
 
-StartThreadButton.propTypes = {
+StartInlineThreadButton.propTypes = {
   handleShowThread: PropTypes.func.isRequired,
 };
 
-export default StartThreadButton;
+export default StartInlineThreadButton;

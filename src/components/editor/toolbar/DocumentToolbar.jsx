@@ -6,7 +6,7 @@ import Toolbar from './Toolbar';
 import FormattingButtons from './FormattingButtons';
 import BlockButtons from './BlockButtons';
 import VerticalDivider from './VerticalDivider';
-import StartThreadButton from './StartThreadButton';
+import StartInlineThreadButton from './StartInlineThreadButton';
 
 const DocumentToolbar = props => {
   const { handleShowThread } = useContext(DocumentContext);
@@ -17,7 +17,7 @@ const DocumentToolbar = props => {
       <VerticalDivider />
       <BlockButtons />
       <VerticalDivider />
-      <StartThreadButton handleShowThread={handleShowThread} />
+      <StartInlineThreadButton handleShowThread={handleShowThread} />
     </Toolbar>
   );
 };

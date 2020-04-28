@@ -16,6 +16,7 @@ import AuthorDetails from 'components/shared/AuthorDetails';
 import MessageEditor from './MessageEditor';
 import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
+import ViewMessageThreadButton from './ViewMessageThreadButton';
 
 const Container = styled.div(
   ({ hover, theme: { colors } }) => ({
@@ -97,9 +98,10 @@ const Message = ({
   const { hover, ...hoverProps } = useHover(mode === 'display');
   const currentUser = useCurrentUser();
 
-  const { createdAt, id: messageId, updatedAt, body } = message;
+  const { createdAt, id: messageId, updatedAt, body, threadId } = message;
   const author = message.author || currentUser || (draft && draft.author);
   const isAuthor = currentUser.id === author.id;
+  const { handleShowThread } = useContext(DiscussionContext);
 
   if (mode === 'edit' && !hideComposer) setHideComposer(true);
 
@@ -165,6 +167,12 @@ const Message = ({
             autoFocus={mode !== 'display' && !disableAutoFocus}
           />
           {mode === 'display' && <MessageReactions />}
+          {mode === 'display' && threadId && (
+            <ViewMessageThreadButton
+              threadId={threadId}
+              handleShowThread={handleShowThread}
+            />
+          )}
         </InnerContainer>
       </MessageContext.Provider>
     </Container>
