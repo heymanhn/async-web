@@ -50,6 +50,7 @@ const MessageComposer = ({
     stopComposing();
     afterCreateMessage(data);
   };
+
   const handleCancelCompose = () => {
     stopComposing();
     if (!messageCount) navigate('/');
