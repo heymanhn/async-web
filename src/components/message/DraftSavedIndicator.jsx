@@ -1,3 +1,4 @@
+// TODO (DISCUSSION V2): Remove this component
 import React, { useContext, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 

@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import useCurrentUser from 'hooks/shared/useCurrentUser';
@@ -15,7 +16,6 @@ import AuthorDetails from 'components/shared/AuthorDetails';
 import MessageEditor from './MessageEditor';
 import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
-import DraftSavedIndicator from './DraftSavedIndicator';
 
 const Container = styled.div(
   ({ hover, theme: { colors } }) => ({
@@ -57,6 +57,24 @@ const StyledHoverMenu = styled(HoverMenu)({
   position: 'relative',
   right: '0px',
 });
+
+const MinimizeButton = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+
+  background: colors.bgGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  cursor: 'pointer',
+  width: '26px',
+  height: '24px',
+}));
+
+const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
+  color: colors.grey3,
+  fontSize: '14px',
+}));
 
 // TODO (DISCUSSION V2): The discussion UX redesign should standardize the
 // appearance of messages, whether in discussions or threads.
@@ -135,7 +153,11 @@ const Message = ({
               {messageId && mode === 'display' && !hideComposer && (
                 <StyledHoverMenu isAuthor={isAuthor} isOpen={hover} />
               )}
-              {mode === 'compose' && <DraftSavedIndicator />}
+              {mode === 'compose' && (
+                <MinimizeButton onClick={handleCancelWrapper}>
+                  <StyledIcon icon="compress-alt" />
+                </MinimizeButton>
+              )}
             </div>
           </HeaderSection>
           <MessageEditor
