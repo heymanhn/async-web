@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import useCurrentUser from 'hooks/shared/useCurrentUser';
 import useHover from 'hooks/shared/useHover';
-import { MessageContext, DEFAULT_MESSAGE_CONTEXT } from 'utils/contexts';
+import {
+  DiscussionContext,
+  MessageContext,
+  DEFAULT_MESSAGE_CONTEXT,
+} from 'utils/contexts';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
 import MessageEditor from './MessageEditor';
 import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 import DraftSavedIndicator from './DraftSavedIndicator';
+import ViewMessageThreadButton from './ViewMessageThreadButton';
 
 const Container = styled.div(({ hover, theme: { colors } }) => ({
   background: hover ? colors.bgGrey : colors.white,
@@ -52,9 +57,10 @@ const Message = ({
   const { hover, ...hoverProps } = useHover(mode === 'display');
   const currentUser = useCurrentUser();
 
-  const { createdAt, id: messageId, updatedAt, body } = message;
+  const { createdAt, id: messageId, updatedAt, body, threadId } = message;
   const author = message.author || currentUser || (draft && draft.author);
   const isAuthor = currentUser.id === author.id;
+  const { handleShowThread } = useContext(DiscussionContext);
 
   const loadInitialContent = () => {
     if (mode !== 'compose') return body.payload;
@@ -74,6 +80,7 @@ const Message = ({
     parentId,
     mode,
     draft,
+    currentMessage: message,
     threadPosition: index,
     setMode,
     afterCreateMessage,
@@ -102,6 +109,12 @@ const Message = ({
             autoFocus={mode !== 'display' && !disableAutoFocus}
           />
           {mode === 'display' && <MessageReactions />}
+          {mode === 'display' && threadId && (
+            <ViewMessageThreadButton
+              threadId={threadId}
+              handleShowThread={handleShowThread}
+            />
+          )}
         </InnerContainer>
       </MessageContext.Provider>
     </Container>

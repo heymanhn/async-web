@@ -69,6 +69,7 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   parentId: null,
   mode: null,
   draft: null,
+  currentMessage: null,
   threadPosition: null,
 
   setMode: () => {},
