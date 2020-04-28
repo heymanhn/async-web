@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
+import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 import { DEFAULT_SELECTION_CONTEXT, SelectionContext } from 'utils/contexts';
 
 import ActionsBar from 'components/shared/ActionsBar';
 import TitleEditor from 'components/discussion/TitleEditor';
 
 import Message from './Message';
+
+const REPLY_HOTKEY = 'shift+r';
 
 // Currently the composer will always be at the bottom of its parent container.
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -40,6 +43,8 @@ const MessageComposer = ({
   const stopComposing = () => setIsComposing(false);
   const shouldDisplayTitle =
     parentType === 'discussion' && !messageCount && isComposing;
+
+  useKeyDownHandler([REPLY_HOTKEY, () => !isComposing && startComposing()]);
 
   const afterCreateWrapper = data => {
     stopComposing();
