@@ -34,12 +34,13 @@ const useMessageDraftMutations = () => {
   const handleSaveMessageDraft = async ({
     content = DEFAULT_ELEMENT(),
     isThread,
+    parentMessageId,
   } = {}) => {
     setIsSubmitting(true);
 
     let draftParentId = parentId;
     if (isThread) {
-      const { id } = await handleCreateThread();
+      const { id } = await handleCreateThread(parentMessageId);
       draftParentId = id;
     }
 

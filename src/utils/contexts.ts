@@ -73,12 +73,9 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   parentId: null,
   mode: null,
   draft: null,
-  message: null,
-  selectedMessage: null,
   threadPosition: null,
 
   setMode: () => {},
-  setSelectedMessage: () => {},
   afterCreateMessage: () => {},
   afterUpdateMessage: () => {},
   handleCancel: () => {},

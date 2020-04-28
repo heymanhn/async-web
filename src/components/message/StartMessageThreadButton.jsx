@@ -19,13 +19,13 @@ const StyledIcon = styled(FontAwesomeIcon)({
 
 const StartMessageThreadButton = ({ handleShowThread }) => {
   const { handleSaveMessageDraft, isSubmitting } = useMessageDraftMutations();
-  const { message, setSelectedMessage } = useContext(MessageContext);
+  const { messageId } = useContext(MessageContext);
 
   const handleClick = async () => {
     // Create an empty draft discussion
-    setSelectedMessage(message);
     const { discussionId: threadId } = await handleSaveMessageDraft({
       isThread: true,
+      parentMessageId: messageId,
     });
 
     handleShowThread({ threadId });

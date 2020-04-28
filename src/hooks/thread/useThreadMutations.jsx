@@ -5,8 +5,9 @@
  * mutation methods.
  */
 import { useContext, useState } from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useLazyQuery } from '@apollo/react-hooks';
 
+import messageQuery from 'graphql/queries/message';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import { track } from 'utils/analytics';
@@ -20,17 +21,17 @@ import { toPlainText } from 'utils/editor/constants';
 
 const useThreadMutations = () => {
   const { documentId } = useContext(DocumentContext);
-  const { messageId, selectedMessage } = useContext(MessageContext);
+  const { messageId } = useContext(MessageContext);
   const { discussionId } = useContext(DiscussionContext);
   const { threadId, topic } = useContext(ThreadContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [createDiscussion] = useMutation(createDiscussionMutation);
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
+  const [getMessage, { data: messageData }] = useLazyQuery(messageQuery);
 
-  const handleCreateThread = async () => {
+  const handleCreateThread = async parentMessageId => {
     setIsSubmitting(true);
-
     const input = {};
 
     if (documentId) {
@@ -55,12 +56,14 @@ const useThreadMutations = () => {
         text: toPlainText(topic),
         payload: JSON.stringify(topic),
       };
-    } else if (selectedMessage) {
+    } else if (parentMessageId) {
+      getMessage({ variables: { discussionId, messageId: parentMessageId } });
+      const { message: parentMessage } = messageData;
       input.topic = {
-        ...selectedMessage.body,
+        ...parentMessage.body,
         metadata: {
-          authorId: selectedMessage.author.id,
-          messageId: selectedMessage.id,
+          authorId: parentMessage.author.id,
+          messageId: parentMessage.id,
         },
       };
     }

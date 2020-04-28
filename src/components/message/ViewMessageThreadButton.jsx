@@ -27,7 +27,7 @@ const Label = styled.div({
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.drakGrey,
+  color: colors.grey1,
   fontSize: '18px',
 }));
 
