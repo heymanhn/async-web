@@ -84,9 +84,9 @@ const Message = ({
   draft,
   mode: initialMode,
   message,
+  messageCount, // number of messages in the parent thread or discussion
   parentId, // A message belongs to either a thread or a discussion
   parentType,
-  disableAutoFocus,
   afterCreateMessage,
   handleCancel,
   ...props
@@ -155,7 +155,7 @@ const Message = ({
               {messageId && mode === 'display' && !hideComposer && (
                 <StyledHoverMenu isAuthor={isAuthor} isOpen={hover} />
               )}
-              {mode === 'compose' && (
+              {mode === 'compose' && !!messageCount && (
                 <MinimizeButton onClick={handleCancelWrapper}>
                   <StyledIcon icon="compress-alt" />
                 </MinimizeButton>
@@ -164,7 +164,7 @@ const Message = ({
           </HeaderSection>
           <MessageEditor
             initialMessage={loadInitialContent()}
-            autoFocus={mode !== 'display' && !disableAutoFocus}
+            autoFocus={mode !== 'display' && !!messageCount}
           />
           {mode === 'display' && <MessageReactions />}
           {mode === 'display' && threadId && (
@@ -184,9 +184,9 @@ Message.propTypes = {
   index: PropTypes.number,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
+  messageCount: PropTypes.number,
   parentId: PropTypes.string.isRequired,
   parentType: PropTypes.oneOf(['discussion', 'thread']).isRequired,
-  disableAutoFocus: PropTypes.bool,
   afterCreateMessage: PropTypes.func,
   handleCancel: PropTypes.func,
 };
@@ -196,7 +196,7 @@ Message.defaultProps = {
   index: null,
   mode: 'display',
   message: {},
-  disableAutoFocus: false,
+  messageCount: null,
   afterCreateMessage: () => {},
   handleCancel: () => {},
 };

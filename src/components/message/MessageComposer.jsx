@@ -89,7 +89,7 @@ const MessageComposer = ({
             parentId={parentId}
             parentType={parentType}
             draft={draft}
-            disableAutoFocus={!messageCount}
+            messageCount={messageCount}
             afterCreateMessage={afterCreateWrapper}
             handleCancel={handleCancelCompose}
           />
