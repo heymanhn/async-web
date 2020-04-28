@@ -5,7 +5,7 @@
  * mutation methods.
  */
 import { useContext, useState } from 'react';
-import { useMutation, useLazyQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import messageQuery from 'graphql/queries/message';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
@@ -28,7 +28,10 @@ const useThreadMutations = () => {
 
   const [createDiscussion] = useMutation(createDiscussionMutation);
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
-  const [getMessage, { data: messageData }] = useLazyQuery(messageQuery);
+  const { refetch: getParentMessage } = useQuery(messageQuery, {
+    variables: { discussionId, messageId },
+    skip: true,
+  });
 
   const handleCreateThread = async parentMessageId => {
     setIsSubmitting(true);
@@ -57,8 +60,8 @@ const useThreadMutations = () => {
         payload: JSON.stringify(topic),
       };
     } else if (parentMessageId) {
-      getMessage({ variables: { discussionId, messageId: parentMessageId } });
-      const { message: parentMessage } = messageData;
+      const { data } = await getParentMessage();
+      const { message: parentMessage } = data;
       input.topic = {
         ...parentMessage.body,
         metadata: {
