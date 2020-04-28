@@ -20,7 +20,7 @@ import { toPlainText } from 'utils/editor/constants';
 
 const useThreadMutations = () => {
   const { documentId } = useContext(DocumentContext);
-  const { messageId, currentMessage } = useContext(MessageContext);
+  const { messageId, selectedMessage } = useContext(MessageContext);
   const { discussionId } = useContext(DiscussionContext);
   const { threadId, topic } = useContext(ThreadContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,12 +55,12 @@ const useThreadMutations = () => {
         text: toPlainText(topic),
         payload: JSON.stringify(topic),
       };
-    } else if (currentMessage) {
+    } else if (selectedMessage) {
       input.topic = {
-        ...currentMessage.body,
+        ...selectedMessage.body,
         metadata: {
-          authorId: currentMessage.author.id,
-          messageId: currentMessage.id,
+          authorId: selectedMessage.author.id,
+          messageId: selectedMessage.id,
         },
       };
     }

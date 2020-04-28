@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { MessageContext } from 'utils/contexts';
 import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
@@ -18,9 +19,11 @@ const StyledIcon = styled(FontAwesomeIcon)({
 
 const StartMessageThreadButton = ({ handleShowThread }) => {
   const { handleSaveMessageDraft, isSubmitting } = useMessageDraftMutations();
+  const { message, setSelectedMessage } = useContext(MessageContext);
 
   const handleClick = async () => {
     // Create an empty draft discussion
+    setSelectedMessage(message);
     const { discussionId: threadId } = await handleSaveMessageDraft({
       isThread: true,
     });

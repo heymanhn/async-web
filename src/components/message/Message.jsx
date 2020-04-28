@@ -54,6 +54,7 @@ const Message = ({
   ...props
 }) => {
   const [mode, setMode] = useState(initialMode);
+  const [selectedMessage, setSelectedMessage] = useState(null);
   const { hover, ...hoverProps } = useHover(mode === 'display');
   const currentUser = useCurrentUser();
 
@@ -80,10 +81,12 @@ const Message = ({
     parentId,
     mode,
     draft,
-    currentMessage: message,
+    message,
+    selectedMessage,
     threadPosition: index,
     setMode,
     afterCreateMessage,
+    setSelectedMessage,
     handleCancel: handleCancelWrapper,
   };
 
