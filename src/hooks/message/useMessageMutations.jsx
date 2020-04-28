@@ -16,9 +16,12 @@ import { toPlainText } from 'utils/editor/constants';
 const useMessageMutations = ({ message = null } = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { documentId } = useContext(DocumentContext);
-  const { messageId, parentId, setMode, afterCreateMessage } = useContext(
-    MessageContext
-  );
+  const {
+    messageId,
+    parentId,
+    afterUpdateMessage,
+    afterCreateMessage,
+  } = useContext(MessageContext);
   const { handleCreateDiscussion } = useDiscussionMutations();
 
   const [createMessage] = useMutation(createMessageMutation);
@@ -110,7 +113,7 @@ const useMessageMutations = ({ message = null } = {}) => {
 
     if (data.updateMessage) {
       setIsSubmitting(false);
-      setMode('display');
+      afterUpdateMessage();
       track('Message edited', { messageId, discussionId: parentId });
     }
   };

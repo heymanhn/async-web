@@ -43,6 +43,11 @@ const EditedLabel = styled.span(({ theme: { colors } }) => ({
   marginLeft: '3px',
 }));
 
+const EditingLabel = styled.div(({ theme: { colors } }) => ({
+  color: colors.grey4,
+  fontSize: '14px',
+}));
+
 const AuthorDetails = ({ author, createdAt, isEdited }) => {
   const { mode } = useContext(MessageContext);
   const editedLabel = <EditedLabel>(edited)</EditedLabel>;
@@ -53,15 +58,16 @@ const AuthorDetails = ({ author, createdAt, isEdited }) => {
       <Details>
         <Author>{author.fullName}</Author>
         {mode === 'display' && (
-          <React.Fragment>
+          <>
             {createdAt && (
               <Timestamp fromNow parse="X">
                 {createdAt}
               </Timestamp>
             )}
             {isEdited && editedLabel}
-          </React.Fragment>
+          </>
         )}
+        {mode === 'edit' && <EditingLabel>Editing</EditingLabel>}
       </Details>
     </Container>
   );

@@ -28,7 +28,7 @@ const Icon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 
 const AvatarWithIcon = ({ avatarUrl, icon, ...props }) => (
   <Container {...props}>
-    <AvatarWithMargin avatarUrl={avatarUrl} size={32} />
+    <AvatarWithMargin avatarUrl={avatarUrl} size={24} />
     <Icon icon={icon} />
   </Container>
 );
