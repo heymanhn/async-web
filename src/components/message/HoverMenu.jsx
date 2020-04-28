@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
+
+import { ThreadContext } from 'utils/contexts';
 
 import AddReactionButton from './AddReactionButton';
 import MessageDropdown from './MessageDropdown';
@@ -44,11 +47,18 @@ const MenuIcon = styled.div({
   marginTop: '-1px',
 });
 
+const StyledIcon = styled(FontAwesomeIcon)({
+  cursor: 'pointer',
+  fontSize: '16px',
+});
+
 const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
   const [isPickerOpen, setPickerState] = useState(false);
   const [isDropdownOpen, setDropdownState] = useState(false);
   const showDropdown = () => setDropdownState(true);
   const closeDropdown = () => setDropdownState(false);
+  const { threadId } = useContext(ThreadContext);
+
   const shouldDisplay = isOpen || isPickerOpen || isDropdownOpen;
 
   return (
@@ -59,6 +69,14 @@ const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
           placement="below"
         />
       </ButtonContainer>
+      {!threadId && (
+        <>
+          <VerticalDivider />
+          <ButtonContainer>
+            <StyledIcon icon={['far', 'comment-lines']} />
+          </ButtonContainer>
+        </>
+      )}
       <VerticalDivider />
       {isAuthor && (
         <ButtonContainer onClick={showDropdown}>
