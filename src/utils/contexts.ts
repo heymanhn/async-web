@@ -46,11 +46,13 @@ export const DocumentContext = createContext(DEFAULT_DOCUMENT_CONTEXT);
 export const DEFAULT_DISCUSSION_CONTEXT = {
   discussionId: null,
   readOnly: false,
+  hideComposer: false,
 
   handleShowThread: () => {},
   afterCreateDiscussion: () => {},
   afterDeleteDiscussion: () => {},
   setForceUpdate: () => {},
+  setHideComposer: () => {},
 };
 export const DiscussionContext = createContext(DEFAULT_DISCUSSION_CONTEXT);
 
@@ -58,9 +60,11 @@ export const DEFAULT_THREAD_CONTEXT = {
   threadId: null,
   initialTopic: null,
   topic: null,
+  hideComposer: false,
   modalRef: {},
 
   afterDeleteThread: () => {},
+  setHideComposer: () => {},
 };
 export const ThreadContext = createContext(DEFAULT_THREAD_CONTEXT);
 
@@ -73,6 +77,7 @@ export const DEFAULT_MESSAGE_CONTEXT = {
 
   setMode: () => {},
   afterCreateMessage: () => {},
+  afterUpdateMessage: () => {},
   handleCancel: () => {},
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);

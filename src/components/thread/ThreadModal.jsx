@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 // import { navigate } from '@reach/router';
@@ -42,6 +42,9 @@ const ThreadModal = ({
   ...props
 }) => {
   const modalRef = useRef(null);
+
+  // Hides the message composer if the user is an editing a message
+  const [hideComposer, setHideComposer] = useState(false);
 
   // TODO (DISCUSSION V2): Clean this up
   // useMountEffect(() => {
@@ -96,7 +99,9 @@ const ThreadModal = ({
     initialTopic,
     topic,
     modalRef,
+    hideComposer,
     afterDeleteThread,
+    setHideComposer,
   };
 
   /* Three conditions when ready to show the composer:

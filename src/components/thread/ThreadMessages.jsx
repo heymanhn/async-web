@@ -87,7 +87,12 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
       )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
-          <Message index={i} message={m} parentId={threadId} />
+          <Message
+            index={i}
+            message={m}
+            parentId={threadId}
+            parentType="thread"
+          />
         </React.Fragment>
       ))}
     </Container>

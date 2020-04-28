@@ -1,10 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
-import { DEFAULT_SELECTION_CONTEXT, SelectionContext } from 'utils/contexts';
+import {
+  DEFAULT_SELECTION_CONTEXT,
+  DiscussionContext,
+  ThreadContext,
+  SelectionContext,
+} from 'utils/contexts';
 
 import ActionsBar from 'components/shared/ActionsBar';
 import TitleEditor from 'components/discussion/TitleEditor';
@@ -18,6 +23,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   position: 'sticky',
   bottom: 0,
 
+  background: colors.white,
   borderTop: `3px solid ${colors.bgGrey}`,
   maxHeight: '60vh',
   overflow: 'auto',
@@ -38,6 +44,9 @@ const MessageComposer = ({
   ...props
 }) => {
   const containerRef = useRef(null);
+  const { hideComposer } = useContext(
+    parentType === 'discussion' ? DiscussionContext : ThreadContext
+  );
   const [isComposing, setIsComposing] = useState(false);
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
@@ -57,6 +66,7 @@ const MessageComposer = ({
   };
 
   if ((draft || !messageCount) && !isComposing) startComposing();
+  if (hideComposer) return null;
 
   const value = {
     ...DEFAULT_SELECTION_CONTEXT,
@@ -72,6 +82,7 @@ const MessageComposer = ({
           <Message
             mode="compose"
             parentId={parentId}
+            parentType={parentType}
             draft={draft}
             disableAutoFocus={!messageCount}
             afterCreateMessage={afterCreateWrapper}
