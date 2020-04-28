@@ -47,7 +47,7 @@ const MessageComposer = ({
   const { hideComposer } = useContext(
     parentType === 'discussion' ? DiscussionContext : ThreadContext
   );
-  const [isComposing, setIsComposing] = useState(false);
+  const [isComposing, setIsComposing] = useState(draft || !messageCount);
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => setIsComposing(false);
   const shouldDisplayTitle =
@@ -65,7 +65,6 @@ const MessageComposer = ({
     if (!messageCount) navigate('/');
   };
 
-  if ((draft || !messageCount) && !isComposing) startComposing();
   if (hideComposer) return null;
 
   const value = {
