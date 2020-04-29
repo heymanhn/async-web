@@ -22,7 +22,7 @@ const moduleList = [
     content: {
       title: 'Thoughtful discussions for distributed teams',
       description:
-        'Roval is a distraction-free space to streamline discussions and knowledge sharing in teams and projects.',
+        'Candor is a distraction-free space to streamline discussions and knowledge sharing in teams and projects.',
     },
   },
   {
@@ -63,7 +63,7 @@ const moduleList = [
           icon: 'arrow-circle-right',
           title: 'Reminders & Notifications',
           description:
-            'Roval does not demand your immediate attention. Yet, it gently reminds everyone to move the work forward.',
+            'Candor does not demand your immediate attention. Yet, it gently reminds everyone to move the work forward.',
           lineBreak: true,
         },
       ],
@@ -122,7 +122,7 @@ const moduleList = [
   {
     type: REASONS,
     content: {
-      title: 'Why teams switch to Roval?',
+      title: 'Why teams switch to Candor?',
       reasons: [
         {
           icon: ['fal', 'arrow-circle-right'],
@@ -164,7 +164,7 @@ const moduleList = [
     content: {
       title: 'Ready to give it a spin?',
       description:
-        'Roval is in private beta right now. Sign up for early access.',
+        'Candor is in private beta right now. Sign up for early access.',
     },
   },
 ];

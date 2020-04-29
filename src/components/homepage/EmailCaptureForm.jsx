@@ -81,7 +81,7 @@ const EmailCaptureForm = props => {
     base('Leads').create(
       {
         Email: email,
-        Source: 'Roval Website - email form',
+        Source: 'Candor Website - email form',
       },
       err => {
         if (err) {

@@ -63,7 +63,7 @@ const TitleEditable = ({
 
   useEffect(() => {
     document.title = `${initialTitle ||
-      `Untitled ${titleize(resourceType)}`} - Roval`;
+      `Untitled ${titleize(resourceType)}`} - Candor`;
     setTitle(initialTitle);
     const { current } = titleRef || {};
     if (current && current.innerText !== initialTitle)

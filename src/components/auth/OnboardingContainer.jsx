@@ -39,7 +39,7 @@ const Title = styled.div({
 const OnboardingContainer = ({ children, title }) => (
   <OuterContainer>
     <InnerContainer>
-      <StyledImage src={rovalLogo} alt="Roval logo" />
+      <StyledImage src={rovalLogo} alt="Candor logo" />
       <Title>{title}</Title>
       {children}
     </InnerContainer>
