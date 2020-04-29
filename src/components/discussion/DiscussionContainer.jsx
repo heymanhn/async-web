@@ -40,6 +40,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
+  const bottomRef = useRef(null);
   const [forceUpdate, setForceUpdate] = useState(false);
 
   // Hides the message composer if the user is an editing a message
@@ -93,12 +94,14 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
               isComposingFirstMsg={!messageCount}
             />
           )}
+          <div ref={bottomRef} />
           <MessageComposer
             parentType="discussion"
             parentId={discussionId}
             draft={draft}
             title={title}
             messageCount={messageCount}
+            bottomRef={bottomRef}
           />
         </ContentContainer>
         {threadId && (

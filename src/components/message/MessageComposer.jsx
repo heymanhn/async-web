@@ -41,6 +41,7 @@ const MessageComposer = ({
   draft,
   title,
   messageCount,
+  bottomRef, // reference to the bottom of the parent page
   afterCreateMessage,
   ...props
 }) => {
@@ -62,6 +63,12 @@ const MessageComposer = ({
   const afterCreateWrapper = data => {
     stopComposing();
     afterCreateMessage(data);
+
+    const { current: bottomOfPage } = bottomRef;
+    if (bottomOfPage) {
+      // Make sure the new message is added before we scroll to bottom
+      setTimeout(() => bottomOfPage.scrollIntoView(), 0);
+    }
   };
 
   const handleCancelCompose = () => {
@@ -116,12 +123,14 @@ MessageComposer.propTypes = {
   draft: PropTypes.object,
   title: PropTypes.string,
   messageCount: PropTypes.number.isRequired,
+  bottomRef: PropTypes.object,
   afterCreateMessage: PropTypes.func,
 };
 
 MessageComposer.defaultProps = {
   draft: null,
   title: '',
+  bottomRef: {},
   afterCreateMessage: () => {},
 };
 
