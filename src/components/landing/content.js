@@ -22,15 +22,16 @@ const moduleList = [
     content: {
       title: 'Discuss ideas and build knowledge together',
       description:
-        'Write, discuss, and share knowledge at scale – all in one tool',
+        'Roval is a distraction-free space to streamline discussions and information sharing in teams, groups, and projects.',
     },
   },
   {
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      title: 'Write, discuss, and build knowledge in one place',
-      description: 'With one tool, everyone sees the whole picture.',
+      title: 'Built for all types of team communication',
+      description:
+        'Documents, Discussions, and Threads – designed from the ground up. With one tool, everyone sees the whole picture.',
       image: writeDiscuss,
     },
   },
@@ -39,7 +40,7 @@ const moduleList = [
     side: 'left',
     content: {
       icon: 'comments-alt',
-      title: 'Stay focus, Stay connected',
+      title: 'A distraction-free workplace',
       description:
         'No pressure to be always online. Follow a discussion from start to finish without missing a beat.',
       image: contributeAsync,
@@ -131,7 +132,8 @@ const moduleList = [
         {
           icon: ['fal', 'comments-alt'],
           title: 'Conversational',
-          description: 'All your decisions and discussions, in one place',
+          description:
+            'Short or long-form, all inputs are first-class by design',
         },
         {
           icon: ['fal', 'font-case'],
@@ -146,13 +148,12 @@ const moduleList = [
         {
           icon: ['fal', 'comment-lines'],
           title: 'Threaded',
-          description:
-            'Discussions are organized into threads that stay on topic',
+          description: 'Threads keep conversations organized and on-topic',
         },
         {
           icon: ['fal', 'file-search'],
           title: 'Transparent',
-          description: 'All discussions and decisions are self-documented',
+          description: 'Escape email & app silos with searchable discussions',
         },
       ],
     },
