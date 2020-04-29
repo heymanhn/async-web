@@ -9,7 +9,7 @@
  * - ThreadContext provided with a reference to the modal component, if
  *   a modal is currently displayed
  */
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
 import throttle from 'lodash/throttle';
 
@@ -58,58 +58,56 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
     }
   };
 
-  const calculateDimensions = useCallback(
-    throttle(() => {
-      const { selection } = editor;
-      const domSelection = window.getSelection();
+  const calculateDimensions = throttle(() => {
+    const { selection } = editor;
+    const domSelection = window.getSelection();
 
-      if (!selection && !domSelection && source !== 'notFocused') return;
-      if (!domSelection.rangeCount) return;
-      if (skip) return;
+    if (!selection && !domSelection && source !== 'notFocused') return;
+    if (!domSelection.rangeCount) return;
+    if (skip) return;
 
-      const rect = rectForSource();
-      const { height, width } = rect;
+    const rect = rectForSource();
+    const { height, width } = rect;
 
-      // When a modal is visible, the window isn't scrolled, only the modal component.
-      const { current: container } = containerRef;
-      const { current: modal } = modalRef;
-      let yOffset = window.pageYOffset;
-      let xOffset = window.pageXOffset;
+    // When a modal is visible, the window isn't scrolled, only the modal component.
+    const { current: container } = containerRef;
+    const { current: modal } = modalRef;
+    let yOffset = window.pageYOffset;
+    let xOffset = window.pageXOffset;
 
-      if (container) {
-        yOffset = -(window.innerHeight - container.offsetHeight);
-        xOffset = -container.offsetLeft;
-      }
+    if (container) {
+      yOffset = -(window.innerHeight - container.offsetHeight);
+      xOffset = -container.offsetLeft;
+    }
 
-      if (modal) {
-        yOffset = modal.scrollTop;
-        xOffset = modal.scrollLeft;
-      }
+    if (modal) {
+      yOffset = modal.scrollTop;
+      xOffset = modal.scrollLeft;
+    }
 
-      const coords = {
-        top: rect.top + yOffset,
-        left: rect.left + xOffset,
-      };
+    const coords = {
+      top: rect.top + yOffset,
+      left: rect.left + xOffset,
+    };
 
-      const dimensions = {
-        height,
-        width,
-      };
+    const dimensions = {
+      height,
+      width,
+    };
 
-      const { coords: oldCoords, dimensions: oldDimensions } = data;
-      if (
-        oldCoords &&
-        oldDimensions &&
-        oldCoords.top === coords.top &&
-        oldCoords.left === coords.left &&
-        oldDimensions.height === dimensions.height &&
-        oldDimensions.width === dimensions.width
-      )
-        return;
+    const { coords: oldCoords, dimensions: oldDimensions } = data;
+    if (
+      oldCoords &&
+      oldDimensions &&
+      oldCoords.top === coords.top &&
+      oldCoords.left === coords.left &&
+      oldDimensions.height === dimensions.height &&
+      oldDimensions.width === dimensions.width
+    )
+      return;
 
-      setData({ coords, dimensions, rect });
-    }, THROTTLE_INTERVAL)
-  );
+    setData({ coords, dimensions, rect });
+  }, THROTTLE_INTERVAL);
 
   useEffect(() => {
     calculateDimensions();

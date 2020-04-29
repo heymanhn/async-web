@@ -142,7 +142,9 @@ const CompositionMenuButton = props => {
       >
         <StyledIcon icon={['fal', 'plus']} />
       </ButtonContainer>
-      {showButton && <CompositionMenuPlaceholder isVisible={showButton} />}
+      {showButton && (
+        <CompositionMenuPlaceholder isVisible={showButton} coords={coords} />
+      )}
       <CompositionMenu handleClose={handleCloseMenu} isOpen={isMenuOpen} />
     </>
   );

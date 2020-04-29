@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import useSelectionDimensions from 'hooks/editor/useSelectionDimensions';
-
 import ContentPlaceholder from 'components/editor/ContentPlaceholder';
 
 const Container = styled.div(
@@ -23,9 +21,7 @@ const Container = styled.div(
   }
 );
 
-const CompositionMenuPlaceholder = ({ isVisible }) => {
-  const { coords } = useSelectionDimensions({ skip: !isVisible });
-
+const CompositionMenuPlaceholder = ({ isVisible, coords }) => {
   const adjustedCoords = () => {
     if (!isVisible || !coords) return null;
 
@@ -45,6 +41,7 @@ const CompositionMenuPlaceholder = ({ isVisible }) => {
 
 CompositionMenuPlaceholder.propTypes = {
   isVisible: PropTypes.bool.isRequired,
+  coords: PropTypes.object.isRequired,
 };
 
 export default CompositionMenuPlaceholder;
