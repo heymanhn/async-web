@@ -1,14 +1,17 @@
 import gql from 'graphql-tag';
 
-import body from 'graphql/fragments/body';
+import messageDraft from 'graphql/fragments/messageDraft';
 
 export default gql`
   mutation CreateMessageDraft($discussionId: String!, $input: Object!) {
-    createMessageDraft(discussionId: $discussionId, input: $input) @rest(type: "MessageDraft", path: "/discussions/{args.discussionId}/drafts", method: "POST") {
-      body @type(name: "Body") {
-        ...BodyObject
-      }
+    createMessageDraft(discussionId: $discussionId, input: $input)
+      @rest(
+        type: "MessageDraft"
+        path: "/discussions/{args.discussionId}/drafts"
+        method: "POST"
+      ) {
+      ...MessageDraftObject
     }
   }
-  ${body}
+  ${messageDraft}
 `;

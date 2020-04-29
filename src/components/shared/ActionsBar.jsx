@@ -165,7 +165,6 @@ const ActionsBar = ({
 
 ActionsBar.propTypes = {
   parentType: PropTypes.oneOf(['discussion', 'thread']).isRequired,
-  parentId: PropTypes.string.isRequired,
   handleClickReply: PropTypes.func.isRequired,
   handleClickDiscard: PropTypes.func.isRequired,
 };

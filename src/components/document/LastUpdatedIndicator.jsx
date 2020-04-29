@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Moment from 'react-moment';
+import moment from 'moment';
 import styled from '@emotion/styled';
-
-const REFRESH_INTERVAL = 15000;
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -27,14 +25,14 @@ const Label = styled.div({
   fontWeight: 500,
 });
 
-const Timestamp = styled(Moment)({
+const Timestamp = styled.div({
   marginLeft: '4px',
 });
 
 const LastUpdatedIndicator = ({ timestamp }) => (
   <Container>
     <Label>Updated</Label>
-    <Timestamp interval={REFRESH_INTERVAL} fromNow>{timestamp}</Timestamp>
+    <Timestamp>{moment(timestamp, 'X').fromNow()}</Timestamp>
   </Container>
 );
 

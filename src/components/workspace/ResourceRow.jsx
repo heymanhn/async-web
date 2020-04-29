@@ -7,8 +7,7 @@ import moment from 'moment';
 import styled from '@emotion/styled';
 
 import useHover from 'hooks/shared/useHover';
-// import { getLocalUser } from 'utils/auth';
-// import { isResourceUnread } from 'utils/helpers';
+import { titleize } from 'utils/helpers';
 
 import UnreadIndicator from 'components/shared/UnreadIndicator';
 import LastUpdate from './LastUpdate';
@@ -118,7 +117,9 @@ const ResourceRow = ({ item, ...props }) => {
             </Title>
             <TimestampContainer>
               {isUnread && <StyledIndicator diameter={6} />}
-              <Timestamp>{moment(updatedAt, 'X').fromNow()}</Timestamp>
+              <Timestamp>
+                {titleize(moment(updatedAt, 'X').fromNow())}
+              </Timestamp>
             </TimestampContainer>
           </ItemDetails>
           <LastUpdate notification={lastUpdate} resourceType={resourceType} />

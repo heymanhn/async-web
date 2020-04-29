@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useSlate } from 'slate-react';
+import moment from 'moment';
 import styled from '@emotion/styled';
 
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
@@ -58,7 +59,13 @@ const SubmitLabel = styled.div(({ theme: { colors } }) => ({
 const DraftSavedLabel = styled.div(({ theme: { colors } }) => ({
   color: colors.grey4,
   fontSize: '12px',
+  fontWeight: 600,
 }));
+
+const Timestamp = styled.div({
+  fontWeight: 400,
+  marginLeft: '4px',
+});
 
 const MessageActions = ({ handleSubmit }) => {
   const { draft, mode, handleCancel } = useContext(MessageContext);
@@ -105,7 +112,12 @@ const MessageActions = ({ handleSubmit }) => {
       </Section>
       {draft && (
         <Section>
-          <DraftSavedLabel>Draft saved</DraftSavedLabel>
+          <DraftSavedLabel>
+            Draft saved
+            <Timestamp>
+              {moment(draft.updatedAt * 1000, 'X').fromNow()}
+            </Timestamp>
+          </DraftSavedLabel>
           <CancelButton onClick={handleDiscardWrapper}>Discard</CancelButton>
         </Section>
       )}

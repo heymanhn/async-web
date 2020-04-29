@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { navigate } from '@reach/router';
-import Moment from 'react-moment';
+import moment from 'moment';
 import Truncate from 'react-truncate';
 import camelCase from 'camelcase';
 import styled from '@emotion/styled';
@@ -63,7 +63,7 @@ const StyledIndicator = styled(UnreadIndicator)({
   marginRight: '5px',
 });
 
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
+const Timestamp = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   fontSize: '13px',
 }));
@@ -167,9 +167,7 @@ const NotificationRow = ({ handleClose, notification }) => {
           </Title>
           <TimestampContainer>
             {isUnread && <StyledIndicator diameter={6} />}
-            <Timestamp fromNow parse="X">
-              {updatedAt}
-            </Timestamp>
+            <Timestamp>{moment(updatedAt, 'X').fromNow()}</Timestamp>
           </TimestampContainer>
         </TitleContainer>
         {snippet && (

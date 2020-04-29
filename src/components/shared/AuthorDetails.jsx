@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import Moment from 'react-moment';
+import moment from 'moment';
 import styled from '@emotion/styled';
 
 import { MessageContext } from 'utils/contexts';
+import { titleize } from 'utils/helpers';
 
 import Avatar from './Avatar';
 
@@ -30,7 +31,7 @@ const Author = styled.div({
   marginRight: '15px',
 });
 
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
+const Timestamp = styled.div(({ theme: { colors } }) => ({
   color: colors.grey3,
   cursor: 'default',
   fontSize: '14px',
@@ -60,8 +61,8 @@ const AuthorDetails = ({ author, createdAt, isEdited }) => {
         {mode === 'display' && (
           <>
             {createdAt && (
-              <Timestamp fromNow parse="X">
-                {createdAt}
+              <Timestamp>
+                {titleize(moment(createdAt, 'X').fromNow())}
               </Timestamp>
             )}
             {isEdited && editedLabel}
