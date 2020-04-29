@@ -20,9 +20,9 @@ const moduleList = [
   {
     type: HEADLINE,
     content: {
-      title: 'Discuss ideas and build knowledge together',
+      title: 'Thoughtful discussions for distributed teams',
       description:
-        'Roval is a distraction-free space to streamline discussions and information sharing in teams, groups, and projects.',
+        'Roval is a distraction-free space to streamline discussions and knowledge sharing in teams and projects.',
     },
   },
   {
