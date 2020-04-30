@@ -16,7 +16,6 @@ import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import { ThreadContext } from 'utils/contexts';
 
 import NewMessagesIndicator from 'components/discussion/NewMessagesIndicator';
-import NotFound from 'components/navigation/NotFound';
 import Message from 'components/message/Message';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
@@ -27,7 +26,7 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   maxWidth: discussionViewport,
 }));
 
-const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
+const ThreadMessages = ({ isUnread, ...props }) => {
   const client = useApolloClient();
   const discussionRef = useRef(null);
   const { threadId, modalRef } = useContext(ThreadContext);
@@ -54,10 +53,7 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
     modalRef
   );
 
-  // Workaround to make sure two copies of the first message aren't rendered
-  // on the modal at the same time
-  if (loading || isComposingFirstMsg) return null;
-  if (!data) return <NotFound />;
+  if (loading || !data) return null;
 
   const { items } = data;
   const messages = (items || []).map(i => i.message);
@@ -73,9 +69,6 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
     addPendingMessages();
     markAsRead();
   };
-
-  // TODO (DISCUSSION V2): Evaluate if we still need this
-  // const isNewMessage = m => m.tags && m.tags.includes('new_message');
 
   return (
     <Container ref={discussionRef} {...props}>
@@ -100,7 +93,6 @@ const ThreadMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
 };
 
 ThreadMessages.propTypes = {
-  isComposingFirstMsg: PropTypes.bool.isRequired,
   isUnread: PropTypes.bool.isRequired,
 };
 

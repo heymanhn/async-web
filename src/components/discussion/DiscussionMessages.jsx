@@ -77,9 +77,6 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
     return targetMessage ? targetMessage.id : null;
   };
 
-  // TODO (DISCUSSION V2): Evaluate if we still need this
-  // const isNewMessage = m => m.tags && m.tags.includes('new_message');
-
   return (
     <Container ref={discussionRef} {...props}>
       {pendingMessageCount > 0 && (

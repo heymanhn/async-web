@@ -122,10 +122,7 @@ const ThreadModal = ({
     >
       <ThreadContext.Provider value={value}>
         {(initialTopic || topic) && <StyledTopicComposer />}
-        <ThreadMessages
-          // isComposingFirstMsg={isComposingFirstMsg}
-          isUnread={isResourceUnread(tags)}
-        />
+        <ThreadMessages isUnread={isResourceUnread(tags)} />
         <StyledMessageComposer
           parentType="thread"
           parentId={threadId}
