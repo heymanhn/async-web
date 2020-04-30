@@ -7,8 +7,8 @@ const Container = styled.div({
   display: 'flex',
   alignItems: 'center',
 
-  marginTop: '-5px',
-  marginBottom: '-5px',
+  marginTop: '-8px',
+  marginBottom: '-8px',
   width: '100%',
 });
 
@@ -29,6 +29,7 @@ const NewMessagesLabel = styled.div(({ theme: { colors } }) => ({
   fontSize: '14px',
   fontWeight: 500,
   margin: '0 30px 0 10px',
+  zIndex: 2,
 }));
 
 const LabelText = styled.div({

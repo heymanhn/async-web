@@ -76,15 +76,15 @@ const useAppPusher = pusher => {
           mutation: addNewPendingMessage,
           variables: { message },
         });
-      } else {
-        client.mutate({
-          mutation: addNewMsgMutation,
-          variables: {
-            isUnread: true,
-            message,
-          },
-        });
       }
+
+      client.mutate({
+        mutation: addNewMsgMutation,
+        variables: {
+          isUnread: true,
+          message,
+        },
+      });
     };
 
     channel.bind(BADGE_COUNT_EVENT, handleBadgeCount);

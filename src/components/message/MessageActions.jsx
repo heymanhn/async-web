@@ -57,6 +57,7 @@ const SubmitLabel = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DraftSavedLabel = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
   color: colors.grey4,
   fontSize: '12px',
   fontWeight: 600,

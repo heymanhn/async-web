@@ -2,17 +2,16 @@
  * TODO: Figure out how much this component can be DRY'ed up with
  * <ThreadMessages />
  */
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient, useQuery, useMutation } from '@apollo/react-hooks';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
-import localStateQuery from 'graphql/queries/localState';
-import localAddPendingMessages from 'graphql/mutations/local/addPendingMessagesToDiscussion';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
+import usePendingMessages from 'hooks/resources/usePendingMessages';
 import { DiscussionContext } from 'utils/contexts';
 
 import NotFound from 'components/navigation/NotFound';
@@ -28,21 +27,15 @@ const Container = styled.div({
 });
 
 const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
-  const client = useApolloClient();
   const discussionRef = useRef(null);
   const { discussionId } = useContext(DiscussionContext);
-  const [pendingMessageCount, setPendingMessageCount] = useState(0);
-  const [addPendingMessages] = useMutation(localAddPendingMessages, {
-    variables: { discussionId },
-  });
   const markAsRead = useMarkResourceAsRead();
+  const pendingMessages = usePendingMessages();
 
   useMountEffect(() => {
-    client.writeData({ data: { pendingMessages: [] } });
     if (isUnread) markAsRead();
   });
 
-  const { data: localData } = useQuery(localStateQuery);
   const { loading, data } = usePaginatedResource(discussionRef, {
     query: discussionMessagesQuery,
     key: 'messages',
@@ -57,15 +50,9 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const { items } = data;
   const messages = (items || []).map(i => i.message);
 
-  if (localData) {
-    const { pendingMessages } = localData;
-    if (pendingMessages && pendingMessages.length !== pendingMessageCount) {
-      setPendingMessageCount(pendingMessages.length);
-    }
-  }
-
-  const handleAddPendingMessages = () => {
-    addPendingMessages();
+  const scrollToFirstPendingMessage = () => {
+    const [messageId] = pendingMessages;
+    if (messageId) navigate(`#${messageId}`);
     markAsRead();
   };
 
@@ -79,10 +66,10 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
 
   return (
     <Container ref={discussionRef} {...props}>
-      {pendingMessageCount > 0 && (
+      {!!pendingMessages.length && (
         <NewMessagesIndicator
-          count={pendingMessageCount}
-          onClick={handleAddPendingMessages}
+          count={pendingMessages.length}
+          onClick={scrollToFirstPendingMessage}
         />
       )}
       {messages.map((m, i) => (

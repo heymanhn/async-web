@@ -114,26 +114,13 @@ const addNewPendingMessage = (_root, { message }, { client }) => {
     query: localStateQuery,
   });
 
-  const { author: newAuthor, body: newBody } = message;
-  const newMessage = {
-    __typename: 'Message',
-    ...message,
-    author: {
-      __typename: 'User',
-      ...newAuthor,
-    },
-    body: {
-      __typename: 'Body',
-      ...newBody,
-    },
-    tags: ['new_message'],
-  };
+  const { id: newMessageId } = message;
 
   client.writeQuery({
     query: localStateQuery,
     data: {
       ...localState,
-      pendingMessages: [...pendingMessages, newMessage],
+      pendingMessages: [...pendingMessages, newMessageId],
     },
   });
 

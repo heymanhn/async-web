@@ -1,6 +1,7 @@
 import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { navigate } from '@reach/router';
+import { useApolloClient } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
@@ -29,6 +30,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   maxHeight: '60vh',
   overflow: 'auto',
   width: '100%',
+  zIndex: 3,
 }));
 
 const Divider = styled.div(({ theme: { colors } }) => ({
@@ -45,6 +47,7 @@ const MessageComposer = ({
   afterCreateMessage,
   ...props
 }) => {
+  const client = useApolloClient();
   const containerRef = useRef(null);
   const { hideComposer } = useContext(
     parentType === 'discussion' ? DiscussionContext : ThreadContext
@@ -63,6 +66,9 @@ const MessageComposer = ({
   const afterCreateWrapper = data => {
     stopComposing();
     afterCreateMessage(data);
+
+    // Posting a message is behaviorally equivalent to marking the parent as read
+    client.writeData({ data: { pendingMessages: [] } });
 
     const { current: bottomOfPage } = bottomRef;
     if (bottomOfPage) {
