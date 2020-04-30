@@ -20,9 +20,9 @@ const moduleList = [
   {
     type: HEADLINE,
     content: {
-      title: 'Asynchronous workspace for team communication',
+      title: 'Asynchronous workplace. A new way of working.',
       description:
-        'Candor is a distraction-free space to streamline discussions and knowledge sharing in teams and projects.',
+        'Candor is a distraction-free space to streamline knowledge sharing in teams. Documents, discussions, and threads – all in one place.',
     },
   },
   {
@@ -31,7 +31,7 @@ const moduleList = [
     content: {
       title: 'Built for all types of team communication',
       description:
-        'Documents, Discussions, and Threads – designed from the ground up. With one tool, everyone sees the whole picture.',
+        'Escape email and app silos. Documents, discussions, and threads – keep information organized and transparent.',
       image: writeDiscuss,
     },
   },
