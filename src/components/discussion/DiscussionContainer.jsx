@@ -75,6 +75,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     discussionId,
     readOnly,
     hideComposer,
+    bottomRef,
 
     afterDeleteDiscussion: () => navigate('/'),
     setForceUpdate,
@@ -101,7 +102,6 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
             draft={draft}
             title={title}
             messageCount={messageCount}
-            bottomRef={bottomRef}
           />
         </ContentContainer>
         {threadId && (

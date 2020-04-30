@@ -5,7 +5,9 @@ import Pluralize from 'pluralize';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+import usePendingMessages from 'hooks/resources/usePendingMessages';
+
+const Container = styled.div(({ isVisible, theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
   alignSelf: 'center',
@@ -20,9 +22,11 @@ const Container = styled.div(({ theme: { colors } }) => ({
   fontWeight: 500,
   letterSpacing: '-0.006em',
   height: '28px',
+  opacity: isVisible ? 1 : 0,
   padding: '0 10px',
   position: 'fixed',
   top: '46px', // vertically align to bottom of the nav bar (60px)
+  transition: 'opacity 0.2s',
   zIndex: 1,
 }));
 
@@ -46,15 +50,37 @@ const StyledCloseIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '12px',
 }));
 
-const NewMessagesIndicator = ({ count, ...props }) => {
+const NewMessagesIndicator = ({ dividerRef, handleClick, ...props }) => {
   const client = useApolloClient();
+  const pendingMessages = usePendingMessages();
+
   const handleClearPendingMessages = event => {
     event.stopPropagation();
     client.writeData({ data: { pendingMessages: [] } });
   };
 
+  const handleClickWrapper = event => {
+    handleClick();
+    handleClearPendingMessages(event);
+  };
+
+  const checkVisible = () => {
+    if (!pendingMessages.length) return false;
+
+    const { current: divider } = dividerRef;
+    if (!divider) return false;
+
+    const { offsetTop } = divider;
+    return offsetTop < window.innerHeight;
+  };
+
+  const count = pendingMessages.length;
   return (
-    <Container {...props}>
+    <Container
+      isVisible={checkVisible()}
+      onClick={handleClickWrapper}
+      {...props}
+    >
       <StyledArrowIcon icon="long-arrow-down" />
       <Label>{`show ${count} new ${Pluralize('message', count, false)}`}</Label>
       <CloseButton onClick={handleClearPendingMessages}>
@@ -65,7 +91,12 @@ const NewMessagesIndicator = ({ count, ...props }) => {
 };
 
 NewMessagesIndicator.propTypes = {
-  count: PropTypes.number.isRequired,
+  dividerRef: PropTypes.object,
+  handleClick: PropTypes.func.isRequired,
+};
+
+NewMessagesIndicator.defaultProps = {
+  dividerRef: {},
 };
 
 export default NewMessagesIndicator;

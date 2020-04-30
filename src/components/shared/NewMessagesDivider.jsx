@@ -36,14 +36,14 @@ const LabelText = styled.div({
   marginTop: '-2px',
 });
 
-const NewMessagesDivider = () => (
-  <Container>
+const NewMessagesDivider = React.forwardRef((props, ref) => (
+  <Container {...props} ref={ref}>
     <Divider />
     <NewMessagesLabel>
       <StyledIndicator diameter={6} />
       <LabelText>new messages</LabelText>
     </NewMessagesLabel>
   </Container>
-);
+));
 
 export default NewMessagesDivider;

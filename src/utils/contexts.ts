@@ -46,6 +46,7 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   discussionId: null,
   readOnly: false,
   hideComposer: false,
+  bottomRef: {},
 
   handleShowThread: () => {},
   afterCreateDiscussion: () => {},
@@ -61,6 +62,7 @@ export const DEFAULT_THREAD_CONTEXT = {
   topic: null,
   hideComposer: false,
   modalRef: {},
+  bottomRef: {},
 
   afterDeleteThread: () => {},
   setHideComposer: () => {},

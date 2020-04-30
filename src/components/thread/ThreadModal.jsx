@@ -42,6 +42,7 @@ const ThreadModal = ({
   ...props
 }) => {
   const modalRef = useRef(null);
+  const bottomRef = useRef(null);
 
   // Hides the message composer if the user is an editing a message
   const [hideComposer, setHideComposer] = useState(false);
@@ -96,6 +97,7 @@ const ThreadModal = ({
     initialTopic,
     topic,
     modalRef,
+    bottomRef,
     hideComposer,
     afterDeleteThread,
     setHideComposer,
@@ -111,6 +113,7 @@ const ThreadModal = ({
       <ThreadContext.Provider value={value}>
         {(initialTopic || topic) && <StyledTopicComposer />}
         <ThreadMessages isUnread={isResourceUnread(tags)} />
+        <div ref={bottomRef} />
         <StyledMessageComposer
           parentType="thread"
           parentId={threadId}

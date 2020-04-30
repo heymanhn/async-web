@@ -1,13 +1,11 @@
 import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
-import usePendingMessages from 'hooks/resources/usePendingMessages';
 import { DiscussionContext } from 'utils/contexts';
 import { firstNewMessageId } from 'utils/helpers';
 
@@ -25,9 +23,9 @@ const Container = styled.div({
 
 const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const discussionRef = useRef(null);
-  const { discussionId } = useContext(DiscussionContext);
+  const dividerRef = useRef(null);
+  const { discussionId, bottomRef } = useContext(DiscussionContext);
   const markAsRead = useMarkResourceAsRead();
-  const pendingMessages = usePendingMessages();
 
   useMountEffect(() => {
     if (isUnread) markAsRead();
@@ -47,24 +45,23 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const { items } = data;
   const messages = (items || []).map(i => i.message);
 
-  const scrollToFirstPendingMessage = () => {
-    const [messageId] = pendingMessages;
-    if (messageId) navigate(`#${messageId}`);
+  const scrollToBottom = () => {
+    const { current: bottomOfPage } = bottomRef;
+    if (bottomOfPage) bottomOfPage.scrollIntoView();
+
     markAsRead();
   };
 
   return (
     <Container ref={discussionRef} {...props}>
-      {!!pendingMessages.length && (
-        <NewMessagesIndicator
-          count={pendingMessages.length}
-          onClick={scrollToFirstPendingMessage}
-        />
-      )}
+      <NewMessagesIndicator
+        dividerRef={dividerRef}
+        handleClick={scrollToBottom}
+      />
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
           {firstNewMessageId(messages) === m.id && m.id !== messages[0].id && (
-            <NewMessagesDivider />
+            <NewMessagesDivider ref={dividerRef} />
           )}
           <Message
             index={i}

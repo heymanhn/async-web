@@ -43,13 +43,12 @@ const MessageComposer = ({
   draft,
   title,
   messageCount,
-  bottomRef, // reference to the bottom of the parent page
   afterCreateMessage,
   ...props
 }) => {
   const client = useApolloClient();
   const containerRef = useRef(null);
-  const { hideComposer } = useContext(
+  const { bottomRef, hideComposer } = useContext(
     parentType === 'discussion' ? DiscussionContext : ThreadContext
   );
   const [isComposing, setIsComposing] = useState(draft || !messageCount);
@@ -129,14 +128,12 @@ MessageComposer.propTypes = {
   draft: PropTypes.object,
   title: PropTypes.string,
   messageCount: PropTypes.number.isRequired,
-  bottomRef: PropTypes.object,
   afterCreateMessage: PropTypes.func,
 };
 
 MessageComposer.defaultProps = {
   draft: null,
   title: '',
-  bottomRef: {},
   afterCreateMessage: () => {},
 };
 
