@@ -22,7 +22,8 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 }));
 
 const ThreadMessages = ({ isUnread, ...props }) => {
-  const discussionRef = useRef(null);
+  const threadRef = useRef(null);
+  const dividerRef = useRef(null);
   const { threadId, modalRef, bottomRef } = useContext(ThreadContext);
   const markAsRead = useMarkResourceAsRead();
 
@@ -31,7 +32,7 @@ const ThreadMessages = ({ isUnread, ...props }) => {
   });
 
   const { loading, data } = usePaginatedResource(
-    discussionRef,
+    threadRef,
     {
       query: discussionMessagesQuery,
       key: 'messages',
@@ -46,20 +47,17 @@ const ThreadMessages = ({ isUnread, ...props }) => {
   const { items } = data;
   const messages = (items || []).map(i => i.message);
 
-  const scrollToBottom = () => {
-    const { current: bottomOfPage } = bottomRef;
-    if (bottomOfPage) bottomOfPage.scrollIntoView();
-
-    markAsRead();
-  };
-
   return (
-    <Container ref={discussionRef} {...props}>
-      <NewMessagesIndicator handleClick={scrollToBottom} />
+    <Container ref={threadRef} {...props}>
+      <NewMessagesIndicator
+        bottomRef={bottomRef}
+        dividerRef={dividerRef}
+        afterClick={markAsRead}
+      />
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
           {firstNewMessageId(messages) === m.id && m.id !== messages[0].id && (
-            <NewMessagesDivider />
+            <NewMessagesDivider ref={dividerRef} />
           )}
           <Message
             index={i}

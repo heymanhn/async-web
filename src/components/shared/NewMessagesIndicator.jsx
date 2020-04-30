@@ -50,7 +50,12 @@ const StyledCloseIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '12px',
 }));
 
-const NewMessagesIndicator = ({ dividerRef, handleClick, ...props }) => {
+const NewMessagesIndicator = ({
+  bottomRef,
+  dividerRef,
+  afterClick,
+  ...props
+}) => {
   const client = useApolloClient();
   const pendingMessages = usePendingMessages();
 
@@ -59,9 +64,12 @@ const NewMessagesIndicator = ({ dividerRef, handleClick, ...props }) => {
     client.writeData({ data: { pendingMessages: [] } });
   };
 
-  const handleClickWrapper = event => {
-    handleClick();
+  const handleClick = event => {
     handleClearPendingMessages(event);
+    afterClick();
+
+    const { current: bottomOfPage } = bottomRef;
+    if (bottomOfPage) bottomOfPage.scrollIntoView();
   };
 
   const checkShowIndicator = () => {
@@ -80,7 +88,7 @@ const NewMessagesIndicator = ({ dividerRef, handleClick, ...props }) => {
   return (
     <Container
       isVisible={checkShowIndicator()}
-      onClick={handleClickWrapper}
+      onClick={handleClick}
       {...props}
     >
       <StyledArrowIcon icon="long-arrow-down" />
@@ -93,11 +101,13 @@ const NewMessagesIndicator = ({ dividerRef, handleClick, ...props }) => {
 };
 
 NewMessagesIndicator.propTypes = {
+  bottomRef: PropTypes.object,
   dividerRef: PropTypes.object,
-  handleClick: PropTypes.func.isRequired,
+  afterClick: PropTypes.func.isRequired,
 };
 
 NewMessagesIndicator.defaultProps = {
+  bottomRef: {},
   dividerRef: {},
 };
 

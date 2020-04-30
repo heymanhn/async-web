@@ -45,18 +45,12 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
   const { items } = data;
   const messages = (items || []).map(i => i.message);
 
-  const scrollToBottom = () => {
-    const { current: bottomOfPage } = bottomRef;
-    if (bottomOfPage) bottomOfPage.scrollIntoView();
-
-    markAsRead();
-  };
-
   return (
     <Container ref={discussionRef} {...props}>
       <NewMessagesIndicator
+        bottomRef={bottomRef}
         dividerRef={dividerRef}
-        handleClick={scrollToBottom}
+        afterClick={markAsRead}
       />
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
