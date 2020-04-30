@@ -62,7 +62,8 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   });
 
   if (loading || loading2) return <StyledLoadingIndicator color="borderGrey" />;
-  if (!data.discussion || !data2.messages) return <NotFound />;
+  if (!data || !data.discussion || !data2 || !data2.messages)
+    return <NotFound />;
 
   const { title, draft, messageCount } = data.discussion;
   const { tags } = data.discussion;

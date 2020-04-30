@@ -64,20 +64,22 @@ const NewMessagesIndicator = ({ dividerRef, handleClick, ...props }) => {
     handleClearPendingMessages(event);
   };
 
-  const checkVisible = () => {
+  const checkShowIndicator = () => {
     if (!pendingMessages.length) return false;
 
     const { current: divider } = dividerRef;
     if (!divider) return false;
 
+    // Only show the indicator if the new messages divider is beneath the
+    // current visible area of the page.
     const { offsetTop } = divider;
-    return offsetTop < window.innerHeight;
+    return offsetTop >= window.innerHeight;
   };
 
   const count = pendingMessages.length;
   return (
     <Container
-      isVisible={checkVisible()}
+      isVisible={checkShowIndicator()}
       onClick={handleClickWrapper}
       {...props}
     >
