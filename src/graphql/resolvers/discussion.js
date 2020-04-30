@@ -34,7 +34,7 @@ const addNewMessageToDiscussionMessages = (
   { isUnread, message },
   { client }
 ) => {
-  const { body: newBody, author: newAuthor, discussionId } = message;
+  const { body: newBody, author: newAuthor, discussionId, threadId } = message;
 
   const data = client.readQuery({
     query: discussionMessagesQuery,
@@ -73,6 +73,10 @@ const addNewMessageToDiscussionMessages = (
         ...newBody,
       },
       tags,
+
+      // Need to pass null value if threadId doesn't exist, to satisfy Apollo
+      // fragment shape
+      threadId: threadId || null,
     },
   };
 
