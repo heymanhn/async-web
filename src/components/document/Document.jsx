@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
@@ -29,7 +29,6 @@ const Document = ({ isUnread }) => {
   const { documentId } = documentContext;
   const markAsRead = useMarkResourceAsRead();
   const handleNewTitle = useDocumentTitlePusher();
-  const [updatedTimestamp, setUpdatedTimestamp] = useState(null);
 
   useMountEffect(() => {
     if (isUnread) markAsRead();
@@ -45,21 +44,9 @@ const Document = ({ isUnread }) => {
   const { body, title, updatedAt } = data.document;
   const { payload: content } = body || {};
 
-  // Initialize the state here
-  if (!updatedTimestamp && updatedAt) setUpdatedTimestamp(updatedAt * 1000);
-  const setUpdatedTimestampToNow = () => setUpdatedTimestamp(Date.now());
-
-  const afterUpdateDocumentTitle = newTitle => {
-    setUpdatedTimestampToNow();
-    handleNewTitle(newTitle);
-  };
-
-  // Extend the Document Context. We want to keep the updatedTimestamp defined
-  // here instead of in the parent component.
   const value = {
     ...documentContext,
-    afterUpdateDocument: setUpdatedTimestampToNow,
-    afterUpdateDocumentTitle,
+    afterUpdateDocumentTitle: handleNewTitle,
   };
 
   return (
@@ -68,9 +55,7 @@ const Document = ({ isUnread }) => {
         <TitleEditor autoFocus={!title && !content} initialTitle={title} />
         <DocumentEditor initialContent={content} />
       </DocumentContext.Provider>
-      {updatedTimestamp && (
-        <LastUpdatedIndicator timestamp={updatedTimestamp} />
-      )}
+      {updatedAt && <LastUpdatedIndicator timestamp={updatedAt} />}
     </Container>
   );
 };

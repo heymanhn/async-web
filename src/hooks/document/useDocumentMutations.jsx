@@ -13,7 +13,6 @@ import { toPlainText } from 'utils/editor/constants';
 const useDocumentMutations = () => {
   const {
     documentId,
-    afterUpdateDocument,
     afterUpdateDocumentTitle,
     afterDeleteDocument,
   } = useContext(DocumentContext);
@@ -68,10 +67,7 @@ const useDocumentMutations = () => {
       },
     });
 
-    if (data.updateDocument) {
-      afterUpdateDocument();
-      return Promise.resolve();
-    }
+    if (data.updateDocument) return Promise.resolve();
 
     return Promise.reject(new Error('Failed to update document'));
   };

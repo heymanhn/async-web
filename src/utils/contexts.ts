@@ -35,7 +35,6 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   viewMode: null,
 
   handleShowThread: () => {},
-  afterUpdateDocument: () => {},
   afterUpdateDocumentTitle: () => {},
   afterDeleteDocument: () => {},
   setForceUpdate: () => {},
