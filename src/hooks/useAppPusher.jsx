@@ -16,7 +16,7 @@ import {
   BADGE_COUNT_EVENT,
   PUSHER_CHANNEL_PREFIX,
 } from 'utils/constants';
-import { isDiscussionOpen } from 'utils/helpers';
+import { isResourceOpen } from 'utils/helpers';
 
 const useAppPusher = pusher => {
   const { userId } = getLocalUser();
@@ -71,7 +71,7 @@ const useAppPusher = pusher => {
         handleNewNotification(pusherData);
       }
 
-      if (isDiscussionOpen(discussionId)) {
+      if (isResourceOpen(discussionId)) {
         client.mutate({
           mutation: addNewPendingMessage,
           variables: { message },

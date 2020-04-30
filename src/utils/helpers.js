@@ -1,6 +1,6 @@
 import camelCase from 'camelcase';
 
-export const isDiscussionOpen = id => {
+export const isResourceOpen = id => {
   const { href } = window.location;
   return href.includes(id);
 };
