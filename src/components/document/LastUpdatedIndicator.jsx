@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import Moment from 'react-moment';
 import styled from '@emotion/styled';
 
 const Container = styled.div(({ theme: { colors } }) => ({
@@ -25,14 +25,16 @@ const Label = styled.div({
   fontWeight: 500,
 });
 
-const Timestamp = styled.div({
+const Timestamp = styled(Moment)({
   marginLeft: '4px',
 });
 
 const LastUpdatedIndicator = ({ timestamp }) => (
   <Container>
     <Label>Updated</Label>
-    <Timestamp>{moment(timestamp, 'X').fromNow()}</Timestamp>
+    <Timestamp fromNow parse="X">
+      {timestamp}
+    </Timestamp>
   </Container>
 );
 

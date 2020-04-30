@@ -42,6 +42,7 @@
     "react-dom": "^16.8.6",
     "react-dropzone": "^10.1.9",
     "react-helmet": "^5.2.1",
+    "react-moment": "^0.9.7",
     "react-onclickoutside": "^6.8.0",
     "react-pusher": "^0.2.0",
     "react-scripts": "^3.4.0",

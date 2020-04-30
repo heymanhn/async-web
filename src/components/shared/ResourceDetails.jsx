@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Pluralize from 'pluralize';
-import moment from 'moment';
+import Moment from 'react-moment';
 import styled from '@emotion/styled';
 
 import { isResourceUnread, titleize } from 'utils/helpers';
@@ -27,7 +27,7 @@ const Tag = styled.span(({ isUnread, theme: { colors } }) => ({
   color: isUnread ? colors.blue : colors.grey2,
 }));
 
-const Timestamp = styled.div({
+const Timestamp = styled(Moment)({
   cursor: 'default',
   fontSize: '13px',
   letterSpacing: '-0.0025em',
@@ -56,7 +56,9 @@ const ResourceDetails = ({ type, resource, names, ...props }) => {
       <NameList names={names} />
       {separator}
       <span>
-        <Timestamp>{moment(updatedAt, 'X').fromNow()}</Timestamp>
+        <Timestamp fromNow parse="X">
+          {updatedAt}
+        </Timestamp>
       </span>
     </Container>
   );

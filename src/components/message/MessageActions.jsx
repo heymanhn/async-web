@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useSlate } from 'slate-react';
-import moment from 'moment';
+import Moment from 'react-moment';
 import styled from '@emotion/styled';
 
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
@@ -62,7 +62,7 @@ const DraftSavedLabel = styled.div(({ theme: { colors } }) => ({
   fontWeight: 600,
 }));
 
-const Timestamp = styled.div({
+const Timestamp = styled(Moment)({
   fontWeight: 400,
   marginLeft: '4px',
 });
@@ -114,8 +114,8 @@ const MessageActions = ({ handleSubmit }) => {
         <Section>
           <DraftSavedLabel>
             Draft saved
-            <Timestamp>
-              {moment(draft.updatedAt * 1000, 'X').fromNow()}
+            <Timestamp fromNow parse="X">
+              {draft.updatedAt}
             </Timestamp>
           </DraftSavedLabel>
           <CancelButton onClick={handleDiscardWrapper}>Discard</CancelButton>

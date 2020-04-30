@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Pluralize from 'pluralize';
-import moment from 'moment';
+import Moment from 'react-moment';
 import styled from '@emotion/styled';
 
 import useHover from 'hooks/shared/useHover';
@@ -83,7 +83,7 @@ const TimestampContainer = styled.div({
   alignItems: 'center',
 });
 
-const Timestamp = styled.span(({ theme: { colors } }) => ({
+const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
   color: colors.grey2,
   cursor: 'default',
   fontSize: '13px',
@@ -117,8 +117,8 @@ const ResourceRow = ({ item, ...props }) => {
             </Title>
             <TimestampContainer>
               {isUnread && <StyledIndicator diameter={6} />}
-              <Timestamp>
-                {titleize(moment(updatedAt, 'X').fromNow())}
+              <Timestamp fromNow parse="X" filter={t => titleize(t)}>
+                {updatedAt}
               </Timestamp>
             </TimestampContainer>
           </ItemDetails>
