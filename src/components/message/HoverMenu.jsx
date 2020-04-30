@@ -75,15 +75,17 @@ const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
           </ButtonContainer>
         </>
       )}
-      <VerticalDivider />
       {isAuthor && (
-        <ButtonContainer onClick={showDropdown}>
-          <MenuIcon>•••</MenuIcon>
-          <MessageDropdown
-            handleCloseDropdown={closeDropdown}
-            isOpen={isDropdownOpen}
-          />
-        </ButtonContainer>
+        <>
+          <VerticalDivider />
+          <ButtonContainer onClick={showDropdown}>
+            <MenuIcon>•••</MenuIcon>
+            <MessageDropdown
+              handleCloseDropdown={closeDropdown}
+              isOpen={isDropdownOpen}
+            />
+          </ButtonContainer>
+        </>
       )}
     </Container>
   );
