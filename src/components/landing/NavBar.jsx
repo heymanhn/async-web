@@ -51,7 +51,7 @@ const NavBar = () => {
     <Container>
       <LogoContainer>
         <Logo src={logo} />
-        <Title>Roval</Title>
+        <Title>Candor</Title>
       </LogoContainer>
       <SignInLink to="/login">Sign in</SignInLink>
     </Container>

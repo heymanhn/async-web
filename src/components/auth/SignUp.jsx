@@ -121,7 +121,7 @@ const SignUp = ({ inviteCode }) => {
   if (isLoggedIn || !inviteCode) return <Redirect to="/" noThrow />;
 
   return (
-    <OnboardingContainer title="Welcome to Roval!">
+    <OnboardingContainer title="Welcome to Candor!">
       <Description>Create an account to get started.</Description>
       <FieldsContainer>
         <Label htmlFor="name">NAME</Label>

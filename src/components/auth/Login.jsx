@@ -119,8 +119,10 @@ const Login = () => {
       </FieldsContainer>
       <StyledButton onClick={createSession} title="Sign in" />
       <RequestAccessMessage>
-        Need to get your team on Roval?
-        <RequestAccessButton onClick={() => navigate('mailto:info@roval.co')}>
+        Need to get your team on Candor?
+        <RequestAccessButton
+          onClick={() => navigate('mailto:info@oncandor.com')}
+        >
           Request early access
         </RequestAccessButton>
       </RequestAccessMessage>

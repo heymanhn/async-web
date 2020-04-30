@@ -20,17 +20,18 @@ const moduleList = [
   {
     type: HEADLINE,
     content: {
-      title: 'Discuss ideas and build knowledge together',
+      title: 'Asynchronous workspace for team communication',
       description:
-        'Write, discuss, and share knowledge at scale – all in one tool',
+        'Candor is a distraction-free space to streamline discussions and knowledge sharing in teams and projects.',
     },
   },
   {
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      title: 'Write, discuss, and build knowledge in one place',
-      description: 'With one tool, everyone sees the whole picture.',
+      title: 'Built for all types of team communication',
+      description:
+        'Documents, Discussions, and Threads – designed from the ground up. With one tool, everyone sees the whole picture.',
       image: writeDiscuss,
     },
   },
@@ -39,7 +40,7 @@ const moduleList = [
     side: 'left',
     content: {
       icon: 'comments-alt',
-      title: 'Stay focus, Stay connected',
+      title: 'A distraction-free workplace',
       description:
         'No pressure to be always online. Follow a discussion from start to finish without missing a beat.',
       image: contributeAsync,
@@ -62,7 +63,7 @@ const moduleList = [
           icon: 'arrow-circle-right',
           title: 'Reminders & Notifications',
           description:
-            'Roval does not demand your immediate attention. Yet, it gently reminds everyone to move the work forward.',
+            'Candor does not demand your immediate attention. Yet, it gently reminds everyone to move the work forward.',
           lineBreak: true,
         },
       ],
@@ -112,7 +113,7 @@ const moduleList = [
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      title: 'Create a workspace for every team & project',
+      title: 'Create a workspace for every team or project',
       description:
         "Get organized with workspaces: documents, discussions, or files. With workspaces, the right people don't get left out and information stays at one place.",
       image: workspace,
@@ -121,7 +122,7 @@ const moduleList = [
   {
     type: REASONS,
     content: {
-      title: 'Why teams switch to Roval?',
+      title: 'Why teams switch to Candor?',
       reasons: [
         {
           icon: ['fal', 'arrow-circle-right'],
@@ -131,7 +132,7 @@ const moduleList = [
         {
           icon: ['fal', 'comments-alt'],
           title: 'Conversational',
-          description: 'All your decisions and discussions, in one place',
+          description: 'Ask questions, share knowledge, or discuss ideas',
         },
         {
           icon: ['fal', 'font-case'],
@@ -146,13 +147,12 @@ const moduleList = [
         {
           icon: ['fal', 'comment-lines'],
           title: 'Threaded',
-          description:
-            'Discussions are organized into threads that stay on topic',
+          description: 'Threads keep conversations organized and on-topic',
         },
         {
           icon: ['fal', 'file-search'],
           title: 'Transparent',
-          description: 'All discussions and decisions are self-documented',
+          description: 'Escape email & app silos with searchable discussions',
         },
       ],
     },
@@ -163,7 +163,7 @@ const moduleList = [
     content: {
       title: 'Ready to give it a spin?',
       description:
-        'Roval is in private beta right now. Sign up for early access.',
+        'Candor is in private beta right now. Sign up for early access.',
     },
   },
 ];
