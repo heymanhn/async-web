@@ -26,8 +26,10 @@ const ButtonContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
 
-  color: colors.grey4,
+  color: colors.grey3,
   padding: '0px 10px',
+  position: 'relative',
+  height: '100%',
 
   ':hover': {
     color: colors.grey3,

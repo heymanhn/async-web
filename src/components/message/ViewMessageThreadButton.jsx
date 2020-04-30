@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
+const OuterContainer = styled.div({
+  display: 'flex',
+});
+
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
@@ -14,15 +18,19 @@ const Container = styled.div(({ theme: { colors } }) => ({
   color: colors.grey1,
   height: '30px',
   cursor: 'pointer',
+  marginBottom: '20px',
   padding: '0 15px',
-  width: '145px',
+
+  ':hover': {
+    background: colors.white,
+  },
 }));
 
 const Label = styled.div({
   fontSize: '13px',
   fontWeight: 500,
   letterSpacing: '-0.0025em',
-  margin: '0 10px',
+  marginLeft: '10px',
   marginTop: '-2px',
 });
 
@@ -33,10 +41,12 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 
 const ViewMessageThreadButton = ({ threadId, handleShowThread }) => {
   return (
-    <Container onClick={() => handleShowThread({ threadId })}>
-      <StyledIcon icon={['fas', 'comment-lines']} />
-      <Label>View replies</Label>
-    </Container>
+    <OuterContainer>
+      <Container onClick={() => handleShowThread({ threadId })}>
+        <StyledIcon icon={['fas', 'comment-lines']} />
+        <Label>View replies</Label>
+      </Container>
+    </OuterContainer>
   );
 };
 

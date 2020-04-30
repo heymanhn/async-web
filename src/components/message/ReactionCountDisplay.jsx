@@ -10,18 +10,17 @@ const Container = styled.div(({ isActive, theme: { colors } }) => ({
   background: isActive ? colors.hoverBlue : 'none',
   cursor: 'pointer',
   padding: '0 15px',
-  height: '36px',
+  height: '32px',
 }));
 
 const Icon = styled.div({
-  fontSize: '18px',
+  fontSize: '16px',
   marginRight: '8px',
 });
 
 const ReactionCount = styled.div(({ isActive, theme: { colors } }) => ({
   color: isActive ? colors.blue : colors.grey3,
   fontSize: '14px',
-  letterSpacing: '-0.006em',
   fontWeight: 500,
 }));
 

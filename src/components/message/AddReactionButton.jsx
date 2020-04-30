@@ -14,11 +14,7 @@ const Container = styled.div({
 const ButtonContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   alignItems: 'center',
-  color: colors.grey4,
-
-  ':hover': {
-    color: colors.grey3,
-  },
+  color: colors.grey3,
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)({

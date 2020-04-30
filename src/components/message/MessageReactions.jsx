@@ -7,7 +7,7 @@ import { matchCurrentUserId } from 'utils/auth';
 import AddReactionButton from './AddReactionButton';
 import ReactionCountDisplay from './ReactionCountDisplay';
 
-const defaultHeight = '36px';
+const defaultHeight = '32px';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -16,6 +16,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
 
   color: colors.grey3,
   minHeight: defaultHeight,
+  marginBottom: '20px',
 }));
 
 const InnerContainer = styled.div(({ theme: { colors } }) => ({

@@ -8,22 +8,19 @@ import useClickOutside from 'hooks/shared/useClickOutside';
 import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
 import useMessageMutations from 'hooks/message/useMessageMutations';
 import { MessageContext, ThreadContext } from 'utils/contexts';
-import { titleize } from 'utils/helpers';
 
-const Container = styled.div(
-  ({ isOpen, isFirstMessage, theme: { colors } }) => ({
-    display: isOpen ? 'block' : 'none',
-    background: colors.white,
-    border: `1px solid ${colors.borderGrey}`,
-    borderRadius: '5px',
-    boxShadow: `0px 0px 8px ${colors.borderGrey}`,
-    position: 'absolute',
-    right: '-1px',
-    top: '-1px',
-    zIndex: 100,
-    width: isFirstMessage ? '180px' : 'auto',
-  })
-);
+const Container = styled.div(({ isOpen, theme: { colors } }) => ({
+  display: isOpen ? 'block' : 'none',
+  background: colors.white,
+  border: `1px solid ${colors.borderGrey}`,
+  borderRadius: '5px',
+  boxShadow: `0px 0px 8px ${colors.borderGrey}`,
+  position: 'absolute',
+  right: '-1px',
+  top: '-1px',
+  zIndex: 100,
+  width: 'max-content',
+}));
 
 const DropdownOption = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -46,20 +43,19 @@ const DropdownOption = styled.div(({ theme: { colors } }) => ({
 }));
 
 const IconContainer = styled.div({
-  width: '18px',
+  minWidth: '20px',
 });
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey4,
-  fontSize: '16px',
-  width: '18px', // Setting this for now...
+  color: colors.grey1,
+  fontSize: '14px',
 }));
 
 const OptionName = styled.div(({ theme: { colors } }) => ({
-  color: colors.mainText,
+  flexShrink: 0,
+  color: colors.grey1,
   fontSize: '14px',
-  letterSpacing: '-0.006em',
-  marginLeft: '12px',
+  marginLeft: '10px',
   position: 'relative',
   top: '1px',
 }));
@@ -117,14 +113,14 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
         <IconContainer>
           <StyledIcon icon="edit" />
         </IconContainer>
-        <OptionName>Edit</OptionName>
+        <OptionName>Edit message</OptionName>
       </DropdownOption>
       <DropdownOption onClick={handleDeleteWrapper}>
         <IconContainer>
           <StyledIcon icon="trash" />
         </IconContainer>
         <OptionName>
-          {isFirstMessage ? `Delete ${titleize(parentResourceType)}` : 'Delete'}
+          {isFirstMessage ? `Delete ${parentResourceType}` : 'Delete message'}
         </OptionName>
       </DropdownOption>
     </Container>
