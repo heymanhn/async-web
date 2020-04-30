@@ -113,7 +113,7 @@ const moduleList = [
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      title: 'Create a workspace for every team & project',
+      title: 'Create a workspace for every team or project',
       description:
         "Get organized with workspaces: documents, discussions, or files. With workspaces, the right people don't get left out and information stays at one place.",
       image: workspace,
@@ -132,8 +132,7 @@ const moduleList = [
         {
           icon: ['fal', 'comments-alt'],
           title: 'Conversational',
-          description:
-            'Short or long-form, all inputs are first-class by design',
+          description: 'Ask questions, share knowledge, or discuss ideas',
         },
         {
           icon: ['fal', 'font-case'],
