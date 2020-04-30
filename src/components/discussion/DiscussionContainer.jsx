@@ -91,10 +91,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
         <ContentContainer ref={discussionRef}>
           {!!messageCount && <TitleEditor initialTitle={title} />}
           {!!messageCount && (
-            <DiscussionMessages
-              isUnread={isResourceUnread(tags)}
-              isComposingFirstMsg={!messageCount}
-            />
+            <DiscussionMessages isUnread={isResourceUnread(tags)} />
           )}
           <div ref={bottomRef} />
           <MessageComposer

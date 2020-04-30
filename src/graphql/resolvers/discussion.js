@@ -56,7 +56,7 @@ const addNewMessageToDiscussionMessages = (
   // Avoid inserting duplicate entries in the cache. This could happen if the
   // queries have already been fetched before the cache update.
   const { id } = message;
-  const safeItems = items || [];
+  let safeItems = items || [];
   if (safeItems.find(i => i.message.id === id)) return null;
 
   const newMessageItem = {
@@ -80,13 +80,22 @@ const addNewMessageToDiscussionMessages = (
     },
   };
 
+  // If isUnread is false, this means the current user posted a new message, and
+  // we should mark all existing messages as read.
+  if (!isUnread) {
+    safeItems = safeItems.map(item => {
+      const { message: msg } = item;
+      return { ...item, message: { ...msg, tags: null } };
+    });
+  }
+
   client.writeQuery({
     query: discussionMessagesQuery,
     variables: { discussionId, queryParams: {} },
     data: {
       messages: {
         pageToken,
-        items: [...(items || []), newMessageItem],
+        items: [...safeItems, newMessageItem],
         __typename,
       },
     },

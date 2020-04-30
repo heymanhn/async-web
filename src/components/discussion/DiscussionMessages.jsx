@@ -21,7 +21,7 @@ const Container = styled.div({
   justifyContent: 'center',
 });
 
-const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
+const DiscussionMessages = ({ isUnread, ...props }) => {
   const discussionRef = useRef(null);
   const dividerRef = useRef(null);
   const { discussionId, bottomRef } = useContext(DiscussionContext);
@@ -37,9 +37,7 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
     variables: { discussionId, queryParams: {} },
   });
 
-  // Workaround to make sure two copies of the first message aren't rendered
-  // on the modal at the same time
-  if (loading || isComposingFirstMsg) return null;
+  if (loading) return null;
   if (!data) return <NotFound />;
 
   const { items } = data;
@@ -70,7 +68,6 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
 };
 
 DiscussionMessages.propTypes = {
-  isComposingFirstMsg: PropTypes.bool.isRequired,
   isUnread: PropTypes.bool.isRequired,
 };
 
