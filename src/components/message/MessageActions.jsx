@@ -114,10 +114,8 @@ const MessageActions = ({ handleSubmit }) => {
       {draft && (
         <Section>
           <DraftSavedLabel>
-            Draft saved
-            <Timestamp fromNow parse="X">
-              {draft.updatedAt}
-            </Timestamp>
+            <span>Draft saved</span>
+            <Timestamp>{moment(draft.updatedAt, 'X').fromNow()}</Timestamp>
           </DraftSavedLabel>
           <CancelButton onClick={handleDiscardWrapper}>Discard</CancelButton>
         </Section>
