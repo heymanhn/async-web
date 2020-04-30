@@ -1,7 +1,3 @@
-/*
- * TODO: Figure out how much this component can be DRY'ed up with
- * <ThreadMessages />
- */
 import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { navigate } from '@reach/router';
@@ -13,12 +9,13 @@ import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import usePendingMessages from 'hooks/resources/usePendingMessages';
 import { DiscussionContext } from 'utils/contexts';
+import { firstNewMessageId } from 'utils/helpers';
 
 import NotFound from 'components/navigation/NotFound';
 import Message from 'components/message/Message';
 
-import NewMessagesDivider from './NewMessagesDivider';
-import NewMessagesIndicator from './NewMessagesIndicator';
+import NewMessagesDivider from 'components/shared/NewMessagesDivider';
+import NewMessagesIndicator from 'components/shared/NewMessagesIndicator';
 
 const Container = styled.div({
   display: 'flex',
@@ -56,14 +53,6 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
     markAsRead();
   };
 
-  const firstNewMessageId = () => {
-    const targetMessage = messages.find(
-      m => m.tags && m.tags.includes('new_message')
-    );
-
-    return targetMessage ? targetMessage.id : null;
-  };
-
   return (
     <Container ref={discussionRef} {...props}>
       {!!pendingMessages.length && (
@@ -74,7 +63,7 @@ const DiscussionMessages = ({ isComposingFirstMsg, isUnread, ...props }) => {
       )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
-          {firstNewMessageId() === m.id && m.id !== messages[0].id && (
+          {firstNewMessageId(messages) === m.id && m.id !== messages[0].id && (
             <NewMessagesDivider />
           )}
           <Message

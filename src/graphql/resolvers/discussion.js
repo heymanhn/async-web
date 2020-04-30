@@ -131,46 +131,6 @@ const addNewPendingMessage = (_root, { message }, { client }) => {
   return null;
 };
 
-const addPendingMessagesToDiscussion = (
-  _root,
-  { discussionId },
-  { client }
-) => {
-  const { pendingMessages } = client.readQuery({ query: localStateQuery });
-
-  const data = client.readQuery({
-    query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
-  });
-  if (!data) return null;
-
-  const {
-    messages: { pageToken, items, __typename, messageCount },
-  } = data;
-
-  const pendingMessageItems = pendingMessages.map(m => ({
-    __typename: items[0].__typename,
-    message: m,
-  }));
-
-  client.writeQuery({
-    query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
-    data: {
-      messages: {
-        messageCount: messageCount + pendingMessageItems.length,
-        pageToken,
-        items: [...items, ...pendingMessageItems],
-        __typename,
-      },
-    },
-  });
-
-  client.writeData({ data: { pendingMessages: [] } });
-
-  return null;
-};
-
 const deleteMessageFromDiscussion = (
   _root,
   { discussionId, messageId },
@@ -205,6 +165,5 @@ export default {
   deleteDraftFromDiscussion,
   addNewMessageToDiscussionMessages,
   addNewPendingMessage,
-  addPendingMessagesToDiscussion,
   deleteMessageFromDiscussion,
 };
