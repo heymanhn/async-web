@@ -20,7 +20,7 @@ const moduleList = [
   {
     type: HEADLINE,
     content: {
-      title: 'Thoughtful discussions for distributed teams',
+      title: 'Asynchronous workspace for team communication',
       description:
         'Candor is a distraction-free space to streamline discussions and knowledge sharing in teams and projects.',
     },
