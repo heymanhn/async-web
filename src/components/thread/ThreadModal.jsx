@@ -1,13 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
-// import { navigate } from '@reach/router';
+import { navigate } from '@reach/router';
+import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
-// import { track } from 'utils/analytics';
+import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
+import useMountEffect from 'hooks/shared/useMountEffect';
+import { track } from 'utils/analytics';
 import { DEFAULT_THREAD_CONTEXT, ThreadContext } from 'utils/contexts';
-// import useMountEffect from 'hooks/shared/useMountEffect';
 import { isResourceUnread } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
@@ -25,8 +27,6 @@ const StyledTopicComposer = styled(TopicComposer)({
   borderTopRightRadius: '5px',
 });
 
-// Render the 3px top border differently, since the box shadow trick
-// won't work here
 const StyledMessageComposer = styled(MessageComposer)({
   position: 'unset',
   overflow: 'initial',
@@ -46,29 +46,26 @@ const ThreadModal = ({
   // Hides the message composer if the user is an editing a message
   const [hideComposer, setHideComposer] = useState(false);
 
-  // TODO (DISCUSSION V2): Clean this up
-  // useMountEffect(() => {
-  //   track('Discussion viewed', { discussionId: modalDiscussionId, documentId });
-  // });
+  // A thread's parent is either a document or a discussion
+  const { resourceId, resourceType } = useDisambiguatedResource();
 
-  // TODO (DISCUSSION V2): Support proper URLs later
-  // useEffect(() => {
-  //   const { origin } = window.location;
-  //   const baseUrl = `${origin}/documents/${documentId}`;
-  //   const setUrl = () => {
-  //     const url = `${baseUrl}/discussions/${modalDiscussionId}`;
-  //     return window.history.replaceState(
-  //       {},
-  //       `discussion: ${modalDiscussionId}`,
-  //       url
-  //     );
-  //   };
-  //   if (modalDiscussionId) setUrl();
+  useEffect(() => {
+    const { origin } = window.location;
+    const baseUrl = `${origin}/${Pluralize(resourceType)}/${resourceId}`;
+    const setUrl = () => {
+      const url = `${baseUrl}/threads/${threadId}`;
+      return window.history.replaceState({}, `thread: ${threadId}`, url);
+    };
+    if (threadId) setUrl();
 
-  //   // Triggering a navigation so that the discussionId prop can be reset in
-  //   // the parent <DocumentContainer /> component.
-  //   return () => navigate(baseUrl);
-  // }, [documentId, discussionId, modalDiscussionId]);
+    // Triggering a navigation so that the discussionId prop can be reset in
+    // the parent <DocumentContainer /> component.
+    return () => navigate(baseUrl);
+  }, [threadId, resourceType, resourceId]);
+
+  useMountEffect(() => {
+    track('Thread viewed', { threadId });
+  });
 
   const { data } = useQuery(discussionQuery, {
     variables: { discussionId: threadId },
@@ -103,15 +100,6 @@ const ThreadModal = ({
     afterDeleteThread,
     setHideComposer,
   };
-
-  /* Three conditions when ready to show the composer:
-   * 1. Inline discussion and the context has been created. This ensures the
-   *    composer is in focus when it's rendered.
-   * 2. General discussion. There won't be a topic to create context for.
-   * 3. Subsequent messages to a discussion. Also won't be a topic present.
-   */
-  // const readyToCompose = isComposing && (!initialTopic || topic);
-  // const isComposingFirstMsg = isComposing && !messageCount;
 
   return (
     <StyledModal
