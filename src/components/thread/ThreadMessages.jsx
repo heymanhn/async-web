@@ -21,6 +21,10 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   maxWidth: discussionViewport,
 }));
 
+const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
+  top: '75px', // 60px top margin for the modal + 15px buffer
+});
+
 const ThreadMessages = ({ isUnread, ...props }) => {
   const threadRef = useRef(null);
   const dividerRef = useRef(null);
@@ -51,7 +55,7 @@ const ThreadMessages = ({ isUnread, ...props }) => {
 
   return (
     <Container ref={threadRef} {...props}>
-      <NewMessagesIndicator
+      <StyledNewMessagesIndicator
         bottomRef={bottomRef}
         composerRef={composerRef}
         dividerRef={dividerRef}

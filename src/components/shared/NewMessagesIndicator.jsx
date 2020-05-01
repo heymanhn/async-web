@@ -16,7 +16,6 @@ const Container = styled.div(({ isVisible, theme: { colors } }) => ({
   alignSelf: 'center',
 
   background: colors.grey1,
-  border: `1px solid ${colors.borderGrey}`,
   borderRadius: '5px',
   boxShadow: '0px 0px 8px rgba(0,0,0,0.1)',
   color: colors.white,
@@ -28,7 +27,6 @@ const Container = styled.div(({ isVisible, theme: { colors } }) => ({
   opacity: isVisible ? 1 : 0,
   padding: '0 10px',
   position: 'fixed',
-  top: '46px', // vertically align to bottom of the nav bar (60px)
   transition: 'opacity 0.2s',
   zIndex: 1,
 }));

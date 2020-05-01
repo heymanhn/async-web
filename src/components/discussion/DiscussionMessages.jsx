@@ -21,6 +21,10 @@ const Container = styled.div({
   justifyContent: 'center',
 });
 
+const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
+  top: '46px', // vertically align to bottom of the nav bar (60px)
+});
+
 const DiscussionMessages = ({ isUnread, ...props }) => {
   const discussionRef = useRef(null);
   const dividerRef = useRef(null);
@@ -47,7 +51,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
 
   return (
     <Container ref={discussionRef} {...props}>
-      <NewMessagesIndicator
+      <StyledNewMessagesIndicator
         bottomRef={bottomRef}
         composerRef={composerRef}
         dividerRef={dividerRef}
