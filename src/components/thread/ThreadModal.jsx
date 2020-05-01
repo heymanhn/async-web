@@ -20,6 +20,9 @@ import TopicComposer from './TopicComposer';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
+  margin: '60px auto',
+  maxHeight: 'calc(100vh - 120px)', // 60px vertical margin x2
+  overflow: 'auto',
 });
 
 const StyledTopicComposer = styled(TopicComposer)({
@@ -28,8 +31,6 @@ const StyledTopicComposer = styled(TopicComposer)({
 });
 
 const StyledMessageComposer = styled(MessageComposer)({
-  position: 'unset',
-  overflow: 'initial',
   borderBottomLeftRadius: '5px',
   borderBottomRightRadius: '5px',
 });
@@ -43,6 +44,7 @@ const ThreadModal = ({
 }) => {
   const modalRef = useRef(null);
   const bottomRef = useRef(null);
+  const composerRef = useRef(null);
 
   // Hides the message composer if the user is an editing a message
   const [hideComposer, setHideComposer] = useState(false);
@@ -98,6 +100,7 @@ const ThreadModal = ({
     topic,
     modalRef,
     bottomRef,
+    composerRef,
     hideComposer,
     afterDeleteThread,
     setHideComposer,
@@ -115,6 +118,7 @@ const ThreadModal = ({
         <ThreadMessages isUnread={isResourceUnread(tags)} />
         <div ref={bottomRef} />
         <StyledMessageComposer
+          ref={composerRef}
           parentType="thread"
           parentId={threadId}
           draft={draft}

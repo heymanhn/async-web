@@ -24,7 +24,9 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
 const ThreadMessages = ({ isUnread, ...props }) => {
   const threadRef = useRef(null);
   const dividerRef = useRef(null);
-  const { threadId, modalRef, bottomRef } = useContext(ThreadContext);
+  const { threadId, modalRef, bottomRef, composerRef } = useContext(
+    ThreadContext
+  );
   const markAsRead = useMarkResourceAsRead();
 
   useMountEffect(() => {
@@ -51,6 +53,7 @@ const ThreadMessages = ({ isUnread, ...props }) => {
     <Container ref={threadRef} {...props}>
       <NewMessagesIndicator
         bottomRef={bottomRef}
+        composerRef={composerRef}
         dividerRef={dividerRef}
         afterClick={markAsRead}
       />
