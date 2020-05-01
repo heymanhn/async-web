@@ -21,6 +21,9 @@ import TopicComposer from './TopicComposer';
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
   margin: '60px auto',
+});
+
+const Container = styled.div({
   maxHeight: 'calc(100vh - 120px)', // 60px vertical margin x2
   overflow: 'auto',
 });
@@ -107,24 +110,21 @@ const ThreadModal = ({
   };
 
   return (
-    <StyledModal
-      ref={modalRef}
-      handleClose={handleClose}
-      isOpen={!!threadId}
-      {...props}
-    >
+    <StyledModal handleClose={handleClose} isOpen={!!threadId} {...props}>
       <ThreadContext.Provider value={value}>
-        {(initialTopic || topic) && <StyledTopicComposer />}
-        <ThreadMessages isUnread={isResourceUnread(tags)} />
-        <div ref={bottomRef} />
-        <StyledMessageComposer
-          ref={composerRef}
-          parentType="thread"
-          parentId={threadId}
-          draft={draft}
-          messageCount={messageCount}
-          afterCreateMessage={afterCreateMessage}
-        />
+        <Container ref={modalRef}>
+          {(initialTopic || topic) && <StyledTopicComposer />}
+          <ThreadMessages isUnread={isResourceUnread(tags)} />
+          <div ref={bottomRef} />
+          <StyledMessageComposer
+            ref={composerRef}
+            parentType="thread"
+            parentId={threadId}
+            draft={draft}
+            messageCount={messageCount}
+            afterCreateMessage={afterCreateMessage}
+          />
+        </Container>
       </ThreadContext.Provider>
     </StyledModal>
   );

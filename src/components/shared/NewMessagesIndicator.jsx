@@ -27,7 +27,7 @@ const Container = styled.div(({ isVisible, theme: { colors } }) => ({
   opacity: isVisible ? 1 : 0,
   padding: '0 10px',
   position: 'fixed',
-  transition: 'opacity 0.2s',
+  transition: 'opacity 0.1s',
   zIndex: 1,
 }));
 
