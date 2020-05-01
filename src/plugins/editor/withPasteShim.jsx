@@ -1,5 +1,3 @@
-// Slate isn't pasting plaintext with new lines propertly.
-// We need this patch until that is addressed.
 import { Transforms } from 'slate';
 
 import { CODE_BLOCK } from 'utils/editor/constants';
