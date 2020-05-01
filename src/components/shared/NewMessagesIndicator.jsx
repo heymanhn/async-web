@@ -100,6 +100,7 @@ const NewMessagesIndicator = ({
 
   const handleClearPendingMessages = event => {
     event.stopPropagation();
+    setIsVisible(false);
     client.writeData({ data: { pendingMessages: [] } });
   };
 
