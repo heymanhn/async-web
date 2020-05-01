@@ -64,7 +64,10 @@ const NewMessagesIndicator = ({
   const pendingMessages = usePendingMessages();
 
   const checkShowIndicator = () => {
-    if (!pendingMessages.length) return;
+    if (!pendingMessages.length) {
+      if (isVisible) setIsVisible(false);
+      return;
+    }
 
     const { current: divider } = dividerRef;
     if (!divider) return;
