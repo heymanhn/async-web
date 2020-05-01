@@ -1,21 +1,16 @@
-/*
- * TODO: Figure out how much this component can be DRY'ed up with
- * <DiscussionMessages />
- */
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { useApolloClient, useQuery, useMutation } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
-import localStateQuery from 'graphql/queries/localState';
-import localAddPendingMessages from 'graphql/mutations/local/addPendingMessagesToDiscussion';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import { ThreadContext } from 'utils/contexts';
+import { firstNewMessageId } from 'utils/helpers';
 
-import NewMessagesIndicator from 'components/discussion/NewMessagesIndicator';
+import NewMessagesDivider from 'components/shared/NewMessagesDivider';
+import NewMessagesIndicator from 'components/shared/NewMessagesIndicator';
 import Message from 'components/message/Message';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
@@ -26,24 +21,24 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   maxWidth: discussionViewport,
 }));
 
+const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
+  top: '75px', // 60px top margin for the modal + 15px buffer
+});
+
 const ThreadMessages = ({ isUnread, ...props }) => {
-  const client = useApolloClient();
-  const discussionRef = useRef(null);
-  const { threadId, modalRef } = useContext(ThreadContext);
-  const [pendingMessageCount, setPendingMessageCount] = useState(0);
-  const [addPendingMessages] = useMutation(localAddPendingMessages, {
-    variables: { discussionId: threadId },
-  });
+  const threadRef = useRef(null);
+  const dividerRef = useRef(null);
+  const { threadId, modalRef, bottomRef, composerRef } = useContext(
+    ThreadContext
+  );
   const markAsRead = useMarkResourceAsRead();
 
   useMountEffect(() => {
-    client.writeData({ data: { pendingMessages: [] } });
     if (isUnread) markAsRead();
   });
 
-  const { data: localData } = useQuery(localStateQuery);
   const { loading, data } = usePaginatedResource(
-    discussionRef,
+    threadRef,
     {
       query: discussionMessagesQuery,
       key: 'messages',
@@ -58,28 +53,19 @@ const ThreadMessages = ({ isUnread, ...props }) => {
   const { items } = data;
   const messages = (items || []).map(i => i.message);
 
-  if (localData) {
-    const { pendingMessages } = localData;
-    if (pendingMessages && pendingMessages.length !== pendingMessageCount) {
-      setPendingMessageCount(pendingMessages.length);
-    }
-  }
-
-  const handleAddPendingMessages = () => {
-    addPendingMessages();
-    markAsRead();
-  };
-
   return (
-    <Container ref={discussionRef} {...props}>
-      {pendingMessageCount > 0 && (
-        <NewMessagesIndicator
-          count={pendingMessageCount}
-          onClick={handleAddPendingMessages}
-        />
-      )}
+    <Container ref={threadRef} {...props}>
+      <StyledNewMessagesIndicator
+        bottomRef={bottomRef}
+        composerRef={composerRef}
+        dividerRef={dividerRef}
+        afterClick={markAsRead}
+      />
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
+          {firstNewMessageId(messages) === m.id && m.id !== messages[0].id && (
+            <NewMessagesDivider ref={dividerRef} />
+          )}
           <Message
             index={i}
             message={m}

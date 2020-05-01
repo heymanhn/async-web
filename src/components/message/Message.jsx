@@ -139,7 +139,13 @@ const Message = ({
   };
 
   return (
-    <Container hover={hover} mode={mode} {...hoverProps} {...props}>
+    <Container
+      id={messageId}
+      hover={hover}
+      mode={mode}
+      {...hoverProps}
+      {...props}
+    >
       {mode === 'edit' && <Divider />}
       <MessageContext.Provider value={value}>
         <InnerContainer mode={mode}>

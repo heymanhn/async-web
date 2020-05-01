@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 
-import { snakedQueryParams } from 'utils/queryParams';
+import { DEBOUNCE_INTERVAL } from 'utils/constants';
 import { debounce } from 'utils/helpers';
+import { snakedQueryParams } from 'utils/queryParams';
 
-const DEBOUNCE_INTERVAL = 500;
 const DISTANCE_FROM_BOTTOM = 200;
 
 /*

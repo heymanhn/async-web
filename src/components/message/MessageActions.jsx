@@ -57,6 +57,7 @@ const SubmitLabel = styled.div(({ theme: { colors } }) => ({
 }));
 
 const DraftSavedLabel = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
   color: colors.grey4,
   fontSize: '12px',
   fontWeight: 600,
@@ -113,7 +114,7 @@ const MessageActions = ({ handleSubmit }) => {
       {draft && (
         <Section>
           <DraftSavedLabel>
-            Draft saved
+            <span>Draft saved</span>
             <Timestamp fromNow parse="X">
               {draft.updatedAt}
             </Timestamp>

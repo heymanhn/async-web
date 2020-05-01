@@ -46,6 +46,8 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   discussionId: null,
   readOnly: false,
   hideComposer: false,
+  bottomRef: {},
+  composerRef: {},
 
   handleShowThread: () => {},
   afterCreateDiscussion: () => {},
@@ -61,6 +63,8 @@ export const DEFAULT_THREAD_CONTEXT = {
   topic: null,
   hideComposer: false,
   modalRef: {},
+  bottomRef: {},
+  composerRef: {},
 
   afterDeleteThread: () => {},
   setHideComposer: () => {},
@@ -80,11 +84,3 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   handleCancel: () => {},
 };
 export const MessageContext = createContext(DEFAULT_MESSAGE_CONTEXT);
-
-// Used for calculating coordinates relative to the current text selection
-// in Editor content.
-export const DEFAULT_SELECTION_CONTEXT = {
-  containerRef: {},
-  scrollRef: {},
-};
-export const SelectionContext = createContext(DEFAULT_SELECTION_CONTEXT);

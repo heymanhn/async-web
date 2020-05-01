@@ -20,6 +20,12 @@ import TopicComposer from './TopicComposer';
 
 const StyledModal = styled(Modal)({
   alignSelf: 'flex-start',
+  margin: '60px auto',
+});
+
+const Container = styled.div({
+  maxHeight: 'calc(100vh - 120px)', // 60px vertical margin x2
+  overflow: 'auto',
 });
 
 const StyledTopicComposer = styled(TopicComposer)({
@@ -28,8 +34,6 @@ const StyledTopicComposer = styled(TopicComposer)({
 });
 
 const StyledMessageComposer = styled(MessageComposer)({
-  position: 'unset',
-  overflow: 'initial',
   borderBottomLeftRadius: '5px',
   borderBottomRightRadius: '5px',
 });
@@ -42,6 +46,8 @@ const ThreadModal = ({
   ...props
 }) => {
   const modalRef = useRef(null);
+  const bottomRef = useRef(null);
+  const composerRef = useRef(null);
 
   // Hides the message composer if the user is an editing a message
   const [hideComposer, setHideComposer] = useState(false);
@@ -96,28 +102,29 @@ const ThreadModal = ({
     initialTopic,
     topic,
     modalRef,
+    bottomRef,
+    composerRef,
     hideComposer,
     afterDeleteThread,
     setHideComposer,
   };
 
   return (
-    <StyledModal
-      ref={modalRef}
-      handleClose={handleClose}
-      isOpen={!!threadId}
-      {...props}
-    >
+    <StyledModal handleClose={handleClose} isOpen={!!threadId} {...props}>
       <ThreadContext.Provider value={value}>
-        {(initialTopic || topic) && <StyledTopicComposer />}
-        <ThreadMessages isUnread={isResourceUnread(tags)} />
-        <StyledMessageComposer
-          parentType="thread"
-          parentId={threadId}
-          draft={draft}
-          messageCount={messageCount}
-          afterCreateMessage={afterCreateMessage}
-        />
+        <Container ref={modalRef}>
+          {(initialTopic || topic) && <StyledTopicComposer />}
+          <ThreadMessages isUnread={isResourceUnread(tags)} />
+          <div ref={bottomRef} />
+          <StyledMessageComposer
+            ref={composerRef}
+            parentType="thread"
+            parentId={threadId}
+            draft={draft}
+            messageCount={messageCount}
+            afterCreateMessage={afterCreateMessage}
+          />
+        </Container>
       </ThreadContext.Provider>
     </StyledModal>
   );

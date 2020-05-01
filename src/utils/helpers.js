@@ -58,6 +58,14 @@ export const isResourceUnread = tags => {
   );
 };
 
+export const firstNewMessageId = messages => {
+  const targetMessage = messages.find(
+    m => m.tags && m.tags.includes('new_message')
+  );
+
+  return targetMessage ? targetMessage.id : null;
+};
+
 export const isResourceReadOnly = tags => {
   return tags.includes('viewer');
 };

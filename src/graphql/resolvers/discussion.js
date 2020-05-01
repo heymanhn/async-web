@@ -34,7 +34,7 @@ const addNewMessageToDiscussionMessages = (
   { isUnread, message },
   { client }
 ) => {
-  const { body: newBody, author: newAuthor, discussionId } = message;
+  const { body: newBody, author: newAuthor, discussionId, threadId } = message;
 
   const data = client.readQuery({
     query: discussionMessagesQuery,
@@ -56,7 +56,7 @@ const addNewMessageToDiscussionMessages = (
   // Avoid inserting duplicate entries in the cache. This could happen if the
   // queries have already been fetched before the cache update.
   const { id } = message;
-  const safeItems = items || [];
+  let safeItems = items || [];
   if (safeItems.find(i => i.message.id === id)) return null;
 
   const newMessageItem = {
@@ -73,8 +73,21 @@ const addNewMessageToDiscussionMessages = (
         ...newBody,
       },
       tags,
+
+      // Need to pass null value if threadId doesn't exist, to satisfy Apollo
+      // fragment shape
+      threadId: threadId || null,
     },
   };
+
+  // If isUnread is false, this means the current user posted a new message, and
+  // we should mark all existing messages as read.
+  if (!isUnread) {
+    safeItems = safeItems.map(item => {
+      const { message: msg } = item;
+      return { ...item, message: { ...msg, tags: null } };
+    });
+  }
 
   client.writeQuery({
     query: discussionMessagesQuery,
@@ -82,7 +95,7 @@ const addNewMessageToDiscussionMessages = (
     data: {
       messages: {
         pageToken,
-        items: [...(items || []), newMessageItem],
+        items: [...safeItems, newMessageItem],
         __typename,
       },
     },
@@ -114,68 +127,15 @@ const addNewPendingMessage = (_root, { message }, { client }) => {
     query: localStateQuery,
   });
 
-  const { author: newAuthor, body: newBody } = message;
-  const newMessage = {
-    __typename: 'Message',
-    ...message,
-    author: {
-      __typename: 'User',
-      ...newAuthor,
-    },
-    body: {
-      __typename: 'Body',
-      ...newBody,
-    },
-    tags: ['new_message'],
-  };
+  const { id: newMessageId } = message;
 
   client.writeQuery({
     query: localStateQuery,
     data: {
       ...localState,
-      pendingMessages: [...pendingMessages, newMessage],
+      pendingMessages: [...pendingMessages, newMessageId],
     },
   });
-
-  return null;
-};
-
-const addPendingMessagesToDiscussion = (
-  _root,
-  { discussionId },
-  { client }
-) => {
-  const { pendingMessages } = client.readQuery({ query: localStateQuery });
-
-  const data = client.readQuery({
-    query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
-  });
-  if (!data) return null;
-
-  const {
-    messages: { pageToken, items, __typename, messageCount },
-  } = data;
-
-  const pendingMessageItems = pendingMessages.map(m => ({
-    __typename: items[0].__typename,
-    message: m,
-  }));
-
-  client.writeQuery({
-    query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
-    data: {
-      messages: {
-        messageCount: messageCount + pendingMessageItems.length,
-        pageToken,
-        items: [...items, ...pendingMessageItems],
-        __typename,
-      },
-    },
-  });
-
-  client.writeData({ data: { pendingMessages: [] } });
 
   return null;
 };
@@ -214,6 +174,5 @@ export default {
   deleteDraftFromDiscussion,
   addNewMessageToDiscussionMessages,
   addNewPendingMessage,
-  addPendingMessagesToDiscussion,
   deleteMessageFromDiscussion,
 };

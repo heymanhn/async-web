@@ -8,21 +8,25 @@
  *   provider component
  * - ThreadContext provided with a reference to the modal component, if
  *   a modal is currently displayed
+ * - DiscussionContext provided with a reference to the composer, if
+ *   a discussion is currently displayed
  */
 import { useContext, useEffect, useState } from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
 import throttle from 'lodash/throttle';
 
 import { THROTTLE_INTERVAL } from 'utils/constants';
-import { SelectionContext, ThreadContext } from 'utils/contexts';
+import { DiscussionContext, ThreadContext } from 'utils/contexts';
 
 import Editor from 'components/editor/Editor';
 
 const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
-  // TODO (DISCUSSION V2): See if we can pass modalRef as containerRef in SelectionContext
   const { modalRef } = useContext(ThreadContext);
 
-  const { containerRef } = useContext(SelectionContext);
+  // We only need to use the reference to the composer in the case of a
+  // discussion page.
+  const { composerRef } = useContext(DiscussionContext);
+
   const [data, setData] = useState({});
   const editor = useSlate();
 
@@ -70,7 +74,7 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
     const { height, width } = rect;
 
     // When a modal is visible, the window isn't scrolled, only the modal component.
-    const { current: container } = containerRef;
+    const { current: container } = composerRef;
     const { current: modal } = modalRef;
     let yOffset = window.pageYOffset;
     let xOffset = window.pageXOffset;

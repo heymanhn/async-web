@@ -34,6 +34,7 @@ import {
   faCommentPlus,
   faFileAlt,
   faHorizontalRule,
+  faLongArrowDown,
   faPlus as faSolidPlus,
   faText,
 } from '@fortawesome/pro-solid-svg-icons';
@@ -79,6 +80,7 @@ export default [
   faListOl,
   faListUl,
   faLock,
+  faLongArrowDown,
   faQuoteRight,
   faRegularCommentLines,
   faRegularPlusCircle,

@@ -40,6 +40,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
+  const composerRef = useRef(null);
   const bottomRef = useRef(null);
   const [forceUpdate, setForceUpdate] = useState(false);
 
@@ -62,7 +63,8 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   });
 
   if (loading || loading2) return <StyledLoadingIndicator color="borderGrey" />;
-  if (!data.discussion || !data2.messages) return <NotFound />;
+  if (!data || !data.discussion || !data2 || !data2.messages)
+    return <NotFound />;
 
   const { title, draft, messageCount } = data.discussion;
   const { tags } = data.discussion;
@@ -75,6 +77,8 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     discussionId,
     readOnly,
     hideComposer,
+    bottomRef,
+    composerRef,
 
     afterDeleteDiscussion: () => navigate('/'),
     setForceUpdate,
@@ -89,19 +93,16 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
         <ContentContainer ref={discussionRef}>
           {!!messageCount && <TitleEditor initialTitle={title} />}
           {!!messageCount && (
-            <DiscussionMessages
-              isUnread={isResourceUnread(tags)}
-              isComposingFirstMsg={!messageCount}
-            />
+            <DiscussionMessages isUnread={isResourceUnread(tags)} />
           )}
           <div ref={bottomRef} />
           <MessageComposer
+            ref={composerRef}
             parentType="discussion"
             parentId={discussionId}
             draft={draft}
             title={title}
             messageCount={messageCount}
-            bottomRef={bottomRef}
           />
         </ContentContainer>
         {threadId && (

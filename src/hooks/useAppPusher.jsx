@@ -3,10 +3,10 @@ import { useApolloClient } from '@apollo/react-hooks';
 import camelcaseKeys from 'camelcase-keys';
 import Pluralize from 'pluralize';
 
-import addNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
+import localAddNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
+import localAddNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
 import localUpdateNotificationMutation from 'graphql/mutations/local/updateNotification';
 import localUpdateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
-import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
 import { getLocalUser } from 'utils/auth';
 
 import {
@@ -73,18 +73,18 @@ const useAppPusher = pusher => {
 
       if (isResourceOpen(discussionId)) {
         client.mutate({
-          mutation: addNewPendingMessage,
+          mutation: localAddNewPendingMessage,
           variables: { message },
         });
-      } else {
-        client.mutate({
-          mutation: addNewMsgMutation,
-          variables: {
-            isUnread: true,
-            message,
-          },
-        });
       }
+
+      client.mutate({
+        mutation: localAddNewMsgMutation,
+        variables: {
+          isUnread: true,
+          message,
+        },
+      });
     };
 
     channel.bind(BADGE_COUNT_EVENT, handleBadgeCount);
