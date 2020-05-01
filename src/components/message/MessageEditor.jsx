@@ -62,7 +62,7 @@ const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
 
   return (
     <Container mode={mode} {...props}>
-      <Slate editor={editor} key={readOnly} {...contentProps}>
+      <Slate editor={editor} {...contentProps}>
         <MessageEditable
           autoFocus={autoFocus}
           readOnly={readOnly}
