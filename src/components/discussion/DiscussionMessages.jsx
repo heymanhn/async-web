@@ -24,7 +24,9 @@ const Container = styled.div({
 const DiscussionMessages = ({ isUnread, ...props }) => {
   const discussionRef = useRef(null);
   const dividerRef = useRef(null);
-  const { discussionId, bottomRef } = useContext(DiscussionContext);
+  const { discussionId, bottomRef, composerRef } = useContext(
+    DiscussionContext
+  );
   const markAsRead = useMarkResourceAsRead();
 
   useMountEffect(() => {
@@ -47,6 +49,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     <Container ref={discussionRef} {...props}>
       <NewMessagesIndicator
         bottomRef={bottomRef}
+        composerRef={composerRef}
         dividerRef={dividerRef}
         afterClick={markAsRead}
       />

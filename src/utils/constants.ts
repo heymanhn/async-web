@@ -69,3 +69,5 @@ export const THROTTLE_INTERVAL = 100;
 
 // Delay for showing DOM toolbar
 export const SHOW_TOOLBAR_DELAY = 200;
+
+export const DEBOUNCE_INTERVAL = 200;

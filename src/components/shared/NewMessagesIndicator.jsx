@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useApolloClient } from '@apollo/react-hooks';
 import Pluralize from 'pluralize';
@@ -6,6 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import usePendingMessages from 'hooks/resources/usePendingMessages';
+import { DEBOUNCE_INTERVAL } from 'utils/constants';
+import { ThreadContext } from 'utils/contexts';
+import { debounce } from 'utils/helpers';
 
 const Container = styled.div(({ isVisible, theme: { colors } }) => ({
   display: 'flex',
@@ -52,12 +55,47 @@ const StyledCloseIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 
 const NewMessagesIndicator = ({
   bottomRef,
+  composerRef,
   dividerRef,
   afterClick,
   ...props
 }) => {
   const client = useApolloClient();
+  const { modalRef } = useContext(ThreadContext);
+  const [isVisible, setIsVisible] = useState(false);
   const pendingMessages = usePendingMessages();
+
+  const checkShowIndicator = () => {
+    if (!pendingMessages.length) return;
+
+    const { current: divider } = dividerRef;
+    if (!divider) return;
+
+    const { current: composer } = composerRef;
+    if (!composer) return;
+
+    // Only show the indicator if the new messages divider is positioned above
+    // the message composer.
+    const { top: dividerYOffset } = divider.getBoundingClientRect();
+    const { top: composerYOffset } = composer.getBoundingClientRect();
+
+    const showIndicator = dividerYOffset > composerYOffset - 10; // Add some buffer
+    if (isVisible !== showIndicator) setIsVisible(showIndicator);
+  };
+
+  useEffect(() => {
+    checkShowIndicator();
+
+    const { current: modal } = modalRef || {};
+    const target = modal || window;
+
+    const debouncedScroll = debounce(checkShowIndicator, DEBOUNCE_INTERVAL);
+    target.addEventListener('scroll', debouncedScroll);
+
+    return () => {
+      target.removeEventListener('scroll', debouncedScroll);
+    };
+  });
 
   const handleClearPendingMessages = event => {
     event.stopPropagation();
@@ -72,25 +110,9 @@ const NewMessagesIndicator = ({
     if (bottomOfPage) bottomOfPage.scrollIntoView();
   };
 
-  const checkShowIndicator = () => {
-    if (!pendingMessages.length) return false;
-
-    const { current: divider } = dividerRef;
-    if (!divider) return false;
-
-    // Only show the indicator if the new messages divider is beneath the
-    // current visible area of the page.
-    const { offsetTop } = divider;
-    return offsetTop >= window.innerHeight;
-  };
-
   const count = pendingMessages.length;
   return (
-    <Container
-      isVisible={checkShowIndicator()}
-      onClick={handleClick}
-      {...props}
-    >
+    <Container isVisible={isVisible} onClick={handleClick} {...props}>
       <StyledArrowIcon icon="long-arrow-down" />
       <Label>{`show ${count} new ${Pluralize('message', count, false)}`}</Label>
       <CloseButton onClick={handleClearPendingMessages}>
@@ -102,12 +124,14 @@ const NewMessagesIndicator = ({
 
 NewMessagesIndicator.propTypes = {
   bottomRef: PropTypes.object,
+  composerRef: PropTypes.object,
   dividerRef: PropTypes.object,
   afterClick: PropTypes.func.isRequired,
 };
 
 NewMessagesIndicator.defaultProps = {
   bottomRef: {},
+  composerRef: {},
   dividerRef: {},
 };
 

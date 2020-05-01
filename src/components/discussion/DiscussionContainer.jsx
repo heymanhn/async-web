@@ -40,6 +40,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
+  const composerRef = useRef(null);
   const bottomRef = useRef(null);
   const [forceUpdate, setForceUpdate] = useState(false);
 
@@ -77,6 +78,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     readOnly,
     hideComposer,
     bottomRef,
+    composerRef,
 
     afterDeleteDiscussion: () => navigate('/'),
     setForceUpdate,
@@ -95,6 +97,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
           )}
           <div ref={bottomRef} />
           <MessageComposer
+            ref={composerRef}
             parentType="discussion"
             parentId={discussionId}
             draft={draft}
