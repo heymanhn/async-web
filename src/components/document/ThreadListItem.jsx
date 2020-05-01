@@ -7,13 +7,13 @@ import styled from '@emotion/styled';
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import localDeleteDiscussionMutation from 'graphql/mutations/local/deleteDiscussionFromDocument';
-import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
+import { ThreadContext, DEFAULT_THREAD_CONTEXT } from 'utils/contexts';
 
 import Message from 'components/message/Message';
 import TopicComposer from 'components/thread/TopicComposer';
 import AvatarList from 'components/shared/AvatarList';
 import NotFound from 'components/navigation/NotFound';
-import DiscussionListItemHeader from './DiscussionListItemHeader';
+import ThreadListItemHeader from './ThreadListItemHeader';
 
 const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
@@ -57,13 +57,13 @@ const StyledMessage = styled(Message)(
   }
 );
 
-const DiscussionListItem = ({ discussionId }) => {
+const ThreadListItem = ({ threadId }) => {
   const { loading, data } = useQuery(discussionQuery, {
-    variables: { discussionId },
+    variables: { discussionId: threadId },
   });
 
   const { loading: loading2, data: data2 } = useQuery(discussionMessagesQuery, {
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId: threadId, queryParams: {} },
   });
   const [localDeleteDiscussion] = useMutation(localDeleteDiscussionMutation);
 
@@ -81,22 +81,26 @@ const DiscussionListItem = ({ discussionId }) => {
   const moreReplyCount = messageCount - (topic ? 1 : 2);
 
   const value = {
-    ...DEFAULT_DISCUSSION_CONTEXT,
-    discussionId,
+    ...DEFAULT_THREAD_CONTEXT,
+    threadId,
     topic,
     draft,
     afterDeleteDiscussion: () =>
-      localDeleteDiscussion({ variables: { documentId, discussionId } }),
+      localDeleteDiscussion({
+        variables: { documentId, discussionId: threadId },
+      }),
   };
 
   return (
-    <DiscussionContext.Provider value={value}>
+    <ThreadContext.Provider value={value}>
       <Container>
-        <DiscussionListItemHeader discussion={data.discussion} />
+        <ThreadListItemHeader discussion={data.discussion} />
         {topic && <StyledTopicComposer />}
         <StyledMessage
           isLast={lastMessage.id === firstMessage.id}
           message={firstMessage}
+          parentId={threadId}
+          parentType="thread"
         />
         {moreReplyCount > 0 && (
           <MoreRepliesIndicator>
@@ -105,15 +109,20 @@ const DiscussionListItem = ({ discussionId }) => {
           </MoreRepliesIndicator>
         )}
         {lastMessage && lastMessage.id !== firstMessage.id && (
-          <StyledMessage isLast message={lastMessage} />
+          <StyledMessage
+            isLast
+            message={lastMessage}
+            parentId={threadId}
+            parentType="thread"
+          />
         )}
       </Container>
-    </DiscussionContext.Provider>
+    </ThreadContext.Provider>
   );
 };
 
-DiscussionListItem.propTypes = {
-  discussionId: PropTypes.string.isRequired,
+ThreadListItem.propTypes = {
+  threadId: PropTypes.string.isRequired,
 };
 
-export default DiscussionListItem;
+export default ThreadListItem;

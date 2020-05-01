@@ -12,7 +12,7 @@ import {
 import NotFound from 'components/navigation/NotFound';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import Message from 'components/message/Message';
-import DiscussionListItem from './DiscussionListItem';
+import ThreadListItem from './ThreadListItem';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   margin: '60px auto',
@@ -61,7 +61,7 @@ const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
   margin: '40px 0',
 }));
 
-const DiscussionsList = () => {
+const ThreadsList = () => {
   const listRef = useRef(null);
   const { documentId } = useContext(DocumentContext);
 
@@ -117,10 +117,10 @@ const DiscussionsList = () => {
         )}
       </DiscussionContext.Provider>
       {discussions.map(d => (
-        <DiscussionListItem key={d.id} discussionId={d.id} />
+        <ThreadListItem key={d.id} threadId={d.id} />
       ))}
     </Container>
   );
 };
 
-export default DiscussionsList;
+export default ThreadsList;

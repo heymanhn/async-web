@@ -12,7 +12,7 @@ import NotFound from 'components/navigation/NotFound';
 import ThreadModal from 'components/thread/ThreadModal';
 import NavigationBar from 'components/navigation/NavigationBar';
 
-import DiscussionsList from './DiscussionsList';
+import ThreadsList from './ThreadsList';
 import Document from './Document';
 
 const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
@@ -55,7 +55,7 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
     <DocumentContext.Provider value={value}>
       <NavigationBar />
       {viewMode === 'content' && <Document isUnread={isResourceUnread(tags)} />}
-      {viewMode === 'discussions' && <DiscussionsList />}
+      {viewMode === 'discussions' && <ThreadsList />}
 
       {threadId && (
         <ThreadModal

@@ -62,8 +62,8 @@ const ResolvedDiscussionIcon = styled(DiscussionIcon)(
   })
 );
 
-const DiscussionListItemHeader = ({ discussion }) => {
-  const { handleShowModal } = useContext(DocumentContext);
+const ThreadListItemHeader = ({ discussion }) => {
+  const { handleShowThread } = useContext(DocumentContext);
   const { id, tags, status, messageCount } = discussion;
   const { state, author } = status || {};
 
@@ -107,15 +107,15 @@ const DiscussionListItemHeader = ({ discussion }) => {
         )}
         <Label isUnread={isUnread()}>{titleize(headerLabel())}</Label>
       </LabelContainer>
-      <ViewDiscussionButton onClick={() => handleShowModal(id)}>
+      <ViewDiscussionButton onClick={() => handleShowThread({ threadId: id })}>
         {tags.includes('new_messages') ? 'View replies' : 'View discussion'}
       </ViewDiscussionButton>
     </Container>
   );
 };
 
-DiscussionListItemHeader.propTypes = {
+ThreadListItemHeader.propTypes = {
   discussion: PropTypes.object.isRequired,
 };
 
-export default DiscussionListItemHeader;
+export default ThreadListItemHeader;
