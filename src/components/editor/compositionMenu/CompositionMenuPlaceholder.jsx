@@ -41,7 +41,11 @@ const CompositionMenuPlaceholder = ({ isVisible, coords }) => {
 
 CompositionMenuPlaceholder.propTypes = {
   isVisible: PropTypes.bool.isRequired,
-  coords: PropTypes.object.isRequired,
+  coords: PropTypes.object,
+};
+
+CompositionMenuPlaceholder.defaultProps = {
+  coords: {},
 };
 
 export default CompositionMenuPlaceholder;
