@@ -8,6 +8,7 @@ import { useContext, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import messageQuery from 'graphql/queries/message';
+import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import { track } from 'utils/analytics';
@@ -36,6 +37,7 @@ const useThreadMutations = () => {
   const handleCreateThread = async parentMessageId => {
     setIsSubmitting(true);
     const input = {};
+    const refetchQueries = [];
 
     if (documentId) {
       input.parent = {
@@ -44,6 +46,10 @@ const useThreadMutations = () => {
         contentParentType: 'document',
         contentParentId: documentId,
       };
+      refetchQueries.push({
+        query: documentDiscussionsQuery,
+        variables: { id: documentId, queryParams: { order: 'desc' } },
+      });
     } else if (messageId) {
       input.parent = {
         type: 'discussion',
@@ -73,6 +79,7 @@ const useThreadMutations = () => {
 
     const { data } = await createDiscussion({
       variables: { input },
+      refetchQueries,
     });
 
     if (data.createDiscussion) {

@@ -31,16 +31,6 @@ const useDiscussionMutations = () => {
 
     const { data } = await createDiscussion({
       variables: { input },
-      refetchQueries: [
-        {
-          query: inboxQuery,
-          variables: { userId, queryParams: { type: 'all' } },
-        },
-        {
-          query: inboxQuery,
-          variables: { userId, queryParams: { type: 'discussion' } },
-        },
-      ],
     });
 
     if (data.createDiscussion) {

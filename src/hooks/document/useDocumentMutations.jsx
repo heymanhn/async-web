@@ -30,16 +30,6 @@ const useDocumentMutations = () => {
 
     const { data } = await createDocument({
       variables: { input: {} },
-      refetchQueries: [
-        {
-          query: inboxQuery,
-          variables: { userId, queryParams: { type: 'all' } },
-        },
-        {
-          query: inboxQuery,
-          variables: { userId, queryParams: { type: 'document' } },
-        },
-      ],
     });
 
     if (data.createDocument) {
