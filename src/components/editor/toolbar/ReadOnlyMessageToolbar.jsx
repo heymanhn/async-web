@@ -5,6 +5,7 @@ import { DiscussionContext, ThreadContext } from 'utils/contexts';
 import DOMToolbar from './DOMToolbar';
 import QuoteReplyButton from './QuoteReplyButton';
 import StartInlineThreadButton from './StartInlineThreadButton';
+import VerticalDivider from './VerticalDivider';
 
 const ReadOnlyMessageToolbar = props => {
   const { handleShowThread } = useContext(DiscussionContext);
@@ -14,7 +15,10 @@ const ReadOnlyMessageToolbar = props => {
     <DOMToolbar {...props}>
       <QuoteReplyButton source={source} />
       {source === 'discussion' && (
-        <StartInlineThreadButton handleShowThread={handleShowThread} />
+        <>
+          <VerticalDivider />
+          <StartInlineThreadButton handleShowThread={handleShowThread} />
+        </>
       )}
     </DOMToolbar>
   );
