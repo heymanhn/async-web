@@ -17,7 +17,6 @@ import throttle from 'lodash/throttle';
 
 import { THROTTLE_INTERVAL } from 'utils/constants';
 import { DiscussionContext, ThreadContext } from 'utils/contexts';
-
 import Editor from 'components/editor/Editor';
 
 const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
@@ -25,7 +24,7 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
 
   // We only need to use the reference to the composer in the case of a
   // discussion page.
-  const { composerRef } = useContext(DiscussionContext);
+  const { composerRef: containerRef } = useContext(DiscussionContext);
 
   const [data, setData] = useState({});
   const editor = useSlate();
@@ -72,21 +71,27 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
 
     const rect = rectForSource();
     const { height, width } = rect;
-
-    // When a modal is visible, the window isn't scrolled, only the modal component.
-    const { current: container } = composerRef;
-    const { current: modal } = modalRef;
     let yOffset = window.pageYOffset;
     let xOffset = window.pageXOffset;
 
-    if (container) {
-      yOffset = -(window.innerHeight - container.offsetHeight);
-      xOffset = -container.offsetLeft;
-    }
-
+    // When a modal is visible, the window isn't scrolled, only the modal component.
+    const { current: modal } = modalRef;
     if (modal) {
       yOffset = modal.scrollTop;
       xOffset = modal.scrollLeft;
+    }
+
+    /*
+     * If a container ref is provided, assume it's a ref to a fixed position element,
+     * and update offsets to be based on the element's offset parameters
+     *
+     * Not my proudest moment, but we shouldn't use the container ref, even if it was
+     * provided, if the consumer of this hook is the read only message toolbar
+     */
+    const { current: container } = containerRef;
+    if (container && source !== 'DOMSelection') {
+      yOffset = -(window.innerHeight - container.offsetHeight);
+      xOffset = -container.offsetLeft;
     }
 
     const coords = {
