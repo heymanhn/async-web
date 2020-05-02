@@ -46,6 +46,7 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   discussionId: null,
   readOnly: false,
   hideComposer: false,
+  quoteReply: null,
   bottomRef: {},
   composerRef: {},
 
@@ -54,6 +55,7 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   afterDeleteDiscussion: () => {},
   setForceUpdate: () => {},
   setHideComposer: () => {},
+  setQuoteReply: () => {},
 };
 export const DiscussionContext = createContext(DEFAULT_DISCUSSION_CONTEXT);
 
@@ -62,18 +64,21 @@ export const DEFAULT_THREAD_CONTEXT = {
   initialTopic: null,
   topic: null,
   hideComposer: false,
+  quoteReply: null,
   modalRef: {},
   bottomRef: {},
   composerRef: {},
 
   afterDeleteThread: () => {},
   setHideComposer: () => {},
+  setQuoteReply: () => {},
 };
 export const ThreadContext = createContext(DEFAULT_THREAD_CONTEXT);
 
 export const DEFAULT_MESSAGE_CONTEXT = {
   messageId: null,
   parentId: null,
+  parentType: null,
   mode: null,
   draft: null,
   threadPosition: null,

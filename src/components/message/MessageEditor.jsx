@@ -9,12 +9,13 @@ import useCoreEditorProps from 'hooks/editor/useCoreEditorProps';
 import useMessageDrafts from 'hooks/message/useMessageDrafts';
 import useMessageEditor from 'hooks/message/useMessageEditor';
 import useMessageMutations from 'hooks/message/useMessageMutations';
+import useQuoteReplies from 'hooks/message/useQuoteReplies';
 import { MessageContext } from 'utils/contexts';
 
-import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
-import ReadOnlyMessageToolbar from 'components/editor/toolbar/ReadOnlyMessageToolbar';
-import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
+import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
+import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
+import ReadOnlyMessageToolbar from 'components/editor/toolbar/ReadOnlyMessageToolbar';
 import MessageActions from './MessageActions';
 
 const Container = styled.div(({ mode }) => ({
@@ -58,6 +59,7 @@ const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
 
   const coreEditorProps = useCoreEditorProps(editor, { readOnly });
   useMessageDrafts(message, isSubmitting);
+  useQuoteReplies(editor, setMessage);
   useAnnotationMonitor(message, setMessage, editor, readOnly);
 
   return (

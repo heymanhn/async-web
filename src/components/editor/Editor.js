@@ -3,6 +3,7 @@
  * https://github.com/ianstormtaylor/slate/blob/master/site/examples/richtext.js
  */
 import { Editor, Point, Range, Transforms } from 'slate';
+import { ReactEditor } from 'slate-react';
 
 import { track } from 'utils/analytics';
 import {
@@ -26,6 +27,7 @@ import {
   HYPERLINK,
   IMAGE,
   SECTION_BREAK,
+  BLOCK_QUOTE,
 } from 'utils/editor/constants';
 
 /*
@@ -373,6 +375,21 @@ const wrapLink = (editor, url) => {
   }
 };
 
+const insertBlockQuote = (editor, text) => {
+  if (!isEmptyParagraph(editor)) {
+    Transforms.splitNodes(editor, { always: true });
+    replaceBlock(editor, DEFAULT_ELEMENT_TYPE);
+  }
+
+  Editor.insertText(editor, text);
+
+  // Wrap the text in a block quote, then make sure
+  // the next node is unwrapped
+  toggleBlock(editor, BLOCK_QUOTE);
+  Transforms.splitNodes(editor, { always: true });
+  toggleBlock(editor, BLOCK_QUOTE);
+};
+
 const insertImage = (editor, src) => {
   const id = Date.now();
   const text = { text: '' };
@@ -432,6 +449,17 @@ const mergeWithNextList = editor => {
   Transforms.move(editor, { reverse: true });
 };
 
+// Used for manipulating the editor selection when the editor is read-only
+const makeDOMSelection = editor => {
+  const domSelection = window.getSelection();
+  const domRange =
+    domSelection && domSelection.rangeCount > 0 && domSelection.getRangeAt(0);
+
+  if (!domRange) return;
+  const range = ReactEditor.toSlateRange(editor, domRange);
+  Transforms.select(editor, range);
+};
+
 const NewEditor = {
   ...Editor,
 
@@ -474,11 +502,13 @@ const NewEditor = {
   removeInlineAnnotation,
   wrapLink,
   unwrapLink,
+  insertBlockQuote,
   insertImage,
   updateImage,
   indentListItem,
   outdentListItem,
   mergeWithNextList,
+  makeDOMSelection,
 };
 
 export default NewEditor;

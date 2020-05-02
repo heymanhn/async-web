@@ -48,6 +48,7 @@ const ThreadModal = ({
   const modalRef = useRef(null);
   const bottomRef = useRef(null);
   const composerRef = useRef(null);
+  const [quoteReply, setQuoteReply] = useState(null);
 
   // Hides the message composer if the user is an editing a message
   const [hideComposer, setHideComposer] = useState(false);
@@ -101,12 +102,14 @@ const ThreadModal = ({
     threadId,
     initialTopic,
     topic,
+    quoteReply,
     modalRef,
     bottomRef,
     composerRef,
     hideComposer,
     afterDeleteThread,
     setHideComposer,
+    setQuoteReply,
   };
 
   return (

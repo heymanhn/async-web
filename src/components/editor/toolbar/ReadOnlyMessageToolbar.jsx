@@ -3,17 +3,23 @@ import React, { useContext } from 'react';
 import { DiscussionContext, ThreadContext } from 'utils/contexts';
 
 import DOMToolbar from './DOMToolbar';
+import QuoteReplyButton from './QuoteReplyButton';
 import StartInlineThreadButton from './StartInlineThreadButton';
+import VerticalDivider from './VerticalDivider';
 
 const ReadOnlyMessageToolbar = props => {
   const { handleShowThread } = useContext(DiscussionContext);
   const { threadId } = useContext(ThreadContext);
-
-  if (threadId) return null;
-
+  const source = threadId ? 'thread' : 'discussion';
   return (
     <DOMToolbar {...props}>
-      <StartInlineThreadButton handleShowThread={handleShowThread} />
+      <QuoteReplyButton source={source} />
+      {source === 'discussion' && (
+        <>
+          <VerticalDivider />
+          <StartInlineThreadButton handleShowThread={handleShowThread} />
+        </>
+      )}
     </DOMToolbar>
   );
 };

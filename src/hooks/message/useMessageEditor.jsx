@@ -12,7 +12,7 @@ import withMarkdownShortcuts from 'plugins/editor/withMarkdownShortcuts';
 import withPasteShim from 'plugins/editor/withPasteShim';
 import withSectionBreak from 'plugins/editor/withSectionBreak';
 
-const useMessageEditor = discussionId => {
+const useMessageEditor = parentId => {
   const baseEditor = useMemo(
     () =>
       compose(
@@ -33,9 +33,9 @@ const useMessageEditor = discussionId => {
    * Workaround is to memoize the base editor instance, and extend it by calling
    * withImages() with the updated variables.
    */
-  const editor = useMemo(() => withImages(baseEditor, discussionId), [
+  const editor = useMemo(() => withImages(baseEditor, parentId), [
     baseEditor,
-    discussionId,
+    parentId,
   ]);
 
   return editor;
