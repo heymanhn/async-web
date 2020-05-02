@@ -1,7 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Transforms } from 'slate';
-import { Slate, ReactEditor, Editable } from 'slate-react';
+import { Slate, Editable } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useAnnotationMonitor from 'hooks/message/useAnnotationMonitor';
@@ -10,15 +9,11 @@ import useCoreEditorProps from 'hooks/editor/useCoreEditorProps';
 import useMessageDrafts from 'hooks/message/useMessageDrafts';
 import useMessageEditor from 'hooks/message/useMessageEditor';
 import useMessageMutations from 'hooks/message/useMessageMutations';
-import {
-  DiscussionContext,
-  MessageContext,
-  ThreadContext,
-} from 'utils/contexts';
+import useQuoteReplies from 'hooks/message/useQuoteReplies';
+import { MessageContext } from 'utils/contexts';
 
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
-import Editor from 'components/editor/Editor';
 import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import ReadOnlyMessageToolbar from 'components/editor/toolbar/ReadOnlyMessageToolbar';
 import MessageActions from './MessageActions';
@@ -37,10 +32,7 @@ const MessageEditable = styled(Editable)({
 });
 
 const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
-  const { mode, parentId, parentType } = useContext(MessageContext);
-  const { quoteReply, setQuoteReply } = useContext(
-    parentType === 'discussion' ? DiscussionContext : ThreadContext
-  );
+  const { mode, parentId } = useContext(MessageContext);
   const editor = useMessageEditor(parentId);
   const readOnly = mode === 'display';
 
@@ -67,19 +59,8 @@ const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
 
   const coreEditorProps = useCoreEditorProps(editor, { readOnly });
   useMessageDrafts(message, isSubmitting);
+  useQuoteReplies(editor, setMessage);
   useAnnotationMonitor(message, setMessage, editor, readOnly);
-
-  useEffect(() => {
-    // The quote reply will always be added to the end of the content
-    if (quoteReply && mode === 'compose') {
-      ReactEditor.focus(editor);
-      if (!editor.selection) Transforms.select(editor, Editor.end(editor, []));
-      Editor.insertBlockQuote(editor, quoteReply);
-
-      setMessage(editor.children);
-      setQuoteReply(null);
-    }
-  });
 
   return (
     <Container mode={mode} {...props}>
