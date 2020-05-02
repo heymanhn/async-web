@@ -8,6 +8,7 @@ import {
   DiscussionContext,
   DEFAULT_DISCUSSION_CONTEXT,
 } from 'utils/contexts';
+import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
 
 import NotFound from 'components/navigation/NotFound';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
@@ -64,6 +65,7 @@ const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
 const ThreadsList = () => {
   const listRef = useRef(null);
   const { documentId } = useContext(DocumentContext);
+  const { handleSaveMessageDraft, isSubmitting } = useMessageDraftMutations();
 
   const [isComposing, setIsComposing] = useState(false);
   const [discussionId, setDiscussionId] = useState(null);
@@ -72,6 +74,16 @@ const ThreadsList = () => {
   const stopComposing = () => {
     setDiscussionId(null);
     setIsComposing(false);
+  };
+
+  const handleStartDiscussion = async () => {
+    // Create an empty draft discussion
+    const { discussionId: threadId } = await handleSaveMessageDraft({
+      isThread: true,
+    });
+
+    setDiscussionId(threadId);
+    startComposing();
   };
 
   const { loading, data } = usePaginatedResource(
@@ -103,9 +115,13 @@ const ThreadsList = () => {
     <Container ref={listRef}>
       <TitleSection>
         <Title>{discussionCount ? 'Discussions' : 'Start a discussion'}</Title>
-        <StartDiscussionButton onClick={startComposing}>
-          <Label>Start a discussion</Label>
-        </StartDiscussionButton>
+        {isSubmitting ? (
+          <LoadingIndicator color="grey4" size="16" />
+        ) : (
+          <StartDiscussionButton onClick={handleStartDiscussion}>
+            <Label>Start a discussion</Label>
+          </StartDiscussionButton>
+        )}
       </TitleSection>
       <DiscussionContext.Provider value={value}>
         {isComposing && (
@@ -113,6 +129,8 @@ const ThreadsList = () => {
             mode="compose"
             afterCreateMessage={stopComposing}
             handleCancel={stopComposing}
+            parentId={discussionId}
+            parentType="thread"
           />
         )}
       </DiscussionContext.Provider>
