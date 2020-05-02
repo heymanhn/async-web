@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Slate, Editable } from 'slate-react';
+import { Transforms } from 'slate';
+import { Slate, ReactEditor, Editable } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useAnnotationMonitor from 'hooks/message/useAnnotationMonitor';
@@ -68,10 +69,17 @@ const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
   useMessageDrafts(message, isSubmitting);
   useAnnotationMonitor(message, setMessage, editor, readOnly);
 
-  if (quoteReply) {
-    Editor.insertBlockQuote(editor, quoteReply);
-    setQuoteReply(null);
-  }
+  useEffect(() => {
+    // The quote reply will always be added to the end of the content
+    if (quoteReply && mode === 'compose') {
+      ReactEditor.focus(editor);
+      if (!editor.selection) Transforms.select(editor, Editor.end(editor, []));
+      Editor.insertBlockQuote(editor, quoteReply);
+
+      setMessage(editor.children);
+      setQuoteReply(null);
+    }
+  });
 
   return (
     <Container mode={mode} {...props}>

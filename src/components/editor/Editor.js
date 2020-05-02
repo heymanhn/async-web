@@ -376,13 +376,18 @@ const wrapLink = (editor, url) => {
 };
 
 const insertBlockQuote = (editor, text) => {
-  const node = { type: BLOCK_QUOTE, children: [{ text }] };
-
-  if (isEmptyParagraph(editor)) {
-    Transforms.setNodes(editor, node);
-  } else {
-    Transforms.insertNodes(editor, node);
+  if (!isEmptyParagraph(editor)) {
+    Transforms.splitNodes(editor, { always: true });
+    replaceBlock(editor, DEFAULT_ELEMENT_TYPE);
   }
+
+  Editor.insertText(editor, text);
+
+  // Wrap the text in a block quote, then make sure
+  // the next node is unwrapped
+  toggleBlock(editor, BLOCK_QUOTE);
+  Transforms.splitNodes(editor, { always: true });
+  toggleBlock(editor, BLOCK_QUOTE);
 };
 
 const insertImage = (editor, src) => {

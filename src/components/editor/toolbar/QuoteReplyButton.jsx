@@ -10,7 +10,7 @@ import Editor from 'components/editor/Editor';
 import ToolbarButton from './ToolbarButton';
 import ButtonIcon from './ButtonIcon';
 
-const INLINE_DISCUSSION_HOTKEY = 'cmd+opt+r';
+const QUOTE_REPLY_HOTKEY = 'cmd+opt+r';
 
 const QuoteReplyButton = ({ source, ...props }) => {
   const editor = useSlate();
@@ -28,7 +28,7 @@ const QuoteReplyButton = ({ source, ...props }) => {
 
   const { selection } = editor;
   const isOpen = selection && Range.isExpanded(selection);
-  useKeyDownHandler([INLINE_DISCUSSION_HOTKEY, handleClick], !isOpen);
+  useKeyDownHandler([QUOTE_REPLY_HOTKEY, handleClick], !isOpen);
 
   return (
     <ToolbarButton handleClick={handleClick} {...props}>
