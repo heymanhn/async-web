@@ -63,7 +63,7 @@ const ResolvedDiscussionIcon = styled(DiscussionIcon)(
 );
 
 const ThreadListItemHeader = ({ discussion }) => {
-  const { handleShowThread } = useContext(DocumentContext);
+  const { handleShowThread, editor } = useContext(DocumentContext);
   const { id, tags, status, messageCount } = discussion;
   const { state, author } = status || {};
 
@@ -107,7 +107,9 @@ const ThreadListItemHeader = ({ discussion }) => {
         )}
         <Label isUnread={isUnread()}>{titleize(headerLabel())}</Label>
       </LabelContainer>
-      <ViewDiscussionButton onClick={() => handleShowThread({ threadId: id })}>
+      <ViewDiscussionButton
+        onClick={() => handleShowThread({ threadId: id, sourceEditor: editor })}
+      >
         {tags.includes('new_messages') ? 'View replies' : 'View discussion'}
       </ViewDiscussionButton>
     </Container>

@@ -7,7 +7,6 @@ import styled from '@emotion/styled';
 import useAutoSave from 'hooks/editor/useAutoSave';
 import useContentState from 'hooks/editor/useContentState';
 import useCoreEditorProps from 'hooks/editor/useCoreEditorProps';
-import useDocumentEditor from 'hooks/document/useDocumentEditor';
 import useDocumentMutations from 'hooks/document/useDocumentMutations';
 import useDocumentOperationsPusher from 'hooks/document/useDocumentOperationsPusher';
 import { DocumentContext } from 'utils/contexts';
@@ -23,8 +22,7 @@ const DocumentEditable = styled(Editable)({
 });
 
 const DocumentEditor = ({ initialContent, ...props }) => {
-  const { documentId, readOnly } = useContext(DocumentContext);
-  const editor = useDocumentEditor(documentId);
+  const { documentId, editor, readOnly } = useContext(DocumentContext);
 
   const {
     content,

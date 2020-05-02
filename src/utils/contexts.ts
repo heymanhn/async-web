@@ -33,6 +33,7 @@ export const DEFAULT_DOCUMENT_CONTEXT = {
   channelId: null,
   readOnly: false,
   viewMode: null,
+  editor: null,
 
   handleShowThread: () => {},
   afterUpdateDocumentTitle: () => {},
