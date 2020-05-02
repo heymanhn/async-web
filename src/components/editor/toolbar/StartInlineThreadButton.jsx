@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Transforms, Range } from 'slate';
-import { ReactEditor, useSlate } from 'slate-react';
+import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
@@ -24,16 +24,6 @@ const StartInlineThreadButton = ({ handleShowThread, ...props }) => {
   const { handleSaveMessageDraft, isSubmitting } = useMessageDraftMutations();
   const { userId } = getLocalUser();
 
-  const makeDOMSelection = () => {
-    const domSelection = window.getSelection();
-    const domRange =
-      domSelection && domSelection.rangeCount > 0 && domSelection.getRangeAt(0);
-
-    if (!domRange) return;
-    const range = ReactEditor.toSlateRange(editor, domRange);
-    Transforms.select(editor, range);
-  };
-
   const handleClick = async () => {
     // Create an empty draft discussion
     const { discussionId: threadId } = await handleSaveMessageDraft({
@@ -41,11 +31,10 @@ const StartInlineThreadButton = ({ handleShowThread, ...props }) => {
     });
 
     // Special case for starting inline discussion from read-only message content
-    // TODO (DISCUSSION V2): Do this another way, instead of special casing like this.
     let mode = 'document';
     if (!editor.selection) {
       mode = 'discussion';
-      makeDOMSelection();
+      Editor.makeDOMSelection(editor);
     }
 
     Editor.createInlineAnnotation(editor, {

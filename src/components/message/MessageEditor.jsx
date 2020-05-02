@@ -9,12 +9,17 @@ import useCoreEditorProps from 'hooks/editor/useCoreEditorProps';
 import useMessageDrafts from 'hooks/message/useMessageDrafts';
 import useMessageEditor from 'hooks/message/useMessageEditor';
 import useMessageMutations from 'hooks/message/useMessageMutations';
-import { MessageContext } from 'utils/contexts';
+import {
+  DiscussionContext,
+  MessageContext,
+  ThreadContext,
+} from 'utils/contexts';
 
-import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
-import ReadOnlyMessageToolbar from 'components/editor/toolbar/ReadOnlyMessageToolbar';
-import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
+import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
+import Editor from 'components/editor/Editor';
+import MessageToolbar from 'components/editor/toolbar/MessageToolbar';
+import ReadOnlyMessageToolbar from 'components/editor/toolbar/ReadOnlyMessageToolbar';
 import MessageActions from './MessageActions';
 
 const Container = styled.div(({ mode }) => ({
@@ -31,7 +36,10 @@ const MessageEditable = styled(Editable)({
 });
 
 const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
-  const { mode, parentId } = useContext(MessageContext);
+  const { mode, parentId, parentType } = useContext(MessageContext);
+  const { quoteReply, setQuoteReply } = useContext(
+    parentType === 'discussion' ? DiscussionContext : ThreadContext
+  );
   const editor = useMessageEditor(parentId);
   const readOnly = mode === 'display';
 
@@ -59,6 +67,11 @@ const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
   const coreEditorProps = useCoreEditorProps(editor, { readOnly });
   useMessageDrafts(message, isSubmitting);
   useAnnotationMonitor(message, setMessage, editor, readOnly);
+
+  if (quoteReply) {
+    Editor.insertBlockQuote(editor, quoteReply);
+    setQuoteReply(null);
+  }
 
   return (
     <Container mode={mode} {...props}>

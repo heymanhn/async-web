@@ -43,6 +43,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   const composerRef = useRef(null);
   const bottomRef = useRef(null);
   const [forceUpdate, setForceUpdate] = useState(false);
+  const [quoteReply, setQuoteReply] = useState(null);
 
   // Hides the message composer if the user is an editing a message
   const [hideComposer, setHideComposer] = useState(false);
@@ -79,10 +80,12 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     hideComposer,
     bottomRef,
     composerRef,
+    quoteReply,
 
     afterDeleteDiscussion: () => navigate('/'),
     setForceUpdate,
     setHideComposer,
+    setQuoteReply,
     handleShowThread,
   };
 

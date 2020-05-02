@@ -129,6 +129,7 @@ const Message = ({
     ...DEFAULT_MESSAGE_CONTEXT,
     messageId,
     parentId,
+    parentType,
     mode,
     draft,
     threadPosition: index,

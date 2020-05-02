@@ -49,7 +49,7 @@ const MessageComposer = React.forwardRef(
     composerRef
   ) => {
     const client = useApolloClient();
-    const { bottomRef, hideComposer } = useContext(
+    const { bottomRef, hideComposer, quoteReply } = useContext(
       parentType === 'discussion' ? DiscussionContext : ThreadContext
     );
     const [isComposing, setIsComposing] = useState(draft || !messageCount);
@@ -83,6 +83,7 @@ const MessageComposer = React.forwardRef(
     };
 
     if (hideComposer) return null;
+    if (!isComposing && quoteReply) startComposing();
 
     const messageValue = {
       draft,
