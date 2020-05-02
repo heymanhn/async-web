@@ -1,12 +1,10 @@
 import { useContext, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 
-import inboxQuery from 'graphql/queries/inbox';
 import createDocumentMutation from 'graphql/mutations/createDocument';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import deleteDocumentMutation from 'graphql/mutations/deleteDocument';
 import { track } from 'utils/analytics';
-import { getLocalUser } from 'utils/auth';
 import { DocumentContext } from 'utils/contexts';
 import { toPlainText } from 'utils/editor/constants';
 
@@ -17,7 +15,6 @@ const useDocumentMutations = () => {
     afterDeleteDocument,
   } = useContext(DocumentContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { userId } = getLocalUser();
 
   const [createDocument] = useMutation(createDocumentMutation);
   const [updateDocument] = useMutation(updateDocumentMutation);
