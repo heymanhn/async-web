@@ -191,7 +191,7 @@ Message.propTypes = {
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
   messageCount: PropTypes.number,
-  parentId: PropTypes.string.isRequired,
+  parentId: PropTypes.string,
   parentType: PropTypes.oneOf(['discussion', 'thread']).isRequired,
   afterCreateMessage: PropTypes.func,
   handleCancel: PropTypes.func,
@@ -200,6 +200,7 @@ Message.propTypes = {
 Message.defaultProps = {
   draft: null,
   index: null,
+  parentId: null,
   mode: 'display',
   message: {},
   messageCount: null,
