@@ -38,20 +38,26 @@ const ImageElement = ({ attributes, children, element }) => {
   const isReadOnly = ReactEditor.isReadOnly(editor);
   const { src } = element;
   const currentDomain = process.env.REACT_APP_ASYNC_API_URL;
-  let imageUrl;
 
-  if (src.includes(currentDomain)) {
-    imageUrl = src;
-  } else {
-    // In case, we switched to new domain, build the updated url
-    const imagePath = new URL(src).pathname;
-    imageUrl = `${currentDomain}${imagePath}`;
-  }
+  const imageUrl = () => {
+    let url;
+    if (!src) {
+      url = '';
+    } else if (src.includes(currentDomain)) {
+      url = src;
+    } else {
+      // In case, we switched to new domain, build the updated url
+      const imagePath = new URL(src).pathname;
+      url = `${currentDomain}${imagePath}`;
+    }
+
+    return url;
+  };
 
   const image = (
     <div contentEditable={false}>
       <StyledImage
-        src={imageUrl}
+        src={imageUrl()}
         isFocused={isSelected && isFocused}
         readOnly={isReadOnly}
       />

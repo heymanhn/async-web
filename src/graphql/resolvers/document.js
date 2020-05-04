@@ -32,7 +32,7 @@ const deleteThreadFromDocument = (
     query: documentThreadsQuery,
     variables: { id: documentId, queryParams: { order: 'desc' } },
   });
-  if (!data) return;
+  if (!data) return null;
   const { items, pageToken, __typename } = data.documentThreads;
 
   const index = items.findIndex(i => i.discussion.id === threadId);
