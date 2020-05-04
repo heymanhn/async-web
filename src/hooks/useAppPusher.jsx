@@ -7,10 +7,14 @@ import localAddNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscu
 import localAddNewPendingMessage from 'graphql/mutations/local/addNewPendingMessage';
 import localUpdateNotificationMutation from 'graphql/mutations/local/updateNotification';
 import localUpdateBadgeCountMutation from 'graphql/mutations/local/updateBadgeCount';
+import discussionMessagesQuery from 'graphql/queries/discussionMessages';
+import documentQuery from 'graphql/queries/document';
+import messageQuery from 'graphql/queries/message';
 import { getLocalUser } from 'utils/auth';
 
 import {
   NEW_MESSAGE_EVENT,
+  NEW_THREAD_EVENT,
   DOCUMENT_ACCESS_EVENT,
   DISCUSSION_ACCESS_EVENT,
   BADGE_COUNT_EVENT,
@@ -87,14 +91,43 @@ const useAppPusher = pusher => {
       });
     };
 
+    const handleNewThread = pusherData => {
+      const camelData = camelcaseKeys(pusherData, { deep: true });
+      const { notification } = camelData;
+      const { payload } = notification;
+      const camelPayload = camelcaseKeys(JSON.parse(payload));
+      const { contentParentId, contentParentType, discussionId } = camelPayload;
+
+      if (contentParentType === 'message') {
+        client.query({
+          query: messageQuery,
+          variables: { messageId: contentParentId },
+        });
+
+        client.query({
+          query: discussionMessagesQuery,
+          variables: { discussionId, queryParams: {} },
+        });
+      }
+
+      if (contentParentType === 'document') {
+        client.query({
+          query: documentQuery,
+          variables: { documentId: contentParentId },
+        });
+      }
+    };
+
     channel.bind(BADGE_COUNT_EVENT, handleBadgeCount);
     channel.bind(NEW_MESSAGE_EVENT, handleNewMessage);
+    channel.bind(NEW_THREAD_EVENT, handleNewThread);
     channel.bind(DOCUMENT_ACCESS_EVENT, handleNewNotification);
     channel.bind(DISCUSSION_ACCESS_EVENT, handleNewNotification);
 
     return () => {
       channel.unbind(BADGE_COUNT_EVENT, handleBadgeCount);
       channel.unbind(NEW_MESSAGE_EVENT, handleNewMessage);
+      channel.unbind(NEW_THREAD_EVENT, handleNewThread);
       channel.unbind(DOCUMENT_ACCESS_EVENT, handleNewNotification);
       channel.unbind(DISCUSSION_ACCESS_EVENT, handleNewNotification);
     };

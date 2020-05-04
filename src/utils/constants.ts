@@ -12,6 +12,7 @@ export const MINIMUM_PUSHER_SEND_INTERVAL = 500; // milliseconds
 export const PUSHER_SUBSCRIPTION_SUCCESS_EVENT =
   'pusher:subscription_succeeded';
 export const NEW_MESSAGE_EVENT = 'new_message';
+export const NEW_THREAD_EVENT = 'new_thread';
 export const DOCUMENT_ACCESS_EVENT = 'access_document';
 export const DISCUSSION_ACCESS_EVENT = 'access_discussion';
 export const DOCUMENT_EDIT_EVENT = 'edit_document';
