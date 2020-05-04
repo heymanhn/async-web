@@ -8,7 +8,12 @@ import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useThreadState from 'hooks/thread/useThreadState';
 import useUpdateSelectedResource from 'hooks/resources/useUpdateSelectedResource';
-import { DiscussionContext, DEFAULT_DISCUSSION_CONTEXT } from 'utils/contexts';
+import {
+  DiscussionContext,
+  MessageContext,
+  DEFAULT_DISCUSSION_CONTEXT,
+  DEFAULT_MESSAGE_CONTEXT,
+} from 'utils/contexts';
 import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
 
 import LoadingIndicator from 'components/shared/LoadingIndicator';
@@ -73,11 +78,12 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
 
   if (forceUpdate) setForceUpdate(false);
 
-  const value = {
+  const discussionValue = {
     ...DEFAULT_DISCUSSION_CONTEXT,
     discussionId,
     readOnly,
     hideComposer,
+    messageCount,
     bottomRef,
     composerRef,
     quoteReply,
@@ -89,8 +95,15 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     handleShowThread,
   };
 
+  const messageValue = {
+    ...DEFAULT_MESSAGE_CONTEXT,
+    draft,
+    parentId: discussionId,
+    parentType: 'discussion',
+  };
+
   return (
-    <DiscussionContext.Provider value={value}>
+    <DiscussionContext.Provider value={discussionValue}>
       <OuterContainer>
         <NavigationBar />
         <ContentContainer ref={discussionRef}>
@@ -99,14 +112,9 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
             <DiscussionMessages isUnread={isResourceUnread(tags)} />
           )}
           <div ref={bottomRef} />
-          <MessageComposer
-            ref={composerRef}
-            parentType="discussion"
-            parentId={discussionId}
-            draft={draft}
-            title={title}
-            messageCount={messageCount}
-          />
+          <MessageContext.Provider value={messageValue}>
+            <MessageComposer ref={composerRef} title={title} />
+          </MessageContext.Provider>
         </ContentContainer>
         {threadId && (
           <ThreadModal

@@ -6,7 +6,11 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
-import { DiscussionContext } from 'utils/contexts';
+import {
+  DiscussionContext,
+  MessageContext,
+  DEFAULT_MESSAGE_CONTEXT,
+} from 'utils/contexts';
 import { firstNewMessageId } from 'utils/helpers';
 
 import NotFound from 'components/navigation/NotFound';
@@ -49,6 +53,13 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   const { items } = data;
   const messages = (items || []).map(i => i.message);
 
+  const generateValue = index => ({
+    ...DEFAULT_MESSAGE_CONTEXT,
+    listPosition: index,
+    parentId: discussionId,
+    parentType: 'discussion',
+  });
+
   return (
     <Container ref={discussionRef} {...props}>
       <StyledNewMessagesIndicator
@@ -62,12 +73,9 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
           {firstNewMessageId(messages) === m.id && m.id !== messages[0].id && (
             <NewMessagesDivider ref={dividerRef} />
           )}
-          <Message
-            index={i}
-            message={m}
-            parentId={discussionId}
-            parentType="discussion"
-          />
+          <MessageContext.Provider value={generateValue(i)}>
+            <Message message={m} />
+          </MessageContext.Provider>
         </React.Fragment>
       ))}
     </Container>

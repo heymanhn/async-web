@@ -62,8 +62,8 @@ const OptionName = styled.div(({ theme: { colors } }) => ({
 
 const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
   const selector = useRef();
-  const { parentId, threadPosition, setMode } = useContext(MessageContext);
-  const isFirstMessage = !threadPosition;
+  const { parentId, listPosition, setMode } = useContext(MessageContext);
+  const isFirstMessage = !listPosition;
 
   // If there's no thread ID, then there has to be a discussion ID
   const { threadId } = useContext(ThreadContext);

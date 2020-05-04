@@ -9,7 +9,6 @@ import {
   DiscussionContext,
   ThreadContext,
   MessageContext,
-  DEFAULT_MESSAGE_CONTEXT,
 } from 'utils/contexts';
 
 import AuthorDetails from 'components/shared/AuthorDetails';
@@ -80,18 +79,15 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 // TODO (DISCUSSION V2): The discussion UX redesign should standardize the
 // appearance of messages, whether in discussions or threads.
 const Message = ({
-  index,
-  draft,
   mode: initialMode,
   message,
-  messageCount, // number of messages in the parent thread or discussion
-  parentId, // A message belongs to either a thread or a discussion
-  parentType,
   afterCreateMessage,
   handleCancel,
   ...props
 }) => {
-  const { hideComposer, setHideComposer } = useContext(
+  const messageContext = useContext(MessageContext);
+  const { draft, parentType } = messageContext;
+  const { hideComposer, messageCount, setHideComposer } = useContext(
     parentType === 'discussion' ? DiscussionContext : ThreadContext
   );
   const [mode, setMode] = useState(initialMode);
@@ -126,13 +122,9 @@ const Message = ({
   };
 
   const value = {
-    ...DEFAULT_MESSAGE_CONTEXT,
+    ...messageContext,
     messageId,
-    parentId,
-    parentType,
     mode,
-    draft,
-    threadPosition: index,
     setMode,
     afterCreateMessage,
     afterUpdateMessage,
@@ -187,24 +179,15 @@ const Message = ({
 };
 
 Message.propTypes = {
-  draft: PropTypes.object,
-  index: PropTypes.number,
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
-  messageCount: PropTypes.number,
-  parentId: PropTypes.string,
-  parentType: PropTypes.oneOf(['discussion', 'thread']).isRequired,
   afterCreateMessage: PropTypes.func,
   handleCancel: PropTypes.func,
 };
 
 Message.defaultProps = {
-  draft: null,
-  index: null,
-  parentId: null,
   mode: 'display',
   message: {},
-  messageCount: null,
   afterCreateMessage: () => {},
   handleCancel: () => {},
 };

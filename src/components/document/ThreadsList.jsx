@@ -4,9 +4,11 @@ import styled from '@emotion/styled';
 import documentThreadsQuery from 'graphql/queries/documentThreads';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import {
-  DocumentContext,
-  ThreadContext,
+  DEFAULT_MESSAGE_CONTEXT,
   DEFAULT_THREAD_CONTEXT,
+  DocumentContext,
+  MessageContext,
+  ThreadContext,
 } from 'utils/contexts';
 import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
 
@@ -103,10 +105,16 @@ const ThreadsList = () => {
   const threads = (items || []).map(i => i.discussion);
   const threadCount = threads.length;
 
-  const value = {
+  const threadValue = {
     ...DEFAULT_THREAD_CONTEXT,
     threadId,
     afterCreateDiscussion: id => setThreadId(id),
+  };
+
+  const messageValue = {
+    ...DEFAULT_MESSAGE_CONTEXT,
+    parentType: 'thread',
+    parentId: threadId,
   };
 
   return (
@@ -121,15 +129,15 @@ const ThreadsList = () => {
           </StartDiscussionButton>
         )}
       </TitleSection>
-      <ThreadContext.Provider value={value}>
+      <ThreadContext.Provider value={threadValue}>
         {isComposing && (
-          <StyledMessage
-            mode="compose"
-            afterCreateMessage={stopComposing}
-            handleCancel={stopComposing}
-            parentId={threadId}
-            parentType="thread"
-          />
+          <MessageContext.Provider value={messageValue}>
+            <StyledMessage
+              mode="compose"
+              afterCreateMessage={stopComposing}
+              handleCancel={stopComposing}
+            />
+          </MessageContext.Provider>
         )}
       </ThreadContext.Provider>
       {threads.map(d => (

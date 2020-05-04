@@ -6,7 +6,11 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
-import { ThreadContext } from 'utils/contexts';
+import {
+  DEFAULT_MESSAGE_CONTEXT,
+  MessageContext,
+  ThreadContext,
+} from 'utils/contexts';
 import { firstNewMessageId } from 'utils/helpers';
 
 import NewMessagesDivider from 'components/shared/NewMessagesDivider';
@@ -53,6 +57,13 @@ const ThreadMessages = ({ isUnread, ...props }) => {
   const { items } = data;
   const messages = (items || []).map(i => i.message);
 
+  const generateValue = index => ({
+    ...DEFAULT_MESSAGE_CONTEXT,
+    listPosition: index,
+    parentType: 'thread',
+    parentId: threadId,
+  });
+
   return (
     <Container ref={threadRef} {...props}>
       <StyledNewMessagesIndicator
@@ -66,12 +77,9 @@ const ThreadMessages = ({ isUnread, ...props }) => {
           {firstNewMessageId(messages) === m.id && m.id !== messages[0].id && (
             <NewMessagesDivider ref={dividerRef} />
           )}
-          <Message
-            index={i}
-            message={m}
-            parentId={threadId}
-            parentType="thread"
-          />
+          <MessageContext.Provider value={generateValue(i)}>
+            <Message message={m} />
+          </MessageContext.Provider>
         </React.Fragment>
       ))}
     </Container>

@@ -10,7 +10,12 @@ import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
 import localDeleteThreadMutation from 'graphql/mutations/local/deleteThreadFromDocument';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import { track } from 'utils/analytics';
-import { DEFAULT_THREAD_CONTEXT, ThreadContext } from 'utils/contexts';
+import {
+  DEFAULT_MESSAGE_CONTEXT,
+  DEFAULT_THREAD_CONTEXT,
+  MessageContext,
+  ThreadContext,
+} from 'utils/contexts';
 import { isResourceUnread } from 'utils/helpers';
 
 import Modal from 'components/shared/Modal';
@@ -105,7 +110,7 @@ const ThreadModal = ({
     handleClose();
   };
 
-  const value = {
+  const threadValue = {
     ...DEFAULT_THREAD_CONTEXT,
     threadId,
     initialTopic,
@@ -115,26 +120,32 @@ const ThreadModal = ({
     bottomRef,
     composerRef,
     hideComposer,
+    messageCount,
     afterDeleteThread,
     setHideComposer,
     setQuoteReply,
   };
 
+  const messageValue = {
+    ...DEFAULT_MESSAGE_CONTEXT,
+    draft,
+    parentId: threadId,
+    parentType: 'thread',
+  };
+
   return (
     <StyledModal handleClose={handleClose} isOpen={!!threadId} {...props}>
-      <ThreadContext.Provider value={value}>
+      <ThreadContext.Provider value={threadValue}>
         <Container ref={modalRef}>
           {(initialTopic || topic) && <StyledTopicComposer />}
           <ThreadMessages isUnread={isResourceUnread(tags)} />
           <div ref={bottomRef} />
-          <StyledMessageComposer
-            ref={composerRef}
-            parentType="thread"
-            parentId={threadId}
-            draft={draft}
-            messageCount={messageCount}
-            afterCreateMessage={afterCreateMessage}
-          />
+          <MessageContext.Provider value={messageValue}>
+            <StyledMessageComposer
+              ref={composerRef}
+              afterCreateMessage={afterCreateMessage}
+            />
+          </MessageContext.Provider>
         </Container>
       </ThreadContext.Provider>
     </StyledModal>

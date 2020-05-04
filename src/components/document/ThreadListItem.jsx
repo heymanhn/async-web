@@ -6,7 +6,12 @@ import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
-import { ThreadContext, DEFAULT_THREAD_CONTEXT } from 'utils/contexts';
+import {
+  DEFAULT_MESSAGE_CONTEXT,
+  DEFAULT_THREAD_CONTEXT,
+  MessageContext,
+  ThreadContext,
+} from 'utils/contexts';
 
 import Message from 'components/message/Message';
 import TopicComposer from 'components/thread/TopicComposer';
@@ -77,38 +82,39 @@ const ThreadListItem = ({ threadId }) => {
   const avatarUrls = messages.map(m => m.author.profilePictureUrl);
   const moreReplyCount = messageCount - (topic ? 1 : 2);
 
-  const value = {
+  const threadValue = {
     ...DEFAULT_THREAD_CONTEXT,
     threadId,
     topic,
     draft,
   };
 
+  const messageValue = {
+    ...DEFAULT_MESSAGE_CONTEXT,
+    parentType: 'thread',
+    parentId: threadId,
+  };
+
   return (
-    <ThreadContext.Provider value={value}>
+    <ThreadContext.Provider value={threadValue}>
       <Container>
         <ThreadListItemHeader discussion={data.discussion} />
         {topic && <StyledTopicComposer />}
-        <StyledMessage
-          isLast={lastMessage.id === firstMessage.id}
-          message={firstMessage}
-          parentId={threadId}
-          parentType="thread"
-        />
-        {moreReplyCount > 0 && (
-          <MoreRepliesIndicator>
-            <StyledAvatarList avatarUrls={avatarUrls} opacity={0.5} />
-            <div>{Pluralize('more reply', moreReplyCount, true)}</div>
-          </MoreRepliesIndicator>
-        )}
-        {lastMessage && lastMessage.id !== firstMessage.id && (
+        <MessageContext.Provider value={messageValue}>
           <StyledMessage
-            isLast
-            message={lastMessage}
-            parentId={threadId}
-            parentType="thread"
+            isLast={lastMessage.id === firstMessage.id}
+            message={firstMessage}
           />
-        )}
+          {moreReplyCount > 0 && (
+            <MoreRepliesIndicator>
+              <StyledAvatarList avatarUrls={avatarUrls} opacity={0.5} />
+              <div>{Pluralize('more reply', moreReplyCount, true)}</div>
+            </MoreRepliesIndicator>
+          )}
+          {lastMessage && lastMessage.id !== firstMessage.id && (
+            <StyledMessage isLast message={lastMessage} />
+          )}
+        </MessageContext.Provider>
       </Container>
     </ThreadContext.Provider>
   );

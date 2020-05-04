@@ -48,6 +48,7 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   readOnly: false,
   hideComposer: false,
   quoteReply: null,
+  messageCount: null,
   bottomRef: {},
   composerRef: {},
 
@@ -66,6 +67,7 @@ export const DEFAULT_THREAD_CONTEXT = {
   topic: null,
   hideComposer: false,
   quoteReply: null,
+  messageCount: null,
   modalRef: {},
   bottomRef: {},
   composerRef: {},
@@ -82,7 +84,7 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   parentType: null,
   mode: null,
   draft: null,
-  threadPosition: null,
+  listPosition: null,
 
   setMode: () => {},
   afterCreateMessage: () => {},

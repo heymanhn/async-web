@@ -36,22 +36,14 @@ const Divider = styled.div(({ theme: { colors } }) => ({
 }));
 
 const MessageComposer = React.forwardRef(
-  (
-    {
-      parentType,
-      parentId,
-      draft,
-      title,
-      messageCount,
-      afterCreateMessage,
-      ...props
-    },
-    composerRef
-  ) => {
+  ({ title, afterCreateMessage, ...props }, composerRef) => {
     const client = useApolloClient();
-    const { bottomRef, hideComposer, quoteReply } = useContext(
+    const messageContext = useContext(MessageContext);
+    const { draft, parentType } = messageContext;
+    const { bottomRef, hideComposer, messageCount, quoteReply } = useContext(
       parentType === 'discussion' ? DiscussionContext : ThreadContext
     );
+
     const [isComposing, setIsComposing] = useState(draft || !messageCount);
     const startComposing = () => setIsComposing(true);
     const stopComposing = () => setIsComposing(false);
@@ -85,11 +77,6 @@ const MessageComposer = React.forwardRef(
     if (hideComposer) return null;
     if (!isComposing && quoteReply) startComposing();
 
-    const messageValue = {
-      draft,
-      parentId,
-    };
-
     return (
       <Container ref={composerRef} {...props}>
         <Divider />
@@ -97,21 +84,15 @@ const MessageComposer = React.forwardRef(
         {isComposing ? (
           <Message
             mode="compose"
-            parentId={parentId}
-            parentType={parentType}
-            draft={draft}
-            messageCount={messageCount}
             afterCreateMessage={afterCreateWrapper}
             handleCancel={handleCancelCompose}
           />
         ) : (
-          <MessageContext.Provider value={messageValue}>
-            <ActionsBar
-              handleClickReply={startComposing}
-              handleClickDiscard={stopComposing}
-              parentType={parentType}
-            />
-          </MessageContext.Provider>
+          <ActionsBar
+            handleClickReply={startComposing}
+            handleClickDiscard={stopComposing}
+            parentType={parentType}
+          />
         )}
       </Container>
     );
@@ -119,16 +100,11 @@ const MessageComposer = React.forwardRef(
 );
 
 MessageComposer.propTypes = {
-  parentType: PropTypes.oneOf(['discussion', 'thread']).isRequired,
-  parentId: PropTypes.string.isRequired,
-  draft: PropTypes.object,
   title: PropTypes.string,
-  messageCount: PropTypes.number.isRequired,
   afterCreateMessage: PropTypes.func,
 };
 
 MessageComposer.defaultProps = {
-  draft: null,
   title: '',
   afterCreateMessage: () => {},
 };
