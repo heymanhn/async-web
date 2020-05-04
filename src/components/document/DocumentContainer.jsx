@@ -18,6 +18,10 @@ import Document from './Document';
 
 const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(documentId);
+  /*
+   * We're initializing document editor in this top component to better provide
+   * a reference to child components that are not desecendants of document Editable
+   */
   const editor = useDocumentEditor(documentId);
 
   const [viewMode, setViewMode] = useState('content');

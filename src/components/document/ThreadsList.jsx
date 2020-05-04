@@ -5,8 +5,8 @@ import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import {
   DocumentContext,
-  DiscussionContext,
-  DEFAULT_DISCUSSION_CONTEXT,
+  ThreadContext,
+  DEFAULT_THREAD_CONTEXT,
 } from 'utils/contexts';
 import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
 
@@ -68,21 +68,21 @@ const ThreadsList = () => {
   const { handleSaveMessageDraft, isSubmitting } = useMessageDraftMutations();
 
   const [isComposing, setIsComposing] = useState(false);
-  const [discussionId, setDiscussionId] = useState(null);
+  const [threadId, setThreadId] = useState(null);
 
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => {
-    setDiscussionId(null);
+    setThreadId(null);
     setIsComposing(false);
   };
 
-  const handleStartDiscussion = async () => {
+  const handleStartThread = async () => {
     // Create an empty draft discussion
-    const { discussionId: threadId } = await handleSaveMessageDraft({
+    const { discussionId: tId } = await handleSaveMessageDraft({
       isThread: true,
     });
 
-    setDiscussionId(threadId);
+    setThreadId(tId);
     startComposing();
   };
 
@@ -100,41 +100,41 @@ const ThreadsList = () => {
   if (!data) return <NotFound />;
 
   const { items } = data;
-  const discussions = (items || []).map(i => i.discussion);
-  const discussionCount = discussions.length;
+  const threads = (items || []).map(i => i.discussion);
+  const threadCount = threads.length;
 
-  if (!discussionCount && !isComposing) setIsComposing(true);
+  if (!threadCount && !isComposing) setIsComposing(true);
 
   const value = {
-    ...DEFAULT_DISCUSSION_CONTEXT,
-    discussionId,
-    afterCreateDiscussion: id => setDiscussionId(id),
+    ...DEFAULT_THREAD_CONTEXT,
+    threadId,
+    afterCreateDiscussion: id => setThreadId(id),
   };
 
   return (
     <Container ref={listRef}>
       <TitleSection>
-        <Title>{discussionCount ? 'Discussions' : 'Start a discussion'}</Title>
+        <Title>{threadCount ? 'Threads' : 'Start a thread'}</Title>
         {isSubmitting ? (
           <LoadingIndicator color="grey4" size="16" />
         ) : (
-          <StartDiscussionButton onClick={handleStartDiscussion}>
+          <StartDiscussionButton onClick={handleStartThread}>
             <Label>Start a discussion</Label>
           </StartDiscussionButton>
         )}
       </TitleSection>
-      <DiscussionContext.Provider value={value}>
+      <ThreadContext.Provider value={value}>
         {isComposing && (
           <StyledMessage
             mode="compose"
             afterCreateMessage={stopComposing}
             handleCancel={stopComposing}
-            parentId={discussionId}
+            parentId={threadId}
             parentType="thread"
           />
         )}
-      </DiscussionContext.Provider>
-      {discussions.map(d => (
+      </ThreadContext.Provider>
+      {threads.map(d => (
         <ThreadListItem key={d.id} threadId={d.id} />
       ))}
     </Container>
