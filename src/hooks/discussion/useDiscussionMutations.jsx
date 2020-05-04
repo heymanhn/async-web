@@ -1,12 +1,10 @@
 import { useContext, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 
-import inboxQuery from 'graphql/queries/inbox';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
 import { track } from 'utils/analytics';
-import { getLocalUser } from 'utils/auth';
 import { DiscussionContext, ThreadContext } from 'utils/contexts';
 
 const useDiscussionMutations = () => {
@@ -17,7 +15,6 @@ const useDiscussionMutations = () => {
   } = useContext(DiscussionContext);
   const { afterDeleteThread } = useContext(ThreadContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { userId } = getLocalUser();
 
   const [createDiscussion] = useMutation(createDiscussionMutation);
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
@@ -31,16 +28,6 @@ const useDiscussionMutations = () => {
 
     const { data } = await createDiscussion({
       variables: { input },
-      refetchQueries: [
-        {
-          query: inboxQuery,
-          variables: { userId, queryParams: { type: 'all' } },
-        },
-        {
-          query: inboxQuery,
-          variables: { userId, queryParams: { type: 'discussion' } },
-        },
-      ],
     });
 
     if (data.createDiscussion) {

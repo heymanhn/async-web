@@ -1,18 +1,19 @@
 import React, { useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
+import documentThreadsQuery from 'graphql/queries/documentThreads';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import {
   DocumentContext,
-  DiscussionContext,
-  DEFAULT_DISCUSSION_CONTEXT,
+  ThreadContext,
+  DEFAULT_THREAD_CONTEXT,
 } from 'utils/contexts';
+import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
 
 import NotFound from 'components/navigation/NotFound';
 import LoadingIndicator from 'components/shared/LoadingIndicator';
 import Message from 'components/message/Message';
-import DiscussionListItem from './DiscussionListItem';
+import ThreadListItem from './ThreadListItem';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
   margin: '60px auto',
@@ -61,24 +62,35 @@ const StyledMessage = styled(Message)(({ theme: { colors } }) => ({
   margin: '40px 0',
 }));
 
-const DiscussionsList = () => {
+const ThreadsList = () => {
   const listRef = useRef(null);
   const { documentId } = useContext(DocumentContext);
+  const { handleSaveMessageDraft, isSubmitting } = useMessageDraftMutations();
 
   const [isComposing, setIsComposing] = useState(false);
-  const [discussionId, setDiscussionId] = useState(null);
+  const [threadId, setThreadId] = useState(null);
 
   const startComposing = () => setIsComposing(true);
   const stopComposing = () => {
-    setDiscussionId(null);
+    setThreadId(null);
     setIsComposing(false);
+  };
+
+  const handleStartThread = async () => {
+    // Create an empty draft discussion
+    const { discussionId: tId } = await handleSaveMessageDraft({
+      isThread: true,
+    });
+
+    setThreadId(tId);
+    startComposing();
   };
 
   const { loading, data } = usePaginatedResource(
     listRef,
     {
-      query: documentDiscussionsQuery,
-      key: 'documentDiscussions',
+      query: documentThreadsQuery,
+      key: 'documentThreads',
       variables: { id: documentId, queryParams: { order: 'desc' } },
     },
     300
@@ -88,39 +100,43 @@ const DiscussionsList = () => {
   if (!data) return <NotFound />;
 
   const { items } = data;
-  const discussions = (items || []).map(i => i.discussion);
-  const discussionCount = discussions.length;
-
-  if (!discussionCount && !isComposing) setIsComposing(true);
+  const threads = (items || []).map(i => i.discussion);
+  const threadCount = threads.length;
 
   const value = {
-    ...DEFAULT_DISCUSSION_CONTEXT,
-    discussionId,
-    afterCreateDiscussion: id => setDiscussionId(id),
+    ...DEFAULT_THREAD_CONTEXT,
+    threadId,
+    afterCreateDiscussion: id => setThreadId(id),
   };
 
   return (
     <Container ref={listRef}>
       <TitleSection>
-        <Title>{discussionCount ? 'Discussions' : 'Start a discussion'}</Title>
-        <StartDiscussionButton onClick={startComposing}>
-          <Label>Start a discussion</Label>
-        </StartDiscussionButton>
+        <Title>{threadCount ? 'Threads' : 'Start a thread'}</Title>
+        {isSubmitting ? (
+          <LoadingIndicator color="grey4" size="16" />
+        ) : (
+          <StartDiscussionButton onClick={handleStartThread}>
+            <Label>Start a thread</Label>
+          </StartDiscussionButton>
+        )}
       </TitleSection>
-      <DiscussionContext.Provider value={value}>
+      <ThreadContext.Provider value={value}>
         {isComposing && (
           <StyledMessage
             mode="compose"
             afterCreateMessage={stopComposing}
             handleCancel={stopComposing}
+            parentId={threadId}
+            parentType="thread"
           />
         )}
-      </DiscussionContext.Provider>
-      {discussions.map(d => (
-        <DiscussionListItem key={d.id} discussionId={d.id} />
+      </ThreadContext.Provider>
+      {threads.map(d => (
+        <ThreadListItem key={d.id} threadId={d.id} />
       ))}
     </Container>
   );
 };
 
-export default DiscussionsList;
+export default ThreadsList;

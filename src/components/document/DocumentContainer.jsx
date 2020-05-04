@@ -11,12 +11,18 @@ import { isResourceUnread, isResourceReadOnly } from 'utils/helpers';
 import NotFound from 'components/navigation/NotFound';
 import ThreadModal from 'components/thread/ThreadModal';
 import NavigationBar from 'components/navigation/NavigationBar';
+import useDocumentEditor from 'hooks/document/useDocumentEditor';
 
-import DiscussionsList from './DiscussionsList';
+import ThreadsList from './ThreadsList';
 import Document from './Document';
 
 const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(documentId);
+  /*
+   * We're initializing document editor in this top component to better provide
+   * a reference to child components that are not desecendants of document Editable
+   */
+  const editor = useDocumentEditor(documentId);
 
   const [viewMode, setViewMode] = useState('content');
   const [forceUpdate, setForceUpdate] = useState(false);
@@ -45,6 +51,7 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
     viewMode,
     channelId,
     readOnly,
+    editor,
 
     setForceUpdate,
     setViewMode,
@@ -55,7 +62,7 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
     <DocumentContext.Provider value={value}>
       <NavigationBar />
       {viewMode === 'content' && <Document isUnread={isResourceUnread(tags)} />}
-      {viewMode === 'discussions' && <DiscussionsList />}
+      {viewMode === 'discussions' && <ThreadsList />}
 
       {threadId && (
         <ThreadModal

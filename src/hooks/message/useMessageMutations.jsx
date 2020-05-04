@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 
 import discussionQuery from 'graphql/queries/discussion';
-import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
+import documentDiscussionsQuery from 'graphql/queries/documentThreads';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
