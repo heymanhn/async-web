@@ -19,8 +19,8 @@ import Message from './Message';
 const REPLY_HOTKEY = 'shift+r';
 
 // Currently the composer will always be at the bottom of its parent container.
-const Container = styled.div(({ theme: { colors } }) => ({
-  position: 'sticky',
+const Container = styled.div(({ isComposing, theme: { colors } }) => ({
+  position: isComposing ? 'unset' : 'sticky',
   bottom: 0,
 
   background: colors.white,
@@ -78,7 +78,7 @@ const MessageComposer = React.forwardRef(
     if (!isComposing && quoteReply) startComposing();
 
     return (
-      <Container ref={composerRef} {...props}>
+      <Container ref={composerRef} isComposing={isComposing} {...props}>
         <Divider />
         {shouldDisplayTitle && <TitleEditor initialTitle={title} />}
         {isComposing ? (
