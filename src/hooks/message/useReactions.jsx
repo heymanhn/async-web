@@ -51,7 +51,7 @@ const reactionsReference = [
 ];
 
 const useReactions = () => {
-  const { messageId, parentId } = useContext(MessageContext);
+  const { messageId } = useContext(MessageContext);
   const [execAddReaction] = useMutation(createReactionMutation);
   const [execRemoveReaction] = useMutation(deleteReactionMutation);
 
@@ -67,7 +67,7 @@ const useReactions = () => {
       refetchQueries: [
         {
           query: messageQuery,
-          variables: { discussionId: parentId, messageId },
+          variables: { messageId },
         },
       ],
     });
@@ -81,7 +81,7 @@ const useReactions = () => {
       refetchQueries: [
         {
           query: messageQuery,
-          variables: { discussionId: parentId, messageId },
+          variables: { messageId },
         },
       ],
     });
@@ -90,7 +90,7 @@ const useReactions = () => {
   }
 
   const { data } = useQuery(messageQuery, {
-    variables: { discussionId: parentId, messageId },
+    variables: { messageId },
   });
 
   let reactions = [];

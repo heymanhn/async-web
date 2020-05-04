@@ -30,7 +30,7 @@ const useThreadMutations = () => {
   const [createDiscussion] = useMutation(createDiscussionMutation);
   const [updateDiscussion] = useMutation(updateDiscussionMutation);
   const { refetch: getParentMessage } = useQuery(messageQuery, {
-    variables: { discussionId, messageId },
+    variables: { messageId },
     skip: true,
   });
 
