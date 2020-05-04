@@ -68,7 +68,7 @@ const Timestamp = styled(Moment)({
   marginLeft: '4px',
 });
 
-const MessageActions = ({ handleSubmit }) => {
+const MessageActions = ({ handleSubmit, ...props }) => {
   const { draft, mode, handleCancel } = useContext(MessageContext);
   const { handleDeleteMessageDraft } = useMessageDraftMutations();
   const editor = useSlate();
@@ -101,7 +101,7 @@ const MessageActions = ({ handleSubmit }) => {
   useKeyDownHandler([SUBMIT_HOTKEY, handleSubmitWrapper]);
 
   return (
-    <Container>
+    <Container {...props}>
       <Section>
         <SubmitLabel>⌘ + Enter to</SubmitLabel>
         <SubmitButton onClick={handleSubmitWrapper}>
