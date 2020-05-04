@@ -111,10 +111,10 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
           {!!messageCount && (
             <DiscussionMessages isUnread={isResourceUnread(tags)} />
           )}
-          <div ref={bottomRef} />
           <MessageContext.Provider value={messageValue}>
             <MessageComposer ref={composerRef} title={title} />
           </MessageContext.Provider>
+          <div ref={bottomRef} />
         </ContentContainer>
         {threadId && (
           <ThreadModal

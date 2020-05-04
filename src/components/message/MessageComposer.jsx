@@ -44,8 +44,19 @@ const MessageComposer = React.forwardRef(
       parentType === 'discussion' ? DiscussionContext : ThreadContext
     );
 
+    const scrollToBottom = () => {
+      const { current: bottomOfPage } = bottomRef;
+      if (bottomOfPage) {
+        // Make sure the new message is added before we scroll to bottom
+        setTimeout(() => bottomOfPage.scrollIntoView(), 0);
+      }
+    };
+
     const [isComposing, setIsComposing] = useState(draft || !messageCount);
-    const startComposing = () => setIsComposing(true);
+    const startComposing = () => {
+      scrollToBottom();
+      setIsComposing(true);
+    };
     const stopComposing = () => setIsComposing(false);
     const shouldDisplayTitle =
       parentType === 'discussion' && !messageCount && isComposing;
@@ -61,12 +72,7 @@ const MessageComposer = React.forwardRef(
 
       // Posting a message is behaviorally equivalent to marking the parent as read
       client.writeData({ data: { pendingMessages: [] } });
-
-      const { current: bottomOfPage } = bottomRef;
-      if (bottomOfPage) {
-        // Make sure the new message is added before we scroll to bottom
-        setTimeout(() => bottomOfPage.scrollIntoView(), 0);
-      }
+      scrollToBottom();
     };
 
     const handleCancelCompose = () => {
