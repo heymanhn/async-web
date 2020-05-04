@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
-import localDeleteDiscussionMutation from 'graphql/mutations/local/deleteDiscussionFromDocument';
 import { ThreadContext, DEFAULT_THREAD_CONTEXT } from 'utils/contexts';
 
 import Message from 'components/message/Message';
@@ -65,14 +64,12 @@ const ThreadListItem = ({ threadId }) => {
   const { loading: loading2, data: data2 } = useQuery(discussionMessagesQuery, {
     variables: { discussionId: threadId, queryParams: {} },
   });
-  const [localDeleteDiscussion] = useMutation(localDeleteDiscussionMutation);
 
   if (loading || loading2) return null;
   if (!data.discussion || !data2.messages) return <NotFound />;
 
-  const { topic, lastMessage, messageCount, draft, parent } = data.discussion;
+  const { topic, lastMessage, messageCount, draft } = data.discussion;
   const { items } = data2.messages;
-  const { id: documentId } = parent;
   const messages = (items || []).map(i => i.message);
   if (!messages.length) return null;
 
@@ -85,10 +82,6 @@ const ThreadListItem = ({ threadId }) => {
     threadId,
     topic,
     draft,
-    afterDeleteDiscussion: () =>
-      localDeleteDiscussion({
-        variables: { documentId, discussionId: threadId },
-      }),
   };
 
   return (

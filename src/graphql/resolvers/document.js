@@ -1,5 +1,5 @@
 import documentQuery from 'graphql/queries/document';
-import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
+import documentThreadsQuery from 'graphql/queries/documentThreads';
 
 const updateDocumentTitle = (_root, { documentId, title }, { client }) => {
   const data = client.readQuery({
@@ -23,24 +23,24 @@ const updateDocumentTitle = (_root, { documentId, title }, { client }) => {
   return null;
 };
 
-const deleteDiscussionFromDocument = (
+const deleteThreadFromDocument = (
   _root,
-  { documentId, discussionId },
+  { documentId, threadId },
   { client }
 ) => {
   const {
-    documentDiscussions: { items, pageToken, __typename },
+    documentThreads: { items, pageToken, __typename },
   } = client.readQuery({
-    query: documentDiscussionsQuery,
+    query: documentThreadsQuery,
     variables: { id: documentId, queryParams: { order: 'desc' } },
   });
 
-  const index = items.findIndex(i => i.discussion.id === discussionId);
+  const index = items.findIndex(i => i.discussion.id === threadId);
   client.writeQuery({
-    query: documentDiscussionsQuery,
+    query: documentThreadsQuery,
     variables: { id: documentId, queryParams: { order: 'desc' } },
     data: {
-      documentDiscussions: {
+      documentThreads: {
         items: [...items.slice(0, index), ...items.slice(index + 1)],
         pageToken,
         __typename,
@@ -53,5 +53,5 @@ const deleteDiscussionFromDocument = (
 
 export default {
   updateDocumentTitle,
-  deleteDiscussionFromDocument,
+  deleteThreadFromDocument,
 };

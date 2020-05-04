@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { navigate } from '@reach/router';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
 import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
+import localDeleteThreadMutation from 'graphql/mutations/local/deleteThreadFromDocument';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import { track } from 'utils/analytics';
 import { DEFAULT_THREAD_CONTEXT, ThreadContext } from 'utils/contexts';
@@ -54,6 +55,7 @@ const ThreadModal = ({
 
   // A thread's parent is either a document or a discussion
   const { resourceId, resourceType } = useDisambiguatedResource();
+  const [localDeleteThread] = useMutation(localDeleteThreadMutation);
 
   useEffect(() => {
     const { origin } = window.location;
@@ -79,7 +81,7 @@ const ThreadModal = ({
 
   if (!data || !data.discussion) return null;
 
-  const { draft, messageCount, topic, tags } = data.discussion;
+  const { draft, messageCount, topic, tags, parent } = data.discussion;
 
   const afterCreateMessage = newThreadId => {
     // Only need to set this once, when the first message is created.
@@ -92,6 +94,12 @@ const ThreadModal = ({
 
   const afterDeleteThread = () => {
     if (sourceEditor) Editor.removeInlineAnnotation(sourceEditor, threadId);
+
+    if (parent && parent.contentParentType === 'document') {
+      localDeleteThread({
+        variables: { documentId: parent.contentParentId, threadId },
+      });
+    }
 
     handleClose();
   };

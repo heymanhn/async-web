@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
+import documentThreadsQuery from 'graphql/queries/documentThreads';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import {
   DocumentContext,
@@ -89,8 +89,8 @@ const ThreadsList = () => {
   const { loading, data } = usePaginatedResource(
     listRef,
     {
-      query: documentDiscussionsQuery,
-      key: 'documentDiscussions',
+      query: documentThreadsQuery,
+      key: 'documentThreads',
       variables: { id: documentId, queryParams: { order: 'desc' } },
     },
     300
@@ -102,8 +102,6 @@ const ThreadsList = () => {
   const { items } = data;
   const threads = (items || []).map(i => i.discussion);
   const threadCount = threads.length;
-
-  if (!threadCount && !isComposing) setIsComposing(true);
 
   const value = {
     ...DEFAULT_THREAD_CONTEXT,
@@ -119,7 +117,7 @@ const ThreadsList = () => {
           <LoadingIndicator color="grey4" size="16" />
         ) : (
           <StartDiscussionButton onClick={handleStartThread}>
-            <Label>Start a discussion</Label>
+            <Label>Start a thread</Label>
           </StartDiscussionButton>
         )}
       </TitleSection>

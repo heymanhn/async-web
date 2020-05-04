@@ -8,7 +8,7 @@ import { useContext, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import messageQuery from 'graphql/queries/message';
-import documentDiscussionsQuery from 'graphql/queries/documentDiscussions';
+import documentThreadsQuery from 'graphql/queries/documentThreads';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import { track } from 'utils/analytics';
@@ -47,7 +47,7 @@ const useThreadMutations = () => {
         contentParentId: documentId,
       };
       refetchQueries.push({
-        query: documentDiscussionsQuery,
+        query: documentThreadsQuery,
         variables: { id: documentId, queryParams: { order: 'desc' } },
       });
     } else if (messageId) {
