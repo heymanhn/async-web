@@ -8,23 +8,17 @@
  *   provider component
  * - ThreadContext provided with a reference to the modal component, if
  *   a modal is currently displayed
- * - DiscussionContext provided with a reference to the composer, if
- *   a discussion is currently displayed
  */
 import { useContext, useEffect, useState } from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
 import throttle from 'lodash/throttle';
 
 import { THROTTLE_INTERVAL } from 'utils/constants';
-import { DiscussionContext, ThreadContext } from 'utils/contexts';
+import { ThreadContext } from 'utils/contexts';
 import Editor from 'components/editor/Editor';
 
 const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
   const { modalRef } = useContext(ThreadContext);
-
-  // We only need to use the reference to the composer in the case of a
-  // discussion page.
-  const { composerRef: containerRef } = useContext(DiscussionContext);
 
   const [data, setData] = useState({});
   const editor = useSlate();
@@ -79,19 +73,6 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
     if (modal) {
       yOffset = modal.scrollTop;
       xOffset = modal.scrollLeft;
-    }
-
-    /*
-     * If a container ref is provided, assume it's a ref to a fixed position element,
-     * and update offsets to be based on the element's offset parameters
-     *
-     * Not my proudest moment, but we shouldn't use the container ref, even if it was
-     * provided, if the consumer of this hook is the read only message toolbar
-     */
-    const { current: container } = containerRef;
-    if (container && source !== 'DOMSelection') {
-      yOffset = -(window.innerHeight - container.offsetHeight);
-      xOffset = -container.offsetLeft;
     }
 
     const coords = {
