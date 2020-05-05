@@ -28,7 +28,7 @@ const Container = styled.div(({ isVisible, theme: { colors } }) => ({
   padding: '0 10px',
   position: 'fixed',
   transition: 'opacity 0.1s',
-  zIndex: 1,
+  zIndex: 3,
 }));
 
 const StyledArrowIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
