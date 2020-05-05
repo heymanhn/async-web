@@ -25,8 +25,6 @@ const Container = styled.div(({ isComposing, theme: { colors } }) => ({
 
   background: colors.white,
   borderTop: `3px solid ${colors.bgGrey}`,
-  maxHeight: '60vh',
-  overflow: 'auto',
   width: '100%',
   zIndex: 3,
 }));

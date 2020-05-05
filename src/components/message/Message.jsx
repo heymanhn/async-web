@@ -46,12 +46,17 @@ const InnerContainer = styled.div(
   })
 );
 
-const HeaderSection = styled.div({
+const HeaderSection = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-});
+  marginLeft: '-60px',
+  marginRight: '-60px',
+  position: 'sticky',
+  top: 0,
+  background: colors.white,
+}));
 
 const StyledHoverMenu = styled(HoverMenu)({
   position: 'relative',
@@ -76,8 +81,6 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-// TODO (DISCUSSION V2): The discussion UX redesign should standardize the
-// appearance of messages, whether in discussions or threads.
 const Message = ({
   mode: initialMode,
   message,
