@@ -123,7 +123,7 @@ const MessageActions = ({ handleSubmit, ...props }) => {
           <CancelButton onClick={handleCancel}>Cancel</CancelButton>
         )}
       </Section>
-      {draft && (
+      {draft && mode === 'compose' && (
         <Section>
           <DraftSavedLabel>
             <span>Draft saved</span>
