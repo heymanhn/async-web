@@ -21,7 +21,7 @@ const Container = styled.div(({ isOpen, offset, theme: { colors } }) => ({
   padding: '10px 5px 5px',
   position: 'absolute',
   transition: 'opacity 0.2s',
-  zIndex: 1,
+  zIndex: 4,
 }));
 
 const Title = styled.div(({ theme: { colors } }) => ({
