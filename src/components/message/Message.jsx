@@ -48,10 +48,19 @@ const HeaderSection = styled.div(
     background: hover ? colors.bgGrey : colors.white,
     margin: isModalOpen ? 0 : '0 -60px',
     padding: isModalOpen ? '20px 0 5px' : '20px 60px 5px',
-    position: 'sticky',
-    top: 0,
-    zIndex: 1,
-  })
+  }),
+  ({ mode, theme: { colors } }) => {
+    if (mode === 'display') return {};
+
+    const styles = {
+      position: 'sticky',
+      top: 0,
+      zIndex: 1,
+    };
+
+    if (mode === 'edit') styles.background = colors.white;
+    return styles;
+  }
 );
 
 const StyledHoverMenu = styled(HoverMenu)({
@@ -141,7 +150,7 @@ const Message = ({
       {mode === 'edit' && <Divider />}
       <MessageContext.Provider value={value}>
         <InnerContainer>
-          <HeaderSection hover={hover} isModalOpen={isModalOpen}>
+          <HeaderSection hover={hover} isModalOpen={isModalOpen} mode={mode}>
             <AuthorDetails
               author={author}
               createdAt={createdAt}
