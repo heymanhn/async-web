@@ -32,12 +32,19 @@ const StyledModal = styled(Modal)({
 const Container = styled.div({
   borderRadius: '5px',
   maxHeight: 'calc(100vh - 120px)', // 60px vertical margin x2
-  overflow: 'auto',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+});
+
+// https://www.bennadel.com/blog/3409-using-position-absolute-inside-a-scrolling-overflow-container.htm
+const InnerContainer = styled.div({
+  position: 'relative',
 });
 
 const StyledTopicComposer = styled(TopicComposer)({
   borderTopLeftRadius: '5px',
   borderTopRightRadius: '5px',
+  padding: '0 30px',
 });
 
 const StyledMessageComposer = styled(MessageComposer)({
@@ -139,15 +146,17 @@ const ThreadModal = ({
     <StyledModal handleClose={handleClose} isOpen={!!threadId} {...props}>
       <ThreadContext.Provider value={threadValue}>
         <Container ref={modalRef}>
-          <MessageContext.Provider value={messageValue}>
-            {(initialTopic || topic) && <StyledTopicComposer />}
-            <ThreadMessages isUnread={isResourceUnread(tags)} />
-            <StyledMessageComposer
-              ref={composerRef}
-              afterCreateMessage={afterCreateMessage}
-            />
-            <div ref={bottomRef} />
-          </MessageContext.Provider>
+          <InnerContainer>
+            <MessageContext.Provider value={messageValue}>
+              {(initialTopic || topic) && <StyledTopicComposer />}
+              <ThreadMessages isUnread={isResourceUnread(tags)} />
+              <StyledMessageComposer
+                ref={composerRef}
+                afterCreateMessage={afterCreateMessage}
+              />
+              <div ref={bottomRef} />
+            </MessageContext.Provider>
+          </InnerContainer>
         </Container>
       </ThreadContext.Provider>
     </StyledModal>

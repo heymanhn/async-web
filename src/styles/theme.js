@@ -42,6 +42,7 @@ export const theme = {
   documentViewport: '740px',
   discussionViewport: '740px',
   workspaceViewport: '740px',
+  modalViewport: '800px',
   inboxViewport: '600px',
   wideViewport: '1220px',
   sidebarWidth: '240px',
