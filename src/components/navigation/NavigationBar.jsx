@@ -21,7 +21,7 @@ const Container = styled.div(({ theme: { colors } }) => ({
   position: 'sticky',
   top: '0px',
   width: '100%',
-  zIndex: 1,
+  zIndex: 2,
 }));
 
 const LeftSection = styled.div({

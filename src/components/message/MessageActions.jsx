@@ -18,8 +18,8 @@ const Container = styled.div(
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '10px',
-    paddingBottom: '20px',
+    margin: '0 -60px',
+    padding: '10px 60px 20px',
   },
   ({ mode, theme: { colors } }) => {
     if (mode !== 'compose') return {};
