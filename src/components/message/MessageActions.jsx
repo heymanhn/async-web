@@ -19,7 +19,7 @@ const Container = styled.div(
     alignItems: 'center',
     justifyContent: 'space-between',
     margin: isModalOpen ? 0 : '0 -60px',
-    padding: isModalOpen ? '10px 20px' : '10px 60px 20px',
+    padding: isModalOpen ? '10px 0 20px' : '10px 60px 20px',
   }),
   ({ mode, theme: { colors } }) => {
     if (mode !== 'compose') return {};
