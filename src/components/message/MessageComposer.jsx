@@ -37,7 +37,7 @@ const MessageComposer = React.forwardRef(
   ({ title, afterCreateMessage, ...props }, composerRef) => {
     const client = useApolloClient();
     const messageContext = useContext(MessageContext);
-    const { draft, parentType } = messageContext;
+    const { draft, isModalOpen, parentType } = messageContext;
     const { bottomRef, hideComposer, messageCount, quoteReply } = useContext(
       parentType === 'discussion' ? DiscussionContext : ThreadContext
     );
@@ -61,7 +61,7 @@ const MessageComposer = React.forwardRef(
 
     useKeyDownHandler(
       [REPLY_HOTKEY, () => !isComposing && startComposing()],
-      isComposing
+      isComposing || (isModalOpen && parentType === 'discussion')
     );
 
     const afterCreateWrapper = data => {

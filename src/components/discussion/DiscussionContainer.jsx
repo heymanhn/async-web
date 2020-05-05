@@ -98,6 +98,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   const messageValue = {
     ...DEFAULT_MESSAGE_CONTEXT,
     draft,
+    isModalOpen: !!threadId,
     parentId: discussionId,
     parentType: 'discussion',
   };
@@ -107,11 +108,11 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
       <OuterContainer>
         <NavigationBar />
         <ContentContainer ref={discussionRef}>
-          {!!messageCount && <TitleEditor initialTitle={title} />}
-          {!!messageCount && (
-            <DiscussionMessages isUnread={isResourceUnread(tags)} />
-          )}
           <MessageContext.Provider value={messageValue}>
+            {!!messageCount && <TitleEditor initialTitle={title} />}
+            {!!messageCount && (
+              <DiscussionMessages isUnread={isResourceUnread(tags)} />
+            )}
             <MessageComposer ref={composerRef} title={title} />
           </MessageContext.Provider>
           <div ref={bottomRef} />

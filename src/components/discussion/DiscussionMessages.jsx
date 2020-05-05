@@ -6,11 +6,7 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
-import {
-  DiscussionContext,
-  MessageContext,
-  DEFAULT_MESSAGE_CONTEXT,
-} from 'utils/contexts';
+import { DiscussionContext, MessageContext } from 'utils/contexts';
 import { firstNewMessageId } from 'utils/helpers';
 
 import NotFound from 'components/navigation/NotFound';
@@ -35,6 +31,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   const { discussionId, bottomRef, composerRef } = useContext(
     DiscussionContext
   );
+  const messageContext = useContext(MessageContext);
   const markAsRead = useMarkResourceAsRead();
 
   useMountEffect(() => {
@@ -54,10 +51,8 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   const messages = (items || []).map(i => i.message);
 
   const generateValue = index => ({
-    ...DEFAULT_MESSAGE_CONTEXT,
+    ...messageContext,
     listPosition: index,
-    parentId: discussionId,
-    parentType: 'discussion',
   });
 
   return (

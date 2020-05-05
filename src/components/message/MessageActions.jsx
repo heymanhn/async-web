@@ -14,13 +14,13 @@ const SUBMIT_HOTKEY = 'cmd+enter';
 const ESCAPE_HOTKEY = 'Escape';
 
 const Container = styled.div(
-  {
+  ({ isModalOpen }) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    margin: '0 -60px',
-    padding: '10px 60px 20px',
-  },
+    margin: isModalOpen ? 0 : '0 -60px',
+    padding: isModalOpen ? '10px 20px' : '10px 60px 20px',
+  }),
   ({ mode, theme: { colors } }) => {
     if (mode !== 'compose') return {};
 
@@ -81,7 +81,7 @@ const Timestamp = styled(Moment)({
 });
 
 const MessageActions = ({ handleSubmit, ...props }) => {
-  const { draft, mode, handleCancel } = useContext(MessageContext);
+  const { draft, isModalOpen, mode, handleCancel } = useContext(MessageContext);
   const { handleDeleteMessageDraft } = useMessageDraftMutations();
   const editor = useSlate();
   const isEmptyContent = Editor.isEmptyContent(editor);
@@ -113,7 +113,7 @@ const MessageActions = ({ handleSubmit, ...props }) => {
   useKeyDownHandler([SUBMIT_HOTKEY, handleSubmitWrapper]);
 
   return (
-    <Container mode={mode} {...props}>
+    <Container isModalOpen={isModalOpen} mode={mode} {...props}>
       <Section>
         <SubmitLabel>⌘ + Enter to</SubmitLabel>
         <SubmitButton onClick={handleSubmitWrapper}>

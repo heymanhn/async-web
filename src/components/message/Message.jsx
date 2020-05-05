@@ -38,19 +38,21 @@ const InnerContainer = styled.div(({ theme: { discussionViewport } }) => ({
   width: discussionViewport,
 }));
 
-const HeaderSection = styled.div(({ hover, theme: { colors } }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
+const HeaderSection = styled.div(
+  ({ hover, isModalOpen, theme: { colors } }) => ({
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
 
-  background: hover ? colors.bgGrey : colors.white,
-  margin: '0 -60px',
-  padding: '20px 60px 5px',
-  position: 'sticky',
-  top: 0,
-  zIndex: 1,
-}));
+    background: hover ? colors.bgGrey : colors.white,
+    margin: isModalOpen ? 0 : '0 -60px',
+    padding: isModalOpen ? '20px 0 5px' : '20px 60px 5px',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1,
+  })
+);
 
 const StyledHoverMenu = styled(HoverMenu)({
   position: 'relative',
@@ -83,7 +85,7 @@ const Message = ({
   ...props
 }) => {
   const messageContext = useContext(MessageContext);
-  const { draft, parentType } = messageContext;
+  const { draft, isModalOpen, parentType } = messageContext;
   const { hideComposer, messageCount, setHideComposer } = useContext(
     parentType === 'discussion' ? DiscussionContext : ThreadContext
   );
@@ -139,7 +141,7 @@ const Message = ({
       {mode === 'edit' && <Divider />}
       <MessageContext.Provider value={value}>
         <InnerContainer>
-          <HeaderSection hover={hover}>
+          <HeaderSection hover={hover} isModalOpen={isModalOpen}>
             <AuthorDetails
               author={author}
               createdAt={createdAt}
