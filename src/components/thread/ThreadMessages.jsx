@@ -6,11 +6,7 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
-import {
-  DEFAULT_MESSAGE_CONTEXT,
-  MessageContext,
-  ThreadContext,
-} from 'utils/contexts';
+import { MessageContext, ThreadContext } from 'utils/contexts';
 import { firstNewMessageId } from 'utils/helpers';
 
 import NewMessagesDivider from 'components/shared/NewMessagesDivider';
@@ -35,6 +31,7 @@ const ThreadMessages = ({ isUnread, ...props }) => {
   const { threadId, modalRef, bottomRef, composerRef } = useContext(
     ThreadContext
   );
+  const messageContext = useContext(MessageContext);
   const markAsRead = useMarkResourceAsRead();
 
   useMountEffect(() => {
@@ -58,7 +55,7 @@ const ThreadMessages = ({ isUnread, ...props }) => {
   const messages = (items || []).map(i => i.message);
 
   const generateValue = index => ({
-    ...DEFAULT_MESSAGE_CONTEXT,
+    ...messageContext,
     listPosition: index,
     parentType: 'thread',
     parentId: threadId,

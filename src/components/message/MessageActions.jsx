@@ -13,13 +13,25 @@ import Editor from 'components/editor/Editor';
 const SUBMIT_HOTKEY = 'cmd+enter';
 const ESCAPE_HOTKEY = 'Escape';
 
-const Container = styled.div({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+const Container = styled.div(
+  ({ isModalOpen }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: isModalOpen ? 0 : '0 -60px',
+    padding: isModalOpen ? '10px 20px' : '10px 60px 20px',
+  }),
+  ({ mode, theme: { colors } }) => {
+    if (mode !== 'compose') return {};
 
-  margin: '10px 0 20px',
-});
+    // This keeps the action buttons visible at the bottom of the composer
+    return {
+      background: colors.white,
+      position: 'sticky',
+      bottom: 0,
+    };
+  }
+);
 
 const Section = styled.div({
   display: 'flex',
@@ -68,8 +80,8 @@ const Timestamp = styled(Moment)({
   marginLeft: '4px',
 });
 
-const MessageActions = ({ handleSubmit }) => {
-  const { draft, mode, handleCancel } = useContext(MessageContext);
+const MessageActions = ({ handleSubmit, ...props }) => {
+  const { draft, isModalOpen, mode, handleCancel } = useContext(MessageContext);
   const { handleDeleteMessageDraft } = useMessageDraftMutations();
   const editor = useSlate();
   const isEmptyContent = Editor.isEmptyContent(editor);
@@ -101,7 +113,7 @@ const MessageActions = ({ handleSubmit }) => {
   useKeyDownHandler([SUBMIT_HOTKEY, handleSubmitWrapper]);
 
   return (
-    <Container>
+    <Container isModalOpen={isModalOpen} mode={mode} {...props}>
       <Section>
         <SubmitLabel>⌘ + Enter to</SubmitLabel>
         <SubmitButton onClick={handleSubmitWrapper}>
@@ -111,7 +123,7 @@ const MessageActions = ({ handleSubmit }) => {
           <CancelButton onClick={handleCancel}>Cancel</CancelButton>
         )}
       </Section>
-      {draft && (
+      {draft && mode === 'compose' && (
         <Section>
           <DraftSavedLabel>
             <span>Draft saved</span>

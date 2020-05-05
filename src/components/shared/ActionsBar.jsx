@@ -13,6 +13,9 @@ import Avatar from 'components/shared/Avatar';
 import AvatarWithIcon from 'components/shared/AvatarWithIcon';
 
 const Container = styled.div(({ theme: { discussionViewport } }) => ({
+  position: 'sticky',
+  bottom: 0,
+
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',

@@ -30,6 +30,7 @@ const StyledModal = styled(Modal)({
 });
 
 const Container = styled.div({
+  borderRadius: '5px',
   maxHeight: 'calc(100vh - 120px)', // 60px vertical margin x2
   overflow: 'auto',
 });
@@ -129,6 +130,7 @@ const ThreadModal = ({
   const messageValue = {
     ...DEFAULT_MESSAGE_CONTEXT,
     draft,
+    isModalOpen: true,
     parentId: threadId,
     parentType: 'thread',
   };
@@ -137,14 +139,14 @@ const ThreadModal = ({
     <StyledModal handleClose={handleClose} isOpen={!!threadId} {...props}>
       <ThreadContext.Provider value={threadValue}>
         <Container ref={modalRef}>
-          {(initialTopic || topic) && <StyledTopicComposer />}
-          <ThreadMessages isUnread={isResourceUnread(tags)} />
-          <div ref={bottomRef} />
           <MessageContext.Provider value={messageValue}>
+            {(initialTopic || topic) && <StyledTopicComposer />}
+            <ThreadMessages isUnread={isResourceUnread(tags)} />
             <StyledMessageComposer
               ref={composerRef}
               afterCreateMessage={afterCreateMessage}
             />
+            <div ref={bottomRef} />
           </MessageContext.Provider>
         </Container>
       </ThreadContext.Provider>

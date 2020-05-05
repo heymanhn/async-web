@@ -19,14 +19,12 @@ import Message from './Message';
 const REPLY_HOTKEY = 'shift+r';
 
 // Currently the composer will always be at the bottom of its parent container.
-const Container = styled.div(({ theme: { colors } }) => ({
-  position: 'sticky',
+const Container = styled.div(({ isComposing, theme: { colors } }) => ({
+  position: isComposing ? 'unset' : 'sticky',
   bottom: 0,
 
   background: colors.white,
   borderTop: `3px solid ${colors.bgGrey}`,
-  maxHeight: '60vh',
-  overflow: 'auto',
   width: '100%',
   zIndex: 3,
 }));
@@ -39,20 +37,31 @@ const MessageComposer = React.forwardRef(
   ({ title, afterCreateMessage, ...props }, composerRef) => {
     const client = useApolloClient();
     const messageContext = useContext(MessageContext);
-    const { draft, parentType } = messageContext;
+    const { draft, isModalOpen, parentType } = messageContext;
     const { bottomRef, hideComposer, messageCount, quoteReply } = useContext(
       parentType === 'discussion' ? DiscussionContext : ThreadContext
     );
 
+    const scrollToBottom = () => {
+      const { current: bottomOfPage } = bottomRef;
+      if (bottomOfPage) {
+        // Make sure the new message is added before we scroll to bottom
+        setTimeout(() => bottomOfPage.scrollIntoView(), 0);
+      }
+    };
+
     const [isComposing, setIsComposing] = useState(draft || !messageCount);
-    const startComposing = () => setIsComposing(true);
+    const startComposing = () => {
+      scrollToBottom();
+      setIsComposing(true);
+    };
     const stopComposing = () => setIsComposing(false);
     const shouldDisplayTitle =
       parentType === 'discussion' && !messageCount && isComposing;
 
     useKeyDownHandler(
       [REPLY_HOTKEY, () => !isComposing && startComposing()],
-      isComposing
+      isComposing || (isModalOpen && parentType === 'discussion')
     );
 
     const afterCreateWrapper = data => {
@@ -61,12 +70,7 @@ const MessageComposer = React.forwardRef(
 
       // Posting a message is behaviorally equivalent to marking the parent as read
       client.writeData({ data: { pendingMessages: [] } });
-
-      const { current: bottomOfPage } = bottomRef;
-      if (bottomOfPage) {
-        // Make sure the new message is added before we scroll to bottom
-        setTimeout(() => bottomOfPage.scrollIntoView(), 0);
-      }
+      scrollToBottom();
     };
 
     const handleCancelCompose = () => {
@@ -78,7 +82,7 @@ const MessageComposer = React.forwardRef(
     if (!isComposing && quoteReply) startComposing();
 
     return (
-      <Container ref={composerRef} {...props}>
+      <Container ref={composerRef} isComposing={isComposing} {...props}>
         <Divider />
         {shouldDisplayTitle && <TitleEditor initialTitle={title} />}
         {isComposing ? (

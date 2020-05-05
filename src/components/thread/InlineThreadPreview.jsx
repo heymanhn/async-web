@@ -20,6 +20,7 @@ const OuterContainer = styled.div(({ isOpen, styles }) => ({
   transition: 'opacity 0.2s',
   top: '-10000px',
   left: '-10000px',
+  zIndex: isOpen ? 2 : 'unset',
 
   ...styles,
 }));

@@ -17,41 +17,51 @@ import HoverMenu from './HoverMenu';
 import MessageReactions from './MessageReactions';
 import ViewMessageThreadButton from './ViewMessageThreadButton';
 
-const Container = styled.div(
-  ({ hover, theme: { colors } }) => ({
-    background: hover ? colors.bgGrey : 'none',
-    padding: '20px 0 0',
-  }),
-  ({ mode, theme: { colors } }) => {
-    if (mode !== 'edit') return {};
+const Container = styled.div(({ hover, mode, theme: { colors } }) => {
+  if (mode !== 'edit') return { background: hover ? colors.bgGrey : 'none' };
 
-    return {
-      background: 'none',
-      borderTop: `3px solid ${colors.bgGrey}`,
-      borderBottom: `1px solid ${colors.borderGrey}`,
-      padding: 0,
-    };
-  }
-);
+  return {
+    background: 'none',
+    borderTop: `3px solid ${colors.bgGrey}`,
+    borderBottom: `1px solid ${colors.borderGrey}`,
+    padding: 0,
+  };
+});
 
 const Divider = styled.div(({ theme: { colors } }) => ({
   borderTop: `1px solid ${colors.borderGrey}`,
 }));
 
-const InnerContainer = styled.div(
-  ({ mode, theme: { discussionViewport } }) => ({
-    margin: '0 auto',
-    padding: mode === 'edit' ? '20px 30px 0' : '0 30px',
-    width: discussionViewport,
-  })
-);
+const InnerContainer = styled.div(({ theme: { discussionViewport } }) => ({
+  margin: '0 auto',
+  padding: '0 30px',
+  width: discussionViewport,
+}));
 
-const HeaderSection = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-});
+const HeaderSection = styled.div(
+  ({ hover, isModalOpen, theme: { colors } }) => ({
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    background: hover ? colors.bgGrey : colors.white,
+    margin: isModalOpen ? 0 : '0 -60px',
+    padding: isModalOpen ? '20px 0 5px' : '20px 60px 5px',
+  }),
+  ({ mode, theme: { colors } }) => {
+    if (mode === 'display') return {};
+
+    const styles = {
+      position: 'sticky',
+      top: 0,
+      zIndex: 1,
+    };
+
+    if (mode === 'edit') styles.background = colors.white;
+    return styles;
+  }
+);
 
 const StyledHoverMenu = styled(HoverMenu)({
   position: 'relative',
@@ -76,8 +86,6 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-// TODO (DISCUSSION V2): The discussion UX redesign should standardize the
-// appearance of messages, whether in discussions or threads.
 const Message = ({
   mode: initialMode,
   message,
@@ -86,7 +94,7 @@ const Message = ({
   ...props
 }) => {
   const messageContext = useContext(MessageContext);
-  const { draft, parentType } = messageContext;
+  const { draft, isModalOpen, parentType } = messageContext;
   const { hideComposer, messageCount, setHideComposer } = useContext(
     parentType === 'discussion' ? DiscussionContext : ThreadContext
   );
@@ -141,8 +149,8 @@ const Message = ({
     >
       {mode === 'edit' && <Divider />}
       <MessageContext.Provider value={value}>
-        <InnerContainer mode={mode}>
-          <HeaderSection>
+        <InnerContainer>
+          <HeaderSection hover={hover} isModalOpen={isModalOpen} mode={mode}>
             <AuthorDetails
               author={author}
               createdAt={createdAt}

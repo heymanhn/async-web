@@ -74,12 +74,7 @@ const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
         {!readOnly && <MessageToolbar />}
         <DefaultPlaceholder />
         <CompositionMenuButton />
-        {!readOnly && (
-          <MessageActions
-            handleSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
-          />
-        )}
+        {!readOnly && <MessageActions handleSubmit={handleSubmit} />}
       </Slate>
     </Container>
   );

@@ -84,6 +84,7 @@ export const DEFAULT_MESSAGE_CONTEXT = {
   parentType: null,
   mode: null,
   draft: null,
+  isModalOpen: false,
   listPosition: null,
 
   setMode: () => {},
