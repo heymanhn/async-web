@@ -7,13 +7,11 @@ import notification from './notification';
 export default gql`
   fragment ResourceItems on ResourcesResponse {
     items @type(name: "ResourceItem") {
-      discussion @type(name: "Discussion") {
+      discussion @type(name: "WorkspaceDiscussion") {
         ...DiscussionObject
-        messageCount
       }
-      document @type(name: "Document") {
+      document @type(name: "WorkspaceDocument") {
         ...DocumentObject
-        discussionCount
       }
       lastUpdate @type(name: "Notification") {
         ...NotificationObject
