@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import {
   DiscussionContext,
   DocumentContext,
+  ThreadContext,
   WorkspaceContext,
 } from 'utils/contexts';
 import buildResource from 'utils/resourceHelpers';
@@ -17,7 +18,7 @@ const useDisambiguatedResource = () => {
   const { discussionId, setForceUpdate: setForceUpdateDiscussion } = useContext(
     DiscussionContext
   );
-  const isDocumentDiscussion = documentId && discussionId;
+  const { threadId } = useContext(ThreadContext);
 
   let resourceId;
   let resourceType;
@@ -27,8 +28,8 @@ const useDisambiguatedResource = () => {
     resourceId = workspaceId;
     resourceType = 'workspace';
     setForceUpdate = setForceUpdateWorkspace;
-  } else if (isDocumentDiscussion) {
-    resourceId = discussionId;
+  } else if (threadId) {
+    resourceId = threadId;
     resourceType = 'discussion';
     setForceUpdate = setForceUpdateDiscussion;
   } else if (documentId) {

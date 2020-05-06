@@ -46,12 +46,13 @@ const useAppPusher = pusher => {
     const handleNewNotification = pusherData => {
       const camelData = camelcaseKeys(pusherData, { deep: true });
       const { notification } = camelData;
-      const { documentId, workspaceId } = notification;
+      const { parentId, workspaceId } = notification;
 
       [
         { resourceType: 'user', resourceId: userId },
         { resourceType: 'workspace', resourceId: workspaceId },
-        { resourceType: 'document', resourceId: documentId },
+        { resourceType: 'document', resourceId: parentId },
+        { resourceType: 'discussion', resourceId: parentId },
       ].forEach(item => {
         if (item.resourceId) {
           client.mutate({

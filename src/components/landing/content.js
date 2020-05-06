@@ -20,9 +20,9 @@ const moduleList = [
   {
     type: HEADLINE,
     content: {
-      title: 'Asynchronous workplace. A new way of working.',
+      title: 'Organized, distraction-free team communication',
       description:
-        'Candor is a distraction-free space to streamline knowledge sharing in teams. Documents, discussions, and threads – all in one place.',
+        'Candor is the most thoughtful way to write, discuss, and share knowledge. All your team communication in one place.',
     },
   },
   {
