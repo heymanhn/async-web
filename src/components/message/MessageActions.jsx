@@ -11,7 +11,7 @@ import { MessageContext } from 'utils/contexts';
 import Editor from 'components/editor/Editor';
 
 const SUBMIT_HOTKEY = 'cmd+enter';
-const ESCAPE_HOTKEY = 'Escape';
+// const ESCAPE_HOTKEY = 'Escape';
 
 const Container = styled.div(
   ({ isModalOpen }) => ({
