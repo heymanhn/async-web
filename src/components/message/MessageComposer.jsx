@@ -37,7 +37,7 @@ const MessageComposer = React.forwardRef(
   ({ title, afterCreateMessage, ...props }, composerRef) => {
     const client = useApolloClient();
     const messageContext = useContext(MessageContext);
-    const { draft, isModalOpen, parentType } = messageContext;
+    const { isModalOpen, parentType } = messageContext;
     const { bottomRef, hideComposer, messageCount, quoteReply } = useContext(
       parentType === 'discussion' ? DiscussionContext : ThreadContext
     );
@@ -50,7 +50,7 @@ const MessageComposer = React.forwardRef(
       }
     };
 
-    const [isComposing, setIsComposing] = useState(draft || !messageCount);
+    const [isComposing, setIsComposing] = useState(!messageCount);
     const startComposing = () => {
       scrollToBottom();
       setIsComposing(true);
