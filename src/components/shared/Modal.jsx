@@ -29,12 +29,12 @@ const Container = styled.div({
   zIndex: 1050,
 });
 
-const Dialog = styled.div(({ theme: { colors, documentViewport } }) => ({
+const Dialog = styled.div(({ theme: { colors, modalViewport } }) => ({
   background: colors.white,
   borderRadius: '5px',
   boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
   margin: '120px auto',
-  width: documentViewport,
+  width: modalViewport,
 }));
 
 const Modal = React.forwardRef(

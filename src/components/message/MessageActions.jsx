@@ -11,7 +11,7 @@ import { MessageContext } from 'utils/contexts';
 import Editor from 'components/editor/Editor';
 
 const SUBMIT_HOTKEY = 'cmd+enter';
-const ESCAPE_HOTKEY = 'Escape';
+// const ESCAPE_HOTKEY = 'Escape';
 
 const Container = styled.div(
   ({ isModalOpen }) => ({
@@ -19,7 +19,7 @@ const Container = styled.div(
     alignItems: 'center',
     justifyContent: 'space-between',
     margin: isModalOpen ? 0 : '0 -60px',
-    padding: isModalOpen ? '10px 20px' : '10px 60px 20px',
+    padding: isModalOpen ? '10px 0 20px' : '10px 60px 20px',
   }),
   ({ mode, theme: { colors } }) => {
     if (mode !== 'compose') return {};
@@ -81,7 +81,9 @@ const Timestamp = styled(Moment)({
 });
 
 const MessageActions = ({ handleSubmit, ...props }) => {
-  const { draft, isModalOpen, mode, handleCancel } = useContext(MessageContext);
+  const { draft, isModalOpen, mode, parentType, handleCancel } = useContext(
+    MessageContext
+  );
   const { handleDeleteMessageDraft } = useMessageDraftMutations();
   const editor = useSlate();
   const isEmptyContent = Editor.isEmptyContent(editor);
@@ -99,18 +101,25 @@ const MessageActions = ({ handleSubmit, ...props }) => {
     handleCancel();
   };
 
-  const handleEscapeKey = event => {
-    event.preventDefault();
+  // TODO (DISCUSSION V2): Hook up the escape key to minimizing the composer
+  // const handleEscapeKey = event => {
+  //   event.preventDefault();
 
-    // TODO (DISCUSSION V2): Minimize the composer
-  };
+  //   // TODO (DISCUSSION V2): Minimize the composer
+  // };
 
-  const handlers = [
+  // const handlers = [
+  //   [SUBMIT_HOTKEY, handleSubmitWrapper],
+  //   [ESCAPE_HOTKEY, handleEscapeKey],
+  // ];
+
+  useKeyDownHandler(
     [SUBMIT_HOTKEY, handleSubmitWrapper],
-    [ESCAPE_HOTKEY, handleEscapeKey],
-  ];
-  useKeyDownHandler(handlers);
-  useKeyDownHandler([SUBMIT_HOTKEY, handleSubmitWrapper]);
+
+    // Make sure that cmd + enter doesn't work if a composer is open in both
+    // the modal and a discussion page
+    isModalOpen && parentType === 'discussion'
+  );
 
   return (
     <Container isModalOpen={isModalOpen} mode={mode} {...props}>

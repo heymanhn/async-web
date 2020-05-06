@@ -13,13 +13,11 @@ import NewMessagesDivider from 'components/shared/NewMessagesDivider';
 import NewMessagesIndicator from 'components/shared/NewMessagesIndicator';
 import Message from 'components/message/Message';
 
-const Container = styled.div(({ theme: { discussionViewport } }) => ({
+const Container = styled.div({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-
-  maxWidth: discussionViewport,
-}));
+});
 
 const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
   top: '75px', // 60px top margin for the modal + 15px buffer
