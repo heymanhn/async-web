@@ -36,6 +36,8 @@ const Container = styled.div({
   overflowX: 'hidden',
 });
 
+// Setting this additional container with a position allows the absolute
+// positioned content in the modal to scroll along with the rest of the content
 // https://www.bennadel.com/blog/3409-using-position-absolute-inside-a-scrolling-overflow-container.htm
 const InnerContainer = styled.div({
   position: 'relative',
