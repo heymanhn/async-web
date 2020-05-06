@@ -20,9 +20,9 @@ const moduleList = [
   {
     type: HEADLINE,
     content: {
-      title: 'Organized, distraction-free team communication',
+      title: 'A new standard for team communication',
       description:
-        'Candor is the most thoughtful way to write, discuss, and share knowledge. All your team communication in one place.',
+        'Candor is a distraction-free space that streamlines team communication and knowledge sharing.',
     },
   },
   {
