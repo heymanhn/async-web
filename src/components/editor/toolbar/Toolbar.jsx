@@ -1,10 +1,14 @@
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Range } from 'slate';
 import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useSelectionDimensions from 'hooks/editor/useSelectionDimensions';
+import { ThreadContext } from 'utils/contexts';
+
+// Number of pixels padding from left/right edge of the modal, if needed
+const EDGE_PADDING = 20;
 
 const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
   display: 'flex',
@@ -32,22 +36,48 @@ const Toolbar = ({ children }) => {
   const ref = useRef(null);
   const editor = useSlate();
   const { selection } = editor;
+  const { modalRef } = useContext(ThreadContext);
 
   const isOpen = selection && Range.isExpanded(selection);
   const { coords, rect } = useSelectionDimensions({ skip: !isOpen });
 
+  const adjustedLeft = left => {
+    const { current: toolbar } = ref;
+    const { offsetWidth: toolbarWidth } = toolbar;
+    const { width: selectionWidth } = rect;
+    const { current: modal } = modalRef || {};
+
+    // # pixels from left edge of viewport, if this toolbar is center-aligned
+    const newLeft = left - toolbarWidth / 2 + selectionWidth / 2;
+
+    // The toolbar can always be center aligned when not in the modal
+    if (!modal) return newLeft;
+
+    // Otherwise, left or right align as appropriate, as long as the
+    // whole toolbar is visible in the modal
+    const { offsetWidth } = modal;
+    const leftEdge = EDGE_PADDING;
+    if (newLeft < leftEdge) return leftEdge;
+
+    const rightEdge = offsetWidth - EDGE_PADDING;
+    const newRight = newLeft + toolbarWidth;
+    if (newRight > rightEdge) return rightEdge - toolbarWidth;
+
+    return newLeft;
+  };
+
   // Figure out where the toolbar should be displayed based on the user's
   // text selection
   const adjustedCoords = () => {
-    const { current: toolbarRef } = ref;
-    if (!isOpen || !toolbarRef || !coords) return {};
+    const { current: toolbar } = ref;
+    if (!isOpen || !toolbar || !coords) return {};
 
     const { top, left } = coords;
-    return {
-      top: `${top - toolbarRef.offsetHeight}px`,
+    const newLeft = adjustedLeft(left);
 
-      // Horizontally center align the toolbar against the selection range
-      left: `${left - toolbarRef.offsetWidth / 2 + rect.width / 2}px`,
+    return {
+      top: `${top - toolbar.offsetHeight}px`,
+      left: newLeft,
     };
   };
 
