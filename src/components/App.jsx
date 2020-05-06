@@ -15,7 +15,7 @@ import snake_case from 'snake-case';
 import localResolvers from 'graphql/resolvers/localResolvers';
 import useAppPusher from 'hooks/useAppPusher';
 import useFaviconIcon from 'hooks/useFaviconIcon';
-import useNetworkObserver from 'hooks/useNetworkObserver';
+// import useNetworkObserver from 'hooks/useNetworkObserver';
 import {
   getAuthHeader,
   isLocalTokenPresent,
@@ -125,7 +125,9 @@ moment.updateLocale('en', {
 moment.relativeTimeThreshold('d', 361);
 
 const App = () => {
-  useNetworkObserver();
+  // HN: Disabling this logic temporarily
+  // useNetworkObserver();
+
   useAppPusher(pusherClient);
   useFaviconIcon();
 
