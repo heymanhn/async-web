@@ -20,7 +20,7 @@ export const theme = {
   mq,
 
   fontStack: [
-    'Inter UI',
+    'Inter',
     '-apple-system',
     'BlinkMacSystemFont',
     'Helvetica Neue',
