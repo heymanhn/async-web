@@ -107,8 +107,6 @@ const ReactionPicker = ({
     const { current: button } = buttonRef || {};
     if (!isOpen || !tooltip || !button) return {};
 
-    const buttonRect = button.getBoundingClientRect();
-
     const {
       offsetTop: buttonTop,
       offsetLeft: buttonLeft,
