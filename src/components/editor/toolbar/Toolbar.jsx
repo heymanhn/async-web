@@ -1,14 +1,11 @@
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Range } from 'slate';
 import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
+import useModalDimensions from 'hooks/thread/useModalDimensions';
 import useSelectionDimensions from 'hooks/editor/useSelectionDimensions';
-import { ThreadContext } from 'utils/contexts';
-
-// Number of pixels padding from left/right edge of the modal, if needed
-const EDGE_PADDING = 20;
 
 const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
   display: 'flex',
@@ -33,56 +30,34 @@ const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
 }));
 
 const Toolbar = ({ children }) => {
-  const ref = useRef(null);
+  const toolbarRef = useRef(null);
   const editor = useSlate();
   const { selection } = editor;
-  const { modalRef } = useContext(ThreadContext);
 
   const isOpen = selection && Range.isExpanded(selection);
   const { coords, rect } = useSelectionDimensions({ skip: !isOpen });
-
-  const adjustedLeft = left => {
-    const { current: toolbar } = ref;
-    const { offsetWidth: toolbarWidth } = toolbar;
-    const { width: selectionWidth } = rect;
-    const { current: modal } = modalRef || {};
-
-    // # pixels from left edge of viewport, if this toolbar is center-aligned
-    const newLeft = left - toolbarWidth / 2 + selectionWidth / 2;
-
-    // The toolbar can always be center aligned when not in the modal
-    if (!modal) return newLeft;
-
-    // Otherwise, left or right align as appropriate, as long as the
-    // whole toolbar is visible in the modal
-    const { offsetWidth } = modal;
-    const leftEdge = EDGE_PADDING;
-    if (newLeft < leftEdge) return leftEdge;
-
-    const rightEdge = offsetWidth - EDGE_PADDING;
-    const newRight = newLeft + toolbarWidth;
-    if (newRight > rightEdge) return rightEdge - toolbarWidth;
-
-    return newLeft;
-  };
+  const { getModalCoords } = useModalDimensions(toolbarRef);
 
   // Figure out where the toolbar should be displayed based on the user's
   // text selection
   const adjustedCoords = () => {
-    const { current: toolbar } = ref;
+    const { current: toolbar } = toolbarRef;
     if (!isOpen || !toolbar || !coords) return {};
 
     const { top, left } = coords;
-    const newLeft = adjustedLeft(left);
+    const { offsetWidth: toolbarWidth } = toolbar;
+    const { width: selectionWidth } = rect;
 
-    return {
-      top: `${top - toolbar.offsetHeight}px`,
-      left: newLeft,
-    };
+    // Default: center-align the toolbar to the current selection
+    const centeredLeft = left - toolbarWidth / 2 + selectionWidth / 2;
+    const newTop = top - toolbar.offsetHeight;
+
+    // Adjust the dimensions if needed, if the UI is in a modal
+    return getModalCoords({ top: newTop, left: centeredLeft });
   };
 
   return (
-    <Container ref={ref} styles={adjustedCoords()} isOpen={isOpen}>
+    <Container ref={toolbarRef} styles={adjustedCoords()} isOpen={isOpen}>
       {children}
     </Container>
   );
