@@ -5,9 +5,7 @@ import styled from '@emotion/styled';
 
 import ReactionPicker from './ReactionPicker';
 
-const Container = styled.div({
-  height: '100%',
-});
+const Container = styled.div();
 
 const ButtonContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
