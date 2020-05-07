@@ -4,24 +4,31 @@ import styled from '@emotion/styled';
 
 import { matchCurrentUserId } from 'utils/auth';
 import useClickOutside from 'hooks/shared/useClickOutside';
+import useModalDimensions from 'hooks/thread/useModalDimensions';
 import useReactions from 'hooks/message/useReactions';
 
 import ReactionIcon from './ReactionIcon';
 
-const Container = styled.div(({ isOpen, offset, theme: { colors } }) => ({
-  display: isOpen ? 'flex' : 'none',
+// # of pixels from the parent button
+const BUTTON_GAP = 5;
+
+const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
+  display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  top: '-10000px',
+  left: '-10000px',
 
   background: colors.white,
   borderRadius: '5px',
   boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
-  marginTop: `${offset}px`,
   opacity: isOpen ? 1 : 0,
   padding: '10px 5px 5px',
   position: 'absolute',
   transition: 'opacity 0.2s',
   zIndex: 4,
+
+  ...styles,
 }));
 
 const Title = styled.div(({ theme: { colors } }) => ({
@@ -42,7 +49,13 @@ const ReactionsList = styled.div({
   flexDirection: 'row',
 });
 
-const ReactionPicker = ({ handleClose, isOpen, placement, ...props }) => {
+const ReactionPicker = ({
+  buttonRef,
+  handleClose,
+  isOpen,
+  placement,
+  ...props
+}) => {
   const tooltipRef = useRef(null);
   const [reactionOnHover, setReactionOnHover] = useState(null);
   const { getModalCoords } = useModalDimensions(tooltipRef);
@@ -89,11 +102,30 @@ const ReactionPicker = ({ handleClose, isOpen, placement, ...props }) => {
 
   // Note: the tooltip is horizontally center-aligned due to the parent's
   // flex display property
-  // const adjustedCoords = () => {
-  //   const top = placement === 'below' ? 35 : -110; // Aiming for a 5 pixel gap
+  const adjustedCoords = () => {
+    const { current: tooltip } = tooltipRef || {};
+    const { current: button } = buttonRef || {};
+    if (!isOpen || !tooltip || !button) return {};
 
-  //   return getModalCoords({ top, left });
-  // };
+    const buttonRect = button.getBoundingClientRect();
+
+    const {
+      offsetTop: buttonTop,
+      offsetLeft: buttonLeft,
+      offsetHeight: buttonHeight,
+      offsetWidth: buttonWidth,
+    } = button;
+    const { offsetHeight: tooltipHeight, offsetWidth: tooltipWidth } = tooltip;
+
+    const top =
+      placement === 'below'
+        ? buttonTop + buttonHeight + BUTTON_GAP
+        : buttonTop - tooltipHeight - BUTTON_GAP;
+
+    const left = buttonLeft - tooltipWidth / 2 + buttonWidth / 2;
+
+    return getModalCoords({ top, left });
+  };
 
   const title = reactionOnHover
     ? reactionsReference.find(r => r.code === reactionOnHover).text
@@ -103,9 +135,8 @@ const ReactionPicker = ({ handleClose, isOpen, placement, ...props }) => {
     <Container
       ref={tooltipRef}
       isOpen={isOpen}
-      offset={placement === 'below' ? 25 : -106} // Aiming for an 8 pixel gap
       placement={placement}
-      // styles={adjustedCoords()}
+      styles={adjustedCoords()}
       {...props}
     >
       <Title>{title}</Title>
@@ -130,12 +161,14 @@ const ReactionPicker = ({ handleClose, isOpen, placement, ...props }) => {
 };
 
 ReactionPicker.propTypes = {
+  buttonRef: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
   placement: PropTypes.oneOf(['above', 'below']),
 };
 
 ReactionPicker.defaultProps = {
+  buttonRef: {},
   isOpen: false,
   placement: 'above',
 };

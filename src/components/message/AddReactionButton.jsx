@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
@@ -6,9 +6,7 @@ import styled from '@emotion/styled';
 import ReactionPicker from './ReactionPicker';
 
 const Container = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
+  height: '100%',
 });
 
 const ButtonContainer = styled.div(({ theme: { colors } }) => ({
@@ -30,6 +28,7 @@ const PlusSign = styled.div({
 });
 
 const AddReactionButton = ({ onPickerStateChange, placement, ...props }) => {
+  const buttonRef = useRef(null);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isOutsideClick, setIsOutsideClick] = useState(false);
 
@@ -62,12 +61,13 @@ const AddReactionButton = ({ onPickerStateChange, placement, ...props }) => {
   };
 
   return (
-    <Container {...props}>
+    <Container ref={buttonRef} {...props}>
       <ButtonContainer onClick={handleOpenPicker}>
         <StyledIcon icon={['far', 'laugh']} />
         <PlusSign>+</PlusSign>
       </ButtonContainer>
       <ReactionPicker
+        buttonRef={buttonRef}
         handleClose={handleClosePicker}
         isOpen={isPickerOpen}
         placement={placement}

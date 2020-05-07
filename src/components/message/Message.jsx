@@ -63,11 +63,6 @@ const HeaderSection = styled.div(
   }
 );
 
-const StyledHoverMenu = styled(HoverMenu)({
-  position: 'relative',
-  right: '0px',
-});
-
 const MinimizeButton = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
   justifyContent: 'center',
@@ -164,7 +159,7 @@ const Message = ({
               {/* For now, hiding the composer means no hover menu, so that the
                   user can't edit multiple messages */}
               {messageId && mode === 'display' && !hideComposer && (
-                <StyledHoverMenu isAuthor={isAuthor} isOpen={hover} />
+                <HoverMenu isAuthor={isAuthor} isOpen={hover} />
               )}
               {mode === 'compose' && !!messageCount && (
                 <MinimizeButton onClick={handleCancelWrapper}>

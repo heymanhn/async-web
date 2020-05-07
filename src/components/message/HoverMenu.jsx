@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -28,13 +28,16 @@ const ButtonContainer = styled.div(({ theme: { colors } }) => ({
 
   color: colors.grey3,
   padding: '0px 10px',
-  position: 'relative',
   height: '100%',
 
   ':hover': {
     color: colors.grey3,
   },
 }));
+
+const MenuButtonContainer = styled(ButtonContainer)({
+  position: 'relative',
+});
 
 const VerticalDivider = styled.div(({ theme: { colors } }) => ({
   borderRight: `1px solid ${colors.borderGrey}`,
@@ -78,13 +81,13 @@ const HoverMenu = ({ isAuthor, isOpen, ...props }) => {
       {isAuthor && (
         <>
           <VerticalDivider />
-          <ButtonContainer onClick={showDropdown}>
+          <MenuButtonContainer onClick={showDropdown}>
             <MenuIcon>•••</MenuIcon>
             <MessageDropdown
               handleCloseDropdown={closeDropdown}
               isOpen={isDropdownOpen}
             />
-          </ButtonContainer>
+          </MenuButtonContainer>
         </>
       )}
     </Container>
