@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 import discussionQuery from 'graphql/queries/discussion';
 import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
 import localDeleteThreadMutation from 'graphql/mutations/local/deleteThreadFromDocument';
+import localUpdateParentMessageMtn from 'graphql/mutations/local/updateMessageInDiscussion';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import { track } from 'utils/analytics';
 import {
@@ -72,6 +73,7 @@ const ThreadModal = ({
   // A thread's parent is either a document or a discussion
   const { resourceId, resourceType } = useDisambiguatedResource();
   const [localDeleteThread] = useMutation(localDeleteThreadMutation);
+  const [localUpdateParentMessage] = useMutation(localUpdateParentMessageMtn);
 
   useEffect(() => {
     const { origin } = window.location;
@@ -114,6 +116,13 @@ const ThreadModal = ({
     if (parent && parent.contentParentType === 'document') {
       localDeleteThread({
         variables: { documentId: parent.contentParentId, threadId },
+      });
+    } else if (parent && parent.contentParentType === 'message') {
+      localUpdateParentMessage({
+        variables: {
+          discussionId: parent.id,
+          messageId: parent.contentParentId,
+        },
       });
     }
 

@@ -140,6 +140,48 @@ const addNewPendingMessage = (_root, { message }, { client }) => {
   return null;
 };
 
+const updateMessageInDiscussion = (
+  _root,
+  { discussionId, messageId },
+  { client }
+) => {
+  const {
+    messages: { pageToken, items, __typename, messageCount },
+  } = client.readQuery({
+    query: discussionMessagesQuery,
+    variables: { discussionId, queryParams: {} },
+  });
+
+  const index = items.findIndex(i => i.message.id === messageId);
+  if (index < 0) return null;
+
+  const updatedItem = {
+    ...items[index],
+    message: {
+      ...items[index].message,
+      threadId: null,
+    },
+  };
+  client.writeQuery({
+    query: discussionMessagesQuery,
+    variables: { discussionId, queryParams: {} },
+    data: {
+      messages: {
+        items: [
+          ...items.slice(0, index),
+          updatedItem,
+          ...items.slice(index + 1),
+        ],
+        messageCount,
+        pageToken,
+        __typename,
+      },
+    },
+  });
+
+  return null;
+};
+
 const deleteMessageFromDiscussion = (
   _root,
   { discussionId, messageId },
@@ -175,4 +217,5 @@ export default {
   addNewMessageToDiscussionMessages,
   addNewPendingMessage,
   deleteMessageFromDiscussion,
+  updateMessageInDiscussion,
 };
