@@ -43,7 +43,10 @@ const ReactionsList = styled.div({
 });
 
 const ReactionPicker = ({ handleClose, isOpen, placement, ...props }) => {
+  const tooltipRef = useRef(null);
   const [reactionOnHover, setReactionOnHover] = useState(null);
+  const { getModalCoords } = useModalDimensions(tooltipRef);
+
   const {
     addReaction,
     reactions,
@@ -51,42 +54,46 @@ const ReactionPicker = ({ handleClose, isOpen, placement, ...props }) => {
     removeReaction,
   } = useReactions();
 
-  function handleAddReaction(code) {
+  const handleAddReaction = code => {
     handleClose();
     addReaction(code);
-  }
+  };
 
-  function handleExitHover(code) {
+  const handleExitHover = code => {
     if (code !== reactionOnHover) return;
     setReactionOnHover(null);
-  }
+  };
 
-  function handleRemoveReaction(reactionId, code) {
+  const handleRemoveReaction = (reactionId, code) => {
     handleClose();
     removeReaction(reactionId, code);
-  }
+  };
 
-  function hasReactedWith(code) {
-    return (
-      reactions.findIndex(
-        r => matchCurrentUserId(r.author.id) && r.code === code
-      ) >= 0
-    );
-  }
+  const hasReactedWith = code =>
+    reactions.findIndex(
+      r => matchCurrentUserId(r.author.id) && r.code === code
+    ) >= 0;
 
-  function userReactionForCode(code) {
+  const userReactionForCode = code => {
     const reaction = reactions.find(
       r => r.code === code && matchCurrentUserId(r.author.id)
     );
     return reaction ? reaction.id : null;
-  }
+  };
 
-  const selector = useRef();
   const handleClickOutside = () => {
     if (!isOpen) return;
     handleClose({ outsideClick: true });
   };
-  useClickOutside({ handleClickOutside, isOpen, ref: selector });
+  useClickOutside({ handleClickOutside, isOpen, ref: tooltipRef });
+
+  // Note: the tooltip is horizontally center-aligned due to the parent's
+  // flex display property
+  // const adjustedCoords = () => {
+  //   const top = placement === 'below' ? 35 : -110; // Aiming for a 5 pixel gap
+
+  //   return getModalCoords({ top, left });
+  // };
 
   const title = reactionOnHover
     ? reactionsReference.find(r => r.code === reactionOnHover).text
@@ -94,10 +101,11 @@ const ReactionPicker = ({ handleClose, isOpen, placement, ...props }) => {
 
   return (
     <Container
-      ref={selector}
+      ref={tooltipRef}
       isOpen={isOpen}
       offset={placement === 'below' ? 25 : -106} // Aiming for an 8 pixel gap
       placement={placement}
+      // styles={adjustedCoords()}
       {...props}
     >
       <Title>{title}</Title>

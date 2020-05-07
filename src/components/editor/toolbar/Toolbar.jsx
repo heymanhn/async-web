@@ -30,18 +30,18 @@ const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
 }));
 
 const Toolbar = ({ children }) => {
-  const ref = useRef(null);
+  const toolbarRef = useRef(null);
   const editor = useSlate();
   const { selection } = editor;
 
   const isOpen = selection && Range.isExpanded(selection);
   const { coords, rect } = useSelectionDimensions({ skip: !isOpen });
-  const { getModalCoords } = useModalDimensions(ref);
+  const { getModalCoords } = useModalDimensions(toolbarRef);
 
   // Figure out where the toolbar should be displayed based on the user's
   // text selection
   const adjustedCoords = () => {
-    const { current: toolbar } = ref;
+    const { current: toolbar } = toolbarRef;
     if (!isOpen || !toolbar || !coords) return {};
 
     const { top, left } = coords;
@@ -57,7 +57,7 @@ const Toolbar = ({ children }) => {
   };
 
   return (
-    <Container ref={ref} styles={adjustedCoords()} isOpen={isOpen}>
+    <Container ref={toolbarRef} styles={adjustedCoords()} isOpen={isOpen}>
       {children}
     </Container>
   );
