@@ -39,15 +39,15 @@ const InnerContainer = styled.div(({ theme: { discussionViewport } }) => ({
 }));
 
 const HeaderSection = styled.div(
-  ({ hover, isModalOpen, theme: { colors } }) => ({
+  ({ hover, isThread, theme: { colors } }) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
 
     background: hover ? colors.bgGrey : colors.white,
-    margin: isModalOpen ? 0 : '0 -60px',
-    padding: isModalOpen ? '20px 0 5px' : '20px 60px 5px',
+    margin: isThread ? 0 : '0 -60px',
+    padding: isThread ? '20px 0 5px' : '20px 60px 5px',
   }),
   ({ mode, theme: { colors } }) => {
     if (mode === 'display') return {};
@@ -94,7 +94,7 @@ const Message = ({
   ...props
 }) => {
   const messageContext = useContext(MessageContext);
-  const { draft, isModalOpen, parentType } = messageContext;
+  const { draft, parentType } = messageContext;
   const { hideComposer, messageCount, setHideComposer } = useContext(
     parentType === 'discussion' ? DiscussionContext : ThreadContext
   );
@@ -150,7 +150,11 @@ const Message = ({
       {mode === 'edit' && <Divider />}
       <MessageContext.Provider value={value}>
         <InnerContainer>
-          <HeaderSection hover={hover} isModalOpen={isModalOpen} mode={mode}>
+          <HeaderSection
+            hover={hover}
+            isThread={parentType === 'thread'}
+            mode={mode}
+          >
             <AuthorDetails
               author={author}
               createdAt={createdAt}
