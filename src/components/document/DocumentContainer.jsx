@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -16,7 +16,11 @@ import useDocumentEditor from 'hooks/document/useDocumentEditor';
 import ThreadsList from './ThreadsList';
 import Document from './Document';
 
-const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
+const DocumentContainer = ({
+  documentId,
+  threadId: initialThreadId,
+  viewMode: initialViewMode,
+}) => {
   useUpdateSelectedResource(documentId);
   /*
    * We're initializing document editor in this top component to better provide
@@ -24,7 +28,7 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
    */
   const editor = useDocumentEditor(documentId);
 
-  const [viewMode, setViewMode] = useState('content');
+  const [viewMode, setViewMode] = useState(initialViewMode);
   const [forceUpdate, setForceUpdate] = useState(false);
   const {
     threadId,
@@ -32,6 +36,10 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
     handleCloseThread,
     ...threadProps
   } = useThreadState(initialThreadId);
+
+  useEffect(() => {
+    setViewMode(initialViewMode);
+  }, [initialViewMode]);
 
   const { error, data } = useQuery(documentQuery, {
     variables: { documentId },
@@ -62,7 +70,7 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
     <DocumentContext.Provider value={value}>
       <NavigationBar />
       {viewMode === 'content' && <Document isUnread={isResourceUnread(tags)} />}
-      {viewMode === 'discussions' && <ThreadsList />}
+      {viewMode === 'threads' && <ThreadsList />}
 
       {threadId && (
         <ThreadModal
@@ -78,10 +86,12 @@ const DocumentContainer = ({ documentId, threadId: initialThreadId }) => {
 DocumentContainer.propTypes = {
   documentId: PropTypes.string.isRequired,
   threadId: PropTypes.string,
+  viewMode: PropTypes.oneOf(['content', 'threads']),
 };
 
 DocumentContainer.defaultProps = {
   threadId: null,
+  viewMode: 'content',
 };
 
 export default DocumentContainer;

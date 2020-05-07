@@ -68,8 +68,8 @@ const DocumentViewMode = () => {
         <StyledDocumentIcon icon="file-alt" />
       </ModeButton>
       <ModeButton
-        isSelected={viewMode === 'discussions'}
-        onClick={() => setViewMode('discussions')}
+        isSelected={viewMode === 'threads'}
+        onClick={() => setViewMode('threads')}
       >
         <DiscussionsIconContainer>
           <StyledDiscussionsIcon icon="comments-alt" />

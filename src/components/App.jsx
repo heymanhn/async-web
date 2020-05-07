@@ -161,6 +161,11 @@ const App = () => {
               component={DocumentContainer}
             />
             <PrivateRoute
+              path="/documents/:documentId/threads"
+              component={DocumentContainer}
+              viewMode="threads"
+            />
+            <PrivateRoute
               path="/documents/:documentId/threads/:threadId"
               component={DocumentContainer}
             />
