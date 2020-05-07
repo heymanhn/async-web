@@ -51,9 +51,10 @@ const Button = styled.div({
   padding: '0 20px',
 });
 
-const SubmitButton = styled(Button)(({ theme: { colors } }) => ({
-  background: colors.altBlue,
-  color: colors.white,
+const SubmitButton = styled(Button)(({ isDisabled, theme: { colors } }) => ({
+  background: isDisabled ? colors.grey7 : colors.altBlue,
+  color: isDisabled ? colors.grey4 : colors.white,
+  cursor: isDisabled ? 'default' : 'pointer',
 }));
 
 const CancelButton = styled(Button)(({ theme: { colors } }) => ({
@@ -125,7 +126,7 @@ const MessageActions = ({ handleSubmit, ...props }) => {
     <Container isThread={parentType === 'thread'} mode={mode} {...props}>
       <Section>
         <SubmitLabel>⌘ + Enter to</SubmitLabel>
-        <SubmitButton onClick={handleSubmitWrapper}>
+        <SubmitButton isDisabled={isEmptyContent} onClick={handleSubmitWrapper}>
           {mode === 'edit' ? 'Save Changes' : 'Post'}
         </SubmitButton>
         {mode === 'edit' && (
