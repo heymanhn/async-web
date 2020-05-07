@@ -70,12 +70,12 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     shortcut: 'D',
   };
 
-  const newDocumentDiscussionCommand = {
+  const newDocumentThreadCommand = {
     type: 'command',
     icon: ['fal', 'plus-circle'],
-    title: 'Start a discussion',
-    action: () => navigate(`/documents/${documentId}/discussions`),
-    shortcut: 'D',
+    title: 'Start a thread',
+    action: () => navigate(`/documents/${documentId}/threads`),
+    shortcut: 'T',
   };
 
   const newWorkspaceDiscussionCommand = {
@@ -182,7 +182,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     ],
     document: [
       newDocumentCommand,
-      newDocumentDiscussionCommand,
+      newDocumentThreadCommand,
       newWorkspaceCommand,
       invitePeopleCommand,
       goToInboxCommand,
