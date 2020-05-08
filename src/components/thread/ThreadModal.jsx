@@ -87,7 +87,7 @@ const ThreadModal = ({
     // Triggering a navigation so that the discussionId prop can be reset in
     // the parent <DocumentContainer /> component.
     return () => navigate(baseUrl);
-  }, [threadId, resourceType, resourceId]);
+  }, [baseUrl, threadId, resourceType, resourceId]);
 
   useMountEffect(() => {
     track('Thread viewed', { threadId });
