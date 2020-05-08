@@ -103,19 +103,14 @@ const ThreadPreview = ({ discussionId, isOpen, parentRef, mode }) => {
   if (loading) return null;
   if (error || !data.discussion) return null;
 
-  const { draft, lastMessage, messageCount, tags } = data.discussion;
-  const content = draft || lastMessage;
-  if (!content) return null;
+  const { lastMessage, messageCount, tags } = data.discussion;
+  if (!lastMessage) return null;
 
-  const { author } = lastMessage || data.discussion;
-  const { body } = content;
+  const { body, author } = lastMessage;
   const { profilePictureUrl } = author;
   const { text } = body;
   const newUpdates =
     tags.includes('new_messages') || tags.includes('new_discussion');
-
-  // HN: Make a better UI for a draft indicator in the preview in the future
-  const displayText = draft ? `(Draft) ${text}` : text;
 
   const handleClick = event => {
     event.preventDefault();
@@ -148,7 +143,7 @@ const ThreadPreview = ({ discussionId, isOpen, parentRef, mode }) => {
         <LastMessageDetails>
           <AvatarWithMargin avatarUrl={profilePictureUrl} size={32} />
           <PreviewSnippet>
-            <StyledTruncate lines={1}>{displayText}</StyledTruncate>
+            <StyledTruncate lines={1}>{text}</StyledTruncate>
           </PreviewSnippet>
         </LastMessageDetails>
         {newUpdates ? (
