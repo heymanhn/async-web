@@ -74,10 +74,10 @@ const ThreadModal = ({
   const { resourceId, resourceType } = useDisambiguatedResource();
   const [localDeleteThread] = useMutation(localDeleteThreadMutation);
   const [localUpdateParentMessage] = useMutation(localUpdateParentMessageMtn);
+  const { origin } = window.location;
+  const baseUrl = `${origin}/${Pluralize(resourceType)}/${resourceId}`;
 
   useEffect(() => {
-    const { origin } = window.location;
-    const baseUrl = `${origin}/${Pluralize(resourceType)}/${resourceId}`;
     const setUrl = () => {
       const url = `${baseUrl}/threads/${threadId}`;
       return window.history.replaceState({}, `thread: ${threadId}`, url);
@@ -127,6 +127,7 @@ const ThreadModal = ({
     }
 
     handleClose();
+    navigate(baseUrl);
   };
 
   const threadValue = {
