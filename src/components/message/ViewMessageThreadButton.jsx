@@ -26,13 +26,11 @@ const Container = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const Label = styled.div({
-  fontSize: '13px',
-  fontWeight: 500,
-  letterSpacing: '-0.0025em',
+const Label = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 13, weight: 500 }),
   marginLeft: '10px',
   marginTop: '-2px',
-});
+}));
 
 const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   color: colors.grey1,

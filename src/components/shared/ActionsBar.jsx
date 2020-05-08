@@ -38,41 +38,33 @@ const AvatarWithMargin = styled(Avatar)({
   marginRight: '12px',
 });
 
-const Label = styled.div(({ theme: { colors } }) => ({
+const Label = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 12 }),
   color: colors.grey1,
-  fontSize: '12px',
 }));
 
-const ReplyButton = styled.div(({ theme: { colors } }) => ({
+const Button = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 12, weight: 500 }),
+
   display: 'flex',
   alignItems: 'center',
 
-  background: colors.altBlue,
   borderRadius: '5px',
-  color: colors.white,
   cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: 500,
   height: '25px',
   marginLeft: '8px',
   padding: '0 20px',
 }));
 
-const ActionButton = styled.div(({ theme: { colors } }) => ({
-  display: 'flex',
-  alignItems: 'center',
+const ReplyButton = styled(Button)(({ theme: { colors } }) => ({
+  background: colors.altBlue,
+  color: colors.white,
+}));
 
+const ActionButton = styled(Button)(({ theme: { colors } }) => ({
   background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  cursor: 'pointer',
-  height: '25px',
-  marginLeft: '8px',
-  padding: '0 20px',
-
   color: colors.grey3,
-  fontSize: '12px',
-  fontWeight: 500,
 }));
 
 const ActionsBar = ({

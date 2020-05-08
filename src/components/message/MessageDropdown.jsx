@@ -51,10 +51,11 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '14px',
 }));
 
-const OptionName = styled.div(({ theme: { colors } }) => ({
+const OptionName = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
+
   flexShrink: 0,
   color: colors.grey1,
-  fontSize: '14px',
   marginLeft: '10px',
   position: 'relative',
   top: '1px',

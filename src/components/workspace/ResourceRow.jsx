@@ -29,11 +29,12 @@ const ItemDetails = styled.div({
   alignItems: 'center',
 });
 
-const Title = styled.span(({ hover, isUnread, theme: { colors } }) => ({
-  color: hover ? colors.blue : colors.grey0,
-  fontSize: '16px',
-  fontWeight: isUnread ? 600 : 400,
-}));
+const Title = styled.span(
+  ({ hover, isUnread, theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 16, weight: isUnread ? 600 : 400 }),
+    color: hover ? colors.blue : colors.grey0,
+  })
+);
 
 const IconContainer = styled.div({
   marginTop: '5px',
@@ -83,11 +84,10 @@ const TimestampContainer = styled.div({
   alignItems: 'center',
 });
 
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
+const Timestamp = styled(Moment)(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13 }),
   color: colors.grey2,
   cursor: 'default',
-  fontSize: '13px',
-  letterSpacing: '-0.0025em',
 }));
 
 const ResourceRow = ({ item, ...props }) => {

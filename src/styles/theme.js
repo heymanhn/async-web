@@ -20,11 +20,11 @@ const mq = n => {
 
 // convenient way to generate all the required properties for
 // a given font size
-const fontProps = ({ size, weight }) => {
+const fontProps = ({ size, weight, type }) => {
   const props = {
     fontSize: `${size}px`,
     letterSpacing: `${letterSpacing(size)}em`,
-    lineHeight: `${lineHeight(size)}px`,
+    lineHeight: `${lineHeight(size, type)}px`,
   };
 
   if (weight) props.fontWeight = weight;

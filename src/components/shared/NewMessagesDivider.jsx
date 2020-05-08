@@ -22,12 +22,12 @@ const StyledIndicator = styled(UnreadIndicator)({
   marginRight: '10px',
 });
 
-const NewMessagesLabel = styled.div(({ theme: { colors } }) => ({
+const NewMessagesLabel = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
+
   display: 'flex',
   alignItems: 'center',
   color: colors.grey1,
-  fontSize: '14px',
-  fontWeight: 500,
   margin: '0 30px 0 10px',
   zIndex: 2,
 }));

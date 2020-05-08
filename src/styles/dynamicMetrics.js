@@ -10,10 +10,15 @@ import { roundToPrecision } from 'utils/helpers';
 const A = -0.0223;
 const B = 0.185;
 const C = -0.1745;
-const LINE_HEIGHT_MULTIPLIER = 1.6;
+
+const LINE_HEIGHTS = {
+  content: 1.6,
+  title: 1.2,
+};
 
 // Produces the line height for the given font size
-const lineHeight = fontSize => Math.round(fontSize * LINE_HEIGHT_MULTIPLIER);
+const lineHeight = (fontSize, type = 'content') =>
+  Math.round(fontSize * LINE_HEIGHTS[type]);
 
 /* Takes the font size in points or pixels and returns the compensating tracking
  * in EM units.

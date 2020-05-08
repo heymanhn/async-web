@@ -22,7 +22,9 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '16px',
 }));
 
-const StyledInput = styled.input(({ theme: { colors } }) => ({
+const StyledInput = styled.input(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 16, weight: 500 }),
+
   flexGrow: 1,
 
   // Remove all default styles for an input element
@@ -31,8 +33,6 @@ const StyledInput = styled.input(({ theme: { colors } }) => ({
   border: 'none',
 
   color: colors.grey0,
-  fontSize: '16px',
-  fontWeight: 500,
   outline: 'none',
 
   '::placeholder': {

@@ -35,18 +35,17 @@ const StyledIcon = styled(FontAwesomeIcon)(
   })
 );
 
-const Title = styled.div(({ theme: { colors } }) => ({
+const Title = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   cursor: 'default',
   color: colors.grey0,
-  fontSize: '14px',
-  fontWeight: 500,
   marginTop: '-1px',
 }));
 
-const RemoveButton = styled.div(({ theme: { colors } }) => ({
+const RemoveButton = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey3,
   cursor: 'pointer',
-  fontSize: '14px',
   marginTop: '-1px',
 
   ':hover': {

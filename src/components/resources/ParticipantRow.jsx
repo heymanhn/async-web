@@ -25,26 +25,22 @@ const StyledAvatar = styled(Avatar)({
   marginRight: '10px',
 });
 
-const Label = styled.div(({ theme: { colors } }) => ({
+const Label = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey0,
   cursor: 'default',
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
 }));
 
-const Name = styled.div(({ theme: { colors } }) => ({
+const Name = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   color: colors.grey0,
   cursor: 'default',
-  fontSize: '14px',
-  fontWeight: 500,
-  letterSpacing: '-0.006em',
 }));
 
-const RemoveButton = styled.div(({ theme: { colors } }) => ({
+const RemoveButton = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey3,
   cursor: 'pointer',
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
 
   ':hover': {
     color: colors.blue,

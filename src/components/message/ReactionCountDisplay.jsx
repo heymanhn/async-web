@@ -18,11 +18,12 @@ const Icon = styled.div({
   marginRight: '8px',
 });
 
-const ReactionCount = styled.div(({ isActive, theme: { colors } }) => ({
-  color: isActive ? colors.blue : colors.grey3,
-  fontSize: '14px',
-  fontWeight: 500,
-}));
+const ReactionCount = styled.div(
+  ({ isActive, theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 14, weight: 500 }),
+    color: isActive ? colors.blue : colors.grey3,
+  })
+);
 
 const ReactionCountDisplay = ({
   code,

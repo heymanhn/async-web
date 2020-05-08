@@ -59,9 +59,9 @@ const LockIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '8px',
 }));
 
-const Message = styled.div(({ theme: { colors } }) => ({
+const Message = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey0,
-  fontSize: '14px',
   userSelect: 'none',
 }));
 

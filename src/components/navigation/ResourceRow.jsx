@@ -14,21 +14,23 @@ const ICONS = {
   document: 'file-alt',
 };
 
-const Container = styled.div(({ isSelected, isUnread, theme: { colors } }) => ({
-  display: 'flex',
-  alignItems: 'center',
+const Container = styled.div(
+  ({ isSelected, isUnread, theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 14, weight: isUnread ? 500 : 400 }),
 
-  background: isSelected ? colors.grey7 : 'none',
-  color: colors.grey1,
-  fontSize: '14px',
-  margin: '0 -20px',
-  padding: '8px 20px',
-  fontWeight: isUnread ? 500 : 400,
+    display: 'flex',
+    alignItems: 'center',
 
-  ':hover': {
-    background: colors.grey7,
-  },
-}));
+    background: isSelected ? colors.grey7 : 'none',
+    color: colors.grey1,
+    margin: '0 -20px',
+    padding: '8px 20px',
+
+    ':hover': {
+      background: colors.grey7,
+    },
+  })
+);
 
 const StyledLink = styled(Link)({
   textDecoration: 'none',

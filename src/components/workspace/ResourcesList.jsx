@@ -19,9 +19,9 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
   margin: '20px 0',
 });
 
-const WelcomeMessage = styled.div(({ theme: { colors } }) => ({
+const WelcomeMessage = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   color: colors.grey1,
-  fontSize: '16px',
   marginBottom: '20px',
 }));
 

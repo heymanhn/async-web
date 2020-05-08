@@ -53,11 +53,10 @@ const AvatarWithMargin = styled(Avatar)({
   marginRight: '12px',
 });
 
-const PreviewSnippet = styled.div(({ theme: { colors } }) => ({
+const PreviewSnippet = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   flexGrow: 1,
   color: colors.grey2,
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
   lineHeight: '32px',
 }));
 
@@ -65,12 +64,13 @@ const StyledTruncate = styled(Truncate)({
   userSelect: 'none',
 });
 
-const MessageCountIndicator = styled.div(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  fontSize: '12px',
-  fontWeight: 500,
-  paddingLeft: '25px',
-}));
+const MessageCountIndicator = styled.div(
+  ({ theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 12, weight: 500 }),
+    color: colors.grey2,
+    paddingLeft: '25px',
+  })
+);
 
 const NewReplyContainer = styled.div({
   display: 'flex',

@@ -41,10 +41,9 @@ const TitleSection = styled.div(({ theme: { colors } }) => ({
   padding: '15px 20px',
 }));
 
-const Title = styled.div({
-  fontSize: '14px',
-  fontWeight: 500,
-});
+const Title = styled.div(({ theme: { fontProps } }) =>
+  fontProps({ size: 14, weight: 500 })
+);
 
 const NotificationsDropdown = ({ coords, isOpen, handleClose, ...props }) => {
   const dropdownRef = useRef();

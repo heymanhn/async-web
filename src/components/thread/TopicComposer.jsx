@@ -16,10 +16,8 @@ const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.grey7,
 }));
 
-const TopicEditable = styled(Editable)(({ theme: { colors } }) => ({
-  fontSize: '16px',
-  fontWeight: 400,
-  lineHeight: '26px',
+const TopicEditable = styled(Editable)(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 16, weight: 400 }),
   padding: '10px 30px 25px',
 
   span: {

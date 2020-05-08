@@ -31,11 +31,9 @@ const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
   ...styles,
 }));
 
-const Title = styled.div(({ theme: { colors } }) => ({
+const Title = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   color: colors.grey3,
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
-  fontWeight: 500,
 }));
 
 const Divider = styled.div(({ theme: { colors } }) => ({

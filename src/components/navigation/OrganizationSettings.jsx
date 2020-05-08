@@ -24,12 +24,10 @@ const OrganizationAvatar = styled(Avatar)({
   cursor: 'pointer',
 });
 
-const OrganizationTitle = styled.div(({ theme: { colors } }) => ({
+const OrganizationTitle = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   color: colors.grey0,
   cursor: 'pointer',
-  fontSize: '14px',
-  fontWeight: 500,
-  letterSpacing: '-0.006em',
 }));
 
 const OrganizationSettings = props => {

@@ -20,10 +20,9 @@ const StyledModal = styled(Modal)({
   width: '400px',
 });
 
-const Header = styled.div(({ theme: { colors } }) => ({
+const Header = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   color: colors.grey1,
-  fontSize: '14px',
-  fontWeight: 500,
   padding: '15px 25px',
 }));
 
