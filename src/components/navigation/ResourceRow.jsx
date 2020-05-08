@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 import Pluralize from 'pluralize';
-import Truncate from 'react-truncate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
@@ -31,6 +30,15 @@ const Container = styled.div(
     },
   })
 );
+
+const TruncatedText = styled.div({
+  // reference: https://css-tricks.com/flexbox-truncated-text/
+  '&, & > *': {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+});
 
 const StyledLink = styled(Link)({
   textDecoration: 'none',
@@ -72,9 +80,9 @@ const ResourceRow = ({
             <StyledIcon icon={ICONS[resourceType]} />
           </IconContainer>
         )}
-        <Truncate trimWhitespace>
+        <TruncatedText>
           {resourceTitle || `Untitled ${titleize(resourceType)}`}
-        </Truncate>
+        </TruncatedText>
       </Container>
     </StyledLink>
   );
