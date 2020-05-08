@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  fragment DiscussionItems on DiscussionsResponse {
-    items @type(name: "[DiscussionItem]") {
+  fragment ThreadItems on ThreadsResponse {
+    items @type(name: "[ThreadItem]") {
       discussion @type(name: "Discussion") {
         id
       }
