@@ -25,10 +25,9 @@ const FieldsContainer = styled.div({
 });
 
 const Label = styled.div(({ theme: { colors, fontProps } }) => ({
-  ...fontProps(14),
+  ...fontProps({ size: 14, weight: 500 }),
   alignSelf: 'flex-start',
   color: colors.grey3,
-  fontWeight: 500,
   marginBottom: '5px',
 }));
 
@@ -39,7 +38,7 @@ const StyledButton = styled(Button)({
 });
 
 const RequestAccessMessage = styled.div(({ theme: { colors, fontProps } }) => ({
-  ...fontProps(12),
+  ...fontProps({ size: 12 }),
   color: colors.grey3,
   marginTop: '12px',
 }));

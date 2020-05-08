@@ -32,11 +32,9 @@ const TitleSection = styled.div({
   justifyContent: 'space-between',
 });
 
-const Title = styled.div(({ theme: { colors } }) => ({
+const Title = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 32, weight: 600 }),
   color: colors.mainText,
-  fontSize: '32px',
-  fontWeight: 600,
-  letterSpacing: '-0.021em',
 }));
 
 const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
@@ -48,11 +46,9 @@ const StartDiscussionButton = styled.div(({ theme: { colors } }) => ({
   padding: '5px 20px',
 }));
 
-const Label = styled.div(({ theme: { colors } }) => ({
+const Label = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   color: colors.white,
-  fontSize: '14px',
-  fontWeight: 500,
-  letterSpacing: '-0.006em',
 }));
 
 // HN: There should be a way to DRY up these style declarations

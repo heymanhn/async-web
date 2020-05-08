@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import styled from '@emotion/styled';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
@@ -12,7 +13,6 @@ const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
   color: colors.grey4,
   cursor: 'default',
-  fontSize: '14px',
   height: '60px',
   padding: '0 30px',
   opacity: 0.95,

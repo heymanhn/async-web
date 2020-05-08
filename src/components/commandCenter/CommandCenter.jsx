@@ -12,7 +12,7 @@ const COMMAND_CENTER_HOTKEY = 'cmd+k';
 
 const StyledIcon = styled(FontAwesomeIcon)(
   ({ theme: { colors, fontProps } }) => ({
-    ...fontProps(20),
+    ...fontProps({ size: 20 }),
     color: colors.grey2,
     cursor: 'pointer',
     margin: '0 15px',

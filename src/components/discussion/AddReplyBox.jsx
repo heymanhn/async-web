@@ -45,7 +45,7 @@ const AvatarWithMargin = styled(Avatar)({
 
 const IndicatorLabel = styled.div(
   ({ isResolved, theme: { colors, fontProps } }) => ({
-    ...fontProps(isResolved ? 14 : 16),
+    ...fontProps({ size: isResolved ? 14 : 16 }),
     color: isResolved ? colors.grey2 : colors.grey4,
     marginLeft: '5px',
   })
@@ -63,7 +63,6 @@ const ActionButton = styled.div(({ theme: { colors, fontProps } }) => ({
   padding: '4px 15px',
 
   color: colors.mainText,
-  fontWeight: 500,
 }));
 
 const AddReplyBox = ({ handleClickReply, isComposing, ...props }) => {

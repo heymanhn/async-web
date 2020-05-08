@@ -18,12 +18,10 @@ const InnerContainer = styled.div(({ theme: { colors, inboxViewport } }) => ({
   padding: '60px 20px 40px',
 }));
 
-const PageTitle = styled.div({
-  fontSize: '42px',
-  fontWeight: 600,
-  letterSpacing: '-0.022em',
+const PageTitle = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 42, weight: 600 }),
   marginBottom: '10px',
-});
+}));
 
 const ButtonContainer = styled.div({
   display: 'flex',

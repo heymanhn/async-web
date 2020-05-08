@@ -49,12 +49,13 @@ const ItemDetails = styled.div({
   flexDirection: 'column',
 });
 
-const Title = styled.span(({ hover, isUnread, theme: { colors } }) => ({
-  color: hover ? colors.blue : colors.mainText,
-  fontSize: '16px',
-  fontWeight: isUnread ? 600 : 400,
-  marginBottom: '2px',
-}));
+const Title = styled.span(
+  ({ hover, isUnread, theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 16, weight: isUnread ? 600 : 400 }),
+    color: hover ? colors.blue : colors.mainText,
+    marginBottom: '2px',
+  })
+);
 
 const IconContainer = styled.div({
   marginTop: '5px',

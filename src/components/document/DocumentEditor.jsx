@@ -15,11 +15,11 @@ import DefaultPlaceholder from 'components/editor/DefaultPlaceholder';
 import DocumentToolbar from 'components/editor/toolbar/DocumentToolbar';
 import CompositionMenuButton from 'components/editor/compositionMenu/CompositionMenuButton';
 
-const DocumentEditable = styled(Editable)({
-  fontSize: '16px',
+const DocumentEditable = styled(Editable)(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   lineHeight: '26px',
   marginBottom: '80px',
-});
+}));
 
 const DocumentEditor = ({ initialContent, ...props }) => {
   const { documentId, editor, readOnly } = useContext(DocumentContext);

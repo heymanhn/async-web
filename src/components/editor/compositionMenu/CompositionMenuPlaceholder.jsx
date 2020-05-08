@@ -5,10 +5,11 @@ import styled from '@emotion/styled';
 import ContentPlaceholder from 'components/editor/ContentPlaceholder';
 
 const Container = styled.div(
-  ({ isVisible, theme: { colors } }) => ({
+  ({ isVisible, theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 16 }),
+
     display: isVisible ? 'block' : 'none',
     color: colors.textPlaceholder,
-    fontSize: '16px',
     opacity: 0,
     top: '-10000px',
     left: '-10000px',

@@ -30,8 +30,7 @@ const StyledImage = styled.img({
 });
 
 const Title = styled.div(({ theme: { fontProps } }) => ({
-  ...fontProps(24),
-  fontWeight: 500,
+  ...fontProps({ size: 24, weight: 500 }),
   textAlign: 'center',
   width: '300px',
 }));

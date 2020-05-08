@@ -1,21 +1,22 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-export const LargeTitle = styled.div(({ theme: { mq, textColors } }) => ({
-  color: textColors.main,
-  fontSize: '48px',
-  fontWeight: 700,
-  letterSpacing: '-0.022em',
-  lineHeight: '58px',
-  margin: '0 auto 20px',
+export const LargeTitle = styled.div(
+  ({ theme: { fontProps, mq, textColors } }) => ({
+    ...fontProps({ size: 48, weight: 700 }),
+    lineHeight: '58px', // custom for large titles
 
-  [mq('tabletUp')]: {
-    fontSize: '52px',
-    lineHeight: '63px',
-    maxWidth: '550px',
-    textAlign: 'center',
-  },
-}));
+    color: textColors.main,
+    margin: '0 auto 20px',
+
+    [mq('tabletUp')]: {
+      ...fontProps({ size: 52 }),
+      lineHeight: '63px', // custom for large titles
+      maxWidth: '550px',
+      textAlign: 'center',
+    },
+  })
+);
 
 export const LargeDescription = styled.div(({ theme: { mq, textColors } }) => ({
   color: textColors.alt,

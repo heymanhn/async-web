@@ -8,15 +8,17 @@ const Container = styled.div(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
 }));
 
-const ModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
-  borderBottom: isSelected ? `2px solid ${colors.mainText}` : 'none',
-  borderTop: isSelected ? `2px solid ${colors.white}` : 'none',
-  color: isSelected ? colors.mainText : colors.grey3,
-  fontSize: '12px',
-  cursor: 'pointer',
-  height: '100%',
-  marginRight: '25px',
-}));
+const ModeButton = styled.div(
+  ({ isSelected, theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 12 }),
+    borderBottom: isSelected ? `2px solid ${colors.mainText}` : 'none',
+    borderTop: isSelected ? `2px solid ${colors.white}` : 'none',
+    color: isSelected ? colors.mainText : colors.grey3,
+    cursor: 'pointer',
+    height: '100%',
+    marginRight: '25px',
+  })
+);
 
 const InboxViewMode = ({ setViewMode, viewMode }) => {
   return (

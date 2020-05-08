@@ -16,9 +16,8 @@ const StyledIcon = styled(FontAwesomeIcon)(
 );
 
 const Title = styled.div(({ theme: { colors, fontProps } }) => ({
-  ...fontProps(14),
+  ...fontProps({ size: 14, weight: 500 }),
   color: colors.grey0,
-  fontWeight: 500,
   marginTop: '-2px',
 }));
 

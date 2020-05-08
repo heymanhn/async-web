@@ -33,11 +33,10 @@ const NavigationSection = styled.div({
   marginRight: '15px',
 });
 
-const Title = styled.span({
-  fontSize: '16px',
-  fontWeight: 500,
+const Title = styled.span(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 16, weight: 500 }),
   position: 'relative',
-});
+}));
 
 const NavBar = () => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);

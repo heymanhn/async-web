@@ -20,8 +20,7 @@ const RowContainer = styled.div({
 });
 
 const Title = styled.div(({ theme: { fontProps } }) => ({
-  ...fontProps(14),
-  fontWeight: 500,
+  ...fontProps({ size: 14, weight: 500 }),
   marginTop: '-2px',
 }));
 

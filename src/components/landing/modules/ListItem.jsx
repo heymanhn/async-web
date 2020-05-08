@@ -19,10 +19,10 @@ const Icon = styled(FontAwesomeIcon)(({ theme: { accentColor } }) => ({
   marginRight: '12px',
 }));
 
-const Details = styled.div({
-  fontSize: '16px',
+const Details = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   lineHeight: '26px',
-});
+}));
 
 const Title = styled.span(({ theme: { textColors } }) => ({
   color: textColors.main,

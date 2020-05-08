@@ -23,10 +23,9 @@ const IconContainer = styled.div({
   width: '35px',
 });
 
-const Title = styled.div(({ theme: { colors } }) => ({
+const Title = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   color: colors.grey1,
-  fontWeight: 500,
-  fontSize: '14px',
   marginTop: '-2px',
 }));
 

@@ -23,54 +23,36 @@ const GlobalStyles = ({
         height: '100%',
       },
       h1: {
-        ...fontProps(42),
-        fontWeight: 600,
+        ...fontProps({ size: 42, weight: 600 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          ...fontProps(36),
-        },
+        [mq('mobileOnly')]: fontProps({ size: 36 }),
       },
       h2: {
-        ...fontProps(32),
-        fontWeight: 600,
+        ...fontProps({ size: 32, weight: 600 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          ...fontProps(28),
-        },
+        [mq('mobileOnly')]: fontProps({ size: 28 }),
       },
       h3: {
-        ...fontProps(22),
-        fontWeight: 500,
+        ...fontProps({ size: 22, weight: 500 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          ...fontProps(20),
-        },
+        [mq('mobileOnly')]: fontProps({ size: 20 }),
       },
       h4: {
-        ...fontProps(20),
-        fontWeight: 500,
+        ...fontProps({ size: 20, weight: 500 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          ...fontProps(18),
-        },
+        [mq('mobileOnly')]: fontProps({ size: 18 }),
       },
       h5: {
-        ...fontProps(18),
-        fontWeight: 500,
+        ...fontProps({ size: 18, weight: 500 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          ...fontProps(17),
-        },
+        [mq('mobileOnly')]: fontProps({ size: 17 }),
       },
-      p: {
-        ...fontProps(16),
-        fontWeight: 400,
-      },
+      p: fontProps({ size: 16, weight: 400 }),
       a: {
         textDecoration: 'none',
         color: colors.blue,

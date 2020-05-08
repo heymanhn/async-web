@@ -18,22 +18,22 @@ const Container = styled.div(({ theme: { mq } }) => ({
   },
 }));
 
-const StyledInput = styled.input(({ theme: { colors, mq } }) => ({
+const StyledInput = styled.input(({ theme: { colors, fontProps, mq } }) => ({
+  ...fontProps({ size: 14 }),
+
   background: colors.bgGrey,
   border: `1px solid ${colors.formBorderGrey}`,
   borderRadius: '5px',
   color: colors.mainText,
   marginBottom: '15px',
   padding: '12px 20px 13px',
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
   width: '100%',
   outline: 'none',
 
   '::placeholder': {
+    ...fontProps({ size: 14 }),
+
     color: colors.grey4,
-    fontSize: '14px',
-    letterSpacing: '-0.006em',
     opacity: 1, // Firefox
   },
 
