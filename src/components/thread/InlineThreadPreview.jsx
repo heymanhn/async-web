@@ -106,8 +106,7 @@ const ThreadPreview = ({ discussionId, isOpen, parentRef, mode }) => {
   const { lastMessage, messageCount, tags } = data.discussion;
   if (!lastMessage) return null;
 
-  const { author } = lastMessage;
-  const { body } = lastMessage;
+  const { body, author } = lastMessage;
   const { profilePictureUrl } = author;
   const { text } = body;
   const newUpdates =
