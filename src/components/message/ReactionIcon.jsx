@@ -2,21 +2,25 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const Container = styled.div({
-  border: '1px solid rgba(255,255,255,0)',
-  cursor: 'pointer',
-  padding: '4px 10px',
-}, ({ isSelected, theme: { colors } }) => {
-  if (!isSelected) return {};
+const Container = styled.div(
+  {
+    border: '1px solid rgba(255,255,255,0)',
+    cursor: 'pointer',
+    padding: '4px 10px',
+  },
+  ({ isSelected, theme: { colors } }) => {
+    if (!isSelected) return {};
 
-  return {
-    background: colors.hoverBlue,
-    border: `1px solid ${colors.borderGrey}`,
-  };
-});
+    return {
+      background: colors.hoverBlue,
+      border: `1px solid ${colors.borderGrey}`,
+    };
+  }
+);
 
 const Icon = styled.div({
   fontSize: '24px',
+  fontFamily: '-apple-system',
 });
 
 class ReactionIcon extends Component {
@@ -30,8 +34,16 @@ class ReactionIcon extends Component {
 
   handleClick(event) {
     event.stopPropagation();
-    const { code, existingReactionId, isSelected, onAddReaction, onRemoveReaction } = this.props;
-    return isSelected ? onRemoveReaction(existingReactionId, code) : onAddReaction(code);
+    const {
+      code,
+      existingReactionId,
+      isSelected,
+      onAddReaction,
+      onRemoveReaction,
+    } = this.props;
+    return isSelected
+      ? onRemoveReaction(existingReactionId, code)
+      : onAddReaction(code);
   }
 
   handleExitHover() {

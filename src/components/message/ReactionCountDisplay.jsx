@@ -14,6 +14,7 @@ const Container = styled.div(({ isActive, theme: { colors } }) => ({
 }));
 
 const Icon = styled.div({
+  fontFamily: '-apple-system',
   fontSize: '16px',
   marginRight: '8px',
 });
