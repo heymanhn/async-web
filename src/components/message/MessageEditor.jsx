@@ -25,10 +25,9 @@ const Container = styled.div(({ mode }) => ({
   minHeight: mode === 'compose' ? '180px' : 'initial',
 }));
 
-const MessageEditable = styled(Editable)(({ theme: { fontProps } }) => ({
-  ...fontProps({ size: 16, weight: 400 }),
-  lineHeight: '26px',
-}));
+const MessageEditable = styled(Editable)(({ theme: { fontProps } }) =>
+  fontProps({ size: 14, weight: 400 })
+);
 
 const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
   const { mode, parentId } = useContext(MessageContext);
