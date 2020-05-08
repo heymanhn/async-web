@@ -10,17 +10,19 @@ const Container = styled.div(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
 }));
 
-const ModeButton = styled.div(({ isSelected, theme: { colors } }) => ({
-  borderBottom: isSelected ? `2px solid ${colors.mainText}` : 'none',
-  borderTop: isSelected ? `2px solid ${colors.white}` : 'none',
-  color: isSelected ? colors.mainText : colors.grey3,
-  cursor: 'pointer',
-  fontSize: '13px',
-  height: '100%',
-  letterSpacing: '-0.0025em',
-  marginRight: '25px',
-  padding: '0px 3px 2px',
-}));
+const ModeButton = styled.div(
+  ({ isSelected, theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 13 }),
+
+    borderBottom: isSelected ? `2px solid ${colors.mainText}` : 'none',
+    borderTop: isSelected ? `2px solid ${colors.white}` : 'none',
+    color: isSelected ? colors.mainText : colors.grey3,
+    cursor: 'pointer',
+    height: '100%',
+    marginRight: '25px',
+    padding: '0px 3px 2px',
+  })
+);
 
 const ResourceFilters = () => {
   const { viewMode, setViewMode } = useContext(WorkspaceContext);

@@ -10,12 +10,14 @@ import CommandCenterModal from './CommandCenterModal';
 
 const COMMAND_CENTER_HOTKEY = 'cmd+k';
 
-const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
-  color: colors.grey2,
-  cursor: 'pointer',
-  fontSize: '20px',
-  margin: '0 15px',
-}));
+const StyledIcon = styled(FontAwesomeIcon)(
+  ({ theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 20 }),
+    color: colors.grey2,
+    cursor: 'pointer',
+    margin: '0 15px',
+  })
+);
 
 const CommandCenter = props => {
   const navigationContext = useContext(NavigationContext);

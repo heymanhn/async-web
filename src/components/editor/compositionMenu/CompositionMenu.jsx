@@ -44,9 +44,9 @@ const Container = styled.div(
   }
 );
 
-const NoResults = styled.div(({ theme: { colors } }) => ({
+const NoResults = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey3,
-  fontSize: '14px',
   marginLeft: '20px',
   marginTop: '15px',
 }));

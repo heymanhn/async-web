@@ -24,19 +24,16 @@ const StyledAvatar = styled(Avatar)({
   marginRight: '8px',
 });
 
-const Name = styled.div(({ theme: { colors } }) => ({
+const Name = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13, weight: 500 }),
   color: colors.grey0,
-  fontSize: '13px',
-  fontWeight: 500,
-  letterSpacing: '-0.0025em',
   marginRight: '5px',
   flexShrink: 0,
 }));
 
-const Snippet = styled.div(({ theme: { colors } }) => ({
+const Snippet = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13 }),
   color: colors.grey2,
-  fontSize: '13px',
-  letterSpacing: '-0.0025em',
   flexGrow: 1,
 }));
 

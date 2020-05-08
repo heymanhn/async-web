@@ -42,10 +42,9 @@ const TitleContainer = styled.div({
   alignItems: 'flex-start',
 });
 
-const Title = styled.div(({ theme: { colors } }) => ({
+const Title = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13, weight: 400 }),
   color: colors.grey0,
-  fontSize: '13px',
-  fontWeight: 400,
 }));
 
 const Bold = styled.span({
@@ -63,15 +62,14 @@ const StyledIndicator = styled(UnreadIndicator)({
   marginRight: '5px',
 });
 
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
+const Timestamp = styled(Moment)(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13 }),
   color: colors.grey3,
-  fontSize: '13px',
 }));
 
-const SnippetText = styled.div(({ theme: { colors } }) => ({
+const SnippetText = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13, weight: 400 }),
   color: colors.grey2,
-  fontSize: '13px',
-  fontWeight: 400,
   marginTop: '15px',
 }));
 

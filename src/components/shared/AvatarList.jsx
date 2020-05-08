@@ -17,22 +17,23 @@ const StyledAvatar = styled(Avatar)(({ opacity }) => ({
   opacity,
 }));
 
-const AvatarWithCount = styled.div(({ size, square, theme: { colors } }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+const AvatarWithCount = styled.div(
+  ({ size, square, theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 10, weight: 500 }),
 
-  background: colors.grey4,
-  borderRadius: square ? '5px' : '50%',
-  fontSize: '10px',
-  color: colors.white,
-  letterSpacing: '0.01em',
-  width: `${size}px`,
-  height: `${size}px`,
-  marginLeft: '-2px',
-  fontWeight: 500,
-  paddingBottom: '1px',
-}));
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    background: colors.grey4,
+    borderRadius: square ? '5px' : '50%',
+    color: colors.white,
+    width: `${size}px`,
+    height: `${size}px`,
+    marginLeft: '-2px',
+    paddingBottom: '1px',
+  })
+);
 
 const AvatarList = ({ avatarUrls, size, opacity, ...props }) => {
   const uniqueAvatarUrls = [...new Set(avatarUrls)];

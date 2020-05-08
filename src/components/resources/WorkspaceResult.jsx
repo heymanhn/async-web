@@ -27,15 +27,14 @@ const Details = styled.div({
   justifyContent: 'center',
 });
 
-const Title = styled.div(({ isDisabled, theme: { colors } }) => ({
+const Title = styled.div(({ isDisabled, theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: isDisabled ? 500 : 600 }),
   color: isDisabled ? colors.grey4 : colors.grey0,
-  fontSize: '14px',
-  fontWeight: isDisabled ? 500 : 600,
 }));
 
-const DisabledMessage = styled.div(({ theme: { colors } }) => ({
+const DisabledMessage = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13 }),
   color: colors.grey4,
-  fontSize: '13px',
 }));
 
 const WorkspaceResult = ({ result, isDisabled }) => {

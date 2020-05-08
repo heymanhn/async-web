@@ -25,28 +25,27 @@ const Details = styled.div({
   alignItems: 'baseline',
 });
 
-const Author = styled.div({
-  fontWeight: 500,
-  fontSize: '14px',
+const Author = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   marginRight: '15px',
-});
-
-const Timestamp = styled(Moment)(({ theme: { colors } }) => ({
-  color: colors.grey3,
-  cursor: 'default',
-  fontSize: '14px',
 }));
 
-const EditedLabel = styled.span(({ theme: { colors } }) => ({
+const Timestamp = styled(Moment)(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey3,
   cursor: 'default',
-  fontSize: '14px',
+}));
+
+const EditedLabel = styled.span(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
+  color: colors.grey3,
+  cursor: 'default',
   marginLeft: '3px',
 }));
 
-const EditingLabel = styled.div(({ theme: { colors } }) => ({
+const EditingLabel = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey4,
-  fontSize: '14px',
 }));
 
 const AuthorDetails = ({ author, createdAt, isEdited }) => {

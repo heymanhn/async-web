@@ -1,56 +1,53 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
-export const LargeTitle = styled.div(({ theme: { mq, textColors } }) => ({
-  color: textColors.main,
-  fontSize: '48px',
-  fontWeight: 700,
-  letterSpacing: '-0.022em',
-  lineHeight: '58px',
-  margin: '0 auto 20px',
+export const LargeTitle = styled.div(
+  ({ theme: { fontProps, mq, textColors } }) => ({
+    ...fontProps({ size: 48, weight: 700, type: 'title' }),
 
-  [mq('tabletUp')]: {
-    fontSize: '52px',
-    lineHeight: '63px',
-    maxWidth: '550px',
-    textAlign: 'center',
-  },
-}));
+    color: textColors.main,
+    margin: '0 auto 20px',
 
-export const LargeDescription = styled.div(({ theme: { mq, textColors } }) => ({
-  color: textColors.alt,
-  fontSize: '20px',
-  letterSpacing: '-0.017em',
-  lineHeight: '32px',
-  margin: '0 auto 30px',
+    [mq('tabletUp')]: {
+      ...fontProps({ size: 52, type: 'title' }),
+      maxWidth: '550px',
+      textAlign: 'center',
+    },
+  })
+);
 
-  [mq('tabletUp')]: {
-    maxWidth: '580px',
-    textAlign: 'center',
-  },
-}));
+export const LargeDescription = styled.div(
+  ({ theme: { fontProps, mq, textColors } }) => ({
+    ...fontProps({ size: 20 }),
 
-export const SmallTitle = styled.div(({ theme: { mq, textColors } }) => ({
-  color: textColors.main,
-  fontSize: '32px',
-  fontWeight: 700,
-  letterSpacing: '-0.021em',
-  lineHeight: '39px',
-  marginBottom: '10px',
+    color: textColors.alt,
+    margin: '0 auto 30px',
 
-  [mq('tabletUp')]: {
-    fontSize: '36px',
-    lineHeight: '44px',
-  },
-}));
+    [mq('tabletUp')]: {
+      maxWidth: '580px',
+      textAlign: 'center',
+    },
+  })
+);
+
+export const SmallTitle = styled.div(
+  ({ theme: { fontProps, mq, textColors } }) => ({
+    ...fontProps({ size: 32, weight: 700, type: 'title' }),
+    color: textColors.main,
+    marginBottom: '10px',
+
+    [mq('tabletUp')]: fontProps({ size: 36, type: 'title' }),
+  })
+);
 
 // Not specifying a letter-spacing for this one. It looks too compressed
 // with the recommended value.
-export const SmallDescription = styled.div(({ theme: { textColors } }) => ({
-  color: textColors.alt,
-  fontSize: '18px',
-  lineHeight: '28px',
-}));
+export const SmallDescription = styled.div(
+  ({ theme: { fontProps, textColors } }) => ({
+    ...fontProps({ size: 18 }),
+    color: textColors.alt,
+  })
+);
 
 export const TitleIcon = styled(FontAwesomeIcon)(
   ({ theme: { accentColor, mq } }) => ({

@@ -27,17 +27,15 @@ const Icon = styled(FontAwesomeIcon)(({ theme: { accentColor } }) => ({
   marginBottom: '5px',
 }));
 
-const Title = styled.span(({ theme: { textColors } }) => ({
+const Title = styled.span(({ theme: { fontProps, textColors } }) => ({
+  ...fontProps({ size: 16, weight: 600 }),
   color: textColors.main,
-  fontSize: '16px',
-  fontWeight: 600,
   marginBottom: '5px',
 }));
 
-const Description = styled.span(({ theme: { textColors } }) => ({
+const Description = styled.span(({ theme: { fontProps, textColors } }) => ({
+  ...fontProps({ size: 14 }),
   color: textColors.sub,
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
   lineHeight: '20px',
 }));
 

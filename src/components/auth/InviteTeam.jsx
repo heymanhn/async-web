@@ -19,10 +19,10 @@ const FieldsContainer = styled.div({
   width: '300px',
 });
 
-const SkipStep = styled.div(({ theme: { colors } }) => ({
+const SkipStep = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 12 }),
   color: colors.grey3,
   cursor: 'pointer',
-  fontSize: '12px',
   marginTop: '12px',
 }));
 

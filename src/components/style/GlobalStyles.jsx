@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import { Global } from '@emotion/core';
 import { withTheme } from 'emotion-theming';
 
-const GlobalStyles = ({ bgColor, theme: { colors, fontStack, mq } }) => (
+const GlobalStyles = ({
+  bgColor,
+  theme: { colors, fontStack, fontProps, mq },
+}) => (
   <Global
     styles={{
       '*': {
@@ -20,55 +23,36 @@ const GlobalStyles = ({ bgColor, theme: { colors, fontStack, mq } }) => (
         height: '100%',
       },
       h1: {
-        fontSize: '42px',
-        fontWeight: 600,
+        ...fontProps({ size: 42, weight: 600 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          fontSize: '36px',
-        },
+        [mq('mobileOnly')]: fontProps({ size: 36 }),
       },
       h2: {
-        fontSize: '32px',
-        fontWeight: 600,
+        ...fontProps({ size: 32, weight: 600 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          fontSize: '28px',
-        },
+        [mq('mobileOnly')]: fontProps({ size: 28 }),
       },
       h3: {
-        fontSize: '22px',
-        fontWeight: 500,
+        ...fontProps({ size: 22, weight: 500 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          fontSize: '20px',
-        },
+        [mq('mobileOnly')]: fontProps({ size: 20 }),
       },
       h4: {
-        fontSize: '20px',
-        fontWeight: 500,
+        ...fontProps({ size: 20, weight: 500 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          fontSize: '18px',
-        },
+        [mq('mobileOnly')]: fontProps({ size: 18 }),
       },
       h5: {
-        fontSize: '18px',
-        fontWeight: 500,
+        ...fontProps({ size: 18, weight: 500 }),
         margin: 0,
 
-        [mq('mobileOnly')]: {
-          fontSize: '17px',
-        },
+        [mq('mobileOnly')]: fontProps({ size: 17 }),
       },
-      p: {
-        fontSize: '16px',
-        fontWeight: 400,
-        lineHeight: '26px',
-      },
+      p: fontProps({ size: 16, weight: 400 }),
       a: {
         textDecoration: 'none',
         color: colors.blue,

@@ -12,10 +12,9 @@ import {
 
 import Avatar from 'components/shared/Avatar';
 
-const Title = styled.span(({ theme: { colors } }) => ({
+const Title = styled.span(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   color: colors.grey0,
-  fontSize: '14px',
-  fontWeight: 500,
 }));
 
 const WorkspaceTitle = styled.span({

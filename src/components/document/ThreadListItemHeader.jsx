@@ -7,7 +7,9 @@ import styled from '@emotion/styled';
 import { DocumentContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 16, weight: 500 }),
+
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -16,8 +18,6 @@ const Container = styled.div(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
   borderTopLeftRadius: '5px',
   borderTopRightRadius: '5px',
-  fontSize: '16px',
-  fontWeight: 500,
   padding: '0 30px',
   height: '56px',
 }));
@@ -27,13 +27,13 @@ const LabelContainer = styled.div({
   alignItems: 'center',
 });
 
-const Label = styled.div(({ isUnread }) => ({
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
-  fontWeight: isUnread ? 600 : 400,
-}));
+const Label = styled.div(({ isUnread, theme: { fontProps } }) =>
+  fontProps({ size: 14, weight: isUnread ? 600 : 400 })
+);
 
-const ViewDiscussionButton = styled.div(({ theme: { colors } }) => ({
+const ViewDiscussionButton = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 12, weight: 500 }),
+
   display: 'flex',
   alignItems: 'center',
 
@@ -42,8 +42,6 @@ const ViewDiscussionButton = styled.div(({ theme: { colors } }) => ({
   borderRadius: '5px',
   color: colors.grey1,
   cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: 500,
   height: '30px',
   padding: '0 18px',
 }));

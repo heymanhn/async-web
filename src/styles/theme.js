@@ -1,3 +1,5 @@
+import { letterSpacing, lineHeight } from './dynamicMetrics';
+
 // Media query helper methods. Add this method into the theme object for easy reuse.
 export const breakpoints = [
   ['mobileOnly', 599],
@@ -16,8 +18,25 @@ const mq = n => {
   return result;
 };
 
+// convenient way to generate all the required properties for
+// a given font size
+const fontProps = ({ size, weight, type }) => {
+  const props = {
+    fontSize: `${size}px`,
+    letterSpacing: `${letterSpacing(size)}em`,
+    lineHeight: `${lineHeight(size, type)}px`,
+  };
+
+  if (weight) props.fontWeight = weight;
+
+  return props;
+};
+
 export const theme = {
   mq,
+  letterSpacing,
+  lineHeight,
+  fontProps,
 
   fontStack: [
     'Inter',

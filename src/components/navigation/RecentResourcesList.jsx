@@ -22,10 +22,9 @@ const HeadingSection = styled.div({
   marginBottom: '8px',
 });
 
-const Heading = styled.div(({ theme: { colors } }) => ({
+const Heading = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 12, weight: 500 }),
   color: colors.grey3,
-  fontSize: '12px',
-  fontWeight: 500,
 }));
 
 const RecentResourcesList = () => {

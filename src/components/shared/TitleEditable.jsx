@@ -20,12 +20,10 @@ const Container = styled.div(({ theme: { discussionViewport } }) => ({
   width: discussionViewport,
 }));
 
-const Title = styled.div(({ theme: { colors } }) => ({
+const Title = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 42, weight: 600, type: 'title' }),
+
   color: colors.mainText,
-  fontSize: '42px',
-  fontWeight: 600,
-  letterSpacing: '-0.022em',
-  lineHeight: '54px',
   marginTop: '60px',
   marginBottom: '15px',
   outline: 'none',

@@ -38,10 +38,9 @@ const AvatarWithMargin = styled(Avatar)({
   marginRight: '12px',
 });
 
-const Name = styled.div({
-  fontSize: '14px',
-  fontWeight: 500,
-});
+const Name = styled.div(({ theme: { fontProps } }) =>
+  fontProps({ size: 14, weight: 500 })
+);
 
 const MenuOptionList = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -53,9 +52,9 @@ const MenuOptionList = styled.div(({ theme: { colors } }) => ({
   padding: '8px 20px',
 }));
 
-const MenuOption = styled.div(({ theme: { colors } }) => ({
+const MenuOption = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   cursor: 'pointer',
-  fontSize: '14px',
   margin: '10px 0',
 
   ':hover': {

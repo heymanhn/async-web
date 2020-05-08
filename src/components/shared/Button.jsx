@@ -4,14 +4,13 @@ import { Spinner } from 'reactstrap';
 
 import styled from '@emotion/styled/macro';
 
-const Container = styled.div(({ isDisabled }) => ({
+const Container = styled.div(({ isDisabled, theme: { fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
+
   flexShrink: 0,
   borderRadius: '5px',
   cursor: isDisabled ? 'default' : 'pointer',
   display: 'inline-block',
-  fontWeight: 500,
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
   padding: '7px 20px 8px',
   userSelect: 'none',
 

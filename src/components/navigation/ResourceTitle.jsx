@@ -23,9 +23,9 @@ const TitleContainer = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const Title = styled.div(({ theme: { colors } }) => ({
+const Title = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey0,
-  fontSize: '14px',
   marginTop: '-3px',
 }));
 

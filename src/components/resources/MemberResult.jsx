@@ -10,18 +10,18 @@ const StyledAvatar = styled(Avatar)(({ isDisabled }) => ({
   opacity: isDisabled ? 0.5 : 1,
 }));
 
-const Details = styled.div({
-  fontSize: '14px',
-});
+const Details = styled.div(({ theme: { fontProps } }) =>
+  fontProps({ size: 14 })
+);
 
 const Name = styled.div(({ isDisabled, theme: { colors } }) => ({
   color: isDisabled ? colors.grey4 : colors.grey0,
   fontWeight: isDisabled ? 500 : 600,
 }));
 
-const Email = styled.div(({ isDisabled, theme: { colors } }) => ({
+const Email = styled.div(({ isDisabled, theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13 }),
   color: isDisabled ? colors.grey4 : colors.grey2,
-  fontSize: '13px',
 }));
 
 const MemberResult = ({ result, isDisabled }) => {

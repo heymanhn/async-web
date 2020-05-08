@@ -5,9 +5,9 @@ import styled from '@emotion/styled';
 import workspaceQuery from 'graphql/queries/workspace';
 import { WorkspaceContext } from 'utils/contexts';
 
-const Title = styled.div(({ theme: { colors } }) => ({
+const Title = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey0,
-  fontSize: '14px',
   marginTop: '-4px',
 }));
 

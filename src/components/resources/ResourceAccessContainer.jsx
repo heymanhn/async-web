@@ -10,7 +10,9 @@ import { NavigationContext } from 'utils/contexts';
 
 import ResourceAccessModal from './ResourceAccessModal';
 
-const ShareButton = styled.div(({ theme: { colors } }) => ({
+const ShareButton = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 600 }),
+
   display: 'flex',
   alignItems: 'center',
 
@@ -18,8 +20,6 @@ const ShareButton = styled.div(({ theme: { colors } }) => ({
   borderRadius: '5px',
   color: colors.white,
   cursor: 'pointer',
-  fontSize: '14px',
-  fontWeight: 600,
   height: '30px',
   marginTop: '-1px',
   padding: '0 12px',

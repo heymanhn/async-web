@@ -21,7 +21,7 @@ const Container = styled.div(({ isOpen, styles, theme: { colors } }) => ({
   background: colors.mainText,
   borderRadius: '5px',
   boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.25)',
-  fontSize: '16px',
+  fontSize: '16px', // for the toolbar icons
   height: '40px',
   marginTop: '0px',
   opacity: isOpen ? 1 : 0,

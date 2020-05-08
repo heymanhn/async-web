@@ -46,13 +46,17 @@ const AvatarWithMargin = styled(Avatar)({
   marginRight: '12px',
 });
 
-const IndicatorLabel = styled.div(({ isResolved, theme: { colors } }) => ({
-  color: isResolved ? colors.grey2 : colors.grey4,
-  fontSize: isResolved ? '14px' : '16px',
-  marginLeft: '5px',
-}));
+const IndicatorLabel = styled.div(
+  ({ isResolved, theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: isResolved ? 14 : 16 }),
+    color: isResolved ? colors.grey2 : colors.grey4,
+    marginLeft: '5px',
+  })
+);
 
-const ActionButton = styled.div(({ theme: { colors } }) => ({
+const ActionButton = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
+
   display: 'flex',
   alignItems: 'center',
   background: colors.white,
@@ -62,9 +66,6 @@ const ActionButton = styled.div(({ theme: { colors } }) => ({
   padding: '4px 15px',
 
   color: colors.mainText,
-  fontSize: '14px',
-  fontWeight: 500,
-  letterSpacing: '-0.006em',
 }));
 
 const AddReplyBox = ({ handleClickReply, isComposing, ...props }) => {

@@ -26,18 +26,16 @@ const Logo = styled.img({
   marginRight: '12px',
 });
 
-const Title = styled.span(({ theme: { textColors } }) => ({
+const Title = styled.span(({ theme: { fontProps, textColors } }) => ({
+  ...fontProps({ size: 16, weight: 500 }),
   color: textColors.sub,
-  fontSize: '16px',
-  fontWeight: 500,
 }));
 
-const SignInLink = styled(Link)(({ theme: { textColors } }) => ({
+const SignInLink = styled(Link)(({ theme: { fontProps, textColors } }) => ({
+  ...fontProps({ size: 14, weight: 600 }),
+
   color: textColors.sub,
   cursor: 'pointer',
-  fontSize: '14px',
-  fontWeight: 600,
-  letterSpacing: '-0.006em',
   textDecoration: 'none',
 
   ':hover,:active,:visited': {

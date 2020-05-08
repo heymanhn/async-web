@@ -29,12 +29,11 @@ const StyledImage = styled.img({
   height: '42px',
 });
 
-const Title = styled.div({
-  fontSize: '24px',
-  fontWeight: 500,
+const Title = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 24, weight: 500 }),
   textAlign: 'center',
   width: '300px',
-});
+}));
 
 const OnboardingContainer = ({ children, title }) => (
   <OuterContainer>

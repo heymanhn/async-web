@@ -38,18 +38,18 @@ const Section = styled.div({
   alignItems: 'center',
 });
 
-const Button = styled.div({
+const Button = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 12, weight: 500 }),
+
   display: 'flex',
   alignItems: 'center',
 
   borderRadius: '5px',
   cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: 500,
   height: '25px',
   marginLeft: '8px',
   padding: '0 20px',
-});
+}));
 
 const SubmitButton = styled(Button)(({ isDisabled, theme: { colors } }) => ({
   background: isDisabled ? colors.grey7 : colors.altBlue,
@@ -63,17 +63,15 @@ const CancelButton = styled(Button)(({ theme: { colors } }) => ({
   color: colors.grey3,
 }));
 
-const SubmitLabel = styled.div(({ theme: { colors } }) => ({
-  fontSize: '12px',
-  fontWeight: 500,
+const SubmitLabel = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 12, weight: 500 }),
   color: colors.grey1,
 }));
 
-const DraftSavedLabel = styled.div(({ theme: { colors } }) => ({
+const DraftSavedLabel = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 12, weight: 600 }),
   display: 'flex',
   color: colors.grey4,
-  fontSize: '12px',
-  fontWeight: 600,
 }));
 
 const Timestamp = styled(Moment)({

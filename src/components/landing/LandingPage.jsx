@@ -8,11 +8,11 @@ import contents from './content';
 import { modules } from './modules';
 import themes from './themes';
 
-const Footer = styled.div(({ theme: { bgColors, colors } }) => ({
+const Footer = styled.div(({ theme: { bgColors, colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
+
   background: bgColors.main,
   color: colors.grey4,
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
   padding: '0 30px 30px',
   textAlign: 'center',
 }));

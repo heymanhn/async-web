@@ -8,16 +8,15 @@ import { isResourceUnread, titleize } from 'utils/helpers';
 
 import NameList from 'components/shared/NameList';
 
-const Container = styled.div(({ theme: { colors } }) => ({
+const Container = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13 }),
   color: colors.grey2,
   cursor: 'default',
-  fontSize: '13px',
-  letterSpacing: '-0.0025em',
 }));
 
-const Separator = styled.span(({ theme: { colors } }) => ({
+const Separator = styled.span(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 10 }),
   color: colors.grey3,
-  fontSize: '10px',
   margin: '0 8px',
   position: 'relative',
   top: '-1px',
@@ -27,11 +26,10 @@ const Tag = styled.span(({ isUnread, theme: { colors } }) => ({
   color: isUnread ? colors.blue : colors.grey2,
 }));
 
-const Timestamp = styled(Moment)({
+const Timestamp = styled(Moment)(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 13 }),
   cursor: 'default',
-  fontSize: '13px',
-  letterSpacing: '-0.0025em',
-});
+}));
 
 // Resource is either a document or a discussion
 const ResourceDetails = ({ type, resource, names, ...props }) => {

@@ -19,9 +19,9 @@ import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
 import OnboardingContainer from './OnboardingContainer';
 
-const Description = styled.div(({ theme: { colors } }) => ({
+const Description = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   color: colors.grey3,
-  fontSize: '16px',
   marginBottom: '25px',
 }));
 
@@ -31,11 +31,10 @@ const FieldsContainer = styled.div({
   width: '300px',
 });
 
-const Label = styled.div(({ theme: { colors } }) => ({
+const Label = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
   alignSelf: 'flex-start',
   color: colors.grey3,
-  fontSize: '14px',
-  fontWeight: 500,
   marginBottom: '5px',
 }));
 
@@ -45,9 +44,9 @@ const StyledButton = styled(Button)({
   width: '300px',
 });
 
-const LoginMessage = styled.div(({ theme: { colors } }) => ({
+const LoginMessage = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 12 }),
   color: colors.grey3,
-  fontSize: '12px',
   marginTop: '12px',
 }));
 

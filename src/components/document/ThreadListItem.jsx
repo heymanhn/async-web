@@ -31,15 +31,15 @@ const StyledTopicComposer = styled(TopicComposer)(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
 }));
 
-const MoreRepliesIndicator = styled.div(({ theme: { colors } }) => ({
+const MoreRepliesIndicator = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
+
   display: 'flex',
   alignItems: 'center',
 
   height: '46px',
   background: colors.bgGrey,
   border: `1px solid ${colors.borderGrey}`,
-  fontSize: '14px',
-  letterSpacing: '-0.006em',
   color: colors.grey3,
   padding: '0 30px',
 }));

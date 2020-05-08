@@ -10,7 +10,9 @@ import { DEBOUNCE_INTERVAL } from 'utils/constants';
 import { ThreadContext } from 'utils/contexts';
 import { debounce } from 'utils/helpers';
 
-const Container = styled.div(({ isVisible, theme: { colors } }) => ({
+const Container = styled.div(({ isVisible, theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 13, weight: 500 }),
+
   display: 'flex',
   alignItems: 'center',
   alignSelf: 'center',
@@ -20,9 +22,6 @@ const Container = styled.div(({ isVisible, theme: { colors } }) => ({
   boxShadow: '0px 0px 8px rgba(0,0,0,0.1)',
   color: colors.white,
   cursor: 'pointer',
-  fontSize: '13px',
-  fontWeight: 500,
-  letterSpacing: '-0.006em',
   height: '28px',
   opacity: isVisible ? 1 : 0,
   padding: '0 10px',

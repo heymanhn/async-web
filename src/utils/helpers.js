@@ -79,3 +79,8 @@ export const camelCaseObjString = str => {
 
   return camelCaseObj;
 };
+
+// Convenience method for rounding a number to a number of significant digits
+// https://stackoverflow.com/questions/11832914/round-to-at-most-2-decimal-places-only-if-necessary
+export const roundToPrecision = (num, sigfig = 2) =>
+  Math.round((num + Number.EPSILON) * 10 ** sigfig) / 10 ** sigfig;

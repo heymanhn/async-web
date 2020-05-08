@@ -34,9 +34,9 @@ import ImageElement from './ImageElement';
 
 const DefaultInline = styled.span({});
 
-const DefaultBlock = styled.div(({ theme: { colors } }) => ({
+const DefaultBlock = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   color: colors.contentText,
-  fontSize: '16px',
   marginTop: '12px',
   marginBottom: '20px',
 }));
@@ -52,29 +52,21 @@ export const DefaultElement = ({ attributes, children, element }) => {
 /*
  * Headings: Large, medium, small
  */
-const LargeFont = styled.h1(({ theme: { colors } }) => ({
+const LargeFont = styled.h1(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 28, weight: 600 }),
   color: colors.mainText,
-  fontSize: '28px',
-  fontWeight: 600,
-  lineHeight: '36px',
-  letterSpacing: '-0.02em',
   margin: '30px 0px -10px',
 }));
 
-const MediumFont = styled.h2(({ theme: { colors } }) => ({
+const MediumFont = styled.h2(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 22, weight: 600 }),
   color: colors.mainText,
-  fontSize: '22px',
-  fontWeight: 600,
-  lineHeight: '28px',
-  letterSpacing: '-0.018em',
   margin: '18px 0px -10px',
 }));
 
-const SmallFont = styled.h3(({ theme: { colors } }) => ({
+const SmallFont = styled.h3(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 16, weight: 600 }),
   color: colors.mainText,
-  fontSize: '16px',
-  fontWeight: 600,
-  lineHeight: '22px',
   margin: '12px 0px -10px',
 }));
 
@@ -94,48 +86,48 @@ const SmallFontElement = ({ attributes, children }) => (
  * List types
  */
 
-const BulletedList = styled.ul({
-  fontSize: '16px',
+const BulletedList = styled.ul(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   marginTop: '12px',
   marginBottom: '20px',
-});
+}));
 
-const NumberedList = styled.ol({
-  fontSize: '16px',
+const NumberedList = styled.ul(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   marginTop: '12px',
   marginBottom: '20px',
-});
+}));
 
 // Backwards compatibility
-const ListItem = styled.li(({ depth }) => ({
-  fontSize: '16px',
+const ListItem = styled.li(({ depth, theme: { fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   marginBottom: '5px',
   marginLeft: depth ? `${depth * LIST_ITEM_INDENT_WIDTH}px` : 0,
   width: '100%',
 }));
 
-const BulletedListItem = styled.li(({ depth = 0 }) => ({
-  fontSize: '16px',
+const BulletedListItem = styled.li(({ depth = 0, theme: { fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   listStyleType: depth % 2 === 0 ? 'disc' : 'circle',
   marginBottom: '5px',
   marginLeft: depth ? `${depth * LIST_ITEM_INDENT_WIDTH}px` : 0,
   width: '100%',
 }));
 
-const NumberedListItem = styled.li(({ depth = 0 }) => ({
-  fontSize: '16px',
+const NumberedListItem = styled.li(({ depth = 0, theme: { fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   listStyleType: depth % 2 === 0 ? 'decimal' : 'lower-alpha',
   marginBottom: '5px',
   marginLeft: depth ? `${depth * LIST_ITEM_INDENT_WIDTH}px` : 0,
   width: '100%',
 }));
 
-const Checklist = styled.ul({
-  fontSize: '16px',
+const Checklist = styled.ul(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 16 }),
   marginTop: '12px',
   marginBottom: '20px',
   paddingLeft: '16px',
-});
+}));
 
 const BulletedListElement = ({ attributes, children }) => (
   <BulletedList {...attributes}>{children}</BulletedList>
@@ -170,27 +162,29 @@ const NumberedListItemElement = ({ attributes, children, element }) => (
 /*
  * Code block
  */
-const CodeBlock = styled.pre(({ theme: { codeFontStack, colors } }) => ({
-  background: colors.bgGrey,
-  border: `1px solid ${colors.borderGrey}`,
-  borderRadius: '5px',
-  fontFamily: `${codeFontStack}`,
-  marginTop: '20px',
-  marginBottom: '20px',
-  padding: '7px 12px',
-  whiteSpace: 'pre-wrap',
-
-  div: {
-    fontSize: '14px',
-    marginTop: '0 !important',
-    marginBottom: '0 !important',
-  },
-
-  span: {
+const CodeBlock = styled.pre(
+  ({ theme: { codeFontStack, colors, fontProps } }) => ({
+    background: colors.bgGrey,
+    border: `1px solid ${colors.borderGrey}`,
+    borderRadius: '5px',
     fontFamily: `${codeFontStack}`,
-    letterSpacing: '-0.2px',
-  },
-}));
+    marginTop: '20px',
+    marginBottom: '20px',
+    padding: '7px 12px',
+    whiteSpace: 'pre-wrap',
+
+    div: {
+      ...fontProps({ size: 14 }),
+      marginTop: '0 !important',
+      marginBottom: '0 !important',
+    },
+
+    span: {
+      fontFamily: `${codeFontStack}`,
+      letterSpacing: '-0.2px',
+    },
+  })
+);
 
 const CodeBlockElement = ({ attributes, children }) => (
   <CodeBlock {...attributes} spellCheck={false}>

@@ -31,9 +31,9 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   fontSize: '18px',
 }));
 
-const Label = styled.div(({ theme: { colors } }) => ({
+const Label = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
   color: colors.grey1,
-  fontSize: '14px',
   marginTop: '1px',
 }));
 

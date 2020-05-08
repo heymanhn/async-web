@@ -7,11 +7,13 @@ import { DiscussionContext } from 'utils/contexts';
 
 import TitleEditable from 'components/shared/TitleEditable';
 
-const StyledTitleEditable = styled(TitleEditable)({
-  fontSize: '24px',
-  margin: '15px auto 5px',
-  padding: '0 30px',
-});
+const StyledTitleEditable = styled(TitleEditable)(
+  ({ theme: { fontProps } }) => ({
+    ...fontProps({ size: 24 }),
+    margin: '15px auto 5px',
+    padding: '0 30px',
+  })
+);
 
 const Divider = styled.div(({ theme: { discussionViewport } }) => ({
   margin: '0 auto',

@@ -2,10 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-const SectionTitle = styled.div(({ theme: { colors } }) => ({
+const SectionTitle = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 12, weight: 500 }),
   color: colors.grey4,
-  fontWeight: 500,
-  fontSize: '12px',
   margin: '15px 0 8px 20px',
 }));
 

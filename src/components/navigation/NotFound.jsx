@@ -28,24 +28,25 @@ const Icon = styled.span({
   top: '2px',
 });
 
-const Title = styled.h1({
-  fontSize: '36px',
-  fontWeight: 600,
-});
+const Title = styled.h1(({ theme: { fontProps } }) =>
+  fontProps({ size: 36, weight: 600 })
+);
 
-const Message = styled.div({
-  fontSize: '20px',
-  lineHeight: '30px',
-});
+const Message = styled.div(({ theme: { fontProps } }) =>
+  fontProps({ size: 20 })
+);
 
 const NotFound = () => (
   <Container>
     <TitleSection>
-      <Icon role="img" aria-label="pensive">😔</Icon>
+      <Icon role="img" aria-label="pensive">
+        😔
+      </Icon>
       <Title>Uh oh!</Title>
     </TitleSection>
     <Message>
-      We couldn&#39;t find what you are looking for. Can you double check your URL?
+      We couldn&#39;t find what you are looking for. Can you double check your
+      URL?
     </Message>
   </Container>
 );
