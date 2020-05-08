@@ -123,10 +123,10 @@ const addNewMessageToDiscussionMessages = (
 };
 
 const addNewPendingMessage = (_root, { message }, { client }) => {
-  const { pendingMessages, ...localState } = client.readQuery({
-    query: localStateQuery,
-  });
+  const { data } = client.readQuery({ query: localStateQuery });
+  if (!data) return null;
 
+  const { pendingMessages, ...localState } = data;
   const { id: newMessageId } = message;
 
   client.writeQuery({
