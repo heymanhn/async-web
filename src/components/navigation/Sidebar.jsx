@@ -19,6 +19,7 @@ const Container = styled.div(({ theme: { colors, sidebarWidth } }) => ({
   top: 0,
   bottom: 0,
   width: sidebarWidth,
+  paddingBottom: '40px',
   zIndex: 1,
 }));
 
