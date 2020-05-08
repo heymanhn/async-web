@@ -34,11 +34,11 @@ import ImageElement from './ImageElement';
 
 const DefaultInline = styled.span({});
 
-const DefaultBlock = styled.div(({ theme: { colors } }) => ({
+const DefaultBlock = styled.div(({ theme: { colors, fontProps } }) => ({
   color: colors.contentText,
-  fontSize: '16px',
   marginTop: '12px',
   marginBottom: '20px',
+  ...fontProps(16),
 }));
 
 export const DefaultElement = ({ attributes, children, element }) => {
