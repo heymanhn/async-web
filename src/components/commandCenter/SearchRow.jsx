@@ -19,12 +19,11 @@ const RowContainer = styled.div({
   justifyContent: 'flex-start',
 });
 
-const Title = styled.div({
-  fontSize: '14px',
+const Title = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps(14),
   fontWeight: 500,
-  letterSpacing: '-0.006em',
   marginTop: '-2px',
-});
+}));
 
 const SearchRow = ({ data }) => {
   const { type, icon, title, resource } = data;

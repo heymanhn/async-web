@@ -19,9 +19,9 @@ import Button from 'components/shared/Button';
 import { OnboardingInputField } from 'styles/shared';
 import OnboardingContainer from './OnboardingContainer';
 
-const Description = styled.div(({ theme: { colors } }) => ({
+const Description = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps(16),
   color: colors.grey3,
-  fontSize: '16px',
   marginBottom: '25px',
 }));
 
@@ -45,9 +45,9 @@ const StyledButton = styled(Button)({
   width: '300px',
 });
 
-const LoginMessage = styled.div(({ theme: { colors } }) => ({
+const LoginMessage = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps(12),
   color: colors.grey3,
-  fontSize: '12px',
   marginTop: '12px',
 }));
 

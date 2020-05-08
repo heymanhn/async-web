@@ -39,20 +39,20 @@ const Header = styled.div(({ resultCount, theme: { colors } }) => ({
   padding: '15px 30px 0',
 }));
 
-const Title = styled.div({
-  fontSize: '14px',
+const Title = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps(14),
   fontWeight: 500,
-  letterSpacing: '-0.006em',
-});
+}));
 
-const SearchInput = styled.input(({ theme: { colors } }) => ({
+const SearchInput = styled.input(({ theme: { colors, fontProps } }) => ({
+  ...fontProps(16),
+
   // Remove all default styles for an input element
   WebkitAppearance: 'none',
 
   background: 'none',
   border: 'none',
   color: colors.grey1,
-  fontSize: '16px',
   fontWeight: 400,
   outline: 'none',
   margin: '20px 0',

@@ -15,11 +15,10 @@ const StyledIcon = styled(FontAwesomeIcon)(
   })
 );
 
-const Title = styled.div(({ theme: { colors } }) => ({
+const Title = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps(14),
   color: colors.grey0,
-  fontSize: '14px',
   fontWeight: 500,
-  letterSpacing: '-0.006em',
   marginTop: '-2px',
 }));
 
