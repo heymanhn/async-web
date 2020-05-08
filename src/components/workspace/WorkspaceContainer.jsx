@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -13,17 +13,18 @@ const Container = styled.div(({ theme: { colors } }) => ({
   background: colors.white,
 }));
 
-const WorkspaceContainer = ({ workspaceId }) => {
-  useUpdateSelectedResource(workspaceId);
+const WorkspaceContainer = ({ workspaceId: initialWorkspaceId }) => {
+  const [workspaceId, setWorkspaceId] = useState(initialWorkspaceId);
   const [viewMode, setViewMode] = useState('all');
-  const resetViewMode = useCallback(() => {
-    if (viewMode !== 'all') setViewMode('all');
-  }, [viewMode]);
   const [forceUpdate, setForceUpdate] = useState(false);
+  useUpdateSelectedResource(workspaceId);
 
   useEffect(() => {
-    resetViewMode();
-  }, [resetViewMode, workspaceId]);
+    if (initialWorkspaceId !== workspaceId) {
+      setViewMode('all');
+      setWorkspaceId(initialWorkspaceId);
+    }
+  }, [workspaceId, initialWorkspaceId]);
 
   if (forceUpdate) setForceUpdate(false);
 
