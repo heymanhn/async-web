@@ -11,7 +11,7 @@ import { MessageContext } from 'utils/contexts';
 import Editor from 'components/editor/Editor';
 
 const SUBMIT_HOTKEY = 'cmd+enter';
-// const ESCAPE_HOTKEY = 'Escape';
+const ESCAPE_HOTKEY = 'Escape';
 
 const Container = styled.div(
   ({ isThread }) => ({
@@ -89,7 +89,7 @@ const MessageActions = ({ handleSubmit, ...props }) => {
 
   const handleSubmitWrapper = event => {
     event.stopPropagation();
-    return isEmptyContent ? null : handleSubmit();
+    if (!isEmptyContent) handleSubmit();
   };
 
   const handleDiscardWrapper = async event => {
@@ -100,20 +100,18 @@ const MessageActions = ({ handleSubmit, ...props }) => {
     handleCancel();
   };
 
-  // TODO (DISCUSSION V2): Hook up the escape key to minimizing the composer
-  // const handleEscapeKey = event => {
-  //   event.preventDefault();
+  const handleEscapeKey = event => {
+    event.preventDefault();
+    if (mode === 'compose' && isEmptyContent) handleCancel();
+  };
 
-  //   // TODO (DISCUSSION V2): Minimize the composer
-  // };
-
-  // const handlers = [
-  //   [SUBMIT_HOTKEY, handleSubmitWrapper],
-  //   [ESCAPE_HOTKEY, handleEscapeKey],
-  // ];
+  const handlers = [
+    [SUBMIT_HOTKEY, handleSubmitWrapper],
+    [ESCAPE_HOTKEY, handleEscapeKey],
+  ];
 
   useKeyDownHandler(
-    [SUBMIT_HOTKEY, handleSubmitWrapper],
+    handlers,
 
     // Make sure that cmd + enter doesn't work if a composer is open in both
     // the modal and a discussion page
