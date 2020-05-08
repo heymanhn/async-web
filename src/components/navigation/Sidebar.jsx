@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { NavigationContext, DEFAULT_NAVIGATION_CONTEXT } from 'utils/contexts';
+import { NavigationContext } from 'utils/contexts';
 
 import OrganizationSettings from './OrganizationSettings';
 import AllUpdatesButton from './AllUpdatesButton';
@@ -27,13 +27,14 @@ const StyledOrganizationSettings = styled(OrganizationSettings)({
 });
 
 const Sidebar = () => {
+  const navigationContext = useContext(NavigationContext);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [resourceCreationModalMode, setResourceCreationModalMode] = useState(
     null
   );
 
   const value = {
-    ...DEFAULT_NAVIGATION_CONTEXT,
+    ...navigationContext,
     isInviteModalOpen,
     resourceCreationModalMode,
     setIsInviteModalOpen,
