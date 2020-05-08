@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
@@ -46,6 +46,7 @@ const ResourceTitle = props => {
   const {
     resource: { resourceType, resourceQuery, variables },
   } = useContext(NavigationContext);
+  const [workspaceId, setWorkspaceId] = useState(null);
 
   const [getWorkspace, { loading, data: workspaceData }] = useLazyQuery(
     workspaceQuery
@@ -55,13 +56,20 @@ const ResourceTitle = props => {
     variables,
   });
 
+  useEffect(() => {
+    getWorkspace({ variables: { workspaceId } });
+  }, [workspaceId, getWorkspace]);
+
   // All these dances to ensure we render only when everything is fetched
   if (!resourceData || !resourceData[resourceType]) return null;
   const { title, topic, workspaces } = resourceData[resourceType];
-  if (!loading && !workspaceData && workspaces) {
-    getWorkspace({ variables: { workspaceId: workspaces[0] } });
-    return null;
+
+  if (workspaces) {
+    const [wsId] = workspaces;
+    if (workspaceId !== wsId) setWorkspaceId(wsId);
   }
+
+  // Don't render the title until the workspace title is available too
   if (!workspaceData && loading) return null;
 
   const { title: workspaceTitle } = workspaceData
