@@ -20,12 +20,15 @@ const useDocumentOperationsPusher = (editor, setLastTouchedToNow) => {
 
   const { channelId } = useContext(DocumentContext);
   const { pusher } = useContext(AppContext);
+  const [channel, setChannel] = useState(null);
   const [pendingOperations, setPendingOperations] = useState([]);
   const [lastSend, setLastSend] = useState(null);
   const channelName = `${PUSHER_CHANNEL_PREFIX}-${channelId}`;
-  const channel = pusher.subscribe(channelName);
   const setLastTouchedToNowCb = useCallback(setLastTouchedToNow, []);
 
+  // This hook will only be triggered when a new channel name is produced.
+  // This only happens when the channel ID has changed, or when the hook is
+  // mounted for the first time.
   useEffect(() => {
     const handleReadyState = () => {
       pusherReadyRef.current = true;
@@ -44,14 +47,19 @@ const useDocumentOperationsPusher = (editor, setLastTouchedToNow) => {
       setLastTouchedToNowCb();
     };
 
-    channel.bind(PUSHER_SUBSCRIPTION_SUCCESS_EVENT, handleReadyState);
-    channel.bind(NEW_DOCUMENT_OPERATION_EVENT, processOperations);
+    const newChannel = pusher.subscribe(channelName);
+    newChannel.bind(PUSHER_SUBSCRIPTION_SUCCESS_EVENT, handleReadyState);
+    newChannel.bind(NEW_DOCUMENT_OPERATION_EVENT, processOperations);
+    setChannel(newChannel);
 
     return () => {
-      channel.unbind(PUSHER_SUBSCRIPTION_SUCCESS_EVENT, handleReadyState);
-      channel.unbind(NEW_DOCUMENT_OPERATION_EVENT, processOperations);
+      newChannel.unbind(PUSHER_SUBSCRIPTION_SUCCESS_EVENT, handleReadyState);
+      newChannel.unbind(NEW_DOCUMENT_OPERATION_EVENT, processOperations);
+
+      pusher.unsubscribe(channelName);
+      setChannel(null);
     };
-  }, [channel, editor, setLastTouchedToNowCb]);
+  }, [channelName, editor, setLastTouchedToNowCb, pusher]);
 
   const sendOperations = () => {
     if (!pusherReadyRef.current) return;
