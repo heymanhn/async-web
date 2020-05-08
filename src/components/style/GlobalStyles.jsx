@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import { Global } from '@emotion/core';
 import { withTheme } from 'emotion-theming';
 
-const GlobalStyles = ({ bgColor, theme: { colors, fontStack, mq } }) => (
+const GlobalStyles = ({
+  bgColor,
+  theme: { colors, fontStack, fontProps, mq },
+}) => (
   <Global
     styles={{
       '*': {
@@ -20,54 +23,53 @@ const GlobalStyles = ({ bgColor, theme: { colors, fontStack, mq } }) => (
         height: '100%',
       },
       h1: {
-        fontSize: '42px',
+        ...fontProps(42),
         fontWeight: 600,
         margin: 0,
 
         [mq('mobileOnly')]: {
-          fontSize: '36px',
+          ...fontProps(36),
         },
       },
       h2: {
-        fontSize: '32px',
+        ...fontProps(32),
         fontWeight: 600,
         margin: 0,
 
         [mq('mobileOnly')]: {
-          fontSize: '28px',
+          ...fontProps(28),
         },
       },
       h3: {
-        fontSize: '22px',
+        ...fontProps(22),
         fontWeight: 500,
         margin: 0,
 
         [mq('mobileOnly')]: {
-          fontSize: '20px',
+          ...fontProps(20),
         },
       },
       h4: {
-        fontSize: '20px',
+        ...fontProps(20),
         fontWeight: 500,
         margin: 0,
 
         [mq('mobileOnly')]: {
-          fontSize: '18px',
+          ...fontProps(18),
         },
       },
       h5: {
-        fontSize: '18px',
+        ...fontProps(18),
         fontWeight: 500,
         margin: 0,
 
         [mq('mobileOnly')]: {
-          fontSize: '17px',
+          ...fontProps(17),
         },
       },
       p: {
-        fontSize: '16px',
+        ...fontProps(16),
         fontWeight: 400,
-        lineHeight: '26px',
       },
       a: {
         textDecoration: 'none',
