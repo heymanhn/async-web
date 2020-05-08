@@ -31,13 +31,17 @@ const Container = styled.div(
   })
 );
 
+const LeftSection = styled.div({
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+});
+
 const TruncatedText = styled.div({
   // reference: https://css-tricks.com/flexbox-truncated-text/
-  '&, & > *': {
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  },
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 });
 
 const StyledLink = styled(Link)({
@@ -74,12 +78,14 @@ const ResourceRow = ({
   return (
     <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
       <Container isSelected={isSelected} isUnread={isUnread} {...props}>
-        {isUnread && <StyledIndicator diameter={6} />}
-        {resourceType !== 'workspace' && (
-          <IconContainer>
-            <StyledIcon icon={ICONS[resourceType]} />
-          </IconContainer>
-        )}
+        <LeftSection>
+          {isUnread && <StyledIndicator diameter={6} />}
+          {resourceType !== 'workspace' && (
+            <IconContainer>
+              <StyledIcon icon={ICONS[resourceType]} />
+            </IconContainer>
+          )}
+        </LeftSection>
         <TruncatedText>
           {resourceTitle || `Untitled ${titleize(resourceType)}`}
         </TruncatedText>
