@@ -75,6 +75,7 @@ export const DEFAULT_THREAD_CONTEXT = {
   afterDeleteThread: () => {},
   setHideComposer: () => {},
   setQuoteReply: () => {},
+  handleClose: () => {},
 };
 export const ThreadContext = createContext(DEFAULT_THREAD_CONTEXT);
 

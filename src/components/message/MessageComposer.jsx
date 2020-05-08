@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { navigate } from '@reach/router';
 import { useApolloClient } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
 
@@ -38,7 +37,13 @@ const MessageComposer = React.forwardRef(
     const client = useApolloClient();
     const messageContext = useContext(MessageContext);
     const { isModalOpen, parentType } = messageContext;
-    const { bottomRef, hideComposer, messageCount, quoteReply } = useContext(
+    const {
+      bottomRef,
+      hideComposer,
+      messageCount,
+      quoteReply,
+      handleClose,
+    } = useContext(
       parentType === 'discussion' ? DiscussionContext : ThreadContext
     );
 
@@ -75,7 +80,7 @@ const MessageComposer = React.forwardRef(
 
     const handleCancelCompose = () => {
       stopComposing();
-      if (!messageCount) navigate('/');
+      if (!messageCount && isModalOpen) handleClose();
     };
 
     if (hideComposer) return null;

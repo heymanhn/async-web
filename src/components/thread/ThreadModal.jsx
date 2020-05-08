@@ -143,6 +143,7 @@ const ThreadModal = ({
     afterDeleteThread,
     setHideComposer,
     setQuoteReply,
+    handleClose,
   };
 
   const messageValue = {
