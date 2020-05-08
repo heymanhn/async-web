@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import { titleize } from 'utils/helpers';
+import { TruncatedSingleLine } from 'styles/shared';
+
 import UnreadIndicator from 'components/shared/UnreadIndicator';
 
 const ICONS = {
@@ -13,23 +15,19 @@ const ICONS = {
   document: 'file-alt',
 };
 
-const Container = styled.div(
-  ({ isSelected, isUnread, theme: { colors, fontProps } }) => ({
-    ...fontProps({ size: 14, weight: isUnread ? 500 : 400 }),
+const Container = styled.div(({ isSelected, theme: { colors } }) => ({
+  display: 'flex',
+  alignItems: 'center',
 
-    display: 'flex',
-    alignItems: 'center',
+  background: isSelected ? colors.grey7 : 'none',
+  color: colors.grey1,
+  margin: '0 -20px',
+  padding: '8px 20px',
 
-    background: isSelected ? colors.grey7 : 'none',
-    color: colors.grey1,
-    margin: '0 -20px',
-    padding: '8px 20px',
-
-    ':hover': {
-      background: colors.grey7,
-    },
-  })
-);
+  ':hover': {
+    background: colors.grey7,
+  },
+}));
 
 const LeftSection = styled.div({
   flexShrink: 0,
@@ -37,12 +35,11 @@ const LeftSection = styled.div({
   alignItems: 'center',
 });
 
-const TruncatedText = styled.div({
-  // reference: https://css-tricks.com/flexbox-truncated-text/
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-});
+const TruncatedText = styled(
+  TruncatedSingleLine
+)(({ isUnread, theme: { fontProps } }) =>
+  fontProps({ size: 14, weight: isUnread ? 500 : 400 })
+);
 
 const StyledLink = styled(Link)({
   textDecoration: 'none',
@@ -77,7 +74,7 @@ const ResourceRow = ({
 
   return (
     <StyledLink to={`/${Pluralize(resourceType)}/${id}`}>
-      <Container isSelected={isSelected} isUnread={isUnread} {...props}>
+      <Container isSelected={isSelected} {...props}>
         <LeftSection>
           {isUnread && <StyledIndicator diameter={6} />}
           {resourceType !== 'workspace' && (
@@ -86,7 +83,7 @@ const ResourceRow = ({
             </IconContainer>
           )}
         </LeftSection>
-        <TruncatedText>
+        <TruncatedText isUnread={isUnread}>
           {resourceTitle || `Untitled ${titleize(resourceType)}`}
         </TruncatedText>
       </Container>

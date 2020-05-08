@@ -30,3 +30,13 @@ export const OnboardingInputField = styled.input(
     },
   })
 );
+
+// Pure CSS solution for truncating a single line of text
+// Useful on elements that are flexbox children
+//
+// https://css-tricks.com/flexbox-truncated-text/
+export const TruncatedSingleLine = styled.div({
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+});
