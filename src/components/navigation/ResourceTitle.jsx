@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import workspaceQuery from 'graphql/queries/workspace';
 import { NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
+import { TruncatedSingleLine } from 'styles/shared';
 
 const Container = styled.div({
   display: 'flex',
@@ -23,15 +24,19 @@ const TitleContainer = styled.div(({ theme: { colors } }) => ({
   },
 }));
 
-const Title = styled.div(({ theme: { colors, fontProps } }) => ({
-  ...fontProps({ size: 14 }),
-  color: colors.grey0,
-  marginTop: '-3px',
-}));
+const Title = styled(TruncatedSingleLine)(
+  ({ theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 14 }),
+    color: colors.grey0,
+    marginTop: '-3px',
+    maxWidth: '150px',
+  })
+);
 
 const DefaultTitle = styled(Title)({
   cursor: 'default',
   paddingLeft: '5px',
+  maxWidth: '300px',
 });
 
 const Separator = styled.div(({ theme: { colors } }) => ({
