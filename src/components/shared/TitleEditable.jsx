@@ -13,12 +13,11 @@ import useAutoSave from 'hooks/editor/useAutoSave';
 import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
 import { titleize } from 'utils/helpers';
 
-const Container = styled.div(({ theme: { discussionViewport } }) => ({
+const Container = styled.div({
   display: 'flex',
   position: 'relative',
   margin: '0 auto',
-  width: discussionViewport,
-}));
+});
 
 const Title = styled.div(({ theme: { colors, fontProps } }) => ({
   ...fontProps({ size: 42, weight: 600, type: 'title' }),
