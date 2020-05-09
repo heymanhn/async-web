@@ -11,7 +11,6 @@ const StyledTitleEditable = styled(TitleEditable)(
   ({ theme: { discussionViewport, fontProps } }) => ({
     ...fontProps({ size: 24 }),
     margin: '30px auto 10px',
-    padding: '0 30px',
     width: discussionViewport,
   })
 );

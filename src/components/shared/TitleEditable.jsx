@@ -18,6 +18,7 @@ const Container = styled.div(({ theme: { fontProps } }) => ({
   display: 'flex',
   position: 'relative',
   margin: '60px auto 15px',
+  padding: '0 30px',
 }));
 
 const Title = styled.div(({ theme: { colors } }) => ({

@@ -15,6 +15,11 @@ import NewDiscussionButton from 'components/discussion/NewDiscussionButton';
 import ResourceFilters from './ResourceFilters';
 import ResourceRow from './ResourceRow';
 
+const Container = styled.div({
+  marginBottom: '100px',
+  padding: '0 30px',
+});
+
 const StyledLoadingIndicator = styled(LoadingIndicator)({
   margin: '20px 0',
 });
@@ -70,13 +75,13 @@ const ResourcesList = () => {
   );
 
   const renderResourceList = () => (
-    <div ref={listRef}>
+    <Container ref={listRef}>
       <ResourceFilters />
       {(items || []).map(item => {
         const object = item.document || item.discussion;
         return <ResourceRow key={object.id} item={item} />;
       })}
-    </div>
+    </Container>
   );
 
   return <div>{hasItems ? renderResourceList() : renderWelcomeMessage()}</div>;

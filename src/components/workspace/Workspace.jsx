@@ -14,10 +14,14 @@ import ResourcesList from './ResourcesList';
 import TitleEditor from './TitleEditor';
 
 const Container = styled.div(({ theme: { colors, workspaceViewport } }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center', // the new document state is vertically centered
+
   background: colors.white,
   margin: '0px auto',
   maxWidth: workspaceViewport,
-  padding: '90px 30px 40px',
+  minHeight: 'calc(100vh - 60px)', // Navigation bar is 60px tall
 }));
 
 const StyledLoadingIndicator = styled(LoadingIndicator)({

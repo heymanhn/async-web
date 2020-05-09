@@ -20,7 +20,7 @@ const Container = styled.div(({ theme: { documentViewport } }) => ({
   justifyContent: 'center', // the new document state is vertically centered
   margin: '0 auto',
   maxWidth: documentViewport,
-  minHeight: 'calc(100vh - 54px)', // Header bar is 54px tall
+  minHeight: 'calc(100vh - 60px)', // Navigation bar is 60px tall
 }));
 
 const Document = ({ isUnread }) => {

@@ -8,7 +8,6 @@ import TitleEditable from 'components/shared/TitleEditable';
 
 const StyledTitleEditable = styled(TitleEditable)(
   ({ theme: { documentViewport } }) => ({
-    padding: '0 30px',
     width: documentViewport,
   })
 );
