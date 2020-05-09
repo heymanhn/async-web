@@ -53,46 +53,40 @@ const ResourceTitle = props => {
   } = useContext(NavigationContext);
   const [workspaceId, setWorkspaceId] = useState(null);
 
-  const [getWorkspace, { loading, data: workspaceData }] = useLazyQuery(
-    workspaceQuery
-  );
+  const [getWorkspace, { data: workspaceData }] = useLazyQuery(workspaceQuery);
 
   const { data: resourceData } = useQuery(resourceQuery, {
     variables,
   });
 
   useEffect(() => {
-    getWorkspace({ variables: { workspaceId } });
+    if (workspaceId) getWorkspace({ variables: { workspaceId } });
   }, [workspaceId, getWorkspace]);
 
-  // All these dances to ensure we render only when everything is fetched
   if (!resourceData || !resourceData[resourceType]) return null;
-  const { title, topic, workspaces } = resourceData[resourceType];
 
-  if (workspaces) {
-    const [wsId] = workspaces;
-    if (workspaceId !== wsId) setWorkspaceId(wsId);
-  }
+  const { title: resourceTitle, workspaces } = resourceData[resourceType];
 
-  // Don't render the title until the workspace title is available too
-  if (!workspaceData && loading) return null;
+  // Assumes the resource is linked to only one workspace
+  const [wsId] = workspaces || [];
+  if (wsId && wsId !== workspaceId) setWorkspaceId(wsId);
 
   const { title: workspaceTitle } = workspaceData
     ? workspaceData.workspace
     : {};
-  const { text } = topic || {};
-  const resourceTitle = title || text;
 
   const renderWorkspaceTitle = () => (
-    <TitleContainer onClick={() => navigate(`/workspaces/${workspaces[0]}`)}>
-      <Title {...props}>{workspaceTitle}</Title>
-    </TitleContainer>
+    <>
+      <TitleContainer onClick={() => navigate(`/workspaces/${workspaces[0]}`)}>
+        <Title {...props}>{workspaceTitle}</Title>
+      </TitleContainer>
+      <Separator>/</Separator>
+    </>
   );
 
   return (
     <Container>
-      {workspaceTitle && renderWorkspaceTitle()}
-      {workspaceTitle && <Separator>/</Separator>}
+      {wsId && workspaceTitle && renderWorkspaceTitle()}
       <DefaultTitle>
         {resourceTitle || `Untitled ${titleize(resourceType)}`}
       </DefaultTitle>
