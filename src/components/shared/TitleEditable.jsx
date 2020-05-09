@@ -13,18 +13,15 @@ import useAutoSave from 'hooks/editor/useAutoSave';
 import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
 import { titleize } from 'utils/helpers';
 
-const Container = styled.div({
+const Container = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 42, weight: 600, type: 'title' }),
   display: 'flex',
   position: 'relative',
-  margin: '0 auto',
-});
+  margin: '60px auto 15px',
+}));
 
-const Title = styled.div(({ theme: { colors, fontProps } }) => ({
-  ...fontProps({ size: 42, weight: 600, type: 'title' }),
-
+const Title = styled.div(({ theme: { colors } }) => ({
   color: colors.mainText,
-  marginTop: '60px',
-  marginBottom: '15px',
   outline: 'none',
   width: '100%',
 }));
@@ -140,7 +137,7 @@ const TitleEditable = ({
   };
 
   return (
-    <Container>
+    <Container {...props}>
       <Title
         contentEditable
         ref={titleRef}
@@ -149,10 +146,9 @@ const TitleEditable = ({
         onInput={handleCheckPlaceholder}
         onKeyDown={handleKeyDown}
         spellCheck={false}
-        {...props}
       />
       {showPlaceholder && (
-        <Placeholder onClick={handleSelectTitle} {...props}>
+        <Placeholder onClick={handleSelectTitle}>
           {`Untitled ${titleize(resourceType)}`}
         </Placeholder>
       )}

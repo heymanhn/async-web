@@ -15,10 +15,12 @@ import TitleEditor from './TitleEditor';
 import DocumentEditor from './DocumentEditor';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center', // the new document state is vertically centered
   margin: '0 auto',
   maxWidth: documentViewport,
   minHeight: 'calc(100vh - 54px)', // Header bar is 54px tall
-  padding: '0 30px',
 }));
 
 const Document = ({ isUnread }) => {

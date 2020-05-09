@@ -8,10 +8,11 @@ import { DiscussionContext } from 'utils/contexts';
 import TitleEditable from 'components/shared/TitleEditable';
 
 const StyledTitleEditable = styled(TitleEditable)(
-  ({ theme: { fontProps } }) => ({
+  ({ theme: { discussionViewport, fontProps } }) => ({
     ...fontProps({ size: 24 }),
-    margin: '15px auto 5px',
+    margin: '30px auto 10px',
     padding: '0 30px',
+    width: discussionViewport,
   })
 );
 
