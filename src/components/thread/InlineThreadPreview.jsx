@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
-import Truncate from 'react-truncate';
 import { useSlate } from 'slate-react';
 import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
@@ -10,6 +9,7 @@ import styled from '@emotion/styled';
 import discussionQuery from 'graphql/queries/discussion';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import { DocumentContext, DiscussionContext } from 'utils/contexts';
+import { TruncatedSingleLine } from 'styles/shared';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -28,6 +28,7 @@ const OuterContainer = styled.div(({ isOpen, styles }) => ({
 const Container = styled.div(({ theme: { colors, documentViewport } }) => ({
   display: 'flex',
   flexDirection: 'row',
+  justifyContent: 'space-between',
   alignItems: 'center',
   position: 'relative',
 
@@ -45,7 +46,12 @@ const Container = styled.div(({ theme: { colors, documentViewport } }) => ({
 const LastMessageDetails = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  flexGrow: 1,
+  alignItems: 'center',
+
+  // Gives the container an explicit width, so that the CSS text truncation
+  // in the children elements will know when to truncate
+  // https://css-tricks.com/flexbox-truncated-text/#article-header-id-3
+  minWidth: 0,
 });
 
 const AvatarWithMargin = styled(Avatar)({
@@ -53,26 +59,25 @@ const AvatarWithMargin = styled(Avatar)({
   marginRight: '12px',
 });
 
-const PreviewSnippet = styled.div(({ theme: { colors, fontProps } }) => ({
-  ...fontProps({ size: 14 }),
-  flexGrow: 1,
-  color: colors.grey2,
-  lineHeight: '32px',
-}));
-
-const StyledTruncate = styled(Truncate)({
-  userSelect: 'none',
-});
+const PreviewSnippet = styled(TruncatedSingleLine)(
+  ({ theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 14 }),
+    color: colors.grey2,
+    userSelect: 'none',
+  })
+);
 
 const MessageCountIndicator = styled.div(
   ({ theme: { colors, fontProps } }) => ({
     ...fontProps({ size: 12, weight: 500 }),
+    flexShrink: 0,
     color: colors.grey2,
     paddingLeft: '25px',
   })
 );
 
 const NewReplyContainer = styled.div({
+  flexShrink: 0,
   display: 'flex',
   alignItems: 'center',
 });
@@ -142,9 +147,7 @@ const ThreadPreview = ({ discussionId, isOpen, parentRef, mode }) => {
       <Container onClick={handleClick}>
         <LastMessageDetails>
           <AvatarWithMargin avatarUrl={profilePictureUrl} size={32} />
-          <PreviewSnippet>
-            <StyledTruncate lines={1}>{text}</StyledTruncate>
-          </PreviewSnippet>
+          <PreviewSnippet>{text}</PreviewSnippet>
         </LastMessageDetails>
         {newUpdates ? (
           <NewReplyContainer>
