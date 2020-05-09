@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Truncate from 'react-truncate';
 import styled from '@emotion/styled';
 
 import { getLocalUser } from 'utils/auth';
@@ -10,6 +9,7 @@ import {
   DISCUSSION_RESOLVE_EVENT,
 } from 'utils/constants';
 import { camelCaseObjString } from 'utils/helpers';
+import { TruncatedSingleLine } from 'styles/shared';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -31,11 +31,13 @@ const Name = styled.div(({ theme: { colors, fontProps } }) => ({
   flexShrink: 0,
 }));
 
-const Snippet = styled.div(({ theme: { colors, fontProps } }) => ({
-  ...fontProps({ size: 13 }),
-  color: colors.grey2,
-  flexGrow: 1,
-}));
+const Snippet = styled(TruncatedSingleLine)(
+  ({ theme: { colors, fontProps } }) => ({
+    ...fontProps({ size: 13 }),
+    color: colors.grey2,
+    flexGrow: 1,
+  })
+);
 
 const LastUpdate = ({ notification, resourceType }) => {
   const { author, payload, type } = notification;
@@ -80,9 +82,7 @@ const LastUpdate = ({ notification, resourceType }) => {
         size={20}
       />
       <Name>{authorName}</Name>
-      <Snippet>
-        <Truncate lines={1}>{snippet}</Truncate>
-      </Snippet>
+      <Snippet>{snippet}</Snippet>
     </Container>
   );
 };

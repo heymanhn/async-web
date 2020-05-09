@@ -21,6 +21,11 @@ const Container = styled.div({
 
 const DetailsContainer = styled.div({
   flexGrow: 1,
+
+  // Gives the container an explicit width, so that the CSS text truncation
+  // in the children elements will know when to truncate
+  // https://css-tricks.com/flexbox-truncated-text/#article-header-id-3
+  minWidth: 0,
 });
 
 const ItemDetails = styled.div({
