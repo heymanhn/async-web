@@ -17,7 +17,6 @@ import CompositionMenuButton from 'components/editor/compositionMenu/Composition
 
 const DocumentEditable = styled(Editable)(({ theme: { fontProps } }) => ({
   ...fontProps({ size: 16 }),
-  lineHeight: '26px',
   marginBottom: '80px',
 }));
 

@@ -15,9 +15,6 @@ import TitleEditor from './TitleEditor';
 import DocumentEditor from './DocumentEditor';
 
 const Container = styled.div(({ theme: { documentViewport } }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
   margin: '0 auto',
   maxWidth: documentViewport,
   minHeight: 'calc(100vh - 54px)', // Header bar is 54px tall
