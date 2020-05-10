@@ -59,25 +59,27 @@ const addNewMessageToDiscussionMessages = (
   let safeItems = items || [];
   if (safeItems.find(i => i.message.id === id)) return null;
 
+  const newMessage = {
+    __typename: 'Message',
+    ...message,
+    author: {
+      __typename: 'User',
+      ...newAuthor,
+    },
+    body: {
+      __typename: 'Body',
+      ...newBody,
+    },
+    tags,
+
+    // Need to pass null value if threadId doesn't exist, to satisfy Apollo
+    // fragment shape
+    threadId: threadId || null,
+  };
+
   const newMessageItem = {
     __typename: 'MessageItem',
-    message: {
-      __typename: 'Message',
-      ...message,
-      author: {
-        __typename: 'User',
-        ...newAuthor,
-      },
-      body: {
-        __typename: 'Body',
-        ...newBody,
-      },
-      tags,
-
-      // Need to pass null value if threadId doesn't exist, to satisfy Apollo
-      // fragment shape
-      threadId: threadId || null,
-    },
+    message: newMessage,
   };
 
   // If isUnread is false, this means the current user posted a new message, and
@@ -113,6 +115,7 @@ const addNewMessageToDiscussionMessages = (
     data: {
       discussion: {
         ...discussion,
+        lastMessage: newMessage,
         messageCount: messageCount + 1,
         tags,
       },
