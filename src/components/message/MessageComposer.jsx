@@ -89,10 +89,15 @@ const MessageComposer = React.forwardRef(
     return (
       <Container ref={composerRef} isComposing={isComposing} {...props}>
         <Divider />
-        {shouldDisplayTitle && <TitleEditor initialTitle={title} />}
+        {shouldDisplayTitle && (
+          <TitleEditor initialTitle={title} autoFocus={!title} />
+        )}
         {isComposing ? (
           <Message
             mode="compose"
+            // Since there's no title to worry about in the modal, always
+            // autofocus if the modal is open
+            autoFocus={!!title || !!messageCount || isModalOpen}
             afterCreateMessage={afterCreateWrapper}
             handleCancel={handleCancelCompose}
           />

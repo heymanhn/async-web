@@ -84,6 +84,7 @@ const StyledIcon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
 const Message = ({
   mode: initialMode,
   message,
+  autoFocus,
   afterCreateMessage,
   handleCancel,
   ...props
@@ -170,7 +171,7 @@ const Message = ({
           </HeaderSection>
           <MessageEditor
             initialMessage={loadInitialContent()}
-            autoFocus={mode !== 'display' && !!messageCount}
+            autoFocus={autoFocus || (mode !== 'display' && !!messageCount)}
           />
           {mode === 'display' && <MessageReactions />}
           {mode === 'display' && threadId && (
@@ -188,6 +189,7 @@ const Message = ({
 Message.propTypes = {
   mode: PropTypes.oneOf(['compose', 'display', 'edit']),
   message: PropTypes.object,
+  autoFocus: PropTypes.bool,
   afterCreateMessage: PropTypes.func,
   handleCancel: PropTypes.func,
 };
@@ -195,6 +197,7 @@ Message.propTypes = {
 Message.defaultProps = {
   mode: 'display',
   message: {},
+  autoFocus: false,
   afterCreateMessage: () => {},
   handleCancel: () => {},
 };
