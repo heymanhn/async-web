@@ -110,13 +110,15 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     shortcut: 'T',
   };
 
-  const goToInboxCommand = {
-    type: 'command',
-    icon: ['fal', 'arrow-circle-right'],
-    title: 'Go to Inbox',
-    action: () => navigate('/inbox'),
-    shortcut: 'I',
-  };
+  // HN: Not used for now, will re-introduce once we figure out the right
+  // product experience for the Inbox.
+  // const goToInboxCommand = {
+  //   type: 'command',
+  //   icon: ['fal', 'arrow-circle-right'],
+  //   title: 'Go to Inbox',
+  //   action: () => navigate('/inbox'),
+  //   shortcut: 'I',
+  // };
 
   const shareDocumentCommand = {
     type: 'command',
@@ -182,23 +184,21 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     document: [
       newDocumentCommand,
       newDocumentThreadCommand,
+      newDiscussionCommand,
       newWorkspaceCommand,
       invitePeopleCommand,
-      goToInboxCommand,
     ],
     discussion: [
       newDiscussionCommand,
       newDocumentCommand,
       newWorkspaceCommand,
       invitePeopleCommand,
-      goToInboxCommand,
     ],
     workspace: [
       newWorkspaceDiscussionCommand,
       newWorkspaceDocumentCommand,
       newWorkspaceCommand,
       invitePeopleCommand,
-      goToInboxCommand,
     ],
     workspaceDocument: [shareDocumentCommand, privateDocumentCommand],
     workspaceDiscussion: [
