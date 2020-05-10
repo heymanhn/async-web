@@ -31,7 +31,7 @@ const moduleList = [
     content: {
       title: 'Built for all types of team communication',
       description:
-        'Escape email and app silos. Documents, discussions, and threads – keep information organized and transparent.',
+        'Better documents and better discussions makes better decisions',
       image: writeDiscuss,
     },
   },
@@ -42,14 +42,14 @@ const moduleList = [
       icon: 'comments-alt',
       title: 'A distraction-free workplace',
       description:
-        'No pressure to be always online. Follow a discussion from start to finish without missing a beat.',
+        'Follow a discussion from start to finish without missing a beat.',
       image: contributeAsync,
       features: [
         {
           icon: 'arrow-circle-right',
-          title: 'Stop scheduling meetings',
+          title: 'Write things up vs. chat it down',
           description:
-            'Start self-documented meetings. Discussions make it easy to capture inputs and follow progress on your schedule.',
+            'Better discussions start and end with an exchange of complete thoughts, not one-line-at-a-time messages.',
           lineBreak: true,
         },
         {
@@ -122,7 +122,7 @@ const moduleList = [
   {
     type: REASONS,
     content: {
-      title: 'Why teams switch to Candor?',
+      title: 'Why teams love using Candor?',
       reasons: [
         {
           icon: ['fal', 'arrow-circle-right'],
@@ -163,7 +163,7 @@ const moduleList = [
     content: {
       title: 'Ready to give it a spin?',
       description:
-        'Candor is in private beta right now. Sign up for early access.',
+        'Candor is in private alpha right now. Sign up for early access.',
     },
   },
 ];
