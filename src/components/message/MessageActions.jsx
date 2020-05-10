@@ -6,7 +6,11 @@ import styled from '@emotion/styled';
 
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
-import { MessageContext } from 'utils/contexts';
+import {
+  DiscussionContext,
+  MessageContext,
+  ThreadContext,
+} from 'utils/contexts';
 
 import Editor from 'components/editor/Editor';
 
@@ -83,6 +87,9 @@ const MessageActions = ({ handleSubmit, ...props }) => {
   const { draft, isModalOpen, mode, parentType, handleCancel } = useContext(
     MessageContext
   );
+  const { messageCount } = useContext(
+    parentType === 'discussion' ? DiscussionContext : ThreadContext
+  );
   const { handleDeleteMessageDraft } = useMessageDraftMutations();
   const editor = useSlate();
   const isEmptyContent = Editor.isEmptyContent(editor);
@@ -102,7 +109,10 @@ const MessageActions = ({ handleSubmit, ...props }) => {
 
   const handleEscapeKey = event => {
     event.preventDefault();
-    if (mode === 'compose' && isEmptyContent) handleCancel();
+    const isNewDiscussion = parentType === 'discussion' && !messageCount;
+    if (mode === 'compose' && isEmptyContent && !isNewDiscussion) {
+      handleCancel();
+    }
   };
 
   const handlers = [
