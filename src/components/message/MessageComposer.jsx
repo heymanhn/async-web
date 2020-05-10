@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useApolloClient } from '@apollo/react-hooks';
 import styled from '@emotion/styled';
@@ -61,8 +61,10 @@ const MessageComposer = React.forwardRef(
       setIsComposing(true);
     };
     const stopComposing = () => setIsComposing(false);
-    const shouldDisplayTitle =
-      parentType === 'discussion' && !messageCount && isComposing;
+
+    useEffect(() => {
+      if (!messageCount) setIsComposing(true);
+    }, [messageCount]);
 
     useKeyDownHandler(
       [REPLY_HOTKEY, () => !isComposing && startComposing()],
@@ -85,6 +87,9 @@ const MessageComposer = React.forwardRef(
 
     if (hideComposer) return null;
     if (!isComposing && quoteReply) startComposing();
+
+    const shouldDisplayTitle =
+      parentType === 'discussion' && !messageCount && isComposing;
 
     return (
       <Container ref={composerRef} isComposing={isComposing} {...props}>
