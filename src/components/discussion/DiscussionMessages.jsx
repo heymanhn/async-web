@@ -1,10 +1,9 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
-import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import { DiscussionContext, MessageContext } from 'utils/contexts';
 import { firstNewMessageId } from 'utils/helpers';
@@ -32,11 +31,17 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     DiscussionContext
   );
   const messageContext = useContext(MessageContext);
+  const [currentDiscussionId, setCurrentDiscussionId] = useState(discussionId);
   const markAsRead = useMarkResourceAsRead();
 
-  useMountEffect(() => {
-    if (isUnread) markAsRead();
-  });
+  // Keep track of the current discussion in state to make sure we can mark the
+  // discussion as read each time the discussion ID changes.
+  useEffect(() => {
+    if (discussionId !== currentDiscussionId) {
+      if (isUnread) markAsRead();
+      setCurrentDiscussionId(discussionId);
+    }
+  }, [isUnread, markAsRead, discussionId, currentDiscussionId]);
 
   const { loading, data } = usePaginatedResource(discussionRef, {
     query: discussionMessagesQuery,
