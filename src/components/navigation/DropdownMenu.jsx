@@ -78,6 +78,7 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
     event.stopPropagation();
     handleClose();
     await logout();
+    window.location = '/';
   };
 
   if (!Object.keys(currentUser).length) return null;

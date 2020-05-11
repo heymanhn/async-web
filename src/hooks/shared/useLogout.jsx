@@ -17,10 +17,6 @@ const useLogout = () => {
 
     // Clear apollo cache
     await client.clearStore();
-
-    // Forcing the entire app to reload is the best way to reset the
-    // active queries
-    window.location = '/';
   };
 
   return logout;

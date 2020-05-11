@@ -17,6 +17,11 @@ const Content = styled.div(({ theme: { sidebarWidth } }) => ({
 const SidebarLayout = ({ children }) => {
   const [selectedResourceId, setSelectedResourceId] = useState(null);
   const { data } = useQuery(localStateQuery);
+
+  // If visiting the /logout query directly, don't render the sidebar
+  const { pathname } = window.location;
+  if (pathname === '/logout') return children;
+
   const { isLoggedIn, isOnboarding } = data || {};
   if (!isLoggedIn || isOnboarding) return children;
 

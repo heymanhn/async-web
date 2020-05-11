@@ -1,32 +1,30 @@
-import React from 'react';
-import { useApolloClient, useQuery } from '@apollo/react-hooks';
+import React, { useEffect } from 'react';
+import { useQuery } from '@apollo/react-hooks';
 import { Redirect } from '@reach/router';
 
 import isLoggedInQuery from 'graphql/queries/isLoggedIn';
-import { clearLocalUser, clearLocalAppState } from 'utils/auth';
-import { reset, track } from 'utils/analytics';
+import useLogout from 'hooks/shared/useLogout';
 
 const Logout = () => {
-  const client = useApolloClient();
-  const { data } = useQuery(isLoggedInQuery);
-  if (!data) return null;
+  const logout = useLogout();
+  const {
+    data: { isLoggedIn },
+  } = useQuery(isLoggedInQuery);
 
-  const handleLogout = async () => {
-    await clearLocalUser();
-    await clearLocalAppState();
-    track('Logged out');
-    reset();
+  useEffect(() => {
+    const handleLogout = async () => {
+      if (isLoggedIn) {
+        await logout();
+        window.location.replace('/');
+      }
+    };
 
-    await client.clearStore();
-    client.resetStore();
-  };
-
-  if (data.isLoggedIn) {
     handleLogout();
-    return <div>Logging out...</div>;
-  }
+  }, [isLoggedIn, logout]);
 
-  return <Redirect to="/" noThrow />;
+  if (!isLoggedIn) return <Redirect to="/" noThrow />;
+
+  return null;
 };
 
 export default Logout;

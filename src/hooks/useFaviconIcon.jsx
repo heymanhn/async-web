@@ -6,10 +6,11 @@ import { getLocalUser } from 'utils/auth';
 const useFaviconIcon = () => {
   const favicon = window.document.getElementById('favicon');
   const { userId } = getLocalUser();
+  const { pathname } = window.location;
 
   const { data } = useQuery(resourceNotificationsQuery, {
     variables: { resourceType: 'users', resourceId: userId, queryParams: {} },
-    skip: !userId,
+    skip: !userId || pathname === '/logout',
   });
 
   if (!userId || !data || !data.resourceNotifications) return;
