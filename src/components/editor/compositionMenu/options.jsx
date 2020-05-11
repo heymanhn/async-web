@@ -171,7 +171,10 @@ export const SectionBreakOption = props => {
   const editor = useSlate();
   const handleSectionBreakOption = () => {
     Editor.clearBlock(editor);
-    return Editor.insertSectionBreak(editor);
+
+    // HN: Using setTimeout() to avoid the common "Cannot resolve DOM node
+    // from Slate node" exception.
+    setTimeout(() => Editor.insertSectionBreak(editor), 0);
   };
 
   return (
