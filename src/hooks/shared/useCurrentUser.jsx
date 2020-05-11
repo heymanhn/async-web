@@ -7,6 +7,7 @@ const useCurrentUser = () => {
   const { userId } = getLocalUser();
   const { data } = useQuery(currentUserQuery, {
     variables: { userId },
+    skip: !userId,
   });
 
   return data ? data.user : {};
