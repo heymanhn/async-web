@@ -62,9 +62,12 @@ const MessageComposer = React.forwardRef(
     };
     const stopComposing = () => setIsComposing(false);
 
+    // Ensures each time the discussion or thread has changed, the composer
+    // is in the right state
     useEffect(() => {
-      if (!messageCount) setIsComposing(true);
-    }, [messageCount]);
+      const newIsComposing = !messageCount;
+      if (newIsComposing !== isComposing) setIsComposing(newIsComposing);
+    }, [messageCount, isComposing]);
 
     useKeyDownHandler(
       [REPLY_HOTKEY, () => !isComposing && startComposing()],
