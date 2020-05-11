@@ -107,7 +107,7 @@ const generateDefaultData = () => ({
   pendingMessages: [],
 });
 cache.writeData({ data: generateDefaultData() });
-client.onResetStore(() =>
+client.onClearStore(() =>
   Promise.resolve(cache.writeData({ data: generateDefaultData() }))
 );
 

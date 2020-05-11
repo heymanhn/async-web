@@ -16,6 +16,7 @@ const useNetworkObserver = () => {
     skip: true,
   });
 
+  // NOTE: need to handle case when the user is logged out
   useEffect(() => {
     const handleRefetch = async (waitInterval = TIMEOUT) => {
       try {

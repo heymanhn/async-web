@@ -1,11 +1,11 @@
 import React, { useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import { NavigationContext } from 'utils/contexts';
 import useClickOutside from 'hooks/shared/useClickOutside';
 import useCurrentUser from 'hooks/shared/useCurrentUser';
+import useLogout from 'hooks/shared/useLogout';
 
 import Avatar from 'components/shared/Avatar';
 import InviteTeamModal from './InviteTeamModal';
@@ -66,6 +66,7 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
   const { setIsInviteModalOpen } = useContext(NavigationContext);
   const selector = useRef();
   const currentUser = useCurrentUser();
+  const logout = useLogout();
   const handleClickOutside = () => isOpen && handleClose();
   useClickOutside({ handleClickOutside, isOpen, ref: selector });
 
@@ -73,14 +74,11 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
     setIsInviteModalOpen(true);
   };
 
-  const handleNavigate = (event, route) => {
+  const handleLogout = async event => {
     event.stopPropagation();
     handleClose();
-    return navigate(route);
+    await logout();
   };
-
-  const handleNavigateInbox = event => handleNavigate(event, '/inbox');
-  const handleLogout = event => handleNavigate(event, '/logout');
 
   if (!Object.keys(currentUser).length) return null;
 
@@ -91,7 +89,6 @@ const DropdownMenu = ({ handleClose, isOpen, organizationId, ...props }) => {
         <Name>{currentUser.fullName}</Name>
       </AuthorSection>
       <MenuOptionList>
-        <MenuOption onClick={handleNavigateInbox}>Inbox</MenuOption>
         <MenuOption onClick={showInviteModal}>Invite people</MenuOption>
         <MenuOption onClick={handleLogout}>Sign out</MenuOption>
       </MenuOptionList>
