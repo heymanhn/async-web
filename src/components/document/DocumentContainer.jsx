@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
+import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
 import useThreadState from 'hooks/thread/useThreadState';
@@ -15,6 +16,10 @@ import useDocumentEditor from 'hooks/document/useDocumentEditor';
 
 import ThreadsList from './ThreadsList';
 import Document from './Document';
+
+const OuterContainer = styled.div(({ theme: { colors } }) => ({
+  background: colors.white,
+}));
 
 const DocumentContainer = ({
   documentId,
@@ -68,17 +73,21 @@ const DocumentContainer = ({
 
   return (
     <DocumentContext.Provider value={value}>
-      <NavigationBar />
-      {viewMode === 'content' && <Document isUnread={isResourceUnread(tags)} />}
-      {viewMode === 'threads' && <ThreadsList />}
+      <OuterContainer>
+        <NavigationBar />
+        {viewMode === 'content' && (
+          <Document isUnread={isResourceUnread(tags)} />
+        )}
+        {viewMode === 'threads' && <ThreadsList />}
 
-      {threadId && (
-        <ThreadModal
-          threadId={threadId}
-          handleClose={handleCloseThread}
-          {...threadProps}
-        />
-      )}
+        {threadId && (
+          <ThreadModal
+            threadId={threadId}
+            handleClose={handleCloseThread}
+            {...threadProps}
+          />
+        )}
+      </OuterContainer>
     </DocumentContext.Provider>
   );
 };

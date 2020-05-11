@@ -9,12 +9,9 @@ import Theme from 'components/style/Theme';
 const Layout = ({ children }) => {
   useMediaQuery();
 
-  // TEMP CODE
-  const isDocument = window.location.pathname.includes('/documents/');
-
   return (
     <Theme>
-      <GlobalStyles bgColor={isDocument ? 'white' : null} />
+      <GlobalStyles />
       <div>{children}</div>
     </Theme>
   );
