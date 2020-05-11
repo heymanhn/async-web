@@ -130,7 +130,7 @@ const NotificationRow = ({ handleClose, notification }) => {
       case 'new_message':
         url = threadId ? threadURL : discussionURL;
         context = threadId
-          ? ' replied to thread: '
+          ? ' replied to a thread in: '
           : ' replied to discussion: ';
         break;
       default:
