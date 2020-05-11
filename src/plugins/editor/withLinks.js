@@ -19,7 +19,7 @@ const withLinks = oldEditor => {
     }
 
     if (text === ' ') {
-      const line = Editor.getCurrentText(editor);
+      const line = Editor.getCurrentText(editor) || '';
       const words = line.split(' ');
       const previousWord = words[words.length - 1];
 
