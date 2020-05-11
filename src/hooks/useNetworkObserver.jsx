@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useApolloClient, useQuery } from '@apollo/react-hooks';
 
 import currentUserQuery from 'graphql/queries/currentUser';
+import localStateQuery from 'graphql/queries/localState';
 import { getLocalUser } from 'utils/auth';
 
 const TIMEOUT = 60000;
@@ -16,8 +17,13 @@ const useNetworkObserver = () => {
     skip: true,
   });
 
-  // NOTE: need to handle case when the user is logged out
+  const {
+    data: { isLoggedIn },
+  } = useQuery(localStateQuery);
+
   useEffect(() => {
+    if (!isLoggedIn) return () => {};
+
     const handleRefetch = async (waitInterval = TIMEOUT) => {
       try {
         await getCurrentUser(); // Refetch one query to test the waters first
@@ -43,7 +49,7 @@ const useNetworkObserver = () => {
       clearInterval(interval);
       window.removeEventListener('online', handleRefetch);
     };
-  }, [client, getCurrentUser]);
+  }, [client, isLoggedIn, getCurrentUser]);
 };
 
 export default useNetworkObserver;
