@@ -7,9 +7,8 @@ const Container = styled.div({
 });
 
 const NameList = ({ names, ...props }) => {
-  const uniqueNames = [...new Set(names)];
-  const firstNames = uniqueNames.map(name => name.split(' ')[0]);
-  const displayNames = firstNames.slice(0, 2);
+  const uniqueNames = [...new Set(names)].filter(n => !!n);
+  const displayNames = uniqueNames.slice(0, 2);
   const overflowCount = uniqueNames.length - displayNames.length;
 
   return (

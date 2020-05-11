@@ -20,7 +20,7 @@ const useResourceDetails = (type, resource) => {
 
   const { resourceMembers } = data;
   const { members } = resourceMembers;
-  const names = (members || []).map(m => m.user.fullName);
+  const names = (members || []).map(m => m.user.firstName);
 
   return props => (
     <ResourceDetails type={type} resource={resource} names={names} {...props} />
