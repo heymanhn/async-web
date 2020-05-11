@@ -164,6 +164,7 @@ const ThreadModal = ({
               <ThreadMessages isUnread={isResourceUnread(tags)} />
               <StyledMessageComposer
                 ref={composerRef}
+                isExpanded={!messageCount}
                 afterCreateMessage={afterCreateMessage}
               />
               <div ref={bottomRef} />

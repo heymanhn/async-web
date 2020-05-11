@@ -33,7 +33,7 @@ const Divider = styled.div(({ theme: { colors } }) => ({
 }));
 
 const MessageComposer = React.forwardRef(
-  ({ title, afterCreateMessage, ...props }, composerRef) => {
+  ({ title, isExpanded, afterCreateMessage, ...props }, composerRef) => {
     const client = useApolloClient();
     const messageContext = useContext(MessageContext);
     const { isModalOpen, parentType } = messageContext;
@@ -55,7 +55,7 @@ const MessageComposer = React.forwardRef(
       }
     };
 
-    const [isComposing, setIsComposing] = useState(!messageCount);
+    const [isComposing, setIsComposing] = useState(false);
     const startComposing = () => {
       scrollToBottom();
       setIsComposing(true);
@@ -65,9 +65,8 @@ const MessageComposer = React.forwardRef(
     // Ensures each time the discussion or thread has changed, the composer
     // is in the right state
     useEffect(() => {
-      const newIsComposing = !messageCount;
-      if (newIsComposing !== isComposing) setIsComposing(newIsComposing);
-    }, [messageCount, isComposing]);
+      setIsComposing(isExpanded);
+    }, [isExpanded]);
 
     useKeyDownHandler(
       [REPLY_HOTKEY, () => !isComposing && startComposing()],
@@ -123,6 +122,7 @@ const MessageComposer = React.forwardRef(
 
 MessageComposer.propTypes = {
   title: PropTypes.string,
+  isExpanded: PropTypes.bool.isRequired,
   afterCreateMessage: PropTypes.func,
 };
 

@@ -113,7 +113,11 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
             {!!messageCount && (
               <DiscussionMessages isUnread={isResourceUnread(tags)} />
             )}
-            <MessageComposer ref={composerRef} title={title} />
+            <MessageComposer
+              ref={composerRef}
+              title={title}
+              isExpanded={!messageCount}
+            />
           </MessageContext.Provider>
           <div ref={bottomRef} />
         </ContentContainer>
