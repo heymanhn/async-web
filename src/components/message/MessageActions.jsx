@@ -18,13 +18,13 @@ const SUBMIT_HOTKEY = 'cmd+enter';
 const ESCAPE_HOTKEY = 'Escape';
 
 const Container = styled.div(
-  ({ isThread }) => ({
+  {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    margin: isThread ? 0 : '0 -60px',
-    padding: isThread ? '10px 0 20px' : '10px 60px 20px',
-  }),
+    margin: '0 -60px',
+    padding: '10px 60px 20px',
+  },
   ({ mode, theme: { colors } }) => {
     if (mode !== 'compose') return {};
 
@@ -129,7 +129,7 @@ const MessageActions = ({ handleSubmit, ...props }) => {
   );
 
   return (
-    <Container isThread={parentType === 'thread'} mode={mode} {...props}>
+    <Container mode={mode} {...props}>
       <Section>
         <SubmitLabel>⌘ + Enter to</SubmitLabel>
         <SubmitButton isDisabled={isEmptyContent} onClick={handleSubmitWrapper}>
