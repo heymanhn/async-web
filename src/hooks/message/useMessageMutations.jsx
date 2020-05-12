@@ -12,6 +12,7 @@ import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
 import { track } from 'utils/analytics';
 import { DocumentContext, MessageContext } from 'utils/contexts';
 import { toPlainText } from 'utils/editor/constants';
+import trimContent from 'utils/editor/helpers';
 
 const useMessageMutations = ({ message = null } = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,14 +61,15 @@ const useMessageMutations = ({ message = null } = {}) => {
       });
     }
 
+    const trimmedMessage = trimContent(message);
     const { data } = await createMessage({
       variables: {
         discussionId: messageDiscussionId,
         input: {
           body: {
             formatter: 'slatejs',
-            text: toPlainText(message),
-            payload: JSON.stringify(message),
+            text: toPlainText(trimmedMessage),
+            payload: JSON.stringify(trimmedMessage),
           },
         },
       },
