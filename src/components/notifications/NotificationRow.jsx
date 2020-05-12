@@ -120,12 +120,14 @@ const NotificationRow = ({ handleClose, notification }) => {
         break;
       case 'new_discussion':
       case 'access_discussion':
-        url = threadId ? discussionThreadURL : discussionURL;
+        url = threadId ? threadURL : discussionURL;
         context = ' invited you to join the discussion: ';
         break;
       case 'resolve_discussion':
-        url = threadId ? discussionThreadURL : discussionURL;
-        context = ' resolved the discussion: ';
+        url = threadId ? threadURL : discussionURL;
+        context = threadId
+          ? ' resolved a thread in: '
+          : ' resolved the discussion: ';
         break;
       case 'new_message':
         url = threadId ? threadURL : discussionURL;
