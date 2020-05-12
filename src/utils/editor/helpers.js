@@ -28,6 +28,7 @@ const trimContent = content => {
     endIndex -= 1;
   }
 
+  // Avoids an expensive Array.slice() operation if it's unnecessary
   if (beginIndex === 0 && endIndex === content.length - 1) return content;
 
   return content.slice(beginIndex, endIndex + 1);
