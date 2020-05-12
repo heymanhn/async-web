@@ -72,3 +72,9 @@ export const THROTTLE_INTERVAL = 100;
 export const SHOW_TOOLBAR_DELAY = 200;
 
 export const DEBOUNCE_INTERVAL = 200;
+
+// TEMPORARY: Demo organization IDs
+export const DEMO_ORG_IDS = {
+  development: '99818c3e-0279-5f83-bba4-48861ec8c78c',
+  production: 'c1336e5e-a26a-5651-b0e5-0ac40d199dc1',
+};

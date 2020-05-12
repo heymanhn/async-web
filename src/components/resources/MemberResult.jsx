@@ -2,6 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
+import { getLocalAppState } from 'utils/auth';
+
+// TEMPORARY: For hiding emails from demo orgs
+import { DEMO_ORG_IDS } from 'utils/constants';
+
 import Avatar from 'components/shared/Avatar';
 
 const StyledAvatar = styled(Avatar)(({ isDisabled }) => ({
@@ -25,6 +30,8 @@ const Email = styled.div(({ isDisabled, theme: { colors, fontProps } }) => ({
 }));
 
 const MemberResult = ({ result, isDisabled }) => {
+  const { organizationId } = getLocalAppState();
+  const isDemoOrg = organizationId === DEMO_ORG_IDS[process.env.NODE_ENV];
   const { email, fullName, profilePictureUrl } = result;
 
   return (
@@ -40,7 +47,7 @@ const MemberResult = ({ result, isDisabled }) => {
         <Name isDisabled={isDisabled}>
           {`${fullName}${isDisabled ? ' (joined)' : ''}`}
         </Name>
-        <Email isDisabled={isDisabled}>{email}</Email>
+        {!isDemoOrg && <Email isDisabled={isDisabled}>{email}</Email>}
       </Details>
     </>
   );
