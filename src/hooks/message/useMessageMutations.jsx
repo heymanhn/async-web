@@ -99,6 +99,7 @@ const useMessageMutations = ({ message = null } = {}) => {
   const handleUpdateMessage = async ({ newMessage } = {}) => {
     setIsSubmitting(true);
 
+    const trimmedMessage = trimContent(newMessage || message);
     const { data } = await updateMessage({
       variables: {
         discussionId: parentId,
@@ -106,8 +107,8 @@ const useMessageMutations = ({ message = null } = {}) => {
         input: {
           body: {
             formatter: 'slatejs',
-            text: toPlainText(newMessage || message),
-            payload: JSON.stringify(newMessage || message),
+            text: toPlainText(trimmedMessage),
+            payload: JSON.stringify(trimmedMessage),
           },
         },
       },
