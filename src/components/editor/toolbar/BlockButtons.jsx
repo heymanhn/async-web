@@ -4,6 +4,7 @@ import {
   LargeFontButton,
   MediumFontButton,
   BulletedListButton,
+  CheckListButton,
   CodeBlockButton,
   BlockQuoteButton,
 } from './buttons';
@@ -14,6 +15,7 @@ const BlockButtons = () => (
     <LargeFontButton />
     <MediumFontButton />
     <BulletedListButton />
+    <CheckListButton />
     <VerticalDivider />
     <BlockQuoteButton />
     <CodeBlockButton />

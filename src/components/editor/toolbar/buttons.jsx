@@ -11,6 +11,7 @@ import {
   MEDIUM_FONT,
   TOOLBAR_SOURCE,
   BULLETED_LIST,
+  CHECKLIST,
 } from 'utils/editor/constants';
 
 import Editor from 'components/editor/Editor';
@@ -111,4 +112,12 @@ export const MediumFontButton = () => <HeadingButton type={MEDIUM_FONT} />;
 
 export const BulletedListButton = () => (
   <BlockButton type={BULLETED_LIST} icon="list-ul" />
+);
+
+/*
+ * Button for checklist
+ */
+
+export const CheckListButton = () => (
+  <BlockButton type={CHECKLIST} icon="check-square" />
 );
