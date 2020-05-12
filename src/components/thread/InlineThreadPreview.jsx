@@ -103,6 +103,7 @@ const ThreadPreview = ({ discussionId, isOpen, parentRef, mode }) => {
   );
   const { loading, error, data, client } = useQuery(discussionQuery, {
     variables: { discussionId },
+    fetchPolicy: 'cache-and-network',
   });
 
   if (loading) return null;
