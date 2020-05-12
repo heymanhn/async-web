@@ -2,7 +2,7 @@
  * Majority of these plugins borrowed from the Slate examples:
  * https://github.com/ianstormtaylor/slate/blob/master/site/examples/richtext.js
  */
-import { Editor, Point, Range, Transforms } from 'slate';
+import { Editor, Point, Range, Text, Transforms } from 'slate';
 import { ReactEditor } from 'slate-react';
 
 import { track } from 'utils/analytics';
@@ -90,9 +90,32 @@ const getCurrentText = editor => {
   return Editor.string(editor, path);
 };
 
+/*
+ * Equivalent to Editor.isEmpty(), but trims whitespace from text node
+ */
+const isEmptyText = (editor, element) => {
+  const { children } = element;
+  const [first] = children;
+  return (
+    children.length === 0 ||
+    (children.length === 1 &&
+      Text.isText(first) &&
+      first.text.trim() === '' &&
+      !editor.isVoid(element))
+  );
+};
+
+/*
+ * Checks all the top-level children of the content. Returns true once one
+ * of the top-level children is non-empty.
+ */
 const isEmptyContent = editor => {
   const { children } = editor;
-  return children.length === 1 && Editor.isEmpty(editor, children[0]);
+  for (let i = 0; i < children.length; i += 1) {
+    if (!isEmptyText(editor, children[i])) return false;
+  }
+
+  return true;
 };
 
 const isEmptyElement = (editor, type) => {

@@ -16,8 +16,9 @@ const Container = styled.div(({ styles }) => ({
 
 const DefaultPlaceholder = () => {
   const editor = useSlate();
+  const { children } = editor;
   const isFocused = ReactEditor.isFocused(editor);
-  const isEmpty = Editor.isEmptyContent(editor);
+  const isEmpty = children.length === 1 && Editor.isEmpty(editor, children[0]);
   const hidePlaceholder = isFocused || !isEmpty;
 
   const { coords } = useSelectionDimensions({
