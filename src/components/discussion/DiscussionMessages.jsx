@@ -31,7 +31,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     DiscussionContext
   );
   const messageContext = useContext(MessageContext);
-  const [currentDiscussionId, setCurrentDiscussionId] = useState(discussionId);
+  const [currentDiscussionId, setCurrentDiscussionId] = useState(null);
   const markAsRead = useMarkResourceAsRead();
 
   // Keep track of the current discussion in state to make sure we can mark the
