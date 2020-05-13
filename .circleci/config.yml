@@ -37,7 +37,7 @@ jobs:
       - save_cache:
           key: source-{{ .Branch }}-{{ .Revision }}
           paths:
-            - "~/app"
+            - '~/app'
   build:
     <<: *defaults
     steps:
@@ -46,10 +46,10 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: "Install node modules"
+          name: 'Install node modules'
           command: npm install
       - run:
-          name: "Build app"
+          name: 'Build app'
           command: npm run build
       - persist_to_workspace:
           root: ~/app
@@ -67,6 +67,14 @@ jobs:
       - run:
           name: Install awscli
           command: sudo pip install awscli --upgrade
+      - run:
+          name: Upload sourcemap to Rollbar
+          command: |
+            curl https://api.rollbar.com/api/1/sourcemap/ \
+            -F access_token=8ff1a0a5b3a4422c885bb78fa295e59a \
+            -F version=`git rev-parse HEAD`
+            -F minified_url=https://candor.ws/static/js/main.[hash].chunk.js
+            -F source_map=build/static/js/main.[hash].chunk.js.map
       - run:
           name: Deploy to S3
           command: |
