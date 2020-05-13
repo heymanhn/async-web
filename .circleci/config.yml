@@ -37,7 +37,7 @@ jobs:
       - save_cache:
           key: source-{{ .Branch }}-{{ .Revision }}
           paths:
-            - "~/app"
+            - '~/app'
   build:
     <<: *defaults
     steps:
@@ -46,10 +46,10 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: "Install node modules"
+          name: 'Install node modules'
           command: npm install
       - run:
-          name: "Build app"
+          name: 'Build app'
           command: npm run build
       - persist_to_workspace:
           root: ~/app
@@ -59,6 +59,8 @@ jobs:
   deploy:
     <<: *defaults
     steps:
+      - restore_cache:
+          key: source-{{ .Branch }}-{{ .Revision }}
       - attach_workspace:
           at: ~/app
       - run: sudo apt-get update && sudo apt-get install -y python-dev
@@ -67,6 +69,24 @@ jobs:
       - run:
           name: Install awscli
           command: sudo pip install awscli --upgrade
+      - run:
+          name: Upload main sourcemap to Rollbar
+          command: |
+            main_source_map=`find build/static/js -name main.*.chunk.js.map -print`
+            curl https://api.rollbar.com/api/1/sourcemap/ \
+            -F access_token=$ROLLBAR_POST_SERVER_ITEM_TOKEN \
+            -F version=`git rev-parse HEAD` \
+            -F minified_url=$DOMAIN_ROOT${main_source_map#build/} \
+            -F source_map=@$main_source_map
+      - run:
+          name: Upload secondary sourcemap to Rollbar
+          command: |
+            secondary_source_map=`find build/static/js -name 2.*.chunk.js.map -print`
+            curl https://api.rollbar.com/api/1/sourcemap/ \
+            -F access_token=$ROLLBAR_POST_SERVER_ITEM_TOKEN \
+            -F version=`git rev-parse HEAD` \
+            -F minified_url=$DOMAIN_ROOT${secondary_source_map#build/} \
+            -F source_map=@$secondary_source_map
       - run:
           name: Deploy to S3
           command: |
