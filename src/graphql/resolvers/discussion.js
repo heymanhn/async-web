@@ -87,7 +87,7 @@ const addNewMessageToDiscussionMessages = (
   if (!isUnread) {
     safeItems = safeItems.map(item => {
       const { message: msg } = item;
-      return { ...item, message: { ...msg, tags: null } };
+      return { ...item, message: { ...msg, tags: ['no_updates'] } };
     });
   }
 
@@ -117,7 +117,7 @@ const addNewMessageToDiscussionMessages = (
         ...discussion,
         lastMessage: newMessage,
         messageCount: messageCount + 1,
-        tags,
+        tags: ['new_messages'],
       },
     },
   });
