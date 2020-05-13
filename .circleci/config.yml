@@ -73,19 +73,23 @@ jobs:
           name: Upload main sourcemap to Rollbar
           command: |
             main_source_map=`find build/static/js -name main.*.chunk.js.map -print`
+            main_source=${main_source_map%.map}
+            main_source_url=$DOMAIN_ROOT${main_source#build/}
             curl https://api.rollbar.com/api/1/sourcemap/ \
             -F access_token=$ROLLBAR_POST_SERVER_ITEM_TOKEN \
             -F version=`git rev-parse HEAD` \
-            -F minified_url=$DOMAIN_ROOT${main_source_map#build/} \
+            -F minified_url=$main_source_url \
             -F source_map=@$main_source_map
       - run:
           name: Upload secondary sourcemap to Rollbar
           command: |
             secondary_source_map=`find build/static/js -name 2.*.chunk.js.map -print`
+            secondary_source=${secondary_source_map%.map}
+            secondary_source_url=$DOMAIN_ROOT${secondary_source#build/}
             curl https://api.rollbar.com/api/1/sourcemap/ \
             -F access_token=$ROLLBAR_POST_SERVER_ITEM_TOKEN \
             -F version=`git rev-parse HEAD` \
-            -F minified_url=$DOMAIN_ROOT${secondary_source_map#build/} \
+            -F minified_url=$secondary_source_url \
             -F source_map=@$secondary_source_map
       - run:
           name: Deploy to S3
