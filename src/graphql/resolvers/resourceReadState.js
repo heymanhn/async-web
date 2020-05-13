@@ -16,7 +16,7 @@ const updateWorkspaceBadgeCount = (userId, resourceId, incrementBy, client) => {
     },
   });
 
-  const index = items.findIndex(i => i.workspace.id === resourceId);
+  const index = (items || []).findIndex(i => i.workspace.id === resourceId);
   if (index < 0) return;
 
   const workspaceItem = items[index];
