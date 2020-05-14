@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/react-hooks';
 import createDocumentMutation from 'graphql/mutations/createDocument';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import deleteDocumentMutation from 'graphql/mutations/deleteDocument';
+import useRefetchWorkspaceResources from 'hooks/resources/useRefetchWorkspaceResources';
 import { track } from 'utils/analytics';
 import { DocumentContext } from 'utils/contexts';
 import { toPlainText } from 'utils/editor/constants';
@@ -14,6 +15,10 @@ const useDocumentMutations = () => {
     afterUpdateDocumentTitle,
     afterDeleteDocument,
   } = useContext(DocumentContext);
+  const checkRefetchWorkspaceResources = useRefetchWorkspaceResources({
+    resourceType: 'document',
+    resourceId: documentId,
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [createDocument] = useMutation(createDocumentMutation);
@@ -60,8 +65,10 @@ const useDocumentMutations = () => {
   };
 
   const handleUpdateDocumentTitle = async title => {
+    const refetchQueries = await checkRefetchWorkspaceResources();
     const { data } = await updateDocument({
       variables: { documentId, input: { title } },
+      refetchQueries,
     });
 
     if (data.updateDocument) {

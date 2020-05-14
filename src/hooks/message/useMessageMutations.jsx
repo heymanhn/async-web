@@ -2,13 +2,14 @@ import { useContext, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 
 import discussionQuery from 'graphql/queries/discussion';
-import documentDiscussionsQuery from 'graphql/queries/documentThreads';
+import documentThreadsQuery from 'graphql/queries/documentThreads';
 import createMessageMutation from 'graphql/mutations/createMessage';
 import updateMessageMutation from 'graphql/mutations/updateMessage';
 import deleteMessageMutation from 'graphql/mutations/deleteMessage';
 import localDeleteMessageMutation from 'graphql/mutations/local/deleteMessageFromDiscussion';
 import addNewMsgMutation from 'graphql/mutations/local/addNewMessageToDiscussionMessages';
 import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
+import useRefetchWorkspaceResources from 'hooks/resources/useRefetchWorkspaceResources';
 import { track } from 'utils/analytics';
 import { DocumentContext, MessageContext } from 'utils/contexts';
 import { toPlainText } from 'utils/editor/constants';
@@ -24,6 +25,10 @@ const useMessageMutations = ({ message = null } = {}) => {
     afterCreateMessage,
   } = useContext(MessageContext);
   const { handleCreateDiscussion } = useDiscussionMutations();
+  const checkRefetchWorkspaceResources = useRefetchWorkspaceResources({
+    resourceType: documentId ? 'document' : 'discussion',
+    resourceId: documentId || parentId,
+  });
 
   const [createMessage] = useMutation(createMessageMutation);
   const [updateMessage] = useMutation(updateMessageMutation);
@@ -48,15 +53,17 @@ const useMessageMutations = ({ message = null } = {}) => {
       messageDiscussionId = id;
     }
 
+    const workspaceResourceQueries = await checkRefetchWorkspaceResources();
     const refetchQueries = [
       {
         query: discussionQuery,
         variables: { discussionId: messageDiscussionId },
       },
+      ...workspaceResourceQueries,
     ];
     if (!parentId && documentId) {
       refetchQueries.push({
-        query: documentDiscussionsQuery,
+        query: documentThreadsQuery,
         variables: { id: documentId, queryParams: { order: 'desc' } },
       });
     }

@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/react-hooks';
 import createDiscussionMutation from 'graphql/mutations/createDiscussion';
 import updateDiscussionMutation from 'graphql/mutations/updateDiscussion';
 import deleteDiscussionMutation from 'graphql/mutations/deleteDiscussion';
+import useRefetchWorkspaceResources from 'hooks/resources/useRefetchWorkspaceResources';
 import { track } from 'utils/analytics';
 import { DiscussionContext, ThreadContext } from 'utils/contexts';
 
@@ -14,6 +15,10 @@ const useDiscussionMutations = () => {
     afterDeleteDiscussion,
   } = useContext(DiscussionContext);
   const { afterDeleteThread } = useContext(ThreadContext);
+  const checkRefetchWorkspaceResources = useRefetchWorkspaceResources({
+    resourceType: 'discussion',
+    resourceId: discussionId,
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [createDiscussion] = useMutation(createDiscussionMutation);
@@ -43,7 +48,9 @@ const useDiscussionMutations = () => {
     return Promise.reject(new Error('Failed to create discussion'));
   };
 
+  // Refetch workspace resources if the discussion belongs to one
   const handleUpdateDiscussionTitle = async title => {
+    const refetchQueries = await checkRefetchWorkspaceResources();
     const { data } = await updateDiscussion({
       variables: {
         discussionId,
@@ -51,6 +58,7 @@ const useDiscussionMutations = () => {
           title,
         },
       },
+      refetchQueries,
     });
 
     if (data.updateDiscussion) {
