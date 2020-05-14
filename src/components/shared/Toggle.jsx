@@ -8,7 +8,7 @@ const Container = styled.div(({ isEnabled, theme: { colors } }) => ({
   cursor: 'pointer',
   height: '30px',
   width: '54px',
-  transition: '0.4s',
+  transition: '0.2s',
 }));
 
 const Slider = styled.div(({ isEnabled, theme: { colors } }) => ({
@@ -18,16 +18,14 @@ const Slider = styled.div(({ isEnabled, theme: { colors } }) => ({
   width: '20px',
   margin: '5px',
   marginLeft: isEnabled ? '29px' : '5px',
-  transition: '0.4s',
+  transition: '0.2s',
 }));
 
-const Toggle = ({ isEnabled, handleToggle, ...props }) => {
-  return (
-    <Container isEnabled={isEnabled} onClick={handleToggle} {...props}>
-      <Slider isEnabled={isEnabled} />
-    </Container>
-  );
-};
+const Toggle = ({ isEnabled, handleToggle, ...props }) => (
+  <Container isEnabled={isEnabled} onClick={handleToggle} {...props}>
+    <Slider isEnabled={isEnabled} />
+  </Container>
+);
 
 Toggle.propTypes = {
   isEnabled: PropTypes.bool.isRequired,

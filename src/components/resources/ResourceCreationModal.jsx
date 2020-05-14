@@ -56,11 +56,44 @@ const StyledInput = styled(InputWithIcon)({
   width: 'auto',
 });
 
-const CreateButton = styled(Button)({
-  alignSelf: 'flex-end',
-  marginTop: '30px',
-  padding: '4px 20px 6px',
+const PrivateSection = styled.div(({ theme: { colors } }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+
+  background: colors.bgGrey,
+  borderTop: `1px solid ${colors.borderGrey}`,
+  borderBottom: `1px solid ${colors.borderGrey}`,
+  margin: '30px -25px 0',
+  padding: '15px 0',
+}));
+
+const Info = styled.div({
+  marginLeft: '25px',
 });
+
+const MakePrivateTitle = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 500 }),
+  color: colors.mainText,
+}));
+
+const Description = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
+  color: colors.grey1,
+}));
+
+const StyledToggle = styled(Toggle)({
+  flexShrink: 0,
+  marginLeft: '25px',
+  marginRight: '25px',
+});
+
+const CreateButton = styled(Button)(({ isDisabled, theme: { colors } }) => ({
+  alignSelf: 'flex-end',
+  background: isDisabled ? colors.grey7 : colors.altBlue,
+  marginTop: '20px',
+  padding: '4px 20px 6px',
+}));
 
 const ResourceCreationModal = props => {
   const navigationContext = useContext(NavigationContext);
@@ -127,6 +160,18 @@ const ResourceCreationModal = props => {
     handleClose();
   };
 
+  const privateWorkspaceSection = () => (
+    <PrivateSection>
+      <Info>
+        <MakePrivateTitle>Make private?</MakePrivateTitle>
+        <Description>
+          When selected, only the people added to the workspace can access it.
+        </Description>
+      </Info>
+      <StyledToggle isEnabled={isPrivate} handleToggle={togglePrivate} />
+    </PrivateSection>
+  );
+
   const value = {
     ...navigationContext,
     resource: { resourceType },
@@ -169,9 +214,7 @@ const ResourceCreationModal = props => {
             handleRemove={() => setParentWorkspaceId(null)}
           />
         )}
-        {resourceType === 'workspace' && (
-          <Toggle isEnabled={isPrivate} handleToggle={togglePrivate} />
-        )}
+        {resourceType === 'workspace' && privateWorkspaceSection()}
         <CreateButton
           onClick={handleCreate}
           isDisabled={!title}
