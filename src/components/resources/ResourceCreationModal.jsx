@@ -153,6 +153,7 @@ const ResourceCreationModal = props => {
   const handleCreate = async () => {
     await handleCreateResource({
       title,
+      accessType: isPrivate ? 'private' : 'protected',
       parentWorkspaceId,
       newMembers: participants,
     });
