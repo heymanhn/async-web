@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
@@ -66,6 +67,7 @@ const DocumentContainer = ({
     readOnly,
     editor,
 
+    afterDeleteDocument: () => navigate('/'),
     setForceUpdate,
     setViewMode,
     handleShowThread,
