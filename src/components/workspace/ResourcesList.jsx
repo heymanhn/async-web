@@ -16,7 +16,7 @@ import ResourceFilters from './ResourceFilters';
 import ResourceRow from './ResourceRow';
 
 const Container = styled.div({
-  marginBottom: '100px',
+  marginBottom: '150px',
   padding: '0 30px',
 });
 
