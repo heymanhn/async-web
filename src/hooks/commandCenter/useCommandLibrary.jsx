@@ -4,6 +4,9 @@ import styled from '@emotion/styled';
 
 import useCurrentUser from 'hooks/shared/useCurrentUser';
 import useResourceCreator from 'hooks/resources/useResourceCreator';
+import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
+
 import {
   NavigationContext,
   DocumentContext,
@@ -41,6 +44,8 @@ const useCommandLibrary = ({ source, setSource, title }) => {
   const { handleCreateResource: handleCreateDiscussion } = useResourceCreator(
     'discussion'
   );
+  const { handleDeleteDocument } = useDocumentMutations();
+  const { handleDeleteDiscussion } = useDiscussionMutations();
 
   const currentUser = useCurrentUser();
 
@@ -108,6 +113,24 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     title: 'Invite your team',
     action: () => setIsInviteModalOpen(true),
     shortcut: 'T',
+  };
+
+  const deleteDocumentCommand = {
+    type: 'command',
+    icon: 'trash',
+    fontSize: '16px',
+    title: `Delete document`,
+    action: () => handleDeleteDocument(),
+    shortcut: 'D',
+  };
+
+  const deleteDiscussionCommand = {
+    type: 'command',
+    icon: 'trash',
+    fontSize: '16px',
+    title: `Delete discussion`,
+    action: () => handleDeleteDiscussion(),
+    shortcut: 'D',
   };
 
   // HN: Not used for now, will re-introduce once we figure out the right
@@ -187,12 +210,14 @@ const useCommandLibrary = ({ source, setSource, title }) => {
       newDiscussionCommand,
       newWorkspaceCommand,
       invitePeopleCommand,
+      deleteDocumentCommand,
     ],
     discussion: [
       newDiscussionCommand,
       newDocumentCommand,
       newWorkspaceCommand,
       invitePeopleCommand,
+      deleteDiscussionCommand,
     ],
     workspace: [
       newWorkspaceDiscussionCommand,
