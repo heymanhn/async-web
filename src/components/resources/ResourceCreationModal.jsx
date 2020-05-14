@@ -8,9 +8,10 @@ import { titleize } from 'utils/helpers';
 import useCurrentUser from 'hooks/shared/useCurrentUser';
 import useResourceCreator from 'hooks/resources/useResourceCreator';
 
-import Modal from 'components/shared/Modal';
-import InputWithIcon from 'components/shared/InputWithIcon';
 import Button from 'components/shared/Button';
+import InputWithIcon from 'components/shared/InputWithIcon';
+import Modal from 'components/shared/Modal';
+import Toggle from 'components/shared/Toggle';
 import OrganizationSearch from './OrganizationSearch';
 import ParticipantsList from './ParticipantsList';
 import WorkspaceRow from './WorkspaceRow';
@@ -80,6 +81,11 @@ const ResourceCreationModal = props => {
   const handleHideDropdown = () => setIsDropdownVisible(false);
 
   const [title, setTitle] = useState('');
+
+  // Only used for workspaces for now. Keeps track of whether it should
+  // be created as a private workspace.
+  const [isPrivate, setIsPrivate] = useState(false);
+  const togglePrivate = () => setIsPrivate(previous => !previous);
 
   // Keep track of the list of participants and the parent workspace
   // locally first. Then, add them to the resource after it's created.
@@ -162,6 +168,9 @@ const ResourceCreationModal = props => {
             workspaceId={parentWorkspaceId}
             handleRemove={() => setParentWorkspaceId(null)}
           />
+        )}
+        {resourceType === 'workspace' && (
+          <Toggle isEnabled={isPrivate} handleToggle={togglePrivate} />
         )}
         <CreateButton
           onClick={handleCreate}
