@@ -55,11 +55,12 @@ const useResourceCreator = resourceType => {
 
   const handleCreateResource = async ({
     title,
+    accessType,
     parentWorkspaceId,
     newMembers,
     openInNewTab,
   } = {}) => {
-    const { id: resourceId } = await handleCreate({ title });
+    const { id: resourceId } = await handleCreate({ title, accessType });
 
     if (resourceId) {
       if (parentWorkspaceId)

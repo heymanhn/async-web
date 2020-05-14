@@ -16,7 +16,7 @@ import ResourceFilters from './ResourceFilters';
 import ResourceRow from './ResourceRow';
 
 const Container = styled.div({
-  marginBottom: '100px',
+  marginBottom: '150px',
   padding: '0 30px',
 });
 
@@ -62,7 +62,7 @@ const ResourcesList = () => {
   }
 
   const renderWelcomeMessage = () => (
-    <div>
+    <Container>
       <WelcomeMessage>
         Welcome to the workspace! Get started by creating a document or
         discussion.
@@ -71,7 +71,7 @@ const ResourcesList = () => {
         <NewDocumentButton />
         <NewDiscussionButton />
       </ButtonsContainer>
-    </div>
+    </Container>
   );
 
   const renderResourceList = () => (
