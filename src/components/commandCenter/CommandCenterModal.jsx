@@ -43,6 +43,11 @@ const Title = styled.div(({ theme: { fontProps } }) => ({
   ...fontProps({ size: 14, weight: 500 }),
 }));
 
+const EmptyRow = styled.div(({ theme: { fontProps } }) => ({
+  ...fontProps({ size: 14, weight: 400 }),
+  margin: '20px 30px 20px',
+}));
+
 const SearchInput = styled.input(({ theme: { colors, fontProps } }) => ({
   ...fontProps({ size: 16, weight: 400 }),
 
@@ -162,6 +167,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
           value={queryString}
         />
       </Header>
+      {!results.length && <EmptyRow>No results</EmptyRow>}
       {results.map((r, i) => (
         <ResultRow
           key={r.title}
