@@ -62,7 +62,7 @@ const ResourcesList = () => {
   }
 
   const renderWelcomeMessage = () => (
-    <div>
+    <Container>
       <WelcomeMessage>
         Welcome to the workspace! Get started by creating a document or
         discussion.
@@ -71,7 +71,7 @@ const ResourcesList = () => {
         <NewDocumentButton />
         <NewDiscussionButton />
       </ButtonsContainer>
-    </div>
+    </Container>
   );
 
   const renderResourceList = () => (
