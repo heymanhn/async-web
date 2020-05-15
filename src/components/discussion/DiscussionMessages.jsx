@@ -6,7 +6,7 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import { DiscussionContext, MessageContext } from 'utils/contexts';
-import { firstNewMessageId } from 'utils/helpers';
+import { firstNewMessageId, scrollToBottom } from 'utils/helpers';
 
 import NotFound from 'components/navigation/NotFound';
 import Message from 'components/message/Message';
@@ -32,6 +32,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   );
   const messageContext = useContext(MessageContext);
   const [currentDiscussionId, setCurrentDiscussionId] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const markAsRead = useMarkResourceAsRead();
 
   // Keep track of the current discussion in state to make sure we can mark the
@@ -40,6 +41,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     if (discussionId !== currentDiscussionId) {
       if (isUnread) markAsRead();
       setCurrentDiscussionId(discussionId);
+      setIsScrolled(false);
     }
   }, [isUnread, markAsRead, discussionId, currentDiscussionId]);
 
@@ -55,6 +57,13 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   const { items } = data;
   const safeItems = items || [];
   const messages = safeItems.map(i => i.message).reverse();
+
+  // Logic to scroll to the bottom of the page on each initial render
+  // of discussion messages
+  if (!isScrolled) {
+    scrollToBottom(bottomRef);
+    setIsScrolled(true);
+  }
 
   const generateValue = index => ({
     ...messageContext,

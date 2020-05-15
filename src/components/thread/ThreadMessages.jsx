@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
@@ -7,7 +7,7 @@ import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import { MessageContext, ThreadContext } from 'utils/contexts';
-import { firstNewMessageId } from 'utils/helpers';
+import { firstNewMessageId, scrollToBottom } from 'utils/helpers';
 
 import NewMessagesDivider from 'components/shared/NewMessagesDivider';
 import NewMessagesIndicator from 'components/shared/NewMessagesIndicator';
@@ -30,6 +30,7 @@ const ThreadMessages = ({ isUnread, ...props }) => {
     ThreadContext
   );
   const messageContext = useContext(MessageContext);
+  const [isScrolled, setIsScrolled] = useState(false);
   const markAsRead = useMarkResourceAsRead();
 
   useMountEffect(() => {
@@ -52,6 +53,13 @@ const ThreadMessages = ({ isUnread, ...props }) => {
   const { items } = data;
   const safeItems = items || [];
   const messages = safeItems.map(i => i.message).reverse();
+
+  // Logic to scroll to the bottom of the page on each initial render
+  // of thread messages
+  if (!isScrolled) {
+    scrollToBottom(bottomRef);
+    setIsScrolled(true);
+  }
 
   const generateValue = index => ({
     ...messageContext,
