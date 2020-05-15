@@ -96,7 +96,14 @@ const MessageActions = ({ handleSubmit, ...props }) => {
 
   const handleSubmitWrapper = event => {
     event.stopPropagation();
-    if (!isEmptyContent) handleSubmit();
+
+    /*
+     * HN: Trying this hack to avoid the infamous "Cannot resolve a DOM point
+     * from Slate point" exceptions. Triggering submit on the next event loop
+     * tick should in theory allow Slate enough time to finish rendering the
+     * content the user just typed.
+     */
+    if (!isEmptyContent) setTimeout(handleSubmit, 0);
   };
 
   const handleDiscardWrapper = async event => {
