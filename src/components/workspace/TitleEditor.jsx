@@ -23,7 +23,7 @@ const StyledTitleEditable = styled(TitleEditable)(
 
 const StyledAddResourceButton = styled(AddResourceButton)({
   flexShrink: 0,
-  marginTop: '10px',
+  marginTop: '12px',
   marginRight: '30px',
 });
 

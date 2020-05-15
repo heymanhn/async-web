@@ -3,9 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from '@emotion/styled';
 
 import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
+import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
 import { DEFAULT_NAVIGATION_CONTEXT, NavigationContext } from 'utils/contexts';
 
 import CommandCenterModal from 'components/commandCenter/CommandCenterModal';
+
+const ADD_RESOURCE_HOTKEY = 'cmd+opt+r';
 
 const IconContainer = styled.div(({ theme: { colors } }) => ({
   display: 'flex',
@@ -18,6 +21,10 @@ const IconContainer = styled.div(({ theme: { colors } }) => ({
   cursor: 'pointer',
   width: '40px',
   height: '32px',
+
+  ':hover': {
+    background: colors.grey7,
+  },
 }));
 
 const StyledIcon = styled(FontAwesomeIcon)(
@@ -30,6 +37,8 @@ const StyledIcon = styled(FontAwesomeIcon)(
 const AddResourceButton = props => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const resource = useDisambiguatedResource();
+
+  useKeyDownHandler([ADD_RESOURCE_HOTKEY, () => setIsModalOpen(true)]);
 
   const value = {
     ...DEFAULT_NAVIGATION_CONTEXT,
