@@ -39,8 +39,8 @@ const AvatarWithMargin = styled(Avatar)({
 });
 
 const Label = styled.div(({ theme: { colors, fontProps } }) => ({
-  ...fontProps({ size: 12 }),
-  color: colors.grey1,
+  ...fontProps({ size: 14 }),
+  color: colors.grey2,
 }));
 
 const Button = styled.div(({ theme: { fontProps } }) => ({
