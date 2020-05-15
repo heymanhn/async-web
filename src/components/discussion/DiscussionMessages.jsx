@@ -53,6 +53,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
       variables: { discussionId, queryParams: { order: 'desc' } },
     },
     reverse: true,
+    isDisabled: !isScrolled,
   });
 
   if (loading) return null;

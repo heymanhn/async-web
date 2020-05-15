@@ -12,10 +12,12 @@ const DISTANCE_FROM_BOTTOM = 200;
  * This is essentially a wrapper on Apollo's useQuery, bundled with
  * custom fetchMore() logic
  *
- * - containerRef is the reference to the container that holds the paginated results.
- * - (optional) gap is the custom distance from the bottom.
- * - (optional) modalRef is the reference to a modal when the results are in a modal.
- * - (optional) reverse will paginate if the user scrolls near the top of the container
+ * - containerRef: reference to the container that holds the paginated items.
+ * - (optional) gap: custom distance from the bottom.
+ * - (optional) modalRef: reference to a modal when the results are in a modal.
+ * - (optional) reverse: paginate once top of the container is reached
+ * - (optional) isDisabled: useful for when the initial set of items hasn't loaded.
+ *
  */
 const usePaginatedResource = ({
   queryDetails: { query, key, ...props },
@@ -23,13 +25,14 @@ const usePaginatedResource = ({
   modalRef = {},
   gap = DISTANCE_FROM_BOTTOM,
   // reverse = false,
+  isDisabled = false,
 } = {}) => {
   const [shouldFetch, setShouldFetch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   const handleScroll = () => {
-    const elem = containerRef.current;
-    if (!elem) return;
+    const { current: elem } = containerRef || {};
+    if (!elem || isDisabled) return;
 
     const { current: modal } = modalRef;
     const scrollOffset = modal

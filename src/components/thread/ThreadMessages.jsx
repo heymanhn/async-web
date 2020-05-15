@@ -46,6 +46,7 @@ const ThreadMessages = ({ isUnread, ...props }) => {
     containerRef: threadRef,
     modalRef,
     reverse: true,
+    isDisabled: !isScrolled,
   });
 
   if (loading || !data) return null;
