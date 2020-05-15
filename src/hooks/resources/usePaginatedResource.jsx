@@ -9,32 +9,29 @@ const DISTANCE_FROM_BOTTOM = 200;
 
 /*
  * Inspired by https://upmostly.com/tutorials/build-an-infinite-scroll-component-in-react-using-react-hooks
- *
- * Note:
- * - Not using IntersectionObserver yet due to browser support limitations
- * - Requires a reference to the component being scrolled
- *
- * Now this is essentially a wrapper on Apollo's useQuery, bundled with
+ * This is essentially a wrapper on Apollo's useQuery, bundled with
  * custom fetchMore() logic
  *
- * - ref is the reference to the container that holds the paginated results.
- * - optional: gap, is the custom distance from the bottom.
- * - optional: modalRef, is the reference to a modal when the results are in a modal.
+ * - containerRef is the reference to the container that holds the paginated results.
+ * - (optional) gap is the custom distance from the bottom.
+ * - (optional) modalRef is the reference to a modal when the results are in a modal.
+ * - (optional) reverse will paginate if the user scrolls near the top of the container
  */
-const usePaginatedResource = (
-  ref,
-  { query, key, ...props },
+const usePaginatedResource = ({
+  queryDetails: { query, key, ...props },
+  containerRef,
+  modalRef = {},
   gap = DISTANCE_FROM_BOTTOM,
-  modalRef
-) => {
+  // reverse = false,
+} = {}) => {
   const [shouldFetch, setShouldFetch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   const handleScroll = () => {
-    const elem = ref.current;
+    const elem = containerRef.current;
     if (!elem) return;
 
-    const { current: modal } = modalRef || {};
+    const { current: modal } = modalRef;
     const scrollOffset = modal
       ? modal.clientHeight + modal.scrollTop
       : window.innerHeight + window.scrollY;

@@ -30,10 +30,13 @@ const InboxTable = ({ viewMode }) => {
 
   usePrefetchQueries(buildQueryDetails());
 
-  const { loading, data } = usePaginatedResource(inboxRef, {
-    query: inboxQuery,
-    key: 'inbox',
-    variables: { userId, queryParams: { type: viewMode } },
+  const { loading, data } = usePaginatedResource({
+    queryDetails: {
+      query: inboxQuery,
+      key: 'inbox',
+      variables: { userId, queryParams: { type: viewMode } },
+    },
+    containerRef: inboxRef,
   });
 
   if (loading) return <StyledLoadingIndicator color="borderGrey" />;

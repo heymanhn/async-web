@@ -62,9 +62,8 @@ const NotificationsDropdown = ({ coords, isOpen, handleClose, ...props }) => {
     ref: dropdownRef,
   });
 
-  const { loading, data } = usePaginatedResource(
-    dropdownRef,
-    {
+  const { loading, data } = usePaginatedResource({
+    queryDetails: {
       query: resourceNotificationsQuery,
       key: 'resourceNotifications',
       variables: {
@@ -73,9 +72,9 @@ const NotificationsDropdown = ({ coords, isOpen, handleClose, ...props }) => {
         queryParams: {},
       },
     },
-    undefined,
-    dropdownRef
-  );
+    containerRef: dropdownRef,
+    modalRef: dropdownRef,
+  });
 
   if (loading || !data) return null;
   const { items } = data;

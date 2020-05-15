@@ -47,10 +47,13 @@ const ResourcesList = () => {
 
   usePrefetchQueries(buildQueryDetails());
 
-  const { loading, data } = usePaginatedResource(listRef, {
-    query: workspaceResourcesQuery,
-    key: 'workspaceResources',
-    variables: { workspaceId, queryParams: { type: viewMode } },
+  const { loading, data } = usePaginatedResource({
+    queryDetails: {
+      query: workspaceResourcesQuery,
+      key: 'workspaceResources',
+      variables: { workspaceId, queryParams: { type: viewMode } },
+    },
+    containerRef: listRef,
   });
 
   if (loading) return <StyledLoadingIndicator color="borderGrey" />;

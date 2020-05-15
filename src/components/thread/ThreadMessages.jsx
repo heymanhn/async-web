@@ -37,16 +37,16 @@ const ThreadMessages = ({ isUnread, ...props }) => {
     if (isUnread) markAsRead();
   });
 
-  const { loading, data } = usePaginatedResource(
-    threadRef,
-    {
+  const { loading, data } = usePaginatedResource({
+    queryDetails: {
       query: discussionMessagesQuery,
       key: 'messages',
       variables: { discussionId: threadId, queryParams: { order: 'desc' } },
     },
-    undefined,
-    modalRef
-  );
+    containerRef: threadRef,
+    modalRef,
+    reverse: true,
+  });
 
   if (loading || !data) return null;
 
