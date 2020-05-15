@@ -72,11 +72,21 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   if (!data || !data.discussion || !data2 || !data2.messages)
     return <NotFound />;
 
-  const { title, draft, messageCount } = data.discussion;
+  const { title, draft, messageCount, workspaces } = data.discussion;
   const { tags } = data.discussion;
   const readOnly = isResourceReadOnly(tags);
 
   if (forceUpdate) setForceUpdate(false);
+
+  const afterDeleteDiscussion = () => {
+    let path = '/';
+    if (workspaces && workspaces.length) {
+      const [workspaceId] = workspaces;
+      path = `/workspaces/${workspaceId}`;
+    }
+
+    navigate(path);
+  };
 
   const discussionValue = {
     ...DEFAULT_DISCUSSION_CONTEXT,
@@ -88,7 +98,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     composerRef,
     quoteReply,
 
-    afterDeleteDiscussion: () => navigate('/'),
+    afterDeleteDiscussion,
     setForceUpdate,
     setHideComposer,
     setQuoteReply,

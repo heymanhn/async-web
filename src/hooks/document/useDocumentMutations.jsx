@@ -1,13 +1,18 @@
 import { useContext, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 
+import resourcesQuery from 'graphql/queries/resources';
 import createDocumentMutation from 'graphql/mutations/createDocument';
 import updateDocumentMutation from 'graphql/mutations/updateDocument';
 import deleteDocumentMutation from 'graphql/mutations/deleteDocument';
+import localDeleteUserResourceMtn from 'graphql/mutations/local/deleteUserResource';
 import useRefetchWorkspaceResources from 'hooks/resources/useRefetchWorkspaceResources';
 import { track } from 'utils/analytics';
+import { getLocalUser } from 'utils/auth';
+import { RESOURCES_QUERY_SIZE } from 'utils/constants';
 import { DocumentContext } from 'utils/contexts';
 import { toPlainText } from 'utils/editor/constants';
+import { snakedQueryParams } from 'utils/queryParams';
 
 const useDocumentMutations = () => {
   const {
@@ -26,12 +31,23 @@ const useDocumentMutations = () => {
   const [deleteDocument] = useMutation(deleteDocumentMutation, {
     variables: { documentId },
   });
+  const [localDeleteUserResource] = useMutation(localDeleteUserResourceMtn);
 
   const handleCreateDocument = async () => {
     setIsSubmitting(true);
 
+    const { userId } = getLocalUser();
     const { data } = await createDocument({
       variables: { input: {} },
+      refetchQueries: [
+        {
+          query: resourcesQuery,
+          variables: {
+            userId,
+            queryParams: snakedQueryParams({ size: RESOURCES_QUERY_SIZE }),
+          },
+        },
+      ],
     });
 
     if (data.createDocument) {
@@ -81,9 +97,11 @@ const useDocumentMutations = () => {
   };
 
   const handleDeleteDocument = async () => {
-    const { data } = await deleteDocument();
+    const refetchQueries = await checkRefetchWorkspaceResources();
+    const { data } = await deleteDocument({ refetchQueries });
 
     if (data.deleteDocument) {
+      localDeleteUserResource({ variables: { resourceId: documentId } });
       afterDeleteDocument();
       return Promise.resolve();
     }

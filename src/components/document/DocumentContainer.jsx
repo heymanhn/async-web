@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
+import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import documentQuery from 'graphql/queries/document';
@@ -54,9 +55,19 @@ const DocumentContainer = ({
   if (!data) return null;
   if (error || !data || !data.document) return <NotFound />;
 
-  const { channelId, tags } = data.document;
+  const { channelId, tags, workspaces } = data.document;
   const readOnly = isResourceReadOnly(tags);
   if (forceUpdate) setForceUpdate(false);
+
+  const afterDeleteDocument = () => {
+    let path = '/';
+    if (workspaces && workspaces.length) {
+      const [workspaceId] = workspaces;
+      path = `/workspaces/${workspaceId}`;
+    }
+
+    navigate(path);
+  };
 
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
@@ -66,6 +77,7 @@ const DocumentContainer = ({
     readOnly,
     editor,
 
+    afterDeleteDocument,
     setForceUpdate,
     setViewMode,
     handleShowThread,

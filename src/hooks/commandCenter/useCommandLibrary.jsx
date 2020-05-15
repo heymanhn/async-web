@@ -1,9 +1,13 @@
+/* eslint no-alert: 0 */
 import React, { useContext } from 'react';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
 
 import useCurrentUser from 'hooks/shared/useCurrentUser';
 import useResourceCreator from 'hooks/resources/useResourceCreator';
+import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
+
 import {
   NavigationContext,
   DocumentContext,
@@ -41,8 +45,22 @@ const useCommandLibrary = ({ source, setSource, title }) => {
   const { handleCreateResource: handleCreateDiscussion } = useResourceCreator(
     'discussion'
   );
+  const { handleDeleteDocument } = useDocumentMutations();
+  const { handleDeleteDiscussion } = useDiscussionMutations();
 
   const currentUser = useCurrentUser();
+
+  const handleDeleteWrapper = resourceType => {
+    const userChoice = window.confirm(
+      `Are you sure you want to delete this ${resourceType}?`
+    );
+
+    if (!userChoice) return null;
+
+    return resourceType === 'document'
+      ? handleDeleteDocument()
+      : handleDeleteDiscussion();
+  };
 
   const newDocumentCommand = {
     type: 'command',
@@ -108,6 +126,22 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     title: 'Invite your team',
     action: () => setIsInviteModalOpen(true),
     shortcut: 'T',
+  };
+
+  const deleteDocumentCommand = {
+    type: 'command',
+    icon: ['fal', 'times-circle'],
+    title: 'Delete document',
+    action: () => handleDeleteWrapper('document'),
+    shortcut: 'D',
+  };
+
+  const deleteDiscussionCommand = {
+    type: 'command',
+    icon: ['fal', 'times-circle'],
+    title: 'Delete discussion',
+    action: () => handleDeleteWrapper('discussion'),
+    shortcut: 'D',
   };
 
   // HN: Not used for now, will re-introduce once we figure out the right
@@ -187,12 +221,14 @@ const useCommandLibrary = ({ source, setSource, title }) => {
       newDiscussionCommand,
       newWorkspaceCommand,
       invitePeopleCommand,
+      deleteDocumentCommand,
     ],
     discussion: [
       newDiscussionCommand,
       newDocumentCommand,
       newWorkspaceCommand,
       invitePeopleCommand,
+      deleteDiscussionCommand,
     ],
     workspace: [
       newWorkspaceDiscussionCommand,

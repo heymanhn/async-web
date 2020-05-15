@@ -53,7 +53,7 @@ const DeleteResourceButton = ({ resourceType, ...props }) => {
 
   return (
     <Container onClick={handleClick} {...props}>
-      <StyledIcon icon="trash" />
+      <StyledIcon icon={['fal', 'times-circle']} />
     </Container>
   );
 };
