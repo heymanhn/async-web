@@ -84,15 +84,14 @@ const ThreadsList = () => {
     startComposing();
   };
 
-  const { loading, data } = usePaginatedResource(
-    listRef,
-    {
+  const { loading, data } = usePaginatedResource({
+    queryDetails: {
       query: documentThreadsQuery,
       key: 'documentThreads',
       variables: { id: documentId, queryParams: { order: 'desc' } },
     },
-    300
-  );
+    containerRef: listRef,
+  });
 
   if (loading) return <StyledLoadingIndicator color="borderGrey" />;
   if (!data) return <NotFound />;

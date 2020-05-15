@@ -6,7 +6,7 @@ import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import { DiscussionContext, MessageContext } from 'utils/contexts';
-import { firstNewMessageId } from 'utils/helpers';
+import { firstNewMessageId, scrollToBottom } from 'utils/helpers';
 
 import NotFound from 'components/navigation/NotFound';
 import Message from 'components/message/Message';
@@ -20,6 +20,16 @@ const Container = styled.div({
   justifyContent: 'center',
 });
 
+const LoadingMessage = styled.div(
+  ({ theme: { colors, discussionViewport, fontProps } }) => ({
+    ...fontProps({ size: 12, weight: 500 }),
+    color: colors.grey6,
+    margin: '-15px auto 0',
+    padding: '15px 30px 0',
+    width: discussionViewport,
+  })
+);
+
 const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
   top: '46px', // vertically align to bottom of the nav bar (60px)
 });
@@ -32,6 +42,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   );
   const messageContext = useContext(MessageContext);
   const [currentDiscussionId, setCurrentDiscussionId] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const markAsRead = useMarkResourceAsRead();
 
   // Keep track of the current discussion in state to make sure we can mark the
@@ -40,20 +51,34 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     if (discussionId !== currentDiscussionId) {
       if (isUnread) markAsRead();
       setCurrentDiscussionId(discussionId);
+      setIsScrolled(false);
     }
   }, [isUnread, markAsRead, discussionId, currentDiscussionId]);
 
-  const { loading, data } = usePaginatedResource(discussionRef, {
-    query: discussionMessagesQuery,
-    key: 'messages',
-    variables: { discussionId, queryParams: {} },
+  const { loading, isPaginating, data } = usePaginatedResource({
+    containerRef: discussionRef,
+    queryDetails: {
+      query: discussionMessagesQuery,
+      key: 'messages',
+      variables: { discussionId, queryParams: { order: 'desc' } },
+    },
+    reverse: true,
+    isDisabled: !isScrolled,
   });
 
   if (loading) return null;
   if (!data) return <NotFound />;
 
   const { items } = data;
-  const messages = (items || []).map(i => i.message);
+  const safeItems = items || [];
+  const messages = safeItems.map(i => i.message).reverse();
+
+  // Logic to scroll to the bottom of the page on each initial render
+  // of discussion messages
+  if (!isScrolled) {
+    scrollToBottom(bottomRef);
+    setIsScrolled(true);
+  }
 
   const generateValue = index => ({
     ...messageContext,
@@ -68,6 +93,9 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
         dividerRef={dividerRef}
         afterClick={markAsRead}
       />
+      {isPaginating && (
+        <LoadingMessage>Fetching earlier messages...</LoadingMessage>
+      )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
           {firstNewMessageId(messages) === m.id && m.id !== messages[0].id && (

@@ -9,45 +9,57 @@ const DISTANCE_FROM_BOTTOM = 200;
 
 /*
  * Inspired by https://upmostly.com/tutorials/build-an-infinite-scroll-component-in-react-using-react-hooks
- *
- * Note:
- * - Not using IntersectionObserver yet due to browser support limitations
- * - Requires a reference to the component being scrolled
- *
- * Now this is essentially a wrapper on Apollo's useQuery, bundled with
+ * This is essentially a wrapper on Apollo's useQuery, bundled with
  * custom fetchMore() logic
  *
- * - ref is the reference to the container that holds the paginated results.
- * - optional: gap, is the custom distance from the bottom.
- * - optional: modalRef, is the reference to a modal when the results are in a modal.
+ * - containerRef: reference to the container that holds the paginated items.
+ * - (optional) modalRef: reference to a modal when the results are in a modal.
+ * - (optional) reverse: paginate once top of the container is reached
+ * - (optional) isDisabled: useful for when the initial set of items hasn't loaded.
+ *
  */
-const usePaginatedResource = (
-  ref,
-  { query, key, ...props },
-  gap = DISTANCE_FROM_BOTTOM,
-  modalRef
-) => {
+const usePaginatedResource = ({
+  queryDetails: { query, key, ...props },
+  containerRef,
+  modalRef,
+  reverse = false,
+  isDisabled = false,
+} = {}) => {
   const [shouldFetch, setShouldFetch] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
+  const [isPaginating, setIsPaginating] = useState(false);
 
   const handleScroll = () => {
-    const elem = ref.current;
-    if (!elem) return;
+    const { current: elem } = containerRef || {};
+    if (!elem || isDisabled) return;
 
     const { current: modal } = modalRef || {};
-    const scrollOffset = modal
-      ? modal.clientHeight + modal.scrollTop
-      : window.innerHeight + window.scrollY;
+    let bottomEdge;
+    let scrollOffset;
+    if (modal) {
+      bottomEdge = modal.clientHeight;
+      scrollOffset = modal.scrollTop;
+    } else {
+      bottomEdge = window.innerHeight;
+      scrollOffset = window.scrollY;
+    }
 
-    const reachedBottom = scrollOffset >= elem.scrollHeight - gap;
-    if (!reachedBottom || shouldFetch) return;
+    const totalOffset = reverse ? scrollOffset : bottomEdge + scrollOffset;
+
+    // HN: We only want to paginate upwards if the user is at the absolute top
+    // of the container. Not the best solution but would suffice for now.
+    const reachedEdge = reverse
+      ? totalOffset === 0
+      : totalOffset >= elem.scrollHeight - DISTANCE_FROM_BOTTOM;
+
+    if (!reachedEdge || shouldFetch) return;
     setShouldFetch(true);
   };
 
   useEffect(() => {
-    if (modalRef && !modalRef.current) return () => {};
+    const { current: modal } = modalRef || {};
+    if (modalRef && !modal) return () => {};
 
-    const target = modalRef ? modalRef.current : window;
+    const target = modal || window;
     const debouncedScroll = debounce(handleScroll, DEBOUNCE_INTERVAL);
     target.addEventListener('scroll', debouncedScroll);
 
@@ -75,7 +87,7 @@ const usePaginatedResource = (
           const { items: previousItems } = previousResult[key];
           const { items: newItems, pageToken: newToken } = fetchMoreResult[key];
           setShouldFetch(false);
-          setIsFetching(false);
+          setIsPaginating(false);
 
           const newResult = {};
           newResult[key] = {
@@ -93,12 +105,12 @@ const usePaginatedResource = (
     }
   };
 
-  if (shouldFetch && pageToken && !isFetching) {
-    setIsFetching(true);
+  if (shouldFetch && pageToken && !isPaginating) {
+    setIsPaginating(true);
     fetchMoreItems();
   }
 
-  return { loading, data: data[key] };
+  return { loading, isPaginating, data: data[key] };
 };
 
 export default usePaginatedResource;

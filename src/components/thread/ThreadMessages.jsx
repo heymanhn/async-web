@@ -1,13 +1,12 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
-import useMountEffect from 'hooks/shared/useMountEffect';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
 import { MessageContext, ThreadContext } from 'utils/contexts';
-import { firstNewMessageId } from 'utils/helpers';
+import { firstNewMessageId, scrollToBottom } from 'utils/helpers';
 
 import NewMessagesDivider from 'components/shared/NewMessagesDivider';
 import NewMessagesIndicator from 'components/shared/NewMessagesIndicator';
@@ -19,10 +18,24 @@ const Container = styled.div({
   justifyContent: 'center',
 });
 
+const LoadingMessage = styled.div(
+  ({ theme: { colors, discussionViewport, fontProps } }) => ({
+    ...fontProps({ size: 12, weight: 500 }),
+    color: colors.grey6,
+    margin: '0 auto',
+    padding: '15px 30px 0',
+    width: discussionViewport,
+  })
+);
+
 const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
   top: '75px', // 60px top margin for the modal + 15px buffer
 });
 
+/*
+ * HN: Much of this logic is repeated from <DiscussionMessages />. Candidate
+ * to clean up in the future
+ */
 const ThreadMessages = ({ isUnread, ...props }) => {
   const threadRef = useRef(null);
   const dividerRef = useRef(null);
@@ -30,27 +43,44 @@ const ThreadMessages = ({ isUnread, ...props }) => {
     ThreadContext
   );
   const messageContext = useContext(MessageContext);
+  const [currentThreadId, setCurrentThreadId] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const markAsRead = useMarkResourceAsRead();
 
-  useMountEffect(() => {
-    if (isUnread) markAsRead();
-  });
+  // Keep track of the current thread in state to make sure we can mark the
+  // thread as read each time the thread ID changes.
+  useEffect(() => {
+    if (threadId !== currentThreadId) {
+      if (isUnread) markAsRead();
+      setCurrentThreadId(threadId);
+      setIsScrolled(false);
+    }
+  }, [isUnread, markAsRead, threadId, currentThreadId]);
 
-  const { loading, data } = usePaginatedResource(
-    threadRef,
-    {
+  const { loading, isPaginating, data } = usePaginatedResource({
+    queryDetails: {
       query: discussionMessagesQuery,
       key: 'messages',
-      variables: { discussionId: threadId, queryParams: {} },
+      variables: { discussionId: threadId, queryParams: { order: 'desc' } },
     },
-    undefined,
-    modalRef
-  );
+    containerRef: threadRef,
+    modalRef,
+    reverse: true,
+    isDisabled: !isScrolled,
+  });
 
   if (loading || !data) return null;
 
   const { items } = data;
-  const messages = (items || []).map(i => i.message);
+  const safeItems = items || [];
+  const messages = safeItems.map(i => i.message).reverse();
+
+  // Logic to scroll to the bottom of the page on each initial render
+  // of thread messages
+  if (!isScrolled) {
+    scrollToBottom(bottomRef);
+    setIsScrolled(true);
+  }
 
   const generateValue = index => ({
     ...messageContext,
@@ -67,6 +97,9 @@ const ThreadMessages = ({ isUnread, ...props }) => {
         dividerRef={dividerRef}
         afterClick={markAsRead}
       />
+      {isPaginating && (
+        <LoadingMessage>Fetching earlier messages...</LoadingMessage>
+      )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
           {firstNewMessageId(messages) === m.id && m.id !== messages[0].id && (
