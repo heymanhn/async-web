@@ -14,6 +14,7 @@ import Modal from 'components/shared/Modal';
 import ResultRow from './ResultRow';
 
 const DEFAULT_PLACEHOLDER = 'Type a command or search';
+const TYPE_ONLY_PLACEHOLDER = 'Type a command';
 const UP_KEY = 'up';
 const DOWN_KEY = 'down';
 const ENTER_KEY = 'enter';
@@ -70,17 +71,19 @@ const SearchInput = styled.input(({ theme: { colors, fontProps } }) => ({
 const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
   const {
-    resource: { resourceType },
+    resource: { resourceType, customMode },
   } = useContext(NavigationContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [source, setSource] = useState(resourceType);
-  const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
+  const [placeholder, setPlaceholder] = useState(
+    customMode ? TYPE_ONLY_PLACEHOLDER : DEFAULT_PLACEHOLDER
+  );
   const title = useCommandCenterTitle();
   const { queryString, setQueryString, results } = useCommandCenterSearch({
     source,
     setSource,
     title,
-    isSearchDisabled: resourceType !== source,
+    isSearchDisabled: resourceType !== source || !!customMode,
   });
 
   useEffect(() => {
@@ -104,7 +107,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const handleClearInput = () => {
     setSelectedIndex(0);
     setQueryString('');
-    setPlaceholder(DEFAULT_PLACEHOLDER);
+    setPlaceholder(customMode ? TYPE_ONLY_PLACEHOLDER : DEFAULT_PLACEHOLDER);
   };
 
   const handleCloseWrapper = () => {
