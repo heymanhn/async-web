@@ -118,6 +118,10 @@ const NotificationRow = ({ handleClose, notification }) => {
         url = documentURL;
         context = ' made edits to: ';
         break;
+      case 'new_thread':
+        url = threadURL;
+        context = ' started a thread in: ';
+        break;
       case 'new_discussion':
       case 'access_discussion':
         url = threadId ? threadURL : discussionURL;
