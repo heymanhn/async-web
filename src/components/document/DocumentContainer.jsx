@@ -55,9 +55,19 @@ const DocumentContainer = ({
   if (!data) return null;
   if (error || !data || !data.document) return <NotFound />;
 
-  const { channelId, tags } = data.document;
+  const { channelId, tags, workspaces } = data.document;
   const readOnly = isResourceReadOnly(tags);
   if (forceUpdate) setForceUpdate(false);
+
+  const afterDeleteDocument = () => {
+    let path = '/';
+    if (workspaces && workspaces.length) {
+      const [workspaceId] = workspaces;
+      path = `/workspaces/${workspaceId}`;
+    }
+
+    navigate(path);
+  };
 
   const value = {
     ...DEFAULT_DOCUMENT_CONTEXT,
@@ -67,7 +77,7 @@ const DocumentContainer = ({
     readOnly,
     editor,
 
-    afterDeleteDocument: () => navigate('/'),
+    afterDeleteDocument,
     setForceUpdate,
     setViewMode,
     handleShowThread,
