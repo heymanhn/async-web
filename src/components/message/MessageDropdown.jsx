@@ -118,7 +118,7 @@ const MessageDropdown = ({ handleCloseDropdown, isOpen, ...props }) => {
       </DropdownOption>
       <DropdownOption onClick={handleDeleteWrapper}>
         <IconContainer>
-          <StyledIcon icon="trash" />
+          <StyledIcon icon="times-circle" />
         </IconContainer>
         <OptionName>
           {isFirstMessage ? `Delete ${parentResourceType}` : 'Delete message'}

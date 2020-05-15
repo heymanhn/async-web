@@ -23,7 +23,7 @@ import {
   faReply,
   faTasks,
   faTerminal,
-  faTrash,
+  faTimesCircle as faSolidTimesCircle,
   faUser,
   faUsers,
 } from '@fortawesome/free-solid-svg-icons';
@@ -48,6 +48,7 @@ import {
   faInfinity,
   faPlus as faLightPlus,
   faPlusCircle as faLightPlusCircle,
+  faTimesCircle as faLightTimesCircle,
   faUserCircle,
 } from '@fortawesome/pro-light-svg-icons';
 
@@ -79,6 +80,7 @@ export default [
   faLightCommentsAlt,
   faLightPlus,
   faLightPlusCircle,
+  faLightTimesCircle,
   faListOl,
   faListUl,
   faLock,
@@ -89,12 +91,12 @@ export default [
   faReply,
   faSolidArrowCircleRight,
   faSolidPlus,
+  faSolidTimesCircle,
   faSquare,
   faTasks,
   faTerminal,
   faText,
   faTimes,
-  faTrash,
   faUser,
   faUserCircle,
   faUsers,
