@@ -14,6 +14,7 @@ import Modal from 'components/shared/Modal';
 import ResultRow from './ResultRow';
 
 const DEFAULT_PLACEHOLDER = 'Type a command or search';
+const TYPE_ONLY_PLACEHOLDER = 'Type a command';
 const UP_KEY = 'up';
 const DOWN_KEY = 'down';
 const ENTER_KEY = 'enter';
@@ -33,9 +34,8 @@ const customBackdropStyle = {
   opacity: 0.5,
 };
 
-const Header = styled.div(({ resultCount, theme: { colors } }) => ({
+const Header = styled.div(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
-  borderRadius: resultCount ? '0' : '5px',
   padding: '15px 30px 0',
 }));
 
@@ -43,10 +43,19 @@ const Title = styled.div(({ theme: { fontProps } }) => ({
   ...fontProps({ size: 14, weight: 500 }),
 }));
 
-const EmptyRow = styled.div(({ theme: { fontProps } }) => ({
-  ...fontProps({ size: 14, weight: 400 }),
-  margin: '20px 30px 20px',
+const EmptyRow = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
+  background: colors.bgGrey,
+  borderBottomLeftRadius: '5px',
+  borderBottomRightRadius: '5px',
+  color: colors.grey2,
+  padding: '15px 30px',
 }));
+
+const NoResults = styled.div({
+  cursor: 'default',
+  marginTop: '-2px',
+});
 
 const SearchInput = styled.input(({ theme: { colors, fontProps } }) => ({
   ...fontProps({ size: 16, weight: 400 }),
@@ -70,17 +79,19 @@ const SearchInput = styled.input(({ theme: { colors, fontProps } }) => ({
 const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const inputRef = useRef(null);
   const {
-    resource: { resourceType },
+    resource: { resourceType, customMode },
   } = useContext(NavigationContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [source, setSource] = useState(resourceType);
-  const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
+  const [placeholder, setPlaceholder] = useState(
+    customMode ? TYPE_ONLY_PLACEHOLDER : DEFAULT_PLACEHOLDER
+  );
   const title = useCommandCenterTitle();
   const { queryString, setQueryString, results } = useCommandCenterSearch({
     source,
     setSource,
     title,
-    isSearchDisabled: resourceType !== source,
+    isSearchDisabled: resourceType !== source || !!customMode,
   });
 
   useEffect(() => {
@@ -104,7 +115,7 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
   const handleClearInput = () => {
     setSelectedIndex(0);
     setQueryString('');
-    setPlaceholder(DEFAULT_PLACEHOLDER);
+    setPlaceholder(customMode ? TYPE_ONLY_PLACEHOLDER : DEFAULT_PLACEHOLDER);
   };
 
   const handleCloseWrapper = () => {
@@ -167,7 +178,11 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
           value={queryString}
         />
       </Header>
-      {!results.length && <EmptyRow>No results</EmptyRow>}
+      {!results.length && (
+        <EmptyRow>
+          <NoResults>No results</NoResults>
+        </EmptyRow>
+      )}
       {results.map((r, i) => (
         <ResultRow
           key={r.title}

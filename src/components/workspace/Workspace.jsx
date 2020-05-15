@@ -7,7 +7,6 @@ import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import { matchCurrentUserId } from 'utils/auth';
 import { WorkspaceContext } from 'utils/contexts';
 
-import LoadingIndicator from 'components/shared/LoadingIndicator';
 import NotFound from 'components/navigation/NotFound';
 
 import ResourcesList from './ResourcesList';
@@ -24,10 +23,6 @@ const Container = styled.div(({ theme: { colors, workspaceViewport } }) => ({
   minHeight: 'calc(100vh - 60px)', // Navigation bar is 60px tall
 }));
 
-const StyledLoadingIndicator = styled(LoadingIndicator)({
-  marginTop: '30px',
-});
-
 const Workspace = () => {
   const { workspaceId } = useContext(WorkspaceContext);
   const [sentReaction, setSentReaction] = useState(false);
@@ -37,7 +32,7 @@ const Workspace = () => {
     variables: { workspaceId },
   });
 
-  if (loading) return <StyledLoadingIndicator color="borderGrey" />;
+  if (loading) return null;
   if (!data || !data.workspace) return <NotFound />;
 
   const { title, reactions } = data.workspace;

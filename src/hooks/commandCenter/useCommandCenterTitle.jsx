@@ -4,9 +4,19 @@ import { useQuery } from '@apollo/react-hooks';
 import { NavigationContext } from 'utils/contexts';
 import { titleize } from 'utils/helpers';
 
+const PREFIXES = {
+  addResource: 'Add to',
+};
+
 const useCommandCenterTitle = () => {
   const {
-    resource: { resourceType, resourceId, resourceQuery, variables },
+    resource: {
+      customMode,
+      resourceType,
+      resourceId,
+      resourceQuery,
+      variables,
+    },
   } = useContext(NavigationContext);
 
   const { data } = useQuery(resourceQuery, {
@@ -15,10 +25,11 @@ const useCommandCenterTitle = () => {
   });
 
   if (data && data[resourceType]) {
-    const { title, topic } = data[resourceType];
-    return (
-      title || (topic && topic.text) || `Untitled ${titleize(resourceType)}`
-    );
+    const { title } = data[resourceType];
+    const prefix = customMode ? PREFIXES[customMode] : '';
+    const safeTitle = title || `Untitled ${titleize(resourceType)}`;
+
+    return `${prefix} ${safeTitle}`;
   }
 
   return titleize(resourceType);
