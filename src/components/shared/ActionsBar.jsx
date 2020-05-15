@@ -71,6 +71,7 @@ const ActionsBar = ({
   parentType,
   handleClickReply,
   handleClickDiscard,
+  afterUpdateResolution,
   ...props
 }) => {
   const { draft, parentId } = useContext(MessageContext);
@@ -85,14 +86,20 @@ const ActionsBar = ({
 
   if (loading || !data.discussion) return null;
   const { status } = data.discussion;
+  const { state, author } = status || {};
+  const safeState = state || 'open';
+  const isResolved = safeState === 'resolved';
 
-  const updateDiscussionStatus = state => {
+  const handleClickAction = () => {
     updateDiscussion({
       variables: {
         discussionId: parentId,
-        input: { status: { state } },
+        input: { status: { state: safeState } },
       },
     });
+
+    // The new resolved state is the opposite of the current one
+    afterUpdateResolution(!isResolved);
   };
 
   const handleClickDiscardWrapper = () => {
@@ -100,16 +107,12 @@ const ActionsBar = ({
     handleClickDiscard();
   };
 
-  const { state, author } = status || {};
-  const newStatus = state || 'open';
-  const isResolved = newStatus === 'resolved';
-
   // Either an indication that the discussion is resolved, or a call-out for
   // the current user to add a reply
   const renderIndicator = () => {
     const avatar = isResolved ? (
       <AvatarWithIcon
-        avatarUrl={status.author.profilePictureUrl}
+        avatarUrl={author.profilePictureUrl}
         icon="comment-check"
       />
     ) : (
@@ -143,11 +146,7 @@ const ActionsBar = ({
   const renderActionButton = () => {
     const label = `${isResolved ? 'Re-open ' : 'Resolve '} ${parentType}`;
 
-    return (
-      <ActionButton onClick={() => updateDiscussionStatus(newStatus)}>
-        {label}
-      </ActionButton>
-    );
+    return <ActionButton onClick={handleClickAction}>{label}</ActionButton>;
   };
 
   return (
@@ -162,6 +161,7 @@ ActionsBar.propTypes = {
   parentType: PropTypes.oneOf(['discussion', 'thread']).isRequired,
   handleClickReply: PropTypes.func.isRequired,
   handleClickDiscard: PropTypes.func.isRequired,
+  afterUpdateResolution: PropTypes.func.isRequired,
 };
 
 export default ActionsBar;
