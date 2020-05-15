@@ -42,9 +42,10 @@ const usePaginatedResource = ({
   };
 
   useEffect(() => {
-    if (modalRef && !modalRef.current) return () => {};
+    const { current: modal } = modalRef;
+    if (!modal) return () => {};
 
-    const target = modalRef ? modalRef.current : window;
+    const target = modal || window;
     const debouncedScroll = debounce(handleScroll, DEBOUNCE_INTERVAL);
     target.addEventListener('scroll', debouncedScroll);
 
