@@ -91,7 +91,6 @@ const ThreadsList = () => {
       variables: { id: documentId, queryParams: { order: 'desc' } },
     },
     containerRef: listRef,
-    gap: 300,
   });
 
   if (loading) return <StyledLoadingIndicator color="borderGrey" />;

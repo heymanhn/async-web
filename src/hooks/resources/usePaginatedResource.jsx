@@ -5,7 +5,7 @@ import { DEBOUNCE_INTERVAL } from 'utils/constants';
 import { debounce } from 'utils/helpers';
 import { snakedQueryParams } from 'utils/queryParams';
 
-const DISTANCE_FROM_EDGE = 200;
+const DISTANCE_FROM_BOTTOM = 200;
 
 /*
  * Inspired by https://upmostly.com/tutorials/build-an-infinite-scroll-component-in-react-using-react-hooks
@@ -13,7 +13,6 @@ const DISTANCE_FROM_EDGE = 200;
  * custom fetchMore() logic
  *
  * - containerRef: reference to the container that holds the paginated items.
- * - (optional) gap: custom distance from the bottom.
  * - (optional) modalRef: reference to a modal when the results are in a modal.
  * - (optional) reverse: paginate once top of the container is reached
  * - (optional) isDisabled: useful for when the initial set of items hasn't loaded.
@@ -23,7 +22,6 @@ const usePaginatedResource = ({
   queryDetails: { query, key, ...props },
   containerRef,
   modalRef,
-  gap = DISTANCE_FROM_EDGE,
   reverse = false,
   isDisabled = false,
 } = {}) => {
@@ -46,9 +44,12 @@ const usePaginatedResource = ({
     }
 
     const totalOffset = reverse ? scrollOffset : bottomEdge + scrollOffset;
+
+    // HN: We only want to paginate upwards if the user is at the absolute top
+    // of the container. Not the best solution but would suffice for now.
     const reachedEdge = reverse
-      ? totalOffset <= gap
-      : totalOffset >= elem.scrollHeight - gap;
+      ? totalOffset === 0
+      : totalOffset >= elem.scrollHeight - DISTANCE_FROM_BOTTOM;
 
     if (!reachedEdge || shouldFetch) return;
     setShouldFetch(true);
