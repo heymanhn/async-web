@@ -16,7 +16,11 @@ const useCommandCenterSearch = ({
 }) => {
   const client = useApolloClient();
   const { resource: resourceContext } = useContext(NavigationContext);
-  const { resourceQuery, resourceType, variables } = resourceContext;
+  const {
+    resourceQuery,
+    resourceType: resourceContextType,
+    variables,
+  } = resourceContext;
 
   const commands = useCommandLibrary({ source: newSource, ...props });
   const [queryString, setQueryString] = useState('');
@@ -29,7 +33,7 @@ const useCommandCenterSearch = ({
     if (!title.includes('Delete')) return true;
 
     const data = client.readQuery({ query: resourceQuery, variables });
-    const { author, owner } = data[resourceType];
+    const { author, owner } = data[resourceContextType];
     const { id: authorId } = author || owner;
     const { userId } = getLocalUser();
     return userId === authorId;
