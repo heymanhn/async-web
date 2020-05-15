@@ -42,7 +42,9 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   );
   const messageContext = useContext(MessageContext);
   const [currentDiscussionId, setCurrentDiscussionId] = useState(null);
+  const [scrollHeight, setScrollHeight] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [prevMessageCount, setPrevMessageCount] = useState(null);
   const markAsRead = useMarkResourceAsRead();
 
   // Keep track of the current discussion in state to make sure we can mark the
@@ -66,12 +68,38 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     isDisabled: !isScrolled,
   });
 
+  // Keep the scroll position of the container intact while reverse paginating
+  useEffect(() => {
+    const { current: container } = discussionRef || {};
+    const { items } = data || {};
+    const safeItems = items || [];
+
+    if (container) {
+      if (isPaginating && !scrollHeight)
+        setScrollHeight(container.scrollHeight);
+
+      if (
+        !isPaginating &&
+        safeItems.length > prevMessageCount &&
+        scrollHeight &&
+        scrollHeight !== container.scrollHeight
+      ) {
+        setScrollHeight(null);
+        setPrevMessageCount(safeItems.length);
+        const newScrollTop =
+          container.scrollTop + container.scrollHeight - scrollHeight;
+        container.scroll({ top: newScrollTop });
+      }
+    }
+  }, [isPaginating, scrollHeight, data, prevMessageCount]);
+
   if (loading) return null;
   if (!data) return <NotFound />;
 
   const { items } = data;
   const safeItems = items || [];
   const messages = safeItems.map(i => i.message).reverse();
+  if (!prevMessageCount) setPrevMessageCount(messages.length);
 
   // Logic to scroll to the bottom of the page on each initial render
   // of discussion messages

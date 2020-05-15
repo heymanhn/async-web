@@ -5,7 +5,7 @@ import { DEBOUNCE_INTERVAL } from 'utils/constants';
 import { debounce } from 'utils/helpers';
 import { snakedQueryParams } from 'utils/queryParams';
 
-const DISTANCE_FROM_BOTTOM = 200;
+const DISTANCE_FROM_EDGE = 200;
 
 /*
  * Inspired by https://upmostly.com/tutorials/build-an-infinite-scroll-component-in-react-using-react-hooks
@@ -27,10 +27,10 @@ const usePaginatedResource = ({
 } = {}) => {
   const [shouldFetch, setShouldFetch] = useState(false);
   const [isPaginating, setIsPaginating] = useState(false);
+  const { current: container } = containerRef || {};
 
   const handleScroll = () => {
-    const { current: elem } = containerRef || {};
-    if (!elem || isDisabled) return;
+    if (!container || isDisabled) return;
 
     const { current: modal } = modalRef || {};
     let bottomEdge;
@@ -44,12 +44,9 @@ const usePaginatedResource = ({
     }
 
     const totalOffset = reverse ? scrollOffset : bottomEdge + scrollOffset;
-
-    // HN: We only want to paginate upwards if the user is at the absolute top
-    // of the container. Not the best solution but would suffice for now.
     const reachedEdge = reverse
-      ? totalOffset === 0
-      : totalOffset >= elem.scrollHeight - DISTANCE_FROM_BOTTOM;
+      ? totalOffset <= DISTANCE_FROM_EDGE
+      : totalOffset >= container.scrollHeight - DISTANCE_FROM_EDGE;
 
     if (!reachedEdge || shouldFetch) return;
     setShouldFetch(true);
