@@ -53,7 +53,8 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   if (!data) return <NotFound />;
 
   const { items } = data;
-  const messages = (items || []).map(i => i.message);
+  const safeItems = items || [];
+  const messages = safeItems.map(i => i.message).reverse();
 
   const generateValue = index => ({
     ...messageContext,

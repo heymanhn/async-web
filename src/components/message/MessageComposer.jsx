@@ -9,6 +9,7 @@ import {
   MessageContext,
   ThreadContext,
 } from 'utils/contexts';
+import { scrollToBottom } from 'utils/helpers';
 
 import ActionsBar from 'components/shared/ActionsBar';
 import TitleEditor from 'components/discussion/TitleEditor';
@@ -50,17 +51,9 @@ const MessageComposer = React.forwardRef(
       parentType === 'discussion' ? DiscussionContext : ThreadContext
     );
 
-    const scrollToBottom = () => {
-      const { current: bottomOfPage } = bottomRef;
-      if (bottomOfPage) {
-        // Make sure the new message is added before we scroll to bottom
-        setTimeout(() => bottomOfPage.scrollIntoView(), 0);
-      }
-    };
-
     const [isComposing, setIsComposing] = useState(false);
     const startComposing = () => {
-      scrollToBottom();
+      scrollToBottom(bottomRef);
       setIsComposing(true);
     };
     const stopComposing = () => setIsComposing(false);
@@ -82,7 +75,7 @@ const MessageComposer = React.forwardRef(
 
       // Posting a message is behaviorally equivalent to marking the parent as read
       client.writeData({ data: { pendingMessages: [] } });
-      scrollToBottom();
+      scrollToBottom(bottomRef);
     };
 
     const handleCancelCompose = () => {

@@ -50,7 +50,8 @@ const ThreadMessages = ({ isUnread, ...props }) => {
   if (loading || !data) return null;
 
   const { items } = data;
-  const messages = (items || []).map(i => i.message);
+  const safeItems = items || [];
+  const messages = safeItems.map(i => i.message).reverse();
 
   const generateValue = index => ({
     ...messageContext,

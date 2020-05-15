@@ -38,7 +38,7 @@ const addNewMessageToDiscussionMessages = (
 
   const data = client.readQuery({
     query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: { order: 'desc' } },
   });
 
   const data2 = client.readQuery({
@@ -93,11 +93,11 @@ const addNewMessageToDiscussionMessages = (
 
   client.writeQuery({
     query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: { order: 'desc' } },
     data: {
       messages: {
         pageToken,
-        items: [...safeItems, newMessageItem],
+        items: [newMessageItem, ...safeItems],
         __typename,
       },
     },
@@ -136,7 +136,7 @@ const addNewPendingMessage = (_root, { message }, { client }) => {
     query: localStateQuery,
     data: {
       ...localState,
-      pendingMessages: [...pendingMessages, newMessageId],
+      pendingMessages: [newMessageId, ...pendingMessages],
     },
   });
 

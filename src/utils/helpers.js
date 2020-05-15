@@ -84,3 +84,10 @@ export const camelCaseObjString = str => {
 // https://stackoverflow.com/questions/11832914/round-to-at-most-2-decimal-places-only-if-necessary
 export const roundToPrecision = (num, sigfig = 2) =>
   Math.round((num + Number.EPSILON) * 10 ** sigfig) / 10 ** sigfig;
+
+export const scrollToBottom = ref => {
+  const { current: bottomOfPage } = ref;
+  if (bottomOfPage) {
+    setTimeout(() => bottomOfPage.scrollIntoView(), 0);
+  }
+};
