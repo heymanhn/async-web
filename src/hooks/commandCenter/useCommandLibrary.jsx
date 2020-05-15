@@ -7,12 +7,12 @@ import useCurrentUser from 'hooks/shared/useCurrentUser';
 import useResourceCreator from 'hooks/resources/useResourceCreator';
 import useDiscussionMutations from 'hooks/discussion/useDiscussionMutations';
 import useDocumentMutations from 'hooks/document/useDocumentMutations';
-
 import {
   NavigationContext,
   DocumentContext,
   WorkspaceContext,
 } from 'utils/contexts';
+import { titleize } from 'utils/helpers';
 
 import Avatar from 'components/shared/Avatar';
 
@@ -32,6 +32,7 @@ const StyledAvatar = styled(Avatar)({
 
 const useCommandLibrary = ({ source, setSource, title }) => {
   const {
+    resource: { customMode = '' },
     setIsResourceAccessModalOpen,
     setIsInviteModalOpen,
     setResourceCreationModalMode,
@@ -66,7 +67,13 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     type: 'command',
     icon: ['fal', 'plus-circle'],
     title: 'New document',
-    action: handleCreateDocument,
+    action: () => {
+      if (customMode === 'addResource') {
+        handleCreateDocument({ parentWorkspaceId: workspaceId });
+      }
+
+      handleCreateDocument();
+    },
     shortcut: 'N',
   };
 
@@ -83,7 +90,13 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     type: 'command',
     icon: ['fal', 'plus-circle'],
     title: 'New discussion',
-    action: handleCreateDiscussion,
+    action: () => {
+      if (customMode === 'addResource') {
+        handleCreateDiscussion({ parentWorkspaceId: workspaceId });
+      }
+
+      handleCreateDiscussion();
+    },
     shortcut: 'D',
   };
 
@@ -236,6 +249,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
       newWorkspaceCommand,
       invitePeopleCommand,
     ],
+    workspaceAddResource: [newDocumentCommand, newDiscussionCommand],
     workspaceDocument: [shareDocumentCommand, privateDocumentCommand],
     workspaceDiscussion: [
       shareDiscussionCommand,
@@ -243,7 +257,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     ],
   };
 
-  return source ? commands[source] : [];
+  return source ? commands[`${source}${titleize(customMode)}`] : [];
 };
 
 export default useCommandLibrary;
