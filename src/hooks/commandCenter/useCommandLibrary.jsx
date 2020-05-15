@@ -1,3 +1,4 @@
+/* eslint no-alert: 0 */
 import React, { useContext } from 'react';
 import { navigate } from '@reach/router';
 import styled from '@emotion/styled';
@@ -48,6 +49,18 @@ const useCommandLibrary = ({ source, setSource, title }) => {
   const { handleDeleteDiscussion } = useDiscussionMutations();
 
   const currentUser = useCurrentUser();
+
+  const handleDeleteWrapper = resourceType => {
+    const userChoice = window.confirm(
+      `Are you sure you want to delete this ${resourceType}?`
+    );
+
+    if (!userChoice) return null;
+
+    return resourceType === 'document'
+      ? handleDeleteDocument()
+      : handleDeleteDiscussion();
+  };
 
   const newDocumentCommand = {
     type: 'command',
@@ -119,7 +132,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     type: 'command',
     icon: ['fal', 'times-circle'],
     title: `Delete document`,
-    action: () => handleDeleteDocument(),
+    action: () => handleDeleteWrapper('document'),
     shortcut: 'D',
   };
 
@@ -127,7 +140,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     type: 'command',
     icon: ['fal', 'times-circle'],
     title: `Delete discussion`,
-    action: () => handleDeleteDiscussion(),
+    action: () => handleDeleteWrapper('discussion'),
     shortcut: 'D',
   };
 
