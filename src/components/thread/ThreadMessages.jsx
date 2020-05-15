@@ -41,7 +41,7 @@ const ThreadMessages = ({ isUnread, ...props }) => {
     {
       query: discussionMessagesQuery,
       key: 'messages',
-      variables: { discussionId: threadId, queryParams: {} },
+      variables: { discussionId: threadId, queryParams: { order: 'desc' } },
     },
     undefined,
     modalRef

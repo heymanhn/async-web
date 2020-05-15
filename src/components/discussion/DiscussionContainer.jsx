@@ -65,7 +65,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   });
 
   const { loading: loading2, data: data2 } = useQuery(discussionMessagesQuery, {
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: { order: 'desc' } },
   });
 
   if (loading || loading2) return <StyledLoadingIndicator color="borderGrey" />;

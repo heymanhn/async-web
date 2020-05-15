@@ -46,7 +46,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   const { loading, data } = usePaginatedResource(discussionRef, {
     query: discussionMessagesQuery,
     key: 'messages',
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: { order: 'desc' } },
   });
 
   if (loading) return null;
