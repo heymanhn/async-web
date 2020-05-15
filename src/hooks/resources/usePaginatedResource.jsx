@@ -5,7 +5,7 @@ import { DEBOUNCE_INTERVAL } from 'utils/constants';
 import { debounce } from 'utils/helpers';
 import { snakedQueryParams } from 'utils/queryParams';
 
-const DISTANCE_FROM_BOTTOM = 200;
+const DISTANCE_FROM_EDGE = 200;
 
 /*
  * Inspired by https://upmostly.com/tutorials/build-an-infinite-scroll-component-in-react-using-react-hooks
@@ -22,9 +22,9 @@ const DISTANCE_FROM_BOTTOM = 200;
 const usePaginatedResource = ({
   queryDetails: { query, key, ...props },
   containerRef,
-  modalRef = {},
-  gap = DISTANCE_FROM_BOTTOM,
-  // reverse = false,
+  modalRef,
+  gap = DISTANCE_FROM_EDGE,
+  reverse = false,
   isDisabled = false,
 } = {}) => {
   const [shouldFetch, setShouldFetch] = useState(false);
@@ -34,19 +34,29 @@ const usePaginatedResource = ({
     const { current: elem } = containerRef || {};
     if (!elem || isDisabled) return;
 
-    const { current: modal } = modalRef;
-    const scrollOffset = modal
-      ? modal.clientHeight + modal.scrollTop
-      : window.innerHeight + window.scrollY;
+    const { current: modal } = modalRef || {};
+    let bottomEdge;
+    let scrollOffset;
+    if (modal) {
+      bottomEdge = modal.clientHeight;
+      scrollOffset = modal.scrollTop;
+    } else {
+      bottomEdge = window.innerHeight;
+      scrollOffset = window.scrollY;
+    }
 
-    const reachedBottom = scrollOffset >= elem.scrollHeight - gap;
-    if (!reachedBottom || shouldFetch) return;
+    const totalOffset = reverse ? scrollOffset : bottomEdge + scrollOffset;
+    const reachedEdge = reverse
+      ? totalOffset <= gap
+      : totalOffset >= elem.scrollHeight - gap;
+
+    if (!reachedEdge || shouldFetch) return;
     setShouldFetch(true);
   };
 
   useEffect(() => {
-    const { current: modal } = modalRef;
-    if (!modal) return () => {};
+    const { current: modal } = modalRef || {};
+    if (modalRef && !modal) return () => {};
 
     const target = modal || window;
     const debouncedScroll = debounce(handleScroll, DEBOUNCE_INTERVAL);
