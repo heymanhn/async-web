@@ -19,11 +19,10 @@ const AvatarWithMargin = styled(Avatar)({
 const Icon = styled(FontAwesomeIcon)(({ theme: { colors } }) => ({
   position: 'absolute',
   marginTop: '10px',
-  marginLeft: '10px',
+  marginLeft: '5px',
 
   color: colors.successGreen,
-  fontSize: '18px',
-  marginRight: '12px',
+  fontSize: '14px',
 }));
 
 const AvatarWithIcon = ({ avatarUrl, icon, ...props }) => (

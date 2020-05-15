@@ -110,6 +110,14 @@ const ThreadModal = ({
     }
   };
 
+  const afterUpdateResolution = isResolved => {
+    if (sourceEditor) {
+      Editor.updateInlineAnnotation(sourceEditor, threadId, {
+        isResolved,
+      });
+    }
+  };
+
   const afterDeleteThread = () => {
     if (sourceEditor) Editor.removeInlineAnnotation(sourceEditor, threadId);
 
@@ -166,6 +174,7 @@ const ThreadModal = ({
                 ref={composerRef}
                 isExpanded={!messageCount}
                 afterCreateMessage={afterCreateMessage}
+                afterUpdateResolution={afterUpdateResolution}
               />
               <div ref={bottomRef} />
             </MessageContext.Provider>

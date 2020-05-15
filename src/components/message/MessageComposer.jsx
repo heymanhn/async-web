@@ -33,7 +33,10 @@ const Divider = styled.div(({ theme: { colors } }) => ({
 }));
 
 const MessageComposer = React.forwardRef(
-  ({ title, isExpanded, afterCreateMessage, ...props }, composerRef) => {
+  (
+    { title, isExpanded, afterCreateMessage, afterUpdateResolution, ...props },
+    composerRef
+  ) => {
     const client = useApolloClient();
     const messageContext = useContext(MessageContext);
     const { isModalOpen, parentType } = messageContext;
@@ -112,6 +115,7 @@ const MessageComposer = React.forwardRef(
           <ActionsBar
             handleClickReply={startComposing}
             handleClickDiscard={stopComposing}
+            afterUpdateResolution={afterUpdateResolution}
             parentType={parentType}
           />
         )}
@@ -124,11 +128,13 @@ MessageComposer.propTypes = {
   title: PropTypes.string,
   isExpanded: PropTypes.bool.isRequired,
   afterCreateMessage: PropTypes.func,
+  afterUpdateResolution: PropTypes.func,
 };
 
 MessageComposer.defaultProps = {
   title: '',
   afterCreateMessage: () => {},
+  afterUpdateResolution: () => {},
 };
 
 export default MessageComposer;

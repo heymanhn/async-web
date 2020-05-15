@@ -3,7 +3,6 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 
-import { getLocalUser } from 'utils/auth';
 import useHover from 'hooks/shared/useHover';
 
 import DraftTooltip from './DraftTooltip';
@@ -17,10 +16,11 @@ const Highlight = styled.span(
     cursor: 'pointer',
     padding: '2px 0px',
   },
-  ({ isHover, isInitialDraft, isAuthor, theme: { colors } }) => {
+  ({ isHover, isInitialDraft, isResolved, theme: { colors } }) => {
     const getHighlightColor = () => {
-      if (!isInitialDraft) return colors.highlightYellow;
-      return isAuthor ? colors.blue : colors.grey6;
+      if (isResolved) return colors.grey6;
+      if (isInitialDraft) return colors.blue;
+      return colors.highlightYellow;
     };
 
     if (!isHover)
@@ -40,7 +40,7 @@ const InlineThreadElement = ({ attributes, children, element }) => {
   const ref = useRef(null);
   const [isHighlightHover, setIsHighlightHover] = useState(false);
   const [isPreviewHover, setIsPreviewHover] = useState(false);
-  const { discussionId, isInitialDraft, authorId, mode } = element;
+  const { discussionId, isInitialDraft, isResolved, mode } = element;
 
   // See https://upmostly.com/tutorials/settimeout-in-react-components-using-hooks
   const isHighlightHoverRef = useRef(isHighlightHover);
@@ -84,17 +84,14 @@ const InlineThreadElement = ({ attributes, children, element }) => {
   );
   delete previewHoverProps.hover;
 
-  const { userId } = getLocalUser();
-  const isAuthor = userId === authorId;
-
   const Tooltip = isInitialDraft ? DraftTooltip : InlineThreadPreview;
 
   return (
     <span ref={ref} {...highlightHoverProps}>
       <Highlight
         isHover={isHighlightHover || isPreviewHover}
-        isAuthor={isAuthor}
         isInitialDraft={isInitialDraft}
+        isResolved={isResolved}
         {...attributes}
       >
         {children}
