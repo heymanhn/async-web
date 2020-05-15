@@ -1,5 +1,6 @@
 import { faLaugh, faSquare } from '@fortawesome/free-regular-svg-icons';
 import {
+  faPlus as faRegularPlus,
   faPlusCircle as faRegularPlusCircle,
   faTimes,
   faCommentLines as faRegularCommentLines,
@@ -87,6 +88,7 @@ export default [
   faLongArrowDown,
   faQuoteRight,
   faRegularCommentLines,
+  faRegularPlus,
   faRegularPlusCircle,
   faReply,
   faSolidArrowCircleRight,
