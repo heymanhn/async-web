@@ -72,6 +72,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   if (!data || !data.discussion || !data2 || !data2.messages)
     return <NotFound />;
 
+  const { pageToken } = data2.messages;
   const { title, draft, messageCount, workspaces } = data.discussion;
   const { tags } = data.discussion;
   const readOnly = isResourceReadOnly(tags);
@@ -119,7 +120,9 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
         <NavigationBar />
         <ContentContainer ref={discussionRef}>
           <MessageContext.Provider value={messageValue}>
-            {!!messageCount && <TitleEditor initialTitle={title} />}
+            {!!messageCount && !pageToken && (
+              <TitleEditor initialTitle={title} />
+            )}
             {!!messageCount && (
               <DiscussionMessages isUnread={isResourceUnread(tags)} />
             )}

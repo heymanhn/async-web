@@ -20,6 +20,16 @@ const Container = styled.div({
   justifyContent: 'center',
 });
 
+const LoadingMessage = styled.div(
+  ({ theme: { colors, discussionViewport, fontProps } }) => ({
+    ...fontProps({ size: 12, weight: 500 }),
+    color: colors.grey6,
+    margin: '-15px auto 0',
+    padding: '15px 30px 0',
+    width: discussionViewport,
+  })
+);
+
 const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
   top: '46px', // vertically align to bottom of the nav bar (60px)
 });
@@ -45,7 +55,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     }
   }, [isUnread, markAsRead, discussionId, currentDiscussionId]);
 
-  const { loading, data } = usePaginatedResource({
+  const { loading, isPaginating, data } = usePaginatedResource({
     containerRef: discussionRef,
     queryDetails: {
       query: discussionMessagesQuery,
@@ -83,6 +93,9 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
         dividerRef={dividerRef}
         afterClick={markAsRead}
       />
+      {isPaginating && (
+        <LoadingMessage>Fetching earlier messages...</LoadingMessage>
+      )}
       {messages.map((m, i) => (
         <React.Fragment key={m.id}>
           {firstNewMessageId(messages) === m.id && m.id !== messages[0].id && (

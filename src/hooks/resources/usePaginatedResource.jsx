@@ -26,7 +26,7 @@ const usePaginatedResource = ({
   isDisabled = false,
 } = {}) => {
   const [shouldFetch, setShouldFetch] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
+  const [isPaginating, setIsPaginating] = useState(false);
 
   const handleScroll = () => {
     const { current: elem } = containerRef || {};
@@ -87,7 +87,7 @@ const usePaginatedResource = ({
           const { items: previousItems } = previousResult[key];
           const { items: newItems, pageToken: newToken } = fetchMoreResult[key];
           setShouldFetch(false);
-          setIsFetching(false);
+          setIsPaginating(false);
 
           const newResult = {};
           newResult[key] = {
@@ -105,12 +105,12 @@ const usePaginatedResource = ({
     }
   };
 
-  if (shouldFetch && pageToken && !isFetching) {
-    setIsFetching(true);
+  if (shouldFetch && pageToken && !isPaginating) {
+    setIsPaginating(true);
     fetchMoreItems();
   }
 
-  return { loading, data: data[key] };
+  return { loading, isPaginating, data: data[key] };
 };
 
 export default usePaginatedResource;
