@@ -131,7 +131,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
   const deleteDocumentCommand = {
     type: 'command',
     icon: ['fal', 'times-circle'],
-    title: `Delete document`,
+    title: 'Delete document',
     action: () => handleDeleteWrapper('document'),
     shortcut: 'D',
   };
@@ -139,7 +139,7 @@ const useCommandLibrary = ({ source, setSource, title }) => {
   const deleteDiscussionCommand = {
     type: 'command',
     icon: ['fal', 'times-circle'],
-    title: `Delete discussion`,
+    title: 'Delete discussion',
     action: () => handleDeleteWrapper('discussion'),
     shortcut: 'D',
   };

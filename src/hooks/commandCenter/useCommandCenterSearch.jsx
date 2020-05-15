@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { navigate } from '@reach/router';
 import { useApolloClient } from '@apollo/react-hooks';
 import Pluralize from 'pluralize';
 
 import searchQuery from 'graphql/queries/search';
 import useCommandLibrary from 'hooks/commandCenter/useCommandLibrary';
+import { getLocalUser } from 'utils/auth';
 import { RESOURCE_ICONS } from 'utils/constants';
+import { NavigationContext } from 'utils/contexts';
 
 const useCommandCenterSearch = ({
   source: newSource,
@@ -13,18 +15,35 @@ const useCommandCenterSearch = ({
   ...props
 }) => {
   const client = useApolloClient();
+  const { resource: resourceContext } = useContext(NavigationContext);
+  const { resourceQuery, resourceType, variables } = resourceContext;
+
   const commands = useCommandLibrary({ source: newSource, ...props });
   const [queryString, setQueryString] = useState('');
   const [prevQueryString, setPrevQueryString] = useState(queryString);
   const [results, setResults] = useState(commands);
   const [source, setSource] = useState(newSource);
 
+  // For certain resource commands, only allow if the current user is the author
+  const allowedCommand = title => {
+    if (!title.includes('Delete')) return true;
+
+    const data = client.readQuery({ query: resourceQuery, variables });
+    const { author, owner } = data[resourceType];
+    const { id: authorId } = author || owner;
+    const { userId } = getLocalUser();
+    return userId === authorId;
+  };
+
   const filterCommands = () => {
-    if (!queryString) return commands;
+    const allowedCommands = commands.filter(({ title }) =>
+      allowedCommand(title)
+    );
+    if (!queryString) return allowedCommands;
 
     const sanitizedString = queryString.toLowerCase();
 
-    return commands.filter(({ title }) =>
+    return allowedCommands.filter(({ title }) =>
       title.toLowerCase().includes(sanitizedString)
     );
   };
@@ -55,10 +74,11 @@ const useCommandCenterSearch = ({
   // Calling the search API synchronously because I don't want the UI
   // to render before the search query has completed
   const executeSearch = async () => {
+    if (queryString.length <= 1) return Promise.resolve([]);
+
     const { data } = await client.query({
       query: searchQuery,
       variables: { queryString },
-      fetchResults: queryString.length > 1,
     });
 
     if (data && data.search) {
