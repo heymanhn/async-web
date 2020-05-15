@@ -6,6 +6,7 @@ import Pluralize from 'pluralize';
 import styled from '@emotion/styled';
 
 import discussionQuery from 'graphql/queries/discussion';
+import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
 import localDeleteThreadMutation from 'graphql/mutations/local/deleteThreadFromDocument';
 import localUpdateParentMessageMtn from 'graphql/mutations/local/updateMessageInDiscussion';
@@ -97,9 +98,14 @@ const ThreadModal = ({
     variables: { discussionId: threadId },
   });
 
-  if (!data || !data.discussion) return null;
+  const { data: data2 } = useQuery(discussionMessagesQuery, {
+    variables: { discussionId: threadId, queryParams: { order: 'desc' } },
+  });
+
+  if (!data || !data.discussion || !data2 || !data2.messages) return null;
 
   const { draft, messageCount, topic, tags, parent } = data.discussion;
+  const { pageToken } = data2.messages;
 
   const afterCreateMessage = newThreadId => {
     // Only need to set this once, when the first message is created.
@@ -168,7 +174,7 @@ const ThreadModal = ({
         <Container ref={modalRef}>
           <InnerContainer>
             <MessageContext.Provider value={messageValue}>
-              {(initialTopic || topic) && <StyledTopicComposer />}
+              {(initialTopic || topic) && !pageToken && <StyledTopicComposer />}
               <ThreadMessages isUnread={isResourceUnread(tags)} />
               <StyledMessageComposer
                 ref={composerRef}
