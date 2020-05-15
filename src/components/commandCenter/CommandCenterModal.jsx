@@ -34,9 +34,8 @@ const customBackdropStyle = {
   opacity: 0.5,
 };
 
-const Header = styled.div(({ resultCount, theme: { colors } }) => ({
+const Header = styled.div(({ theme: { colors } }) => ({
   borderBottom: `1px solid ${colors.borderGrey}`,
-  borderRadius: resultCount ? '0' : '5px',
   padding: '15px 30px 0',
 }));
 
@@ -44,10 +43,19 @@ const Title = styled.div(({ theme: { fontProps } }) => ({
   ...fontProps({ size: 14, weight: 500 }),
 }));
 
-const EmptyRow = styled.div(({ theme: { fontProps } }) => ({
-  ...fontProps({ size: 14, weight: 400 }),
-  margin: '20px 30px 20px',
+const EmptyRow = styled.div(({ theme: { colors, fontProps } }) => ({
+  ...fontProps({ size: 14 }),
+  background: colors.bgGrey,
+  borderBottomLeftRadius: '5px',
+  borderBottomRightRadius: '5px',
+  color: colors.grey2,
+  padding: '15px 30px',
 }));
+
+const NoResults = styled.div({
+  cursor: 'default',
+  marginTop: '-2px',
+});
 
 const SearchInput = styled.input(({ theme: { colors, fontProps } }) => ({
   ...fontProps({ size: 16, weight: 400 }),
@@ -170,7 +178,11 @@ const CommandCenterModal = ({ isOpen, handleClose, ...props }) => {
           value={queryString}
         />
       </Header>
-      {!results.length && <EmptyRow>No results</EmptyRow>}
+      {!results.length && (
+        <EmptyRow>
+          <NoResults>No results</NoResults>
+        </EmptyRow>
+      )}
       {results.map((r, i) => (
         <ResultRow
           key={r.title}
