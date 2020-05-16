@@ -67,7 +67,7 @@ const ThreadListItem = ({ threadId }) => {
   });
 
   const { loading: loading2, data: data2 } = useQuery(discussionMessagesQuery, {
-    variables: { discussionId: threadId, queryParams: {} },
+    variables: { discussionId: threadId, queryParams: { order: 'desc' } },
   });
 
   if (loading || loading2) return null;
