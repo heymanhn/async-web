@@ -29,7 +29,7 @@ const usePaginatedResource = ({
   const [isPaginating, setIsPaginating] = useState(false);
   const { current: container } = containerRef || {};
 
-  const handleScroll = () => {
+  const handlePagination = () => {
     if (!container || isDisabled) return;
 
     const { current: modal } = modalRef || {};
@@ -57,10 +57,10 @@ const usePaginatedResource = ({
     if (modalRef && !modal) return () => {};
 
     const target = modal || window;
-    const debouncedScroll = debounce(handleScroll, DEBOUNCE_INTERVAL);
-    target.addEventListener('scroll', debouncedScroll);
+    const debouncedPaginate = debounce(handlePagination, DEBOUNCE_INTERVAL);
+    target.addEventListener('scroll', debouncedPaginate);
 
-    return () => target.removeEventListener('scroll', debouncedScroll);
+    return () => target.removeEventListener('scroll', debouncedPaginate);
   });
 
   const { loading, data, fetchMore } = useQuery(query, props);
