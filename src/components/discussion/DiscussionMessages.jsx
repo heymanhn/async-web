@@ -66,6 +66,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     reverse: true,
     isDisabled: !isScrolled,
   });
+
   useReversePaginateScroll({
     isPaginating,
     data,
