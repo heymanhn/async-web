@@ -69,26 +69,29 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   });
 
   // Keep the scroll position of the container intact while reverse paginating
+  // https://kirbysayshi.com/2013/08/19/maintaining-scroll-position-knockoutjs-list.html
+  //
+  // TODO: handle window vs modal scrolling.
   useEffect(() => {
     const { current: container } = discussionRef || {};
     const { items } = data || {};
     const safeItems = items || [];
 
     if (container) {
-      if (isPaginating && !scrollHeight)
-        setScrollHeight(container.scrollHeight);
+      if (isPaginating && !scrollHeight) {
+        setScrollHeight(container.scrollHeight - window.scrollY);
+      }
 
-      if (
-        !isPaginating &&
-        safeItems.length > prevMessageCount &&
-        scrollHeight &&
-        scrollHeight !== container.scrollHeight
-      ) {
+      if (!isPaginating && safeItems.length > prevMessageCount) {
         setScrollHeight(null);
         setPrevMessageCount(safeItems.length);
-        const newScrollTop =
-          container.scrollTop + container.scrollHeight - scrollHeight;
-        container.scroll({ top: newScrollTop });
+
+        // Extra scrolling is only needed if the window is not scrolled to
+        // the very top. The offset is the difference in height of the
+        // container element, before vs. after pagination.
+        if (!window.scrollY) {
+          window.scroll({ top: container.scrollHeight - scrollHeight });
+        }
       }
     }
   }, [isPaginating, scrollHeight, data, prevMessageCount]);
