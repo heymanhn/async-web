@@ -51,6 +51,7 @@ export const DEFAULT_DISCUSSION_CONTEXT = {
   messageCount: null,
   bottomRef: {},
   composerRef: {},
+  titleRef: {},
 
   handleShowThread: () => {},
   afterCreateDiscussion: () => {},
@@ -71,6 +72,7 @@ export const DEFAULT_THREAD_CONTEXT = {
   modalRef: {},
   bottomRef: {},
   composerRef: {},
+  topicRef: {},
 
   afterDeleteThread: () => {},
   setHideComposer: () => {},

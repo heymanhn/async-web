@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
+import useReversePaginateScroll from 'hooks/resources/useReversePaginateScroll';
 import { MessageContext, ThreadContext } from 'utils/contexts';
 import { firstNewMessageId, scrollToBottom } from 'utils/helpers';
 
@@ -21,7 +22,7 @@ const Container = styled.div({
 const LoadingMessage = styled.div(
   ({ theme: { colors, discussionViewport, fontProps } }) => ({
     ...fontProps({ size: 12, weight: 500 }),
-    color: colors.grey6,
+    color: colors.grey4,
     margin: '0 auto',
     padding: '15px 30px 0',
     width: discussionViewport,
@@ -39,7 +40,7 @@ const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
 const ThreadMessages = ({ isUnread, ...props }) => {
   const threadRef = useRef(null);
   const dividerRef = useRef(null);
-  const { threadId, modalRef, bottomRef, composerRef } = useContext(
+  const { threadId, modalRef, bottomRef, composerRef, topicRef } = useContext(
     ThreadContext
   );
   const messageContext = useContext(MessageContext);
@@ -67,6 +68,14 @@ const ThreadMessages = ({ isUnread, ...props }) => {
     modalRef,
     reverse: true,
     isDisabled: !isScrolled,
+  });
+
+  useReversePaginateScroll({
+    isPaginating,
+    data,
+    containerRef: threadRef,
+    modalRef,
+    titleRef: topicRef,
   });
 
   if (loading || !data) return null;

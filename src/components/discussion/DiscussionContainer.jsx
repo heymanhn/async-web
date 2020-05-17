@@ -45,6 +45,7 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
   useUpdateSelectedResource(discussionId);
   const discussionRef = useRef(null);
+  const titleRef = useRef(null);
   const composerRef = useRef(null);
   const bottomRef = useRef(null);
   const [forceUpdate, setForceUpdate] = useState(false);
@@ -97,6 +98,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
     messageCount,
     bottomRef,
     composerRef,
+    titleRef,
     quoteReply,
 
     afterDeleteDiscussion,
@@ -121,7 +123,7 @@ const DiscussionContainer = ({ discussionId, threadId: initialThreadId }) => {
         <ContentContainer ref={discussionRef}>
           <MessageContext.Provider value={messageValue}>
             {!!messageCount && !pageToken && (
-              <TitleEditor initialTitle={title} />
+              <TitleEditor initialTitle={title} ref={titleRef} />
             )}
             {!!messageCount && (
               <DiscussionMessages isUnread={isResourceUnread(tags)} />

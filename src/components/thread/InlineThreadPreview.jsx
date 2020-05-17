@@ -138,7 +138,7 @@ const ThreadPreview = ({ discussionId, isOpen, parentRef, mode }) => {
   // discussion modal loads immediately
   client.query({
     query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: { order: 'desc' } },
   });
 
   const root = window.document.getElementById('root');

@@ -107,7 +107,7 @@ const useAppPusher = pusher => {
 
         client.query({
           query: discussionMessagesQuery,
-          variables: { discussionId, queryParams: {} },
+          variables: { discussionId, queryParams: { order: 'desc' } },
         });
       }
 

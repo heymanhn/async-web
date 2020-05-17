@@ -78,7 +78,7 @@ const useThreadMutations = () => {
       };
       refetchQueries.push({
         query: discussionMessagesQuery,
-        variables: { discussionId, queryParams: {} },
+        variables: { discussionId, queryParams: { order: 'desc' } },
       });
     }
 

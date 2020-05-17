@@ -5,12 +5,12 @@ import styled from '@emotion/styled';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
+import useReversePaginateScroll from 'hooks/resources/useReversePaginateScroll';
 import { DiscussionContext, MessageContext } from 'utils/contexts';
 import { firstNewMessageId, scrollToBottom } from 'utils/helpers';
 
 import NotFound from 'components/navigation/NotFound';
 import Message from 'components/message/Message';
-
 import NewMessagesDivider from 'components/shared/NewMessagesDivider';
 import NewMessagesIndicator from 'components/shared/NewMessagesIndicator';
 
@@ -23,7 +23,7 @@ const Container = styled.div({
 const LoadingMessage = styled.div(
   ({ theme: { colors, discussionViewport, fontProps } }) => ({
     ...fontProps({ size: 12, weight: 500 }),
-    color: colors.grey6,
+    color: colors.grey4,
     margin: '-15px auto 0',
     padding: '15px 30px 0',
     width: discussionViewport,
@@ -37,12 +37,13 @@ const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
 const DiscussionMessages = ({ isUnread, ...props }) => {
   const discussionRef = useRef(null);
   const dividerRef = useRef(null);
-  const { discussionId, bottomRef, composerRef } = useContext(
+  const { discussionId, bottomRef, composerRef, titleRef } = useContext(
     DiscussionContext
   );
   const messageContext = useContext(MessageContext);
   const [currentDiscussionId, setCurrentDiscussionId] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
+
   const markAsRead = useMarkResourceAsRead();
 
   // Keep track of the current discussion in state to make sure we can mark the
@@ -64,6 +65,13 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     },
     reverse: true,
     isDisabled: !isScrolled,
+  });
+
+  useReversePaginateScroll({
+    isPaginating,
+    data,
+    containerRef: discussionRef,
+    titleRef,
   });
 
   if (loading) return null;

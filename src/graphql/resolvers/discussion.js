@@ -152,7 +152,7 @@ const updateMessageInDiscussion = (
     messages: { pageToken, items, __typename, messageCount },
   } = client.readQuery({
     query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: { order: 'desc' } },
   });
 
   const index = items.findIndex(i => i.message.id === messageId);
@@ -167,7 +167,7 @@ const updateMessageInDiscussion = (
   };
   client.writeQuery({
     query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: { order: 'desc' } },
     data: {
       messages: {
         items: [
@@ -194,13 +194,13 @@ const deleteMessageFromDiscussion = (
     messages: { pageToken, items, __typename, messageCount },
   } = client.readQuery({
     query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: { order: 'desc' } },
   });
 
   const index = items.findIndex(i => i.message.id === messageId);
   client.writeQuery({
     query: discussionMessagesQuery,
-    variables: { discussionId, queryParams: {} },
+    variables: { discussionId, queryParams: { order: 'desc' } },
     data: {
       messages: {
         messageCount: messageCount - 1,

@@ -66,6 +66,7 @@ const ThreadModal = ({
   const modalRef = useRef(null);
   const bottomRef = useRef(null);
   const composerRef = useRef(null);
+  const topicRef = useRef(null);
   const [quoteReply, setQuoteReply] = useState(null);
 
   // Hides the message composer if the user is an editing a message
@@ -152,6 +153,7 @@ const ThreadModal = ({
     modalRef,
     bottomRef,
     composerRef,
+    topicRef,
     hideComposer,
     messageCount,
     afterDeleteThread,
@@ -174,7 +176,9 @@ const ThreadModal = ({
         <Container ref={modalRef}>
           <InnerContainer>
             <MessageContext.Provider value={messageValue}>
-              {(initialTopic || topic) && !pageToken && <StyledTopicComposer />}
+              {(initialTopic || topic) && !pageToken && (
+                <StyledTopicComposer ref={topicRef} />
+              )}
               <ThreadMessages isUnread={isResourceUnread(tags)} />
               <StyledMessageComposer
                 ref={composerRef}

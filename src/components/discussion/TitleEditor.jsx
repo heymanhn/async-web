@@ -26,12 +26,12 @@ const DividerLine = styled.div(({ theme: { colors } }) => ({
   width: '100%',
 }));
 
-const TitleEditor = ({ initialTitle, ...props }) => {
+const TitleEditor = React.forwardRef(({ initialTitle, ...props }, titleRef) => {
   const { handleUpdateDiscussionTitle } = useDiscussionMutations();
   const { readOnly } = useContext(DiscussionContext);
 
   return (
-    <>
+    <div ref={titleRef}>
       <StyledTitleEditable
         initialTitle={initialTitle}
         readOnly={readOnly}
@@ -41,9 +41,9 @@ const TitleEditor = ({ initialTitle, ...props }) => {
       <Divider>
         <DividerLine />
       </Divider>
-    </>
+    </div>
   );
-};
+});
 
 TitleEditor.propTypes = {
   initialTitle: PropTypes.string,
