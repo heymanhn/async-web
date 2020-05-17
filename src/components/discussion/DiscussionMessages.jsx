@@ -5,12 +5,12 @@ import styled from '@emotion/styled';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
+import useReversePaginateScroll from 'hooks/resources/useReversePaginateScroll';
 import { DiscussionContext, MessageContext } from 'utils/contexts';
 import { firstNewMessageId, scrollToBottom } from 'utils/helpers';
 
 import NotFound from 'components/navigation/NotFound';
 import Message from 'components/message/Message';
-
 import NewMessagesDivider from 'components/shared/NewMessagesDivider';
 import NewMessagesIndicator from 'components/shared/NewMessagesIndicator';
 
@@ -42,9 +42,8 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   );
   const messageContext = useContext(MessageContext);
   const [currentDiscussionId, setCurrentDiscussionId] = useState(null);
-  const [scrollHeight, setScrollHeight] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [prevMessageCount, setPrevMessageCount] = useState(null);
+
   const markAsRead = useMarkResourceAsRead();
 
   // Keep track of the current discussion in state to make sure we can mark the
@@ -67,34 +66,7 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     reverse: true,
     isDisabled: !isScrolled,
   });
-
-  // Keep the scroll position of the container intact while reverse paginating
-  // https://kirbysayshi.com/2013/08/19/maintaining-scroll-position-knockoutjs-list.html
-  //
-  // TODO: handle window vs modal scrolling.
-  useEffect(() => {
-    const { current: container } = discussionRef || {};
-    const { items } = data || {};
-    const safeItems = items || [];
-
-    if (container) {
-      if (isPaginating && !scrollHeight) {
-        setScrollHeight(container.scrollHeight - window.scrollY);
-      }
-
-      if (!isPaginating && safeItems.length > prevMessageCount) {
-        setScrollHeight(null);
-        setPrevMessageCount(safeItems.length);
-
-        // Extra scrolling is only needed if the window is not scrolled to
-        // the very top. The offset is the difference in height of the
-        // container element, before vs. after pagination.
-        if (!window.scrollY) {
-          window.scroll({ top: container.scrollHeight - scrollHeight });
-        }
-      }
-    }
-  }, [isPaginating, scrollHeight, data, prevMessageCount]);
+  useReversePaginateScroll({ isPaginating, data, containerRef: discussionRef });
 
   if (loading) return null;
   if (!data) return <NotFound />;
@@ -102,7 +74,6 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
   const { items } = data;
   const safeItems = items || [];
   const messages = safeItems.map(i => i.message).reverse();
-  if (!prevMessageCount) setPrevMessageCount(messages.length);
 
   // Logic to scroll to the bottom of the page on each initial render
   // of discussion messages

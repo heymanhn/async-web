@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import discussionMessagesQuery from 'graphql/queries/discussionMessages';
 import useMarkResourceAsRead from 'hooks/resources/useMarkResourceAsRead';
 import usePaginatedResource from 'hooks/resources/usePaginatedResource';
+import useReversePaginateScroll from 'hooks/resources/useReversePaginateScroll';
 import { MessageContext, ThreadContext } from 'utils/contexts';
 import { firstNewMessageId, scrollToBottom } from 'utils/helpers';
 
@@ -67,6 +68,12 @@ const ThreadMessages = ({ isUnread, ...props }) => {
     modalRef,
     reverse: true,
     isDisabled: !isScrolled,
+  });
+  useReversePaginateScroll({
+    isPaginating,
+    data,
+    containerRef: threadRef,
+    modalRef,
   });
 
   if (loading || !data) return null;
