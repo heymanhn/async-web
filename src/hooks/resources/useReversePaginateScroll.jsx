@@ -11,6 +11,7 @@ const useReversePaginateScroll = ({
   data,
   containerRef,
   modalRef,
+  titleRef,
 } = {}) => {
   const [prevContainerHeight, setPrevContainerHeight] = useState(null);
   const [prevMessageCount, setPrevMessageCount] = useState(null);
@@ -31,18 +32,25 @@ const useReversePaginateScroll = ({
         setPrevContainerHeight(null);
         setPrevMessageCount(messageCount);
 
-        // Extra scrolling is only needed if the window is not scrolled to
-        // the very top. The offset is the difference in height of the
-        // container element, before vs. after pagination.
-        const scrollOffset = modal ? modal.scrollTop : window.scrollY;
+        /* Extra scrolling is only needed if the window is not scrolled to
+         * the very top. The offset is the difference in height of the
+         * container element, before vs. after pagination.
+         *
+         * Be sure to also scroll the extra height of the discussion title
+         * or thread topic, if it appears.
+         */
+        const scrollY = modal ? modal.scrollTop : window.scrollY;
         const target = modal || window;
-        if (!scrollOffset) {
-          console.log(
-            `scrolling by ${container.scrollHeight - prevContainerHeight}`
-          );
-          target.scroll({
-            top: container.scrollHeight - prevContainerHeight,
-          });
+
+        if (!scrollY) {
+          let scrollOffset = container.scrollHeight - prevContainerHeight;
+
+          const { current: title } = titleRef || {};
+          if (title) scrollOffset += title.offsetHeight;
+
+          if (title) console.log(`title is ${title.offsetHeight}`);
+          console.log(`scrolling by ${scrollOffset}`);
+          target.scroll({ top: scrollOffset });
         }
       }
     }
@@ -53,6 +61,7 @@ const useReversePaginateScroll = ({
     prevMessageCount,
     containerRef,
     modalRef,
+    titleRef,
   ]);
 
   if (!prevMessageCount && messageCount) setPrevMessageCount(messageCount);

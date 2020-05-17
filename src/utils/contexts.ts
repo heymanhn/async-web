@@ -71,6 +71,7 @@ export const DEFAULT_THREAD_CONTEXT = {
   modalRef: {},
   bottomRef: {},
   composerRef: {},
+  topicRef: {},
 
   afterDeleteThread: () => {},
   setHideComposer: () => {},

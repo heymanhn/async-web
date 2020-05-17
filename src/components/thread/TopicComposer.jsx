@@ -31,7 +31,7 @@ const TopicEditable = styled(Editable)(({ theme: { colors, fontProps } }) => ({
   },
 }));
 
-const TopicComposer = props => {
+const TopicComposer = React.forwardRef((props, topicRef) => {
   const { topic } = useContext(ThreadContext);
 
   const editor = useMemo(
@@ -54,12 +54,12 @@ const TopicComposer = props => {
   });
 
   return (
-    <Container {...props}>
+    <Container {...props} ref={topicRef}>
       <Slate editor={editor} value={content} onChange={v => setContent(v)}>
         <TopicEditable readOnly {...editorProps} />
       </Slate>
     </Container>
   );
-};
+});
 
 export default TopicComposer;

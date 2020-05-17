@@ -40,7 +40,7 @@ const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
 const ThreadMessages = ({ isUnread, ...props }) => {
   const threadRef = useRef(null);
   const dividerRef = useRef(null);
-  const { threadId, modalRef, bottomRef, composerRef } = useContext(
+  const { threadId, modalRef, bottomRef, composerRef, topicRef } = useContext(
     ThreadContext
   );
   const messageContext = useContext(MessageContext);
@@ -74,6 +74,7 @@ const ThreadMessages = ({ isUnread, ...props }) => {
     data,
     containerRef: threadRef,
     modalRef,
+    titleRef: topicRef,
   });
 
   if (loading || !data) return null;
