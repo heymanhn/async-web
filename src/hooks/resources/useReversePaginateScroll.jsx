@@ -22,6 +22,7 @@ const useReversePaginateScroll = ({
   useEffect(() => {
     const { current: container } = containerRef || {};
     const { current: modal } = modalRef || {};
+    const { current: title } = titleRef || {};
 
     if (container) {
       if (isPaginating && !prevContainerHeight) {
@@ -44,12 +45,8 @@ const useReversePaginateScroll = ({
 
         if (!scrollY) {
           let scrollOffset = container.scrollHeight - prevContainerHeight;
-
-          const { current: title } = titleRef || {};
           if (title) scrollOffset += title.offsetHeight;
 
-          if (title) console.log(`title is ${title.offsetHeight}`);
-          console.log(`scrolling by ${scrollOffset}`);
           target.scroll({ top: scrollOffset });
         }
       }

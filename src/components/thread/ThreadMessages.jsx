@@ -22,7 +22,7 @@ const Container = styled.div({
 const LoadingMessage = styled.div(
   ({ theme: { colors, discussionViewport, fontProps } }) => ({
     ...fontProps({ size: 12, weight: 500 }),
-    color: colors.grey6,
+    color: colors.grey4,
     margin: '0 auto',
     padding: '15px 30px 0',
     width: discussionViewport,

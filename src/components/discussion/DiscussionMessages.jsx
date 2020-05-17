@@ -23,7 +23,7 @@ const Container = styled.div({
 const LoadingMessage = styled.div(
   ({ theme: { colors, discussionViewport, fontProps } }) => ({
     ...fontProps({ size: 12, weight: 500 }),
-    color: colors.grey6,
+    color: colors.grey4,
     margin: '-15px auto 0',
     padding: '15px 30px 0',
     width: discussionViewport,
@@ -37,7 +37,7 @@ const StyledNewMessagesIndicator = styled(NewMessagesIndicator)({
 const DiscussionMessages = ({ isUnread, ...props }) => {
   const discussionRef = useRef(null);
   const dividerRef = useRef(null);
-  const { discussionId, bottomRef, composerRef } = useContext(
+  const { discussionId, bottomRef, composerRef, titleRef } = useContext(
     DiscussionContext
   );
   const messageContext = useContext(MessageContext);
@@ -66,7 +66,12 @@ const DiscussionMessages = ({ isUnread, ...props }) => {
     reverse: true,
     isDisabled: !isScrolled,
   });
-  useReversePaginateScroll({ isPaginating, data, containerRef: discussionRef });
+  useReversePaginateScroll({
+    isPaginating,
+    data,
+    containerRef: discussionRef,
+    titleRef,
+  });
 
   if (loading) return null;
   if (!data) return <NotFound />;
