@@ -60,7 +60,7 @@ const useSelectionDimensions = ({ skip, source = 'selection' } = {}) => {
     const domSelection = window.getSelection();
 
     if (!selection && !domSelection && source !== 'notFocused') return;
-    if (!domSelection.rangeCount) return;
+    if (!domSelection.rangeCount && source !== 'notFocused') return;
     if (skip) return;
 
     const rect = rectForSource();
