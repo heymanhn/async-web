@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import throttle from 'lodash/throttle';
+import { ReactEditor } from 'slate-react';
 
 import useMessageMutations from 'hooks/message/useMessageMutations';
 import { DEFAULT_ELEMENT } from 'utils/editor/constants';
@@ -53,7 +54,13 @@ const useContentState = ({
       );
       setLastTouched(null);
     }
-  }, [resourceId, initialResourceId, initialContent]);
+
+    // We need to keep Slate's selection state consistent with the content
+    // state when changing to another document.
+    return () => {
+      ReactEditor.deselect(editor);
+    };
+  }, [resourceId, initialResourceId, initialContent, editor]);
 
   if (editor.operations.length) setLastTouchedToNow();
 
