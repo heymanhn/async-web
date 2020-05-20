@@ -36,13 +36,13 @@ const useContentState = ({
     }
   };
 
-  const [resourceId, setResourceId] = useState(initialResourceId);
+  const [resourceId, setResourceId] = useState(null);
   const [content, setContent] = useState(
     initialContent ? JSON.parse(initialContent) : DEFAULT_ELEMENT()
   );
 
   useEffect(() => {
-    const resourceChanged = resourceId && resourceId !== initialResourceId;
+    const resourceChanged = resourceId !== initialResourceId;
     const recentlyTouched =
       lastTouchedRef.current &&
       Date.now() - lastTouchedRef.current < RECENT_TOUCH_INTERVAL;
@@ -54,15 +54,14 @@ const useContentState = ({
       );
       setLastTouched(null);
     }
-
-    // We need to keep Slate's selection state consistent with the content
-    // state when changing to another document.
-    return () => {
-      ReactEditor.deselect(editor);
-    };
   }, [resourceId, initialResourceId, initialContent, editor]);
 
   if (editor.operations.length) setLastTouchedToNow();
+
+  // We need to keep Slate's selection state consistent with the content state
+  if (resourceId !== initialResourceId && editor.selection) {
+    ReactEditor.deselect(editor);
+  }
 
   return {
     content,
