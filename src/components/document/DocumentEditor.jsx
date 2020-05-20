@@ -42,7 +42,11 @@ const DocumentEditor = ({ initialContent, ...props }) => {
     setLastTouchedToNow
   );
 
-  useAutoSave({ content, handleSave: handleUpdateDocument });
+  useAutoSave({
+    content,
+    handleSave: handleUpdateDocument,
+    isDisabled: !editor.selection,
+  });
 
   const onChangeWrapper = value => {
     onChange(value);

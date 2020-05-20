@@ -20,7 +20,6 @@ const useAutoSave = ({
   const [state, setState] = useState({
     savedContent: contentString,
     isTyping: false,
-    timerStarted: false,
     timer: null,
   });
 
@@ -31,6 +30,7 @@ const useAutoSave = ({
     // know the content has changed, but we only proceed with the save if the
     // user hasn't changed the content for a given idle interval.
     const readyToSave = !isDisabledRef.current && newContent === oldContent;
+
     if (readyToSave) {
       handleSave({ content: isJSON ? JSON.parse(newContent) : newContent });
     }
@@ -60,7 +60,23 @@ const useAutoSave = ({
   };
 
   const { savedContent, isTyping, timer } = state;
-  useEffect(() => () => clearTimeout(timer), [timer]);
+
+  /*
+   * Need to make sure savedContent is always set to the initial value of a
+   * given resource. This ensures that we only trigger saving when the
+   * content has actually changed.
+   *
+   * Also: not using contentString as a dependency so that the effect hook
+   * doesn't keep clearing the timers on unmount
+   */
+  useEffect(() => {
+    const newContent = contentStringRef.current;
+    if (isDisabled && newContent !== savedContent) {
+      setState(oldState => ({ ...oldState, savedContent: newContent }));
+    }
+
+    return () => clearTimeout(timer);
+  }, [timer, isDisabled, savedContent]);
 
   if (!isDisabled && contentString !== savedContent && !isTyping) {
     setState(oldState => ({ ...oldState, isTyping: true }));
