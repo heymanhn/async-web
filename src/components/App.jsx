@@ -95,6 +95,7 @@ const client = new ApolloClient({
   link: concat(authMiddleware, restLink),
   cache,
   resolvers: localResolvers,
+  typeDefs: {}, // Workaround to enable Apollo dev tools
 });
 
 const { pusher: pusherClient } = initPusher();
