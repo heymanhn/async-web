@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Slate, Editable } from 'slate-react';
+import { Slate, Editable, ReactEditor } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useAnnotationMonitor from 'hooks/message/useAnnotationMonitor';
@@ -60,14 +60,16 @@ const MessageEditor = ({ initialMessage, autoFocus, ...props }) => {
   useQuoteReplies(editor, setMessage);
   useAnnotationMonitor(message, setMessage, editor, readOnly);
 
+  // Setting editor focus ourselves is more reliable than relying on the
+  // autoFocus prop in the Editable component
+  useEffect(() => {
+    if (autoFocus) setTimeout(() => ReactEditor.focus(editor), 0);
+  }, [autoFocus, editor]);
+
   return (
     <Container mode={mode} {...props}>
       <Slate editor={editor} {...contentProps}>
-        <MessageEditable
-          autoFocus={autoFocus}
-          readOnly={readOnly}
-          {...coreEditorProps}
-        />
+        <MessageEditable readOnly={readOnly} {...coreEditorProps} />
         {readOnly && <ReadOnlyMessageToolbar />}
         {!readOnly && <MessageToolbar />}
         <DefaultPlaceholder />
