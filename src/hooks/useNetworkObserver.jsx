@@ -25,6 +25,7 @@ const useNetworkObserver = () => {
     if (!isLoggedIn) return () => {};
 
     const handleRefetch = async (waitInterval = TIMEOUT) => {
+      console.log('Network observer: Refetching queries');
       try {
         await getCurrentUser(); // Refetch one query to test the waters first
         await client.reFetchObservableQueries();
@@ -37,6 +38,7 @@ const useNetworkObserver = () => {
     const interval = setInterval(() => {
       const currentTime = Date.now();
       if (currentTime > lastTimeRef.current + TIMEOUT + 2000) {
+        console.log('Network observer: triggering a refresh');
         handleRefetch();
       }
 
