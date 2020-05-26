@@ -70,9 +70,9 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     action: () => {
       if (customMode === 'addResource') {
         handleCreateDocument({ parentWorkspaceId: workspaceId });
+      } else {
+        handleCreateDocument();
       }
-
-      handleCreateDocument();
     },
     shortcut: 'N',
   };
@@ -93,9 +93,9 @@ const useCommandLibrary = ({ source, setSource, title }) => {
     action: () => {
       if (customMode === 'addResource') {
         handleCreateDiscussion({ parentWorkspaceId: workspaceId });
+      } else {
+        handleCreateDiscussion();
       }
-
-      handleCreateDiscussion();
     },
     shortcut: 'D',
   };
