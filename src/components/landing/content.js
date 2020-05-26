@@ -20,18 +20,18 @@ const moduleList = [
   {
     type: HEADLINE,
     content: {
-      title: 'A new standard for team communication',
+      title: 'Organized, distraction-free team communication',
       description:
-        'Candor is a distraction-free space that streamlines team communication and knowledge sharing.',
+        'Candor is the only app you need for asynchronous communication. Write, discuss, and get organized – all in one app.',
     },
   },
   {
     type: LARGE_GRAPHIC,
     mode: 'dark',
     content: {
-      title: 'Built for all types of team communication',
+      title: 'Built for all types of asynchronous communication',
       description:
-        'Better documents and better discussions makes better decisions',
+        'Better documents, better discussions make better decisions.',
       image: writeDiscuss,
     },
   },
@@ -47,16 +47,16 @@ const moduleList = [
       features: [
         {
           icon: 'arrow-circle-right',
-          title: 'Write things up vs. chat it down',
+          title: 'No pressure to respond immediately',
           description:
-            'Better discussions start and end with an exchange of complete thoughts, not one-line-at-a-time messages.',
+            'You can take a step back, think about what is being discussed, and follow up with a thoughtful response at a later time.',
           lineBreak: true,
         },
         {
           icon: 'arrow-circle-right',
-          title: 'No pressure to respond immediately',
+          title: 'Write things up vs. chat it down',
           description:
-            'You can take a step back, think about what is being discussed, and follow up with a thoughtful response at a later time.',
+            'Better discussions start and end with an exchange of complete thoughts, not one-line-at-a-time messages.',
           lineBreak: true,
         },
         {
@@ -102,10 +102,9 @@ const moduleList = [
     type: SIDE_GRAPHIC,
     side: 'right',
     content: {
-      icon: 'terminal',
-      title: 'Meet your Command Center',
+      title: 'Company-wide transparency',
       description:
-        'Use ⌘ + K shortcut for everything. Perform any actions or search your knowledge base in seconds with the command center.',
+        'Candor makes your organization’s memory browseable and searchable. Information is easy to reference and follow even months later.',
       image: cmdCenter,
     },
   },

@@ -10,7 +10,7 @@ export const LargeTitle = styled.div(
 
     [mq('tabletUp')]: {
       ...fontProps({ size: 52, type: 'title' }),
-      maxWidth: '550px',
+      maxWidth: '680px',
       textAlign: 'center',
     },
   })
@@ -24,7 +24,7 @@ export const LargeDescription = styled.div(
     margin: '0 auto 30px',
 
     [mq('tabletUp')]: {
-      maxWidth: '580px',
+      maxWidth: '600px',
       textAlign: 'center',
     },
   })
