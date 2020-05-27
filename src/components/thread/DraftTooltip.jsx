@@ -28,6 +28,7 @@ const Container = styled.div(
     boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
     cursor: isAuthor ? 'pointer' : 'default',
     padding: '15px 25px',
+    zIndex: 1000,
 
     ...styles,
   })
