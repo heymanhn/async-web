@@ -75,7 +75,7 @@ const useContentState = ({
       // Also, why does updating an annotation trigger onChange, but creating
       // the annotation doesn't? I'm confused.
       const throttledUpdateMessage = throttle(
-        () => handleUpdateMessage({ newMessage: c }),
+        () => handleUpdateMessage({ content: c }),
         1000
       );
       if (readOnly) throttledUpdateMessage();

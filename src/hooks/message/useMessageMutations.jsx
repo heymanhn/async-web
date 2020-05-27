@@ -103,10 +103,10 @@ const useMessageMutations = ({ message = null } = {}) => {
     }
   };
 
-  const handleUpdateMessage = async ({ newMessage } = {}) => {
+  const handleUpdateMessage = async ({ content } = {}) => {
     setIsSubmitting(true);
 
-    const trimmedMessage = trimContent(newMessage || message);
+    const trimmedMessage = trimContent(content || message);
     const { data } = await updateMessage({
       variables: {
         discussionId: parentId,

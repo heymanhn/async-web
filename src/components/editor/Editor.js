@@ -341,7 +341,7 @@ const wrapInlineAnnotation = (editor, data, range) => {
  * This ensures that inline annotation elements are always children of one of
  * these root block nodes.
  */
-const createInlineAnnotation = (editor, data) => {
+const createInlineAnnotation = (editor, afterCreate, data) => {
   const leaves = Array.from(
     Editor.nodes(editor, {
       match: n => Editor.isBlock(editor, n),
@@ -354,23 +354,34 @@ const createInlineAnnotation = (editor, data) => {
     const leafRange = Editor.range(editor, leafPath);
     wrapInlineAnnotation(editor, data, leafRange);
   });
+
+  afterCreate({ content: editor.children });
 };
 
-const updateInlineAnnotation = (editor, discussionId, data) => {
+const updateInlineAnnotation = ({
+  editor,
+  discussionId,
+  afterUpdate = () => {},
+  data,
+}) => {
   Transforms.setNodes(editor, data, {
     at: documentSelection(editor),
     match: n =>
       n.type === INLINE_THREAD_ANNOTATION && n.discussionId === discussionId,
   });
+
+  afterUpdate({ content: editor.children });
 };
 
-const removeInlineAnnotation = (editor, discussionId) => {
+const removeInlineAnnotation = (editor, discussionId, afterRemove) => {
   Transforms.unwrapNodes(editor, {
     at: documentSelection(editor),
     match: n =>
       n.type === INLINE_THREAD_ANNOTATION && n.discussionId === discussionId,
     split: true,
   });
+
+  afterRemove({ content: editor.children });
 };
 
 // Credit to https://github.com/ianstormtaylor/slate/blob/master/site/examples/links.js

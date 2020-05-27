@@ -11,6 +11,8 @@ import useDisambiguatedResource from 'hooks/resources/useDisambiguatedResource';
 import localDeleteThreadMutation from 'graphql/mutations/local/deleteThreadFromDocument';
 import localUpdateParentMessageMtn from 'graphql/mutations/local/updateMessageInDiscussion';
 import useMountEffect from 'hooks/shared/useMountEffect';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
+import useMessageMutations from 'hooks/message/useMessageMutations';
 import { track } from 'utils/analytics';
 import {
   DEFAULT_MESSAGE_CONTEXT,
@@ -77,6 +79,11 @@ const ThreadModal = ({
   const [localDeleteThread] = useMutation(localDeleteThreadMutation);
   const [localUpdateParentMessage] = useMutation(localUpdateParentMessageMtn);
 
+  const { handleUpdateDocument } = useDocumentMutations();
+  const { handleUpdateMessage } = useMessageMutations();
+  const afterAnnotationChange =
+    resourceType === 'document' ? handleUpdateDocument : handleUpdateMessage;
+
   useEffect(() => {
     const { origin } = window.location;
     const baseUrl = `${origin}/${Pluralize(resourceType)}/${resourceId}`;
@@ -111,22 +118,38 @@ const ThreadModal = ({
   const afterCreateMessage = newThreadId => {
     // Only need to set this once, when the first message is created.
     if (!messageCount && sourceEditor) {
-      Editor.updateInlineAnnotation(sourceEditor, newThreadId, {
-        isInitialDraft: false,
+      Editor.updateInlineAnnotation({
+        editor: sourceEditor,
+        discussionId: newThreadId,
+        afterUpdate: afterAnnotationChange,
+        data: {
+          isInitialDraft: false,
+        },
       });
     }
   };
 
   const afterUpdateResolution = isResolved => {
     if (sourceEditor) {
-      Editor.updateInlineAnnotation(sourceEditor, threadId, {
-        isResolved,
+      Editor.updateInlineAnnotation({
+        editor: sourceEditor,
+        discussionId: threadId,
+        afterUpdate: afterAnnotationChange,
+        data: {
+          isResolved,
+        },
       });
     }
   };
 
   const afterDeleteThread = () => {
-    if (sourceEditor) Editor.removeInlineAnnotation(sourceEditor, threadId);
+    if (sourceEditor) {
+      Editor.removeInlineAnnotation(
+        sourceEditor,
+        threadId,
+        afterAnnotationChange
+      );
+    }
 
     if (parent && parent.contentParentType === 'document') {
       localDeleteThread({

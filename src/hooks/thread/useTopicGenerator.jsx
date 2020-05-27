@@ -17,11 +17,15 @@ const useTopicGenerator = editor => {
     Transforms.insertNodes(editor, deepNewContents);
 
     // Convert inline annotation into a context highlight
-    Editor.updateInlineAnnotation(editor, threadId, {
-      type: CONTEXT_HIGHLIGHT,
-      id,
-      discussionId: undefined,
-      isInitialDraft: undefined,
+    Editor.updateInlineAnnotation({
+      editor,
+      discussionId: threadId,
+      data: {
+        type: CONTEXT_HIGHLIGHT,
+        id,
+        discussionId: undefined,
+        isInitialDraft: undefined,
+      },
     });
   };
 

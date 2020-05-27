@@ -5,6 +5,8 @@ import { useSlate } from 'slate-react';
 import styled from '@emotion/styled';
 
 import useKeyDownHandler from 'hooks/shared/useKeyDownHandler';
+import useDocumentMutations from 'hooks/document/useDocumentMutations';
+import useMessageMutations from 'hooks/message/useMessageMutations';
 import useMessageDraftMutations from 'hooks/message/useMessageDraftMutations';
 import { getLocalUser } from 'utils/auth';
 
@@ -21,6 +23,8 @@ const StyledLoadingIndicator = styled(LoadingIndicator)({
 
 const StartInlineThreadButton = ({ handleShowThread, ...props }) => {
   const editor = useSlate();
+  const { handleUpdateDocument } = useDocumentMutations();
+  const { handleUpdateMessage } = useMessageMutations();
   const { handleSaveMessageDraft, isSubmitting } = useMessageDraftMutations();
   const { userId } = getLocalUser();
 
@@ -37,7 +41,10 @@ const StartInlineThreadButton = ({ handleShowThread, ...props }) => {
       Editor.makeDOMSelection(editor);
     }
 
-    Editor.createInlineAnnotation(editor, {
+    const afterCreate =
+      mode === 'document' ? handleUpdateDocument : handleUpdateMessage;
+
+    Editor.createInlineAnnotation(editor, afterCreate, {
       discussionId: threadId, // backwards compatibility
       authorId: userId,
       isInitialDraft: true, // Toggled to false once first message is created
