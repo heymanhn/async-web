@@ -8,7 +8,11 @@ import { DEFAULT_ELEMENT_TYPE } from './constants';
 // Assumes a paragraph node always has text children
 const isEmptyParagraphNode = ({ type, children }) => {
   const [first] = children;
-  return type === DEFAULT_ELEMENT_TYPE && first.text.trim() === '';
+  return (
+    type === DEFAULT_ELEMENT_TYPE &&
+    first.text.trim() === '' &&
+    children.length === 1
+  );
 };
 
 // Check for whitespace from both ends of the content array. Stop once there's
