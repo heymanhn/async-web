@@ -155,7 +155,7 @@ const updateMessageInDiscussion = (
     variables: { discussionId, queryParams: { order: 'desc' } },
   });
 
-  const index = items.findIndex(i => i.message.id === messageId);
+  const index = (items || []).findIndex(i => i.message.id === messageId);
   if (index < 0) return null;
 
   const updatedItem = {
@@ -197,7 +197,7 @@ const deleteMessageFromDiscussion = (
     variables: { discussionId, queryParams: { order: 'desc' } },
   });
 
-  const index = items.findIndex(i => i.message.id === messageId);
+  const index = (items || []).findIndex(i => i.message.id === messageId);
   client.writeQuery({
     query: discussionMessagesQuery,
     variables: { discussionId, queryParams: { order: 'desc' } },

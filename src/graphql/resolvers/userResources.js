@@ -17,7 +17,7 @@ const deleteUserResource = (_root, { resourceId }, { client }) => {
   const { resources } = data;
   const { items, __typename } = resources;
 
-  const index = items.findIndex(item => {
+  const index = (items || []).findIndex(item => {
     const { discussion, document } = item;
     const { id } = discussion || document;
     return id === resourceId;

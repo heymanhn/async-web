@@ -14,7 +14,7 @@ const deleteFromInboxQuery = (type, { resourceType, resourceId }, client) => {
     variables: { userId, queryParams: { type } },
   });
 
-  const index = items.findIndex(item => {
+  const index = (items || []).findIndex(item => {
     const resource = item[resourceType];
     return resource && resource.id === resourceId;
   });

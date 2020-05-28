@@ -57,7 +57,7 @@ const updateResourceBadgeCount = (userId, resourceId, incrementBy, client) => {
     },
   });
 
-  const index = items.findIndex(item => {
+  const index = (items || []).findIndex(item => {
     const { document, discussion } = item;
     const resource = document || discussion;
 

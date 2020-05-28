@@ -48,7 +48,7 @@ const removeMember = (
   const { resourceMembers } = data;
   const { members, __typename } = resourceMembers;
 
-  const index = members.findIndex(p => p.user.id === userId);
+  const index = (members || []).findIndex(p => p.user.id === userId);
   if (index < 0) return null;
 
   client.writeQuery({

@@ -35,7 +35,7 @@ const deleteThreadFromDocument = (
   if (!data) return null;
   const { items, pageToken, __typename } = data.documentThreads;
 
-  const index = items.findIndex(i => i.discussion.id === threadId);
+  const index = (items || []).findIndex(i => i.discussion.id === threadId);
   client.writeQuery({
     query: documentThreadsQuery,
     variables: { id: documentId, queryParams: { order: 'desc' } },
