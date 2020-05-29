@@ -72,7 +72,12 @@ const useAutoSave = ({
   useEffect(() => {
     const newContent = contentStringRef.current;
     if (isDisabled && newContent !== savedContent) {
-      setState(oldState => ({ ...oldState, savedContent: newContent }));
+      setState(oldState => ({
+        ...oldState,
+        savedContent: newContent,
+        isTyping: false,
+        timer: null,
+      }));
     }
 
     return () => clearTimeout(timer);
