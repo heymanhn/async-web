@@ -82,5 +82,5 @@ export const isUserOnboarding = () => {
 export const clearLocalAppState = () => {
   if (!isBrowser) return false;
 
-  return setLocalAppState({});
+  return setAppState({});
 };
