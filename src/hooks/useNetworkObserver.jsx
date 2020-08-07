@@ -17,9 +17,9 @@ const useNetworkObserver = () => {
     skip: true,
   });
 
-  const {
-    data: { isLoggedIn },
-  } = useQuery(localStateQuery);
+  const { data } = useQuery(localStateQuery);
+  let isLoggedIn;
+  if (data) ({ isLoggedIn } = data);
 
   useEffect(() => {
     if (!isLoggedIn) return () => {};
