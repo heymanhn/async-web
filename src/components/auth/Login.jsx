@@ -77,10 +77,10 @@ const Login = () => {
       track('Logged in');
       navigate('/');
     },
-    onError: err => {
+    onError: async err => {
       clearLocalUser();
       clearLocalAppState();
-      client.resetStore();
+      await client.clearStore();
 
       console.dir(err); // TODO: Error handling on the page
     },

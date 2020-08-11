@@ -46,7 +46,8 @@ const DemoLogin = ({ location }) => {
     } catch (err) {
       clearLocalUser();
       clearLocalAppState();
-      client.resetStore();
+      await client.clearStore();
+
       navigate('/', { replace: true });
     }
   }

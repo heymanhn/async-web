@@ -103,9 +103,9 @@ const SignUp = ({ inviteCode }) => {
       navigate(returnPath);
     },
     onError: async () => {
-      await clearLocalUser();
-      await clearLocalAppState();
-      client.resetStore();
+      clearLocalUser();
+      clearLocalAppState();
+      await client.clearStore();
     },
   });
 
