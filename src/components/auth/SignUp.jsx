@@ -80,6 +80,8 @@ const SignUp = ({ inviteCode }) => {
       },
     },
     onCompleted: data => {
+      if (!data.createUser) throw new Error('Error signing up');
+
       const { id: userId, token: userToken, organizationId } = data.createUser;
 
       setLocalUser({ userId, userToken });
@@ -102,10 +104,12 @@ const SignUp = ({ inviteCode }) => {
         : '/organizations';
       navigate(returnPath);
     },
-    onError: async () => {
+    onError: async err => {
       clearLocalUser();
       clearLocalAppState();
       await client.clearStore();
+
+      console.dir(err);
     },
   });
 
